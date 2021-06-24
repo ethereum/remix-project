@@ -105,6 +105,27 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
+  const showWarnings = (warningMessage, groupByKey) => {
+    const resultArray = []
+    warningMessage.map(x => {
+      resultArray.push(x)
+    })
+    function groupBy (objectArray, property) {
+      return objectArray.reduce((acc, obj) => {
+        const key = obj[property]
+        if (!acc[key]) {
+          acc[key] = []
+        }
+        // Add object to list for given key's value
+        acc[key].push(obj)
+        return acc
+      }, {})
+    }
+
+    const groupedCategory = groupBy(resultArray, groupByKey)
+    setWarningState(groupedCategory)
+  }
+
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (state.data !== null) {
       if (lastCompilationResult && categoryIndex.length > 0) {
@@ -112,7 +133,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const warningMessage = []
         const warningErrors = []
 
-        /******************** Remix Analyzer ********************/
+        /******************** Remix Analysis ********************/
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
             let moduleName
@@ -166,85 +187,60 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
             })
           })
-        })
-
-        /******************** Slither Analyzer Start ********************/
-
-        if (slitherEnabled) {
-          props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
-            const { currentVersion, optimize, evmVersion } = compilerState
-            props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then((result) => {
-              console.log('slither result')
-              if (result.status) {
-                const report = result.data
-                report.map((item) => {
-                  let location: any = {}
-                  let locationString = 'not available'
-                  let column = 0
-                  let row = 0
-                  let fileName = currentFile
-                  if (item.sourceMap & item.sourceMap.length) {
-                    location = {
-                      start: item.sourceMap[0].source_mapping.start,
-                      length: item.sourceMap[0].source_mapping.length
+          /******************** Slither Analysis ********************/
+          if (slitherEnabled) {
+            props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
+              const { currentVersion, optimize, evmVersion } = compilerState
+              props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then((result) => {
+                if (result.status) {
+                  const report = result.data
+                  report.map((item) => {
+                    let location: any = {}
+                    let locationString = 'not available'
+                    let column = 0
+                    let row = 0
+                    let fileName = currentFile
+                    if (item.sourceMap & item.sourceMap.length) {
+                      location = {
+                        start: item.sourceMap[0].source_mapping.start,
+                        length: item.sourceMap[0].source_mapping.length
+                      }
+                      location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                        location,
+                        0,
+                        lastCompilationSource.sources,
+                        lastCompilationResult.sources
+                      )
+                      console.log('location:', location)
+                      row = location.start.line
+                      column = location.start.column
+                      locationString = row + 1 + ':' + column + ':'
+                      fileName = Object.keys(lastCompilationResult.contracts)[0]
                     }
-                    location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-                      location,
-                      0,
-                      lastCompilationSource.sources,
-                      lastCompilationResult.sources
-                    )
-                    console.log('location:', location)
-                    row = location.start.line
-                    column = location.start.column
-                    locationString = row + 1 + ':' + column + ':'
-                    fileName = Object.keys(lastCompilationResult.contracts)[0]
-                  }
-                  warningCount++
-                  const msg = message(item.title, item.description, item.more, fileName, locationString)
-                  const options = {
-                    type: 'warning',
-                    useSpan: true,
-                    errFile: fileName,
-                    fileName,
-                    errLine: row,
-                    errCol: column,
-                    item: item,
-                    name: item.title,
-                    locationString,
-                    more: item.more,
-                    location: location
-                  }
-                  warningErrors.push(options)
-                  warningMessage.push({ msg, options, hasWarning: true, warningModuleName: item.title })
-                })
-              }
-              const resultArray = []
-              warningMessage.map(x => {
-                resultArray.push(x)
+                    warningCount++
+                    const msg = message(item.title, item.description, item.more, fileName, locationString)
+                    const options = {
+                      type: 'warning',
+                      useSpan: true,
+                      errFile: fileName,
+                      fileName,
+                      errLine: row,
+                      errCol: column,
+                      item: { warning: item.description},
+                      name: item.title,
+                      locationString,
+                      more: item.more,
+                      location: location
+                    }
+                    warningErrors.push(options)
+                    warningMessage.push({ msg, options, hasWarning: true, warningModuleName: item.title })
+                  })
+                  showWarnings(warningMessage, 'warningModuleName')
+                }
               })
-              function groupBy (objectArray, property) {
-                return objectArray.reduce((acc, obj) => {
-                  const key = obj[property]
-                  if (!acc[key]) {
-                    acc[key] = []
-                  }
-                  // Add object to list for given key's value
-                  acc[key].push(obj)
-                  return acc
-                }, {})
-              }
-
-              const groupedCategory = groupBy(resultArray, 'warningModuleName')
-              setWarningState(groupedCategory)
             })
-          })
-
-        }
-        
-
-        /******************** Slither Analyzer Finish ********************/
-
+          } else showWarnings(warningMessage, 'warningModuleName')
+        })
         if (categoryIndex.length > 0) {
           props.event.trigger('staticAnaysisWarning', [warningCount])
         }
