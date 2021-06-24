@@ -27,6 +27,27 @@ export function extractContractDefinitions (sourcesList) {
 }
 
 /**
+  * return nodes from an ast @arg sourcesList that are declared outside of a ContractDefinition @astList
+  *
+  * @param {Object} sourcesList - sources list (containing root AST node)
+  * @return {Object} - returns a list of node
+  */
+export function extractOrphanDefinitions (sourcesList) {
+  const ret = []
+  for (const k in sourcesList) {
+    const ast = sourcesList[k].ast
+    if (ast.nodes && ast.nodes.length) {
+      for (const node of ast.nodes) {
+        if (node.nodeType !== 'ContractDefinition') {
+          ret.push(node)
+        }
+      }
+    }
+  }
+  return ret
+}
+
+/**
   * returns the linearized base contracts of the contract @arg id
   *
   * @param {Int} id - contract id to resolve
@@ -54,7 +75,7 @@ export function extractStateDefinitions (contractName, sourcesList, contracts) {
   if (!node) {
     return null
   }
-  const stateItems = []
+  const stateItems = extractOrphanDefinitions(sourcesList)
   const stateVar = []
   const baseContracts = getLinearizedBaseContracts(node.id, contracts.contractsById)
   baseContracts.reverse()
