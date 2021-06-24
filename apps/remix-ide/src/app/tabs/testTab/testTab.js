@@ -10,24 +10,26 @@ class TestTabLogic {
 
   setCurrentPath (path) {
     if (path.indexOf('/') === 0) return
-    this.currentPath = path
+    this.currentPath = helper.removeMultipleSlashes(helper.removeTrailingSlashes(path))
   }
 
   generateTestFolder (path) {
     // Todo move this check to File Manager after refactoring
     // Checking to ignore the value which contains only whitespaces
     if (!path || !(/\S/.test(path))) return
+    path = helper.removeMultipleSlashes(path)
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
     fileProvider.exists(path).then(res => {
       if (!res) fileProvider.createDir(path)
     })
   }
 
-  pathExists (path) {
+  async pathExists (path) {
     // Checking to ignore the value which contains only whitespaces
     if (!path || !(/\S/.test(path))) return
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-    return fileProvider.exists(path, (e, res) => { return res })
+    const res = await fileProvider.exists(path, (e, res) => { return res })
+    return res
   }
 
   generateTestFile () {

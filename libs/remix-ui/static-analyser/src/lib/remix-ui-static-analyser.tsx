@@ -66,13 +66,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [])
 
   useEffect(() => {
+    setWarningState([])
     if (autoRun) {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
       }
+    } else {
+      props.event.trigger('staticAnaysisWarning', [])
     }
     return () => { }
-  }, [autoRun, categoryIndex, state])
+  }, [state])
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
@@ -302,7 +305,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Autorun"
             onChange={() => {}}
           />
-          <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={state.data === null}/>
+          <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={state.data === null || categoryIndex.length === 0 }/>
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
@@ -323,22 +326,22 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {state.file}
         </span>
       </div>
-      { categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
+      {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <div className="mb-4">
             {
-              (Object.entries(warningState).map((element) => (
-                <>
+              (Object.entries(warningState).map((element, index) => (
+                <div key={index}>
                   <span className="text-dark h6">{element[0]}</span>
-                  {element[1].map(x => (
+                  {element[1].map((x, i) => (
                     x.hasWarning ? (
-                      <div id={`staticAnalysisModule${element[1].warningModuleName}`}>
+                      <div id={`staticAnalysisModule${element[1].warningModuleName}`} key={i}>
                         <ErrorRenderer message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
                       </div>
 
                     ) : null
                   ))}
-                </>
+                </div>
               )))
             }
           </div>

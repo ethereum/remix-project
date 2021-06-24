@@ -1,13 +1,12 @@
 import React, { useRef, useEffect } from 'react' // eslint-disable-line
-import { FileExplorerContextMenuProps } from './types'
+import { action, FileExplorerContextMenuProps } from './types'
 
 import './css/file-explorer-context-menu.css'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
-
   useEffect(() => {
     contextMenuRef.current.focus()
   }, [])
@@ -23,14 +22,40 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     }
   }, [pageX, pageY])
 
+  const filterItem = (item: action) => {
+    /**
+     * if there are multiple elements focused we need to take this and all conditions must be met
+     * for example : 'downloadAsZip' with type ['file','folder'] will work on files and folders when multiple are selected
+    **/
+    const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+    if (nonRootFocus.length > 1) {
+      for (const element of nonRootFocus) {
+        if (!itemMatchesCondition(item, element.type, element.key)) return false
+      }
+      return true
+    } else {
+      return itemMatchesCondition(item, type, path)
+    }
+  }
+
+  const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
+    if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
+    else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
+    else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true
+    else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => itemPath.match(new RegExp(value))).length > 0)) return true
+    else return false
+  }
+
+  const getPath = () => {
+    if (focus.length > 1) {
+      return focus.map((element) => element.key)
+    } else {
+      return path
+    }
+  }
+
   const menu = () => {
-    return actions.filter(item => {
-      if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === type) !== -1)) return true
-      else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === path) !== -1)) return true
-      else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => path.endsWith(ext)) !== -1)) return true
-      else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => path.match(new RegExp(value))).length > 0)) return true
-      else return false
-    }).map((item, index) => {
+    return actions.filter(item => filterItem(item)).map((item, index) => {
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
@@ -48,7 +73,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               renamePath(path, type)
               break
             case 'Delete':
-              deletePath(path)
+              deletePath(getPath())
               break
             case 'Push changes to gist':
               pushChangesToGist(path, type)
@@ -67,6 +92,9 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
             case 'Paste':
               paste(path, type)
+              break
+            case 'Delete All':
+              deletePath(getPath())
               break
             default:
               emit && emit({ ...item, path: [path] } as customAction)

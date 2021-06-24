@@ -178,7 +178,7 @@ module.exports = {
       .click('*[data-id="debuggerTransactionStartButton"]') // start debugging
       .pause(2000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') !== -1, 'current displayed content is not a generated source')
+        browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32)') !== -1, 'current displayed content is not a generated source')
       })
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
@@ -207,6 +207,28 @@ module.exports = {
       As we are only testing if debugger is active, this is ok to keep that for now.
     */
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
+  },
+
+  'Should start debugging using remix debug nodes (rinkeby)': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('soljson-v0.8.4+commit.c7e474f2.js')
+      .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
+      .clearValue('*[data-id="modalDialogCustomPromptText"]')
+      .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
+      .modalFooterOKClick()
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000) // wait for the compilation to succeed
+      .clickLaunchIcon('debugger')
+      .clearValue('*[data-id="debuggerTransactionInput"]')
+      .setValue('*[data-id="debuggerTransactionInput"]', '0x156dbf7d0f9b435dd900cfc8f3264d523dd25733418ddbea1ce53e294f421013')
+      .click('*[data-id="debugGeneratedSourcesLabel"]') // unselect debug with generated sources
+      .click('*[data-id="debuggerTransactionStartButton"]')
+      .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
+      .pause(10000)
+      .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false } })
       .end()
   }
 }
@@ -246,7 +268,7 @@ const sources = [
     }
   },
   {
-    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
+    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.1/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
   },
   {
     'withABIEncoderV2.sol': {
@@ -294,6 +316,40 @@ const sources = [
       pragma experimental ABIEncoderV2; 
       contract A { 
         function f(uint[] memory) public returns (uint256) { } 
+      }
+      `
+    }
+  },
+  {
+    'useDebugNodes.sol': {
+      content: `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+
+      /**
+       * @title Storage
+       * @dev Store & retrieve value in a variable
+       */
+      contract Storage {
+
+          uint256 number;
+
+          /**
+           * @dev Store value in variable
+           * @param num value to store
+           */
+          function store(uint256 num) public {
+              number = num;
+          }
+
+          /**
+           * @dev Return value 
+           * @return value of 'number'
+           */
+          function retrieve() public view returns (uint256){
+              return number;
+          }
       }
       `
     }
@@ -367,7 +423,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0xbf309c0d71579d595f04a42e89d66d1ec17523dd3edea710b03f46a9b82ee0af')
+      const result = await remix.call('debugger', 'getTrace', '0xa38bff6f06e7c4fc91df1db6aa31a69ab5d5882faa953b1e7a88bfa523268ed7')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -376,7 +432,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0xbf309c0d71579d595f04a42e89d66d1ec17523dd3edea710b03f46a9b82ee0af')
+      const result = await remix.call('debugger', 'debug', '0xa38bff6f06e7c4fc91df1db6aa31a69ab5d5882faa953b1e7a88bfa523268ed7')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
