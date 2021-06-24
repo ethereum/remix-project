@@ -225,8 +225,9 @@ export function compareByteCode (code1, code2) {
 
   if (code1 && code2) {
     const compare = stringSimilarity.compareTwoStrings(code1, code2)
-    return compare > 0.5
+    return compare > 0.93
   }
+
   return false
 }
 /* util extracted out from remix-ide. @TODO split this file, cause it mix real util fn with solidity related stuff ... */
