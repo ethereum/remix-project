@@ -32,8 +32,8 @@ const reducedOpcode = (opCodes, payload) => {
     index: opCodes.index - bottom,
     nextIndex: opCodes.nextIndex - bottom,
     display: opCodes.code.slice(bottom, top),
-    returnInstructionIndexes: payload.returnInstructionIndexes.map((index) => index.instructionIndex - bottom ),
-    outOfGasInstructionIndexes: payload.outOfGasInstructionIndexes.map((index) => index.instructionIndex - bottom )
+    returnInstructionIndexes: payload.returnInstructionIndexes.map((index) => index.instructionIndex - bottom),
+    outOfGasInstructionIndexes: payload.outOfGasInstructionIndexes.map((index) => index.instructionIndex - bottom)
   }
 }
 
