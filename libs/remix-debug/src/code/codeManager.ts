@@ -148,8 +148,8 @@ export class CodeManager {
   private async retrieveIndexAndTrigger (codeMananger, address, step, code) {
     let result
     let next
-    let returnInstructionIndexes = []
-    let outOfGasInstructionIndexes = []
+    const returnInstructionIndexes = []
+    const outOfGasInstructionIndexes = []
 
     try {
       result = codeMananger.getInstructionIndex(address, step)
@@ -170,10 +170,9 @@ export class CodeManager {
           outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
         }
       }
-
-      } catch (error) {
-        return console.log(error)
-      }
+    } catch (error) {
+      return console.log(error)
+    }
     try {
       codeMananger.event.trigger('changed', [code, address, result, next, returnInstructionIndexes, outOfGasInstructionIndexes])
     } catch (e) {
