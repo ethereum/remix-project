@@ -156,18 +156,20 @@ export class CodeManager {
       next = codeMananger.getInstructionIndex(address, step + 1)
 
       let values = this.traceManager.getAllStopIndexes()
-      values = values.filter((value) => value.address === address)
       if (values) {
         for (const value of values) {
-          returnInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
+          if (value.address === address) {
+            returnInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })        
+          }
         }
       }
 
       values = this.traceManager.getAllOutofGasIndexes()
-      values = values.filter((value) => value.address === address)
       if (values) {
         for (const value of values) {
-          outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
+          if (value.address === address) {
+            outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })        
+          }
         }
       }
     } catch (error) {
