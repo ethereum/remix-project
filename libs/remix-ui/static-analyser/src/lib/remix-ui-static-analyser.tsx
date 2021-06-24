@@ -57,8 +57,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState('hidden')
+  // Show checkbox to select to display only Slither Analysis
   const [showSlitherResult, setShowSlitherResult] = useState('hidden')
-  const [showSlitherResultEnabled, setShowSlitherResultEnabled] = useState(false)
+  const [slitherResultEnabled, setSlitherResultEnabled] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -126,6 +127,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
     const groupedCategory = groupBy(resultArray, groupByKey)
     setWarningState(groupedCategory)
+  }
+
+  const showWarningsByModule = (showOnlyModule: string) => {
+    if(showOnlyModule && warningState[showOnlyModule]) {
+      const newWarningState = {}
+      newWarningState[showOnlyModule] = warningState[showOnlyModule]
+      setWarningState({[showOnlyModule]: warningState[showOnlyModule]})
+    }
   }
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
@@ -243,6 +252,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
                   })
                   showWarnings(warningMessage, 'warningModuleName')
+                  setShowSlitherResult('visible')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
               }).catch((error) => {
@@ -291,7 +301,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
-  const handleShowSlitherResultEnabled = () => {
+  const handleSlitherEnabled = () => {
     if (slitherEnabled) {
       setSlitherEnabled(false)
     } else {
@@ -299,11 +309,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
-  const handleSlitherEnabled = () => {
-    if (showSlitherResultEnabled) {
-      setShowSlitherResultEnabled(false)
+  const handleShowSlitherResultEnabled = () => {
+    if (slitherResultEnabled) {
+      setSlitherResultEnabled(false)
     } else {
-      setShowSlitherResultEnabled(true)
+      setSlitherResultEnabled(true)
+      showWarningsByModule('Slither Analysis')
     }
   }
 
