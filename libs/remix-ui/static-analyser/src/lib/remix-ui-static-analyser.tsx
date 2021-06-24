@@ -200,7 +200,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     let column = 0
                     let row = 0
                     let fileName = currentFile
-                    if (item.sourceMap & item.sourceMap.length) {
+                    if (item.sourceMap && item.sourceMap.length) {
                       location = {
                         start: item.sourceMap[0].source_mapping.start,
                         length: item.sourceMap[0].source_mapping.length
