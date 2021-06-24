@@ -19,7 +19,6 @@ export const AssemblyItems = ({ registerEvent }) => {
   }, [])
 
   useEffect(() => {
-    console.log('useEffect', assemblyItems.index)
     if (absoluteSelectedIndex !== assemblyItems.index) {
       clearItems()
       indexChanged(assemblyItems.index)
