@@ -6,7 +6,7 @@ import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
-  setWorkspace: ({ name: string, isLocalhost: boolean }) => void,
+  setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
   createWorkspace: (name: string) => void,
   renameWorkspace: (oldName: string, newName: string) => void
   workspaceRenamed: ({ name: string }) => void,
@@ -53,13 +53,13 @@ export const Workspace = (props: WorkspaceProps) => {
     return setWorkspace(workspaceName)
   }
 
-  props.request.createNewFile = () => {
-    if (!state.workspaces.length) createNewWorkspace('default_workspace')
+  props.request.createNewFile = async () => {
+    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
     props.plugin.resetNewFile()
   }
 
-  props.request.uploadFile = (target) => {
-    if (!state.workspaces.length) createNewWorkspace('default_workspace')
+  props.request.uploadFile = async (target) => {
+    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
 
     setState(prevState => {
       return { ...prevState, uploadFileEvent: target }
@@ -71,12 +71,13 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   useEffect(() => {
-    const getWorkspaces = async () => {
+    let getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
         if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
-          props.workspace.setWorkspace(props.workspaces[0])
+          const currentWorkspace = props.workspace.getWorkspace() ? props.workspace.getWorkspace() : props.workspaces[0]
+          await props.workspace.setWorkspace(currentWorkspace)
           setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
+            return { ...prevState, workspaces: props.workspaces, currentWorkspace }
           })
         } else {
           setState(prevState => {
@@ -87,6 +88,10 @@ export const Workspace = (props: WorkspaceProps) => {
     }
 
     getWorkspaces()
+
+    return () => {
+      getWorkspaces = async () => {}
+    }
   }, [props.workspaces])
 
   const localhostDisconnect = () => {
@@ -236,14 +241,15 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const setWorkspace = async (name) => {
-    await props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
+    await props.fileManager.closeAllFiles()
     if (name === LOCALHOST) {
       props.workspace.clearWorkspace()
     } else if (name === NO_WORKSPACE) {
       props.workspace.clearWorkspace()
     } else {
-      props.workspace.setWorkspace(name)
+      await props.workspace.setWorkspace(name)
     }
+    await props.setWorkspace({ name, isLocalhost: name === LOCALHOST }, !(name === LOCALHOST || name === NO_WORKSPACE))
     props.plugin.getWorkspaces()
     setState(prevState => {
       return { ...prevState, currentWorkspace: name }

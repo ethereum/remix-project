@@ -21,8 +21,7 @@ export function web3DebugNode (network) {
     Main: 'https://gethmainnet.komputing.org',
     Rinkeby: 'https://remix-rinkeby.ethdevops.io',
     Ropsten: 'https://remix-ropsten.ethdevops.io',
-    Goerli: 'https://remix-goerli.ethdevops.io',
-    Kovan: 'https://remix-kovan.ethdevops.io'
+    Goerli: 'https://remix-goerli.ethdevops.io'
   }
   if (web3DebugNodes[network]) {
     return this.loadWeb3(web3DebugNodes[network])

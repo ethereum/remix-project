@@ -5,12 +5,6 @@ const { Provider, extend } = require('@remix-project/remix-simulator')
 class VMProvider {
   constructor (executionContext) {
     this.executionContext = executionContext
-    this.RemixSimulatorProvider = new Provider({})
-    this.RemixSimulatorProvider.init()
-    this.web3 = new Web3(this.RemixSimulatorProvider)
-    extend(this.web3)
-    this.accounts = {}
-    this.executionContext.setWeb3('vm', this.web3)
   }
 
   getAccounts (cb) {
@@ -23,8 +17,14 @@ class VMProvider {
   }
 
   resetEnvironment () {
-    this.RemixSimulatorProvider.Accounts.resetAccounts()
     this.accounts = {}
+    this.RemixSimulatorProvider = new Provider({ fork: this.executionContext.getCurrentFork() })
+    this.RemixSimulatorProvider.init()
+    this.RemixSimulatorProvider.Accounts.resetAccounts()
+    this.web3 = new Web3(this.RemixSimulatorProvider)
+    extend(this.web3)
+    this.accounts = {}
+    this.executionContext.setWeb3('vm', this.web3)
   }
 
   // TODO: is still here because of the plugin API

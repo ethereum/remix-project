@@ -23,6 +23,7 @@ class Blockchain {
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
+      isVM: () => { return this.executionContext.isVM() },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
@@ -208,6 +209,14 @@ class Blockchain {
     return this.executionContext.getProvider()
   }
 
+  /**
+   * return the fork name applied to the current envionment
+   * @return {String} - fork name
+   */
+  getCurrentFork () {
+    return this.executionContext.getCurrentFork()
+  }
+
   isWeb3Provider () {
     const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'
@@ -314,6 +323,7 @@ class Blockchain {
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
+      isVM: () => { return this.executionContext.isVM() },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }

@@ -143,7 +143,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const editRef = useRef(null)
 
   useEffect(() => {
-    init(props.filesProvider, props.name, props.plugin, props.registry)(dispatch)
+    init(props.filesProvider, props.plugin, props.registry)(dispatch)
   }, [])
 
   useEffect(() => {
