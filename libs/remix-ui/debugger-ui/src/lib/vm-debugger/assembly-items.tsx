@@ -28,53 +28,28 @@ export const AssemblyItems = ({ registerEvent }) => {
     }
   }, [assemblyItems.opCodes.index])
 
+  let clearItem = (currentItem) => {
+    if (currentItem) {
+      currentItem.removeAttribute('selected')
+      currentItem.removeAttribute('style')
+      if (currentItem.firstChild) {
+        currentItem.firstChild.removeAttribute('style')
+      }
+    }
+  }
+
   const clearItems = () => {
-    let currentItem = refs.current[selectedItem] ? refs.current[selectedItem] : null
-
-    if (currentItem) {
-      currentItem.removeAttribute('selected')
-      currentItem.removeAttribute('style')
-      if (currentItem.firstChild) {
-        currentItem.firstChild.removeAttribute('style')
-      }
-    }
-
-    currentItem = refs.current[nextSelectedItem] ? refs.current[nextSelectedItem] : null
-
-    if (currentItem) {
-      currentItem.removeAttribute('selected')
-      currentItem.removeAttribute('style')
-      if (currentItem.firstChild) {
-        currentItem.firstChild.removeAttribute('style')
-      }
-    }
-
+    clearItem(refs.current[selectedItem] ? refs.current[selectedItem] : null)
+    clearItem(refs.current[nextSelectedItem] ? refs.current[nextSelectedItem] : null)
+   
     returnInstructionIndexes.map((index) => {
       if (index < 0) return
-
-      currentItem = refs.current[index] ? refs.current[index] : null
-
-      if (currentItem) {
-        currentItem.removeAttribute('selected')
-        currentItem.removeAttribute('style')
-        if (currentItem.firstChild) {
-          currentItem.firstChild.removeAttribute('style')
-        }
-      }
+      clearItem(refs.current[index] ? refs.current[index] : null)
     })
 
     outOfGasInstructionIndexes.map((index) => {
       if (index < 0) return
-
-      currentItem = refs.current[index] ? refs.current[index] : null
-
-      if (currentItem) {
-        currentItem.removeAttribute('selected')
-        currentItem.removeAttribute('style')
-        if (currentItem.firstChild) {
-          currentItem.firstChild.removeAttribute('style')
-        }
-      }
+      clearItem(refs.current[index] ? refs.current[index] : null)
     })
   }
 
