@@ -5,11 +5,9 @@ import { PublishToStorage } from '@remix-ui/publish-to-storage'
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { contractMap } = props
-  const [state, setState] = useState({
-    contractList: null,
-    selectedContract: ''
-  })
+  const { contractMap, fileProvider, fileManager, contractsDetails } = props
+  const [contractList, setContractList] = useState([])
+  const [selectedContract, setSelectedContract] = useState('')
 
   useEffect(() => {
     const contractList = contractMap ? Object.keys(contractMap).map((key) => ({
@@ -17,9 +15,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       file: getFileName(contractMap[key].file)
     })) : []
 
-    setState(prevState => {
-      return { ...prevState, contractList }
-    })
+    setContractList(contractList)
   }, [])
   // Return the file name of a path: ex "browser/ballot.sol" -> "ballot.sol"
   const getFileName = (path) => {
@@ -29,9 +25,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const selectContract = (contractName: string) => {
-    setState(prevState => {
-      return { ...prevState, selectedContract: contractName }
-    })
+    setSelectedContract(contractName)
   }
 
   const handlePublishToStorage = (type) => {
@@ -60,12 +54,15 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
   
   const getContractProperty = (property) => {
-    // if (!this.selectedContract) throw new Error('No contract compiled yet')
-    // const contractProperties = this.data.contractsDetails[this.selectedContract]
-    // return contractProperties[property] || null
+    if (!selectedContract) throw new Error('No contract compiled yet')
+    const contractProperties = contractsDetails[selectedContract]
+
+    return contractProperties[property] || null
   }
 
   const details = () => {
+    if (!selectedContract) throw new Error('No contract compiled yet')
+    
     const help = {
       Assembly: 'Assembly opcodes describing the contract including corresponding solidity source code',
       Opcodes: 'Assembly opcodes describing the contract',
@@ -80,17 +77,22 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
       web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
-    if (!this.selectedContract) throw new Error('No contract compiled yet')
-    const contractProperties = this.data.contractsDetails[this.selectedContract]
-    const log = yo`<div class="${css.detailsJSON}"></div>`
+    const contractProperties = contractsDetails[selectedContract]
+    const log = <div className="remixui_detailsJSON"></div>
+
     Object.keys(contractProperties).map(propertyName => {
-      const copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
-      const questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fas fa-question-circle" aria-hidden="true"></i></span>`
+      const copyDetails = <span className="remixui_copyDetails">{ copyToClipboard(() => contractProperties[propertyName]) }</span>
+      const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
+    
       log.appendChild(yo`<div class=${css.log}>
         <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
         ${this.insertValue(contractProperties, propertyName)}
       </div>`)
     })
+
+    return {
+
+    }
     modalDialog(this.selectedContract, log, { label: '' }, { label: 'Close' })
   }
 
@@ -101,13 +103,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   return (
     // define swarm logo
     <>
-      { state.contractList.length ?
+      { contractList.length ?
         <section className="remixui_compilerSection pt-3">
           {/* Select Compiler Version */}
           <div className="mb-3">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">Contract</label>
             <select onChange={(e) => selectContract(e.target.value)} data-id="compiledContracts" id="compiledContracts" className="custom-select">
-              {state.contractList.map(({ name, file }) => <option value={name}>{name} ({file})</option>)}
+              { contractList.map(({ name, file }) => <option value={name}>{name} ({file})</option>)}
             </select>
           </div>
           <article className="mt-2 pb-0">

@@ -8,7 +8,8 @@ export interface SolidityCompilerProps {
   plugin: any,
   queryParams: any,
   compileTabLogic: any,
-  compiledFileName: string
+  compiledFileName: string,
+  contractsDetails: Record<string, any>
 }
 
 export interface CompilerContainerProps {
@@ -23,5 +24,7 @@ export interface CompilerContainerProps {
 export interface ContractSelectionProps {
   contractMap: {
     file: string
-  }
+  } | Record<string, any>,
+  fileManager: any,
+  fileProvider: any
 }

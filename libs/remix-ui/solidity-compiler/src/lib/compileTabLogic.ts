@@ -9,7 +9,7 @@ const profile = {
   description: 'Compile solidity contracts - Logic',
   version: packageJson.version
 }
-export default class CompileTab extends Plugin {
+export class CompileTab extends Plugin {
   public compiler
   public optimize
   public runs: number
