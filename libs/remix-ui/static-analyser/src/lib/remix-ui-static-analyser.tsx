@@ -57,6 +57,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState('hidden')
+  const [showSlitherResult, setShowSlitherResult] = useState('hidden')
+  const [showSlitherResultEnabled, setShowSlitherResultEnabled] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -289,11 +291,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
-  const handleSlitherEnabled = () => {
+  const handleShowSlitherResultEnabled = () => {
     if (slitherEnabled) {
       setSlitherEnabled(false)
     } else {
       setSlitherEnabled(true)
+    }
+  }
+
+  const handleSlitherEnabled = () => {
+    if (showSlitherResultEnabled) {
+      setShowSlitherResultEnabled(false)
+    } else {
+      setShowSlitherResultEnabled(true)
     }
   }
 
