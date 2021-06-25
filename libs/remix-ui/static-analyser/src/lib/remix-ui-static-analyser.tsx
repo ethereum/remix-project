@@ -64,6 +64,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const warningContainer = React.useRef(null)
   const [warningState, setWarningState] = useState({})
+  const [allWarnings, setAllWarnings] = useState({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   useEffect(() => {
@@ -72,6 +73,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     setWarningState({})
+    setAllWarnings({})
     if (autoRun) {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
@@ -126,14 +128,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
 
     const groupedCategory = groupBy(resultArray, groupByKey)
+    setAllWarnings(groupedCategory)
     setWarningState(groupedCategory)
   }
 
   const showWarningsByModule = (showOnlyModule: string) => {
-    if(showOnlyModule && warningState[showOnlyModule]) {
+    if(allWarnings[showOnlyModule]) {
       const newWarningState = {}
-      newWarningState[showOnlyModule] = warningState[showOnlyModule]
-      setWarningState({[showOnlyModule]: warningState[showOnlyModule]})
+      newWarningState[showOnlyModule] = allWarnings[showOnlyModule]
+      setWarningState({[showOnlyModule]: allWarnings[showOnlyModule]})
+    } else if (showOnlyModule === 'all') {
+      setWarningState(allWarnings)
     }
   }
 
@@ -253,6 +258,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             })
           } else {
             showWarnings(warningMessage, 'warningModuleName')
+            setShowSlitherResult('hidden')
             if (categoryIndex.length > 0) {
               props.event.trigger('staticAnaysisWarning', [warningCount])
           }
@@ -304,6 +310,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const handleShowSlitherResultEnabled = () => {
     if (slitherResultEnabled) {
       setSlitherResultEnabled(false)
+      showWarningsByModule('all')
     } else {
       setSlitherResultEnabled(true)
       showWarningsByModule('Slither Analysis')
@@ -445,7 +452,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             inputType="checkbox"
             onClick={handleShowSlitherResultEnabled}
             checked={slitherResultEnabled}
-            label="Only Show Slither Analysis"
+            label="Show Only Slither Analysis"
             onChange={() => {}}
             visibility = {showSlitherResult}
           />
