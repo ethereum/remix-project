@@ -21,8 +21,7 @@ export class ExecutionContext {
     this.executionContext = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.defaultFork = 'berlin'
-    this.currentFork = this.defaultFork
+    this.currentFork = ' - '
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -125,18 +124,17 @@ export class ExecutionContext {
 
   executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
     const context = value.context
-    const fork = value.fork || this.defaultFork
     if (!cb) cb = () => {}
     if (!confirmCb) confirmCb = () => {}
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
-      this.currentFork = fork
+      this.currentFork = value.fork
       this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
 
-    this.currentFork = this.defaultFork // in the case of injected and web3, we default to the last fork.
+    this.currentFork = ' - '
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
