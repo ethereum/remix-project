@@ -260,8 +260,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     warningErrors.push(options)
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
                   })
-                  showWarnings(warningMessage, 'warningModuleName')
                   setShowSlitherResult('block')
+                  showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
               }).catch((error) => {
@@ -271,6 +271,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               })
             })
           } else {
+            setShowSlitherResult('none')
             showWarnings(warningMessage, 'warningModuleName')
             props.event.trigger('staticAnaysisWarning', [warningCount])
           }
