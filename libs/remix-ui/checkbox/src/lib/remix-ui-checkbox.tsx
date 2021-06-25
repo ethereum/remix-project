@@ -26,11 +26,11 @@ export const RemixUiCheckbox = ({
   onChange,
   itemName,
   categoryId,
-  visibility, 
-  display
+  visibility,
+  display = 'flex'
 }: RemixUiCheckboxProps) => {
   return (
-    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: display ? display : 'flex', alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
+    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: display, alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
       <input
         id={id}
         type={inputType}
