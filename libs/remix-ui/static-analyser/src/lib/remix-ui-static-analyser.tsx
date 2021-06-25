@@ -133,13 +133,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const showWarningsByModule = (showOnlyModule: string) => {
+    let count = 0
     if(allWarnings[showOnlyModule]) {
       const newWarningState = {}
       newWarningState[showOnlyModule] = allWarnings[showOnlyModule]
       setWarningState({[showOnlyModule]: allWarnings[showOnlyModule]})
+      count = allWarnings[showOnlyModule].length
     } else if (showOnlyModule === 'all') {
       setWarningState(allWarnings)
+      for (const e in allWarnings) count += allWarnings[e].length
     }
+    props.event.trigger('staticAnaysisWarning', [count])
   }
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
