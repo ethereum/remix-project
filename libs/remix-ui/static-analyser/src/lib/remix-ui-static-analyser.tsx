@@ -213,6 +213,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               const { currentVersion, optimize, evmVersion } = compilerState
               props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then((result) => {
                 if (result.status) {
+                  props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Success!! ${result.count} warnings found.` })
                   const report = result.data
                   report.map((item) => {
                     let location: any = {}
@@ -254,15 +255,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     warningErrors.push(options)
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
                   })
-                  showWarnings(warningMessage, 'warningModuleName')
                   setShowSlitherResult('block')
+                  showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
               })
             })
           } else {
+            setShowSlitherResult('none')
             showWarnings(warningMessage, 'warningModuleName')
-            setShowSlitherResult('node')
             if (categoryIndex.length > 0) {
               props.event.trigger('staticAnaysisWarning', [warningCount])
             }
