@@ -57,7 +57,7 @@ export class SlitherClient extends PluginClient {
         // Check solc current installed version
         const solcOutput: Buffer = execSync('solc --version', options)
         if (!solcOutput.toString().includes(versionString)) {
-          console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is different from installed solc version`)
+          console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is different from installed solc version')
           // Get compiler version without commit id e.g: 0.8.2
           const version: string = versionString.substring(0, versionString.indexOf('+commit'))
           // List solc versions installed using solc-select
@@ -71,14 +71,14 @@ export class SlitherClient extends PluginClient {
           console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Setting ${version} as current solc version using solc-select`)
           // Set solc current version as required version
           execSync(`solc-select use ${version}`, options)
-        } else console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is same as installed solc version`)
+        } else console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is same as installed solc version')
       }
       const outputFile: string = 'remix-slitherReport_' + Date.now() + '.json'
       const optimizeOption: string = optimize ? '--optimize ' : ''
       const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
       const solcArgs: string = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
       const cmd: string = `slither ${filePath} ${solcArgs} --json ${outputFile}`
-      console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Running Slither...`)
+      console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
       const child = spawn(cmd, options)
       const response = {}
       child.on('close', () => {
