@@ -255,9 +255,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     warningErrors.push(options)
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
                   })
-                  setShowSlitherResult('block')
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
+                  if (showSlitherResult === 'none') {
+                    setShowSlitherResult('block')
+                  } else if (showSlitherResult === 'block' && slitherResultEnabled) {
+                    showWarningsByModule('Slither Analysis')
+                  }
                 }
               })
             })
