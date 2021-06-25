@@ -134,10 +134,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const showWarningsByModule = (showOnlyModule: string) => {
     let count = 0
-    if(allWarnings[showOnlyModule]) {
+    if (allWarnings[showOnlyModule]) {
       const newWarningState = {}
       newWarningState[showOnlyModule] = allWarnings[showOnlyModule]
-      setWarningState({[showOnlyModule]: allWarnings[showOnlyModule]})
+      setWarningState({ [showOnlyModule]: allWarnings[showOnlyModule] })
       count = allWarnings[showOnlyModule].length
     } else if (showOnlyModule === 'all') {
       setWarningState(allWarnings)
