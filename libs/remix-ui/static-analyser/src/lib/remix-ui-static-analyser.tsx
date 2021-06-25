@@ -129,10 +129,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const showWarningsByModule = (showOnlyModule: string) => {
     let count = 0
-    if(allWarnings[showOnlyModule]) {
+    if (allWarnings[showOnlyModule]) {
       const newWarningState = {}
       newWarningState[showOnlyModule] = allWarnings[showOnlyModule]
-      setWarningState({[showOnlyModule]: allWarnings[showOnlyModule]})
+      setWarningState({ [showOnlyModule]: allWarnings[showOnlyModule] })
       count = allWarnings[showOnlyModule].length
     } else if (showOnlyModule === 'all') {
       setWarningState(allWarnings)
@@ -148,7 +148,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const warningMessage = []
         const warningErrors = []
 
-        /******************** Remix Analysis ********************/
+        // Remix Analysis
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
             let moduleName
@@ -202,7 +202,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
             })
           })
-          /******************** Slither Analysis ********************/
+          // Slither Analysis
           if (slitherEnabled) {
             props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
               const { currentVersion, optimize, evmVersion } = compilerState
@@ -240,7 +240,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                       fileName,
                       errLine: row,
                       errCol: column,
-                      item: { warning: item.description},
+                      item: { warning: item.description },
                       name: item.title,
                       locationString,
                       more: item.more,
@@ -260,8 +260,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             setShowSlitherResult('node')
             if (categoryIndex.length > 0) {
               props.event.trigger('staticAnaysisWarning', [warningCount])
+            }
           }
-        }
         })
       } else {
         if (categoryIndex.length) {
@@ -446,15 +446,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         </span>
       </div>
       <div className="d-flex" id="onlySlitherResult">
-          <RemixUiCheckbox
-            id="showOnlySlitherResult"
-            inputType="checkbox"
-            onClick={handleShowSlitherResultEnabled}
-            checked={slitherResultEnabled}
-            label="Show Only Slither Analysis"
-            onChange={() => {}}
-            display = {showSlitherResult}
-          />
+        <RemixUiCheckbox
+          id="showOnlySlitherResult"
+          inputType="checkbox"
+          onClick={handleShowSlitherResultEnabled}
+          checked={slitherResultEnabled}
+          label="Show Only Slither Analysis"
+          onChange={() => {}}
+          display = {showSlitherResult}
+        />
       </div>
       <br/>
       {Object.entries(warningState).length > 0 &&
@@ -464,8 +464,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               (Object.entries(warningState).map((element, index) => (
                 <div key={index}>
                   <span className="text-dark h6">{element[0]}</span>
-                  {element[1]['map']((x, i) => (
-                    x.hasWarning ? (
+                  {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
+                    x.hasWarning ? ( // eslint-disable-next-line  dot-notation
                       <div id={`staticAnalysisModule${element[1]['warningModuleName']}`} key={i}>
                         <ErrorRenderer message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
                       </div>
