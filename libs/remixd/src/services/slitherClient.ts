@@ -50,27 +50,40 @@ export class SlitherClient extends PluginClient {
       }
       const options = { cwd: this.currentSharedFolder, shell: true }
       const { currentVersion, optimize, evmVersion } = compilerConfig
-      if (currentVersion) {
+      if (currentVersion && currentVersion.includes('+commit')) {
+        // Get compiler version with commit id e.g: 0.8.2+commit.661d110
         const versionString: string = currentVersion.substring(0, currentVersion.indexOf('+commit') + 16)
+        console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is ${versionString}`)
+        // Check solc current installed version
         const solcOutput: Buffer = execSync('solc --version', options)
         if (!solcOutput.toString().includes(versionString)) {
+          console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is different from installed solc version`)
+          // Get compiler version without commit id e.g: 0.8.2
           const version: string = versionString.substring(0, versionString.indexOf('+commit'))
+          // List solc versions installed using solc-select
           const solcSelectInstalledVersions: Buffer = execSync('solc-select versions', options)
+          // Check if required version is already installed
           if (!solcSelectInstalledVersions.toString().includes(version)) {
+            console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Installing ${version} using solc-select`)
+            // Install required version
             execSync(`solc-select install ${version}`, options)
           }
+          console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Setting ${version} as current solc version using solc-select`)
+          // Set solc current version as required version
           execSync(`solc-select use ${version}`, options)
-        }
+        } else console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is same as installed solc version`)
       }
       const outputFile: string = 'remix-slitherReport_' + Date.now() + '.json'
       const optimizeOption: string = optimize ? '--optimize ' : ''
       const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
       const solcArgs: string = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
       const cmd: string = `slither ${filePath} ${solcArgs} --json ${outputFile}`
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Running Slither...`)
       const child = spawn(cmd, options)
       const response = {}
       child.on('close', () => {
         const outputFileAbsPath: string = `${this.currentSharedFolder}/${outputFile}`
+        // Check if slither report file exists
         if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
           report = JSON.parse(report)
@@ -83,13 +96,14 @@ export class SlitherClient extends PluginClient {
               response['count'] = detectors.length
               response['data'] = this.transform(detectors)
             }
+            console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Analysis Completed!! ${response['count']} warnings found.`)
             resolve(response)
           } else {
-            console.log('[Slither Analysis]: Error in running Slither Analysis')
+            console.log('\x1b[31m%s\x1b[0m', '[Slither Analysis]: Error in running Slither Analysis')
             console.log(report['error'])
-            reject(new Error('Error in running Slither Analysis. See remixd console.'))
+            reject(new Error('Error in running Slither Analysis. See remixd console for details.'))
           }
-        } else reject(new Error('Error in generating Slither Analysis Report. See remixd console.'))
+        } else reject(new Error('Error in generating Slither Analysis Report. See remixd console for details.'))
       })
     })
   }
