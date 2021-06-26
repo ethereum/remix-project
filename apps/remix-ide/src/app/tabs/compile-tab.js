@@ -11,7 +11,7 @@ import { compile } from '@remix-project/remix-solidity'
 const EventEmitter = require('events')
 const $ = require('jquery')
 const yo = require('yo-yo')
-const copy = require('copy-text-to-clipboard')
+const copy = require('copy-to-clipboard')
 var QueryParams = require('../../lib/query-params')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const parseContracts = require('./compileTab/contractParser')

@@ -1,27 +1,26 @@
 import React, { useState } from 'react'
-import copy from 'copy-text-to-clipboard'
+import copy from 'copy-to-clipboard'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import './copy-to-clipboard.css'
 
-export const CopyToClipboard = ({ content, tip='Copy', icon='fa-copy', ...otherProps }) => {
+export const CopyToClipboard = ({ content, tip = 'Copy', icon = 'fa-copy', direction = 'right', ...otherProps }) => {
   const [message, setMessage] = useState(tip)
-
-  const handleClick = (event) => {
+  const handleClick = (e) => {
     if (content && content !== '') { // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
       try {
         if (typeof content !== 'string') {
           content = JSON.stringify(content, null, '\t')
         }
+        copy(content)
+        setMessage('Copied')
       } catch (e) {
         console.error(e)
       }
-      copy(content)
-      setMessage('Copied')
     } else {
       setMessage('Cannot copy empty content!')
     }
-    event.preventDefault()
+    e.preventDefault()
     return false
   }
 
