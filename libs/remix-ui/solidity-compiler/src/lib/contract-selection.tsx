@@ -165,7 +165,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const log = <div className="remixui_detailsJSON">
       {
         Object.keys(contractProperties).map((propertyName, index) => {
-          const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} /></span>
+          const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} direction='top' /></span>
           const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
         
           return (<div className="remixui_log" key={index}>

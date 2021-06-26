@@ -233,7 +233,7 @@
     "browserify": "^16.2.3",
     "browserify-reload": "^1.0.3",
     "component-type": "^1.2.1",
-    "copy-text-to-clipboard": "^1.0.4",
+    "copy-to-clipboard": "^3.3.1",
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "cypress": "^4.1.0",
