@@ -10,7 +10,7 @@ export const publishToIPFS = async (contract, fileManager) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  let item = null
+  let item = { content: null, hash: null }
   const uploaded = []
 
   try {
@@ -55,8 +55,10 @@ export const publishToIPFS = async (contract, fileManager) => {
     })
   }))
   // publish the list of sources in order, fail if any failed
-  await Promise.all(sources.map(item => {
-    ipfsVerifiedPublish(item.content, item.hash, (error, result) => {
+  await Promise.all(sources.map(async (item) => {
+    try {
+      const result = await ipfsVerifiedPublish(item.content, item.hash)
+
       try {
         item.hash = result.url.match('dweb:/ipfs/(.+)')[1]
       } catch (e) {
@@ -64,41 +66,46 @@ export const publishToIPFS = async (contract, fileManager) => {
       }
       item.output = result
       uploaded.push(item)
-    })
+    } catch (error) {
+      throw new Error(error)
+    }
   }))
   const metadataContent = JSON.stringify(metadata)
 
-  ipfsVerifiedPublish(metadataContent, '', (error, result) => {
+  try {
+    const result = await ipfsVerifiedPublish(metadataContent, '')
+
     try {
       contract.metadataHash = result.url.match('dweb:/ipfs/(.+)')[1]
     } catch (e) {
       contract.metadataHash = '<Metadata inconsistency> - metadata.json'
     }
-    if (!error) {
-      item.content = metadataContent
-      item.hash = contract.metadataHash
-    }
+    item.content = metadataContent
+    item.hash = contract.metadataHash
     uploaded.push({
       content: contract.metadata,
       hash: contract.metadataHash,
       filename: 'metadata.json',
       output: result
     })
-  })
+  } catch (error) {
+    throw new Error(error)
+  }
 
   return { uploaded, item }
 }
 
-const ipfsVerifiedPublish = async (content, expectedHash, cb) => {
+const ipfsVerifiedPublish = async (content, expectedHash) => {
   try {
     const results = await severalGatewaysPush(content)
+
     if (expectedHash && results !== expectedHash) {
-      cb(null, { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + results, hash: results })
+      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + results, hash: results }
     } else {
-      cb(null, { message: 'ok', url: 'dweb:/ipfs/' + results, hash: results })
+      return { message: 'ok', url: 'dweb:/ipfs/' + results, hash: results }
     }
   } catch (error) {
-    cb(error)
+    throw new Error(error)
   }
 }
 

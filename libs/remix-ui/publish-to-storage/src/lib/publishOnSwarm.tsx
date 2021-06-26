@@ -6,7 +6,7 @@ export const publishToSwarm = async (contract, fileManager) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  let item = null
+  let item = { content: null, hash: null }
   const uploaded = []
 
   try {
@@ -52,8 +52,10 @@ export const publishToSwarm = async (contract, fileManager) => {
   }))
   // publish the list of sources in order, fail if any failed
 
-  await Promise.all(sources.map((item) => {
-    swarmVerifiedPublish(item.content, item.hash, (error, result) => {
+  await Promise.all(sources.map(async (item) => {
+    try {
+      const result = await swarmVerifiedPublish(item.content, item.hash)
+
       try {
         item.hash = result.url.match('bzz-raw://(.+)')[1]
       } catch (e) {
@@ -63,40 +65,45 @@ export const publishToSwarm = async (contract, fileManager) => {
       uploaded.push(item)
       // TODO this is a fix cause Solidity metadata does not contain the right swarm hash (poc 0.3)
       metadata.sources[item.filename].urls[0] = result.url
-    })
+    } catch (error) {
+      throw new Error(error)
+    }
   }))
 
   const metadataContent = JSON.stringify(metadata)
+  try {
+    const result = await swarmVerifiedPublish(metadataContent, '')
 
-  swarmVerifiedPublish(metadataContent, '', (error, result) => {
     try {
       contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
     } catch (e) {
       contract.metadataHash = '<Metadata inconsistency> - metadata.json'
     }
-    if (!error) {
-      item.content = metadataContent
-      item.hash = contract.metadataHash
-    }
+    item.content = metadataContent
+    item.hash = contract.metadataHash
     uploaded.push({
       content: contract.metadata,
       hash: contract.metadataHash,
       filename: 'metadata.json',
       output: result
     })
-  })
+  } catch (error) {
+    throw new Error(error)
+  }
 
   return { uploaded, item }
 }
 
-const swarmVerifiedPublish = (content, expectedHash, cb) => {
-  swarmgw.put(content, function (err, ret) {
-    if (err) {
-      cb(err)
-    } else if (expectedHash && ret !== expectedHash) {
-      cb(null, { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + ret, hash: ret })
-    } else {
-      cb(null, { message: 'ok', url: 'bzz-raw://' + ret, hash: ret })
-    }
+const swarmVerifiedPublish = async (content, expectedHash): Promise<Record<string, any>> => {
+  return new Promise((resolve, reject) => {
+    swarmgw.put(content, function (err, ret) {
+      if (err) {
+        reject(err)
+      } else if (expectedHash && ret !== expectedHash) {
+        resolve({ message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + ret, hash: ret })
+      } else {
+        resolve({ message: 'ok', url: 'bzz-raw://' + ret, hash: ret })
+      }
+    })
   })
 }

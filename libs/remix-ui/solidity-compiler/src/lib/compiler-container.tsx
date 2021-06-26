@@ -7,7 +7,7 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import './css/style.css'
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName } = props // eslint-disable-line
+  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -28,6 +28,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const compileIcon = useRef(null)
   const warningIcon = useRef(null)
   const promptMessageInput = useRef(null)
+  const [hhCompilation, sethhCompilation] = useState(false)
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
@@ -441,6 +442,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
+  const updatehhCompilation = (event) => {
+    const checked = event.target.checked
+
+    sethhCompilation(checked)
+    setHardHatCompilation(checked)
+  }
+
   return (
     <section>
       <article>
@@ -514,6 +522,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
               <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
             </div>
+          </div>
+          <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox" style={{ display: "none" }}>
+            <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
+            <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
           </div>
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={!state.compiledFileName || (state.compiledFileName && !isSolFileSelected(state.compiledFileName))}>
             <span>
