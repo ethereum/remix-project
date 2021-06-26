@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { contractMap, fileProvider, fileManager, contractsDetails } = props
+  const { contractMap, fileProvider, fileManager, contractsDetails, modal } = props
   const [contractList, setContractList] = useState([])
   const [selectedContract, setSelectedContract] = useState('')
+  const [storage, setStorage] = useState(null)
 
   useEffect(() => {
     const contractList = contractMap ? Object.keys(contractMap).map((key) => ({
@@ -16,7 +19,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     })) : []
 
     setContractList(contractList)
-  }, [])
+    if (!selectedContract && contractList.length) setSelectedContract(contractList[0].name)
+  }, [contractMap])
+
+  const resetStorage = () => {
+    setStorage('')
+  }
+
   // Return the file name of a path: ex "browser/ballot.sol" -> "ballot.sol"
   const getFileName = (path) => {
     const part = path.split('/')
@@ -24,12 +33,12 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return part[part.length - 1]
   }
 
-  const selectContract = (contractName: string) => {
+  const handleContractChange = (contractName: string) => {
     setSelectedContract(contractName)
   }
 
   const handlePublishToStorage = (type) => {
-
+    setStorage(type)
   }
 
   const copyABI = () => {
@@ -60,6 +69,81 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return contractProperties[property] || null
   }
 
+  const renderData = (item, key: string | number, keyPath: string) => {
+    const data = extractData(item)
+    const children = (data.children || []).map((child) => renderData(child.value, child.key, keyPath + '/' + child.key))
+
+    if (children && children.length > 0) {
+      return (
+        <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={
+          <div className="d-flex mt-2 flex-row remixui_label_item">
+          <label className="small font-weight-bold pr-1 remixui_label_key">{ key }:</label> 
+          <label className="m-0 remixui_label_value">{ data.self }</label>
+        </div>
+        }>
+          <TreeView id={`treeView${key}`} key={keyPath}>
+            {children}
+          </TreeView>
+        </TreeViewItem>
+      )
+    } else {
+      return <TreeViewItem id={key.toString()} key={keyPath} label={
+        <div className="d-flex mt-2 flex-row remixui_label_item">
+        <label className="small font-weight-bold pr-1 remixui_label_key">{ key }:</label> 
+        <label className="m-0 remixui_label_value">{ data.self }</label>
+      </div>
+      } />
+    }
+  }
+
+  const extractData = (item) => {
+    let ret = { children: null, self: null }
+
+    if (item instanceof Array) {
+      ret.children = item.map((item, index) => ({ key: index, value: item }))
+      ret.self = ''
+    } else if (item instanceof Object) {
+      ret.children = Object.keys(item).map((key) => ({ key: key, value: item[key] }))
+      ret.self = ''
+    } else {
+      ret.self = item
+      ret.children = []
+    }
+    return ret
+  }
+
+  const insertValue = (details, propertyName) => {
+    let node
+    if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
+      node = <pre>{ details[propertyName] }</pre>
+    } else if (propertyName === 'abi' || propertyName === 'metadata') {
+      if (details[propertyName] !== '') {
+        try {
+          node = <div>
+            { (typeof details[propertyName] === 'object') ?
+              <TreeView id="treeView">
+                  {
+                    Object.keys(details[propertyName]).map((innerkey) => renderData(details[propertyName][innerkey], innerkey, innerkey))
+                  }
+                </TreeView> :  <TreeView id="treeView">
+                  {
+                    Object.keys(JSON.parse(details[propertyName])).map((innerkey) => renderData(JSON.parse(details[propertyName])[innerkey], innerkey, innerkey))
+                  }
+                </TreeView>
+            }
+          </div> // catch in case the parsing fails.
+        } catch (e) {
+          node = <div>Unable to display "${propertyName}": ${e.message}</div>
+        }
+      } else {
+        node = <div> - </div>
+      }
+    } else {
+      node = <div>{JSON.stringify(details[propertyName], null, 4)}</div>
+    }
+    return <pre className="remixui_value">{node || ''}</pre>
+  }
+
   const details = () => {
     if (!selectedContract) throw new Error('No contract compiled yet')
     
@@ -78,22 +162,21 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     const contractProperties = contractsDetails[selectedContract]
-    const log = <div className="remixui_detailsJSON"></div>
+    const log = <div className="remixui_detailsJSON">
+      {
+        Object.keys(contractProperties).map((propertyName, index) => {
+          const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} /></span>
+          const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
+        
+          return (<div className="remixui_log" key={index}>
+            <div className="remixui_key">{ propertyName } { copyDetails } { questionMark }</div>
+            { insertValue(contractProperties, propertyName) }
+          </div>)
+        })
+      }
+    </div>
 
-    Object.keys(contractProperties).map(propertyName => {
-      const copyDetails = <span className="remixui_copyDetails">{ copyToClipboard(() => contractProperties[propertyName]) }</span>
-      const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
-    
-      log.appendChild(yo`<div class=${css.log}>
-        <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
-        ${this.insertValue(contractProperties, propertyName)}
-      </div>`)
-    })
-
-    return {
-
-    }
-    modalDialog(this.selectedContract, log, { label: '' }, { label: 'Close' })
+    modal(selectedContract, log, 'Close', null)
   }
 
   const copyBytecode = () => {
@@ -108,8 +191,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           {/* Select Compiler Version */}
           <div className="mb-3">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">Contract</label>
-            <select onChange={(e) => selectContract(e.target.value)} data-id="compiledContracts" id="compiledContracts" className="custom-select">
-              { contractList.map(({ name, file }) => <option value={name}>{name} ({file})</option>)}
+            <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
+              { contractList.map(({ name, file }, index) => <option value={name} key={index}>{name} ({file})</option>)}
             </select>
           </div>
           <article className="mt-2 pb-0">
@@ -119,7 +202,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" title="Publish on Ipfs" onClick={() => { handlePublishToStorage('ipfs') }}>
               <span>Publish on Ipfs</span>
-              <img id="ipfsLogo" className="remixui_storageLogo} ml-2" src="assets/img/ipfs.webp" />
+              <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
             </button>
             <button data-id="compilation-details" className="btn btn-secondary btn-block" title="Display Contract Details" onClick={() => { details() }}>
               Compilation Details
@@ -144,18 +227,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           <span className="mt-2 mx-3 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
         </article></section>
       }
-      <PublishToStorage />
+      <PublishToStorage storage={storage} fileManager={fileManager} fileProvider={fileProvider} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
     </>
   )
-
-  // if (contractList.length) {
-  //   this.selectedContract = selectEl.value
-  // } else {
-  //   delete this.selectedContract
-  // }
-  // return result
-
-  // return ()
 }
 
 export default ContractSelection
