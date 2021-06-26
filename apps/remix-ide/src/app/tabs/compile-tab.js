@@ -13,9 +13,6 @@ const $ = require('jquery')
 const yo = require('yo-yo')
 const copy = require('copy-text-to-clipboard')
 var QueryParams = require('../../lib/query-params')
-const TreeView = require('../ui/TreeView')
-const modalDialog = require('../ui/modaldialog')
-const copyToClipboard = require('../ui/copy-to-clipboard')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const parseContracts = require('./compileTab/contractParser')
 const addTooltip = require('../ui/tooltip')
@@ -76,6 +73,7 @@ class CompileTab extends ViewPlugin {
     )
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
+    this.contractMap = {}
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'compileTabView')
@@ -150,7 +148,7 @@ class CompileTab extends ViewPlugin {
     this.fileManager.events.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
-      this._view.errorContainer.appendChild(yo`<span data-id="compilationFinishedWith_${this.getCurrentVersion()}"></span>`)
+      // this._view.errorContainer.appendChild(yo`<span data-id="compilationFinishedWith_${this.getCurrentVersion()}"></span>`)
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data)
@@ -175,10 +173,10 @@ class CompileTab extends ViewPlugin {
         this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
-      const contractMap = {}
-      if (success) this.compiler.visitContracts((contract) => { contractMap[contract.name] = contract })
-      const contractSelection = this.contractSelection(contractMap)
-      yo.update(this._view.contractSelection, contractSelection)
+      this.contractMap = {}
+      if (success) this.compiler.visitContracts((contract) => { this.contractMap[contract.name] = contract })
+      // const contractSelection = this.contractSelection(contractMap)
+      // yo.update(this._view.contractSelection, contractSelection)
 
       if (data.error) {
         // this.renderer.error(
@@ -224,9 +222,13 @@ class CompileTab extends ViewPlugin {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
-        this.compileTabLogic.runCompiler(this.compilerContainer.hhCompilation)
+        this.compileTabLogic.runCompiler(this.hhCompilation)
       }
     })
+  }
+
+  setHardHatCompilation (value) {
+    this.hhCompilation = value
   }
 
   getCompilationResult () {
@@ -388,73 +390,73 @@ class CompileTab extends ViewPlugin {
     this.selectedContract = contractName
   }
 
-  details () {
-    const help = {
-      Assembly: 'Assembly opcodes describing the contract including corresponding solidity source code',
-      Opcodes: 'Assembly opcodes describing the contract',
-      'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
-      bytecode: 'Bytecode being executed during contract creation',
-      functionHashes: 'List of declared function and their corresponding hash',
-      gasEstimates: 'Gas estimation for each function call',
-      metadata: 'Contains all informations related to the compilation',
-      metadataHash: 'Hash representing all metadata information',
-      abi: 'ABI: describing all the functions (input/output params, scope, ...)',
-      name: 'Name of the compiled contract',
-      swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
-      web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
-    }
-    if (!this.selectedContract) throw new Error('No contract compiled yet')
-    const contractProperties = this.contractsDetails[this.selectedContract]
-    const log = yo`<div class="${css.detailsJSON}"></div>`
-    Object.keys(contractProperties).map(propertyName => {
-      const copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
-      const questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fas fa-question-circle" aria-hidden="true"></i></span>`
-      log.appendChild(yo`<div class=${css.log}>
-        <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
-        ${this.insertValue(contractProperties, propertyName)}
-      </div>`)
-    })
-    modalDialog(this.selectedContract, log, { label: '' }, { label: 'Close' })
-  }
+  // details () {
+  //   const help = {
+  //     Assembly: 'Assembly opcodes describing the contract including corresponding solidity source code',
+  //     Opcodes: 'Assembly opcodes describing the contract',
+  //     'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
+  //     bytecode: 'Bytecode being executed during contract creation',
+  //     functionHashes: 'List of declared function and their corresponding hash',
+  //     gasEstimates: 'Gas estimation for each function call',
+  //     metadata: 'Contains all informations related to the compilation',
+  //     metadataHash: 'Hash representing all metadata information',
+  //     abi: 'ABI: describing all the functions (input/output params, scope, ...)',
+  //     name: 'Name of the compiled contract',
+  //     swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
+  //     web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+  //   }
+  //   if (!this.selectedContract) throw new Error('No contract compiled yet')
+  //   const contractProperties = this.contractsDetails[this.selectedContract]
+  //   const log = yo`<div class="${css.detailsJSON}"></div>`
+  //   Object.keys(contractProperties).map(propertyName => {
+  //     const copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
+  //     const questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fas fa-question-circle" aria-hidden="true"></i></span>`
+  //     log.appendChild(yo`<div class=${css.log}>
+  //       <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
+  //       ${this.insertValue(contractProperties, propertyName)}
+  //     </div>`)
+  //   })
+  //   modalDialog(this.selectedContract, log, { label: '' }, { label: 'Close' })
+  // }
 
-  insertValue (details, propertyName) {
-    var node
-    if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
-      node = yo`<pre>${details[propertyName]}</pre>`
-    } else if (propertyName === 'abi' || propertyName === 'metadata') {
-      const treeView = new TreeView({
-        extractData: function (item, parent, key) {
-          var ret = {}
-          if (item instanceof Array) {
-            ret.children = item.map((item, index) => ({ key: index, value: item }))
-            ret.self = ''
-          } else if (item instanceof Object) {
-            ret.children = Object.keys(item).map((key) => ({ key: key, value: item[key] }))
-            ret.self = ''
-          } else {
-            ret.self = item
-            ret.children = []
-          }
-          return ret
-        }
-      })
-      if (details[propertyName] !== '') {
-        try {
-          node = yo`
-          <div>
-            ${treeView.render(typeof details[propertyName] === 'object' ? details[propertyName] : JSON.parse(details[propertyName]))}
-          </div>` // catch in case the parsing fails.
-        } catch (e) {
-          node = yo`<div>Unable to display "${propertyName}": ${e.message}</div>`
-        }
-      } else {
-        node = yo`<div> - </div>`
-      }
-    } else {
-      node = yo`<div>${JSON.stringify(details[propertyName], null, 4)}</div>`
-    }
-    return yo`<pre class="${css.value}">${node || ''}</pre>`
-  }
+  // insertValue (details, propertyName) {
+  //   var node
+  //   if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
+  //     node = yo`<pre>${details[propertyName]}</pre>`
+  //   } else if (propertyName === 'abi' || propertyName === 'metadata') {
+  //     const treeView = new TreeView({
+  //       extractData: function (item, parent, key) {
+  //         var ret = {}
+  //         if (item instanceof Array) {
+  //           ret.children = item.map((item, index) => ({ key: index, value: item }))
+  //           ret.self = ''
+  //         } else if (item instanceof Object) {
+  //           ret.children = Object.keys(item).map((key) => ({ key: key, value: item[key] }))
+  //           ret.self = ''
+  //         } else {
+  //           ret.self = item
+  //           ret.children = []
+  //         }
+  //         return ret
+  //       }
+  //     })
+  //     if (details[propertyName] !== '') {
+  //       try {
+  //         node = yo`
+  //         <div>
+  //           ${treeView.render(typeof details[propertyName] === 'object' ? details[propertyName] : JSON.parse(details[propertyName]))}
+  //         </div>` // catch in case the parsing fails.
+  //       } catch (e) {
+  //         node = yo`<div>Unable to display "${propertyName}": ${e.message}</div>`
+  //       }
+  //     } else {
+  //       node = yo`<div> - </div>`
+  //     }
+  //   } else {
+  //     node = yo`<div>${JSON.stringify(details[propertyName], null, 4)}</div>`
+  //   }
+  //   return yo`<pre class="${css.value}">${node || ''}</pre>`
+  // }
 
   getContractProperty (property) {
     if (!this.selectedContract) throw new Error('No contract compiled yet')
@@ -505,6 +507,8 @@ class CompileTab extends ViewPlugin {
         compileTabLogic={this.compileTabLogic}
         compiledFileName={this.currentFile}
         contractsDetails={this.contractsDetails}
+        setHardHatCompilation={this.setHardHatCompilation}
+        contractMap={this.contractMap}
       />
       , this.el)
   }

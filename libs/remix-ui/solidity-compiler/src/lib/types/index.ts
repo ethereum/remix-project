@@ -9,7 +9,11 @@ export interface SolidityCompilerProps {
   queryParams: any,
   compileTabLogic: any,
   compiledFileName: string,
-  contractsDetails: Record<string, any>
+  contractsDetails: Record<string, any>,
+  setHardHatCompilation: (value: boolean) => void,
+  contractMap: {
+    file: string
+  } | Record<string, any>
 }
 
 export interface CompilerContainerProps {
@@ -19,12 +23,15 @@ export interface CompilerContainerProps {
   compileTabLogic: any,
   tooltip: (message: string) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
-  compiledFileName: string
+  compiledFileName: string,
+  setHardHatCompilation: (value: boolean) => void
 }
 export interface ContractSelectionProps {
   contractMap: {
     file: string
   } | Record<string, any>,
   fileManager: any,
-  fileProvider: any
+  fileProvider: any,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  contractsDetails: Record<string, any>
 }
