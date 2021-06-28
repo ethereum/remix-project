@@ -9,7 +9,7 @@ const _paq = window._paq = window._paq || []
 const requiredModules = [ // services + layout views + system views
   'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider']
 
 const dependentModules = ['git', 'hardhat'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
@@ -111,6 +111,12 @@ export class RemixAppManager extends PluginManager {
     try {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
+      plugins = plugins.filter((plugin) => {
+        if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
+          return (plugin.targets.includes('remix'))
+        }
+        return true
+      })
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {
       console.log('getting plugins list from localstorage...')

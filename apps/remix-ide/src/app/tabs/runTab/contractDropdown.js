@@ -9,6 +9,7 @@ const confirmDialog = require('../../ui/confirmDialog')
 const modalDialog = require('../../ui/modaldialog')
 const MultiParamManager = require('../../ui/multiParamManager')
 const helper = require('../../../lib/helper')
+const addTooltip = require('../../ui/tooltip')
 const _paq = window._paq = window._paq || []
 
 class ContractDropdownUI {
@@ -97,7 +98,10 @@ class ContractDropdownUI {
   enableAtAddress (enable) {
     if (enable) {
       const address = this.atAddressButtonInput.value
-      if (!address || !ethJSUtil.isValidChecksumAddress(address)) return
+      if (!address || !ethJSUtil.isValidAddress(address)) {
+        this.enableAtAddress(false)
+        return
+      }
       this.atAddress.removeAttribute('disabled')
       this.atAddress.setAttribute('title', 'Interact with the given contract.')
     } else {
@@ -387,10 +391,19 @@ class ContractDropdownUI {
   loadFromAddress () {
     this.event.trigger('clearInstance')
 
-    var address = this.atAddressButtonInput.value
+    let address = this.atAddressButtonInput.value
+    if (!ethJSUtil.isValidChecksumAddress(address)) {
+      addTooltip(yo`
+        <span>
+          It seems you are not using a checksumed address.
+          <br>A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
+          <br>Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
+        </span>`)
+      address = ethJSUtil.toChecksumAddress(address)
+    }
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
-        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
+        modalDialogCustom.confirm('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, cb)
       },
       (error, loadType, abi) => {
         if (error) {

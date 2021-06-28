@@ -6,7 +6,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, File } from './types'
+import { FileExplorerProps, File, MenuItems } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
 import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
@@ -33,63 +33,80 @@ export const FileExplorer = (props: FileExplorerProps) => {
       type: ['folder', 'gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'newFolder',
       name: 'New Folder',
       type: ['folder', 'gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'rename',
       name: 'Rename',
       type: ['file', 'folder'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'delete',
       name: 'Delete',
       type: ['file', 'folder', 'gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'run',
       name: 'Run',
       type: [],
       path: [],
       extension: ['.js'],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'pushChangesToGist',
       name: 'Push changes to gist',
       type: ['gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'publishFolderToGist',
       name: 'Publish folder to gist',
       type: ['folder'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'publishFileToGist',
       name: 'Publish file to gist',
       type: ['file'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'copy',
       name: 'Copy',
       type: ['folder', 'file'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
+    }, {
+      id: 'deleteAll',
+      name: 'Delete All',
+      type: ['folder', 'file'],
+      path: [],
+      extension: [],
+      pattern: [],
+      multiselect: true
     }],
     focusContext: {
       element: null,
@@ -126,10 +143,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const editRef = useRef(null)
 
   useEffect(() => {
-    if (props.filesProvider) {
-      init(props.filesProvider, props.name, props.plugin, props.registry)(dispatch)
-    }
-  }, [props.filesProvider, props.name])
+    init(props.filesProvider, props.plugin, props.registry)(dispatch)
+  }, [])
 
   useEffect(() => {
     const provider = fileSystem.provider.provider
@@ -227,6 +242,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [state.modals])
 
   useEffect(() => {
+    const keyPressHandler = (e: KeyboardEvent) => {
+      if (e.shiftKey) {
+        setState(prevState => {
+          return { ...prevState, ctrlKey: true }
+        })
+      }
+    }
+
+    const keyUpHandler = (e: KeyboardEvent) => {
+      if (!e.shiftKey) {
+        setState(prevState => {
+          return { ...prevState, ctrlKey: false }
+        })
+      }
+    }
+
+    document.addEventListener('keydown', keyPressHandler)
+    document.addEventListener('keyup', keyUpHandler)
+    return () => {
+      document.removeEventListener('keydown', keyPressHandler)
+      document.removeEventListener('keyup', keyUpHandler)
+    }
+  }, [])
+
+  useEffect(() => {
     if (canPaste) {
       addMenuItems([{
         id: 'paste',
@@ -234,14 +274,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
         type: ['folder', 'file'],
         path: [],
         extension: [],
-        pattern: []
+        pattern: [],
+        multiselect: false
       }])
     } else {
       removeMenuItems(['paste'])
     }
   }, [canPaste])
 
-  const addMenuItems = (items: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[]) => {
+  const addMenuItems = (items: MenuItems) => {
     setState(prevState => {
       // filter duplicate items
       const actions = items.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
@@ -327,21 +368,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const deletePath = async (path: string) => {
+  const deletePath = async (path: string | string[]) => {
     const filesProvider = fileSystem.provider.provider
-
-    if (filesProvider.isReadOnly(path)) {
-      return toast('cannot delete file. ' + name + ' is a read only explorer')
+    if (!Array.isArray(path)) path = [path]
+    for (const p of path) {
+      if (filesProvider.isReadOnly(p)) {
+        return toast('cannot delete file. ' + name + ' is a read only explorer')
+      }
     }
-    const isDir = state.fileManager.isDirectory(path)
-
-    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, 'OK', async () => {
-      try {
-        const fileManager = state.fileManager
-
-        await fileManager.remove(path)
-      } catch (e) {
-        toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
+    modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', async () => {
+      const fileManager = state.fileManager
+      for (const p of path) {
+        try {
+          await fileManager.remove(p)
+        } catch (e) {
+          const isDir = state.fileManager.isDirectory(p)
+          toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
+        }
       }
     }, 'Cancel', () => {})
   }
@@ -558,7 +601,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const emitContextMenuEvent = (id: string, path: string) => {
+  const emitContextMenuEvent = (id: string, path: string | string[]) => {
     plugin.emit(id, path)
   }
 
@@ -568,7 +611,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const modal = (title: string, message: string, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
+  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setState(prevState => {
       return {
         ...prevState,
@@ -594,10 +637,25 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleClickFile = (path: string, type: string) => {
     path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
-    state.fileManager.open(path)
-    setState(prevState => {
-      return { ...prevState, focusElement: [{ key: path, type }] }
-    })
+    if (!state.ctrlKey) {
+      state.fileManager.open(path)
+      setState(prevState => {
+        return { ...prevState, focusElement: [{ key: path, type }] }
+      })
+    } else {
+      if (state.focusElement.findIndex(item => item.key === path) !== -1) {
+        setState(prevState => {
+          return { ...prevState, focusElement: prevState.focusElement.filter(item => item.key !== path) }
+        })
+      } else {
+        setState(prevState => {
+          const nonRootFocus = prevState.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+
+          nonRootFocus.push({ key: path, type })
+          return { ...prevState, focusElement: nonRootFocus }
+        })
+      }
+    }
   }
 
   const handleClickFolder = async (path: string, type: string) => {
@@ -608,7 +666,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       } else {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type }] }
+          const nonRootFocus = prevState.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+
+          nonRootFocus.push({ key: path, type })
+          return { ...prevState, focusElement: nonRootFocus }
         })
       }
     } else {
@@ -763,10 +824,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     state.copyElement.map(({ key, type }) => {
       type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
-    setState(prevState => {
-      return { ...prevState, copyElement: [] }
-    })
-    setCanPaste(false)
+  }
+
+  const deleteMessage = (path: string[]) => {
+    return (
+      <div>
+        <div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>
+        {
+          path.map((item, i) => (<li key={i}>{item}</li>))
+        }
+      </div>
+    )
   }
 
   const label = (file: File) => {
@@ -935,7 +1003,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       <Toaster message={state.toasterMsg} />
       { state.showContextMenu &&
         <FileExplorerContextMenu
-          actions={state.actions}
+          actions={state.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
@@ -949,6 +1017,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           pageY={state.focusContext.y}
           path={state.focusContext.element}
           type={state.focusContext.type}
+          focus={state.focusElement}
           onMouseOver={(e) => {
             e.stopPropagation()
             handleMouseOver(state.focusContext.element)

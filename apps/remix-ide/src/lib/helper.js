@@ -71,6 +71,20 @@ module.exports = {
 
     return name + counter + prefix + '.' + ext
   },
+  async createNonClashingDirNameAsync (name, fileManager) {
+    if (!name) name = 'Undefined'
+    let counter = ''
+    let exist = true
+
+    do {
+      const isDuplicate = await fileManager.exists(name + counter)
+
+      if (isDuplicate) counter = (counter | 0) + 1
+      else exist = false
+    } while (exist)
+
+    return name + counter
+  },
   checkSpecialChars (name) {
     return name.match(/[:*?"<>\\'|]/) != null
   },
@@ -89,6 +103,14 @@ module.exports = {
   isValidHash (hash) { // 0x prefixed, hexadecimal, 64digit
     const hexValue = hash.slice(2, hash.length)
     return this.is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
+  },
+  removeTrailingSlashes (text) {
+    // Remove single or consecutive trailing slashes
+    return text.replace(/\/+$/g, '')
+  },
+  removeMultipleSlashes (text) {
+    // Replace consecutive slashes with '/'
+    return text.replace(/\/+/g, '/')
   },
   find: find,
   getPathIcon (path) {

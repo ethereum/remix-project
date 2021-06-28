@@ -233,11 +233,11 @@ function getEnum (type, stateDefinitions, contractName) {
   * @return {Array} containing all members of the current struct type
   */
 function getStructMembers (type, stateDefinitions, contractName, location) {
-  const split = type.split('.')
-  if (!split.length) {
+  if (type.indexOf('.') === -1) {
     type = contractName + '.' + type
-  } else {
-    contractName = split[0]
+  }
+  if (!contractName) {
+    contractName = type.split('.')[0]
   }
   const state = stateDefinitions[contractName]
   if (state) {
