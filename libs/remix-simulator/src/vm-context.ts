@@ -99,7 +99,7 @@ export class VMContext {
   constructor (fork?) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = fork
+    this.currentFork = fork || 'berlin'
     this.currentVm = this.createVm(this.currentFork)
     this.blocks = {}
     this.latestBlockNumber = 0
