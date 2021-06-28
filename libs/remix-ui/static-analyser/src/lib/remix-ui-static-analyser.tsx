@@ -263,8 +263,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     showWarningsByModule('Slither Analysis')
                   }
                 }
-              }).catch((error) => {
-                props.analysisModule.call('terminal', 'log', { type: 'error', value: `[Slither Analysis]: Error occured! See remixd console for details.` })
+              }).catch(() => {
+                props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
               })
             })
           } else {
