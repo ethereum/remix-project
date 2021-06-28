@@ -22,10 +22,10 @@ export class CompilerImports extends Plugin {
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
-  async onActivation () {
+  async setToken () {
     const protocol = typeof window !== 'undefined' && window.location.protocol
     const token = await this.call('settings', 'getGithubAccessToken')
-    this.urlResolver = new RemixURLResolver(token, protocol)
+    this.urlResolver.setGistToken(token, protocol)
   }
 
   isRelativeImport (url) {
@@ -71,6 +71,7 @@ export class CompilerImports extends Plugin {
 
     let resolved
     try {
+      await this.setToken()
       resolved = await this.urlResolver.resolve(url)
       const { content, cleanUrl, type } = resolved
       self.previouslyHandled[url] = {

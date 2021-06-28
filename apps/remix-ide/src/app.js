@@ -460,11 +460,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  await appManager.activatePlugin(['settings', 'contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+  await appManager.activatePlugin(['theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()
