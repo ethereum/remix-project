@@ -7,7 +7,7 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import './css/style.css'
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation } = props // eslint-disable-line
+  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -40,6 +40,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         setState(prevState => {
           return { ...prevState, selectedVersion }
         })
+        updateCurrentVersion(selectedVersion)
         _updateVersionSelector()
       }
     })
@@ -279,6 +280,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setState(prevState => {
         return { ...prevState, selectedVersion }
       })
+      updateCurrentVersion(selectedVersion)
     }
     queryParams.update({ version: selectedVersion })
     let url
@@ -288,6 +290,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setState(prevState => {
         return { ...prevState, selectedVersion, customVersions: [...state.customVersions, selectedVersion] }
       })
+      updateCurrentVersion(selectedVersion)
       url = customUrl
       queryParams.update({ version: selectedVersion })
     } else if (selectedVersion === 'builtin') {
