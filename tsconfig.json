@@ -52,6 +52,9 @@
       ],
       "@remix-core-plugin/offset-line-to-column-converter": [
         "libs/remix-core-plugin/offset-line-to-column-converter/src/index.ts"
+      ],
+      "@remix-core-plugin/compiler-metadata": [
+        "libs/remix-core-plugin/compiler-metadata/src/index.ts"
       ]
     }
   },

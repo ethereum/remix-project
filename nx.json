@@ -114,6 +114,9 @@
     },
     "offset-line-to-column-converter": {
       "tags": []
+    },
+    "compiler-metadata": {
+      "tags": []
     }
   }
 }
