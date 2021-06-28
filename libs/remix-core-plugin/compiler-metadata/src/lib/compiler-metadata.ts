@@ -129,8 +129,7 @@ export class CompilerMetadata extends Plugin {
         metadata = metadata.deploy || {}
         return metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()]
       } catch (err) {
-        console.log(err)
-        throw new Error(err)
+        return null
       }
     } catch (err) {
       console.log(err)
