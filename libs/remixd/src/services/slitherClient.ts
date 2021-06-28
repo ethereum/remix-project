@@ -54,8 +54,14 @@ export class SlitherClient extends PluginClient {
         // Get compiler version with commit id e.g: 0.8.2+commit.661d110
         const versionString: string = currentVersion.substring(0, currentVersion.indexOf('+commit') + 16)
         console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is ${versionString}`)
+        let solcOutput: Buffer
         // Check solc current installed version
-        const solcOutput: Buffer = execSync('solc --version', options)
+        try{
+          solcOutput = execSync('solc --version', options)
+        } catch(err) {
+          console.log(err)
+          reject(new Error('Error in checking solc version'))
+        }
         if (!solcOutput.toString().includes(versionString)) {
           console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is different from installed solc version')
           // Get compiler version without commit id e.g: 0.8.2
