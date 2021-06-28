@@ -1,10 +1,21 @@
 import React, { useState } from 'react'
 import copy from 'copy-to-clipboard'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Placement } from 'react-bootstrap/esm/Overlay'
 
 import './copy-to-clipboard.css'
 
-export const CopyToClipboard = ({ content, tip = 'Copy', icon = 'fa-copy', direction = 'right', ...otherProps }) => {
+interface ICopyToClipboard {
+  content: any,
+  tip?: string,
+  icon?: string,
+  direction?: Placement,
+  className?: string,
+  title?: string,
+  children?: JSX.Element
+}
+export const CopyToClipboard = (props: ICopyToClipboard) => {
+  let { content, tip = 'Copy', icon = 'fa-copy', direction = 'right', children, ...otherProps } = props
   const [message, setMessage] = useState(tip)
   const handleClick = (e) => {
     if (content && content !== '') { // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
@@ -35,9 +46,11 @@ export const CopyToClipboard = ({ content, tip = 'Copy', icon = 'fa-copy', direc
           { message }
         </Tooltip>
       }>
-        <i className={`far ${icon} ml-1 p-2`} aria-hidden="true"
-          {...otherProps}
-        ></i>
+        {
+          children || (<i className={`far ${icon} ml-1 p-2`} aria-hidden="true"
+            {...otherProps}
+          ></i>)
+        }
       </OverlayTrigger>
     </a>
   )
