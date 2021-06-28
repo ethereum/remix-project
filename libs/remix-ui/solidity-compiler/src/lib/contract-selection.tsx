@@ -42,23 +42,23 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const copyABI = () => {
-    copyContractProperty('abi')
+    return copyContractProperty('abi')
   }
 
   const copyContractProperty = (property) => {
     let content = getContractProperty(property)
-    // if (!content) {
-    //   addTooltip('No content available for ' + property)
-    //   return
-    // }
+    if (!content) {
+      // addTooltip('No content available for ' + property)
+      return
+    }
 
-    // try {
-    //   if (typeof content !== 'string') {
-    //     content = JSON.stringify(content, null, '\t')
-    //   }
-    // } catch (e) {}
+    try {
+      if (typeof content !== 'string') {
+        content = JSON.stringify(content, null, '\t')
+      }
+    } catch (e) {}
 
-    // copy(content)
+    return content
     // addTooltip('Copied value to clipboard')
   }
   
@@ -180,7 +180,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const copyBytecode = () => {
-    copyContractProperty('bytecode')
+    return copyContractProperty('bytecode')
   }
 
   return (
@@ -211,14 +211,18 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <div className="remixui_contractHelperButtons">
               <div className="input-group">
                 <div className="btn-group" role="group" aria-label="Copy to Clipboard">
-                  <button className="btn copyButton" title="Copy ABI to clipboard" onClick={() => { copyABI() }}>
-                    <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                    <span>ABI</span>
-                  </button>
-                  <button className="btn remixui_copyButton" title="Copy Bytecode to clipboard" onClick={() => { copyBytecode() }}>
-                    <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                    <span>Bytecode</span>
-                  </button>
+                  <CopyToClipboard title="Copy ABI to clipboard" content={copyABI()} direction='top'>
+                    <button className="btn remixui_copyButton" title="Copy ABI to clipboard">
+                      <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                      <span>ABI</span>
+                    </button>
+                  </CopyToClipboard>
+                  <CopyToClipboard title="Copy ABI to clipboard" content={copyBytecode()} direction='top'>
+                    <button className="btn remixui_copyButton" title="Copy Bytecode to clipboard">
+                      <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                      <span>Bytecode</span>
+                    </button>
+                  </CopyToClipboard>
                 </div>
               </div>
             </div>
