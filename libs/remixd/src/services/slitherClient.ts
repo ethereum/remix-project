@@ -56,11 +56,11 @@ export class SlitherClient extends PluginClient {
         console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is ${versionString}`)
         let solcOutput: Buffer
         // Check solc current installed version
-        try{
+        try {
           solcOutput = execSync('solc --version', options)
-        } catch(err) {
+        } catch (err) {
           console.log(err)
-          reject(new Error('Error in checking solc version'))
+          reject(new Error('Error in running solc command'))
         }
         if (!solcOutput.toString().includes(versionString)) {
           console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is different from installed solc version')
