@@ -1,6 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import Web3 from 'web3'
+import toaster from '../ui/tooltip'
 const yo = require('yo-yo')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 
@@ -17,11 +18,13 @@ export default class HardhatProvider extends Plugin {
   constructor (blockchain) {
     super(profile)
     this.provider = null
+    this.blocked = false // used to block any call when trying to recover after a failed connection.
     this.blockchain = blockchain
   }
 
   onDeactivation () {
     this.provider = null
+    this.blocked = false
   }
 
   hardhatProviderDialogBody () {
@@ -41,21 +44,14 @@ export default class HardhatProvider extends Plugin {
 
   sendAsync (data) {
     return new Promise((resolve, reject) => {
+      if (this.blocked) return reject(new Error('provider temporarily blocked'))
       // If provider is not set, allow to open modal only when provider is trying to connect
-      if (!this.provider || data.method === 'net_listening') {
+      if (!this.provider) {
         modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.provider = new Web3.providers.HttpProvider(target)
           this.sendAsyncInternal(data, resolve, reject)
         }, () => {
-          // If 'cancel' is clicked while trying to connect, handle it in custom manner
-          if (data.method === 'net_listening') resolve({ jsonrpc: '2.0', result: 'canceled', id: data.id })
-          else {
-            // When node is abruptly stopped, modal will appear
-            // On which clicking on 'Cancel' will set the Envrionment to VM
-            this.blockchain.changeExecutionContext('vm')
-            this.provider = this.blockchain.getCurrentProvider()
-            reject(new Error('Connection canceled'))
-          }
+          this.sendAsyncInternal(data, resolve, reject)
         })
       } else {
         this.sendAsyncInternal(data, resolve, reject)
@@ -68,9 +64,13 @@ export default class HardhatProvider extends Plugin {
       // Check the case where current environment is VM on UI and it still sends RPC requests
       // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
       if (this.blockchain.getProvider() !== 'Hardhat Provider' && data.method !== 'net_listening') return reject(new Error('Environment Updated !!'))
-      this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
+      this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, async (error, message) => {
         if (error) {
+          this.blocked = true
+          modalDialogCustom.alert('Hardhat', `Error while connecting to the hardhat provider: ${error.message}`)
+          await this.call('udapp', 'setEnvironmentMode', 'vm')
           this.provider = null
+          setTimeout(_ => this.blocked = false, 1000)
           return reject(error)
         }
         resolve(message)
