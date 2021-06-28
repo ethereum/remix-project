@@ -3,11 +3,12 @@ import React from 'react' //eslint-disable-line
 interface RendererProps {
   message: any;
   opt: any,
-  warningErrors: any
   editor: any
 }
 
 export const Renderer = ({ message, opt, editor }: RendererProps) => {
+  console.log('message: ', message)
+  console.log('opt: ', opt)
   const getPositionDetails = (msg: any) => {
     const result = { } as Record<string, number | string>
 
@@ -50,8 +51,8 @@ export const Renderer = ({ message, opt, editor }: RendererProps) => {
         </div>
         <span className='d-flex flex-column' onClick={() => handlePointToErrorOnClick(opt.location, opt.fileName)}>
           <span className='h6 font-weight-bold'>{opt.name}</span>
-          { opt.item.warning }
-          {opt.item.more
+          { opt.item && opt.item.warning }
+          { opt.item && opt.item.more
             ? <span><a href={opt.item.more} target='_blank'>more</a></span>
             : <span> </span>
           }
