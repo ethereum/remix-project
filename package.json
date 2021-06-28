@@ -219,7 +219,7 @@
     "ace-mode-lexon": "^1.*.*",
     "ace-mode-move": "0.0.1",
     "ace-mode-solidity": "^0.1.0",
-    "ace-mode-zokrates": "^1.0.3",
+    "ace-mode-zokrates": "^1.0.4",
     "babel-eslint": "^10.0.0",
     "babel-jest": "25.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",
