@@ -21,6 +21,7 @@ import { CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
 import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
 import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
 import { OffsetToLineColumnConverter } from '@remix-core-plugin/offset-line-to-column-converter'
+import { CompilerMetadata } from '@remix-core-plugin/compiler-metadata'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -42,7 +43,7 @@ const FileProvider = require('./app/files/fileProvider')
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 const toolTip = require('./app/ui/tooltip')
-const CompilerMetadata = require('./app/files/compiler-metadata')
+
 
 const Blockchain = require('./blockchain/blockchain.js')
 
@@ -269,7 +270,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const blockchain = new Blockchain(registry.get('config').api)
 
   // ----------------- compilation metadata generation service ---------
-  const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
+  const compilerMetadataGenerator = new CompilerMetadata()
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
