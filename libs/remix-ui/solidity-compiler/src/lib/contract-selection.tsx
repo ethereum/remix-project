@@ -66,7 +66,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     if (!selectedContract) throw new Error('No contract compiled yet')
     const contractProperties = contractsDetails[selectedContract]
 
-    return contractProperties[property] || null
+    if (contractProperties && contractProperties[property]) return contractProperties[property]
+    return null
   }
 
   const renderData = (item, key: string | number, keyPath: string) => {
