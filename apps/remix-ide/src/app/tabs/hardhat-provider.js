@@ -43,7 +43,7 @@ export default class HardhatProvider extends Plugin {
 
   sendAsync (data) {
     return new Promise((resolve, reject) => {
-      if (this.blocked) return reject(new Error('provider temporarily blocked'))
+      if (this.blocked) return reject(new Error('provider unable to connect'))
       // If provider is not set, allow to open modal only when provider is trying to connect
       if (!this.provider) {
         modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
@@ -66,10 +66,10 @@ export default class HardhatProvider extends Plugin {
       this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, async (error, message) => {
         if (error) {
           this.blocked = true
-          modalDialogCustom.alert('Hardhat', `Error while connecting to the hardhat provider: ${error.message}`)
+          modalDialogCustom.alert('Hardhat Provider', `Error while connecting to the hardhat provider: ${error.message}`)
           await this.call('udapp', 'setEnvironmentMode', 'vm')
           this.provider = null
-          setTimeout(_ => { this.blocked = false }, 1000)
+          setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
           return reject(error)
         }
         resolve(message)
