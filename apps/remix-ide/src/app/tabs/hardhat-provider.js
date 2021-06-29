@@ -1,7 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import Web3 from 'web3'
-import toaster from '../ui/tooltip'
 const yo = require('yo-yo')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 
@@ -70,7 +69,7 @@ export default class HardhatProvider extends Plugin {
           modalDialogCustom.alert('Hardhat', `Error while connecting to the hardhat provider: ${error.message}`)
           await this.call('udapp', 'setEnvironmentMode', 'vm')
           this.provider = null
-          setTimeout(_ => this.blocked = false, 1000)
+          setTimeout(_ => { this.blocked = false }, 1000)
           return reject(error)
         }
         resolve(message)
