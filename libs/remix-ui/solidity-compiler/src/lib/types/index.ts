@@ -14,7 +14,8 @@ export interface SolidityCompilerProps {
   contractMap: {
     file: string
   } | Record<string, any>
-  compileErrors: any
+  compileErrors: any,
+  isHardHatProject: boolean
 }
 
 export interface CompilerContainerProps {
@@ -26,7 +27,8 @@ export interface CompilerContainerProps {
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   compiledFileName: string,
   setHardHatCompilation: (value: boolean) => void,
-  updateCurrentVersion: any
+  updateCurrentVersion: any,
+  isHardHatProject: boolean
 }
 export interface ContractSelectionProps {
   contractMap: {

@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer'
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { editor, config, queryParams, plugin, compileTabLogic, compiledFileName, fileProvider, fileManager, contractsDetails, setHardHatCompilation, contractMap, compileErrors } = props
+  const { editor, config, queryParams, plugin, compileTabLogic, compiledFileName, fileProvider, fileManager, contractsDetails, setHardHatCompilation, contractMap, compileErrors, isHardHatProject } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -81,19 +81,19 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   return (
     <>
       <div id="compileTabView">
-        <CompilerContainer editor={editor} config={config} queryParams={queryParams} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={compiledFileName} setHardHatCompilation={setHardHatCompilation} updateCurrentVersion={updateCurrentVersion} />
+        <CompilerContainer editor={editor} config={config} queryParams={queryParams} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={compiledFileName} setHardHatCompilation={setHardHatCompilation} updateCurrentVersion={updateCurrentVersion} isHardHatProject={isHardHatProject} />
         <ContractSelection contractMap={contractMap} fileProvider={fileProvider} fileManager={fileManager} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
           { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={plugin} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} config={config} /> }
           { compileErrors.error && (compileErrors.error.mode === 'panic') && modal('Error', panicMessage(compileErrors.error.formattedMessage), 'Close', null) }
-          { compileErrors.errors && compileErrors.errors.length && compileErrors.errors.map((err) => {
+          { compileErrors.errors && compileErrors.errors.length && compileErrors.errors.map((err, index) => {
             if (config.get('hideWarnings')) {
               if (err.severity !== 'warning') {
-                return <Renderer message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} config={config} />
+                return <Renderer key={index} message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} config={config} />
               }
             } else {
-              return <Renderer message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} config={config} />
+              return <Renderer key={index} message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} config={config} />
             }
           }) }
         </div>
