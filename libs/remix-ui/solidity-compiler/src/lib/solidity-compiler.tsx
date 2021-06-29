@@ -28,9 +28,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       handleHide: null
     }
   })
-  useEffect(() => {
-    console.log('compileErrors: ', compileErrors)
-  }, [compileErrors])
   const [currentVersion, setCurrentVersion] = useState('') 
 
   const toast = (message: string) => {
@@ -88,15 +85,15 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         <ContractSelection contractMap={contractMap} fileProvider={fileProvider} fileManager={fileManager} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
-          { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} editor={plugin} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} /> }
+          { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={plugin} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} config={config} /> }
           { compileErrors.error && (compileErrors.error.mode === 'panic') && modal('Error', panicMessage(compileErrors.error.formattedMessage), 'Close', null) }
           { compileErrors.errors && compileErrors.errors.length && compileErrors.errors.map((err) => {
             if (config.get('hideWarnings')) {
               if (err.severity !== 'warning') {
-                return <Renderer message={err.formattedMessage} editor={plugin} opt={{ type: err.severity, errorType: err.type }} />
+                return <Renderer message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} config={config} />
               }
             } else {
-              return <Renderer message={err.formattedMessage} editor={plugin} opt={{ type: err.severity, errorType: err.type }} />
+              return <Renderer message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} config={config} />
             }
           }) }
         </div>
