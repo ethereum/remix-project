@@ -105,20 +105,24 @@ export function checkVMError (execResult, abi, contract) {
           if (returnDataHex === sign.replace('0x', '')) {
             customError = item.name
             const functionDesc = fn.getFunction(item.name)
+            // decoding error parameters
             const decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
             decodedCustomErrorInputsClean = {}
             let devdoc = {}
+            // "contract" reprensents the compilation result containing the NATSPEC documentation
             if (contract && fn.functions && Object.keys(fn.functions).length) {
               const functionSignature = Object.keys(fn.functions)[0]
+              //  we check in the 'devdoc' if there's a developer documentation for this error
               devdoc = contract.object.devdoc.errors[functionSignature][0] || {}
+              //  we check in the 'userdoc' if there's an user documentation for this error
               const userdoc = contract.object.userdoc.errors[functionSignature][0] || {}
-              if (userdoc) customError += ' : ' + (userdoc as any).notice
+              if (userdoc) customError += ' : ' + (userdoc as any).notice // we append the user doc if any
             }
             for (const input of functionDesc.inputs) {
               const v = decodedCustomErrorInputs[input.name]
               decodedCustomErrorInputsClean[input.name] = {
                 value: v.toString ? v.toString() : v,
-                documentation: (devdoc as any).params[input.name]
+                documentation: (devdoc as any).params[input.name] // we add the developer documentation for this input parameter if any
               }
             }
             break
