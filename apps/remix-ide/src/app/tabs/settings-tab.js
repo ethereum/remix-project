@@ -61,7 +61,6 @@ module.exports = class SettingsTab extends ViewPlugin {
     return this.element
   }
 
-
   renderComponent () {
     ReactDOM.render(
       <RemixUiSettings
@@ -90,4 +89,3 @@ module.exports = class SettingsTab extends ViewPlugin {
     }
   }
 }
-
