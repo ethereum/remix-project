@@ -74,7 +74,7 @@ module.exports = {
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
   },
 
-  'Should publish all explorer files to github gist': function (browser: NightwatchBrowser) {
+  'Should publish all explorer files to github gist': '' + function (browser: NightwatchBrowser) {
     const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
     browser.refresh()
