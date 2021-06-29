@@ -41,7 +41,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
 
   return (
     <a href='#' onClick={handleClick} onMouseLeave={reset}>
-      <OverlayTrigger placement="right" overlay={
+      <OverlayTrigger placement={direction} overlay={
         <Tooltip id="overlay-tooltip">
           { message }
         </Tooltip>
