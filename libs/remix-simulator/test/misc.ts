@@ -8,7 +8,7 @@ describe('Misc', () => {
   before(async () => {
     const provider = new Provider()
     await provider.init()
-    web3.setProvider(provider)
+    web3.setProvider(provider as any)
   })
 
   describe('web3_clientVersion', () => {
