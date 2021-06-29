@@ -28,7 +28,7 @@ export const AssemblyItems = ({ registerEvent }) => {
     }
   }, [assemblyItems.opCodes.index])
 
-  let clearItem = (currentItem) => {
+  const clearItem = (currentItem) => {
     if (currentItem) {
       currentItem.removeAttribute('selected')
       currentItem.removeAttribute('style')
@@ -41,7 +41,7 @@ export const AssemblyItems = ({ registerEvent }) => {
   const clearItems = () => {
     clearItem(refs.current[selectedItem] ? refs.current[selectedItem] : null)
     clearItem(refs.current[nextSelectedItem] ? refs.current[nextSelectedItem] : null)
-   
+
     returnInstructionIndexes.map((index) => {
       if (index < 0) return
       clearItem(refs.current[index] ? refs.current[index] : null)
