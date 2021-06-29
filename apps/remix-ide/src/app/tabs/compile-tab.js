@@ -312,6 +312,8 @@ class CompileTab extends ViewPlugin {
   }
 
   onDeactivation () {
+    this.editor.event.unregister('contentChanged')
+    this.editor.event.unregister('sessionSwitched')
     this.editor.event.unregister('contentChanged', this.data.eventHandlers.onContentChanged)
     this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
     this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
