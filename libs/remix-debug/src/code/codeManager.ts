@@ -159,7 +159,7 @@ export class CodeManager {
       if (values) {
         for (const value of values) {
           if (value.address === address) {
-            returnInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })        
+            returnInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
           }
         }
       }
@@ -168,7 +168,7 @@ export class CodeManager {
       if (values) {
         for (const value of values) {
           if (value.address === address) {
-            outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })        
+            outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
           }
         }
       }
