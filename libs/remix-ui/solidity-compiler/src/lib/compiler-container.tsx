@@ -44,12 +44,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector()
       }
     })
+    const currentFileName = config.get('currentFile')
+
+    currentFile(currentFileName)
+    listenToEvents()
   }, [])
 
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
       compileTabLogic.compiler.event.register('compilerLoaded', compilerLoaded)
 
+      console.log(`${config.get('autoCompile') || false}`)
       setState(prevState => {
         return {
           ...prevState,
@@ -173,19 +178,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
   }
 
-  const deactivate = () => {
-    // deactivate editor listeners
-    editor.event.unregister('contentChanged')
-    editor.event.unregister('sessionSwitched')
-  }
-
-  const activate = () => {
-    const currentFileName = config.get('currentFile')
-
-    currentFile(currentFileName)
-    listenToEvents()
-  }
-
   const listenToEvents = () => {
     editor.event.register('sessionSwitched', () => {
       if (!compileIcon.current) return
@@ -231,7 +223,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       // _disableCompileBtn(false)
       compileIcon.current.setAttribute('title', '')
       compileIcon.current.classList.remove('remixui_spinningIcon')
-      if (state.autoCompile) compileIfAutoCompileOn()
+      if (state.autoCompile) compile()
     })
 
     compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
@@ -243,19 +235,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const scheduleCompilation = () => {
-    if (!state.autoCompile) return
+    const autoCompile = config.get('autoCompile')
+    if (!autoCompile) return
     if (state.compileTimeout) window.clearTimeout(state.compileTimeout)
-    const compileTimeout = window.setTimeout(() => compileIfAutoCompileOn(), state.timeout)
+    const compileTimeout = window.setTimeout(() => autoCompile && compile(), state.timeout)
 
     setState(prevState => {
       return { ...prevState, compileTimeout }
     })
-  }
-
-  const compileIfAutoCompileOn = () => {
-    if (config.get('autoCompile')) {
-      compile()
-    }
   }
 
   const compile = () => {
@@ -390,7 +377,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     } else {
       compileTabLogic.setRuns(200)
     }
-    compileIfAutoCompileOn()
+    state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, optimise: checked }
     })
@@ -400,7 +387,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const runs = e.target.value
 
     compileTabLogic.setRuns(parseInt(runs))
-    compileIfAutoCompileOn()
+    state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, runs }
     })
@@ -410,7 +397,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = e.target.checked
 
     config.set('hideWarnings', checked)
-    compileIfAutoCompileOn()
+    state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, hideWarnings: checked }
     })
@@ -427,7 +414,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const handleLanguageChange = (value) => {
     compileTabLogic.setLanguage(value)
-    compileIfAutoCompileOn()
+    state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, language: value }
     })
@@ -439,7 +426,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       v = null
     }
     compileTabLogic.setEvmVersion(v)
-    compileIfAutoCompileOn()
+    state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, evmVersion: value }
     })
@@ -533,7 +520,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={!state.compiledFileName || (state.compiledFileName && !isSolFileSelected(state.compiledFileName))}>
             <span>
               <i ref={warningIcon} title="Compilation Slow" style={{ visibility: 'hidden' }} className="remixui_warnCompilationSlow fas fa-exclamation-triangle" aria-hidden="true"></i>
-              <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i>
+              { warningIcon.current && warningIcon.current.style.visibility === 'hidden' && <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
               Compile { state.compiledFileName || '<no file selected>' }
             </span>
           </button>
