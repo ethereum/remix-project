@@ -67,6 +67,7 @@ class CompileTab extends ViewPlugin {
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
     this.contractMap = {}
+    this.isHardHatProject = false
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'compileTabView')
@@ -84,13 +85,6 @@ class CompileTab extends ViewPlugin {
    */
 
   listenToEvents () {
-    this.on('filePanel', 'setWorkspace', (workspace) => {
-      this.compileTabLogic.isHardhatProject().then((result) => {
-        if (result && workspace.isLocalhost) this.compilerContainer.hardhatCompilation.style.display = 'flex'
-        else this.compilerContainer.hardhatCompilation.style.display = 'none'
-      })
-    })
-
     this.data.eventHandlers.onContentChanged = () => {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
     }
@@ -116,7 +110,14 @@ class CompileTab extends ViewPlugin {
       this.call('editor', 'clearAnnotations')
     }
 
-    this.on('filePanel', 'setWorkspace', () => this.resetResults())
+    this.on('filePanel', 'setWorkspace', (workspace) => {
+      this.compileTabLogic.isHardhatProject().then((result) => {
+        if (result && workspace.isLocalhost) this.isHardHatProject = true
+        else this.isHardHatProject = false
+        this.renderComponent()
+      })
+      this.resetResults()
+    })
 
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
     this.compileTabLogic.event.on('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
@@ -284,9 +285,10 @@ class CompileTab extends ViewPlugin {
         compileTabLogic={this.compileTabLogic}
         compiledFileName={this.currentFile}
         contractsDetails={this.contractsDetails}
-        setHardHatCompilation={this.setHardHatCompilation}
+        setHardHatCompilation={this.setHardHatCompilation.bind(this)}
         contractMap={this.contractMap}
         compileErrors={this.compileErrors || {}}
+        isHardHatProject={this.isHardHatProject}
       />
       , this.el)
   }
