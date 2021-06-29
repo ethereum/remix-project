@@ -18,14 +18,12 @@ export class Provider {
   Accounts
   Transactions
   methods
-  host: string
   connected: boolean;
 
-  constructor (host: string = 'vm', options: Record<string, unknown> = {}) {
+  constructor (options: Record<string, unknown> = {}) {
     this.options = options
-    this.host = host
     this.connected = true
-    this.vmContext = new VMContext()
+    this.vmContext = new VMContext(options['fork'])
 
     this.Accounts = new Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
