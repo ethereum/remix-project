@@ -8,9 +8,9 @@ export interface RemixUiTerminalProps {}
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     <div>
-      <h1>Welcome to remix-ui-terminal!</h1>
+      Welcome to remix-ui-terminal
     </div>
   )
 }
 
-export default RemixUiTerminal;
+export default RemixUiTerminal
