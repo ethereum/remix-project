@@ -177,10 +177,10 @@ module.exports = {
       .pause(1000)
       .perform((done) => {
         browser.getAddressAtPosition(4, (address) => {
-          browser.sendLowLevelTx(address, '1', '0xaa')
+          browser.sendLowLevelTx(address, '999999998765257135', '0xaa')
             .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
-            .journalLastChildIncludes('value: 1 wei')
+            .journalLastChildIncludes('value: 999999998765257135 wei')
             .journalLastChildIncludes('data: 0xaa')
             .perform(done)
         })
