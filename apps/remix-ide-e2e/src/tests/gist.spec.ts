@@ -20,7 +20,7 @@ module.exports = {
        - switch to a file in the new gist
       */
     console.log('token', process.env.gist_token)
-
+    const gistid = 'c15ed7c182a7991ea0a4dea1544fa254'
     browser
       .refresh()
       .pause(10000)
@@ -34,12 +34,18 @@ module.exports = {
       .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .addFile('File.sol', { content: '' })
-      .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-      .pause(2000)
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
-      .pause(10000)
-      .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
+      .executeScript(`remix.loadgist('${gistid}')`)
+      // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
+      .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      .openFile(`gist-${gistid}/README.txt`)
+      // Remix publish to gist
+      /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
+         .pause(2000)
+         .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
+         .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+         .pause(10000)
+         .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
         console.log(result)
         const value = typeof result.value === 'string' ? result.value : null
         const reg = /gist.github.com\/([^.]+)/
@@ -59,6 +65,7 @@ module.exports = {
             .openFile(`gist-${gistid}/README.txt`)
         }
       })
+      */
   },
 
   'Load Gist Modal': function (browser: NightwatchBrowser) {
