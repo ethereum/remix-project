@@ -57,7 +57,7 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
   * @param {Object} execResult    - execution result given by the VM
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
-export function checkVMError (execResult, abi) {
+export function checkVMError (execResult, abi, contract) {
   const errorCode = {
     OUT_OF_GAS: 'out of gas',
     STACK_UNDERFLOW: 'stack underflow',
@@ -92,7 +92,7 @@ export function checkVMError (execResult, abi) {
     const returnDataHex = returnData.slice(0, 4).toString('hex')
     let customError
     if (abi) {
-      let decodedCustomErrorInputs
+      let decodedCustomErrorInputsClean
       for (const item of abi) {
         if (item.type === 'error') {
           // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
@@ -104,16 +104,36 @@ export function checkVMError (execResult, abi) {
           if (!sign) continue
           if (returnDataHex === sign.replace('0x', '')) {
             customError = item.name
-            decodedCustomErrorInputs = fn.decodeFunctionData(fn.getFunction(item.name), returnData)
+            const functionDesc = fn.getFunction(item.name)
+            // decoding error parameters
+            const decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
+            decodedCustomErrorInputsClean = {}
+            let devdoc = {}
+            // "contract" reprensents the compilation result containing the NATSPEC documentation
+            if (contract && fn.functions && Object.keys(fn.functions).length) {
+              const functionSignature = Object.keys(fn.functions)[0]
+              //  we check in the 'devdoc' if there's a developer documentation for this error
+              devdoc = contract.object.devdoc.errors[functionSignature][0] || {}
+              //  we check in the 'userdoc' if there's an user documentation for this error
+              const userdoc = contract.object.userdoc.errors[functionSignature][0] || {}
+              if (userdoc) customError += ' : ' + (userdoc as any).notice // we append the user doc if any
+            }
+            for (const input of functionDesc.inputs) {
+              const v = decodedCustomErrorInputs[input.name]
+              decodedCustomErrorInputsClean[input.name] = {
+                value: v.toString ? v.toString() : v,
+                documentation: (devdoc as any).params[input.name] // we add the developer documentation for this input parameter if any
+              }
+            }
             break
           }
         }
       }
-      if (decodedCustomErrorInputs) {
+      if (decodedCustomErrorInputsClean) {
         msg = '\tThe transaction has been reverted to the initial state.\nError provided by the contract:'
         msg += `\n${customError}`
         msg += '\nParameters:'
-        msg += `\n${decodedCustomErrorInputs}`
+        msg += `\n${JSON.stringify(decodedCustomErrorInputsClean, null, ' ')}`
       }
     }
     if (!customError) {
