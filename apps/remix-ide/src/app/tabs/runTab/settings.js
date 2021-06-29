@@ -98,11 +98,15 @@ class SettingsUI {
         </label>
         <div class="${css.environment}">
           <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" class="form-control ${css.select} custom-select">
-            <option id="vm-mode"
+            <option id="vm-mode-berlin" data-id="settingsVMBerlinMode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm" name="executionContext"> JavaScript VM
+              value="vm-berlin" name="executionContext" fork="berlin" > JavaScript VM (Berlin)
             </option>
-            <option id="injected-mode"
+            <option id="vm-mode-london" data-id="settingsVMLondonMode"
+              title="Execution environment does not connect to any node, everything is local and in memory only."
+              value="vm-london" name="executionContext" fork="london"> JavaScript VM (London)
+            </option>
+            <option id="injected-mode" data-id="settingsInjectedMode"
               title="Execution environment has been provided by Metamask or similar provider."
               value="injected" name="executionContext"> Injected Web3
             </option>
@@ -236,11 +240,14 @@ class SettingsUI {
     this.blockchain.event.register('removeProvider', name => removeProvider(name))
 
     selectExEnv.addEventListener('change', (event) => {
-      const context = selectExEnv.options[selectExEnv.selectedIndex].value
-      this.setExecutionContext(context)
+      const provider = selectExEnv.options[selectExEnv.selectedIndex]
+      const fork = provider.getAttribute('fork') // can be undefined if connected to an external source (web3 provider / injected)
+      let context = provider.value
+      context = context.startsWith('vm') ? 'vm' : context // context has to be 'vm', 'web3' or 'injected'
+      this.setExecutionContext({ context, fork })
     })
 
-    selectExEnv.value = this.blockchain.getProvider()
+    selectExEnv.value = this._getProviderDropdownValue()
   }
 
   setExecutionContext (context) {
@@ -278,9 +285,19 @@ class SettingsUI {
     `
   }
 
+  /**
+   * generate a value used by the env dropdown list.
+   * @return {String} - can return 'vm-berlin, 'vm-london', 'injected' or 'web3'
+   */
+  _getProviderDropdownValue () {
+    const provider = this.blockchain.getProvider()
+    const fork = this.blockchain.getCurrentFork()
+    return provider === 'vm' ? provider + '-' + fork : provider
+  }
+
   setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
-    this.selectExEnv.value = this.blockchain.getProvider()
+    this.selectExEnv.value = this._getProviderDropdownValue()
     this.event.trigger('clearInstance', [])
     this.updatePlusButton()
   }

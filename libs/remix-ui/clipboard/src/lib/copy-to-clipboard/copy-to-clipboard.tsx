@@ -6,7 +6,8 @@ import './copy-to-clipboard.css'
 
 export const CopyToClipboard = ({ content, tip='Copy', icon='fa-copy', ...otherProps }) => {
   const [message, setMessage] = useState(tip)
-  const handleClick = () => {
+
+  const handleClick = (event) => {
     if (content && content !== '') { // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
       try {
         if (typeof content !== 'string') {
@@ -20,6 +21,8 @@ export const CopyToClipboard = ({ content, tip='Copy', icon='fa-copy', ...otherP
     } else {
       setMessage('Cannot copy empty content!')
     }
+    event.preventDefault()
+    return false
   }
 
   const reset = () => {
@@ -27,7 +30,7 @@ export const CopyToClipboard = ({ content, tip='Copy', icon='fa-copy', ...otherP
   }
 
   return (
-    <a href="#" onClick={handleClick} onMouseLeave={reset}>
+    <a href='#' onClick={handleClick} onMouseLeave={reset}>
       <OverlayTrigger placement="right" overlay={
         <Tooltip id="overlay-tooltip">
           { message }
