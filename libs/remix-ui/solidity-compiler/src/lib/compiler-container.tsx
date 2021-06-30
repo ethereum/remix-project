@@ -184,7 +184,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
         const releasedVersions = state.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
         const allVersions = state.allversions.map(obj => _retrieveVersion(obj.version))
-        const currentCompilerName = _retrieveVersion(/** this._view.versionSelector.selectedOptions[0].label **/)
+        const currentCompilerName = _retrieveVersion(state.selectedVersion)
         // contains only numbers part, for example '0.4.22'
         const pureVersion = _retrieveVersion()
         // is nightly build newer than the last release
@@ -269,7 +269,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const scheduleCompilation = () => {
     if (!state.autoCompile) return
     if (state.compileTimeout) window.clearTimeout(state.compileTimeout)
-    const compileTimeout = window.setTimeout(() => state.autoCompile && compile(), state.timeout)
+    const compileTimeout = window.setTimeout(() => {
+      state.autoCompile && compile()
+    }, state.timeout)
 
     setState(prevState => {
       return { ...prevState, compileTimeout }
@@ -286,7 +288,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const _retrieveVersion = (version?) => {
-    // if (!version) version = this._view.versionSelector.value
+    if (!version) version = state.selectedVersion
+    if (version === 'builtin') version = state.defaultVersion
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
@@ -374,6 +377,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setState(prevState => {
       return { ...prevState, selectedVersion: value }
     })
+    updateCurrentVersion(value)
     _updateVersionSelector()
     _updateLanguageSelector()
   }
@@ -493,7 +497,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
-            <label htmlFor="nightlies" className="form-check-label custom-control-label">Include nightly builds</label>
+            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">Include nightly builds</label>
           </div>
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
