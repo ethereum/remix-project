@@ -260,7 +260,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const dGitProvider = new DGitProvider()
 
   // ----------------- import content service ------------------------
-  const contentImport = new CompilerImports(fileManager)
+  const contentImport = new CompilerImports()
 
   const blockchain = new Blockchain(registry.get('config').api)
 
