@@ -5,7 +5,7 @@ import init from '../helpers/init'
 const testData = {
   pluginName: 'remixIde',
   pluginDisplayName: 'Remix IDE',
-  pluginUrl: 'https://zokrates-remix-plugin.netlify.app/'
+  pluginUrl: 'https://zokrates.github.io/zokrates-remix-plugin/'
 }
 
 module.exports = {
