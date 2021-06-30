@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../../../../apps/remix-ide/src/app/compiler/compiler-utils' // eslint-disable-line
+import { compilerReducer, compilerInitialState } from './reducers/compiler'
+import { resetCompilerMode, resetEditorMode, listenToEvents } from './actions/compiler'
 
 import './css/style.css'
 
@@ -29,6 +31,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const warningIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const [hhCompilation, sethhCompilation] = useState(false)
+  const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
@@ -47,12 +50,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const currentFileName = config.get('currentFile')
 
     currentFile(currentFileName)
-    listenToEvents()
+    listenToEvents(editor, compileTabLogic)(dispatch)
   }, [])
 
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
-      compileTabLogic.compiler.event.register('compilerLoaded', compilerLoaded)
       setState(prevState => {
         return {
           ...prevState,
@@ -71,13 +73,47 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }, [compiledFileName])
 
-  const compilerLoaded = (version: string) => {
-    setVersionText(version)
-  }
+  useEffect(() => {
+    if (compilerContainer.compiler.mode) {
+      switch (compilerContainer.compiler.mode) {
+        case 'startingCompilation':
+          startingCompilation()
+          resetCompilerMode()(dispatch)
+          break
+        case 'compilationDuration':
+          compilationDuration(compilerContainer.compiler.args)
+          resetCompilerMode()(dispatch)
+          break
+        case 'loadingCompiler':
+          loadingCompiler()
+          resetCompilerMode()(dispatch)
+          break
+        case 'compilerLoaded':
+          compilerLoaded()
+          resetCompilerMode()(dispatch)
+          break
+        case 'compilationFinished':
+          compilationFinished(compilerContainer.compiler.args)
+          resetCompilerMode()(dispatch)
+          break
+      }
+    }
+  }, [compilerContainer.compiler.mode])
 
-  const setVersionText = (text) => {
-    // if (this._view.version) this._view.version.innerText = text
-  }
+  useEffect(() => {
+    if (compilerContainer.editor.mode) {
+      switch (compilerContainer.editor.mode) {
+        case 'sessionSwitched':
+          sessionSwitched()
+          resetEditorMode()(dispatch)
+          break
+        case 'contentChanged':
+          contentChanged()
+          resetEditorMode()(dispatch)
+          break
+      }
+    }
+  }, [compilerContainer.editor.mode])
 
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   const fetchAllVersion = async (callback) => {
@@ -176,67 +212,64 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
   }
 
-  const listenToEvents = () => {
-    editor.event.register('sessionSwitched', () => {
-      if (!compileIcon.current) return
-      scheduleCompilation()
-    })
+  const sessionSwitched = () => {
+    if (!compileIcon.current) return
+    scheduleCompilation()
+  }
 
-    compileTabLogic.event.on('startingCompilation', () => {
-      if (!compileIcon.current) return
-      compileIcon.current.setAttribute('title', 'compiling...')
-      compileIcon.current.classList.remove('remixui_bouncingIcon')
-      compileIcon.current.classList.add('remixui_spinningIcon')
-    })
+  const startingCompilation = () => {
+    if (!compileIcon.current) return
+    compileIcon.current.setAttribute('title', 'compiling...')
+    compileIcon.current.classList.remove('remixui_bouncingIcon')
+    compileIcon.current.classList.add('remixui_spinningIcon')
+  }
 
-    compileTabLogic.compiler.event.register('compilationDuration', (speed) => {
-      if (!warningIcon.current) return
-      if (speed > 1000) {
-        const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
+  const compilationDuration = ({ speed }) => {
+    if (!warningIcon.current) return
+    if (speed > 1000) {
+      const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
 
-        warningIcon.current.setAttribute('title', msg)
-        warningIcon.current.style.visibility = 'visible'
-      } else {
-        warningIcon.current.style.visibility = 'hidden'
-      }
-    })
-
-    editor.event.register('contentChanged', () => {
-      if (!compileIcon.current) return
-      scheduleCompilation()
-      compileIcon.current.classList.add('remixui_bouncingIcon') // @TODO: compileView tab
-    })
-
-    compileTabLogic.compiler.event.register('loadingCompiler', () => {
-      if (!compileIcon.current) return
-      // _disableCompileBtn(true)
-      compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
-      compileIcon.current.classList.add('remixui_spinningIcon')
+      warningIcon.current.setAttribute('title', msg)
+      warningIcon.current.style.visibility = 'visible'
+    } else {
       warningIcon.current.style.visibility = 'hidden'
-      _updateLanguageSelector()
-    })
+    }
+  }
 
-    compileTabLogic.compiler.event.register('compilerLoaded', () => {
-      if (!compileIcon.current) return
-      // _disableCompileBtn(false)
-      compileIcon.current.setAttribute('title', '')
-      compileIcon.current.classList.remove('remixui_spinningIcon')
-      if (state.autoCompile) compile()
-    })
+  const contentChanged = () => {
+    if (!compileIcon.current) return
+    scheduleCompilation()
+    compileIcon.current.classList.add('remixui_bouncingIcon') // @TODO: compileView tab
+  }
 
-    compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
+  const loadingCompiler = () => {
+    if (!compileIcon.current) return
+    // _disableCompileBtn(true)
+    compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
+    compileIcon.current.classList.add('remixui_spinningIcon')
+    warningIcon.current.style.visibility = 'hidden'
+    _updateLanguageSelector()
+  }
+
+  const compilerLoaded = () => {
+    if (!compileIcon.current) return
+    // _disableCompileBtn(false)
+    compileIcon.current.setAttribute('title', '')
+    compileIcon.current.classList.remove('remixui_spinningIcon')
+    if (state.autoCompile) compile()
+  }
+
+  const compilationFinished = ({ success, data, source }) => {
       if (!compileIcon.current) return
       compileIcon.current.setAttribute('title', 'idle')
       compileIcon.current.classList.remove('remixui_spinningIcon')
       compileIcon.current.classList.remove('remixui_bouncingIcon')
-    })
   }
 
   const scheduleCompilation = () => {
-    const autoCompile = config.get('autoCompile')
-    if (!autoCompile) return
+    if (!state.autoCompile) return
     if (state.compileTimeout) window.clearTimeout(state.compileTimeout)
-    const compileTimeout = window.setTimeout(() => autoCompile && compile(), state.timeout)
+    const compileTimeout = window.setTimeout(() => state.autoCompile && compile(), state.timeout)
 
     setState(prevState => {
       return { ...prevState, compileTimeout }
