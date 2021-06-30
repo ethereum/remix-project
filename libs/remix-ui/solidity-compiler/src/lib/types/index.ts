@@ -1,21 +1,24 @@
 
 export interface SolidityCompilerProps {
-  editor: any,
-  config: any,
-  fileProvider: any,
-  fileManager: any,
-  contentImport: any,
-  plugin: any,
-  queryParams: any,
-  compileTabLogic: any,
-  compiledFileName: string,
-  contractsDetails: Record<string, any>,
-  setHardHatCompilation: (value: boolean) => void,
-  contractMap: {
-    file: string
-  } | Record<string, any>
-  compileErrors: any,
-  isHardHatProject: boolean
+  plugin: {
+    contractMap: {
+      file: string
+    } | Record<string, any>
+    compileErrors: any,
+    isHardHatProject: boolean,
+    queryParams: any,
+    compileTabLogic: any,
+    compiledFileName: string,
+    contractsDetails: Record<string, any>,
+    editor: any,
+    config: any,
+    fileProvider: any,
+    fileManager: any,
+    contentImport: any,
+    call: (...args) => void
+    on: (...args) => void,
+    setHardHatCompilation: (value: boolean) => void,
+  },
 }
 
 export interface CompilerContainerProps {

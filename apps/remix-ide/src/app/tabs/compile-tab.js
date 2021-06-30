@@ -68,6 +68,7 @@ class CompileTab extends ViewPlugin {
     this.compileTabLogic.init()
     this.contractMap = {}
     this.isHardHatProject = false
+    this.compileErrors = {}
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'compileTabView')
@@ -274,22 +275,7 @@ class CompileTab extends ViewPlugin {
 
   renderComponent () {
     ReactDOM.render(
-      <SolidityCompiler
-        editor={this.editor}
-        config={this.config}
-        fileProvider={this.fileProvider}
-        fileManager={this.fileManager}
-        contentImport={this.contentImport}
-        queryParams={this.queryParams}
-        plugin={this}
-        compileTabLogic={this.compileTabLogic}
-        compiledFileName={this.currentFile}
-        contractsDetails={this.contractsDetails}
-        setHardHatCompilation={this.setHardHatCompilation.bind(this)}
-        contractMap={this.contractMap}
-        compileErrors={this.compileErrors || {}}
-        isHardHatProject={this.isHardHatProject}
-      />
+      <SolidityCompiler plugin={this}/>
       , this.el)
   }
 
