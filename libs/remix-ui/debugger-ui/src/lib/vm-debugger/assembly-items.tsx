@@ -60,8 +60,8 @@ export const AssemblyItems = ({ registerEvent }) => {
 
     const currentItem = codeView.children[index]
     if (currentItem) {
-      currentItem.style.setProperty('border-color', 'var(--primary)')
-      currentItem.style.setProperty('border-style', 'solid')
+      currentItem.style.setProperty('background-color', 'var(--primary)')
+      currentItem.style.setProperty('color', 'var(--light)')
       currentItem.setAttribute('selected', 'selected')
       codeView.scrollTop = currentItem.offsetTop - parseInt(codeView.offsetTop)
     }
