@@ -1,5 +1,4 @@
 import React from 'react'
-import * as packageJson from '../../../../../package.json'
 
 import './remix-ui-plugin-manager.css';
 
@@ -14,7 +13,7 @@ export interface RemixUiPluginManagerProps {
   kind: 'settings',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
-  version: packageJson.version
+  version: string
 }
 
 export const RemixUiPluginManager = (props: RemixUiPluginManagerProps) => {

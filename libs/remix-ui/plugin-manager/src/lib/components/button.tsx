@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 interface ButtonProps {
   profileName: string
   deactivatePlugin?: (name: string) => {}
   activatePlugin?: (name: string) => {}
+  isActive: boolean
   buttonText?: string
 }
 
 function Button ({ profileName, deactivatePlugin, buttonText }: ButtonProps) {
-  const [isActive, toggleIsActive] = useState(false)
   const dataId = `pluginManagerComponentDeactivateButton${profileName}`
 
   return (
@@ -21,3 +21,4 @@ function Button ({ profileName, deactivatePlugin, buttonText }: ButtonProps) {
     </button>
   )
 }
+export default Button

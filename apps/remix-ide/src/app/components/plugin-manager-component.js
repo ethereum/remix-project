@@ -53,7 +53,7 @@ const css = csjs`
   }
   .isStuck {
     background-color: var(--primary);
-    color: 
+    color:
   }
   .versionWarning {
     padding: 4px;
@@ -146,22 +146,22 @@ class PluginManagerComponent extends ViewPlugin {
       </button>`
 
     return yo`
-      <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 mb-1 plugins-list-group-item" title="${displayName}" >
-        <div class="${css.row} justify-content-between align-items-center mb-2">
-          <h6 class="${css.displayName} plugin-name">
-            <div>
-              ${displayName}
-              ${doclink}
-              ${versionWarning}
-            </div>
-            ${activationButton}
-          </h6>
+    <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 mb-1 plugins-list-group-item" title="${displayName}" >
+    <div class="${css.row} justify-content-between align-items-center mb-2">
+      <h6 class="${css.displayName} plugin-name">
+        <div>
+          ${displayName}
+          ${doclink}
+          ${versionWarning}
         </div>
-        <div class="${css.description} d-flex text-body plugin-text mb-2">
-          <img src="${profile.icon}" class="mr-1 mt-1 ${css.pluginIcon}" />
-          <span class="${css.descriptiontext}">${profile.description}</span>
-        </div>
-      </article>
+        ${activationButton}
+      </h6>
+    </div>
+    <div class="${css.description} d-flex text-body plugin-text mb-2">
+      <img src="${profile.icon}" class="mr-1 mt-1 ${css.pluginIcon}" />
+      <span class="${css.descriptiontext}">${profile.description}</span>
+    </div>
+  </article>
     `
   }
 
