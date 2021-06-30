@@ -1,6 +1,7 @@
 /* global ethereum */
 'use strict'
 import Web3 from 'web3'
+import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
 
 let web3
@@ -21,8 +22,7 @@ export class ExecutionContext {
     this.executionContext = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.defaultFork = 'berlin'
-    this.currentFork = this.defaultFork
+    this.currentFork = 'berlin'
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -123,20 +123,17 @@ export class ExecutionContext {
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+  async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
     const context = value.context
-    const fork = value.fork || this.defaultFork
     if (!cb) cb = () => {}
     if (!confirmCb) confirmCb = () => {}
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
-      this.currentFork = fork
+      this.currentFork = value.fork
       this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
-
-    this.currentFork = this.defaultFork // in the case of injected and web3, we default to the last fork.
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
@@ -146,7 +143,7 @@ export class ExecutionContext {
         this.askPermission()
         this.executionContext = context
         web3.setProvider(injectedProvider)
-        this._updateBlockGasLimit()
+        await this._updateChainContext()
         this.event.trigger('contextChanged', ['injected'])
         return cb()
       }
@@ -173,22 +170,29 @@ export class ExecutionContext {
     this.listenOnLastBlockId = null
   }
 
-  _updateBlockGasLimit () {
+  async _updateChainContext () {
     if (this.getProvider() !== 'vm') {
-      web3.eth.getBlock('latest', (err, block) => {
-        if (!err) {
-          // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-          this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
-        } else {
-          this.blockGasLimit = this.blockGasLimitDefault
+      try {
+        const block = await web3.eth.getBlock('latest')
+        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        try {
+          this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
+        } catch (e) {
+          this.currentFork = 'berlin'
+          console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
+          console.error(e)
         }
-      })
+      } catch (e) {
+        console.error(e)
+        this.blockGasLimit = this.blockGasLimitDefault
+      }
     }
   }
 
   listenOnLastBlock () {
     this.listenOnLastBlockId = setInterval(() => {
-      this._updateBlockGasLimit()
+      this._updateChainContext()
     }, 15000)
   }
 
@@ -202,7 +206,7 @@ export class ExecutionContext {
     web3.eth.net.isListening((err, isConnected) => {
       if (!err && isConnected === true) {
         this.executionContext = context
-        this._updateBlockGasLimit()
+        this._updateChainContext()
         this.event.trigger('contextChanged', [context])
         this.event.trigger('web3EndpointChanged')
         cb()
