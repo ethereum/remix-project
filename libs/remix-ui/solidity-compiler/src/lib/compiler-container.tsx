@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
-import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../../../../apps/remix-ide/src/app/compiler/compiler-utils' // eslint-disable-line
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from './logic/compiler-utils' // eslint-disable-line
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetCompilerMode, resetEditorMode, listenToEvents } from './actions/compiler'
 
@@ -120,9 +120,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     let selectedVersion, allVersionsWasm, isURL
     let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
     // fetch normal builds
-    const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
+    const binRes: any = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds
-    const wasmRes = await promisedMiniXhr(`${baseURLWasm}/list.json`)
+    const wasmRes: any = await promisedMiniXhr(`${baseURLWasm}/list.json`)
     if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
       selectedVersion = 'builtin'
       return callback(allVersions, selectedVersion)
