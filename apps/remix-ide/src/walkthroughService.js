@@ -18,7 +18,7 @@ export class WalkthroughService {
         {
           element: document.querySelector('#compileIcons'),
           title: 'Solidity Compiler',
-          intro: 'Having selected a .sol file in the File Explorers(the icon above), compile it with the Solidity Compiler.',
+          intro: 'Having selected a .sol file in the File Explorers (the icon above), compile it with the Solidity Compiler.',
           tooltipClass: 'bg-light text-dark',
           position: 'right'
         },
@@ -28,16 +28,22 @@ export class WalkthroughService {
           intro: 'Choose a chain, deploy a contract and play with your functions.',
           tooltipClass: 'bg-light text-dark',
           position: 'right'
-        },
-        {
-          title: 'The plugins world',
-          element: document.querySelector('#settingsIcons'),
-          intro: 'Explore more plugins and manage permissions.',
-          tooltipClass: 'bg-light text-dark',
-          position: 'right',
-          doneLabel: 'Done!'
         }
         ]
+      }).onafterchange((targetElement) => {
+        const header = document.getElementsByClassName('introjs-tooltip-header')[0]
+        if (header) {
+          header.classList.add('d-flex')
+          header.classList.add('justify-content-between')
+          header.classList.add('text-nowrap')
+          header.classList.add('pr-0')
+        }
+        const skipbutton = document.getElementsByClassName('introjs-skipbutton')[0]
+        if (skipbutton) {
+          skipbutton.classList.add('ml-3')
+          skipbutton.classList.add('text-decoration-none')
+          skipbutton.id = 'remixTourSkipbtn'
+        }
       }).start()
       localStorage.setItem('hadTour_initial', true)
     }
