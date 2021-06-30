@@ -123,7 +123,7 @@ export class ExecutionContext {
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+  async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
     const context = value.context
     if (!cb) cb = () => {}
     if (!confirmCb) confirmCb = () => {}
@@ -143,7 +143,7 @@ export class ExecutionContext {
         this.askPermission()
         this.executionContext = context
         web3.setProvider(injectedProvider)
-        this._updateChainContext()
+        await this._updateChainContext()
         this.event.trigger('contextChanged', ['injected'])
         return cb()
       }
@@ -170,23 +170,23 @@ export class ExecutionContext {
     this.listenOnLastBlockId = null
   }
 
-  _updateChainContext () {
+  async _updateChainContext () {
     if (this.getProvider() !== 'vm') {
-      web3.eth.getBlock('latest', async (err, block) => {
-        if (!err) {
-          // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-          this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
-          try {
-            this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
-          } catch (e) {
-            this.currentFork = 'berlin'
-            console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
-            console.error(e)
-          }
-        } else {
-          this.blockGasLimit = this.blockGasLimitDefault
+      try {
+        const block = await web3.eth.getBlock('latest')
+        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        try {
+          this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
+        } catch (e) {
+          this.currentFork = 'berlin'
+          console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
+          console.error(e)
         }
-      })
+      } catch (e) {
+        console.error(e)
+        this.blockGasLimit = this.blockGasLimitDefault
+      }
     }
   }
 
