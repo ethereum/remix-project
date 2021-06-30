@@ -69,6 +69,7 @@ class CompileTab extends ViewPlugin {
     this.contractMap = {}
     this.isHardHatProject = false
     this.compileErrors = {}
+    this.compiledFileName = ''
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'compileTabView')

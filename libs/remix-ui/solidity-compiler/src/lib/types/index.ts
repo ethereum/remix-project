@@ -8,7 +8,7 @@ export interface SolidityCompilerProps {
     isHardHatProject: boolean,
     queryParams: any,
     compileTabLogic: any,
-    compiledFileName: string,
+    currentFile: string,
     contractsDetails: Record<string, any>,
     editor: any,
     config: any,
