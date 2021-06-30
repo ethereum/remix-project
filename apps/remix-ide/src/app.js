@@ -507,6 +507,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const walkthroughService = new WalkthroughService(localStorage)
   if (!params.code) {
-      walkthroughService.start()
+    walkthroughService.start()
   }
 }
