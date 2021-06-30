@@ -22,6 +22,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
+    props._deps.themeModule.switchTheme()
     const token = props.config.get('settings/gist-access-token')
     if (token === undefined) {
       props.config.set('settings/generate-contract-metadata', true)
