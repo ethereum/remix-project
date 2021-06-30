@@ -74,9 +74,10 @@ export const Workspace = (props: WorkspaceProps) => {
     let getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
         if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
-          await props.workspace.setWorkspace(props.workspaces[0])
+          const currentWorkspace = props.workspace.getWorkspace() ? props.workspace.getWorkspace() : props.workspaces[0]
+          await props.workspace.setWorkspace(currentWorkspace)
           setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
+            return { ...prevState, workspaces: props.workspaces, currentWorkspace }
           })
         } else {
           setState(prevState => {

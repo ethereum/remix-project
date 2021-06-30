@@ -1,6 +1,7 @@
 /* global ethereum */
 'use strict'
 import Web3 from 'web3'
+import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
 
 let web3
@@ -48,6 +49,10 @@ export class ExecutionContext {
     return this.executionContext
   }
 
+  getCurrentFork () {
+    return this.currentFork
+  }
+
   isVM () {
     return this.executionContext === 'vm'
   }
@@ -58,7 +63,7 @@ export class ExecutionContext {
 
   web3 () {
     if (this.customWeb3[this.executionContext]) return this.customWeb3[this.executionContext]
-    return this.isVM() ? this.vms[this.currentFork].web3vm : web3
+    return web3
   }
 
   detectNetwork (callback) {
@@ -118,12 +123,14 @@ export class ExecutionContext {
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  executionContextChange (context, endPointUrl, confirmCb, infoCb, cb) {
+  async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+    const context = value.context
     if (!cb) cb = () => {}
     if (!confirmCb) confirmCb = () => {}
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
+      this.currentFork = value.fork
       this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
@@ -136,7 +143,7 @@ export class ExecutionContext {
         this.askPermission()
         this.executionContext = context
         web3.setProvider(injectedProvider)
-        this._updateBlockGasLimit()
+        await this._updateChainContext()
         this.event.trigger('contextChanged', ['injected'])
         return cb()
       }
@@ -147,7 +154,7 @@ export class ExecutionContext {
     }
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      this.setProviderFromEndpoint(network.provider, network.name, (error) => {
+      this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
         if (error) infoCb(error)
         cb()
       })
@@ -163,35 +170,43 @@ export class ExecutionContext {
     this.listenOnLastBlockId = null
   }
 
-  _updateBlockGasLimit () {
+  async _updateChainContext () {
     if (this.getProvider() !== 'vm') {
-      web3.eth.getBlock('latest', (err, block) => {
-        if (!err) {
-          // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-          this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
-        } else {
-          this.blockGasLimit = this.blockGasLimitDefault
+      try {
+        const block = await web3.eth.getBlock('latest')
+        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        try {
+          this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
+        } catch (e) {
+          this.currentFork = 'berlin'
+          console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
+          console.error(e)
         }
-      })
+      } catch (e) {
+        console.error(e)
+        this.blockGasLimit = this.blockGasLimitDefault
+      }
     }
   }
 
   listenOnLastBlock () {
     this.listenOnLastBlockId = setInterval(() => {
-      this._updateBlockGasLimit()
+      this._updateChainContext()
     }, 15000)
   }
 
   // TODO: remove this when this function is moved
 
-  setProviderFromEndpoint (endpoint, context, cb) {
+  setProviderFromEndpoint (endpoint, value, cb) {
     const oldProvider = web3.currentProvider
+    const context = value.context
 
     web3.setProvider(endpoint)
     web3.eth.net.isListening((err, isConnected) => {
       if (!err && isConnected === true) {
         this.executionContext = context
-        this._updateBlockGasLimit()
+        this._updateChainContext()
         this.event.trigger('contextChanged', [context])
         this.event.trigger('web3EndpointChanged')
         cb()

@@ -1,12 +1,13 @@
 'use strict'
+import { util, execution } from '@remix-project/remix-lib'
 import { TraceAnalyser } from './traceAnalyser'
 import { TraceCache } from './traceCache'
 import { TraceStepManager } from './traceStepManager'
 import { isCreateInstruction } from './traceHelper'
-import { util } from '@remix-project/remix-lib'
 
 export class TraceManager {
   web3
+  fork: string
   isLoading: boolean
   trace
   traceCache
@@ -34,6 +35,15 @@ export class TraceManager {
 
       if (result['structLogs'].length > 0) {
         this.trace = result['structLogs']
+
+        try {
+          const networkId = await this.web3.eth.net.getId()
+          this.fork = execution.forkAt(networkId, tx.blockNumber)
+        } catch (e) {
+          this.fork = 'berlin'
+          console.log(`unable to detect fork, defaulting to ${this.fork}..`)
+          console.error(e)
+        }
 
         this.traceAnalyser.analyse(result['structLogs'], tx)
         this.isLoading = false
@@ -68,6 +78,10 @@ export class TraceManager {
   init () {
     this.trace = null
     this.traceCache.init()
+  }
+
+  getCurrentFork () {
+    return this.fork
   }
 
   // API section

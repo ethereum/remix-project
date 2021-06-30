@@ -23,6 +23,7 @@ class Blockchain {
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
+      isVM: () => { return this.executionContext.isVM() },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
@@ -208,6 +209,14 @@ class Blockchain {
     return this.executionContext.getProvider()
   }
 
+  /**
+   * return the fork name applied to the current envionment
+   * @return {String} - fork name
+   */
+  getCurrentFork () {
+    return this.executionContext.getCurrentFork()
+  }
+
   isWeb3Provider () {
     const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'
@@ -240,7 +249,7 @@ class Blockchain {
     return txlistener
   }
 
-  runOrCallContractMethod (contractName, contractAbi, funABI, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
+  runOrCallContractMethod (contractName, contractAbi, funABI, contract, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
       if (error) {
@@ -256,6 +265,7 @@ class Blockchain {
       if (data) {
         data.contractName = contractName
         data.contractABI = contractAbi
+        data.contract = contract
       }
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
       this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
@@ -314,6 +324,7 @@ class Blockchain {
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
+      isVM: () => { return this.executionContext.isVM() },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
@@ -480,7 +491,7 @@ class Blockchain {
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
-          const vmError = txExecution.checkVMError(execResult, args.data.contractABI)
+          const vmError = txExecution.checkVMError(execResult, args.data.contractABI, args.data.contract)
           if (vmError.error) {
             return cb(vmError.message)
           }
