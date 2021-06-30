@@ -67,16 +67,21 @@ export class SlitherClient extends PluginClient {
           // Get compiler version without commit id e.g: 0.8.2
           const version: string = versionString.substring(0, versionString.indexOf('+commit'))
           // List solc versions installed using solc-select
-          const solcSelectInstalledVersions: Buffer = execSync('solc-select versions', options)
-          // Check if required version is already installed
-          if (!solcSelectInstalledVersions.toString().includes(version)) {
-            console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Installing ${version} using solc-select`)
-            // Install required version
-            execSync(`solc-select install ${version}`, options)
+          try {
+            const solcSelectInstalledVersions: Buffer = execSync('solc-select versions', options)
+            // Check if required version is already installed
+            if (!solcSelectInstalledVersions.toString().includes(version)) {
+              console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Installing ${version} using solc-select`)
+              // Install required version
+              execSync(`solc-select install ${version}`, options)
+            }
+            console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Setting ${version} as current solc version using solc-select`)
+            // Set solc current version as required version
+            execSync(`solc-select use ${version}`, options)
+          } catch (err) {
+            console.log(err)
+            reject(new Error('Error in running solc-select command'))
           }
-          console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Setting ${version} as current solc version using solc-select`)
-          // Set solc current version as required version
-          execSync(`solc-select use ${version}`, options)
         } else console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is same as installed solc version')
       }
       const outputFile: string = 'remix-slitherReport_' + Date.now() + '.json'
