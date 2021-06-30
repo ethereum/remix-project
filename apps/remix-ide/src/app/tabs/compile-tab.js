@@ -1,7 +1,7 @@
 /* global */
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
-import { SolidityCompiler, CompileTab as CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { SolidityCompiler, CompileTab as CompileTabLogic, compile, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import publishToStorage from '../../publishToStorage'
@@ -11,7 +11,6 @@ const EventEmitter = require('events')
 const $ = require('jquery')
 const yo = require('yo-yo')
 var QueryParams = require('../../lib/query-params')
-const parseContracts = require('./compileTab/contractParser')
 const addTooltip = require('../ui/tooltip')
 const globalRegistry = require('../../global/registry')
 
