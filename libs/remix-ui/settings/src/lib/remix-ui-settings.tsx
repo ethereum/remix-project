@@ -101,7 +101,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   )
 
   const saveToken = () => {
-    saveTokenToast(props, dispatchToast, tokenValue)
+    saveTokenToast(props, dispatchToast, tokenValue || '')
   }
 
   const removeToken = () => {
@@ -125,7 +125,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">{ gitAccessTokenLink }</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={handleSaveTokenState} value={ tokenValue } />
+            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={handleSaveTokenState} value={ tokenValue} />
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken()} value="Save" type="button" disabled={tokenValue === ''}></input>
@@ -141,7 +141,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (themes) {
       return themes.map((aTheme, index) => (
         <div className="radio custom-control custom-radio mb-1 form-check" key={index}>
-          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name ? true : null}/>
+          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name ? true : false}/>
           <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${aTheme.name}`} htmlFor={aTheme.name}>{aTheme.name} ({aTheme.quality})</label>
         </div>
       )
