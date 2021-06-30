@@ -17,11 +17,11 @@ import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 
-import { CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
-import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
-import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
-import { OffsetToLineColumnConverter } from '@remix-core-plugin/offset-line-to-column-converter'
-import { CompilerMetadata } from '@remix-core-plugin/compiler-metadata'
+import { CompilerArtefacts } from '@remix-project/compiler-artefacts'
+import { CompilerImports } from '@remix-project/compiler-content-imports'
+import { FetchAndCompile } from '@remix-project/compiler-fetch-and-compile'
+import { OffsetToLineColumnConverter } from '@remix-project/offset-line-to-column-converter'
+import { CompilerMetadata } from '@remix-project/compiler-metadata'
 
 import migrateFileSystem from './migrateFileSystem'
 

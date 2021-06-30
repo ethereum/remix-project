@@ -1,5 +1,5 @@
 {
-  "name": "@remix-core-plugin/compiler-metadata",
+  "name": "@remix-project/compiler-metadata",
   "version": "0.0.1",
   "description": "This library was generated with [Nx](https://nx.dev).",
   "main": "index.js",

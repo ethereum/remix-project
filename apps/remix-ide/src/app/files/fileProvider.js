@@ -1,6 +1,6 @@
 'use strict'
 
-import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
+import { CompilerImports } from '@remix-project/compiler-content-imports'
 const EventManager = require('events')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const tooltip = require('../ui/tooltip')
