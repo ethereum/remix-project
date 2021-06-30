@@ -102,20 +102,7 @@
     "remix-ui-checkbox": {
       "tags": []
     },
-    "compiler-artefacts": {
-      "tags": [],
-      "implicitDependencies": ["remix-lib", "remix-solidity"]
-    },
-    "compiler-fetch-and-compile": {
-      "tags": []
-    },
-    "compiler-content-imports": {
-      "tags": []
-    },
-    "offset-line-to-column-converter": {
-      "tags": []
-    },
-    "compiler-metadata": {
+    "remix-core-plugin": {
       "tags": []
     }
   }
