@@ -70,6 +70,8 @@ class CompileTab extends ViewPlugin {
     this.isHardHatProject = false
     this.compileErrors = {}
     this.compiledFileName = ''
+    this.selectedVersion = ''
+    this.configurationSettings = null
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'compileTabView')
@@ -196,6 +198,10 @@ class CompileTab extends ViewPlugin {
     this.hhCompilation = value
   }
 
+  setSelectedVersion (version) {
+    this.selectedVersion = version
+  }
+
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
@@ -219,7 +225,7 @@ class CompileTab extends ViewPlugin {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
-    settings.version = settings.version || this.compilerContainer.data.selectedVersion
+    settings.version = settings.version || this.selectedVersion
     const res = await compile(compilationTargets, settings)
     return res
   }
@@ -227,7 +233,7 @@ class CompileTab extends ViewPlugin {
   // This function is used for passing the compiler configuration to 'remix-tests'
   getCurrentCompilerConfig () {
     return {
-      currentVersion: this.compilerContainer.data.selectedVersion,
+      currentVersion: this.selectedVersion,
       evmVersion: this.compileTabLogic.evmVersion,
       optimize: this.compileTabLogic.optimize,
       runs: this.compileTabLogic.runs
@@ -240,20 +246,10 @@ class CompileTab extends ViewPlugin {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   setCompilerConfig (settings) {
-    return new Promise((resolve, reject) => {
-      addTooltip(yo`<div><b>${this.currentRequest.from}</b> is updating the <b>Solidity compiler configuration</b>.<pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
-      this.compilerContainer.setConfiguration(settings)
-      // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
-      let timeout = 0
-      const id = setInterval(() => {
-        timeout++
-        console.log(this.data.loading)
-        if (!this.data.loading || timeout > 10) {
-          resolve()
-          clearInterval(id)
-        }
-      }, 200)
-    })
+    this.configurationSettings = settings
+    this.renderComponent()
+    // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
+    addTooltip(yo`<div><b>${this.currentRequest.from}</b> is updating the <b>Solidity compiler configuration</b>.<pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
   }
 
   // TODO : Add success alert when compilation succeed

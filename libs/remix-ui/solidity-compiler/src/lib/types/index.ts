@@ -18,6 +18,8 @@ export interface SolidityCompilerProps {
     call: (...args) => void
     on: (...args) => void,
     setHardHatCompilation: (value: boolean) => void,
+    setSelectedVersion: (value: string) => void,
+    configurationSettings: ConfigurationSettings
   },
 }
 
@@ -26,12 +28,13 @@ export interface CompilerContainerProps {
   config: any,
   queryParams: any,
   compileTabLogic: any,
-  tooltip: (message: string) => void,
+  tooltip: (message: string | JSX.Element) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   compiledFileName: string,
   setHardHatCompilation: (value: boolean) => void,
   updateCurrentVersion: any,
-  isHardHatProject: boolean
+  isHardHatProject: boolean,
+  configurationSettings: ConfigurationSettings
 }
 export interface ContractSelectionProps {
   contractMap: {
@@ -41,4 +44,12 @@ export interface ContractSelectionProps {
   fileProvider: any,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
+}
+
+export interface ConfigurationSettings {
+  version: string,
+  evmVersion: string,
+  language: string,
+  optimize: boolean,
+  runs: string
 }
