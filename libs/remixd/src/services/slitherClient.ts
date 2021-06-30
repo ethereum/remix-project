@@ -110,11 +110,10 @@ export class SlitherClient extends PluginClient {
             console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Analysis Completed!! ${response['count']} warnings found.`)
             resolve(response)
           } else {
-            console.log('\x1b[31m%s\x1b[0m', '[Slither Analysis]: Error in running Slither Analysis')
             console.log(report['error'])
-            reject(new Error('Error in running Slither Analysis. See remixd console for details.'))
+            reject(new Error('Error in running Slither Analysis.'))
           }
-        } else reject(new Error('Error in generating Slither Analysis Report. See remixd console for details.'))
+        } else reject(new Error('Error in generating Slither Analysis Report. Make sure Slither is properly installed.'))
       })
     })
   }
