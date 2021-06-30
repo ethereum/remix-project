@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { migrateToWorkspace } from '../../../migrateFileSystem'
-import { CompilerImports } from '@remix-project/compiler-content-imports'
+import { CompilerImports } from '@remix-project/core-plugin'
 import JSZip from 'jszip'
 
 const yo = require('yo-yo')

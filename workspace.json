@@ -761,9 +761,9 @@
         }
       }
     },
-    "compiler-artefacts": {
-      "root": "libs/remix-core-plugin/compiler-artefacts",
-      "sourceRoot": "libs/remix-core-plugin/compiler-artefacts/src",
+    "remix-core-plugin": {
+      "root": "libs/remix-core-plugin",
+      "sourceRoot": "libs/remix-core-plugin/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -772,141 +772,21 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/remix-core-plugin/compiler-artefacts/tsconfig.lib.json"
+              "libs/remix-core-plugin/tsconfig.lib.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/remix-core-plugin/compiler-artefacts/**/*"
+              "!libs/remix-core-plugin/**/*"
             ]
           }
         },
         "build": {
           "builder": "@nrwl/node:package",
           "options": {
-            "outputPath": "dist/libs/core-plugin/compiler-artefacts",
-            "tsConfig": "libs/remix-core-plugin/compiler-artefacts/tsconfig.lib.json",
-            "packageJson": "libs/remix-core-plugin/compiler-artefacts/package.json",
-            "main": "libs/remix-core-plugin/compiler-artefacts/src/index.ts"
-          }
-        }
-      }
-    },
-    "compiler-fetch-and-compile": {
-      "root": "libs/remix-core-plugin/compiler-fetch-and-compile",
-      "sourceRoot": "libs/remix-core-plugin/compiler-fetch-and-compile/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-core-plugin/compiler-fetch-and-compile/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-core-plugin/compiler-fetch-and-compile/**/*"
-            ]
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/core-plugin/compiler-fetch-and-compile",
-            "tsConfig": "libs/remix-core-plugin/compiler-fetch-and-compile/tsconfig.lib.json",
-            "packageJson": "libs/remix-core-plugin/compiler-fetch-and-compile/package.json",
-            "main": "libs/remix-core-plugin/compiler-fetch-and-compile/src/index.ts"
-          }
-        }
-      }
-    },
-    "compiler-content-imports": {
-      "root": "libs/remix-core-plugin/compiler-content-imports",
-      "sourceRoot": "libs/remix-core-plugin/compiler-content-imports/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-core-plugin/compiler-content-imports/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-core-plugin/compiler-content-imports/**/*"
-            ]
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/core-plugin/compiler-content-imports",
-            "tsConfig": "libs/remix-core-plugin/compiler-content-imports/tsconfig.lib.json",
-            "packageJson": "libs/remix-core-plugin/compiler-content-imports/package.json",
-            "main": "libs/remix-core-plugin/compiler-content-imports/src/index.ts"
-          }
-        }
-      }
-    },
-    "offset-line-to-column-converter": {
-      "root": "libs/remix-core-plugin/offset-line-to-column-converter",
-      "sourceRoot": "libs/remix-core-plugin/offset-line-to-column-converter/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-core-plugin/offset-line-to-column-converter/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-core-plugin/offset-line-to-column-converter/**/*"
-            ]
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/core-plugin/offset-line-to-column-converter",
-            "tsConfig": "libs/remix-core-plugin/offset-line-to-column-converter/tsconfig.lib.json",
-            "packageJson": "libs/remix-core-plugin/offset-line-to-column-converter/package.json",
-            "main": "libs/remix-core-plugin/coffset-line-to-column-converter/src/index.ts"
-          }
-        }
-      }
-    },
-    "compiler-metadata": {
-      "root": "libs/remix-core-plugin/compiler-metadata",
-      "sourceRoot": "libs/remix-core-plugin/compiler-metadata/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-core-plugin/compiler-metadata/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-core-plugin/compiler-metadata/**/*"
-            ]
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/core-plugin/compiler-metadata",
-            "tsConfig": "libs/remix-core-plugin/compiler-metadata/tsconfig.lib.json",
-            "packageJson": "libs/remix-core-plugin/compiler-metadata/package.json",
-            "main": "libs/remix-core-plugin/compiler-metadata/src/index.ts"
+            "outputPath": "dist/libs/core-plugin",
+            "tsConfig": "libs/remix-core-plugin/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/package.json",
+            "main": "libs/remix-core-plugin/src/index.ts"
           }
         }
       }
