@@ -34,8 +34,6 @@ export default class HardhatProvider extends Plugin {
         <br>
         For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
         <br><br>
-        <b>Note:</b> Click on 'Cancel' if node is stopped.
-        <br><br>
         Hardhat JSON-RPC Endpoint
       </div>
     `
@@ -75,7 +73,8 @@ export default class HardhatProvider extends Plugin {
         resolve(message)
       })
     } else {
-      resolve({ jsonrpc: '2.0', result: [], id: data.id })
+      const result = data.method === 'net_listening' ? 'canceled' : []
+      resolve({ jsonrpc: '2.0', result: result, id: data.id })
     }
   }
 }
