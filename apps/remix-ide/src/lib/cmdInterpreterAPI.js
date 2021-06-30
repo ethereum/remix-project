@@ -1,5 +1,5 @@
 'use strict'
-import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
+import { CompilerImports } from '@remix-project/compiler-content-imports'
 var yo = require('yo-yo')
 var async = require('async')
 var EventManager = require('../lib/events')
