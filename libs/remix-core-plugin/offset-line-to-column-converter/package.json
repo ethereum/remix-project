@@ -1,5 +1,5 @@
 {
-  "name": "@remix-core-plugin/offset-line-to-column-converter",
+  "name": "@remix-project/offset-line-to-column-converter",
   "version": "0.0.1",
   "description": "This library was generated with [Nx](https://nx.dev).",
   "main": "index.js",

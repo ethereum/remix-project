@@ -41,19 +41,19 @@
       "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"],
       "@remix-ui/static-analyser": ["libs/remix-ui/static-analyser/src/index.ts"],
       "@remix-ui/checkbox": ["libs/remix-ui/checkbox/src/index.ts"],
-      "@remix-core-plugin/compiler-artefacts": [
+      "@remix-project/compiler-artefacts": [
         "libs/remix-core-plugin/compiler-artefacts/src/index.ts"
       ],
-      "@remix-core-plugin/compiler-fetch-and-compile": [
+      "@remix-project/compiler-fetch-and-compile": [
         "libs/remix-core-plugin/compiler-fetch-and-compile/src/index.ts"
       ],
-      "@remix-core-plugin/compiler-content-imports": [
+      "@remix-project/compiler-content-imports": [
         "libs/remix-core-plugin/compiler-content-imports/src/index.ts"
       ],
-      "@remix-core-plugin/offset-line-to-column-converter": [
+      "@remix-project/offset-line-to-column-converter": [
         "libs/remix-core-plugin/offset-line-to-column-converter/src/index.ts"
       ],
-      "@remix-core-plugin/compiler-metadata": [
+      "@remix-project/compiler-metadata": [
         "libs/remix-core-plugin/compiler-metadata/src/index.ts"
       ]
     }
