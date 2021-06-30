@@ -1,40 +1,57 @@
 import React from 'react'
 
-const queuedEvents = []
-const pendingEvents = {}
-let provider = null
-let plugin = null
-let dispatch: React.Dispatch<any> = null
-
-export const fetchCompilerError = (error: any) => {
+export const setEditorMode = (mode: string) => {
   return {
-    type: 'FETCH_COMPILER_ERROR',
-    payload: error
+    type: 'SET_EDITOR_MODE',
+    payload: mode
   }
 }
 
-export const fetchCompilerRequest = (promise: Promise<any>) => {
-  return {
-    type: 'FETCH_COMPILER_REQUEST',
-    payload: promise
-  }
-}
-
-export const fetchCompilerSuccess = (compiler) => {
-  return {
-    type: 'FETCH_COMPILER_SUCCESS',
-    payload: compiler
-  }
-}
-
-export const fetchCompiler = (provider, path: string) => (dispatch: React.Dispatch<any>) => {
-  const promise = fetchDirectoryContent(provider, path)
-
-  dispatch(fetchDirectoryRequest(promise))
-  promise.then((files) => {
-    dispatch(fetchDirectorySuccess(path, files))
-  }).catch((error) => {
-    dispatch(fetchDirectoryError({ error }))
+export const resetEditorMode = () => (dispatch: React.Dispatch<any>) => {
+  dispatch({
+    type: 'RESET_EDITOR_MODE'
   })
-  return promise
+}
+
+export const setCompilerMode = (mode: string, ...args) => {
+  return {
+    type: 'SET_COMPILER_MODE',
+    payload: { mode, args }
+  }
+}
+
+export const resetCompilerMode = () => (dispatch: React.Dispatch<any>) => {
+  dispatch({
+    type: 'RESET_COMPILER_MODE'
+  })
+}
+
+export const listenToEvents = (editor, compileTabLogic) => (dispatch: React.Dispatch<any>) => {
+  editor.event.register('sessionSwitched', () => {
+    dispatch(setEditorMode('sessionSwitched'))
+  })
+
+  compileTabLogic.event.on('startingCompilation', () => {
+    dispatch(setCompilerMode('startingCompilation'))
+  })
+
+  compileTabLogic.compiler.event.register('compilationDuration', (speed) => {
+    dispatch(setCompilerMode('compilationDuration', speed))
+  })
+
+  editor.event.register('contentChanged', () => {
+    dispatch(setEditorMode('contentChanged'))
+  })
+
+  compileTabLogic.compiler.event.register('loadingCompiler', () => {
+    dispatch(setCompilerMode('compilationDuration'))
+  })
+
+  compileTabLogic.compiler.event.register('compilerLoaded', () => {
+    dispatch(setCompilerMode('compilerLoaded'))
+  })
+
+  compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
+    dispatch(setCompilerMode('compilationFinished', success, data, source))
+  })
 }
