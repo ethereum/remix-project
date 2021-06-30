@@ -61,7 +61,7 @@ module.exports = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(8000)
       .getModalBody((value, done) => {
-        if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
+        if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
         done()
       })
       .modalFooterOKClick()
