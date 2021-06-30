@@ -336,7 +336,9 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
       console.log('unable to retrieve decode info of ' + variable.typeDescriptions.typeString)
       return null
     }
-    if (!variable.constant && storagelocation.offset + type.storageBytes > 32) {
+    const immutable = variable.mutability === 'immutable'
+    const hasStorageSlots = !immutable && !variable.constant
+    if (hasStorageSlots && storagelocation.offset + type.storageBytes > 32) {
       storagelocation.slot++
       storagelocation.offset = 0
     }
@@ -344,12 +346,13 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
       name: variable.name,
       type: type,
       constant: variable.constant,
+      immutable,
       storagelocation: {
-        offset: variable.constant ? 0 : storagelocation.offset,
-        slot: variable.constant ? 0 : storagelocation.slot
+        offset: !hasStorageSlots ? 0 : storagelocation.offset,
+        slot: !hasStorageSlots ? 0 : storagelocation.slot
       }
     })
-    if (!variable.constant) {
+    if (hasStorageSlots) {
       if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {
         storagelocation.offset += type.storageBytes
       } else {

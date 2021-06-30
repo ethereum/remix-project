@@ -96,6 +96,9 @@
     "remix-ui-workspace": {
       "tags": []
     },
+    "remix-ui-settings": {
+       "tags": []
+    },
     "remix-ui-static-analyser": {
       "tags": []
     },
@@ -103,6 +106,9 @@
       "tags": []
     },
     "remix-ui-plugin-manager": {
+      "tags": []
+    }
+    "remix-ui-settings": {
       "tags": []
     }
   }

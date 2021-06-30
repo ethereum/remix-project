@@ -38,7 +38,7 @@ export class Mapping extends RefType {
   decodeFromMemoryInternal (offset, memory) {
     // mappings can only exist in storage and not in memory
     // so this should never be called
-    return { value: '<not implemented>', length: '0x', type: this.typeName }
+    return { value: '', length: '0x0', type: this.typeName }
   }
 
   async decodeMappingsLocation (preimages, location, storageResolver) {
