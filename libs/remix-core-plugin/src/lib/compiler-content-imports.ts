@@ -13,11 +13,9 @@ const profile = {
 
 export class CompilerImports extends Plugin {
   previouslyHandled: {}
-  fileManager: any
   urlResolver: any
-  constructor (fileManager) {
+  constructor () {
     super(profile)
-    this.fileManager = fileManager
     this.urlResolver = new RemixURLResolver()
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
@@ -89,12 +87,14 @@ export class CompilerImports extends Plugin {
     this.import(url,
       // TODO: handle this event
       (loadingMsg) => { this.emit('message', loadingMsg) },
-      (error, content, cleanUrl, type, url) => {
+      async (error, content, cleanUrl, type, url) => {
         if (error) return cb(error)
-        if (this.fileManager) {
-          const provider = this.fileManager.currentFileProvider()
+        try {
+          const provider = await this.call('fileManager', 'getProviderOf', null)
           const path = targetPath || type + '/' + cleanUrl
           if (provider) provider.addExternal('.deps/' + path, content, url)
+        } catch (err) {
+
         }
         cb(null, content)
       }, null)
@@ -113,63 +113,64 @@ export class CompilerImports extends Plugin {
   resolveAndSave (url, targetPath) {
     return new Promise((resolve, reject) => {
       if (url.indexOf('remix_tests.sol') !== -1) resolve(remixTests.assertLibCode)
-      if (!this.fileManager) {
+      this.call('fileManager', 'getProviderOf', url).then((provider) => {
+        if (provider) {
+          if (provider.type === 'localhost' && !provider.isConnected()) {
+            return reject(new Error(`file provider ${provider.type} not available while trying to resolve ${url}`))
+          }
+          provider.exists(url).then(exist => {
+            /*
+              if the path is absolute and the file does not exist, we can stop here
+              Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
+            */
+            if (!exist && url.startsWith('browser/')) return reject(new Error(`not found ${url}`))
+            if (!exist && url.startsWith('localhost/')) return reject(new Error(`not found ${url}`))
+
+            if (exist) {
+              return provider.get(url, (error, content) => {
+                if (error) return reject(error)
+                resolve(content)
+              })
+            }
+
+            // try to resolve localhost modules (aka truffle imports) - e.g from the node_modules folder
+            this.call('fileManager', 'getProviderByName', 'localhost').then((localhostProvider) => {
+              if (localhostProvider.isConnected()) {
+                var splitted = /([^/]+)\/(.*)$/g.exec(url)
+                return async.tryEach([
+                  (cb) => { this.resolveAndSave('localhost/installed_contracts/' + url, null).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
+                  // eslint-disable-next-line standard/no-callback-literal
+                  (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], null).then((result) => cb(null, result)).catch((error) => cb(error.message)) } },
+                  (cb) => { this.resolveAndSave('localhost/node_modules/' + url, null).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
+                  // eslint-disable-next-line standard/no-callback-literal
+                  (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], null).then((result) => cb(null, result)).catch((error) => cb(error.message)) } }],
+                (error, result) => {
+                  if (error) {
+                    return this.importExternal(url, targetPath, (error, content) => {
+                      if (error) return reject(error)
+                      resolve(content)
+                    })
+                  }
+                  resolve(result)
+                })
+              }
+            })
+
+            this.importExternal(url, targetPath, (error, content) => {
+              if (error) return reject(error)
+              resolve(content)
+            })
+          }).catch(error => {
+            return reject(error)
+          })
+        }
+      }).catch(() => {
         // fallback to just resolving the file, it won't be saved in file manager
         return this.importExternal(url, targetPath, (error, content) => {
           if (error) return reject(error)
           resolve(content)
         })
-      }
-      var provider = this.fileManager.fileProviderOf(url)
-      if (provider) {
-        if (provider.type === 'localhost' && !provider.isConnected()) {
-          return reject(new Error(`file provider ${provider.type} not available while trying to resolve ${url}`))
-        }
-        provider.exists(url).then(exist => {
-          /*
-            if the path is absolute and the file does not exist, we can stop here
-            Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
-          */
-          if (!exist && url.startsWith('browser/')) return reject(new Error(`not found ${url}`))
-          if (!exist && url.startsWith('localhost/')) return reject(new Error(`not found ${url}`))
-
-          if (exist) {
-            return provider.get(url, (error, content) => {
-              if (error) return reject(error)
-              resolve(content)
-            })
-          }
-
-          // try to resolve localhost modules (aka truffle imports) - e.g from the node_modules folder
-          const localhostProvider = this.fileManager.getProvider('localhost')
-          if (localhostProvider.isConnected()) {
-            var splitted = /([^/]+)\/(.*)$/g.exec(url)
-            return async.tryEach([
-              (cb) => { this.resolveAndSave('localhost/installed_contracts/' + url, null).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
-              // eslint-disable-next-line standard/no-callback-literal
-              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], null).then((result) => cb(null, result)).catch((error) => cb(error.message)) } },
-              (cb) => { this.resolveAndSave('localhost/node_modules/' + url, null).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
-              // eslint-disable-next-line standard/no-callback-literal
-              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], null).then((result) => cb(null, result)).catch((error) => cb(error.message)) } }],
-            (error, result) => {
-              if (error) {
-                return this.importExternal(url, targetPath, (error, content) => {
-                  if (error) return reject(error)
-                  resolve(content)
-                })
-              }
-              resolve(result)
-            })
-          }
-
-          this.importExternal(url, targetPath, (error, content) => {
-            if (error) return reject(error)
-            resolve(content)
-          })
-        }).catch(error => {
-          return reject(error)
-        })
-      }
+      })
     })
   }
 }
