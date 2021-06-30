@@ -100,7 +100,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       </div>
     `
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
-    this._view.optionVMLabel = yo`<label class="form-check-label custom-control-label align-middle" for="alwaysUseVM">Always use Ethereum VM at Load</label>`
+    this._view.optionVMLabel = yo`<label class="form-check-label custom-control-label align-middle" for="alwaysUseVM">Always use JavaScript VM at Load</label>`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
     elementStateChanged(self._view.optionVMLabel, !this.config.get('settings/always-use-vm'))

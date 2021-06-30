@@ -534,7 +534,7 @@ export class LandingPage extends ViewPlugin {
                         <i class="far fa-hdd"></i>
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
                       </p>
-                      <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
+                      <p class="mt-3 mb-0"><label>LOAD FROM:</label></p>
                       <div class="btn-group">
                         <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}">GitHub</button>
