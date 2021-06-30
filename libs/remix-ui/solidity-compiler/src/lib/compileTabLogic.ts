@@ -20,7 +20,7 @@ export class CompileTab extends Plugin {
   constructor (public queryParams, public fileManager, public editor, public config, public fileProvider, public contentImport) {
     super(profile)
     this.event = new EventEmitter()
-    this.compiler = new Compiler((url, cb) => this.compilerImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+    this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
 
   init () {
