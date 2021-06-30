@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 import semver from 'semver'
-import { CompilerContainerProps } from './types'
+import { CompilerContainerProps, ConfigurationSettings } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from './logic/compiler-utils' // eslint-disable-line
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
@@ -9,7 +9,7 @@ import { resetCompilerMode, resetEditorMode, listenToEvents } from './actions/co
 import './css/style.css'
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject } = props // eslint-disable-line
+  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -38,13 +38,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setState(prevState => {
         return { ...prevState, allversions }
       })
-      if (isURL) _updateVersionSelector(selectedVersion)
+      if (isURL) _updateVersionSelector(state.defaultVersion, selectedVersion)
       else {
         setState(prevState => {
           return { ...prevState, selectedVersion }
         })
         updateCurrentVersion(selectedVersion)
-        _updateVersionSelector()
+        _updateVersionSelector(selectedVersion)
       }
     })
     const currentFileName = config.get('currentFile')
@@ -114,6 +114,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       }
     }
   }, [compilerContainer.editor.mode])
+
+  useEffect(() => {
+    if (configurationSettings) {
+      setConfiguration(configurationSettings)
+    }
+  }, [configurationSettings])
 
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   const fetchAllVersion = async (callback) => {
@@ -197,8 +203,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
           const compilerPath = state.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
-            state.selectedVersion = compilerPath
-            _updateVersionSelector()
+            setState((prevState) => {
+              return { ...prevState, selectedVersion: compilerPath }
+            })
+            _updateVersionSelector(compilerPath)
           }
         }
       }
@@ -293,9 +301,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
-  const _updateVersionSelector = (customUrl = '') => {
+  const _updateVersionSelector = (version, customUrl = '') => {
     // update selectedversion of previous one got filtered out
-    let selectedVersion = state.selectedVersion
+    let selectedVersion = version
     if (!selectedVersion || !_shouldBeAdded(selectedVersion)) {
       selectedVersion = state.defaultVersion
       setState(prevState => {
@@ -370,7 +378,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setState(prevState => {
       return { ...prevState, selectedVersion: url }
     })
-    _updateVersionSelector(url)
+    _updateVersionSelector(state.defaultVersion, url)
   }
 
   const handleLoadVersion = (value) => {
@@ -378,7 +386,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       return { ...prevState, selectedVersion: value }
     })
     updateCurrentVersion(value)
-    _updateVersionSelector()
+    _updateVersionSelector(value)
     _updateLanguageSelector()
   }
 
@@ -402,8 +410,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const handleOptimizeChange = (e) => {
-    const checked = !!e.target.checked
+  const handleOptimizeChange = (value) => {
+    const checked = !!value
 
     config.set('optimise', checked)
     compileTabLogic.setOptimize(checked)
@@ -418,8 +426,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const onChangeRuns = (e) => {
-    const runs = e.target.value
+  const onChangeRuns = (value) => {
+    const runs = value
 
     compileTabLogic.setRuns(parseInt(runs))
     state.autoCompile && compile()
@@ -456,6 +464,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const handleEvmVersionChange = (value) => {
+    if (!value) return
     let v = value
     if (v === 'default') {
       v = null
@@ -472,6 +481,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     sethhCompilation(checked)
     setHardHatCompilation(checked)
+  }
+
+    /*
+    The following functions map with the above event handlers.
+    They are an external API for modifying the compiler configuration.
+  */
+  const setConfiguration = (settings: ConfigurationSettings) => {
+    handleLoadVersion(`soljson-v${settings.version}.js`)
+    handleEvmVersionChange(settings.evmVersion)
+    handleLanguageChange(settings.language)
+    handleOptimizeChange(settings.optimize)
+    onChangeRuns(settings.runs)
   }
 
   return (
@@ -501,9 +522,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-            <select onChange={(e) => handleLanguageChange(e.target.value)} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
-              <option>Solidity</option>
-              <option>Yul</option>
+            <select onChange={(e) => handleLanguageChange(e.target.value)} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+              <option value='Solidity'>Solidity</option>
+              <option value='Yul'>Yul</option>
             </select>
           </div>
           <div className="mb-2">
@@ -528,7 +549,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <div className="justify-content-between align-items-center d-flex">
-                <input onChange={handleOptimizeChange} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} />
+                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} />
                 <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
                 <input
                   min="1"
@@ -538,7 +559,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   defaultValue="200"
                   type="number"
                   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
-                  onChange={onChangeRuns}
+                  onChange={(e) => onChangeRuns(e.target.value)}
                   disabled={!state.optimise}
                 />
               </div>
