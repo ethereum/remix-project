@@ -56,7 +56,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   }, [storage])
 
   const publishMessage = (uploaded) => (
-    <span> Metadata of {contract.name.toLowerCase()} was published successfully. <br />
+    <span> Metadata of "{contract.name.toLowerCase()}" was published successfully. <br />
       <pre>
         <div>
           { uploaded.map((value, index) => <div key={index}><b>{ value.filename }</b> : <pre>{ value.output.url }</pre></div>) }
@@ -94,7 +94,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
 
   return (
       <ModalDialog
-        id='publishToStorageModalDialog'
+        id='publishToStorage'
         title={ state.modal.title }
         message={ state.modal.message }
         hide={ state.modal.hide }

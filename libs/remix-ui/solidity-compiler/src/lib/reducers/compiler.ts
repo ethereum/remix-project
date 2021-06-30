@@ -5,47 +5,58 @@ interface Action {
 
 export const compilerInitialState = {
   compiler: {
-    compiler: null,
-    isRequesting: false,
-    isSuccessful: false,
-    error: null
+    mode: '',
+    args: null
+  },
+  editor: {
+    mode: ''
   }
 }
 
 export const compilerReducer = (state = compilerInitialState, action: Action) => {
   switch (action.type) {
-    case 'FETCH_COMPILER_REQUEST': {
+    case 'SET_COMPILER_MODE': {
       return {
         ...state,
-        compiler: action.payload,
-        isRequesting: true,
-        isSuccessful: false,
-        error: null
-      }
-    }
-    case 'FETCH_COMPILER_SUCCESS': {
-      return {
-        ...state,
-        provider: {
-          ...state,
-          compiler: action.payload,
-          isRequesting: false,
-          isSuccessful: true,
-          error: null
+        compiler: {
+          ...state.compiler,
+          mode: action.payload.mode,
+          args: action.payload.args || null
         }
       }
     }
-    case 'FETCH_COMPILER_ERROR': {
+
+    case 'RESET_COMPILER_MODE': {
       return {
         ...state,
-        provider: {
-          ...state,
-          isRequesting: false,
-          isSuccessful: false,
-          error: action.payload
+        compiler: {
+          ...state.compiler,
+          mode: '',
+          args: null
         }
       }
     }
+
+    case 'SET_EDITOR_MODE': {
+      return {
+        ...state,
+        editor: {
+          ...state.editor,
+          mode: action.payload
+        }
+      }
+    }
+
+    case 'RESET_EDITOR_MODE': {
+      return {
+        ...state,
+        editor: {
+          ...state.editor,
+          mode: ''
+        }
+      }
+    }
+  
     default:
       throw new Error()
   }
