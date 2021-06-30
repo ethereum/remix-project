@@ -187,7 +187,7 @@ export class ExecutionContext {
         console.error(e)
         this.blockGasLimit = this.blockGasLimitDefault
       }
-    }   
+    }
   }
 
   listenOnLastBlock () {
