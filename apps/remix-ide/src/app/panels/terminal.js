@@ -109,7 +109,426 @@ class Terminal extends Plugin {
   }
 
   render () {
+    // var self = this
+    // if (self._view.el) return self._view.el
+    //self._view.journal = yo`<div id="journal" class=${css.journal} data-id="terminalJournal"></div>`
+    // self._view.input = yo`
+    //   <span class=${css.input} onload=${() => { this.focus() }} onpaste=${paste} onkeydown=${change}></span>
+    // `
+   // self._view.input.setAttribute('spellcheck', 'false')
+    // self._view.input.setAttribute('contenteditable', 'true')
+    // self._view.input.setAttribute('id', 'terminalCliInput')
+    // self._view.input.setAttribute('data-id', 'terminalCliInput')
+
+    // self._view.input.innerText = '\n'
+    // self._view.cli = yo`
+    //   <div id="terminalCli" data-id="terminalCli" class="${css.cli}" onclick=${focusinput}>
+    //     <span class=${css.prompt}>${'>'}</span>
+    //     ${self._view.input}
+    //   </div>
+    // `
+
+    // self._view.icon = yo`
+    //   <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
+    //   class="mx-2 ${css.toggleTerminal} fas fa-angle-double-down" data-id="terminalToggleIcon"></i>`
+    // self._view.dragbar = yo`
+    //   <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
+
+    // self._view.pendingTxCount = yo`<div class="mx-2" title='Pending Transactions'>0</div>`
+    // self._view.inputSearch = yo`<input
+    //   spellcheck="false"
+    //   type="text"
+    //   class="border ${css.filter} form-control"
+    //   id="searchInput"
+    //   onkeydown=${filter}
+    //   placeholder="Search with transaction hash or address"
+    //   data-id="terminalInputSearch">
+    // </input>`
+    // self._view.bar = yo`
+    //   <div class="${css.bar}">
+    //     ${self._view.dragbar}
+    //     <div class="${css.menu} border-top border-dark bg-light" data-id="terminalToggleMenu">
+    //       ${self._view.icon}
+    //       <div class="mx-2" id="clearConsole" data-id="terminalClearConsole" onclick=${clear}>
+    //         <i class="fas fa-ban" aria-hidden="true" title="Clear console"
+    //         onmouseenter=${hover} onmouseleave=${hover}></i>
+    //       </div>
+    //       ${self._view.pendingTxCount}
+    //       <div class=${css.verticalLine}></div>
+    //       <div class="pt-1 h-80 mx-3 align-items-center ${css.listenOnNetwork} custom-control custom-checkbox">
+    //         <input
+    //           class="custom-control-input"
+    //           id="listenNetworkCheck"
+    //           onchange=${listenOnNetwork}
+    //           type="checkbox"
+    //           title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+    //         >
+    //         <label
+    //           class="pt-1 form-check-label custom-control-label text-nowrap""
+    //           title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+    //           for="listenNetworkCheck"
+    //         >
+    //           listen on network
+    //         </label>
+    //       </div>
+    //       <div class=${css.search}>
+    //         <i class="fas fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
+    //         ${self._view.inputSearch}
+    //       </div>
+    //     </div>
+    //   </div>
+    // `
+    // self._view.term = yo`
+    //   <div class="${css.terminal_container}" tabindex="-1" data-id="terminalContainer" onscroll=${throttle(reattach, 10)} onkeydown=${focusinput}>
+    //     ${self._components.autoCompletePopup.render()}
+    //     <div data-id="terminalContainerDisplay" style="
+    //       position: absolute;
+    //       height: 100%;
+    //       width: 100%;
+    //       opacity: 0.1;
+    //       z-index: -1;
+    //     "></div>
+    //     <div class=${css.terminal}>
+    //         ${self._view.journal}
+    //         ${self._view.cli}
+    //     </div>
+    //   </div>
+    // `
+    // self._view.el = yo`
+    //   <div class="${css.panel}" style="height: 180px;">
+    //     ${self._view.bar}
+    //     ${self._view.term}
+    //   </div>
+    // `
+    // setInterval(async () => {
+    //   try {
+    //     self._view.pendingTxCount.innerHTML = await self.call('udapp', 'pendingTransactionsCount')
+    //   } catch (err) {}
+    // }, 1000)
+
+    // function listenOnNetwork (ev) {
+    //   self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
+    // }
+    //function paste (event) {
+      // const selection = window.getSelection()
+      // if (!selection.rangeCount) return false
+      // event.preventDefault()
+      // event.stopPropagation()
+      // var clipboard = (event.clipboardData || window.clipboardData)
+      // var text = clipboard.getData('text/plain')
+      // text = text.replace(/[^\x20-\xFF]/gi, '') // remove non-UTF-8 characters
+      // var temp = document.createElement('div')
+      // temp.innerHTML = text
+      // var textnode = document.createTextNode(temp.textContent)
+      // selection.getRangeAt(0).insertNode(textnode)
+      // selection.empty()
+      // self.scroll2bottom()
+      // placeCaretAtEnd(event.currentTarget)
+    //}
+    //function placeCaretAtEnd (el) {
+      // el.focus()
+      // var range = document.createRange()
+      // range.selectNodeContents(el)
+      // range.collapse(false)
+      // var sel = window.getSelection()
+      // sel.removeAllRanges()
+      // sel.addRange(range)
+   // }
+   // function throttle (fn, wait) {
+      // var time = Date.now()
+      // return function debounce () {
+      //   if ((time + wait - Date.now()) < 0) {
+      //     fn.apply(this, arguments)
+      //     time = Date.now()
+      //   }
+      // }
+   // }
+    // var css2 = csjs`
+    //   .anchor            {
+    //     position         : static;
+    //     border-top       : 2px dotted blue;
+    //     height           : 10px;
+    //   }
+    //   .overlay           {
+    //     position         : absolute;
+    //     width            : 100%;
+    //     display          : flex;
+    //     align-items      : center;
+    //     justify-content  : center;
+    //     bottom           : 0;
+    //     right            : 15px;
+    //     min-height       : 20px;
+    //   }
+    //   .text              {
+    //     z-index          : 2;
+    //     color            : black;
+    //     font-weight      : bold;
+    //     pointer-events   : none;
+    //   }
+    //   .background        {
+    //     z-index          : 1;
+    //     opacity          : 0.8;
+    //     background-color : #a6aeba;
+    //     cursor           : pointer;
+    //   }
+    //   .ul                 {
+    //     padding-left     : 20px;
+    //     padding-bottom   : 5px;
+    //   }
+    // `
+    // var text = yo`<div class="${css2.overlay} ${css2.text}"></div>`
+    // var background = yo`<div class="${css2.overlay} ${css2.background}"></div>`
+    // var placeholder = yo`<div class=${css2.anchor}>${background}${text}</div>`
+    // var inserted = false
+
+    // window.addEventListener('resize', function (event) {
+    //   self.event.trigger('resize', [])
+    //   self.event.trigger('resize', [])
+    // })
+
+    //function focusinput (event) {
+      // if (
+      //   event.altKey ||
+      //   event.ctrlKey ||
+      //   event.metaKey ||
+      //   event.shiftKey ||
+      //   event.key === 'Down' ||
+      //   event.key === 'ArrowDown' ||
+      //   event.key === 'Up' ||
+      //   event.key === 'ArrowUp' ||
+      //   event.key === 'Left' ||
+      //   event.key === 'ArrowLeft' ||
+      //   event.key === 'Right' ||
+      //   event.key === 'ArrowRight' ||
+      //   event.key === 'Esc' ||
+      //   event.key === 'Escape'
+      // ) return
+
+      // refocus()
+    //}
+
+    // function refocus () {
+    //   self._view.input.focus()
+    //   reattach({ currentTarget: self._view.term })
+    //   delete self.scroll2bottom
+    //   self.scroll2bottom()
+    // }
+    //function reattach (event) {
+      // var el = event.currentTarget
+      // var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
+      // if (isBottomed) {
+      //   if (inserted) {
+      //     text.innerText = ''
+      //     background.onclick = undefined
+      //     if (placeholder.parentElement) self._view.journal.removeChild(placeholder)
+      //   }
+      //   inserted = false
+      //   delete self.scroll2bottom
+      // } else {
+      //   if (!inserted) self._view.journal.appendChild(placeholder)
+      //   inserted = true
+      //   check()
+      //   if (!placeholder.nextElementSibling) {
+      //     placeholder.style.display = 'none'
+      //   } else {
+      //     placeholder.style = ''
+      //   }
+      //   self.scroll2bottom = function () {
+      //     var next = placeholder.nextElementSibling
+      //     if (next) {
+      //       placeholder.style = ''
+      //       check()
+      //       var messages = 1
+      //       while ((next = next.nextElementSibling)) messages += 1
+      //       text.innerText = `${messages} new unread log entries`
+      //     } else {
+      //       placeholder.style.display = 'none'
+      //     }
+      //   }
+      // }
+    //}
+    //function check () {
+      // var pos1 = self._view.term.offsetHeight + self._view.term.scrollTop - (self._view.el.offsetHeight * 0.15)
+      // var pos2 = placeholder.offsetTop
+      // if ((pos1 - pos2) > 0) {
+      //   text.style.display = 'none'
+      //   background.style.position = 'relative'
+      //   background.style.opacity = 0.3
+      //   background.style.right = 0
+      //   background.style.borderBox = 'content-box'
+      //   background.style.padding = '2px'
+      //   background.style.height = (self._view.journal.offsetHeight - (placeholder.offsetTop + placeholder.offsetHeight)) + 'px'
+      //   background.onclick = undefined
+      //   background.style.cursor = 'default'
+      //   background.style.pointerEvents = 'none'
+      // } else {
+      //   background.style = ''
+      //   text.style = ''
+      //   background.onclick = function (event) {
+      //     placeholder.scrollIntoView()
+      //     check()
+      //   }
+      // }
+    //}
+    //function hover (event) { event.currentTarget.classList.toggle(css.hover) }
+    //function minimize (event) {
+      // event.preventDefault()
+      // event.stopPropagation()
+      // if (event.button === 0) {
+      //   var classList = self._view.icon.classList
+      //   classList.toggle('fa-angle-double-down')
+      //   classList.toggle('fa-angle-double-up')
+      //   self.event.trigger('resize', [])
+      // }
+    //}
+   // var filtertimeout = null
+    //function filter (event) {
+      // if (filtertimeout) {
+      //   clearTimeout(filtertimeout)
+      // }
+      // filtertimeout = setTimeout(() => {
+      //   self.updateJournal({ type: 'search', value: self._view.inputSearch.value })
+      //   self.scroll2bottom()
+      // }, 500)
+   // }
+    // function clear (event) {
+    //   refocus()
+    //   self._view.journal.innerHTML = ''
+    // }
+    // ----------------- resizeable ui ---------------
+    //function mousedown (event) {
+      // event.preventDefault()
+      // if (event.which === 1) {
+      //   moveGhostbar(event)
+      //   document.body.appendChild(ghostbar)
+      //   document.addEventListener('mousemove', moveGhostbar)
+      //   document.addEventListener('mouseup', removeGhostbar)
+      //   document.addEventListener('keydown', cancelGhostbar)
+      // }
+    //}
+    //function cancelGhostbar (event) {
+      // if (event.keyCode === 27) {
+      //   document.body.removeChild(ghostbar)
+      //   document.removeEventListener('mousemove', moveGhostbar)
+      //   document.removeEventListener('mouseup', removeGhostbar)
+      //   document.removeEventListener('keydown', cancelGhostbar)
+      // }
+   // }
+    // function moveGhostbar (event) { // @NOTE HORIZONTAL ghostbar
+    //   ghostbar.style.top = self._api.getPosition(event) + 'px'
+    // }
+    // function removeGhostbar (event) {
+    //   if (self._view.icon.classList.contains('fa-angle-double-up')) {
+    //     self._view.icon.classList.toggle('fa-angle-double-down')
+    //     self._view.icon.classList.toggle('fa-angle-double-up')
+    //   }
+    //   document.body.removeChild(ghostbar)
+    //   document.removeEventListener('mousemove', moveGhostbar)
+    //   document.removeEventListener('mouseup', removeGhostbar)
+    //   document.removeEventListener('keydown', cancelGhostbar)
+    //   self.event.trigger('resize', [self._api.getPosition(event)])
+    // }
+
+    // self._cmdHistory = []
+    // self._cmdIndex = -1
+    // self._cmdTemp = ''
+
+    // var intro = yo`
+    //   <div><div> - Welcome to Remix ${packageJson.version} - </div><br>
+    //   <div>You can use this terminal to: </div>
+    //   <ul class=${css2.ul}>
+    //     <li>Check transactions details and start debugging.</li>
+    //     <li>Execute JavaScript scripts:
+    //       <br />
+    //       <i> - Input a script directly in the command line interface </i>
+    //       <br />
+    //       <i> - Select a Javascript file in the file explorer and then run \`remix.execute()\` or \`remix.exeCurrent()\`  in the command line interface  </i>
+    //       <br />
+    //       <i> - Right click on a JavaScript file in the file explorer and then click \`Run\` </i>
+    //     </li>
+    //   </ul>
+    //   <div>The following libraries are accessible:</div>
+    //   <ul class=${css2.ul}>
+    //     <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
+    //     <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
+    //     <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
+    //     <li>remix (run remix.help() for more info)</li>
+    //   </ul>
+    //   </div>
+    // `
+
+    //self._shell('remix.help()', self.commands, () => {})
+    //self.commands.html(intro)
+
+    //self._components.txLogger = new TxLogger(this, self.blockchain)
+    // self._components.txLogger.event.register('debuggingRequested', async (hash) => {
+    //   // TODO should probably be in the run module
+    //   if (!await self._opts.appManager.isActive('debugger')) await self._opts.appManager.activatePlugin('debugger')
+    //   this.call('menuicons', 'select', 'debugger')
+    //   this.call('debugger', 'debug', hash)
+    // })
+
+   // return self._view.el
     return this.element
+    // function wrapScript (script) {
+    //   const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
+    //   if (isKnownScript) return script
+    //   return `
+    //     try {
+    //       const ret = ${script};
+    //       if (ret instanceof Promise) {
+    //         ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
+    //       } else {
+    //         console.log(ret)
+    //       }   
+    //     } catch (e) {
+    //       console.log(e.message)
+    //     }
+    //     `
+    // }
+    //function change (event) {
+    //   if (self._components.autoCompletePopup.handleAutoComplete(
+    //     event,
+    //     self._view.input.innerText)) return
+    //   if (self._view.input.innerText.length === 0) self._view.input.innerText += '\n'
+    //   if (event.which === 13) {
+    //     if (event.ctrlKey) { // <ctrl+enter>
+    //       self._view.input.innerText += '\n'
+    //       self.putCursor2End(self._view.input)
+    //       self.scroll2bottom()
+    //       self._components.autoCompletePopup.removeAutoComplete()
+    //     } else { // <enter>
+    //       self._cmdIndex = -1
+    //       self._cmdTemp = ''
+    //       event.preventDefault()
+    //       var script = self._view.input.innerText.trim()
+    //       self._view.input.innerText = '\n'
+    //       if (script.length) {
+    //         self._cmdHistory.unshift(script)
+    //         self.commands.script(wrapScript(script))
+    //       }
+    //       self._components.autoCompletePopup.removeAutoComplete()
+    //     }
+    //   } else if (event.which === 38) { // <arrowUp>
+    //     var len = self._cmdHistory.length
+    //     if (len === 0) return event.preventDefault()
+    //     if (self._cmdHistory.length - 1 > self._cmdIndex) {
+    //       self._cmdIndex++
+    //     }
+    //     self._view.input.innerText = self._cmdHistory[self._cmdIndex]
+    //     self.putCursor2End(self._view.input)
+    //     self.scroll2bottom()
+    //   } else if (event.which === 40) { // <arrowDown>
+    //     if (self._cmdIndex > -1) {
+    //       self._cmdIndex--
+    //     }
+    //     self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+    //     self.putCursor2End(self._view.input)
+    //     self.scroll2bottom()
+    //   } else {
+    //     self._cmdTemp = self._view.input.innerText
+    //   }
+    //}
   }
 
   renderComponent () {
