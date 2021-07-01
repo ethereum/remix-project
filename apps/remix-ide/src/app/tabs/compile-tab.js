@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom'
 import { SolidityCompiler, CompileTab as CompileTabLogic, compile, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
-import publishToStorage from '../../publishToStorage'
-import { compile } from '@remix-project/remix-solidity'
 
 const EventEmitter = require('events')
 const $ = require('jquery')
