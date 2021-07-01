@@ -208,7 +208,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (removedContextMenuItems) {
       removeMenuItems(removedContextMenuItems)
     }
-  }, [removedContextMenuItems])
+  }, [contextMenuItems])
 
   useEffect(() => {
     if (displayInput) {
@@ -285,7 +285,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
         multiselect: false
       }])
     } else {
-      removeMenuItems(['paste'])
+      removeMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false
+      }])
     }
   }, [canPaste])
 
@@ -298,10 +306,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const removeMenuItems = (ids: string[]) => {
+  const removeMenuItems = (items: MenuItems) => {
     setState(prevState => {
-      const actions = prevState.actions.filter(({ id }) => ids.findIndex(value => value === id) === -1)
-
+      const actions = prevState.actions.filter(({ id, name }) => items.findIndex(item => id === item.id && name === item.name) === -1)
       return { ...prevState, actions }
     })
   }

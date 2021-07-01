@@ -9,7 +9,7 @@ export interface FileExplorerProps {
     plugin: any,
     focusRoot: boolean,
     contextMenuItems: MenuItems,
-    removedContextMenuItems: string[],
+    removedContextMenuItems: MenuItems,
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement,
 }

@@ -108,7 +108,7 @@ module.exports = class Filepanel extends ViewPlugin {
       return o.id === item.id & o.name === item.name
     }).length) throw new Error(`Action ${item.name} already exists on ${item.id}`)
     this.registeredMenuItems = [...this.registeredMenuItems, item]
-    this.removedMenuItems = this.removedMenuItems.filter(id => item.id !== id)
+    this.removedMenuItems = this.removedMenuItems.filter(menuItem => item.id !== menuItem.id)
     this.renderComponent()
   }
 
@@ -116,16 +116,9 @@ module.exports = class Filepanel extends ViewPlugin {
     this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
       if (item.id !== plugin.name || item.sticky === true) return true
       else {
-        this.removedMenuItems.push(item.id)
+        this.removedMenuItems.push(item)
         return false
       }
-    })
-    this.renderComponent()
-  }
-
-  removePluginActions (plugin) {
-    this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
-      return item.id !== plugin.name || item.sticky === true
     })
     this.renderComponent()
   }
@@ -212,9 +205,6 @@ module.exports = class Filepanel extends ViewPlugin {
         }
       })
     })
-
-    const self = this
-    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
   }
 
   async createNewFile () {
