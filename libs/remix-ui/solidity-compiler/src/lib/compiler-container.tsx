@@ -56,12 +56,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
       setState(prevState => {
+        const params = queryParams.get()
+        const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
+        const runs = params.runs
+        const evmVersion = params.evmVersion
+  
         return {
           ...prevState,
           hideWarnings: config.get('hideWarnings') || false,
           autoCompile: config.get('autoCompile') || false,
-          optimise: config.get('optimise') || false,
-          includeNightlies: config.get('includeNightlies') || false
+          includeNightlies: config.get('includeNightlies') || false,
+          optimise:  (optimize !== null) && (optimize !== undefined) ? optimize : config.get('optimise') || false,
+          runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
+          evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
       })
     }
@@ -505,12 +512,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
             </label>
             <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
-              { state.allversions.length <= 0 && <option disabled>{ state.defaultVersion }</option> }
-              { state.allversions.length <= 0 && <option disabled>builtin</option> }
-              { state.customVersions.map((url, i) => <option key={i} value={url}>custom</option> )}
+              { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
+              { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option> }
+              { state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option> )}
               { state.allversions.map((build, i) => {
                 return _shouldBeAdded(build.longVersion)
-                  ? <option key={i} value={build.path}>{build.longVersion}</option>
+                  ? <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>{build.longVersion}</option>
                   : null
               })
               }
@@ -529,16 +536,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
-            <select onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
-              <option value="default">compiler default</option>
-              <option value="muirGlacier">muirGlacier</option>
-              <option value="istanbul">istanbul</option>
-              <option value="petersburg">petersburg</option>
-              <option value="constantinople">constantinople</option>
-              <option value="byzantium">byzantium</option>
-              <option value="spuriousDragon">spuriousDragon</option>
-              <option value="tangerineWhistle">tangerineWhistle</option>
-              <option value="homestead">homestead</option>
+            <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
+              <option data-id={state.evmVersion === 'default' ? 'selected' : ''} value="default">compiler default</option>
+              <option data-id={state.evmVersion === 'muirGlacier' ? 'selected' : ''} value="muirGlacier">muirGlacier</option>
+              <option data-id={state.evmVersion === 'istanbul' ? 'selected' : ''} value="istanbul">istanbul</option>
+              <option data-id={state.evmVersion === 'petersburg' ? 'selected' : ''} value="petersburg">petersburg</option>
+              <option data-id={state.evmVersion === 'constantinople' ? 'selected' : ''} value="constantinople">constantinople</option>
+              <option data-id={state.evmVersion === 'byzantium' ? 'selected' : ''} value="byzantium">byzantium</option>
+              <option data-id={state.evmVersion === 'spuriousDragon' ? 'selected' : ''} value="spuriousDragon">spuriousDragon</option>
+              <option data-id={state.evmVersion === 'tangerineWhistle' ? 'selected' : ''} value="tangerineWhistle">tangerineWhistle</option>
+              <option data-id={state.evmVersion === 'homestead' ? 'selected' : ''} value="homestead">homestead</option>
             </select>
           </div>
           <div className="mt-3">
@@ -556,7 +563,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   className="custom-select ml-2 remixui_runs"
                   id="runs"
                   placeholder="200"
-                  defaultValue="200"
+                  value={state.runs}
                   type="number"
                   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
                   onChange={(e) => onChangeRuns(e.target.value)}
