@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { ContractSelectionProps } from './types'
-import { PublishToStorage } from '@remix-ui/publish-to-storage'
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { CopyToClipboard } from '@remix-ui/clipboard'
+import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
 import './css/style.css'
 
@@ -61,7 +61,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return content
     // addTooltip('Copied value to clipboard')
   }
-  
+
   const getContractProperty = (property) => {
     if (!selectedContract) throw new Error('No contract compiled yet')
     const contractProperties = contractsDetails[selectedContract]
@@ -78,9 +78,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       return (
         <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={
           <div className="d-flex mt-2 flex-row remixui_label_item">
-          <label className="small font-weight-bold pr-1 remixui_label_key">{ key }:</label> 
-          <label className="m-0 remixui_label_value">{ data.self }</label>
-        </div>
+            <label className="small font-weight-bold pr-1 remixui_label_key">{ key }:</label>
+            <label className="m-0 remixui_label_value">{ data.self }</label>
+          </div>
         }>
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
@@ -90,15 +90,15 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     } else {
       return <TreeViewItem id={key.toString()} key={keyPath} label={
         <div className="d-flex mt-2 flex-row remixui_label_item">
-        <label className="small font-weight-bold pr-1 remixui_label_key">{ key }:</label> 
-        <label className="m-0 remixui_label_value">{ data.self }</label>
-      </div>
+          <label className="small font-weight-bold pr-1 remixui_label_key">{ key }:</label>
+          <label className="m-0 remixui_label_value">{ data.self }</label>
+        </div>
       } />
     }
   }
 
   const extractData = (item) => {
-    let ret = { children: null, self: null }
+    const ret = { children: null, self: null }
 
     if (item instanceof Array) {
       ret.children = item.map((item, index) => ({ key: index, value: item }))
@@ -121,16 +121,16 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       if (details[propertyName] !== '') {
         try {
           node = <div>
-            { (typeof details[propertyName] === 'object') ?
-              <TreeView id="treeView">
-                  {
-                    Object.keys(details[propertyName]).map((innerkey) => renderData(details[propertyName][innerkey], innerkey, innerkey))
-                  }
-                </TreeView> :  <TreeView id="treeView">
-                  {
-                    Object.keys(JSON.parse(details[propertyName])).map((innerkey) => renderData(JSON.parse(details[propertyName])[innerkey], innerkey, innerkey))
-                  }
-                </TreeView>
+            { (typeof details[propertyName] === 'object')
+              ? <TreeView id="treeView">
+                {
+                  Object.keys(details[propertyName]).map((innerkey) => renderData(details[propertyName][innerkey], innerkey, innerkey))
+                }
+              </TreeView> : <TreeView id="treeView">
+                {
+                  Object.keys(JSON.parse(details[propertyName])).map((innerkey) => renderData(JSON.parse(details[propertyName])[innerkey], innerkey, innerkey))
+                }
+              </TreeView>
             }
           </div> // catch in case the parsing fails.
         } catch (e) {
@@ -147,7 +147,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
   const details = () => {
     if (!selectedContract) throw new Error('No contract compiled yet')
-    
+
     const help = {
       Assembly: 'Assembly opcodes describing the contract including corresponding solidity source code',
       Opcodes: 'Assembly opcodes describing the contract',
@@ -168,7 +168,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         Object.keys(contractProperties).map((propertyName, index) => {
           const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} direction='top' /></span>
           const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
-        
+
           return (<div className="remixui_log" key={index}>
             <div className="remixui_key">{ propertyName } { copyDetails } { questionMark }</div>
             { insertValue(contractProperties, propertyName) }
@@ -187,8 +187,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   return (
     // define swarm logo
     <>
-      { contractList.length ?
-        <section className="remixui_compilerSection pt-3">
+      { contractList.length
+        ? <section className="remixui_compilerSection pt-3">
           {/* Select Compiler Version */}
           <div className="mb-3">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">Contract</label>
@@ -197,7 +197,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <button id="publishOnSwarm" className="btn btn-secondary btn-block" title="Publish on Swarm" onClick={() => { handlePublishToStorage('swarm')}}>
+            <button id="publishOnSwarm" className="btn btn-secondary btn-block" title="Publish on Swarm" onClick={() => { handlePublishToStorage('swarm') }}>
               <span>Publish on Swarm</span>
               <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
             </button>

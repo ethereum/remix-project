@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { RemixUiPublishToStorageProps } from './types'
+import { RemixUiPublishToStorageProps } from './types' // eslint-disable-line
 import { publishToIPFS } from './publishToIPFS'
 import { publishToSwarm } from './publishOnSwarm'
 
@@ -31,10 +31,11 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             // triggered each time there's a new verified publish (means hash correspond)
             fileProvider.addExternal('swarm/' + result.item.hash, result.item.content)
           } catch (err) {
+            let parseError = err
             try {
-              err = JSON.stringify(err)
+              parseError = JSON.stringify(err)
             } catch (e) {}
-            modal(`Swarm Publish Failed`, publishMessageFailed(storage, err))
+            modal('Swarm Publish Failed', publishMessageFailed(storage, parseError))
           }
         } else {
           try {
@@ -44,7 +45,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             // triggered each time there's a new verified publish (means hash correspond)
             fileProvider.addExternal('ipfs/' + result.item.hash, result.item.content)
           } catch (err) {
-            modal(`IPFS Publish Failed`, publishMessageFailed(storage, err))
+            modal('IPFS Publish Failed', publishMessageFailed(storage, err))
           }
         }
       }
@@ -67,7 +68,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
 
   const publishMessageFailed = (storage, err) => (
     <span>Failed to publish metadata file to { storage }, please check the { storage } gateways is available. <br />
-      {err} 
+      {err}
     </span>
   )
 
@@ -86,23 +87,23 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
           ...prevState.modal,
           hide: false,
           message,
-          title,
+          title
         }
       }
     })
   }
 
   return (
-      <ModalDialog
-        id='publishToStorage'
-        title={ state.modal.title }
-        message={ state.modal.message }
-        hide={ state.modal.hide }
-        okLabel='OK'
-        okFn={() => {}}
-        handleHide={ handleHideModal }>
-        { (typeof state.modal.message !== 'string') && state.modal.message }
-      </ModalDialog>
+    <ModalDialog
+      id='publishToStorage'
+      title={ state.modal.title }
+      message={ state.modal.message }
+      hide={ state.modal.hide }
+      okLabel='OK'
+      okFn={() => {}}
+      handleHide={ handleHideModal }>
+      { (typeof state.modal.message !== 'string') && state.modal.message }
+    </ModalDialog>
   )
 }
 

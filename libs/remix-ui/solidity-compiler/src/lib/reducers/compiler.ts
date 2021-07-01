@@ -56,7 +56,7 @@ export const compilerReducer = (state = compilerInitialState, action: Action) =>
         }
       }
     }
-  
+
     default:
       throw new Error()
   }

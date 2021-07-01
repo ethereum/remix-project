@@ -38,7 +38,7 @@ function browserSupportWorker () {
 
 // returns a promise for minixhr
 export function promisedMiniXhr (url) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     minixhr(url, (json, event) => {
       resolve({ json, event })
     })
