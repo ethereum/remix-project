@@ -259,7 +259,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const loadingCompiler = () => {
     if (!compileIcon.current) return
-    // _disableCompileBtn(true)
     compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
     compileIcon.current.classList.add('remixui_spinningIcon')
     warningIcon.current.style.visibility = 'hidden'
@@ -268,7 +267,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const compilerLoaded = () => {
     if (!compileIcon.current) return
-    // _disableCompileBtn(false)
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     if (state.autoCompile) compile()
@@ -349,10 +347,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // resort to non-worker version in that case.
     if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
       compileTabLogic.compiler.loadVersion(true, url)
-      // setVersionText('(loading using worker)')
     } else {
       compileTabLogic.compiler.loadVersion(false, url)
-      // setVersionText('(loading)')
     }
   }
 
@@ -360,10 +356,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return !version.includes('nightly') ||
            (version.includes('nightly') && state.includeNightlies)
   }
-
-  // const setVersionText = (text) => {
-  // if (this._view.version) this._view.version.innerText = text
-  // }
 
   const promptCompiler = () => {
     // custom url https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js
@@ -400,11 +392,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const _updateLanguageSelector = () => {
     // This is the first version when Yul is available
     if (!semver.valid(_retrieveVersion()) || semver.lt(_retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
-      // this._view.languageSelector.setAttribute('disabled', '')
-      // this._view.languageSelector.value = 'Solidity'
-      // this.compileTabLogic.setLanguage('Solidity')
-    } else {
-      // this._view.languageSelector.removeAttribute('disabled')
+      handleLanguageChange('Solidity')
+      compileTabLogic.setLanguage('Solidity')
     }
   }
 

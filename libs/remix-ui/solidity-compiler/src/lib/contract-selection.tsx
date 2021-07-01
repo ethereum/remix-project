@@ -48,7 +48,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const copyContractProperty = (property) => {
     let content = getContractProperty(property)
     if (!content) {
-      // addTooltip('No content available for ' + property)
       return
     }
 
@@ -59,7 +58,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     } catch (e) {}
 
     return content
-    // addTooltip('Copied value to clipboard')
   }
 
   const getContractProperty = (property) => {
