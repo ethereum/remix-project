@@ -17,11 +17,13 @@ export default class HardhatProvider extends Plugin {
   constructor (blockchain) {
     super(profile)
     this.provider = null
+    this.blocked = false // used to block any call when trying to recover after a failed connection.
     this.blockchain = blockchain
   }
 
   onDeactivation () {
     this.provider = null
+    this.blocked = false
   }
 
   hardhatProviderDialogBody () {
@@ -39,6 +41,8 @@ export default class HardhatProvider extends Plugin {
 
   sendAsync (data) {
     return new Promise((resolve, reject) => {
+      if (this.blocked) return reject(new Error('provider unable to connect'))
+      // If provider is not set, allow to open modal only when provider is trying to connect
       if (!this.provider) {
         modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.provider = new Web3.providers.HttpProvider(target)
@@ -54,9 +58,16 @@ export default class HardhatProvider extends Plugin {
 
   sendAsyncInternal (data, resolve, reject) {
     if (this.provider) {
-      this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
+      // Check the case where current environment is VM on UI and it still sends RPC requests
+      // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
+      if (this.blockchain.getProvider() !== 'Hardhat Provider' && data.method !== 'net_listening') return reject(new Error('Environment Updated !!'))
+      this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, async (error, message) => {
         if (error) {
+          this.blocked = true
+          modalDialogCustom.alert('Hardhat Provider', `Error while connecting to the hardhat provider: ${error.message}`)
+          await this.call('udapp', 'setEnvironmentMode', 'vm')
           this.provider = null
+          setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
           return reject(error)
         }
         resolve(message)
