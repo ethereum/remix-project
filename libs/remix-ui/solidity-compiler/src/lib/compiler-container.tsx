@@ -309,8 +309,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setState(prevState => {
         return { ...prevState, selectedVersion }
       })
-      updateCurrentVersion(selectedVersion)
     }
+    updateCurrentVersion(selectedVersion)
     queryParams.update({ version: selectedVersion })
     let url
 
