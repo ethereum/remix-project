@@ -21,6 +21,7 @@ export interface WorkspaceProps {
   request: any // api request,
   workspaces: any,
   registeredMenuItems: [] // menu items
+  removedMenuItems: []
   initialWorkspace: string
 }
 
@@ -409,6 +410,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     plugin={props.plugin}
                     focusRoot={state.reset}
                     contextMenuItems={props.registeredMenuItems}
+                    removedContextMenuItems={props.removedMenuItems}
                     displayInput={state.displayNewFile}
                     externalUploads={state.uploadFileEvent}
                   />
@@ -426,6 +428,7 @@ export const Workspace = (props: WorkspaceProps) => {
                         plugin={props.plugin}
                         focusRoot={state.reset}
                         contextMenuItems={props.registeredMenuItems}
+                        removedContextMenuItems={props.removedMenuItems}
                       />
                   }
                 </div>
