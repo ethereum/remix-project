@@ -1,15 +1,15 @@
 import React, { useState } from 'react' // eslint-disable-line
 import { SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
-import { ContractSelection } from './contract-selection'
+import { ContractSelection } from './contract-selection' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Renderer } from '@remix-ui/renderer'
+import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { plugin, plugin : { editor, config, queryParams, compileTabLogic, currentFile, fileProvider, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
+  const { plugin, plugin: { editor, config, queryParams, compileTabLogic, currentFile, fileProvider, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -28,16 +28,12 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       handleHide: null
     }
   })
-  const [currentVersion, setCurrentVersion] = useState('') 
+  const [currentVersion, setCurrentVersion] = useState('')
 
   const toast = (message: string) => {
     setState(prevState => {
       return { ...prevState, toasterMsg: message }
     })
-  }
-
-  const clearAnnotations = () => {
-    plugin.call('editor', 'clearAnnotations')
   }
 
   const updateCurrentVersion = (value) => {

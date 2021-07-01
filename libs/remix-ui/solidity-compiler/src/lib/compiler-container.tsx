@@ -60,13 +60,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
         const runs = params.runs
         const evmVersion = params.evmVersion
-  
+
         return {
           ...prevState,
           hideWarnings: config.get('hideWarnings') || false,
           autoCompile: config.get('autoCompile') || false,
           includeNightlies: config.get('includeNightlies') || false,
-          optimise:  (optimize !== null) && (optimize !== undefined) ? optimize : config.get('optimise') || false,
+          optimise: (optimize !== null) && (optimize !== undefined) ? optimize : config.get('optimise') || false,
           runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
@@ -100,7 +100,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           resetCompilerMode()(dispatch)
           break
         case 'compilationFinished':
-          compilationFinished(compilerContainer.compiler.args)
+          compilationFinished()
           resetCompilerMode()(dispatch)
           break
       }
@@ -274,11 +274,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (state.autoCompile) compile()
   }
 
-  const compilationFinished = ({ success, data, source }) => {
-      if (!compileIcon.current) return
-      compileIcon.current.setAttribute('title', 'idle')
-      compileIcon.current.classList.remove('remixui_spinningIcon')
-      compileIcon.current.classList.remove('remixui_bouncingIcon')
+  const compilationFinished = () => {
+    if (!compileIcon.current) return
+    compileIcon.current.setAttribute('title', 'idle')
+    compileIcon.current.classList.remove('remixui_spinningIcon')
+    compileIcon.current.classList.remove('remixui_bouncingIcon')
   }
 
   const scheduleCompilation = () => {
@@ -490,7 +490,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setHardHatCompilation(checked)
   }
 
-    /*
+  /*
     The following functions map with the above event handlers.
     They are an external API for modifying the compiler configuration.
   */
@@ -514,7 +514,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option> }
-              { state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option> )}
+              { state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option>)}
               { state.allversions.map((build, i) => {
                 return _shouldBeAdded(build.longVersion)
                   ? <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>{build.longVersion}</option>

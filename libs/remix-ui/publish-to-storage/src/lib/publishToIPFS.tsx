@@ -10,7 +10,7 @@ export const publishToIPFS = async (contract, fileManager) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  let item = { content: null, hash: null }
+  const item = { content: null, hash: null }
   const uploaded = []
 
   try {
