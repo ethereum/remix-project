@@ -18,7 +18,7 @@ import './css/file-explorer.css'
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
+  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems } = props
   const [state, setState] = useState({
     focusElement: [{
       key: '',
@@ -203,6 +203,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       addMenuItems(contextMenuItems)
     }
   }, [contextMenuItems])
+
+  useEffect(() => {
+    if (removedContextMenuItems) {
+      removeMenuItems(removedContextMenuItems)
+    }
+  }, [removedContextMenuItems])
 
   useEffect(() => {
     if (displayInput) {

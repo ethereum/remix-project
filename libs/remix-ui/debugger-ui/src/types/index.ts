@@ -27,7 +27,10 @@ export interface DropdownPanelProps {
     registerEvent?: Function,
     triggerEvent?: Function,
     loadMoreEvent?: string,
-    loadMoreCompletedEvent?: string
+    loadMoreCompletedEvent?: string,
+    bodyStyle?: React.CSSProperties,
+    headStyle?: React.CSSProperties,
+    hexHighlight?: boolean // highlight non zero value of hex value
 }
 
 export type FormatSelfFunc = (key: string | number, data: ExtractData) => JSX.Element

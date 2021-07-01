@@ -60,6 +60,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.gitHandle = new GitHandle()
     this.hardhatHandle = new HardhatHandle()
     this.registeredMenuItems = []
+    this.removedMenuItems = []
     this.request = {}
     this.workspaces = []
     this.initialWorkspace = null
@@ -89,6 +90,7 @@ module.exports = class Filepanel extends ViewPlugin {
         request={this.request}
         workspaces={this.workspaces}
         registeredMenuItems={this.registeredMenuItems}
+        removedMenuItems={this.removedMenuItems}
         initialWorkspace={this.initialWorkspace}
       />
       , this.el)
@@ -106,6 +108,18 @@ module.exports = class Filepanel extends ViewPlugin {
       return o.id === item.id & o.name === item.name
     }).length) throw new Error(`Action ${item.name} already exists on ${item.id}`)
     this.registeredMenuItems = [...this.registeredMenuItems, item]
+    this.removedMenuItems = this.removedMenuItems.filter(id => item.id !== id)
+    this.renderComponent()
+  }
+
+  removePluginActions (plugin) {
+    this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
+      if (item.id !== plugin.name || item.sticky === true) return true
+      else {
+        this.removedMenuItems.push(item.id)
+        return false
+      }
+    })
     this.renderComponent()
   }
 
@@ -173,6 +187,9 @@ module.exports = class Filepanel extends ViewPlugin {
       }
       return
     }
+
+    const self = this
+    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
     // insert example contracts if there are no files to show
     return new Promise((resolve, reject) => {
       this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
