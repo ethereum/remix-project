@@ -1,6 +1,5 @@
 import React from 'react'
 import '../remix-ui-plugin-manager.css'
-import ''
 import Button from './button'
 interface PluginCardProps {
   profileName: string
