@@ -89,7 +89,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
     })
     return () => { }
-  })
+  }, [props.analysisModule])
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
