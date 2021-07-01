@@ -1,6 +1,7 @@
 'use strict'
 import { add } from './util'
 import { RefType } from './RefType'
+import { Mapping } from './Mapping'
 
 export class Struct extends RefType {
   members
@@ -33,7 +34,7 @@ export class Struct extends RefType {
       var contentOffset = offset
       var member = item.type.decodeFromMemory(contentOffset, memory)
       ret[item.name] = member
-      offset += 32
+      if (!(item.type instanceof Mapping)) offset += 32
     })
     return { value: ret, type: this.typeName }
   }

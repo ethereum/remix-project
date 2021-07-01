@@ -208,8 +208,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
         return null
       },
-      debugWithGeneratedSources: state.opt.debugWithGeneratedSources,
-      fork: 'berlin'
+      debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
 
     debuggerInstance.debug(blockNumber, txNumber, tx, () => {
@@ -275,7 +274,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <div className="px-2">
         <div>
           <p className="my-2 debuggerLabel">Debugger Configuration</p>
-          <div className="mt-2 debuggerConfig custom-control custom-checkbox">
+          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { debugWithGeneratedSources: checked } }
