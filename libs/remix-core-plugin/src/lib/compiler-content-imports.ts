@@ -154,11 +154,10 @@ export class CompilerImports extends Plugin {
                   resolve(result)
                 })
               }
-            })
-
-            this.importExternal(url, targetPath, (error, content) => {
-              if (error) return reject(error)
-              resolve(content)
+              this.importExternal(url, targetPath, (error, content) => {
+                if (error) return reject(error)
+                resolve(content)
+              })
             })
           }).catch(error => {
             return reject(error)
