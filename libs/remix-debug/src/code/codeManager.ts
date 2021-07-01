@@ -4,6 +4,7 @@ import { EventManager } from '../eventManager'
 import { isContractCreation } from '../trace/traceHelper'
 import { findNodeAtInstructionIndex } from '../source/sourceMappingDecoder'
 import { CodeResolver } from './codeResolver'
+import { TraceManager } from '../trace/traceManager' // eslint-disable-line
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
@@ -15,7 +16,7 @@ import { CodeResolver } from './codeResolver'
 export class CodeManager {
   event
   isLoading: boolean
-  traceManager
+  traceManager: TraceManager
   codeResolver
 
   constructor (_traceManager) {
@@ -32,7 +33,8 @@ export class CodeManager {
             return resolve(code)
           })
         })
-      }
+      },
+      fork: this.traceManager.getCurrentFork()
     })
   }
 
@@ -143,15 +145,38 @@ export class CodeManager {
     })
   }
 
-  private retrieveIndexAndTrigger (codeMananger, address, step, code) {
+  private async retrieveIndexAndTrigger (codeMananger, address, step, code) {
     let result
+    let next
+    const returnInstructionIndexes = []
+    const outOfGasInstructionIndexes = []
+
     try {
       result = codeMananger.getInstructionIndex(address, step)
+      next = codeMananger.getInstructionIndex(address, step + 1)
+
+      let values = this.traceManager.getAllStopIndexes()
+      if (values) {
+        for (const value of values) {
+          if (value.address === address) {
+            returnInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
+          }
+        }
+      }
+
+      values = this.traceManager.getAllOutofGasIndexes()
+      if (values) {
+        for (const value of values) {
+          if (value.address === address) {
+            outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
+          }
+        }
+      }
     } catch (error) {
       return console.log(error)
     }
     try {
-      codeMananger.event.trigger('changed', [code, address, result])
+      codeMananger.event.trigger('changed', [code, address, result, next, returnInstructionIndexes, outOfGasInstructionIndexes])
     } catch (e) {
       console.log('dispatching event failed', e)
     }

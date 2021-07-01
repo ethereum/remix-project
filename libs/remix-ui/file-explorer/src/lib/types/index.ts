@@ -1,3 +1,5 @@
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
@@ -6,9 +8,10 @@ export interface FileExplorerProps {
     menuItems?: string[],
     plugin: any,
     focusRoot: boolean,
-    contextMenuItems: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[],
+    contextMenuItems: MenuItems,
+    removedContextMenuItems: MenuItems,
     displayInput?: boolean,
-    externalUploads?: EventTarget & HTMLInputElement
+    externalUploads?: EventTarget & HTMLInputElement,
 }
 
 export interface File {
@@ -29,11 +32,14 @@ export interface FileExplorerMenuProps {
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
 
+export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean }
+
+export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
-    actions: { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string }[],
+    actions: action[],
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
-    deletePath: (path: string) => void,
+    deletePath: (path: string | string[]) => void,
     renamePath: (path: string, type: string) => void,
     hideContextMenu: () => void,
     publishToGist?: (path?: string, type?: string) => void,
@@ -41,12 +47,13 @@ export interface FileExplorerContextMenuProps {
     publishFolderToGist?: (path?: string, type?: string) => void,
     publishFileToGist?: (path?: string, type?: string) => void,
     runScript?: (path: string) => void,
-    emit?: (id: string, path: string) => void,
+    emit?: (cmd: customAction) => void,
     pageX: number,
     pageY: number,
     path: string,
     type: string,
+    focus: {key:string, type:string}[],
     onMouseOver?: (...args) => void,
-    copy?: (path: string, type: string) => void
+    copy?: (path: string, type: string) => void,
     paste?: (destination: string, type: string) => void
 }

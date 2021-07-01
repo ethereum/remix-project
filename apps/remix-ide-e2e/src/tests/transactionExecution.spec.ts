@@ -148,9 +148,34 @@ module.exports = {
       .click('.instance:nth-of-type(3) > div > button')
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
-      .journalLastChildIncludes('CustomError')
+      .journalLastChildIncludes('CustomError : error description')
       .journalLastChildIncludes('Parameters:')
-      .journalLastChildIncludes('2,3,error_string_2')
+      .journalLastChildIncludes('"value": "2",')
+      .journalLastChildIncludes('"value": "3",')
+      .journalLastChildIncludes('"value": "error_string_2",')
+      .journalLastChildIncludes('"documentation": "param1"')
+      .journalLastChildIncludes('"documentation": "param2"')
+      .journalLastChildIncludes('"documentation": "param3"')
+      .journalLastChildIncludes('Debug the transaction to get more information.')
+  },
+
+  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+      .click('#runTabView button[class^="instanceButton"]')
+      .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
+      .clickFunction('g - transact (not payable)')
+      .journalLastChildIncludes('Error provided by the contract:')
+      .journalLastChildIncludes('CustomError : error description')
+      .journalLastChildIncludes('Parameters:')
+      .journalLastChildIncludes('"value": "2",')
+      .journalLastChildIncludes('"value": "3",')
+      .journalLastChildIncludes('"value": "error_string_2",')
+      .journalLastChildIncludes('"documentation": "param1"')
+      .journalLastChildIncludes('"documentation": "param2"')
+      .journalLastChildIncludes('"documentation": "param3"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
       .end()
   }
@@ -241,6 +266,10 @@ contract C {
 
       pragma solidity ^0.8.4;
       
+      /// error description
+      /// @param a param1
+      /// @param b param2
+      /// @param c param3
       error CustomError(uint a, uint b, string c);
       contract C {
           function f() public pure {

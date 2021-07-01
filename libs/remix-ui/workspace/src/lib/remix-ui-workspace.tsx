@@ -3,6 +3,7 @@ import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
+import { MenuItems } from 'libs/remix-ui/file-explorer/src/lib/types'
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
@@ -20,7 +21,8 @@ export interface WorkspaceProps {
   plugin: any // plugin call and resetFocus
   request: any // api request,
   workspaces: any,
-  registeredMenuItems: [] // menu items
+  registeredMenuItems: MenuItems // menu items
+  removedMenuItems: MenuItems
   initialWorkspace: string
 }
 
@@ -74,9 +76,10 @@ export const Workspace = (props: WorkspaceProps) => {
     let getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
         if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
-          await props.workspace.setWorkspace(props.workspaces[0])
+          const currentWorkspace = props.workspace.getWorkspace() ? props.workspace.getWorkspace() : props.workspaces[0]
+          await props.workspace.setWorkspace(currentWorkspace)
           setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
+            return { ...prevState, workspaces: props.workspaces, currentWorkspace }
           })
         } else {
           setState(prevState => {
@@ -408,6 +411,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     plugin={props.plugin}
                     focusRoot={state.reset}
                     contextMenuItems={props.registeredMenuItems}
+                    removedContextMenuItems={props.removedMenuItems}
                     displayInput={state.displayNewFile}
                     externalUploads={state.uploadFileEvent}
                   />
@@ -425,6 +429,7 @@ export const Workspace = (props: WorkspaceProps) => {
                         plugin={props.plugin}
                         focusRoot={state.reset}
                         contextMenuItems={props.registeredMenuItems}
+                        removedContextMenuItems={props.removedMenuItems}
                       />
                   }
                 </div>
