@@ -12,7 +12,7 @@ const profile = {
 export class CompileTab extends Plugin {
   public compiler
   public optimize
-  public runs: number
+  public runs
   public evmVersion: string
   public compilerImport
   public event
@@ -30,7 +30,7 @@ export class CompileTab extends Plugin {
     this.compiler.set('optimize', this.optimize)
 
     this.runs = this.queryParams.get().runs
-    this.runs = this.runs || 200
+    this.runs = this.runs && this.runs !== 'undefined' ? this.runs : 200
     this.queryParams.update({ runs: this.runs })
     this.compiler.set('runs', this.runs)
 
