@@ -17,52 +17,8 @@ import './css/file-explorer.css'
 
 const queryParams = new QueryParams()
 
-const initialActions = [{
-  id: 'newFile',
-  name: 'New File',
-  type: ['folder'],
-  path: [],
-  extension: [],
-  pattern: []
-}, {
-  id: 'newFolder',
-  name: 'New Folder',
-  type: ['folder'],
-  path: [],
-  extension: [],
-  pattern: []
-}, {
-  id: 'rename',
-  name: 'Rename',
-  type: ['file', 'folder'],
-  path: [],
-  extension: [],
-  pattern: []
-}, {
-  id: 'delete',
-  name: 'Delete',
-  type: ['file', 'folder'],
-  path: [],
-  extension: [],
-  pattern: []
-}, {
-  id: 'pushChangesToGist',
-  name: 'Push changes to gist',
-  type: [],
-  path: [],
-  extension: [],
-  pattern: ['^browser/gists/([0-9]|[a-z])*$']
-}, {
-  id: 'run',
-  name: 'Run',
-  type: [],
-  path: [],
-  extension: ['.js'],
-  pattern: []
-}]
-
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
+  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems } = props
   const [state, setState] = useState({
     focusElement: [{
       key: '',
@@ -247,6 +203,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       addMenuItems(contextMenuItems)
     }
   }, [contextMenuItems])
+
+  useEffect(() => {
+    if (removedContextMenuItems) {
+      removeMenuItems(removedContextMenuItems)
+    }
+  }, [removedContextMenuItems])
 
   useEffect(() => {
     if (displayInput) {

@@ -9,8 +9,9 @@ export interface FileExplorerProps {
     plugin: any,
     focusRoot: boolean,
     contextMenuItems: MenuItems,
+    removedContextMenuItems: string[],
     displayInput?: boolean,
-    externalUploads?: EventTarget & HTMLInputElement
+    externalUploads?: EventTarget & HTMLInputElement,
 }
 
 export interface File {
