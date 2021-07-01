@@ -228,7 +228,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                       }
                       location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
                         location,
-                        0,
+                        Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative),
                         lastCompilationSource.sources,
                         lastCompilationResult.sources
                       )
