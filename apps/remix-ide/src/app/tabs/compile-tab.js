@@ -46,7 +46,6 @@ class CompileTab extends ViewPlugin {
     // dependencies
     this.editor = editor
     this.config = config
-    // this.renderer = new Renderer(this)
     this.fileManager = fileManager
     this.contractsDetails = {}
     this.data = {
