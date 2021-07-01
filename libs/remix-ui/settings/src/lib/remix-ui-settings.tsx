@@ -22,6 +22,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
+    props._deps.themeModule.switchTheme()
     const token = props.config.get('settings/gist-access-token')
     if (token === undefined) {
       props.config.set('settings/generate-contract-metadata', true)
@@ -140,7 +141,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (themes) {
       return themes.map((aTheme, index) => (
         <div className="radio custom-control custom-radio mb-1 form-check" key={index}>
-          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name ? true : null}/>
+          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name }/>
           <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${aTheme.name}`} htmlFor={aTheme.name}>{aTheme.name} ({aTheme.quality})</label>
         </div>
       )
