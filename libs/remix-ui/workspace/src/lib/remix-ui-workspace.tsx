@@ -3,6 +3,7 @@ import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
+import { MenuItems } from 'libs/remix-ui/file-explorer/src/lib/types'
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
@@ -20,8 +21,8 @@ export interface WorkspaceProps {
   plugin: any // plugin call and resetFocus
   request: any // api request,
   workspaces: any,
-  registeredMenuItems: [] // menu items
-  removedMenuItems: []
+  registeredMenuItems: MenuItems // menu items
+  removedMenuItems: MenuItems
   initialWorkspace: string
 }
 
