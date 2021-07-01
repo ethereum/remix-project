@@ -58,11 +58,11 @@ function errorHandler (error: any, service: string) {
   program
     .usage('-s <shared folder>')
     .description('Provide a two-way connection between the local computer and Remix IDE')
-    .option('--remix-ide  <url>', 'URL of remix instance allowed to connect to this web sockect connection')
+    .option('-u, --remix-ide  <url>', 'URL of remix instance allowed to connect to this web sockect connection')
     .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
-    .option('--read-only', 'Treat shared folder as read-only (experimental)')
+    .option('-r, --read-only', 'Treat shared folder as read-only (experimental)')
     .on('--help', function () {
-      console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
+      console.log('\nExample:\n\n    remixd -s ./ -u http://localhost:8080')
     }).parse(process.argv)
   // eslint-disable-next-line
 
