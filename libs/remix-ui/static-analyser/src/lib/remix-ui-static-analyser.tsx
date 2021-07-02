@@ -57,14 +57,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState('hidden')
-  // Show checkbox to select to display only Slither Analysis
-  const [showSlitherResult, setShowSlitherResult] = useState('none')
-  const [slitherResultEnabled, setSlitherResultEnabled] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
   const [warningState, setWarningState] = useState({})
-  const [allWarnings, setAllWarnings] = useState({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   useEffect(() => {
@@ -73,7 +69,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     setWarningState({})
-    setAllWarnings({})
     if (autoRun) {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
@@ -128,22 +123,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
 
     const groupedCategory = groupBy(resultArray, groupByKey)
-    setAllWarnings(groupedCategory)
     setWarningState(groupedCategory)
-  }
-
-  const showWarningsByModule = (showOnlyModule: string) => {
-    let count = 0
-    if (allWarnings[showOnlyModule]) {
-      const newWarningState = {}
-      newWarningState[showOnlyModule] = allWarnings[showOnlyModule]
-      setWarningState({ [showOnlyModule]: allWarnings[showOnlyModule] })
-      count = allWarnings[showOnlyModule].length
-    } else if (showOnlyModule === 'all') {
-      setWarningState(allWarnings)
-      for (const e in allWarnings) count += allWarnings[e].length
-    }
-    props.event.trigger('staticAnaysisWarning', [count])
   }
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
@@ -257,11 +237,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   })
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
-                  if (showSlitherResult === 'none') {
-                    setShowSlitherResult('block')
-                  } else if (showSlitherResult === 'block' && slitherResultEnabled) {
-                    showWarningsByModule('Slither Analysis')
-                  }
                 }
               }).catch((error) => {
                 console.log('Error found:', error) // This should be removed once testing done
@@ -269,11 +244,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               })
             })
           } else {
-            setShowSlitherResult('none')
             showWarnings(warningMessage, 'warningModuleName')
-            if (categoryIndex.length > 0) {
-              props.event.trigger('staticAnaysisWarning', [warningCount])
-            }
+            props.event.trigger('staticAnaysisWarning', [warningCount])
           }
         })
       } else {
@@ -316,16 +288,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setSlitherEnabled(false)
     } else {
       setSlitherEnabled(true)
-    }
-  }
-
-  const handleShowSlitherResultEnabled = () => {
-    if (slitherResultEnabled) {
-      setSlitherResultEnabled(false)
-      showWarningsByModule('all')
-    } else {
-      setSlitherResultEnabled(true)
-      showWarningsByModule('Slither Analysis')
     }
   }
 
@@ -457,17 +419,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         >
           {state.file}
         </span>
-      </div>
-      <div className="d-flex" id="onlySlitherResult">
-        <RemixUiCheckbox
-          id="showOnlySlitherResult"
-          inputType="checkbox"
-          onClick={handleShowSlitherResultEnabled}
-          checked={slitherResultEnabled}
-          label="Show Only Slither Analysis"
-          onChange={() => {}}
-          display = {showSlitherResult}
-        />
       </div>
       <br/>
       {Object.entries(warningState).length > 0 &&
