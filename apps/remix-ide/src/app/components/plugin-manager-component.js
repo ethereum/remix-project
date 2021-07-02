@@ -1,5 +1,8 @@
 import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
 import { PluginManagerSettings } from './plugin-manager-settings'
+import React from 'react'
+import { ReactDOM } from 'react-dom'
+import { RemixUIPluginManager } from '@remix-ui/plugin-manager'
 import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
@@ -96,6 +99,12 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager.event.on('deactivate', () => { this.reRender() })
     this.engine = engine
     this.engine.event.on('onRegistration', () => { this.reRender() })
+    this.htmlElement = document.createElement('div')
+    this.htmlElement.setAttribute('id', 'pluginManager')
+  }
+
+  onActivation () {
+    this.renderComponent()
   }
 
   isActive (name) {
@@ -188,8 +197,14 @@ class PluginManagerComponent extends ViewPlugin {
     }
   }
 
+  // return this.htmlElement()
+
+  // render () {
+  //   return this.htmlElement()
+  // }
+
   render () {
-    // Filtering helpers
+  // Filtering helpers
     const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
     const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
     const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
@@ -215,44 +230,50 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activeTile = actives.length !== 0
       ? yo`
-      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
-        <span class="navbar-brand plugins-list-title">Active Modules</span>
-        <span class="badge badge-primary" data-id="pluginManagerComponentActiveTilesCount">${actives.length}</span>
-      </nav>`
+    <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
+    <span class="navbar-brand plugins-list-title">Active Modules</span>
+    <span class="badge badge-primary" data-id="pluginManagerComponentActiveTilesCount">${actives.length}</span>
+    </nav>
+    `
       : ''
     const inactiveTile = inactives.length !== 0
       ? yo`
-      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
-        <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
-        <span class="badge badge-primary" style = "cursor: default;" data-id="pluginManagerComponentInactiveTilesCount">${inactives.length}</span>
-      </nav>`
+    <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
+    <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
+    <span class="badge badge-primary" style = "cursor: default;" data-id="pluginManagerComponentInactiveTilesCount">${inactives.length}</span>
+    </nav>
+    `
       : ''
 
     const settings = new PluginManagerSettings().render()
 
     const rootView = yo`
-      <div id='pluginManager' data-id="pluginManagerComponentPluginManager">
-        <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
-          <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput">
-          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
-            Connect to a Local Plugin
-          </button>
-        </header>
-        <section data-id="pluginManagerComponentPluginManagerSection">
-          ${activeTile}
-          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-            ${actives.map(profile => this.renderItem(profile))}
-          </div>
-          ${inactiveTile}
-          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
-            ${inactives.map(profile => this.renderItem(profile))}
-          </div>
-        </section>
-        ${settings}
-      </div>
-    `
+  <div id='pluginManager' data-id="pluginManagerComponentPluginManager">
+  <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
+    <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput">
+    <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
+      Connect to a Local Plugin
+    </button>
+  </header>
+  <section data-id="pluginManagerComponentPluginManagerSection">
+    ${activeTile}
+    <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
+      ${actives.map(profile => this.renderItem(profile))}
+    </div>
+    ${inactiveTile}
+    <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
+      ${inactives.map(profile => this.renderItem(profile))}
+    </div>
+  </section>
+  ${settings}
+  </div>
+  `
     if (!this.views.root) this.views.root = rootView
     return rootView
+  }
+
+  renderComponent () {
+    ReactDOM.render(<RemixUIPluginManager />, this.htmElement)
   }
 
   reRender () {
