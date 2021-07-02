@@ -412,7 +412,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         }
       </div>
       <div className="mt-2 p-2 d-flex border-top flex-column">
-        <span>last results for:</span>
+        <span>Last results for:</span>
         <span
           className="text-break break-word word-break font-weight-bold"
           id="staticAnalysisCurrentFile"
