@@ -18,3 +18,12 @@ export type Profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
   version: string
 }
+
+export type LocalPlugin = {
+  create: () => Profile
+  updateName: (target: string) => void
+  updateDisplayName: (displayName: string) => void
+  updateProfile: (key: string, e: Event) => void
+  updateMethods: (target: any) => void
+  form: () => HTMLElement
+}
