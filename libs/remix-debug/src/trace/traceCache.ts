@@ -5,6 +5,8 @@ const { sha3_256 } = util
 
 export class TraceCache {
   returnValues
+  stopIndexes
+  outofgasIndexes
   currentCall
   callsTree
   callsData
@@ -24,6 +26,8 @@ export class TraceCache {
     // ...Changes contains index in the vmtrace of the corresponding changes
 
     this.returnValues = {}
+    this.stopIndexes = []
+    this.outofgasIndexes = []
     this.currentCall = null
     this.callsTree = null
     this.callsData = {}
@@ -59,7 +63,7 @@ export class TraceCache {
         this.currentCall.call.reverted = reverted
       }
       var parent = this.currentCall.parent
-      this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
+      if (parent) this.currentCall = { call: parent.call, parent: parent.parent }
       return
     }
     const call = {
@@ -76,6 +80,14 @@ export class TraceCache {
       this.callsTree = { call: call }
     }
     this.currentCall = { call: call, parent: this.currentCall }
+  }
+
+  pushOutOfGasIndex (index, address) {
+    this.outofgasIndexes.push({ index, address })
+  }
+
+  pushStopIndex (index, address) {
+    this.stopIndexes.push({ index, address })
   }
 
   pushReturnValue (step, value) {
