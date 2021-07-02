@@ -1,3 +1,5 @@
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
@@ -7,8 +9,9 @@ export interface FileExplorerProps {
     plugin: any,
     focusRoot: boolean,
     contextMenuItems: MenuItems,
+    removedContextMenuItems: MenuItems,
     displayInput?: boolean,
-    externalUploads?: EventTarget & HTMLInputElement
+    externalUploads?: EventTarget & HTMLInputElement,
 }
 
 export interface File {
@@ -44,7 +47,7 @@ export interface FileExplorerContextMenuProps {
     publishFolderToGist?: (path?: string, type?: string) => void,
     publishFileToGist?: (path?: string, type?: string) => void,
     runScript?: (path: string) => void,
-    emit?: (id: string, path: string | string[]) => void,
+    emit?: (cmd: customAction) => void,
     pageX: number,
     pageY: number,
     path: string,
