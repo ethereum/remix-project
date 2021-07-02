@@ -1,5 +1,6 @@
 'use strict'
 import { BN, bufferToHex, keccak, setLengthLeft, toBuffer, addHexPrefix } from 'ethereumjs-util'
+import stringSimilarity from 'string-similarity'
 
 /*
  contains misc util: @TODO should be splitted
@@ -222,9 +223,11 @@ export function compareByteCode (code1, code2) {
   code2 = this.extractSwarmHash(code2)
   code2 = this.extractcborMetadata(code2)
 
-  if (code1 && code2 && code1.indexOf(code2) === 0) {
-    return true
+  if (code1 && code2) {
+    const compare = stringSimilarity.compareTwoStrings(code1, code2)
+    return compare > 0.93
   }
+
   return false
 }
 /* util extracted out from remix-ide. @TODO split this file, cause it mix real util fn with solidity related stuff ... */

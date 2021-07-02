@@ -13,6 +13,7 @@ import * as txFormat from './execution/txFormat'
 import { TxListener } from './execution/txListener'
 import { TxRunner } from './execution/txRunner'
 import { LogsManager } from './execution/logsManager'
+import { forkAt } from './execution/forkAt'
 import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
@@ -45,7 +46,8 @@ function modules () {
       TxRunnerWeb3: TxRunnerWeb3,
       TxRunnerVM: TxRunnerVM,
       typeConversion: typeConversion,
-      LogsManager
+      LogsManager,
+      forkAt
     }
   }
 }
