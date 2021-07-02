@@ -128,7 +128,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (state.data !== null) {
-      if (lastCompilationResult && categoryIndex.length > 0) {
+      if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
         let warningCount = 0
         const warningMessage = []
         const warningErrors = []
@@ -388,7 +388,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Autorun"
             onChange={() => {}}
           />
-          <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={state.data === null || categoryIndex.length === 0 }/>
+          <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
         </div>
         <div className="d-flex" id="enableSlitherAnalysis">
           <RemixUiCheckbox
