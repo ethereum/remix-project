@@ -11,13 +11,14 @@ import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem
 import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 import './css/file-explorer.css'
 
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
+  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems } = props
   const [state, setState] = useState({
     focusElement: [{
       key: '',
@@ -204,6 +205,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [contextMenuItems])
 
   useEffect(() => {
+    if (removedContextMenuItems) {
+      removeMenuItems(removedContextMenuItems)
+    }
+  }, [contextMenuItems])
+
+  useEffect(() => {
     if (displayInput) {
       handleNewFileInput()
       plugin.resetNewFile()
@@ -278,7 +285,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
         multiselect: false
       }])
     } else {
-      removeMenuItems(['paste'])
+      removeMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false
+      }])
     }
   }, [canPaste])
 
@@ -291,10 +306,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const removeMenuItems = (ids: string[]) => {
+  const removeMenuItems = (items: MenuItems) => {
     setState(prevState => {
-      const actions = prevState.actions.filter(({ id }) => ids.findIndex(value => value === id) === -1)
-
+      const actions = prevState.actions.filter(({ id, name }) => items.findIndex(item => id === item.id && name === item.name) === -1)
       return { ...prevState, actions }
     })
   }
@@ -601,8 +615,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const emitContextMenuEvent = (id: string, path: string | string[]) => {
-    plugin.emit(id, path)
+  const emitContextMenuEvent = (cmd: customAction) => {
+    plugin.call(cmd.id, cmd.name, cmd)
   }
 
   const handleHideModal = () => {
