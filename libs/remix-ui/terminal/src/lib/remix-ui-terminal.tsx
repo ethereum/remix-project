@@ -18,7 +18,7 @@ export interface RemixUiTerminalProps {
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
-
+  const [inserted, setInserted] = useState(false)
   // events
   useEffect(() => {
     // window.addEventListener('resize', function () {
@@ -46,6 +46,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     console.log(props.event, 'event.trigger')
   }
+
+  const reattached = (event) => {
+    let el = event.currentTarget
+    var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
+    if (isBottomed) {
+
+    }
+  }
+
+
   return (
     <div>
       <div className="bar">
@@ -91,7 +101,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
         </div>
       </div>
-      <div className="terminal_container" data-id="terminalContainer" > 
+      <div className="terminal_container" data-id="terminalContainer" >
         {/* onScroll=${throttle(reattach, 10)} onkeydown=${focusinput} */}
         {/* {props.autoCompletePopup.render()} */}
         {console.log({ props })}
@@ -103,6 +113,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           zIndex: -1
         }}></div>
         <div className="terminal">
+          <div id="journal" className="journal" data-id="terminalJournal">
+          </div>
         </div>
       </div>
     </div>
