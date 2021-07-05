@@ -16,7 +16,11 @@ export type Profile = {
   kind: 'settings',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
-  version: string
+  version: any
+}
+
+export type TileLabel = {
+  label: 'Active Module' | 'Inactive Modules'
 }
 
 export type LocalPlugin = {

@@ -92,7 +92,7 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    // this.event = new EventEmitter()
+    // this.event = new EventEmitter() //already exists in engine so not needed here
     // this.appManager = appManager
     // this.engine = engine
     this.htmlElement = document.createElement('div')
@@ -120,15 +120,15 @@ class PluginManagerComponent extends ViewPlugin {
   //   return this.appManager.actives.includes(name)
   // }
 
-  // activateP (name) {
-  //   this.appManager.activatePlugin(name)
-  //   _paq.push(['trackEvent', 'manager', 'activate', name])
-  // }
+  activateP (name) {
+    this.appManager.activatePlugin(name)
+    _paq.push(['trackEvent', 'manager', 'activate', name])
+  }
 
-  // deactivateP (name) {
-  //   this.call('manager', 'deactivatePlugin', name)
-  //   _paq.push(['trackEvent', 'manager', 'deactivate', name])
-  // }
+  deactivateP (name) {
+    this.call('manager', 'deactivatePlugin', name)
+    _paq.push(['trackEvent', 'manager', 'deactivate', name])
+  }
 
   // renderItem (profile) {
   //   const displayName = (profile.displayName) ? profile.displayName : profile.name
@@ -206,23 +206,17 @@ class PluginManagerComponent extends ViewPlugin {
     }
   }
 
-  // // return this.htmlElement()
-
-  // // render () {
-  // //   return this.htmlElement()
-  // // }
-
   render () {
-    // // Filtering helpers
-    //   const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
-    //   const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
-    //   const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
-    //   const isNotHome = (profile) => profile.name !== 'home'
-    //   const sortByName = (profileA, profileB) => {
-    //     const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
-    //     const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
-    //     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
-    //   }
+    // Filtering helpers
+    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+    const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
+    const isNotHome = (profile) => profile.name !== 'home'
+    const sortByName = (profileA, profileB) => {
+      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
+      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    }
 
     //   // Filter all active and inactive modules that are not required
     //   const { actives, inactives } = this.appManager.getAll()

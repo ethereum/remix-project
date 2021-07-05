@@ -5,7 +5,7 @@ interface PluginCardProps {
   profileName: string
   displayName: string
   docLink: string
-  versionWarning: string
+  versionWarning: any
   profileIcon: string
   profileDescription: string
 }
