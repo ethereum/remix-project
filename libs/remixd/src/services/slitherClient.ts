@@ -127,9 +127,10 @@ export class SlitherClient extends PluginClient {
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
       const cmd: string = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
-      console.log('command--->', cmd)
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
-      const child = spawn(cmd, options)
+      // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
+      // get too big and hangs the process. We process analysis from the report file only
+      const child = spawn(cmd, { cwd: this.currentSharedFolder, shell: true, stdio: 'ignore' })
       const response = {}
       child.on('close', () => {
         const outputFileAbsPath: string = `${this.currentSharedFolder}/${outputFile}`
