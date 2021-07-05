@@ -12,7 +12,8 @@ import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 export interface RemixUiSettingsProps {
   config: any,
   editor: any,
-   _deps: any
+   _deps: any,
+   useMatomoAnalytics: boolean
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
@@ -33,24 +34,28 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
   }, [themeName, state.message])
 
+  useEffect(() => {
+    if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
+  }, [props.useMatomoAnalytics])
+
   const onchangeGenerateContractMetadata = (event) => {
-    generateContractMetadat(props, event, dispatch)
+    generateContractMetadat(props.config, event.target.checked, dispatch)
   }
 
   const onchangeOption = (event) => {
-    etherumVM(props, event, dispatch)
+    etherumVM(props.config, event.target.checked, dispatch)
   }
 
   const textWrapEvent = (event) => {
-    textWrapEventAction(props, event, dispatch)
+    textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
   const onchangePersonal = event => {
-    personal(props, event, dispatch)
+    personal(props.config, event.target.checked, dispatch)
   }
 
   const onchangeMatomoAnalytics = event => {
-    useMatomoAnalytics(props, event, dispatch)
+    useMatomoAnalytics(props.config, event.target.checked, dispatch)
   }
 
   const onswitchTheme = (event, name) => {
