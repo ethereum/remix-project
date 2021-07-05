@@ -215,6 +215,20 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  // events
+  useEffect(() => {
+    // window.addEventListener('resize', function () {
+    //   props.event.trigger('resize', [])
+    //   props.event.trigger('resize', [])
+    // })
+    // return () => {
+    //   window.removeEventListener('resize', function () {
+    //     props.event.trigger('resize', [])
+    //     props.event.trigger('resize', [])
+    //   })
+    // }
+  }, [])
+
   const handleMinimizeTerminal = (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -227,6 +241,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       props.event.trigger('resize', [terminalTopOffset])
       setToggleDownUp('fa-angle-double-down')
     }
+    console.log(props.event, 'event.trigger')
   }
 
   const focusinput = () => {
