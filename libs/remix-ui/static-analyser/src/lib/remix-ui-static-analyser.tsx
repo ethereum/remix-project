@@ -196,12 +196,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
                   const report = result.data
                   report.map((item) => {
-                    let location: any = {}
-                    let locationString = 'not available'
-                    let column = 0
-                    let row = 0
-                    let fileName = currentFile
-                    // There are issues with location for imported contract 
+                    const location: any = {}
+                    const locationString = 'not available'
+                    const column = 0
+                    const row = 0
+                    const fileName = currentFile
+                    // There are issues with location for imported contract
                     // which stops complete analysis including remix analyzer's
                     // if (item.sourceMap && item.sourceMap.length) {
                     //   location = {
