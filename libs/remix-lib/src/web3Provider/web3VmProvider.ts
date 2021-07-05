@@ -138,7 +138,7 @@ export class Web3VmProvider {
   async txProcessed (data) {
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
-      lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'thisDESTRUCT'
+      lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'DESTRUCT'
     }
     this.vmTraces[this.processingHash].gas = '0x' + data.gasUsed.toString(16)
 
