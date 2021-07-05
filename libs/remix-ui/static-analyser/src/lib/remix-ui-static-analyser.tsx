@@ -201,22 +201,24 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     let column = 0
                     let row = 0
                     let fileName = currentFile
-                    if (item.sourceMap && item.sourceMap.length) {
-                      location = {
-                        start: item.sourceMap[0].source_mapping.start,
-                        length: item.sourceMap[0].source_mapping.length
-                      }
-                      location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-                        location,
-                        Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative),
-                        lastCompilationSource.sources,
-                        lastCompilationResult.sources
-                      )
-                      row = location.start.line
-                      column = location.start.column
-                      locationString = row + 1 + ':' + column + ':'
-                      fileName = Object.keys(lastCompilationResult.contracts)[0]
-                    }
+                    // There are issues with location for imported contract 
+                    // which stops complete analysis including remix analyzer's
+                    // if (item.sourceMap && item.sourceMap.length) {
+                    //   location = {
+                    //     start: item.sourceMap[0].source_mapping.start,
+                    //     length: item.sourceMap[0].source_mapping.length
+                    //   }
+                    //   location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                    //     location,
+                    //     Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative),
+                    //     lastCompilationSource.sources,
+                    //     lastCompilationResult.sources
+                    //   )
+                    //   row = location.start.line
+                    //   column = location.start.column
+                    //   locationString = row + 1 + ':' + column + ':'
+                    //   fileName = Object.keys(lastCompilationResult.contracts)[0]
+                    // }
                     warningCount++
                     const msg = message(item.title, item.description, item.more, fileName, locationString)
                     const options = {
