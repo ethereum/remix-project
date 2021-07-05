@@ -13,11 +13,28 @@ export const initialState = {
   },
   display: [],
   index: 0,
+  nextIndex: -1,
+  returnInstructionIndexes: [],
+  outOfGasInstructionIndexes: [],
   top: 0,
   bottom: 0,
   isRequesting: false,
   isSuccessful: false,
   hasError: null
+}
+
+const reducedOpcode = (opCodes, payload) => {
+  const length = 100
+  let bottom = opCodes.index - 10
+  bottom = bottom < 0 ? 0 : bottom
+  const top = bottom + length
+  return {
+    index: opCodes.index - bottom,
+    nextIndex: opCodes.nextIndex - bottom,
+    display: opCodes.code.slice(bottom, top),
+    returnInstructionIndexes: payload.returnInstructionIndexes.map((index) => index.instructionIndex - bottom),
+    outOfGasInstructionIndexes: payload.outOfGasInstructionIndexes.map((index) => index.instructionIndex - bottom)
+  }
 }
 
 export const reducer = (state = initialState, action: Action) => {
@@ -32,21 +49,20 @@ export const reducer = (state = initialState, action: Action) => {
     }
     case 'FETCH_OPCODES_SUCCESS': {
       const opCodes = action.payload.address === state.opCodes.address ? {
-        ...state.opCodes, index: action.payload.index
+        ...state.opCodes, index: action.payload.index, nextIndex: action.payload.nextIndex
       } : deepEqual(action.payload.code, state.opCodes.code) ? state.opCodes : action.payload
-      const top = opCodes.index - 3 > 0 ? opCodes.index - 3 : 0
-      const bottom = opCodes.index + 4 < opCodes.code.length ? opCodes.index + 4 : opCodes.code.length
-      const display = opCodes.code.slice(top, bottom)
 
+      const reduced = reducedOpcode(opCodes, action.payload)
       return {
         opCodes,
-        display,
-        index: display.findIndex(code => code === opCodes.code[opCodes.index]),
-        top,
-        bottom,
+        display: reduced.display,
+        index: reduced.index,
+        nextIndex: reduced.nextIndex,
         isRequesting: false,
         isSuccessful: true,
-        hasError: null
+        hasError: null,
+        returnInstructionIndexes: reduced.returnInstructionIndexes,
+        outOfGasInstructionIndexes: reduced.outOfGasInstructionIndexes
       }
     }
     case 'FETCH_OPCODES_ERROR': {
