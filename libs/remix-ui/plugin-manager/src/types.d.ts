@@ -1,3 +1,7 @@
+import { PermissionHandler } from './app/ui/persmission-handler'
+import { PluginManager } from '@remixproject/engine/lib/manager'
+import { EventEmitter } from 'events'
+import { Engine } from '@remixproject/engine/lib/engine'
 /* eslint-disable camelcase */
 
 declare module 'yo-yo'{
@@ -17,3 +21,55 @@ declare module 'dom-css'{
  var css:dom_css
  export = css;
 }
+
+interface SetPluginOptionType {
+  queueTimeout: number
+}
+
+export interface _Paq {
+  _paq: Window & typeof globalThis | []
+}
+
+export class RemixEngine extends Engine {
+  event: EventEmitter;
+  setPluginOption ({ name, kind }) : SetPluginOptionType
+  onRegistration (plugin) : void
+}
+
+export function isNative(name: any): any;
+/**
+ * Checks if plugin caller 'from' is allowed to activate plugin 'to'
+ * The caller can have 'canActivate' as a optional property in the plugin profile.
+ * This is an array containing the 'name' property of the plugin it wants to call.
+ * canActivate = ['plugin1-to-call','plugin2-to-call',....]
+ * or the plugin is allowed by default because it is native
+ *
+ * @param {any, any}
+ * @returns {boolean}
+ */
+export function canActivate(from: any, to: any): boolean;
+export class RemixAppManager extends PluginManager {
+  constructor();
+    event: EventEmitter;
+    pluginsDirectory: string;
+    pluginLoader: PluginLoader;
+    permissionHandler: PermissionHandler;
+    getAll(): import('@remixproject/plugin-utils').Profile<any>[];
+    getIds(): string[];
+    isDependent(name: any): any;
+    isRequired(name: any): any;
+    registeredPlugins(): Promise<any>;
+}
+/** @class Reference loaders.
+ *  A loader is a get,set based object which load a workspace from a defined sources.
+ *  (localStorage, queryParams)
+ **/
+declare class PluginLoader {
+  get currentLoader(): any;
+    donotAutoReload: string[];
+    loaders: {};
+    current: string;
+    set(plugin: any, actives: any): void;
+    get(): any;
+}
+export { }
