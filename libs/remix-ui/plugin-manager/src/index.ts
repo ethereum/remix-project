@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-plugin-manager';
+export * from './lib/remix-ui-plugin-manager'
