@@ -20,5 +20,3 @@ export const RemixUiPluginManager = (props: RemixUiPluginManagerProps) => {
     </div>
   )
 }
-
-export default RemixUiPluginManager
