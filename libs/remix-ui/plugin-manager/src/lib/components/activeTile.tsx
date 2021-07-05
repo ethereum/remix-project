@@ -1,13 +1,10 @@
 import React from 'react'
-
-type tileLabel = {
-  label: 'Active Module' | 'Inactive Modules'
-}
+import { TileLabel } from '../../customTypes'
 
 interface ActiveTileProps {
   inactivesCount?: number
   activesCount?: number
-  tileLabel?: tileLabel
+  tileLabel?: TileLabel
 }
 
 function ActiveTile ({ inactivesCount, activesCount, tileLabel }: ActiveTileProps) {

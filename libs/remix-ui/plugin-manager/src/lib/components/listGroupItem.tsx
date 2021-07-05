@@ -1,18 +1,22 @@
 import React from 'react'
 import { Profile } from '../../customTypes'
+import RenderItem from './renderItem'
 
 interface ListGroupItemProps {
   activeProfiles: Profile[]
   inactiveProfiles: Profile[]
-  renderItem: (profile: Profile) => void
 }
 
-function ListGroupItem ({ activeProfiles, inactiveProfiles, renderItem }: ListGroupItemProps) {
+function ListGroupItem ({ activeProfiles, inactiveProfiles }: ListGroupItemProps) {
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
       { activeProfiles.length > 0
-        ? activeProfiles.map(profile => renderItem(profile))
-        : inactiveProfiles.map(profile => renderItem(profile))
+        ? activeProfiles.map(profile => (
+          <RenderItem profile={profile} />
+        ))
+        : inactiveProfiles.map(profile => (
+          <RenderItem profile={profile}/>
+        ))
       }
     </div>
   )
