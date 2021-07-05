@@ -71,26 +71,26 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">General settings</h6>
         <div className="mt-2 custom-control custom-checkbox mb-1">
-          <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked = { props.config.get('settings/generate-contract-metadata') }/>
+          <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" defaultChecked = { props.config.get('settings/generate-contract-metadata') }/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
         </div>
         <div className="fmt-2 custom-control custom-checkbox mb-1">
-          <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ props.config.get('settings/always-use-vm') }/>
+          <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" defaultChecked={ props.config.get('settings/always-use-vm') }/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
         </div>
         <div className="mt-2 custom-control custom-checkbox mb-1">
-          <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { props.config.get('settings/text-wrap')}/>
+          <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} defaultChecked = { props.config.get('settings/text-wrap')}/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
-          <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { props.config.get('settings/personal-mode')}/>
+          <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" defaultChecked = { props.config.get('settings/personal-mode')}/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
             <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
             <span>   </span>{enablePersonalModeText} {warnText}
           </label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
-          <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={ props.config.get('settings/matomo-analytics')}/>
+          <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" defaultChecked={ props.config.get('settings/matomo-analytics')}/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
             <span>{matomoAnalytics}</span>
             <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
