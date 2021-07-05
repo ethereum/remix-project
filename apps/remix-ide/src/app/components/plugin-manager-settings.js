@@ -2,8 +2,8 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const modalDialog = require('../ui/modaldialog')
 
-const css = csjs` 
-.permissions {
+const css = csjs`
+.remixui_permissions {
   position: sticky;
   bottom: 0;
   display: flex;
