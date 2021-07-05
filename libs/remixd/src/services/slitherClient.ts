@@ -2,7 +2,7 @@
 
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, readdirSync } from 'fs'
 import { OutputStandard } from '../types' // eslint-disable-line
 const { spawn, execSync } = require('child_process')
 
@@ -23,6 +23,31 @@ export class SlitherClient extends PluginClient {
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
   }
+
+  mapNpmDepsDir (list) {
+    const remixNpmDepsPath = `${this.currentSharedFolder}/.deps/npm`
+    const localNpmDepsPath = `${this.currentSharedFolder}/node_modules`
+    const npmDepsExists = existsSync(remixNpmDepsPath)
+    const nodeModulesExists = existsSync(localNpmDepsPath)
+    let isLocalDep = false, isRemixDep = false
+    let allowPathString = '', remapString = ''
+
+    for (const e of list) {
+      const importPath = e.replace(/import ['"]/g, '').trim()
+      const packageName = importPath.split('/')[0]
+      if (nodeModulesExists && readdirSync(localNpmDepsPath).includes(packageName)) {
+        isLocalDep = true
+        remapString+= `${packageName}=./node_modules/${packageName} `
+      } else if (npmDepsExists && readdirSync(remixNpmDepsPath).includes(packageName)) {
+        isRemixDep = true
+        remapString+= `${packageName}=./.deps/npm/${packageName} `
+      }
+    }
+    if (isLocalDep) allowPathString+= './node_modules,'
+    if (isRemixDep) allowPathString+= './.deps/npm,'
+
+    return { remapString, allowPathString}
+}
 
   transform (detectors: Record<string, any>[]): OutputStandard[] {
     const standardReport: OutputStandard[] = []
@@ -85,10 +110,22 @@ export class SlitherClient extends PluginClient {
         } else console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is same as installed solc version')
       }
       const outputFile: string = 'remix-slitherReport_' + Date.now() + '.json'
-      const optimizeOption: string = optimize ? '--optimize ' : ''
-      const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
-      const solcArgs: string = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
-      const cmd: string = `slither ${filePath} ${solcArgs} --json ${outputFile}`
+      const fileContent = readFileSync(`${this.currentSharedFolder}/${filePath}`, 'utf8')
+      const importsArr = fileContent.match(/import ['"][^.|..](.+?)['"];/g)
+      let allowPaths = '', remaps = ''
+      if(importsArr?.length) {
+        const { remapString, allowPathString} = this.mapNpmDepsDir(importsArr)
+        allowPaths = allowPathString
+        remaps = remapString.trim()
+      }
+      const allowPathsOption: string = allowPaths ? `--allow-paths ${allowPaths}` : ''
+      const optimizeOption: string = optimize ? ' --optimize ' : ''
+      const evmOption: string = evmVersion ? ` --evm-version ${evmVersion}` : ''
+      const solcArgs: string = optimizeOption || evmOption || allowPathsOption ? `--solc-args '${allowPathsOption}${optimizeOption}${evmOption}'` : ''
+      const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : '' 
+      
+      const cmd: string = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
+      console.log('command--->', cmd)
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
       const child = spawn(cmd, options)
       const response = {}
