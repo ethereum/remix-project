@@ -29,25 +29,27 @@ export class SlitherClient extends PluginClient {
     const localNpmDepsPath = `${this.currentSharedFolder}/node_modules`
     const npmDepsExists = existsSync(remixNpmDepsPath)
     const nodeModulesExists = existsSync(localNpmDepsPath)
-    let isLocalDep = false, isRemixDep = false
-    let allowPathString = '', remapString = ''
+    let isLocalDep = false
+    let isRemixDep = false
+    let allowPathString = ''
+    let remapString = ''
 
     for (const e of list) {
       const importPath = e.replace(/import ['"]/g, '').trim()
       const packageName = importPath.split('/')[0]
       if (nodeModulesExists && readdirSync(localNpmDepsPath).includes(packageName)) {
         isLocalDep = true
-        remapString+= `${packageName}=./node_modules/${packageName} `
+        remapString += `${packageName}=./node_modules/${packageName} `
       } else if (npmDepsExists && readdirSync(remixNpmDepsPath).includes(packageName)) {
         isRemixDep = true
-        remapString+= `${packageName}=./.deps/npm/${packageName} `
+        remapString += `${packageName}=./.deps/npm/${packageName} `
       }
     }
-    if (isLocalDep) allowPathString+= './node_modules,'
-    if (isRemixDep) allowPathString+= './.deps/npm,'
+    if (isLocalDep) allowPathString += './node_modules,'
+    if (isRemixDep) allowPathString += './.deps/npm,'
 
-    return { remapString, allowPathString}
-}
+    return { remapString, allowPathString }
+  }
 
   transform (detectors: Record<string, any>[]): OutputStandard[] {
     const standardReport: OutputStandard[] = []
@@ -112,9 +114,9 @@ export class SlitherClient extends PluginClient {
       const outputFile: string = 'remix-slitherReport_' + Date.now() + '.json'
       const fileContent = readFileSync(`${this.currentSharedFolder}/${filePath}`, 'utf8')
       const importsArr = fileContent.match(/import ['"][^.|..](.+?)['"];/g)
-      let allowPaths = '', remaps = ''
-      if(importsArr?.length) {
-        const { remapString, allowPathString} = this.mapNpmDepsDir(importsArr)
+      let allowPaths = ''; let remaps = ''
+      if (importsArr?.length) {
+        const { remapString, allowPathString } = this.mapNpmDepsDir(importsArr)
         allowPaths = allowPathString
         remaps = remapString.trim()
       }
@@ -122,8 +124,8 @@ export class SlitherClient extends PluginClient {
       const optimizeOption: string = optimize ? ' --optimize ' : ''
       const evmOption: string = evmVersion ? ` --evm-version ${evmVersion}` : ''
       const solcArgs: string = optimizeOption || evmOption || allowPathsOption ? `--solc-args '${allowPathsOption}${optimizeOption}${evmOption}'` : ''
-      const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : '' 
-      
+      const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
+
       const cmd: string = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
       console.log('command--->', cmd)
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
