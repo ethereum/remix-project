@@ -89,7 +89,7 @@
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "remixd": "nx build remixd && nx serve remixd --folder=./apps/remix-ide/contracts --remixide=http://127.0.0.1:8080",
     "selenium": "selenium-standalone start",
-    "selenium-install": "selenium-standalone install",
+  "selenium-install": "selenium-standalone install",
     "sourcemap": "exorcist --root ../ apps/remix-ide/build/app.js.map > apps/remix-ide/build/app.js",
     "test-browser": "npm-run-all -lpr selenium make-mock-compiler serve browsertest",
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
