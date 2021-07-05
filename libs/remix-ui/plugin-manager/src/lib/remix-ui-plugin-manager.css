@@ -1,4 +1,4 @@
-.pluginSearch {
+.remixui_pluginSearch {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,42 +9,42 @@
   z-index: 2;
   margin-bottom: 0px;
 }
-.pluginSearchInput {
+.remixui_pluginSearchInput {
   height: 38px;
 }
-.pluginSearchButton {
+.remixui_pluginSearchButton {
   font-size: 13px;
 }
-.displayName {
+.remixui_displayName {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.pluginIcon {
+.remixui_pluginIcon {
   height: 0.7rem;
   width: 0.7rem;
   filter: invert(0.5);
 }
-.description {
+.remixui_description {
   font-size: 13px;
   line-height: 18px;
 }
-.descriptiontext {
+.remixui_descriptiontext {
   display: block;
 }
-.descriptiontext:first-letter {
+.remixui_descriptiontext:first-letter {
   text-transform: uppercase;
 }
-.row {
+.remixui_row {
   display: flex;
   flex-direction: row;
 }
-.isStuck {
+.remixui_isStuck {
   background-color: var(--primary);
   /* color:  */
 }
-.versionWarning {
+.remixui_versionWarning {
   padding: 4px;
   margin: 0 8px;
   font-weight: 700;
@@ -54,4 +54,43 @@
   cursor: default;
   border: 1px solid;
   border-radius: 2px;
+}
+
+.remixui_permissions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 5px 20px;
+}
+.remixui_permissions button {
+  padding: 2px 5px;
+  cursor: pointer;
+}
+.remixui_permissionForm h4 {
+  font-size: 1.3rem;
+  text-align: center;
+}
+.remixui_permissionForm h6 {
+  font-size: 1.1rem;
+}
+.remixui_permissionForm hr {
+  width: 80%;
+}
+.remixui_permissionKey {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.remixui_permissionKey i {
+  cursor: pointer;
+}
+.remixui_checkbox {
+  display: flex;
+  align-items: center;
+}
+.remixui_checkbox label {
+  margin: 0;
+  font-size: 1rem;
 }
