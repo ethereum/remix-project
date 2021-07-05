@@ -121,7 +121,8 @@ const stateCheck = {
   chairperson: {
     value: '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
     type: 'address',
-    constant: false
+    constant: false,
+    immutable: false
   },
   voters: {
     value: {
@@ -148,7 +149,8 @@ const stateCheck = {
       }
     },
     type: 'mapping(address => struct Ballot.Voter)',
-    constant: false
+    constant: false,
+    immutable: false
   },
   proposals: {
     value: [
@@ -168,7 +170,8 @@ const stateCheck = {
     ],
     length: '0x1',
     type: 'struct Ballot.Proposal[]',
-    constant: false
+    constant: false,
+    immutable: false
   }
 }
 
