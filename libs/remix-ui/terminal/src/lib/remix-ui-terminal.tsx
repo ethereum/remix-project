@@ -1,30 +1,53 @@
-import React, { useState } from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 
 import './remix-ui-terminal.css'
 
 /* eslint-disable-next-line */
 export interface RemixUiTerminalProps {
   propterties: any
+  event: any
+  autoCompletePopupEvent: any
+  autoCompletePopup: any
+  blockchain: any
+  api: any
+  options: any
+  data: any
+  cmdInterpreter: any
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
 
+  // events
+  useEffect(() => {
+    // window.addEventListener('resize', function () {
+    //   props.event.trigger('resize', [])
+    //   props.event.trigger('resize', [])
+    // })
+    // return () => {
+    //   window.removeEventListener('resize', function () {
+    //     props.event.trigger('resize', [])
+    //     props.event.trigger('resize', [])
+    //   })
+    // }
+  }, [])
+
   const handleMinimizeTerminal = (event) => {
-    console.log('clikced')
+    console.log('clikced', props.event)
     if (toggleDownUp === 'fa-angle-double-down') {
       console.log('clikced down')
       setToggleDownUp('fa-angle-double-up')
+      props.event.trigger.resize('resize', [])
     } else {
       console.log('clikced up')
       // event.trigger('resize', [])
       setToggleDownUp('fa-angle-double-down')
     }
+    console.log(props.event, 'event.trigger')
   }
   return (
     <div>
-      {console.log({ toggleDownUp })}
       <div className="bar">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal"></div>
@@ -68,7 +91,20 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
         </div>
       </div>
-      Welcome to remix-ui-terminal {console.log(props.propterties, ' properties david')}
+      <div className="terminal_container" data-id="terminalContainer" > 
+        {/* onScroll=${throttle(reattach, 10)} onkeydown=${focusinput} */}
+        {/* {props.autoCompletePopup.render()} */}
+        {console.log({ props })}
+        <div data-id="terminalContainerDisplay" style = {{
+          position: 'absolute',
+          height: '100',
+          width: '100',
+          opacity: '0.1',
+          zIndex: -1
+        }}></div>
+        <div className="terminal">
+        </div>
+      </div>
     </div>
   )
 }
