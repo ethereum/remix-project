@@ -246,15 +246,14 @@ const resolveDirectory = (provider, path: string, files, content) => {
   }, [])
 
   const prevFiles = _.get(files, _path)
-  if (prevFiles) {
-    files = _.set(files, _path, {
-      isDirectory: true,
-      path,
-      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
-      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
-      child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
-    })
-  }
+
+  files = _.set(files, _path, {
+    isDirectory: true,
+    path,
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+    child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
+  })
 
   return files
 }
