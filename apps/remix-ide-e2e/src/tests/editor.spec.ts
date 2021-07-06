@@ -36,7 +36,7 @@ module.exports = {
       .click('*[class="ace_content"]')
       .sendKeys('*[class="ace_text-input"]', 'error')
       .pause(2000)
-      .waitForElementVisible('.ace_error', 60000)
+      .waitForElementVisible('.ace_error', 120000)
       .checkAnnotations('error', 28)
       .clickLaunchIcon('udapp')
       .checkAnnotationsNotPresent('error')
