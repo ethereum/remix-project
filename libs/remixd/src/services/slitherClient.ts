@@ -132,6 +132,7 @@ export class SlitherClient extends PluginClient {
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
       // get too big and hangs the process. We process analysis from the report file only
       const child = spawn(cmd, { cwd: this.currentSharedFolder, shell: true, stdio: 'ignore' })
+
       const response = {}
       child.on('close', () => {
         const outputFileAbsPath: string = `${this.currentSharedFolder}/${outputFile}`
