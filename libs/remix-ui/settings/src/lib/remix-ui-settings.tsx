@@ -106,12 +106,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   )
 
   const saveToken = () => {
-    saveTokenToast(props, dispatchToast, tokenValue)
+    saveTokenToast(props.config, dispatchToast, tokenValue)
   }
 
   const removeToken = () => {
     setTokenValue('')
-    removeTokenToast(props, dispatchToast)
+    removeTokenToast(props.config, dispatchToast)
   }
 
   const handleSaveTokenState = useCallback(
