@@ -92,11 +92,12 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    // this.event = new EventEmitter() //already exists in engine so not needed here
-    // this.appManager = appManager
-    // this.engine = engine
+    // this.event = new EventEmitter() // already exists in engine so not needed here
+    this.appManager = appManager
+    this.engine = engine
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
+    this.props = {}
     // this.views = {
     //   root: null,
     //   items: {}
@@ -106,6 +107,22 @@ class PluginManagerComponent extends ViewPlugin {
     // this.appManager.event.on('activate', () => { this.reRender() })
     // this.appManager.event.on('deactivate', () => { this.reRender() })
     // this.engine.event.on('onRegistration', () => { this.reRender() })
+    // const { actives, inactives } = this.getAllPlugins()
+  }
+
+  reactProps () {
+    return {
+      views: this.views,
+      filter: this.filter,
+      localPlugin: this.localPlugin,
+      isActive: this.isActive,
+      activatePlugin: this.activateP,
+      deactivePlugin: this.deactivateP,
+      openLocalPlugin: this.openLocalPlugin,
+      profile: this.profile
+      // actives: actives,
+      // inactives: inactives
+    }
   }
 
   onActivation () {
@@ -113,22 +130,46 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   renderComponent () {
-    ReactDOM.render(<RemixUiPluginManager />, document.getElementById('pluginManager'))
+    // const props = this.reactProps()
+    ReactDOM.render(
+      // <RemixUiPluginManager
+      //   activatePlugin={this.activateP}
+      //   deActivatePlugin={this.deactivate}
+      //   filter={this.filter}
+      //   appManager={this.appManager}
+      //   engine={this.engine}
+      //   profile={this.profile}
+      //   isActive={this.isActive}
+      //   openLocalPlugin={this.openLocalPlugin}
+      //   tileLabel
+      //   _paq={_paq}
+      //   {...props}
+      // />,
+      <RemixUiPluginManager
+        profile={profile}
+        appManager={this.appManager}
+        engine={this.engine}
+        activesCount={3}
+        inactivesCount={4}
+        actives={[]}
+        inactives={[]}
+      />,
+      document.getElementById('pluginManager'))
   }
 
-  isActive (name) {
-    return this.appManager.actives.includes(name)
-  }
+  // isActive (name) {
+  //   return this.appManager.actives.includes(name)
+  // }
 
-  activateP (name) {
-    this.appManager.activatePlugin(name)
-    _paq.push(['trackEvent', 'manager', 'activate', name])
-  }
+  // activateP (name) {
+  //   this.appManager.activatePlugin(name)
+  //   _paq.push(['trackEvent', 'manager', 'activate', name])
+  // }
 
-  deactivateP (name) {
-    this.call('manager', 'deactivatePlugin', name)
-    _paq.push(['trackEvent', 'manager', 'deactivate', name])
-  }
+  // deactivateP (name) {
+  //   this.call('manager', 'deactivatePlugin', name)
+  //   _paq.push(['trackEvent', 'manager', 'deactivate', name])
+  // }
 
   // renderItem (profile) {
   //   const displayName = (profile.displayName) ? profile.displayName : profile.name
@@ -189,47 +230,55 @@ class PluginManagerComponent extends ViewPlugin {
   /**
    * Add a local plugin to the list of plugins
    */
-  async openLocalPlugin () {
-    try {
-      const profile = await this.localPlugin.open(this.appManager.getAll())
-      if (!profile) return
-      if (this.appManager.getIds().includes(profile.name)) {
-        throw new Error('This name has already been used')
-      }
-      const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-      this.engine.register(plugin)
-      await this.appManager.activatePlugin(plugin.name)
-    } catch (err) {
-      // TODO : Use an alert to handle this error instead of a console.log
-      console.log(`Cannot create Plugin : ${err.message}`)
-      addToolTip(`Cannot create Plugin : ${err.message}`)
-    }
-  }
+  // async openLocalPlugin () {
+  //   try {
+  //     const profile = await this.localPlugin.open(this.appManager.getAll())
+  //     if (!profile) return
+  //     if (this.appManager.getIds().includes(profile.name)) {
+  //       throw new Error('This name has already been used')
+  //     }
+  //     const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+  //     this.engine.register(plugin)
+  //     await this.appManager.activatePlugin(plugin.name)
+  //   } catch (err) {
+  //     // TODO : Use an alert to handle this error instead of a console.log
+  //     console.log(`Cannot create Plugin : ${err.message}`)
+  //     addToolTip(`Cannot create Plugin : ${err.message}`)
+  //   }
+  // }
+
+  // filterHelper () {
+  //   const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+  //   const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+  //   const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
+  //   const isNotHome = (profile) => profile.name !== 'home'
+  //   const sortByName = (profileA, profileB) => {
+  //     const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+  //     const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
+  //     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+  //   }
+  //   return (isFiltered, isNotRequired, isNotDependent, isNotHome, sortByName)
+  // }
+
+  // getAllPlugins () {
+  //   //   // Filter all active and inactive modules that are not required
+  //   const [isFiltered, isNotRequired, isNotDependent, isNotHome, sortByName] = this.filterHelper()
+  //   const { actives, inactives } = this.appManager.getAll()
+  //     .filter(isFiltered)
+  //     .filter(isNotRequired)
+  //     .filter(isNotDependent)
+  //     .filter(isNotHome)
+  //     .sort(sortByName)
+  //     .reduce(({ actives, inactives }, profile) => {
+  //       return this.isActive(profile.name)
+  //         ? { actives: [...actives, profile], inactives }
+  //         : { inactives: [...inactives, profile], actives }
+  //     }, { actives: [], inactives: [] })
+  //   return (actives, inactives)
+  // }
 
   render () {
     // Filtering helpers
-    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
-    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
-    const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
-    const isNotHome = (profile) => profile.name !== 'home'
-    const sortByName = (profileA, profileB) => {
-      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
-      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
-      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
-    }
-
-    //   // Filter all active and inactive modules that are not required
-    const { actives, inactives } = this.appManager.getAll()
-      .filter(isFiltered)
-      .filter(isNotRequired)
-      .filter(isNotDependent)
-      .filter(isNotHome)
-      .sort(sortByName)
-      .reduce(({ actives, inactives }, profile) => {
-        return this.isActive(profile.name)
-          ? { actives: [...actives, profile], inactives }
-          : { inactives: [...inactives, profile], actives }
-      }, { actives: [], inactives: [] })
 
     //   const activeTile = actives.length !== 0
     //     ? yo`
@@ -275,7 +324,7 @@ class PluginManagerComponent extends ViewPlugin {
     return this.htmlElement
   }
 
-  // reRender () { --> no needed possibly
+  // reRender () {
   //   if (this.views.root) {
   //     yo.update(this.views.root, this.render())
   //   }
