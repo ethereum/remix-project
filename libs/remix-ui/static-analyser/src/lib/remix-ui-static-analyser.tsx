@@ -191,6 +191,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           if (slitherEnabled) {
             props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
               const { currentVersion, optimize, evmVersion } = compilerState
+              props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
               props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then((result) => {
                 if (result.status) {
                   props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
@@ -203,6 +204,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     const fileName = currentFile
                     // There are issues with location for imported contract
                     // which stops complete analysis including remix analyzer's
+
                     // if (item.sourceMap && item.sourceMap.length) {
                     //   location = {
                     //     start: item.sourceMap[0].source_mapping.start,
