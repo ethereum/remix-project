@@ -246,14 +246,15 @@ const resolveDirectory = (provider, path: string, files, content) => {
   }, [])
 
   const prevFiles = _.get(files, _path)
-
-  files = _.set(files, _path, {
-    isDirectory: true,
-    path,
-    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
-    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
-    child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
-  })
+  if (prevFiles) {
+    files = _.set(files, _path, {
+      isDirectory: true,
+      path,
+      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+      child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
+    })
+  }
 
   return files
 }
@@ -266,15 +267,16 @@ const removePath = (root, path: string, pathName, files) => {
     return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
   }, [])
   const prevFiles = _.get(files, _path)
-
-  prevFiles && prevFiles.child && prevFiles.child[pathName] && delete prevFiles.child[pathName]
-  files = _.set(files, _path, {
-    isDirectory: true,
-    path,
-    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
-    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
-    child: prevFiles ? prevFiles.child : {}
-  })
+  if (prevFiles) {
+    prevFiles && prevFiles.child && prevFiles.child[pathName] && delete prevFiles.child[pathName]
+    files = _.set(files, _path, {
+      isDirectory: true,
+      path,
+      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+      child: prevFiles ? prevFiles.child : {}
+    })
+  }
 
   return files
 }
@@ -333,15 +335,16 @@ const fileRenamed = (provider, path: string, removePath: string, files, content)
     return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
   }, [])
   const prevFiles = _.get(files, _path)
-
-  delete prevFiles.child[extractNameFromKey(removePath)]
-  files = _.set(files, _path, {
-    isDirectory: true,
-    path,
-    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
-    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
-    child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
-  })
+  if (prevFiles) {
+    delete prevFiles.child[extractNameFromKey(removePath)]
+    files = _.set(files, _path, {
+      isDirectory: true,
+      path,
+      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+      child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
+    })
+  }
 
   return files
 }
