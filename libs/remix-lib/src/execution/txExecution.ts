@@ -114,7 +114,7 @@ export function checkVMError (execResult, abi, contract) {
               const functionSignature = Object.keys(fn.functions)[0]
               // we check in the 'devdoc' if there's a developer documentation for this error
               try {
-                devdoc = (contract.object.devdoc.errors && contract.object.devdoc.errors[functionSignature][0]) || {}                
+                devdoc = (contract.object.devdoc.errors && contract.object.devdoc.errors[functionSignature][0]) || {}
               } catch (e) {
                 console.error(e.message)
               }
@@ -130,7 +130,7 @@ export function checkVMError (execResult, abi, contract) {
             for (const input of functionDesc.inputs) {
               const inputKey = input.name || inputIndex
               const v = decodedCustomErrorInputs[inputKey]
-             
+
               decodedCustomErrorInputsClean[inputKey] = {
                 value: v.toString ? v.toString() : v
               }
