@@ -60,6 +60,42 @@ export class RemixAppManager extends PluginManager {
     isRequired(name: any): any;
     registeredPlugins(): Promise<any>;
 }
+
+export interface PluginManagerContextProviderProps {
+  appManager: RemixAppManager
+  engine: RemixEngine
+  _paq: _Paq
+  filter: string
+  actives: Profile[]
+  inactives: Profile[]
+  activatePlugin: (name: string) => void
+  deActivatePlugin: (name: string) => void
+  isActive: (name: string) => any
+  openLocalPlugin: () => Promise<void>
+  filterPlugins: () => void
+  profile: Profile
+  inactivesCount: number
+  activesCount: number
+  headingLabel: string
+}
+
+export interface RemixUiPluginManagerProps {
+  appManager: RemixAppManager
+  engine: RemixEngine
+  _paq: _Paq
+  filter: string
+  actives: Profile[]
+  inactives: Profile[]
+  activatePlugin: (name: string) => void
+  deActivatePlugin: (name: string) => void
+  isActive: (name: string) => any
+  openLocalPlugin: () => Promise<void>
+  filterPlugins: () => void
+  profile: Profile
+  inactivesCount: number
+  activesCount: number
+  headingLabel: string
+}
 /** @class Reference loaders.
  *  A loader is a get,set based object which load a workspace from a defined sources.
  *  (localStorage, queryParams)
