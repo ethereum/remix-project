@@ -116,9 +116,9 @@ class PluginManagerComponent extends ViewPlugin {
     ReactDOM.render(<RemixUiPluginManager />, document.getElementById('pluginManager'))
   }
 
-  // isActive (name) {
-  //   return this.appManager.actives.includes(name)
-  // }
+  isActive (name) {
+    return this.appManager.actives.includes(name)
+  }
 
   activateP (name) {
     this.appManager.activatePlugin(name)
@@ -219,17 +219,17 @@ class PluginManagerComponent extends ViewPlugin {
     }
 
     //   // Filter all active and inactive modules that are not required
-    //   const { actives, inactives } = this.appManager.getAll()
-    //     .filter(isFiltered)
-    //     .filter(isNotRequired)
-    //     .filter(isNotDependent)
-    //     .filter(isNotHome)
-    //     .sort(sortByName)
-    //     .reduce(({ actives, inactives }, profile) => {
-    //       return this.isActive(profile.name)
-    //         ? { actives: [...actives, profile], inactives }
-    //         : { inactives: [...inactives, profile], actives }
-    //     }, { actives: [], inactives: [] })
+    const { actives, inactives } = this.appManager.getAll()
+      .filter(isFiltered)
+      .filter(isNotRequired)
+      .filter(isNotDependent)
+      .filter(isNotHome)
+      .sort(sortByName)
+      .reduce(({ actives, inactives }, profile) => {
+        return this.isActive(profile.name)
+          ? { actives: [...actives, profile], inactives }
+          : { inactives: [...inactives, profile], actives }
+      }, { actives: [], inactives: [] })
 
     //   const activeTile = actives.length !== 0
     //     ? yo`

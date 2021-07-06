@@ -1,25 +1,14 @@
-import React from 'react'
-import { Profile, TileLabel } from '../../customTypes'
+import React, { useContext } from 'react'
+import { PluginManagerContext } from '../remix-ui-plugin-manager'
 import ActiveTile from './activeTile'
 import ListGroupItem from './listGroupItem'
 
 interface RootViewProps {
   localPluginButtonText: string
-  activeProfiles: Profile[]
-  inactiveProfiles?: Profile[]
-  filterPlugins: () => void
-  openLocalPlugins: () => void
-  tileLabel: TileLabel
 }
 
-function RootView ({
-  localPluginButtonText,
-  activeProfiles,
-  inactiveProfiles,
-  filterPlugins,
-  openLocalPlugins,
-  tileLabel
-}: RootViewProps) {
+function RootView ({ localPluginButtonText }: RootViewProps) {
+  const { actives, inactives, tileLabel } = useContext(PluginManagerContext)
   return (
     <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
       <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
@@ -28,13 +17,13 @@ function RootView ({
       </header>
       <section data-id="pluginManagerComponentPluginManagerSection">
         <ActiveTile
-          activesCount={activeProfiles.length}
-          inactivesCount={inactiveProfiles.length}
+          activesCount={actives.length}
+          inactivesCount={inactives.length}
           tileLabel={tileLabel}
         />
         <ListGroupItem
-          activeProfiles={activeProfiles}
-          inactiveProfiles={inactiveProfiles}
+          activeProfiles={actives}
+          inactiveProfiles={inactives}
         />
       </section>
     </div>
