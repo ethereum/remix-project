@@ -13,7 +13,7 @@ export const generateContractMetadat = (config, checked, dispatch) => {
   dispatch({ type: 'contractMetadata', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
 }
 
-export const ethereumVM = (config, checked: boolean, dispatch) => {
+export const etherumVM = (config, checked: boolean, dispatch) => {
   config.set('settings/always-use-vm', checked)
   dispatch({ type: 'ethereumVM', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
 }
