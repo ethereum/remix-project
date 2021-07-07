@@ -38,6 +38,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
   }, [props.useMatomoAnalytics])
 
+  useEffect(() => {
+    const javascriptVM = props.config.get('settings/always-use-vm')
+
+    if ((javascriptVM === null) || (javascriptVM === undefined)) etherumVM(props.config, true, dispatch)
+  }, [props.config])
+
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
