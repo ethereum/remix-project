@@ -406,7 +406,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const fileManager = state.fileManager
       for (const p of path) {
         try {
-          await fileManager.remove(p)
+          if (await fileManager.exists(p)) {
+            await fileManager.remove(p)
+          }
         } catch (e) {
           const isDir = state.fileManager.isDirectory(p)
           toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
