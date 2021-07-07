@@ -1,19 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { PluginManagerContext } from '../contexts/pluginmanagercontext'
 
 interface ButtonProps {
-  profileName: string
-  deactivatePlugin?: (name: string) => {}
-  activatePlugin?: (name: string) => {}
-  isActive: boolean
-  buttonText?: string
+  buttonText: 'Activate' | 'Deactivate'
 }
 
-function Button ({ profileName, deactivatePlugin, buttonText }: ButtonProps) {
-  const dataId = `pluginManagerComponentDeactivateButton${profileName}`
+function Button ({ buttonText }: ButtonProps) {
+  const { profile, deActivatePlugin, activatePlugin } = useContext(PluginManagerContext)
+  const dataId = `pluginManagerComponentDeactivateButton${profile.name}`
 
   return (
     <button
-      onClick={() => deactivatePlugin(profileName)}
+      onClick={buttonText === 'Activate' ? () => activatePlugin(profile.name) : () => deActivatePlugin(profile.name)}
       className="btn btn-secondary btn-sm"
       data-id={dataId}
     >
