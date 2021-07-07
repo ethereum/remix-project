@@ -54,7 +54,7 @@ export class TabProxy extends Plugin {
       workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
-    fileManager.events.on('currentFileChanged', (file) => {
+    fileManager.events.on('currentFileChanged', async (file) => {
       const workspace = this.fileManager.currentWorkspace()
 
       if (workspace) {
@@ -64,9 +64,12 @@ export class TabProxy extends Plugin {
           this._view.filetabs.activateTab(workspacePath)
           return
         }
-        this.addTab(workspacePath, '', () => {
-          this.fileManager.open(file)
-          this.event.emit('openFile', file)
+        this.addTab(workspacePath, '', async () => {
+          try {
+            await this.fileManager.open(file)
+            this.event.emit('openFile', file)
+          } catch (e) {
+          }
         },
         () => {
           this.fileManager.closeFile(file)
@@ -79,9 +82,12 @@ export class TabProxy extends Plugin {
           this._view.filetabs.activateTab(path)
           return
         }
-        this.addTab(path, '', () => {
-          this.fileManager.open(file)
-          this.event.emit('openFile', file)
+        this.addTab(path, '', async () => {
+          try {
+            await this.fileManager.open(file)
+            this.event.emit('openFile', file)
+          } catch (e) {
+          }
         },
         () => {
           this.fileManager.closeFile(file)
