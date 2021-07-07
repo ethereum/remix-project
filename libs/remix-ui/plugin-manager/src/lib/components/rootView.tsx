@@ -1,32 +1,15 @@
-import React from 'react'
-import ListGroupItem from './listGroupItem'
+import React, { Fragment, useContext } from 'react'
+import { PluginManagerContext } from '../contexts/pluginmanagercontext'
 import ModuleHeading from './moduleHeading'
+import PluginCard from './pluginCard'
 
 interface RootViewProps {
   localPluginButtonText: string
 }
 
 function RootView ({ localPluginButtonText }: RootViewProps) {
-  // const { actives, inactives, tileLabel } = useContext(PluginManagerContext)
+  const { actives, inactives } = useContext(PluginManagerContext)
   return (
-  // <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
-  //   <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
-  //     <input type="text" className="form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput" />
-  //     <button className="btn btn-secondary text-dark border-0" data-id="pluginManagerComponentPluginSearchButton">{localPluginButtonText}</button>
-  //   </header>
-  //   <section data-id="pluginManagerComponentPluginManagerSection">
-  //     <ActiveTile
-  //       activesCount={actives.length}
-  //       inactivesCount={inactives.length}
-  //       tileLabel={tileLabel}
-  //     />
-  //     <ListGroupItem
-  //       activeProfiles={actives}
-  //       inactiveProfiles={inactives}
-  //     />
-  //   </section>
-  // </div>
-
     <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
       <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
         <input type="text" className="form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput" />
@@ -35,9 +18,22 @@ function RootView ({ localPluginButtonText }: RootViewProps) {
         </button>
       </header>
       <section data-id="pluginManagerComponentPluginManagerSection">
-        <ModuleHeading headingLabel="Active Modules"/>
-        <ModuleHeading headingLabel="Inactive Modules"/>
-        <ListGroupItem />
+        {actives.length === 0 ? (
+          <Fragment>
+            <ModuleHeading headingLabel="Active Modules"/>
+            {actives.map((profile) => (
+              <PluginCard profile={profile}/>
+            ))}
+          </Fragment>
+        ) : null }
+        {inactives.length === 0 ? (
+          <Fragment>
+            <ModuleHeading headingLabel="Inactive Modules"/>
+            {inactives.map((profile) => (
+              <PluginCard profile={profile}/>
+            ))}
+          </Fragment>
+        ) : null}
       </section>
     </div>
   )
