@@ -151,6 +151,7 @@ class PluginManagerComponent extends ViewPlugin {
         engine={this.engine}
         activesCount={3}
         inactivesCount={4}
+        isActive={() => false}
         actives={[]}
         inactives={[]}
       />,
