@@ -70,7 +70,7 @@ export interface PluginManagerContextProviderProps {
   inactives: Profile[]
   activatePlugin: (name: string) => void
   deActivatePlugin: (name: string) => void
-  isActive: (name: string) => any
+  isActive: (name: string) => boolean
   openLocalPlugin: () => Promise<void>
   filterPlugins: () => void
   profile: Profile
