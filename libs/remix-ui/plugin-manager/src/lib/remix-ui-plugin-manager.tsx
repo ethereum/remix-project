@@ -14,7 +14,6 @@ export const RemixUiPluginManager = (props: RemixUiPluginManagerProps) => {
     //   />
     // </PluginManagerContextProvider>
     <PluginManagerContextProvider props={props}>
-      <h3 className="h3">Remix UI Plugin Manager React</h3>
       <RootView localPluginButtonText="Local Plugin"/>
     </PluginManagerContextProvider>
   )

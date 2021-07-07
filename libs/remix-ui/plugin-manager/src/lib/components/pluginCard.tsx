@@ -3,17 +3,12 @@ import { PluginManagerContext } from '../contexts/pluginmanagercontext'
 import '../remix-ui-plugin-manager.css'
 import Button from './button'
 interface PluginCardProps {
-  profileName: string
-  displayName: string
-  docLink: string
-  versionWarning: any
-  profileIcon: string
-  profileDescription: string
+  profile: any
 }
 
 // eslint-disable-next-line no-empty-pattern
-function PluginCard () {
-  const { profile, isActive } = useContext(PluginManagerContext)
+function PluginCard ({ profile }: PluginCardProps) {
+  const { isActive } = useContext(PluginManagerContext)
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
     <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
@@ -26,26 +21,28 @@ function PluginCard () {
     <small title="Version Beta" className="remixui_versionWarning plugin-version">beta</small>
   ) : null)
   return (
-    <article className="list-group-item py-1 mb-1 plugins-list-group-item" title={displayName}>
-      <div className="row justify-content-between align-items-center mb-2">
-        <h6 className="remixui_displayName plugin-name">
-          <div>
-            {displayName}
-            {docLink}
-            {versionWarning}
-          </div>
-          { isActive(profile.name) ? (
-            <Button
-              buttonText="Deactivate"
-            />) : <Button buttonText="Activate" />
-          }
-        </h6>
-      </div>
-      <div className="remixui_description d-flex text-body plugin-text mb-2">
-        <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/>
-        <span className="remixui_descriptiontext">{profile.description}</span>
-      </div>
-    </article>
+    <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
+      <article className="list-group-item py-1 mb-1 plugins-list-group-item" title={displayName}>
+        <div className="remixui_row justify-content-between align-items-center mb-2">
+          <h6 className="remixui_displayName plugin-name">
+            <div>
+              {displayName}
+              {docLink}
+              {versionWarning}
+            </div>
+            { isActive(profile.name) ? (
+              <Button
+                buttonText="Deactivate"
+              />) : <Button buttonText="Activate" />
+            }
+          </h6>
+        </div>
+        <div className="remixui_description d-flex text-body plugin-text mb-2">
+          <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/>
+          <span className="remixui_descriptiontext">{profile.description}</span>
+        </div>
+      </article>
+    </div>
   )
 }
 
