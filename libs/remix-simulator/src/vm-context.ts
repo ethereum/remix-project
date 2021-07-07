@@ -91,7 +91,6 @@ export class VMContext {
   blocks
   latestBlockNumber
   txs
-  defaultFork
   currentVm
   web3vm
   logsManager
@@ -100,8 +99,7 @@ export class VMContext {
   constructor (fork?) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.defaultFork = fork || 'berlin'
-    this.currentFork = this.defaultFork
+    this.currentFork = fork || 'berlin'
     this.currentVm = this.createVm(this.currentFork)
     this.blocks = {}
     this.latestBlockNumber = 0
