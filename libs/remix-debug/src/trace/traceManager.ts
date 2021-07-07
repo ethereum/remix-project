@@ -1,9 +1,9 @@
 'use strict'
+import { util, execution } from '@remix-project/remix-lib'
 import { TraceAnalyser } from './traceAnalyser'
 import { TraceCache } from './traceCache'
 import { TraceStepManager } from './traceStepManager'
 import { isCreateInstruction } from './traceHelper'
-import { util } from '@remix-project/remix-lib'
 
 export class TraceManager {
   web3
@@ -17,7 +17,6 @@ export class TraceManager {
 
   constructor (options) {
     this.web3 = options.web3
-    this.fork = options.fork
     this.isLoading = false
     this.trace = null
     this.traceCache = new TraceCache()
@@ -36,6 +35,15 @@ export class TraceManager {
 
       if (result['structLogs'].length > 0) {
         this.trace = result['structLogs']
+
+        try {
+          const networkId = await this.web3.eth.net.getId()
+          this.fork = execution.forkAt(networkId, tx.blockNumber)
+        } catch (e) {
+          this.fork = 'berlin'
+          console.log(`unable to detect fork, defaulting to ${this.fork}..`)
+          console.error(e)
+        }
 
         this.traceAnalyser.analyse(result['structLogs'], tx)
         this.isLoading = false
@@ -199,6 +207,14 @@ export class TraceManager {
       throw new Error(check)
     }
     return this.trace[stepIndex].pc
+  }
+
+  getAllStopIndexes () {
+    return this.traceCache.stopIndexes
+  }
+
+  getAllOutofGasIndexes () {
+    return this.traceCache.outofgasIndexes
   }
 
   getReturnValue (stepIndex) {

@@ -163,7 +163,6 @@
     "jquery": "^3.3.1",
     "jszip": "^3.6.0",
     "latest-version": "^5.1.0",
-    "lodash": "^4.17.21",
     "merge": "^1.2.0",
     "npm-install-version": "^6.0.2",
     "react": "16.13.1",
@@ -172,12 +171,13 @@
     "react-dom": "16.13.1",
     "selenium": "^2.20.0",
     "signale": "^1.4.0",
+    "string-similarity": "^4.0.4",
     "time-stamp": "^2.2.0",
     "tslib": "^2.3.0",
     "web3": "1.2.4",
     "winston": "^3.3.3",
     "ws": "^7.3.0"
-  },
+  }, 
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-modules-amd": "^7.10.4",
