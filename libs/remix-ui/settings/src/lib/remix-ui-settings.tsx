@@ -12,7 +12,8 @@ import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 export interface RemixUiSettingsProps {
   config: any,
   editor: any,
-   _deps: any
+   _deps: any,
+   useMatomoAnalytics: boolean
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
@@ -33,24 +34,28 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
   }, [themeName, state.message])
 
+  useEffect(() => {
+    if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
+  }, [props.useMatomoAnalytics])
+
   const onchangeGenerateContractMetadata = (event) => {
-    generateContractMetadat(props, event, dispatch)
+    generateContractMetadat(props.config, event.target.checked, dispatch)
   }
 
   const onchangeOption = (event) => {
-    etherumVM(props, event, dispatch)
+    etherumVM(props.config, event.target.checked, dispatch)
   }
 
   const textWrapEvent = (event) => {
-    textWrapEventAction(props, event, dispatch)
+    textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
   const onchangePersonal = event => {
-    personal(props, event, dispatch)
+    personal(props.config, event.target.checked, dispatch)
   }
 
   const onchangeMatomoAnalytics = event => {
-    useMatomoAnalytics(props, event, dispatch)
+    useMatomoAnalytics(props.config, event.target.checked, dispatch)
   }
 
   const onswitchTheme = (event, name) => {
@@ -66,47 +71,55 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
   }
 
-  const generalConfig = () => (
-    <div className="$border-top">
-      <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">General settings</h6>
-        <div className="mt-2 custom-control custom-checkbox mb-1">
-          <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked = { props.config.get('settings/generate-contract-metadata') }/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
-        </div>
-        <div className="fmt-2 custom-control custom-checkbox mb-1">
-          <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ props.config.get('settings/always-use-vm') }/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
-        </div>
-        <div className="mt-2 custom-control custom-checkbox mb-1">
-          <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { props.config.get('settings/text-wrap')}/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
-        </div>
-        <div className="custom-control custom-checkbox mb-1">
-          <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { props.config.get('settings/personal-mode')}/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
-            <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
-            <span>   </span>{enablePersonalModeText} {warnText}
-          </label>
-        </div>
-        <div className="custom-control custom-checkbox mb-1">
-          <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={ props.config.get('settings/matomo-analytics')}/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
-            <span>{matomoAnalytics}</span>
-            <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
-          </label>
+  const generalConfig = () => {
+    const isMetadataChecked = props.config.get('settings/generate-contract-metadata') || false
+    const isEthereumVMChecked = props.config.get('settings/always-use-vm') || false
+    const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
+    const isPersonalChecked = props.config.get('settings/personal-mode') || false
+    const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
+
+    return (
+      <div className="$border-top">
+        <div className="card-body pt-3 pb-2">
+          <h6 className="card-title">General settings</h6>
+          <div className="mt-2 custom-control custom-checkbox mb-1">
+            <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked = { isMetadataChecked }/>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
+          </div>
+          <div className="fmt-2 custom-control custom-checkbox mb-1">
+            <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ isEthereumVMChecked }/>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
+          </div>
+          <div className="mt-2 custom-control custom-checkbox mb-1">
+            <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { isEditorWrapChecked }/>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
+          </div>
+          <div className="custom-control custom-checkbox mb-1">
+            <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { isPersonalChecked }/>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
+              <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
+              <span>   </span>{enablePersonalModeText} {warnText}
+            </label>
+          </div>
+          <div className="custom-control custom-checkbox mb-1">
+            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={ isMatomoChecked }/>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
+              <span>{matomoAnalytics}</span>
+              <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
+            </label>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   const saveToken = () => {
-    saveTokenToast(props, dispatchToast, tokenValue)
+    saveTokenToast(props.config, dispatchToast, tokenValue)
   }
 
   const removeToken = () => {
     setTokenValue('')
-    removeTokenToast(props, dispatchToast)
+    removeTokenToast(props.config, dispatchToast)
   }
 
   const handleSaveTokenState = useCallback(

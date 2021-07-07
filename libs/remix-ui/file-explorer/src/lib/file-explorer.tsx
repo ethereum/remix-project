@@ -35,7 +35,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'newFolder',
       name: 'New Folder',
@@ -43,7 +44,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'rename',
       name: 'Rename',
@@ -51,7 +53,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'delete',
       name: 'Delete',
@@ -59,7 +62,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'run',
       name: 'Run',
@@ -67,7 +71,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: ['.js'],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'pushChangesToGist',
       name: 'Push changes to gist',
@@ -75,7 +80,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'publishFolderToGist',
       name: 'Publish folder to gist',
@@ -83,7 +89,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'publishFileToGist',
       name: 'Publish file to gist',
@@ -91,7 +98,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'copy',
       name: 'Copy',
@@ -99,7 +107,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'deleteAll',
       name: 'Delete All',
@@ -107,7 +116,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: true
+      multiselect: true,
+      label: ''
     }],
     focusContext: {
       element: null,
@@ -282,7 +292,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         path: [],
         extension: [],
         pattern: [],
-        multiselect: false
+        multiselect: false,
+        label: ''
       }])
     } else {
       removeMenuItems([{
@@ -292,7 +303,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         path: [],
         extension: [],
         pattern: [],
-        multiselect: false
+        multiselect: false,
+        label: ''
       }])
     }
   }, [canPaste])
