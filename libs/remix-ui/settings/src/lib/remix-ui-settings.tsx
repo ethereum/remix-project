@@ -72,11 +72,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const generalConfig = () => {
-    const isMetadataChecked = (props.config.get('settings/generate-contract-metadata') === null) || (props.config.get('settings/generate-contract-metadata') === undefined) ? false : props.config.get('settings/generate-contract-metadata')
-    const isEthereumVMChecked = (props.config.get('settings/always-use-vm') === null) || (props.config.get('settings/always-use-vm') === undefined) ? false : props.config.get('settings/always-use-vm')
-    const isEditorWrapChecked = (props.config.get('settings/text-wrap') === null) || (props.config.get('settings/text-wrap') === undefined) ? false : props.config.get('settings/text-wrap')
-    const isPersonalChecked = (props.config.get('settings/personal-mode') === null) || (props.config.get('settings/personal-mode') === undefined) ? false : props.config.get('settings/personal-mode')
-    const isMatomoChecked = (props.config.get('settings/matomo-analytics') === null) || (props.config.get('settings/matomo-analytics') === undefined) ? false : props.config.get('settings/matomo-analytics')
+    const isMetadataChecked = props.config.get('settings/generate-contract-metadata') || false
+    const isEthereumVMChecked = props.config.get('settings/always-use-vm') || false
+    const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
+    const isPersonalChecked = props.config.get('settings/personal-mode') || false
+    const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
 
     return (
       <div className="$border-top">
