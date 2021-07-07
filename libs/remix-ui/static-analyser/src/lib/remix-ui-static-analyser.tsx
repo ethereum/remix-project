@@ -245,6 +245,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }).catch((error) => {
                 console.log('Error found:', error) // This should be removed once testing done
                 props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
+                showWarnings(warningMessage, 'warningModuleName')
               })
             })
           } else {
