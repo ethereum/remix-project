@@ -4,7 +4,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import { enablePersonalModeText, ethereunVMText, generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText } from './constants'
 
 import './remix-ui-settings.css'
-import { etherumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast } from './settingsAction'
+import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 
@@ -38,12 +38,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
   }, [props.useMatomoAnalytics])
 
+  useEffect(() => {
+    const javascriptVM = props.config.get('settings/always-use-vm')
+
+    if ((javascriptVM === null) || (javascriptVM === undefined)) ethereumVM(props.config, true, dispatch)
+  }, [props.config])
+
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
 
   const onchangeOption = (event) => {
-    etherumVM(props.config, event.target.checked, dispatch)
+    ethereumVM(props.config, event.target.checked, dispatch)
   }
 
   const textWrapEvent = (event) => {
