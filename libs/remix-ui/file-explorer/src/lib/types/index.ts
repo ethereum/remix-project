@@ -32,7 +32,7 @@ export interface FileExplorerMenuProps {
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
 
-export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean }
+export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean, label: string }
 
 export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
