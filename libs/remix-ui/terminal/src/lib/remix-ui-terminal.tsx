@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, SyntheticEvent } from 'react' // eslint-disable-line
 
 import './remix-ui-terminal.css'
 
@@ -13,12 +13,38 @@ export interface RemixUiTerminalProps {
   options: any
   data: any
   cmdInterpreter: any
+  registerCommand: any
+}
+
+export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
+  clipboardData: DataTransfer;
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [inserted, setInserted] = useState(false)
+
+  const [state, setState] = useState({
+    data: {
+      // lineLength: props.options.lineLength || 80,
+      session: [],
+      activeFilters: { commands: {}, input: '' },
+      filterFns: {}
+    },
+    _commands: {},
+    commands: {},
+    _JOURNAL: [],
+    _jobs: [],
+    _INDEX: {},
+    _INDEXall: [],
+    _INDEXallMain: [],
+    _INDEXcommands: {},
+    _INDEXcommandsMain: {}
+  })
+
+  // terminal inputRef
+  const inputEl = useRef(null)
   // events
   useEffect(() => {
     // window.addEventListener('resize', function () {
@@ -32,6 +58,25 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     //   })
     // }
   }, [])
+
+  // handle events
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    // Do something
+    const selection = window.getSelection()
+    if (!selection.rangeCount) return false
+    event.preventDefault()
+    event.stopPropagation()
+    var clipboard = (event.clipboardData) // || window.clipboardData
+    var text = clipboard.getData('text/plain')
+    text = text.replace(/[^\x20-\xFF]/gi, '') // remove non-UTF-8 characters
+    var temp = document.createElement('div')
+    temp.innerHTML = text
+    var textnode = document.createTextNode(temp.textContent)
+    selection.getRangeAt(0).insertNode(textnode)
+    selection.empty()
+    // self.scroll2bottom()
+    // placeCaretAtEnd(event.currentTarget)
+  }
 
   const handleMinimizeTerminal = (event) => {
     console.log('clikced', props.event)
@@ -47,13 +92,75 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     console.log(props.event, 'event.trigger')
   }
 
-  const reattached = (event) => {
-    let el = event.currentTarget
-    var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
-    if (isBottomed) {
+  // const reattached = (event) => {
+  //   let el = event.currentTarget
+  //   var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
+  //   if (isBottomed) {
 
+  //   } else {
+  //     // if (!inserted)  
+  //   }
+  // }
+
+  const registerCommand = (name, command, opts) => {
+    const { _commands, _INDEXcommands, _INDEXallMain, _INDEXcommandsMain, _INDEXall, commands } = state
+    // TODO if no _commands[name] throw an error
+
+    // TODO if typeof command !== 'function' throw error
+
+    _commands[name] = command
+    _INDEXcommands[name] = []
+    _INDEXallMain[name] = []
+
+    // TODO _command function goes here
+    commands[name] = function _command () {
+      const steps = []
+      const args = [...arguments]
+      const gidx = 0
+      const idx = 0
+      const step = 0
+      const root = { steps, cmd: name, gidx, idx }
+      const ITEM = { root, cmd: name, el: {} }
+      root.gidx = _INDEXallMain.push(ITEM) - 1
+      root.idx = _INDEXcommandsMain[name].push(ITEM) - 1
+      function append (cmd, params, el) {
+        let item = { el, cmd, root, gidx, idx, step, args: [...arguments] }
+        if (cmd) {
+          item = { el, cmd, root, gidx, idx, step, args }
+        } else {
+          // item = ITEM
+          item.el = el
+          cmd = name
+        }
+        item.gidx = _INDEXall.push(item) - 1
+        item.idx = _INDEXcommands[cmd].push(item) - 1
+        item.step = steps.push(item) - 1
+        item.args = params
+        _appendItem(item)
+      }
     }
+
+    return commands[name]
   }
+
+  const _appendItem = (item: any) => {
+    let { _JOURNAL, _jobs, data } = state
+    const self = props
+    const { el, gidx } = item
+    _JOURNAL[gidx] = item
+    if (!_jobs.length) {
+      // requestAnimationFrame(function updateTerminal () {
+      //   self._jobs.forEach(el => self._view.journal.appendChild(el))
+      //   self.scroll2bottom()
+      _jobs = []
+    }
+    if (data.activeFilters.commands[item.cmd]) _jobs.push(el)
+  }
+
+  const focusinput = () => {
+    inputEl.current.focus()
+  }
+
 
 
   return (
@@ -114,6 +221,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }}></div>
         <div className="terminal">
           <div id="journal" className="journal" data-id="terminalJournal">
+            <div className="anchor">
+              {/* ${background} */}
+              <div className="overlay background"></div>
+              {/* ${text} */}
+              <div className="overlay text"></div>
+            </div>
+          </div>
+          <div id="terminalCli" data-id="terminalCli" className="cli" onClick={focusinput}>
+            <span className="prompt">{'>'}</span>
+            <span className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onPaste={handlePaste}></span>
           </div>
         </div>
       </div>
