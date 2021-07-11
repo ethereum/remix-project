@@ -2,10 +2,15 @@
 import axios, { AxiosResponse } from 'axios'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
 
-export interface Imported {
+export type Imported = _Imported | _ImportedMultiple
+interface _Imported {
   content: string;
   cleanUrl: string;
   type: string;
+}
+
+interface _ImportedMultiple {
+  multiple: Array<_Imported>
 }
 
 interface PreviouslyHandledImports {
@@ -21,6 +26,24 @@ interface Handler {
 interface HandlerResponse {
   content: any;
   cleanUrl: string
+}
+
+interface GithubContents {
+  name: string;
+  path: string;
+  sha: string;
+  size: number;
+  type: 'dir' | 'file';
+  url: string;
+  download_url: string | null;
+  content?: string;
+  encoding?: string;
+}
+
+interface GithubFile {
+  path: string,
+  content?: string;
+  download?: string;
 }
 
 export class RemixURLResolver {
@@ -39,7 +62,7 @@ export class RemixURLResolver {
   * @param root The root of the github import statement
   * @param filePath path of the file in github
   */
-  async handleGithubCall (root: string, filePath: string): Promise<HandlerResponse> {
+  async handleGithubCall (root: string, filePath: string): Promise<Array<HandlerResponse>> {
     const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
     let reference = 'master'
     if (regex) {
@@ -48,12 +71,52 @@ export class RemixURLResolver {
       reference = regex[1]
       filePath = filePath.replace(`blob/${reference}/`, '')
     }
-    // eslint-disable-next-line no-useless-catch
+
+    const enumerateDir = async (url: string): Promise<Array<GithubFile>> => {
+      const response = await axios.get(url)
+      const { data } = response
+      if(Array.isArray(data)) {
+        // Directory listing
+        const files: Array<GithubContents> = data as Array<GithubContents>
+        const toDownload = await Promise.all(files.map(async (e: GithubContents): Promise<Array<GithubFile>> => {
+          if(e.type === 'file') {
+            return [{ path: e.path, download: e.download_url }]
+          } else if (e.type === 'dir') {
+            return await enumerateDir(e.url)
+          }
+        }))
+        return toDownload.flat()
+      } else {
+        // Single file
+        const file = data as GithubContents
+        //@ts-ignore
+        if (Window.atob && file.encoding === 'base64') {
+          return [{
+            path: file.path,
+            //@ts-ignore
+            content: Window.atob(file.content),
+          }]
+        }
+      }
+    }
+
     try {
-      const req: string = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
-      const response: AxiosResponse = await axios.get(req)
-      return { content: response.data, cleanUrl: root + '/' + filePath }
-    } catch (e) {
+      // Get repo contents     
+      const req = `https://api.github.com/repos/${root}/contents/${filePath}?ref=${reference}`
+      const flatFilesTree = await enumerateDir(req)
+      // Fetch all files
+      const fetched = await Promise.all(
+        flatFilesTree.map(async (e: GithubFile): Promise<HandlerResponse> => {
+          const cleanUrl = `${root}/${e.path}`
+          if ('content' in e) {
+            return { content: e.content, cleanUrl }
+          } else {
+            const { data } = await axios.get(e.download)
+            return { content: data, cleanUrl }
+          }
+      }))
+      return fetched
+    } catch(e) {
       throw e
     }
   }
@@ -63,11 +126,11 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttp (url: string, cleanUrl: string): Promise<HandlerResponse> {
+  async handleHttp (url: string, cleanUrl: string): Promise<Array<HandlerResponse>> {
     // eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return { content: response.data, cleanUrl }
+      return [{ content: response.data, cleanUrl }]
     } catch (e) {
       throw e
     }
@@ -78,23 +141,23 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttps (url: string, cleanUrl: string): Promise<HandlerResponse> {
+  async handleHttps (url: string, cleanUrl: string): Promise<Array<HandlerResponse>> {
     // eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return { content: response.data, cleanUrl }
+      return [{ content: response.data, cleanUrl }]
     } catch (e) {
       throw e
     }
   }
 
-  async handleSwarm (url: string, cleanUrl: string): Promise<HandlerResponse> {
+  async handleSwarm (url: string, cleanUrl: string): Promise<Array<HandlerResponse>> {
     // eslint-disable-next-line no-useless-catch
     try {
       const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
       const url = bzz.getDownloadURL(cleanUrl, { mode: 'raw' })
       const response: AxiosResponse = await axios.get(url)
-      return { content: response.data, cleanUrl }
+      return [{ content: response.data, cleanUrl }]
     } catch (e) {
       throw e
     }
@@ -104,7 +167,7 @@ export class RemixURLResolver {
   * Handle an import statement based on IPFS
   * @param url The url of the IPFS import statement
   */
-  async handleIPFS (url: string): Promise<HandlerResponse> {
+  async handleIPFS (url: string): Promise<Array<HandlerResponse>> {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     // eslint-disable-next-line no-useless-catch
@@ -113,7 +176,7 @@ export class RemixURLResolver {
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req)
-      return { content: response.data, cleanUrl: url }
+      return [{ content: response.data, cleanUrl: url }]
     } catch (e) {
       throw e
     }
@@ -123,12 +186,12 @@ export class RemixURLResolver {
   * Handle an import statement based on NPM
   * @param url The url of the NPM import statement
   */
-  async handleNpmImport (url: string): Promise<HandlerResponse> {
+  async handleNpmImport (url: string): Promise<Array<HandlerResponse>> {
     // eslint-disable-next-line no-useless-catch
     try {
       const req = 'https://unpkg.com/' + url
       const response: AxiosResponse = await axios.get(req)
-      return { content: response.data, cleanUrl: url }
+      return [{ content: response.data, cleanUrl: url }]
     } catch (e) {
       throw e
     }
@@ -179,13 +242,16 @@ export class RemixURLResolver {
     const matchedHandler = handlers.filter(handler => handler.match(filePath))
     const handler: Handler = matchedHandler[0]
     const match = handler.match(filePath)
-    const { content, cleanUrl } = await handler.handle(match)
-    imported = {
-      content,
-      cleanUrl: cleanUrl || filePath,
-      type: handler.type
-    }
-    this.previouslyHandled[filePath] = imported
-    return imported
+    const handlerResult = await handler.handle(match)
+    const allImported = handlerResult.map(({content, cleanUrl}) => {
+      imported = {
+        content,
+        cleanUrl: cleanUrl || filePath,
+        type: handler.type
+      }
+      this.previouslyHandled[filePath] = imported
+      return imported
+    })
+    return allImported.length > 1 ? {multiple: allImported} : allImported[0]
   }
 }

@@ -5,7 +5,8 @@
       "outDir": "../../dist/out-tsc",
       "declaration": true,
       "rootDir": "./src",
-      "types": ["node"]
+      "types": ["node"],
+      "lib": ["es2019", "DOM"]
     },
     "exclude": [
       "**/*.spec.ts",
