@@ -511,6 +511,7 @@ class CompileTab extends ViewPlugin {
     this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidity',
       name: 'compileFile',
+      label: 'Compile',
       type: [],
       extension: ['.sol'],
       path: [],
