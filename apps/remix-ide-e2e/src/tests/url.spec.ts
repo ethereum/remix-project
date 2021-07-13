@@ -17,7 +17,7 @@ module.exports = {
     return sources
   },
 
-  'Should load the code from URL params': function (browser: NightwatchBrowser) {
+  'Should load the code from URL params (code param)': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
@@ -28,6 +28,20 @@ module.exports = {
         browser.assert.ok(content.indexOf(
           'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol') !== -1,
         'code has not been loaded')
+      })
+  },
+
+  'Should load the code from URL params (url param)': function (browser: NightwatchBrowser) {
+    browser
+      .pause(5000)
+      .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol')
+      .refresh() // we do one reload for making sure we already have the default workspace
+      .pause(5000)
+      .currentWorkspaceIs('code-sample')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(
+          'proposals.length = _numProposals;') !== -1,
+        'url has not been loaded')
       })
   },
 
