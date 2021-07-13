@@ -21,18 +21,9 @@ const initialState: FormStateProps = {
 
 interface ShowInactivesProps {
   inactives: Partial<PluginManagerProfile>[]
-  appManager?: RemixAppManager
   headinglabel: string
 }
-function ShowInactives ({ inactives, appManager, headinglabel }: ShowInactivesProps) {
-  const [plugins] = useState<Profile<any>[]>(appManager.getAll())
-  const [litUpProfiles] = useState<Profile<any>[]>(appManager.getActiveProfiles())
-  const pluginNames = litUpProfiles.map(p => p.name)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let temp: Profile<any>[]
-  pluginNames.forEach(x => {
-    temp = plugins.filter(plugin => plugin.name === x)
-  })
+function ShowInactives ({ inactives, headinglabel }: ShowInactivesProps) {
   return (
     <Fragment>
       <ModuleHeading headingLabel={headinglabel} />
@@ -43,7 +34,7 @@ function ShowInactives ({ inactives, appManager, headinglabel }: ShowInactivesPr
   )
 }
 
-function ShowActives ({ inactives, appManager, headinglabel }: ShowInactivesProps) {
+function ShowActives ({ inactives, headinglabel }: ShowInactivesProps) {
   const [plugins] = useState<any[]>([])
   if (inactives.length === 0) {
     plugins.map(plugin => inactives.push(plugin))
@@ -62,11 +53,6 @@ function RootView () {
   const { appManager, actives, engine, inactives, localPlugin, filter } = useContext(PluginManagerContext)
   const [visible, setVisible] = useState<boolean>(true)
   const [plugin, setPlugin] = useState(initialState)
-  const [allPlugins] = useState(appManager.getAll())
-  const [activePlugins, setActivePlugins] = useState([])
-  const [inactivePlugins, setInactivePlugins] = useState([])
-
-  console.log(`allPlugins state has ${allPlugins.length} plugins ready to be filtered`)
 
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
@@ -77,11 +63,6 @@ function RootView () {
 
   const closeModal = () => setVisible(true)
 
-  const activatePlugin = async (name: string) => {
-    await appManager.activatePlugin(name)
-  }
-
-  console.log('active plugins', activePlugins)
   return (
     <Fragment>
       <form id="local-plugin-form">
@@ -203,10 +184,10 @@ function RootView () {
         </header>
         <section data-id="pluginManagerComponentPluginManagerSection">
           {actives !== undefined
-            ? (<ShowActives appManager={appManager} headinglabel="Active Modules" inactives={inactivePlugins} />)
-            : (<ShowActives headinglabel="Active Modules" inactives={activePlugins}/>)
+            ? (<ShowActives headinglabel="Active Modules" inactives={actives} />)
+            : (<ShowActives headinglabel="Active Modules" inactives={actives}/>)
           }
-          {inactives !== undefined ? (<ShowInactives appManager={appManager} inactives={inactives} headinglabel="Inactive Modules" />) : <ShowInactives inactives={inactives} headinglabel="Inactive Modules" />}
+          {inactives !== undefined ? (<ShowInactives inactives={inactives} headinglabel="Inactive Modules" />) : <ShowInactives inactives={inactives} headinglabel="Inactive Modules" />}
         </section>
       </div>
     </Fragment>
