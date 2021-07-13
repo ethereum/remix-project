@@ -107,11 +107,12 @@ export interface PluginManagerContextProviderProps {
   localPlugin: LocalPlugin
   _paq: _Paq
   filter: string
+  activePlugins: string[]
   actives: Partial<PluginManagerProfile>[]
   inactives: Partial<PluginManagerProfile>[]
   activatePlugin: (name: string) => void
   deActivatePlugin: (name: string) => void
-  isActive: (name: string) => boolean
+  isActive?: (name: string) => boolean
   filterPlugins: () => void
   profile: Partial<PluginManagerProfile>
   defaultProfile: DefaultLocalPlugin
@@ -124,11 +125,12 @@ export interface RemixUiPluginManagerProps {
   localPlugin: LocalPlugin
   _paq: _Paq
   filter: string
+  activePlugins: string[]
   actives: Partial<PluginManagerProfile>[]
   inactives: Partial<PluginManagerProfile>[]
   activatePlugin: (name: string) => void
   deActivatePlugin: (name: string) => void
-  isActive: (name: string) => boolean
+  isActive?: (name: string) => boolean
   filterPlugins: () => void
   profile: Partial<PluginManagerProfile>
   headingLabel: string
