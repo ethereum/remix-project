@@ -106,6 +106,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.filter = ''
     this.activePlugins = []
     this.inactivePlugins = []
+    this.activePlugins = this.appManager.actives
     // this.appManager.event.on('activate', () => { this.reRender() })
     // this.appManager.event.on('deactivate', () => { this.reRender() })
     // this.engine.event.on('onRegistration', () => { this.reRender() })
@@ -123,7 +124,7 @@ class PluginManagerComponent extends ViewPlugin {
         appManager={this.appManager}
         engine={this.engine}
         localPlugin={this.localPlugin}
-        isActive={() => false}
+        activePlugins={this.activePlugins}
         actives={this.activePlugins}
         inactives={this.inactivePlugins}
       />,
