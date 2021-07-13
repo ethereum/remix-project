@@ -2,6 +2,7 @@ import { PermissionHandler } from './app/ui/persmission-handler'
 import { PluginManager } from '@remixproject/engine/lib/manager'
 import { EventEmitter } from 'events'
 import { Engine } from '@remixproject/engine/lib/engine'
+import { Profile } from '@remixproject/plugin-utils'
 /* eslint-disable camelcase */
 
 // eslint-disable-next-line no-use-before-define
@@ -103,16 +104,17 @@ export class RemixAppManager extends PluginManager {
 export interface PluginManagerContextProviderProps {
   appManager: RemixAppManager
   engine: RemixEngine
+  localPlugin: LocalPlugin
   _paq: _Paq
   filter: string
-  actives: Profile[]
-  inactives: Profile[]
+  actives: Partial<PluginManagerProfile>[]
+  inactives: Partial<PluginManagerProfile>[]
   activatePlugin: (name: string) => void
   deActivatePlugin: (name: string) => void
   isActive: (name: string) => boolean
-  openLocalPlugin: () => Promise<void>
   filterPlugins: () => void
-  profile: Profile
+  profile: Partial<PluginManagerProfile>
+  defaultProfile: DefaultLocalPlugin
   headingLabel: string
 }
 
@@ -122,14 +124,13 @@ export interface RemixUiPluginManagerProps {
   localPlugin: LocalPlugin
   _paq: _Paq
   filter: string
-  actives: Profile[]
-  inactives: Profile[]
+  actives: Partial<PluginManagerProfile>[]
+  inactives: Partial<PluginManagerProfile>[]
   activatePlugin: (name: string) => void
   deActivatePlugin: (name: string) => void
-  isActive: (name: string) => any
-  openLocalPlugin: () => Promise<void>
+  isActive: (name: string) => boolean
   filterPlugins: () => void
-  profile: Profile
+  profile: Partial<PluginManagerProfile>
   headingLabel: string
 }
 /** @class Reference loaders.
@@ -153,43 +154,40 @@ export type PluginManagerSettings = {
   render: () => HTMLElement
 }
 
-export type LocalPluginType = {
-  'iframe',
-  'ws'
-}
-
-export type DefaultLocalPlugin = {
+export interface DefaultLocalPlugin extends Profile {
+  name: string
+  displayName: string
+  url: string
   type: string
   hash: string
   methods: any
   location: string
 }
 
-export interface FormStateProps extends DefaultLocalPlugin {
+export interface FormStateProps {
   name: string
   displayName: string
   url: string
+  type: string
+  hash: string
+  methods: any
+  location: string
 }
 
-export type Profile = {
-  name: 'pluginManager',
-  displayName: 'Plugin manager',
-  methods: [],
-  events: [],
+export type PluginManagerProfile = Profile & {
+  name: string,
+  displayName: string,
+  methods: Array<any>,
+  events?: Array<any>,
   icon: 'assets/img/pluginManager.webp',
-  description: 'Start/stop services, modules and plugins',
-  kind: 'settings',
-  location: 'sidePanel',
+  description: string,
+  kind?: string,
+  location: 'sidePanel' | 'mainPanel' | 'none',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
   version: any
   type: 'iframe' | 'ws'
   hash: string
 }
-
-export type TileLabel = {
-  label: 'Active Module' | 'Inactive Modules'
-}
-
 export type LocalPlugin = {
   create: () => Profile
   updateName: (target: string) => void
