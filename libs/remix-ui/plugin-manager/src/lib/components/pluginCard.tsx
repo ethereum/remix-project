@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react'
-import { Profile } from '../../types'
+import { PluginManagerProfile } from '../../types'
 import { PluginManagerContext } from '../contexts/pluginmanagercontext'
 import '../remix-ui-plugin-manager.css'
 import Button from './button'
 interface PluginCardProps {
-  profile: Partial<Profile>
+  profile: Partial<PluginManagerProfile>
 }
 
 // eslint-disable-next-line no-empty-pattern
