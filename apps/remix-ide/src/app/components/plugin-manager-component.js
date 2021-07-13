@@ -98,19 +98,36 @@ class PluginManagerComponent extends ViewPlugin {
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
     this.props = {}
-    // this.views = {
-    //   root: null,
-    //   items: {}
-    // }
+    this.views = {
+      root: null,
+      items: {}
+    }
     this.localPlugin = new LocalPlugin()
     this.filter = ''
     this.activePlugins = []
     this.inactivePlugins = []
-    this.activePlugins = this.appManager.actives
+    this.activePluginNames = this.appManager.actives
     // this.appManager.event.on('activate', () => { this.reRender() })
     // this.appManager.event.on('deactivate', () => { this.reRender() })
     // this.engine.event.on('onRegistration', () => { this.reRender() })
     // const { actives, inactives } = this.getAllPlugins()
+    console.log('views property contents', this.views)
+  }
+
+  isActive (name) {
+    this.appManager.actives.includes(name)
+  }
+
+  activateP (name) {
+    // console.log(this.appManager)
+    this.appManager.turnPluginOn(name)
+    _paq.push(['trackEvent', 'manager', 'activate', name])
+  }
+
+  deactivateP (name) {
+    // console.log(this.appManager)
+    this.call('manager', 'deactivatePlugin', name)
+    _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
   onActivation () {
@@ -124,26 +141,15 @@ class PluginManagerComponent extends ViewPlugin {
         appManager={this.appManager}
         engine={this.engine}
         localPlugin={this.localPlugin}
-        activePlugins={this.activePlugins}
+        activePluginNames={this.activePluginsNames}
         actives={this.activePlugins}
         inactives={this.inactivePlugins}
+        activatePlugin={this.activateP}
+        deActivatePlugin={this.deactivateP}
+        _paq={_paq}
       />,
       document.getElementById('pluginManager'))
   }
-
-  isActive (name) {
-    return this.appManager.actives.includes(name)
-  }
-
-  // activateP (name) {
-  //   this.appManager.activatePlugin(name)
-  //   _paq.push(['trackEvent', 'manager', 'activate', name])
-  // }
-
-  // deactivateP (name) {
-  //   this.call('manager', 'deactivatePlugin', name)
-  //   _paq.push(['trackEvent', 'manager', 'deactivate', name])
-  // }
 
   /***************
    * SUB-COMPONENT

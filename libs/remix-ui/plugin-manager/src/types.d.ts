@@ -66,10 +66,6 @@ interface SetPluginOptionType {
   queueTimeout: number
 }
 
-export interface _Paq {
-  _paq: Window & typeof globalThis | []
-}
-
 export class RemixEngine extends Engine {
   event: EventEmitter;
   setPluginOption ({ name, kind }) : SetPluginOptionType
@@ -99,15 +95,17 @@ export class RemixAppManager extends PluginManager {
     isDependent(name: any): any;
     isRequired(name: any): any;
     registeredPlugins(): Promise<any>;
+    turnPluginOn(name: string | string[]);
+    turnPluginOff(name: string);
 }
 
 export interface PluginManagerContextProviderProps {
   appManager: RemixAppManager
   engine: RemixEngine
   localPlugin: LocalPlugin
-  _paq: _Paq
+  _paq: any
   filter: string
-  activePlugins: string[]
+  activePluginNames: string[]
   actives: Partial<PluginManagerProfile>[]
   inactives: Partial<PluginManagerProfile>[]
   activatePlugin: (name: string) => void
@@ -123,9 +121,9 @@ export interface RemixUiPluginManagerProps {
   appManager: RemixAppManager
   engine: RemixEngine
   localPlugin: LocalPlugin
-  _paq: _Paq
+  _paq: any // Window & typeof globalThis | []
   filter: string
-  activePlugins: string[]
+  activePluginNames: string[]
   actives: Partial<PluginManagerProfile>[]
   inactives: Partial<PluginManagerProfile>[]
   activatePlugin: (name: string) => void
