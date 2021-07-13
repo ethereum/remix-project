@@ -103,26 +103,13 @@ class PluginManagerComponent extends ViewPlugin {
     //   items: {}
     // }
     this.localPlugin = new LocalPlugin()
-    // this.filter = ''
+    this.filter = ''
+    this.activePlugins = []
+    this.inactivePlugins = []
     // this.appManager.event.on('activate', () => { this.reRender() })
     // this.appManager.event.on('deactivate', () => { this.reRender() })
     // this.engine.event.on('onRegistration', () => { this.reRender() })
     // const { actives, inactives } = this.getAllPlugins()
-  }
-
-  reactProps () {
-    return {
-      views: this.views,
-      filter: this.filter,
-      localPlugin: this.localPlugin,
-      isActive: this.isActive,
-      activatePlugin: this.activateP,
-      deactivePlugin: this.deactivateP,
-      openLocalPlugin: this.openLocalPlugin,
-      profile: this.profile
-      // actives: actives,
-      // inactives: inactives
-    }
   }
 
   onActivation () {
@@ -137,15 +124,15 @@ class PluginManagerComponent extends ViewPlugin {
         engine={this.engine}
         localPlugin={this.localPlugin}
         isActive={() => false}
-        actives={[]}
-        inactives={[]}
+        actives={this.activePlugins}
+        inactives={this.inactivePlugins}
       />,
       document.getElementById('pluginManager'))
   }
 
-  // isActive (name) {
-  //   return this.appManager.actives.includes(name)
-  // }
+  isActive (name) {
+    return this.appManager.actives.includes(name)
+  }
 
   // activateP (name) {
   //   this.appManager.activatePlugin(name)
@@ -180,38 +167,62 @@ class PluginManagerComponent extends ViewPlugin {
     }
   }
 
-  // filterHelper () {
-  //   const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
-  //   const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
-  //   const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
-  //   const isNotHome = (profile) => profile.name !== 'home'
-  //   const sortByName = (profileA, profileB) => {
-  //     const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
-  //     const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
-  //     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
-  //   }
-  //   return (isFiltered, isNotRequired, isNotDependent, isNotHome, sortByName)
-  // }
+  filterHelper () {
+    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+    const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
+    const isNotHome = (profile) => profile.name !== 'home'
+    const sortByName = (profileA, profileB) => {
+      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
+      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    }
+    return (isFiltered, isNotRequired, isNotDependent, isNotHome, sortByName)
+  }
 
-  // getAllPlugins () {
-  //   //   // Filter all active and inactive modules that are not required
-  //   const [isFiltered, isNotRequired, isNotDependent, isNotHome, sortByName] = this.filterHelper()
-  //   const { actives, inactives } = this.appManager.getAll()
-  //     .filter(isFiltered)
-  //     .filter(isNotRequired)
-  //     .filter(isNotDependent)
-  //     .filter(isNotHome)
-  //     .sort(sortByName)
-  //     .reduce(({ actives, inactives }, profile) => {
-  //       return this.isActive(profile.name)
-  //         ? { actives: [...actives, profile], inactives }
-  //         : { inactives: [...inactives, profile], actives }
-  //     }, { actives: [], inactives: [] })
-  //   return (actives, inactives)
-  // }
+  getAllPlugins () {
+    //   // Filter all active and inactive modules that are not required
+    const [isFiltered, isNotRequired, isNotDependent, isNotHome, sortByName] = this.filterHelper()
+    const { actives, inactives } = this.appManager.getAll()
+      .filter(isFiltered)
+      .filter(isNotRequired)
+      .filter(isNotDependent)
+      .filter(isNotHome)
+      .sort(sortByName)
+      .reduce(({ actives, inactives }, profile) => {
+        return this.isActive(profile.name)
+          ? { actives: [...actives, profile], inactives }
+          : { inactives: [...inactives, profile], actives }
+      }, { actives: [], inactives: [] })
+    this.activePlugins = actives
+    this.inactivePlugins = inactives
+  }
 
   render () {
     // Filtering helpers
+    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+    const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
+    const isNotHome = (profile) => profile.name !== 'home'
+    const sortByName = (profileA, profileB) => {
+      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
+      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    }
+
+    const { actives, inactives } = this.appManager.getAll()
+      .filter(isFiltered)
+      .filter(isNotRequired)
+      .filter(isNotDependent)
+      .filter(isNotHome)
+      .sort(sortByName)
+      .reduce(({ actives, inactives }, profile) => {
+        return this.isActive(profile.name)
+          ? { actives: [...actives, profile], inactives }
+          : { inactives: [...inactives, profile], actives }
+      }, { actives: [], inactives: [] })
+    this.activePlugins = actives
+    this.inactivePlugins = inactives
     return this.htmlElement
   }
 
