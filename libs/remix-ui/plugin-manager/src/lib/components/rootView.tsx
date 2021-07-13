@@ -35,10 +35,7 @@ function ShowInactives ({ inactives, headinglabel }: ShowInactivesProps) {
 }
 
 function ShowActives ({ inactives, headinglabel }: ShowInactivesProps) {
-  const [plugins] = useState<any[]>([])
-  if (inactives.length === 0) {
-    plugins.map(plugin => inactives.push(plugin))
-  }
+  console.log('actived plugins are :', inactives)
   return (
     <Fragment>
       <ModuleHeading headingLabel={headinglabel} />
@@ -50,7 +47,7 @@ function ShowActives ({ inactives, headinglabel }: ShowInactivesProps) {
 }
 
 function RootView () {
-  const { appManager, actives, engine, inactives, localPlugin, filter } = useContext(PluginManagerContext)
+  const { appManager, actives, engine, inactives, localPlugin } = useContext(PluginManagerContext)
   const [visible, setVisible] = useState<boolean>(true)
   const [plugin, setPlugin] = useState(initialState)
 
@@ -62,7 +59,9 @@ function RootView () {
   }
 
   const closeModal = () => setVisible(true)
-
+  useEffect(() => {
+    // engine.event.on('onRegistration', () => )
+  })
   return (
     <Fragment>
       <form id="local-plugin-form">
