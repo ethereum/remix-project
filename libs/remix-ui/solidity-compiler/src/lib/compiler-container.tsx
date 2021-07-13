@@ -4,7 +4,7 @@ import { CompilerContainerProps, ConfigurationSettings } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from './logic/compiler-utils' // eslint-disable-line
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
-import { resetCompilerMode, resetEditorMode, listenToEvents } from './actions/compiler'
+import { resetEditorMode, listenToEvents } from './actions/compiler'
 
 import './css/style.css'
 
@@ -85,23 +85,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       switch (compilerContainer.compiler.mode) {
         case 'startingCompilation':
           startingCompilation()
-          resetCompilerMode()(dispatch)
           break
         case 'compilationDuration':
-          compilationDuration(compilerContainer.compiler.args)
-          resetCompilerMode()(dispatch)
+          compilationDuration(compilerContainer.compiler.args[0])
           break
         case 'loadingCompiler':
           loadingCompiler()
-          resetCompilerMode()(dispatch)
           break
         case 'compilerLoaded':
           compilerLoaded()
-          resetCompilerMode()(dispatch)
           break
         case 'compilationFinished':
           compilationFinished()
-          resetCompilerMode()(dispatch)
           break
       }
     }
@@ -239,7 +234,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.classList.add('remixui_spinningIcon')
   }
 
-  const compilationDuration = ({ speed }) => {
+  const compilationDuration = (speed: number) => {
     if (!warningIcon.current) return
     if (speed > 1000) {
       const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
