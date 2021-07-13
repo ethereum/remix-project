@@ -9,7 +9,7 @@ interface PluginCardProps {
 
 // eslint-disable-next-line no-empty-pattern
 function PluginCard ({ profile }: PluginCardProps) {
-  const { activePlugins } = useContext(PluginManagerContext)
+  const { activePluginNames } = useContext(PluginManagerContext)
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
     <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
@@ -31,15 +31,16 @@ function PluginCard ({ profile }: PluginCardProps) {
               {docLink}
               {versionWarning}
             </div>
-            { activePlugins.includes(profile.name) ? (
+            { activePluginNames.includes(profile.name) ? (
               <Button
                 buttonText="Deactivate"
-              />) : <Button buttonText="Activate" />
+                pluginName={profile.name}
+              />) : <Button buttonText="Activate" pluginName={profile.name}/>
             }
           </h6>
         </div>
         <div className="remixui_description d-flex text-body plugin-text mb-2">
-          <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/>
+          { profile.icon ? <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/> : null }
           <span className="remixui_descriptiontext">{profile.description}</span>
         </div>
       </article>
