@@ -53,21 +53,6 @@ export const Workspace = (props: WorkspaceProps) => {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
 
-  /* extends the parent 'plugin' with some function needed by the file explorer */
-  props.plugin.resetFocus = (reset) => {
-    setState(prevState => {
-      return { ...prevState, reset }
-    })
-  }
-
-  props.plugin.resetNewFile = () => {
-    setState(prevState => {
-      return { ...prevState, displayNewFile: !state.displayNewFile }
-    })
-  }
-
-  props.plugin.resetUploadFile = () => {}
-
   /* implement an external API, consumed by the parent */
   props.request.createWorkspace = () => {
     return createWorkspace()

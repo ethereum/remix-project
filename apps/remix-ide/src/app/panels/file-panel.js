@@ -300,5 +300,19 @@ module.exports = class Filepanel extends ViewPlugin {
   workspaceCreated (workspace) {
     this.emit('createWorkspace', workspace)
   }
+
+  resetFocus (reset) {
+    // setState(prevState => {
+    //   return { ...prevState, reset }
+    // })
+  }
+
+  resetNewFile () {
+    // setState(prevState => {
+    //   return { ...prevState, displayNewFile: !state.displayNewFile }
+    // })
+  }
+
+  resetUploadFile = () => {}
   /** end section */
 }
