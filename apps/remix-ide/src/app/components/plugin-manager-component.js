@@ -1,10 +1,18 @@
-import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
+/* eslint-disable no-unused-vars */
+import {
+  IframePlugin,
+  ViewPlugin,
+  WebsocketPlugin
+} from '@remixproject/engine-web'
 import { PluginManagerSettings } from './plugin-manager-settings'
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
-const LocalPlugin = require('./local-plugin')
+const LocalPlugin = require('./local-plugin') // eslint-disable-line
 const addToolTip = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
 
@@ -53,7 +61,7 @@ const css = csjs`
   }
   .isStuck {
     background-color: var(--primary);
-    color: 
+    color:
   }
   .versionWarning {
     padding: 4px;
@@ -84,85 +92,63 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    this.event = new EventEmitter()
+    // this.event = new EventEmitter() // already exists in engine so not needed here
     this.appManager = appManager
+    this.engine = engine
+    this.htmlElement = document.createElement('div')
+    this.htmlElement.setAttribute('id', 'pluginManager')
+    this.props = {}
     this.views = {
       root: null,
       items: {}
     }
     this.localPlugin = new LocalPlugin()
     this.filter = ''
-    this.appManager.event.on('activate', () => { this.reRender() })
-    this.appManager.event.on('deactivate', () => { this.reRender() })
-    this.engine = engine
-    this.engine.event.on('onRegistration', () => { this.reRender() })
+    this.activePlugins = []
+    this.inactivePlugins = []
+    this.activePluginNames = this.appManager.actives
+    // this.appManager.event.on('activate', () => { this.reRender() })
+    // this.appManager.event.on('deactivate', () => { this.reRender() })
+    // this.engine.event.on('onRegistration', () => { this.reRender() })
+    // const { actives, inactives } = this.getAllPlugins()
+    console.log('views property contents', this.views)
   }
 
   isActive (name) {
-    return this.appManager.actives.includes(name)
+    this.appManager.actives.includes(name)
   }
 
   activateP (name) {
-    this.appManager.activatePlugin(name)
+    // console.log(this.appManager)
+    this.appManager.turnPluginOn(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
   deactivateP (name) {
+    // console.log(this.appManager)
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
-  renderItem (profile) {
-    const displayName = (profile.displayName) ? profile.displayName : profile.name
-    const doclink = profile.documentation ? yo`<a href="${profile.documentation}" class="px-1" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>`
-      : yo``
+  onActivation () {
+    this.renderComponent()
+  }
 
-    // Check version of the plugin
-    let versionWarning
-    // Alpha
-    if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning} plugin-version">alpha</small>`
-    }
-    // Beta
-    if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning} plugin-version">beta</small>`
-    }
-
-    const activationButton = this.isActive(profile.name)
-      ? yo`
-      <button
-        onclick="${() => this.deactivateP(profile.name)}"
-        class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}"
-      >
-        Deactivate
-      </button>
-      `
-      : yo`
-      <button
-        onclick="${() => this.activateP(profile.name)}"
-        class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${profile.name}"
-      >
-        Activate
-      </button>`
-
-    return yo`
-      <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 mb-1 plugins-list-group-item" title="${displayName}" >
-        <div class="${css.row} justify-content-between align-items-center mb-2">
-          <h6 class="${css.displayName} plugin-name">
-            <div>
-              ${displayName}
-              ${doclink}
-              ${versionWarning}
-            </div>
-            ${activationButton}
-          </h6>
-        </div>
-        <div class="${css.description} d-flex text-body plugin-text mb-2">
-          <img src="${profile.icon}" class="mr-1 mt-1 ${css.pluginIcon}" />
-          <span class="${css.descriptiontext}">${profile.description}</span>
-        </div>
-      </article>
-    `
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiPluginManager
+        profile={profile}
+        appManager={this.appManager}
+        engine={this.engine}
+        localPlugin={this.localPlugin}
+        activePluginNames={this.activePluginsNames}
+        actives={this.activePlugins}
+        inactives={this.inactivePlugins}
+        activatePlugin={this.activateP}
+        deActivatePlugin={this.deactivateP}
+        _paq={_paq}
+      />,
+      document.getElementById('pluginManager'))
   }
 
   /***************
@@ -200,7 +186,6 @@ class PluginManagerComponent extends ViewPlugin {
       return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
     }
 
-    // Filter all active and inactive modules that are not required
     const { actives, inactives } = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
@@ -212,59 +197,21 @@ class PluginManagerComponent extends ViewPlugin {
           ? { actives: [...actives, profile], inactives }
           : { inactives: [...inactives, profile], actives }
       }, { actives: [], inactives: [] })
-
-    const activeTile = actives.length !== 0
-      ? yo`
-      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
-        <span class="navbar-brand plugins-list-title">Active Modules</span>
-        <span class="badge badge-primary" data-id="pluginManagerComponentActiveTilesCount">${actives.length}</span>
-      </nav>`
-      : ''
-    const inactiveTile = inactives.length !== 0
-      ? yo`
-      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
-        <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
-        <span class="badge badge-primary" style = "cursor: default;" data-id="pluginManagerComponentInactiveTilesCount">${inactives.length}</span>
-      </nav>`
-      : ''
-
-    const settings = new PluginManagerSettings().render()
-
-    const rootView = yo`
-      <div id='pluginManager' data-id="pluginManagerComponentPluginManager">
-        <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
-          <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput">
-          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
-            Connect to a Local Plugin
-          </button>
-        </header>
-        <section data-id="pluginManagerComponentPluginManagerSection">
-          ${activeTile}
-          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-            ${actives.map(profile => this.renderItem(profile))}
-          </div>
-          ${inactiveTile}
-          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
-            ${inactives.map(profile => this.renderItem(profile))}
-          </div>
-        </section>
-        ${settings}
-      </div>
-    `
-    if (!this.views.root) this.views.root = rootView
-    return rootView
+    this.activePlugins = actives
+    this.inactivePlugins = inactives
+    return this.htmlElement
   }
 
-  reRender () {
-    if (this.views.root) {
-      yo.update(this.views.root, this.render())
-    }
-  }
+  // reRender () {
+  //   if (this.views.root) {
+  //     yo.update(this.views.root, this.render())
+  //   }
+  // }
 
-  filterPlugins ({ target }) {
-    this.filter = target.value.toLowerCase()
-    this.reRender()
-  }
+  // filterPlugins ({ target }) {
+  //   this.filter = target.value.toLowerCase()
+  //   this.reRender()
+  // }
 }
 
 module.exports = PluginManagerComponent
