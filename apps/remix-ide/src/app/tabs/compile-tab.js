@@ -33,7 +33,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: packageJson.version,
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile']
 
 }
 
@@ -508,6 +508,21 @@ class CompileTab extends ViewPlugin {
   onActivation () {
     this.call('manager', 'activatePlugin', 'solidity-logic')
     this.listenToEvents()
+    this.call('filePanel', 'registerContextMenuItem', {
+      id: 'solidity',
+      name: 'compileFile',
+      label: 'Compile',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: []
+    })
+  }
+
+  compileFile (event) {
+    if (event.path.length > 0) {
+      this.compileTabLogic.compileFile(event.path[0])
+    }
   }
 
   onDeactivation () {
