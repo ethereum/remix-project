@@ -147,13 +147,17 @@ export class CodeManager {
 
   private async retrieveIndexAndTrigger (codeMananger, address, step, code) {
     let result
-    let next
+    const next = []
     const returnInstructionIndexes = []
     const outOfGasInstructionIndexes = []
 
     try {
       result = codeMananger.getInstructionIndex(address, step)
-      next = codeMananger.getInstructionIndex(address, step + 1)
+      for (let i = 1; i < 6; i++) {
+        if (this.traceManager.inRange(step + i)) {
+          next.push(codeMananger.getInstructionIndex(address, step + i))
+        }
+      }
 
       let values = this.traceManager.getAllStopIndexes()
       if (values) {
