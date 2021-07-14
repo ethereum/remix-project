@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.14.0-dev",
+  "version": "0.15.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "keywords": [
@@ -177,7 +177,7 @@
     "web3": "1.2.4",
     "winston": "^3.3.3",
     "ws": "^7.3.0"
-  }, 
+  },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-modules-amd": "^7.10.4",

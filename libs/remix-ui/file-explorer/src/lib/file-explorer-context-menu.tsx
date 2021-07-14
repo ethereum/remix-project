@@ -101,7 +101,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
           }
           hideContextMenu()
-        }}>{item.name}</li>
+        }}>{item.label || item.name}</li>
     })
   }
 
