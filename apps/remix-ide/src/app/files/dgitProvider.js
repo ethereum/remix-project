@@ -27,10 +27,10 @@ class DGitProvider extends Plugin {
   constructor () {
     super(profile)
     this.ipfsconfig = {
-      host: 'ipfs.komputing.org',
+      host: 'ipfs.remixproject.org',
       port: 443,
       protocol: 'https',
-      ipfsurl: 'https://ipfsgw.komputing.org/ipfs/'
+      ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
       host: 'ipfs.io',
