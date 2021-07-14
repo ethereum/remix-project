@@ -7,27 +7,49 @@ import { MenuItems } from 'libs/remix-ui/file-explorer/src/lib/types'
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
-  setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
-  createWorkspace: (name: string) => void,
-  renameWorkspace: (oldName: string, newName: string) => void
-  workspaceRenamed: ({ name: string }) => void,
-  workspaceCreated: ({ name: string }) => void,
-  workspaceDeleted: ({ name: string }) => void,
-  workspace: any // workspace provider,
-  browser: any // browser provider
-  localhost: any // localhost provider
-  fileManager : any
-  registry: any // registry
-  plugin: any // plugin call and resetFocus
-  request: any // api request,
-  workspaces: any,
-  registeredMenuItems: MenuItems // menu items
-  removedMenuItems: MenuItems
-  initialWorkspace: string
+  plugin: {
+    setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
+    createWorkspace: (name: string) => void,
+    renameWorkspace: (oldName: string, newName: string) => void
+    workspaceRenamed: ({ name: string }) => void,
+    workspaceCreated: ({ name: string }) => void,
+    workspaceDeleted: ({ name: string }) => void,
+    workspace: any // workspace provider,
+    browser: any // browser provider
+    localhost: any // localhost provider
+    fileManager : any
+    registry: any // registry
+    request: any // api request,
+    workspaces: any,
+    registeredMenuItems: MenuItems // menu items
+    removedMenuItems: MenuItems
+    initialWorkspace: string
+  }
 }
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 export const Workspace = (props: WorkspaceProps) => {
+  const {
+    plugin,
+    plugin: {
+      setWorkspace,
+      createWorkspace,
+      renameWorkspace,
+      workspaceRenamed,
+      workspaceCreated,
+      workspaceDeleted,
+      workspace,
+      browser,
+      localhost,
+      fileManager,
+      registry,
+      request,
+      workspaces,
+      registeredMenuItems,
+      removedMenuItems,
+      initialWorkspace
+    }
+  } = props
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
 
@@ -409,7 +431,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     registry={props.registry}
                     filesProvider={props.workspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                    plugin={props.plugin}
+                    plugin={plugin}
                     focusRoot={state.reset}
                     contextMenuItems={props.registeredMenuItems}
                     removedContextMenuItems={props.removedMenuItems}
@@ -427,7 +449,7 @@ export const Workspace = (props: WorkspaceProps) => {
                         registry={props.registry}
                         filesProvider={props.localhost}
                         menuItems={['createNewFile', 'createNewFolder']}
-                        plugin={props.plugin}
+                        plugin={plugin}
                         focusRoot={state.reset}
                         contextMenuItems={props.registeredMenuItems}
                         removedContextMenuItems={props.removedMenuItems}
