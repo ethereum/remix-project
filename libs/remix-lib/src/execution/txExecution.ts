@@ -112,18 +112,32 @@ export function checkVMError (execResult, abi, contract) {
             // "contract" reprensents the compilation result containing the NATSPEC documentation
             if (contract && fn.functions && Object.keys(fn.functions).length) {
               const functionSignature = Object.keys(fn.functions)[0]
-              //  we check in the 'devdoc' if there's a developer documentation for this error
-              devdoc = contract.object.devdoc.errors[functionSignature][0] || {}
-              //  we check in the 'userdoc' if there's an user documentation for this error
-              const userdoc = contract.object.userdoc.errors[functionSignature][0] || {}
-              if (userdoc) customError += ' : ' + (userdoc as any).notice // we append the user doc if any
-            }
-            for (const input of functionDesc.inputs) {
-              const v = decodedCustomErrorInputs[input.name]
-              decodedCustomErrorInputsClean[input.name] = {
-                value: v.toString ? v.toString() : v,
-                documentation: (devdoc as any).params[input.name] // we add the developer documentation for this input parameter if any
+              // we check in the 'devdoc' if there's a developer documentation for this error
+              try {
+                devdoc = (contract.object.devdoc.errors && contract.object.devdoc.errors[functionSignature][0]) || {}
+              } catch (e) {
+                console.error(e.message)
               }
+              // we check in the 'userdoc' if there's an user documentation for this error
+              try {
+                const userdoc = (contract.object.userdoc.errors && contract.object.userdoc.errors[functionSignature][0]) || {}
+                if (userdoc && (userdoc as any).notice) customError += ' : ' + (userdoc as any).notice // we append the user doc if any
+              } catch (e) {
+                console.error(e.message)
+              }
+            }
+            let inputIndex = 0
+            for (const input of functionDesc.inputs) {
+              const inputKey = input.name || inputIndex
+              const v = decodedCustomErrorInputs[inputKey]
+
+              decodedCustomErrorInputsClean[inputKey] = {
+                value: v.toString ? v.toString() : v
+              }
+              if (devdoc && (devdoc as any).params) {
+                decodedCustomErrorInputsClean[input.name].documentation = (devdoc as any).params[inputKey] // we add the developer documentation for this input parameter if any
+              }
+              inputIndex++
             }
             break
           }
