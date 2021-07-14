@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -594,6 +594,32 @@ class FileManager extends Plugin {
     else {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
+    }
+  }
+
+  /**
+  * Async API method getProviderOf
+  * @param {string} file
+  *
+  */
+
+  async getProviderOf (file) {
+    const cancall = await this.askUserPermission('getProviderByName')
+    if (cancall) {
+      return file ? this.fileProviderOf(file) : this.currentFileProvider()
+    }
+  }
+
+  /**
+  * Async API method getProviderByName
+  * @param {string} name
+  *
+  */
+
+  async getProviderByName (name) {
+    const cancall = await this.askUserPermission('getProviderByName')
+    if (cancall) {
+      return this.getProvider(name)
     }
   }
 

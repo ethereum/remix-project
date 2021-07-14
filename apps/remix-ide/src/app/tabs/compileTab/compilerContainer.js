@@ -1,12 +1,13 @@
 
 import toaster from '../../ui/tooltip'
-import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../compiler/compiler-utils'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 const yo = require('yo-yo')
 const helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
+const _paq = window._paq = window._paq || []
 
 class CompilerContainer {
   constructor (compileTabLogic, editor, config, queryParams) {
@@ -111,6 +112,7 @@ class CompilerContainer {
       this._view.compileIcon.setAttribute('title', 'idle')
       this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
+      _paq.push(['trackEvent', 'compiler', `compiled_with_v_${this._retrieveVersion()}`])
     })
   }
 

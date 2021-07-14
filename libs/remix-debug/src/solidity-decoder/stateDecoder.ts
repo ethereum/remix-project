@@ -15,8 +15,12 @@ export async function decodeState (stateVars, storageResolver) {
     try {
       const decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
       decoded.constant = stateVar.constant
+      decoded.immutable = stateVar.immutable
       if (decoded.constant) {
         decoded.value = '<constant>'
+      }
+      if (decoded.immutable) {
+        decoded.value = '<immutable>'
       }
       ret[stateVar.name] = decoded
     } catch (e) {

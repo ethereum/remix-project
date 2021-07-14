@@ -7,7 +7,7 @@ import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
   const [calldataObj, dispatch] = useReducer(reducer, initialState)
-  const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, registerEvent, triggerEvent, loadMoreEvent, loadMoreCompletedEvent } = props
+  const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, registerEvent, triggerEvent, loadMoreEvent, loadMoreCompletedEvent, headStyle, bodyStyle, hexHighlight } = props
   const extractDataDefault: ExtractFunc = (item, parent?) => {
     const ret: ExtractData = {}
 
@@ -34,10 +34,21 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     return ret
   }
   const formatSelfDefault = (key: string | number, data: ExtractData) => {
+    let value
+    if (hexHighlight && typeof (data.self) === 'string') {
+      const isHex = data.self.startsWith('0x') || hexHighlight
+      if (isHex) {
+        const regex = /^(0+)(.*)/g
+        const split = regex.exec(data.self.replace('0x', ''))
+        if (split && split[1]) {
+          value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value">{split[1]}</span>{ split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span> }</span>)
+        } else value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span></span>)
+      } else value = <span className="m-0 label_value">{data.self}</span>
+    } else value = <span className="m-0 label_value">{data.self}</span>
     return (
       <div className="d-flex mr-1 flex-row label_item">
         <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
-        <label className="m-0 label_value">{data.self}</label>
+        <label className="m-0 label_value">{value}</label>
       </div>
     )
   }
@@ -184,14 +195,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
 
   return (
     <div className="border rounded px-1 mt-1 bg-light">
-      <div className="py-0 px-1 title">
+      <div className="py-0 px-1 title" style={headStyle}>
         <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
         <div className="name" data-id={`dropdownPanel${uniquePanelName}`} onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{header}</span>
         <CopyToClipboard content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
       </div>
       <div className='dropdownpanel' style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
         <i className="refresh fas fa-sync" style={{ display: state.updating ? 'inline-block' : 'none' }} aria-hidden="true"></i>
-        <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>
+        <div className='dropdowncontent' style={{ display: state.dropdownContent.display, ...bodyStyle }}>
           {
             state.data &&
             <TreeView id="treeView">

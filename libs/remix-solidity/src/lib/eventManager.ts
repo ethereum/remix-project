@@ -62,7 +62,7 @@ export default class EventManager {
     }
     for (const listener in this.registered[eventName]) {
       const l = this.registered[eventName][listener]
-      l.func.apply(l.obj === this.anonymous ? {} : l.obj, args)
+      if (l.func) l.func.apply(l.obj === this.anonymous ? {} : l.obj, args)
     }
   }
 }

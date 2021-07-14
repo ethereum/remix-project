@@ -1,12 +1,12 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { migrateToWorkspace } from '../../../migrateFileSystem'
+import { CompilerImports } from '@remix-project/core-plugin'
 import JSZip from 'jszip'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const globalRegistry = require('../../../global/registry')
-const CompilerImport = require('../../compiler/compiler-imports')
 const modalDialogCustom = require('../modal-dialog-custom')
 const modalDialog = require('../modaldialog')
 const tooltip = require('../tooltip')
@@ -240,7 +240,7 @@ export class LandingPage extends ViewPlugin {
 
   render () {
     const load = (service, item, examples, info) => {
-      const compilerImport = new CompilerImport()
+      const compilerImport = new CompilerImports()
       const fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`
         <div class="p-2">
@@ -534,7 +534,7 @@ export class LandingPage extends ViewPlugin {
                         <i class="far fa-hdd"></i>
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
                       </p>
-                      <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
+                      <p class="mt-3 mb-0"><label>LOAD FROM:</label></p>
                       <div class="btn-group">
                         <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}">GitHub</button>
