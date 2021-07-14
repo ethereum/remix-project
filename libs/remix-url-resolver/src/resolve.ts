@@ -30,6 +30,10 @@ export class RemixURLResolver {
 
   constructor (gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
+    this.setGistToken(gistToken, protocol)
+  }
+
+  async setGistToken (gistToken?: string, protocol = 'http:') {
     this.gistAccessToken = gistToken || ''
     this.protocol = protocol
   }
