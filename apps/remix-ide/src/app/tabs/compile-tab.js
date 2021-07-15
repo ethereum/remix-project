@@ -2,7 +2,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import publishToStorage from '../../publishToStorage'
-import { compile } from '../compiler/compiler-helpers'
+import { compile } from '@remix-project/remix-solidity'
 
 const EventEmitter = require('events')
 const $ = require('jquery')
