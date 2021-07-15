@@ -58,6 +58,13 @@ module.exports = {
         'code has not been loaded')
       })
       .openFile('contract-76747f6e19.sol')
+      .openFile('ethereum')
+      .openFile('ethereum/remix-project')
+      .openFile('ethereum/remix-project/apps')
+      .openFile('ethereum/remix-project/apps/remix-ide')
+      .openFile('ethereum/remix-project/apps/remix-ide/contracts')
+      .openFile('ethereum/remix-project/apps/remix-ide/contracts/app')
+      .openFile('ethereum/remix-project/apps/remix-ide/contracts/app/solidity')
       .openFile('ethereum/remix-project/apps/remix-ide/contracts/app/solidity/mode.sol')
   },
 
