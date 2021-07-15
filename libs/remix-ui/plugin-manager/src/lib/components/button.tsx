@@ -7,19 +7,17 @@ interface ButtonProps {
 }
 
 function Button ({ buttonText, pluginName }: ButtonProps) {
-  const { appManager, _paq } = useContext(PluginManagerContext)
+  const { pluginComponent } = useContext(PluginManagerContext)
   const dataId = `pluginManagerComponentDeactivateButton${pluginName}`
   const [needToDeactivate] = useState('btn btn-secondary btn-sm')
   const [needToActivate] = useState('btn btn-success btn-sm')
   return (
     <button
       onClick={buttonText === 'Activate' ? () => {
-        appManager.turnPluginOn(pluginName)
-        _paq.push(['trackEvent', 'manager', 'activate', pluginName])
+        pluginComponent.activateP(pluginName)
         buttonText = 'Deactivate'
       } : () => {
-        appManager.turnPluginOff(pluginName)
-        _paq.push(['trackEvent', 'manager', 'deactivate', pluginName])
+        pluginComponent.deactivateP(pluginName)
         buttonText = 'Activate'
       }}
       className={buttonText === 'Activate' ? needToActivate : needToDeactivate}

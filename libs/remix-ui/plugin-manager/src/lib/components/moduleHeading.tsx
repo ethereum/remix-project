@@ -1,12 +1,13 @@
-import React, { useContext } from 'react'
-import { PluginManagerContext } from '../contexts/pluginmanagercontext'
+import React from 'react'
+import { PluginManagerProfile } from '../../types'
 
 interface ModuleHeadingProps {
   headingLabel: string
+  actives: Partial<PluginManagerProfile>[]
+  inactives: Partial<PluginManagerProfile>[]
 }
 
-function ModuleHeading ({ headingLabel }: ModuleHeadingProps) {
-  const { actives, inactives } = useContext(PluginManagerContext)
+function ModuleHeading ({ headingLabel, actives, inactives }: ModuleHeadingProps) {
   return (
     <nav className="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
       <span className="navbar-brand plugins-list-title h6 mb-0 mr-2">{headingLabel}</span>
