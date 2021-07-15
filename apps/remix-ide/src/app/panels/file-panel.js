@@ -182,7 +182,7 @@ module.exports = class Filepanel extends ViewPlugin {
           path = data.cleanUrl
           content = data.content
           await this._deps.fileProviders.workspace.set(path, content)
-        }        
+        }
         this.initialWorkspace = 'code-sample'
         await this._deps.fileManager.openFile(path)
       } catch (e) {
