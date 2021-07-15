@@ -17,9 +17,9 @@ function absolutePath (path: string, sharedFolder:string): string {
 }
 
 function existingPath (filePath: string, sharedFolder:string): ExistingPathResult {
-  let result: ExistingPathResult = {
-    relPath: filePath, 
-    absPath: this.absolutePath(filePath, sharedFolder), 
+  const result: ExistingPathResult = {
+    relPath: filePath,
+    absPath: this.absolutePath(filePath, sharedFolder),
     exists: false
   }
   result.exists = fs.existsSync(result.absPath)
