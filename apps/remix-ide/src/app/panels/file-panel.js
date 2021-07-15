@@ -175,13 +175,14 @@ module.exports = class Filepanel extends ViewPlugin {
           var hash = bufferToHex(keccakFromString(params.code))
           path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
           content = atob(params.code)
+          await this._deps.fileProviders.workspace.set(path, content)
         }
         if (params.url) {
           const data = await this.call('contentImport', 'resolve', params.url)
           path = data.cleanUrl
           content = data.content
-        }
-        await this._deps.fileProviders.workspace.set(path, content)
+          await this._deps.fileProviders.workspace.set(path, content)
+        }        
         this.initialWorkspace = 'code-sample'
         await this._deps.fileManager.openFile(path)
       } catch (e) {
