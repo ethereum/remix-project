@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
@@ -10,9 +9,6 @@ import {allCommands, allPrograms} from './commands' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import TerminalWelcomeMessage from './terminalWelcome' // eslint-disable-line
-=======
-import React, { useState, useEffect, useRef, SyntheticEvent } from 'react' // eslint-disable-line
->>>>>>> 69029a97a (remix id terminal update)
 
 import './remix-ui-terminal.css'
 // const TxLogger from '../../../apps/'
@@ -35,7 +31,6 @@ export interface RemixUiTerminalProps {
   options: any
   data: any
   cmdInterpreter: any
-<<<<<<< HEAD
   command: any
   version: any
   config: any
@@ -51,13 +46,6 @@ export interface RemixUiTerminalProps {
   txListener: any,
   eventsDecoder: any,
   logHtml: any
-=======
-  registerCommand: any
-}
-
-export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
-  clipboardData: DataTransfer;
->>>>>>> 69029a97a (remix id terminal update)
 }
 
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -66,7 +54,6 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
-<<<<<<< HEAD
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
   const [_cmdHistory, setCmdHistory] = useState([])
@@ -106,31 +93,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useWindowResize(() => {
     setWindowHeight(window.innerHeight)
-=======
-  const [inserted, setInserted] = useState(false)
-
-  const [state, setState] = useState({
-    data: {
-      // lineLength: props.options.lineLength || 80,
-      session: [],
-      activeFilters: { commands: {}, input: '' },
-      filterFns: {}
-    },
-    _commands: {},
-    commands: {},
-    _JOURNAL: [],
-    _jobs: [],
-    _INDEX: {},
-    _INDEXall: [],
-    _INDEXallMain: [],
-    _INDEXcommands: {},
-    _INDEXcommandsMain: {}
->>>>>>> 69029a97a (remix id terminal update)
   })
 
   // terminal inputRef
   const inputEl = useRef(null)
-<<<<<<< HEAD
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -249,8 +215,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-=======
->>>>>>> 69029a97a (remix id terminal update)
   // events
   useEffect(() => {
     // window.addEventListener('resize', function () {
@@ -299,7 +263,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     console.log(props.event, 'event.trigger')
   }
 
-<<<<<<< HEAD
   const focusinput = () => {
     inputEl.current.focus()
   }
@@ -393,60 +356,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       inputEl.current.focus()
     } else {
       setCmdTemp(inputEl.current.innerText)
-=======
-  // const reattached = (event) => {
-  //   let el = event.currentTarget
-  //   var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
-  //   if (isBottomed) {
-
-  //   } else {
-  //     // if (!inserted)  
-  //   }
-  // }
-
-  const registerCommand = (name, command, opts) => {
-    const { _commands, _INDEXcommands, _INDEXallMain, _INDEXcommandsMain, _INDEXall, commands } = state
-    // TODO if no _commands[name] throw an error
-
-    // TODO if typeof command !== 'function' throw error
-
-    _commands[name] = command
-    _INDEXcommands[name] = []
-    _INDEXallMain[name] = []
-
-    // TODO _command function goes here
-    commands[name] = function _command () {
-      const steps = []
-      const args = [...arguments]
-      const gidx = 0
-      const idx = 0
-      const step = 0
-      const root = { steps, cmd: name, gidx, idx }
-      const ITEM = { root, cmd: name, el: {} }
-      root.gidx = _INDEXallMain.push(ITEM) - 1
-      root.idx = _INDEXcommandsMain[name].push(ITEM) - 1
-      function append (cmd, params, el) {
-        let item = { el, cmd, root, gidx, idx, step, args: [...arguments] }
-        if (cmd) {
-          item = { el, cmd, root, gidx, idx, step, args }
-        } else {
-          // item = ITEM
-          item.el = el
-          cmd = name
-        }
-        item.gidx = _INDEXall.push(item) - 1
-        item.idx = _INDEXcommands[cmd].push(item) - 1
-        item.step = steps.push(item) - 1
-        item.args = params
-        _appendItem(item)
-      }
->>>>>>> 69029a97a (remix id terminal update)
     }
 
     return commands[name]
   }
 
-<<<<<<< HEAD
   /* start of mouse events */
 
   const mousedown = (event: MouseEvent) => {
@@ -944,27 +858,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setPaste(true)
     setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false}))
   }
-=======
-  const _appendItem = (item: any) => {
-    let { _JOURNAL, _jobs, data } = state
-    const self = props
-    const { el, gidx } = item
-    _JOURNAL[gidx] = item
-    if (!_jobs.length) {
-      // requestAnimationFrame(function updateTerminal () {
-      //   self._jobs.forEach(el => self._view.journal.appendChild(el))
-      //   self.scroll2bottom()
-      _jobs = []
-    }
-    if (data.activeFilters.commands[item.cmd]) _jobs.push(el)
-  }
-
-  const focusinput = () => {
-    inputEl.current.focus()
-  }
-
-
->>>>>>> 69029a97a (remix id terminal update)
 
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
@@ -1027,7 +920,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           zIndex: -1
         }}></div>
         <div className="terminal">
-<<<<<<< HEAD
           <div id='journal' className='journal' data-id='terminalJournal'>
             {!clearConsole && <TerminalWelcomeMessage packageJson={props.version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
@@ -1062,19 +954,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           <div id="terminalCli" data-id="terminalCli" className="cli" onClick={focusinput}>
             <span className="prompt">{'>'}</span>
             <input className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onChange={(event) => onChange(event)} onKeyDown={(event) => handleKeyDown(event) } value={autoCompletState.userInput} onPaste={handlePaste}></input>
-=======
-          <div id="journal" className="journal" data-id="terminalJournal">
-            <div className="anchor">
-              {/* ${background} */}
-              <div className="overlay background"></div>
-              {/* ${text} */}
-              <div className="overlay text"></div>
-            </div>
-          </div>
-          <div id="terminalCli" data-id="terminalCli" className="cli" onClick={focusinput}>
-            <span className="prompt">{'>'}</span>
-            <span className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onPaste={handlePaste}></span>
->>>>>>> 69029a97a (remix id terminal update)
           </div>
         </div>
       </div>
