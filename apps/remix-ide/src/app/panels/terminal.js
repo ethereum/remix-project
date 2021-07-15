@@ -34,11 +34,13 @@ class Terminal extends Plugin {
   constructor (opts, api) {
     super(profile)
     this.element = document.createElement('div')
-    this.element.setAttribute('id', 'terminalView')
+    this.element.setAttribute('class', 'panel_2A0YE0')
+    this.element.setAttribute('id', 'terminal-view')
     this.event = new EventManager()
     this.blockchain = opts.blockchain
     this._api = api
     this._opts = opts
+    this.version = packageJson.version
     this.data = {
       lineLength: opts.lineLength || 80, // ????
       session: [],
@@ -122,6 +124,8 @@ class Terminal extends Plugin {
         cmdInterpreter = {this._components.cmdInterpreter}
         autoCompletePopup = {this._components.autoCompletePopup}
         registerCommand = {this.registerCommand}
+        command = {this.commands}
+        version = {this.version}
       />,
       this.element
     )
