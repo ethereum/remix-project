@@ -83,6 +83,7 @@ export const AssemblyItems = ({ registerEvent }) => {
       const currentItem = codeView.children[index]
       if (currentItem) {
         currentItem.style.setProperty('color', 'var(--primary)')
+        currentItem.style.setProperty('font-weight', 'bold')
         currentItem.setAttribute('selected', 'selected')
       }
     })
