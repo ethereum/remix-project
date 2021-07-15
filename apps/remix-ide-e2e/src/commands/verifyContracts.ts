@@ -22,12 +22,12 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
       if (opts.version) {
         browser
           .click('*[data-id="compilation-details"]')
-          .waitForElementVisible('*[data-id="treeViewDivcompiler"]')
+          .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcompiler"]')
           .pause(2000)
-          .click('*[data-id="treeViewDivcompiler"]')
-          .waitForElementVisible('*[data-id="treeViewLicompiler/version"]')
-          .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version:\n ${opts.version}`)
-          .modalFooterCancelClick()
+          .click('*[data-id="treeViewDivtreeViewItemcompiler"]')
+          .waitForElementVisible('*[data-id="treeViewLiversion"]')
+          .assert.containsText('*[data-id="treeViewLiversion"]', `${opts.version}`)
+          .click('[data-id="workspacesModalDialog-modal-footer-ok-react"]')
           .perform(() => {
             done()
             callback()
