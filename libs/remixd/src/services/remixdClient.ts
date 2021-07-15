@@ -14,7 +14,7 @@ export class RemixdClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
+    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'getExistingPath', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
   }
 
   setWebSocket (websocket: WS): void {
@@ -52,7 +52,7 @@ export class RemixdClient extends PluginClient {
   get (args: SharedFolderArgs): Promise<FileContent> {
     try {
       return new Promise((resolve, reject) => {
-        const path = utils.existingPath(args.path, this.currentSharedFolder)
+        const { absPath: path  } = utils.existingPath(args.path, this.currentSharedFolder)
 
         if (!fs.existsSync(path)) {
           return reject(new Error('File not found ' + path))
@@ -75,11 +75,19 @@ export class RemixdClient extends PluginClient {
     }
   }
 
+  getExistingPath (filePath) {
+    try {
+      const pathObj = utils.existingPath(filePath, this.currentSharedFolder)
+      return pathObj
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
   exists (args: SharedFolderArgs): boolean {
     try {
-      const path = utils.existingPath(args.path, this.currentSharedFolder)
-      if (path) return true
-      else return false
+      const { exists } = utils.existingPath(args.path, this.currentSharedFolder)
+      return exists
     } catch (error) {
       throw new Error(error)
     }
@@ -89,8 +97,7 @@ export class RemixdClient extends PluginClient {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot write file: read-only mode selected'))
-        const path = utils.absolutePath(args.path, this.currentSharedFolder)
-        const exists = fs.existsSync(path)
+        const { absPath: path , exists } = utils.existingPath(args.path, this.currentSharedFolder)
 
         if (exists && !isRealPath(path)) return reject(new Error(''))
         if (args.content === 'undefined') { // no !!!!!
@@ -206,8 +213,7 @@ export class RemixdClient extends PluginClient {
 
   isFile (args: SharedFolderArgs): boolean {
     try {
-      const path = utils.existingPath(args.path, this.currentSharedFolder)
-
+      const { absPath: path  } = utils.existingPath(args.path, this.currentSharedFolder)
       return fs.statSync(path).isFile()
     } catch (error) {
       throw new Error(error)

@@ -111,6 +111,11 @@ module.exports = class RemixDProvider extends FileProvider {
       })
   }
 
+  async getExistingPath (path) {
+    const filePathObj = await this._appManager.call('remixd', 'getExistingPath', path)
+    return filePathObj
+  }
+
   async set (path, content, cb) {
     if (!this._isReady) return cb && cb('provider not ready')
     const unprefixedpath = this.removePrefix(path)

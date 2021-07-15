@@ -25,7 +25,7 @@ const profile = {
   name: 'remixd',
   displayName: 'RemixD',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir'],
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'getExistingPath', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',

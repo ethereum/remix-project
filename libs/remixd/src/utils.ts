@@ -1,4 +1,4 @@
-import { ResolveDirectory, Filelist } from './types' // eslint-disable-line
+import { ResolveDirectory, Filelist, ExistingPathResult } from './types' // eslint-disable-line
 import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
 import * as pathModule from 'path'
@@ -16,17 +16,30 @@ function absolutePath (path: string, sharedFolder:string): string {
   return path
 }
 
-function existingPath (filePath: string, sharedFolder:string): string {
-  let path = this.absolutePath(filePath, sharedFolder)
+function existingPath (filePath: string, sharedFolder:string): ExistingPathResult {
+  let result: ExistingPathResult = {
+    relPath: filePath, 
+    absPath: this.absolutePath(filePath, sharedFolder), 
+    exists: false
+  }
+  result.exists = fs.existsSync(result.absPath)
   // If path is not for a local file, check if it is a node module path
-  if (!fs.existsSync(path)) {
-    path = this.absolutePath(pathModule.join('node_modules/', filePath), sharedFolder)
-    if (!fs.existsSync(path)) {
-      path = this.absolutePath(pathModule.join('.deps/npm/', filePath), sharedFolder)
-      if (!fs.existsSync(path)) return null
+  if (!result.exists) {
+    result.relPath = pathModule.join('node_modules/', filePath)
+    result.absPath = this.absolutePath(result.relPath, sharedFolder)
+    result.exists = fs.existsSync(result.absPath)
+    if (!result.exists) {
+      result.relPath = pathModule.join('.deps/npm/', filePath)
+      result.absPath = this.absolutePath(result.relPath, sharedFolder)
+      result.exists = fs.existsSync(result.absPath)
+      if (!result.exists) {
+        result.relPath = null
+        result.absPath = null
+        result.exists = false
+      }
     }
   }
-  return path
+  return result
 }
 
 /**
