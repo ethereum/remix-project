@@ -1,3 +1,7 @@
+
+element.style {
+ height: 323px !important;
+}
 .panel              {
     position          : relative;
     display           : flex;
