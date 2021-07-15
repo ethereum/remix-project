@@ -1,7 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
-import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
-
+import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')

@@ -1,12 +1,12 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { migrateToWorkspace } from '../../../migrateFileSystem'
+import { CompilerImports } from '@remix-project/core-plugin'
 import JSZip from 'jszip'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const globalRegistry = require('../../../global/registry')
-const CompilerImport = require('../../compiler/compiler-imports')
 const modalDialogCustom = require('../modal-dialog-custom')
 const modalDialog = require('../modaldialog')
 const tooltip = require('../tooltip')
@@ -240,7 +240,7 @@ export class LandingPage extends ViewPlugin {
 
   render () {
     const load = (service, item, examples, info) => {
-      const compilerImport = new CompilerImport()
+      const compilerImport = new CompilerImports()
       const fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`
         <div class="p-2">
