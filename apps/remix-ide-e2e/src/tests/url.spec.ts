@@ -38,22 +38,22 @@ module.exports = {
       .refresh()
       .pause(5000)
       .clickLaunchIcon('solidity')
-      .assert.containsText('#versionSelector option[selected="selected"]', '0.7.4+commit.3f05b770')
-      .assert.containsText('#evmVersionSelector option[selected="selected"]', 'istanbul')
+      .assert.containsText('#versionSelector option[data-id="selected"]', '0.7.4+commit.3f05b770')
+      .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
       .verify.elementPresent('#optimize:checked')
       .verify.attributeEquals('#runs', 'value', '300')
   },
 
   'Should load using compiler from link passed in remix URL': function (browser: NightwatchBrowser) {
     browser
-      .url('http://127.0.0.1:8080/#version=https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js')
+      .url('http://127.0.0.1:8080/#version=https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js&optimize=false')
       .refresh()
       .pause(5000)
       .clickLaunchIcon('solidity')
       .pause(5000)
-      .assert.containsText('#versionSelector option[selected="selected"]', 'custom')
+      .assert.containsText('#versionSelector option[data-id="selected"]', 'custom')
     // default values
-      .assert.containsText('#evmVersionSelector option[selected="selected"]', 'default')
+      .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'default')
       .verify.elementPresent('#optimize')
       .assert.elementNotPresent('#optimize:checked')
       .verify.elementPresent('#runs:disabled')
