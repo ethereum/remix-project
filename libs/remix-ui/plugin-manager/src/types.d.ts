@@ -2,48 +2,9 @@ import { PermissionHandler } from './app/ui/persmission-handler'
 import { PluginManager } from '@remixproject/engine/lib/manager'
 import { EventEmitter } from 'events'
 import { Engine } from '@remixproject/engine/lib/engine'
-import { Profile } from '@remixproject/plugin-utils'
+import { PluginBase, Profile } from '@remixproject/plugin-utils'
+import { ViewPlugin } from '@remixproject/engine-web'
 /* eslint-disable camelcase */
-
-// eslint-disable-next-line no-use-before-define
-export = LocalPlugin;
-declare class LocalPlugin {
-  /**
-  * Open a modal to create a local plugin
-  * @param {Profile[]} plugins The list of the plugins in the store
-  * @returns {Promise<{api: any, profile: any}>} A promise with the new plugin profile
-  */
-  open(plugins: any[]): Promise<{
-        api: any;
-        profile: any;
-    }>;
-
-    profile: any;
-    /**
-     * Create the object to add to the plugin-list
-     */
-    create(): any;
-    updateName({ target }: {
-        target: any;
-    }): void;
-
-    updateUrl({ target }: {
-        target: any;
-    }): void;
-
-    updateDisplayName({ target }: {
-        target: any;
-    }): void;
-
-    updateProfile(key: any, e: any): void;
-    updateMethods({ target }: {
-        target: any;
-    }): void;
-
-    /** The form to create a local plugin */
-    form(): any;
-}
-
 declare module 'yo-yo'{
   interface yo_yo {
     (strings:string[], ...values:any[]):HTMLElement;
@@ -99,17 +60,86 @@ export class RemixAppManager extends PluginManager {
     turnPluginOff(name: string);
 }
 
+export class PluginManagerSettings {
+  openDialog(): void;
+  permissions: any;
+  currentSetting: any;
+  onValidation(): void;
+  /** Clear one permission from a plugin */
+  clearPersmission(from: any, to: any, method: any): void;
+  /** Clear all persmissions from a plugin */
+  clearAllPersmission(to: any): void;
+  settings(): any;
+  render(): any;
+}
+
+export class PluginManagerComponent extends ViewPlugin extends Plugin implements PluginBase {
+  constructor(appManager: RemixAppManager, engine: Engine)
+  appManager: RemixAppManager
+  engine: Engine
+  htmlElement: HTMLDivElement
+  views: { root: null, items: {} }
+  localPlugin: LocalPlugin
+  pluginNames: string[]
+  inactivePlugins: Profile[]
+  activePlugins: Profile[]
+  filter: string
+  isActive(name: string): boolean
+  activateP(name: string): void
+  deactivateP(name: string): void
+  onActivation(): void
+  renderComponent(): void
+  openLocalPlugin(): Promise<void>
+  render(): HTMLDivElement
+  filterPlugins({ target }: { target: any }) : void
+}
+
+// eslint-disable-next-line no-use-before-define
+export = LocalPlugin;
+declare class LocalPlugin {
+  /**
+     * Open a modal to create a local plugin
+     * @param {Profile[]} plugins The list of the plugins in the store
+     * @returns {Promise<{api: any, profile: any}>} A promise with the new plugin profile
+     */
+  open(plugins: any[]): Promise<{
+        api: any;
+        profile: any;
+    }>;
+
+    profile: any;
+    /**
+     * Create the object to add to the plugin-list
+     */
+    create(): any;
+    updateName({ target }: {
+        target: any;
+    }): void;
+
+    updateUrl({ target }: {
+        target: any;
+    }): void;
+
+    updateDisplayName({ target }: {
+        target: any;
+    }): void;
+
+    updateProfile(key: any, e: any): void;
+    updateMethods({ target }: {
+        target: any;
+    }): void;
+
+    /** The form to create a local plugin */
+    form(): any;
+}
+
 export interface PluginManagerContextProviderProps {
   appManager: RemixAppManager
-  engine: RemixEngine
-  localPlugin: LocalPlugin
-  _paq: any
-  filter: string
+  pluginComponent: PluginManagerComponent
+  pluginSettings: PluginManagerSettings
   activePluginNames: string[]
   actives: Partial<PluginManagerProfile>[]
   inactives: Partial<PluginManagerProfile>[]
-  activatePlugin: (name: string) => void
-  deActivatePlugin: (name: string) => void
   isActive?: (name: string) => boolean
   filterPlugins: () => void
   profile: Partial<PluginManagerProfile>
@@ -119,15 +149,11 @@ export interface PluginManagerContextProviderProps {
 
 export interface RemixUiPluginManagerProps {
   appManager: RemixAppManager
-  engine: RemixEngine
-  localPlugin: LocalPlugin
-  _paq: any // Window & typeof globalThis | []
-  filter: string
+  pluginComponent: PluginManagerComponent
+  pluginSettings: PluginManagerSettings // Window & typeof globalThis | []
   activePluginNames: string[]
   actives: Partial<PluginManagerProfile>[]
   inactives: Partial<PluginManagerProfile>[]
-  activatePlugin: (name: string) => void
-  deActivatePlugin: (name: string) => void
   isActive?: (name: string) => boolean
   filterPlugins: () => void
   profile: Partial<PluginManagerProfile>

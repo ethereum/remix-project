@@ -9,7 +9,7 @@ interface PluginCardProps {
 
 // eslint-disable-next-line no-empty-pattern
 function PluginCard ({ profile }: PluginCardProps) {
-  const { activePluginNames } = useContext(PluginManagerContext)
+  const { pluginComponent } = useContext(PluginManagerContext)
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
     <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
@@ -31,7 +31,7 @@ function PluginCard ({ profile }: PluginCardProps) {
               {docLink}
               {versionWarning}
             </div>
-            { activePluginNames.includes(profile.name) ? (
+            { pluginComponent.isActive(profile.name) ? (
               <Button
                 buttonText="Deactivate"
                 pluginName={profile.name}
