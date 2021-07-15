@@ -1,4 +1,3 @@
-
 export interface SolidityCompilerProps {
   plugin: {
     contractMap: {

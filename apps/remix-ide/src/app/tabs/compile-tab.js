@@ -1,7 +1,8 @@
 /* global */
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
-import { SolidityCompiler, CompileTab as CompileTabLogic, compile, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { SolidityCompiler, CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { compile } from '@remix-project/remix-solidity'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 
