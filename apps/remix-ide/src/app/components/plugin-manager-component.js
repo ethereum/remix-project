@@ -97,7 +97,6 @@ class PluginManagerComponent extends ViewPlugin {
     this.engine = engine
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
-    this.props = {}
     this.views = {
       root: null,
       items: {}
@@ -106,12 +105,10 @@ class PluginManagerComponent extends ViewPlugin {
     this.filter = ''
     this.activePlugins = []
     this.inactivePlugins = []
-    this.activePluginNames = this.appManager.actives
-    // this.appManager.event.on('activate', () => { this.reRender() })
-    // this.appManager.event.on('deactivate', () => { this.reRender() })
-    // this.engine.event.on('onRegistration', () => { this.reRender() })
-    // const { actives, inactives } = this.getAllPlugins()
-    console.log('views property contents', this.views)
+    this.pluginNames = this.appManager.actives
+    // this.appManager.event.on('activate', () => { this.renderComponent() })
+    // this.appManager.event.on('deactivate', () => { this.renderComponent() })
+    // this.engine.event.on('onRegistration', () => { this.renderComponent() })
   }
 
   isActive (name) {
@@ -119,15 +116,19 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   activateP (name) {
-    // console.log(this.appManager)
     this.appManager.turnPluginOn(name)
+    console.log('activateP method reached. And activation of method was successful')
     _paq.push(['trackEvent', 'manager', 'activate', name])
+    this.renderComponent()
+    console.log('activation was logged in _paq and renderComponent has been called.')
   }
 
   deactivateP (name) {
-    // console.log(this.appManager)
     this.call('manager', 'deactivatePlugin', name)
+    console.log('deactivateP has been called successfully')
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
+    this.renderComponent()
+    console.log('deactivation was logged and renderComponent has has been called.')
   }
 
   onActivation () {
@@ -138,15 +139,17 @@ class PluginManagerComponent extends ViewPlugin {
     ReactDOM.render(
       <RemixUiPluginManager
         profile={profile}
+        pluginComponent={this}
         appManager={this.appManager}
         engine={this.engine}
         localPlugin={this.localPlugin}
-        activePluginNames={this.activePluginsNames}
+        activePluginNames={this.pluginNames}
         actives={this.activePlugins}
         inactives={this.inactivePlugins}
-        activatePlugin={this.activateP}
-        deActivatePlugin={this.deactivateP}
+        // activatePlugin={this.activateP}
+        // deActivatePlugin={this.deactivateP}
         _paq={_paq}
+        filter={this.filter}
       />,
       document.getElementById('pluginManager'))
   }
@@ -176,29 +179,29 @@ class PluginManagerComponent extends ViewPlugin {
 
   render () {
     // Filtering helpers
-    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
-    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
-    const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
-    const isNotHome = (profile) => profile.name !== 'home'
-    const sortByName = (profileA, profileB) => {
-      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
-      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
-      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
-    }
+    // const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+    // const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+    // const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
+    // const isNotHome = (profile) => profile.name !== 'home'
+    // const sortByName = (profileA, profileB) => {
+    //   const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+    //   const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
+    //   return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    // }
 
-    const { actives, inactives } = this.appManager.getAll()
-      .filter(isFiltered)
-      .filter(isNotRequired)
-      .filter(isNotDependent)
-      .filter(isNotHome)
-      .sort(sortByName)
-      .reduce(({ actives, inactives }, profile) => {
-        return this.isActive(profile.name)
-          ? { actives: [...actives, profile], inactives }
-          : { inactives: [...inactives, profile], actives }
-      }, { actives: [], inactives: [] })
-    this.activePlugins = actives
-    this.inactivePlugins = inactives
+    // const { actives, inactives } = this.appManager.getAll()
+    //   .filter(isFiltered)
+    //   .filter(isNotRequired)
+    //   .filter(isNotDependent)
+    //   .filter(isNotHome)
+    //   .sort(sortByName)
+    //   .reduce(({ actives, inactives }, profile) => {
+    //     return this.isActive(profile.name)
+    //       ? { actives: [...actives, profile], inactives }
+    //       : { inactives: [...inactives, profile], actives }
+    //   }, { actives: [], inactives: [] })
+    // this.activePlugins = actives
+    // this.inactivePlugins = inactives
     return this.htmlElement
   }
 
@@ -208,10 +211,10 @@ class PluginManagerComponent extends ViewPlugin {
   //   }
   // }
 
-  // filterPlugins ({ target }) {
-  //   this.filter = target.value.toLowerCase()
-  //   this.reRender()
-  // }
+  filterPlugins ({ target }) {
+    this.filter = target.value.toLowerCase()
+    this.renderComponent()
+  }
 }
 
 module.exports = PluginManagerComponent
