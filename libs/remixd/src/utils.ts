@@ -16,6 +16,19 @@ function absolutePath (path: string, sharedFolder:string): string {
   return path
 }
 
+function existingPath (filePath: string, sharedFolder:string): string {
+  let path = this.absolutePath(filePath, sharedFolder)
+  // If path is not for a local file, check if it is a node module path
+  if (!fs.existsSync(path)) {
+    path = this.absolutePath(pathModule.join('node_modules/', filePath), sharedFolder)
+    if (!fs.existsSync(path)) {
+      path = this.absolutePath(pathModule.join('.deps/npm/', filePath), sharedFolder)
+      if (!fs.existsSync(path)) return null
+    }
+  }
+  return path
+}
+
 /**
  * returns a true if child is sub-directory of parent.
  *
@@ -114,4 +127,4 @@ function getDomain (url: string) {
   return domainMatch ? domainMatch[0] : null
 }
 
-export { absolutePath, relativePath, walkSync, resolveDirectory, getDomain }
+export { absolutePath, existingPath, relativePath, walkSync, resolveDirectory, getDomain }

@@ -52,7 +52,7 @@ export class RemixdClient extends PluginClient {
   get (args: SharedFolderArgs): Promise<FileContent> {
     try {
       return new Promise((resolve, reject) => {
-        const path = utils.absolutePath(args.path, this.currentSharedFolder)
+        const path = utils.existingPath(args.path, this.currentSharedFolder)
 
         if (!fs.existsSync(path)) {
           return reject(new Error('File not found ' + path))
@@ -77,9 +77,9 @@ export class RemixdClient extends PluginClient {
 
   exists (args: SharedFolderArgs): boolean {
     try {
-      const path = utils.absolutePath(args.path, this.currentSharedFolder)
-
-      return fs.existsSync(path)
+      const path = utils.existingPath(args.path, this.currentSharedFolder)
+      if (path) return true
+      else return false
     } catch (error) {
       throw new Error(error)
     }
@@ -206,7 +206,7 @@ export class RemixdClient extends PluginClient {
 
   isFile (args: SharedFolderArgs): boolean {
     try {
-      const path = utils.absolutePath(args.path, this.currentSharedFolder)
+      const path = utils.existingPath(args.path, this.currentSharedFolder)
 
       return fs.statSync(path).isFile()
     } catch (error) {
