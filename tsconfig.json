@@ -39,10 +39,13 @@
       "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
       "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"],
       "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"],
-      "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"],
       "@remix-ui/static-analyser": ["libs/remix-ui/static-analyser/src/index.ts"],
       "@remix-ui/checkbox": ["libs/remix-ui/checkbox/src/index.ts"],
-      "@remix-ui/terminal": ["libs/remix-ui/terminal/src/index.ts"]
+      "@remix-ui/terminal": ["libs/remix-ui/terminal/src/index.ts"],
+      "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"],
+      "@remix-project/core-plugin": [
+        "libs/remix-core-plugin/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
