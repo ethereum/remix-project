@@ -59,8 +59,8 @@ export class VmDebuggerLogic {
   }
 
   listenToCodeManagerEvents () {
-    this._codeManager.event.register('changed', (code, address, index, nextIndex, returnInstructionIndexes, outOfGasInstructionIndexes) => {
-      this.event.trigger('codeManagerChanged', [code, address, index, nextIndex, returnInstructionIndexes, outOfGasInstructionIndexes])
+    this._codeManager.event.register('changed', (code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes) => {
+      this.event.trigger('codeManagerChanged', [code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes])
     })
   }
 

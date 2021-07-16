@@ -165,16 +165,26 @@ module.exports = class Filepanel extends ViewPlugin {
     }
     if (loadedFromGist) return
 
-    if (params.code) {
+    if (params.code || params.url) {
       try {
         await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
-        var hash = bufferToHex(keccakFromString(params.code))
-        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-        const path = fileName
-        await this._deps.fileProviders.workspace.set(path, atob(params.code))
+        let path = ''
+        let content = ''
+        if (params.code) {
+          var hash = bufferToHex(keccakFromString(params.code))
+          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+          content = atob(params.code)
+          await this._deps.fileProviders.workspace.set(path, content)
+        }
+        if (params.url) {
+          const data = await this.call('contentImport', 'resolve', params.url)
+          path = data.cleanUrl
+          content = data.content
+          await this._deps.fileProviders.workspace.set(path, content)
+        }
         this.initialWorkspace = 'code-sample'
-        await this._deps.fileManager.openFile(fileName)
+        await this._deps.fileManager.openFile(path)
       } catch (e) {
         console.error(e)
       }
