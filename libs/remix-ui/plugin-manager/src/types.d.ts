@@ -76,6 +76,7 @@ export class PluginManagerSettings {
 export class PluginManagerComponent extends ViewPlugin extends Plugin implements PluginBase {
   constructor(appManager: RemixAppManager, engine: Engine)
   appManager: RemixAppManager
+  pluginSettings: PluginManagerSettings
   engine: Engine
   htmlElement: HTMLDivElement
   views: { root: null, items: {} }
@@ -138,8 +139,6 @@ export interface PluginManagerContextProviderProps {
   pluginComponent: PluginManagerComponent
   pluginSettings: PluginManagerSettings
   activePluginNames: string[]
-  actives: Partial<PluginManagerProfile>[]
-  inactives: Partial<PluginManagerProfile>[]
   isActive?: (name: string) => boolean
   filterPlugins: () => void
   profile: Partial<PluginManagerProfile>
@@ -152,8 +151,6 @@ export interface RemixUiPluginManagerProps {
   pluginComponent: PluginManagerComponent
   pluginSettings: PluginManagerSettings // Window & typeof globalThis | []
   activePluginNames: string[]
-  actives: Partial<PluginManagerProfile>[]
-  inactives: Partial<PluginManagerProfile>[]
   isActive?: (name: string) => boolean
   filterPlugins: () => void
   profile: Partial<PluginManagerProfile>
