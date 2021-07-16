@@ -44,7 +44,8 @@ export class TabProxy extends Plugin {
 
     fileManager.events.on('fileRemoved', (name) => {
       const workspace = this.fileManager.currentWorkspace()
-
+      console.log('wotk= ', workspace)
+      console.log('mode= ', this.fileManager.mode)
       workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
