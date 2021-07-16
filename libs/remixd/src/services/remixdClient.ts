@@ -97,8 +97,8 @@ export class RemixdClient extends PluginClient {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot write file: read-only mode selected'))
-        const { absPath: path, exists } = utils.existingPath(args.path, this.currentSharedFolder)
-
+        const path = utils.absolutePath(args.path, this.currentSharedFolder)
+        const exists = fs.existsSync(path)
         if (exists && !isRealPath(path)) return reject(new Error(''))
         if (args.content === 'undefined') { // no !!!!!
           console.log('trying to write "undefined" ! stopping.')
