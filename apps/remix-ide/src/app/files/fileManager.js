@@ -155,9 +155,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory
    * @returns {boolean} true if path is a directory.
    */
-  isDirectory (path) {
+  async isDirectory (path) {
     const provider = this.fileProviderOf(path)
-    const result = provider.isDirectory(path)
+    const result = await provider.isDirectory(path)
 
     return result
   }
@@ -360,9 +360,11 @@ class FileManager extends Plugin {
   async remove (path) {
     try {
       path = this.limitPluginScope(path)
+      console.log('remove fileManager,js ', path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
 
+      // this.emit('folderRemoved', path)
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
@@ -383,6 +385,7 @@ class FileManager extends Plugin {
     this._deps.browserExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.browserExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
     this._deps.localhostExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.localhostExplorer.event.on('folderRemoved', (path) => { this.removeTabsOfPath(path) })
     this._deps.localhostExplorer.event.on('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.on('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.workspaceExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
@@ -543,6 +546,19 @@ class FileManager extends Plugin {
     for (var tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
         this.fileRemovedEvent(tab)
+      }
+    }
+  }
+
+  removeTabsOfPath (path) {
+    for (const tab in this.openedFiles) {
+      if (tab.substring(0, path.length) === path) {
+        console.log('removeTabsOfPath ', path)
+        if (path === this._deps.config.get('currentFile')) {
+          this._deps.config.set('currentFile', '')
+        }
+        this.editor.discard(path)
+        delete this.openedFiles[path]
       }
     }
   }
