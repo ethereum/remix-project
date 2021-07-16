@@ -1,10 +1,12 @@
 /* eslint-disable no-debugger */
-import React, { Fragment, useContext, useEffect, useState } from 'react'
-import { PluginManagerContext } from '../contexts/pluginmanagercontext'
+import React, { Fragment, useEffect, useState } from 'react'
 import ModuleHeading from './moduleHeading'
 import PluginCard from './pluginCard'
 import { ModalDialog } from '@remix-ui/modal-dialog'
-import { FormStateProps, PluginManagerProfile } from '../../types'
+import { FormStateProps, PluginManagerComponent, PluginManagerProfile, PluginManagerSettings } from '../../types'
+import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
+import { Profile } from '@remixproject/plugin-utils'
+import PermisssionsSettings from './permissions/permissionsSettings'
 
 const initialState: FormStateProps = {
   name: 'test',
@@ -16,28 +18,40 @@ const initialState: FormStateProps = {
   location: 'sidePanel'
 }
 
-function RootView () {
-  const { appManager, pluginComponent, activePluginNames } = useContext(PluginManagerContext)
+interface RootViewProps {
+  pluginComponent: PluginManagerComponent
+}
+
+function RootView ({ pluginComponent }: RootViewProps) {
+  /**
+   * Component Local State declaration
+   */
   const [visible, setVisible] = useState<boolean>(true)
   const [plugin, setPlugin] = useState(initialState)
   const [filterPlugins, setFilterPlugin] = useState('')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setGetAndFilter] = useState<any>()
-  const [activeP, setActiveP] = useState<any[]>()
-  const [inactiveP, setInactiveP] = useState<any[]>()
+  const [activeP, setActiveP] = useState<Partial<PluginManagerProfile>[]>()
+  const [inactiveP, setInactiveP] = useState<Partial<PluginManagerProfile>[]>()
 
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
-    appManager.activatePlugin('')
   }
+
+  /**
+   * Modal Visibility States
+   */
   const openModal = () => {
     setVisible(false)
   }
-
   const closeModal = () => setVisible(true)
+  // <-- End Modal Visibility States -->
+
+  /**
+   * Plugins list filtering and Sorting based on search input field state change
+   */
+
   const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(filterPlugins)
-  const isNotRequired = (profile) => !appManager.isRequired(profile.name)
-  const isNotDependent = (profile) => !appManager.isDependent(profile.name)
+  const isNotRequired = (profile) => !pluginComponent.appManager.isRequired(profile.name)
+  const isNotDependent = (profile) => !pluginComponent.appManager.isDependent(profile.name)
   const isNotHome = (profile) => profile.name !== 'home'
   const sortByName = (profileA, profileB) => {
     const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
@@ -46,30 +60,32 @@ function RootView () {
   }
 
   const getAndFilterPlugins = () => {
-    const { actives, inactives } = appManager.getAll()
+    const { actives, inactives } = pluginComponent.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
       .filter(isNotDependent)
       .filter(isNotHome)
       .sort(sortByName)
       .reduce(({ actives, inactives }, profile) => {
-        return activePluginNames.includes(profile.name)
+        return pluginComponent.isActive(profile.name)
           ? { actives: [...actives, profile], inactives }
           : { inactives: [...inactives, profile], actives }
       }, { actives: [], inactives: [] })
     setActiveP(actives)
+    console.log('profile property on appmanager', pluginComponent.appManager.profile)
     setInactiveP(inactives)
   }
+  //  <-- End Filtering and Sorting based on search input field
 
   useEffect(() => {
-    setGetAndFilter(getAndFilterPlugins())
+    getAndFilterPlugins()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterPlugins])
 
   useEffect(() => {
 
-  })
-  console.log('This is the result of getting and filtering all plugins from app manager :', inactiveP)
+  }, [activeP, inactiveP])
+
   return (
     <Fragment>
       <form id="local-plugin-form">
@@ -78,21 +94,14 @@ function RootView () {
           hide={visible}
           title="Local Plugin"
           okLabel="OK"
-          okFn={async () => {
-            // const plugins = appManager.getActiveProfiles()
-            // console.log('There are the active plugins from appManager :', plugins)
-            // const profile: any = await localPlugin.open(appManager.getAll())
-            // if (appManager.getIds().includes(profile.name)) {
-            //   throw new Error('This name has already been used')
-            // }
-            // const lPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-            // console.log('handle submit local plugin', lPlugin)
-            // console.log('Local PLugin type from legacy as props', localPlugin)
-            // engine.register(lPlugin)
-            // console.log('engine has registered lPlugin')
-            // await appManager.activatePlugin(lPlugin.name)
-            // console.log('appManager has activated lPlugin')
-            await pluginComponent.openLocalPlugin()
+          okFn={() => {
+            const profile: any = pluginComponent.localPlugin.open(pluginComponent.appManager.getAll())
+            if (pluginComponent.appManager.getIds().includes(profile.name)) {
+              throw new Error('This name has already been used')
+            }
+            const lPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+            pluginComponent.engine.register(lPlugin)
+            pluginComponent.appManager.activatePlugin(lPlugin.name)
           } }
           cancelLabel="Cancel"
           cancelFn={closeModal}
@@ -183,7 +192,8 @@ function RootView () {
           </div>
 
         </ModalDialog>
-      </form><div id="pluginManager" data-id="pluginManagerComponentPluginManager">
+      </form>
+      <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
         <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
           <input
             type="text"
@@ -204,7 +214,11 @@ function RootView () {
               <Fragment>
                 <ModuleHeading headingLabel="Active Modules" actives={activeP} inactives={inactiveP} />
                 {activeP.map((profile) => (
-                  <PluginCard key={profile.name} profile={profile} />
+                  <PluginCard
+                    key={profile.name}
+                    profile={profile}
+                    pluginComponent={pluginComponent}
+                  />
                 ))}
               </Fragment>
             )
@@ -214,11 +228,16 @@ function RootView () {
             <Fragment>
               <ModuleHeading headingLabel="Inactive Modules" inactives={inactiveP} actives={activeP} />
               {inactiveP.map((profile) => (
-                <PluginCard key={profile.name} profile={profile} />
+                <PluginCard
+                  key={profile.name}
+                  profile={profile}
+                  pluginComponent={pluginComponent}
+                />
               ))}
             </Fragment>
           ) : null}
         </section>
+        <PermisssionsSettings pluginSettings={pluginComponent.pluginSettings}/>
       </div>
     </Fragment>
   )
