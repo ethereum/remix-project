@@ -75,14 +75,6 @@ export class RemixAppManager extends PluginManager {
     return await this.permissionHandler.askPermission(this.profiles[from], this.profiles[to], method, message)
   }
 
-  async turnPluginOn (name) {
-    await this.activatePlugin(name)
-  }
-
-  async turnPluginOff (name) {
-    await this.deactivatePlugin(name)
-  }
-
   onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
