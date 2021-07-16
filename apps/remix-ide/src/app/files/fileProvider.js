@@ -185,6 +185,8 @@ class FileProvider {
               window.remixFileSystem.rmdirSync(path, console.log)
             }
             this.event.emit('fileRemoved', this._normalizePath(path))
+            console.log('file provider remove remove ', path)
+
           }
         } catch (e) {
           console.log(e)
@@ -250,6 +252,8 @@ class FileProvider {
     if (window.remixFileSystem.existsSync(path) && !window.remixFileSystem.statSync(path).isDirectory()) {
       window.remixFileSystem.unlinkSync(path, console.log)
       this.event.emit('fileRemoved', this._normalizePath(path))
+      console.log('file provider removefile remove ', path)
+
       return true
     } else return false
   }

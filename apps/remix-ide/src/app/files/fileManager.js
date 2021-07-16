@@ -363,6 +363,7 @@ class FileManager extends Plugin {
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
 
+      this.emit('folderRemoved', path)
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
@@ -383,6 +384,7 @@ class FileManager extends Plugin {
     this._deps.browserExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.browserExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
     this._deps.localhostExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.localhostExplorer.event.on('folderRemoved', (path) => { this.removeTabsOfPath(path) })
     this._deps.localhostExplorer.event.on('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.on('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.workspaceExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
@@ -542,6 +544,14 @@ class FileManager extends Plugin {
   removeTabsOf (provider) {
     for (var tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
+        this.fileRemovedEvent(tab)
+      }
+    }
+  }
+
+  removeTabsOfPath (path) {
+    for (const tab in this.openedFiles) {
+      if (tab.substring(0, path.length) === path) {
         this.fileRemovedEvent(tab)
       }
     }
