@@ -590,8 +590,16 @@ class FileManager extends Plugin {
         }
       })
     }
-    if (file) return _openFile(file)
-    else {
+    if (file) {
+      this.isRemixDActive().then((result) => {
+        if (result) {
+          const provider = this.fileProviderOf(file)
+          provider.getExistingPath(file).then((pathObj) => {
+            return _openFile(pathObj.relPath)
+          })
+        } else return _openFile(file)
+      })
+    } else {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     }

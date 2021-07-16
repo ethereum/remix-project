@@ -13,6 +13,12 @@ export interface OutputStandard {
     [key: string]: any
 }
 
+export interface ExistingPathResult {
+    relPath: string
+    absPath: string
+    exists: boolean
+}
+
 type ServiceListKeys = keyof typeof ServiceList;
 
 export type Service = typeof ServiceList[ServiceListKeys]
