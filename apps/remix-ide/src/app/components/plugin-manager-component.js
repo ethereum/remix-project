@@ -92,9 +92,10 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    // this.event = new EventEmitter() // already exists in engine so not needed here
+    this.event = new EventEmitter() // already exists in engine so not needed here
     this.appManager = appManager
     this.engine = engine
+    this.pluginManagerSettings = new PluginManagerSettings()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
     this.views = {
@@ -103,9 +104,8 @@ class PluginManagerComponent extends ViewPlugin {
     }
     this.localPlugin = new LocalPlugin()
     this.filter = ''
-    this.activePlugins = []
-    this.inactivePlugins = []
     this.pluginNames = this.appManager.actives
+    // this.pluginManagerSettings.
     // this.appManager.event.on('activate', () => { this.renderComponent() })
     // this.appManager.event.on('deactivate', () => { this.renderComponent() })
     // this.engine.event.on('onRegistration', () => { this.renderComponent() })
@@ -116,10 +116,12 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   activateP (name) {
-    this.appManager.turnPluginOn(name)
-    console.log('activateP method reached. And activation of method was successful')
+    this.appManager.activatePlugin(name)
+    this.appManager.event.on('activate', () => {
+      this.renderComponent()
+      console.log('activateP method reached. And activation of method was successful')
+    })
     _paq.push(['trackEvent', 'manager', 'activate', name])
-    this.renderComponent()
     console.log('activation was logged in _paq and renderComponent has been called.')
   }
 
@@ -144,10 +146,6 @@ class PluginManagerComponent extends ViewPlugin {
         engine={this.engine}
         localPlugin={this.localPlugin}
         activePluginNames={this.pluginNames}
-        actives={this.activePlugins}
-        inactives={this.inactivePlugins}
-        // activatePlugin={this.activateP}
-        // deActivatePlugin={this.deactivateP}
         _paq={_paq}
         filter={this.filter}
       />,

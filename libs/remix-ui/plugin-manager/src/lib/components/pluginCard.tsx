@@ -1,15 +1,17 @@
-import React, { useContext, useState } from 'react'
-import { PluginManagerProfile } from '../../types'
-import { PluginManagerContext } from '../contexts/pluginmanagercontext'
+import React, { useState } from 'react'
+import { PluginManagerComponent, PluginManagerProfile } from '../../types'
 import '../remix-ui-plugin-manager.css'
 import Button from './button'
 interface PluginCardProps {
   profile: Partial<PluginManagerProfile>
+  pluginComponent: PluginManagerComponent
 }
 
 // eslint-disable-next-line no-empty-pattern
-function PluginCard ({ profile }: PluginCardProps) {
-  const { pluginComponent } = useContext(PluginManagerContext)
+function PluginCard ({
+  profile,
+  pluginComponent
+}: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
     <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
@@ -35,7 +37,13 @@ function PluginCard ({ profile }: PluginCardProps) {
               <Button
                 buttonText="Deactivate"
                 pluginName={profile.name}
-              />) : <Button buttonText="Activate" pluginName={profile.name}/>
+                pluginComponent={pluginComponent}
+              />)
+              : <Button
+                buttonText="Activate"
+                pluginName={profile.name}
+                pluginComponent={pluginComponent}
+              />
             }
           </h6>
         </div>
