@@ -26,10 +26,6 @@ export class CompilerImports extends Plugin {
     this.urlResolver.setGistToken(token, protocol)
   }
 
-  onActivation () {
-    this.setToken()
-  }
-
   isRelativeImport (url) {
     return /^([^/]+)/.exec(url)
   }
@@ -73,6 +69,7 @@ export class CompilerImports extends Plugin {
 
     let resolved
     try {
+      await this.setToken()
       resolved = await this.urlResolver.resolve(url)
       const { content, cleanUrl, type } = resolved
       self.previouslyHandled[url] = {
