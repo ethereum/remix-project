@@ -112,7 +112,7 @@ class CompilerContainer {
       this._view.compileIcon.setAttribute('title', 'idle')
       this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-      _paq.push(['trackEvent', 'compiler', `compiled_with_v_${this._retrieveVersion()}`])
+      _paq.push(['trackEvent', 'compiler', 'compiled_with_version', this._retrieveVersion()])
     })
   }
 
