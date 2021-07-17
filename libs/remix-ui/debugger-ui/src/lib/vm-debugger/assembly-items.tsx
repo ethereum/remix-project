@@ -6,15 +6,15 @@ export const AssemblyItems = ({ registerEvent }) => {
   const [assemblyItems, dispatch] = useReducer(reducer, initialState)
   const [absoluteSelectedIndex, setAbsoluteSelectedIndex] = useState(0)
   const [selectedItem, setSelectedItem] = useState(0)
-  const [nextSelectedItem, setNextSelectedItem] = useState(1)
+  const [nextSelectedItems, setNextSelectedItems] = useState([1])
   const [returnInstructionIndexes, setReturnInstructionIndexes] = useState([])
   const [outOfGasInstructionIndexes, setOutOfGasInstructionIndexes] = useState([])
   const refs = useRef({})
   const asmItemsRef = useRef(null)
 
   useEffect(() => {
-    registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndex, returnInstructionIndexes, outOfGasInstructionIndexes) => {
-      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndex, returnInstructionIndexes, outOfGasInstructionIndexes } })
+    registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes) => {
+      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes } })
     })
   }, [])
 
@@ -22,7 +22,7 @@ export const AssemblyItems = ({ registerEvent }) => {
     if (absoluteSelectedIndex !== assemblyItems.index) {
       clearItems()
       indexChanged(assemblyItems.index)
-      nextIndexChanged(assemblyItems.nextIndex)
+      nextIndexesChanged(assemblyItems.nextIndexes)
       returnIndexes(assemblyItems.returnInstructionIndexes)
       outOfGasIndexes(assemblyItems.outOfGasInstructionIndexes)
     }
@@ -40,7 +40,11 @@ export const AssemblyItems = ({ registerEvent }) => {
 
   const clearItems = () => {
     clearItem(refs.current[selectedItem] ? refs.current[selectedItem] : null)
-    clearItem(refs.current[nextSelectedItem] ? refs.current[nextSelectedItem] : null)
+    if (nextSelectedItems) {
+      nextSelectedItems.map((index) => {
+        clearItem(refs.current[index] ? refs.current[index] : null)
+      })
+    }
 
     returnInstructionIndexes.map((index) => {
       if (index < 0) return
@@ -70,18 +74,20 @@ export const AssemblyItems = ({ registerEvent }) => {
     setAbsoluteSelectedIndex(assemblyItems.opCodes.index)
   }
 
-  const nextIndexChanged = (index: number) => {
-    if (index < 0) return
+  const nextIndexesChanged = (indexes: Array<number>) => {
+    indexes.map((index) => {
+      if (index < 0) return
 
-    const codeView = asmItemsRef.current
+      const codeView = asmItemsRef.current
 
-    const currentItem = codeView.children[index]
-    if (currentItem) {
-      currentItem.style.setProperty('border-color', 'var(--secondary)')
-      currentItem.style.setProperty('border-style', 'dotted')
-      currentItem.setAttribute('selected', 'selected')
-    }
-    setNextSelectedItem(index)
+      const currentItem = codeView.children[index]
+      if (currentItem) {
+        currentItem.style.setProperty('color', 'var(--primary)')
+        currentItem.style.setProperty('font-weight', 'bold')
+        currentItem.setAttribute('selected', 'selected')
+      }
+    })
+    setNextSelectedItems(indexes)
   }
 
   const returnIndexes = (indexes) => {
