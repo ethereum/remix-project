@@ -296,7 +296,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         newpos = (newpos < height - limitDown) ? newpos : height - limitDown
         return height - newpos
       }
-    }
+    },
+    { config: registry.get('config').api }
   )
   makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
 
