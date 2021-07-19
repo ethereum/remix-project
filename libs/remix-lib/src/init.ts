@@ -12,23 +12,6 @@ export function extendWeb3 (web3) {
   this.extend(web3)
 }
 
-export function setProvider (web3, url) {
-  web3.setProvider(new web3.providers.HttpProvider(url))
-}
-
-export function web3DebugNode (network) {
-  const web3DebugNodes = {
-    Main: 'https://gethmainnet.komputing.org',
-    Rinkeby: 'https://remix-rinkeby.ethdevops.io',
-    Ropsten: 'https://remix-ropsten.ethdevops.io',
-    Goerli: 'https://remix-goerli.ethdevops.io'
-  }
-  if (web3DebugNodes[network]) {
-    return this.loadWeb3(web3DebugNodes[network])
-  }
-  return null
-}
-
 export function extend (web3) {
   if (!web3.extend) {
     return

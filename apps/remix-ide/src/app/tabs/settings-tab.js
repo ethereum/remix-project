@@ -8,7 +8,7 @@ const globalRegistry = require('../../global/registry')
 const profile = {
   name: 'settings',
   displayName: 'Settings',
-  methods: ['getGithubAccessToken'],
+  methods: ['get'],
   events: [],
   icon: 'assets/img/settings.webp',
   description: 'Remix-IDE settings',
@@ -52,8 +52,8 @@ module.exports = class SettingsTab extends ViewPlugin {
     )
   }
 
-  getGithubAccessToken () {
-    return this.config.get('settings/gist-access-token')
+  get (key) {
+    return this.config.get(key)
   }
 
   updateMatomoAnalyticsChoice (isChecked) {
