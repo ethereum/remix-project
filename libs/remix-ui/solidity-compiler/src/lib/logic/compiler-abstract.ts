@@ -1,8 +1,13 @@
 'use strict'
-var remixLib = require('@remix-project/remix-lib')
-var txHelper = remixLib.execution.txHelper
+import * as remixLib from '@remix-project/remix-lib'
 
-module.exports = class CompilerAbstract {
+const txHelper = remixLib.execution.txHelper
+
+export class CompilerAbstract {
+  public languageversion: string
+  public data: Record<string, any>
+  public source: Record<string, any>
+
   constructor (languageversion, data, source) {
     this.languageversion = languageversion
     this.data = data
