@@ -77,6 +77,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return () => { }
   }, [state])
 
+  useEffect(() => {
+    props.analysisModule.on('filePanel', 'setWorkspace', () => {
+      // Reset warning state
+      setWarningState([])
+      // Reset badge
+      props.event.trigger('staticAnaysisWarning', [])
+    })
+    return () => { }
+  }, [props.analysisModule])
+
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
     <span className='d-flex flex-column'>
