@@ -117,7 +117,7 @@ const css = csjs`
   }
   .onboarding {
     color             : var(--text-info);
-    background-color  : var(--info)
+    background-color  : var(--info);
   }
   .matomoBtn {
     width              : 100px;
