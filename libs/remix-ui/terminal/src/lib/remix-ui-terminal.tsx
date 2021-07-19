@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, SyntheticEvent } from 'react' // eslint-disable-line
-import { useKeyPress } from './custom-hooks/useKeyPress'
+import React, { useState, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
+import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
 
 import './remix-ui-terminal.css'
@@ -18,6 +18,7 @@ export interface RemixUiTerminalProps {
   registerCommand: any
   command: any
   version: any
+  config: any
 
   // blockRenderHtml: any
   // blockRenderLog: any
@@ -38,6 +39,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [_cmdTemp, setCmdTemp] = useState('')
   const [_cmdHistory, setCmdHistory] = useState([])
   const [windowHeight, setWindowHeight] = useState(window.innerHeight)
+  // dragable state
+  const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
+  const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
+  const [dragging, setDragging] = useState(false)
 
   const [state, setState] = useState({
     journalBlocks: {
@@ -93,7 +98,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setWindowHeight(window.innerHeight)
   })
 
-
   // terminal inputRef
   const inputEl = useRef(null)
   // events
@@ -147,11 +151,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setToggleDownUp('fa-angle-double-up')
       props.event.trigger('resize', [])
     } else {
-      console.log('clikced up')
-      props.event.trigger('resize', [118])
+      const terminalTopOffset = props.config.config.get('terminal-top-offset')
+      props.event.trigger('resize', [terminalTopOffset])
       setToggleDownUp('fa-angle-double-down')
     }
-    console.log(props.event, 'event.trigger')
   }
 
   // const reattached = (event) => {
@@ -277,6 +280,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     if (event.which === 13) {
       if (event.ctrlKey) { // <ctrl+enter>
+        console.log(event.which === 32, ' enter key')
         // on enter, append the value in the cli input to the journal
         // setState(prevState => ({...prevState.journalBlocks, prevState: inputEl})
         inputEl.current.innerText += '\n'
@@ -284,17 +288,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         // putCursor2End(inputEl.current)
         // scroll2botton () function not implemented
         props.autoCompletePopup.removeAutoComplete()
-      } else {
+      } else { // <enter>
         setCmdIndex(-1)
         setCmdTemp('')
         const script = inputEl.current.innerText.trim()
-        console.log({ script })
-        inputEl.current.innerText += '\n'
-        if (script.length) {
-          // self._cmdHistory.unshift(script)
-          props.command.script(wrapScript(script))
-        }
-        props.autoCompletePopup.removeAutoComplete()
+        console.log({ script }, ' script ')
+        // inputEl.current.innerText += '\n'
+        // if (script.length) {
+        //   // self._cmdHistory.unshift(script)
+        //   props.command.script(wrapScript(script))
+        // }
+        // props.autoCompletePopup.removeAutoComplete()
       }
     } else if (event.which === 38) { // <arrowUp>
       const len = _cmdHistory.length
@@ -332,19 +336,57 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       console.log('remove event')
       setToggleDownUp('fa-angle-double-down')
     }
-    props.event.trigger('resize', [props.api.getPostion(event)])
+    const value = props.event.get('resize')
+    console.log({ value })
+    props.event.trigger('resize', [value])
   }
 
-  const mousedown = (event) => {
-    console.log({ windowHeight })
-    console.log(event.which === 1, 'event.which === 1')
-    event.preventDefault()
-    moveGhostbar(event)
-    if (event.which === 1) {
-      console.log('event .which code 1')
-      moveGhostbar(event)
+  /* start of mouse events */
+
+  const mousedown = (event: MouseEvent) => {
+    setSeparatorYPosition(event.clientY)
+    setDragging(true)
+    // console.log({ windowHeight })
+    // console.log(event.which === 1, 'event.which === 1')
+    // event.preventDefault()
+    // moveGhostbar(event)
+    // if (event.which === 1) {
+    //   console.log('event .which code 1')
+    //   moveGhostbar(event)
+    // }
+  }
+
+  const onMouseMove: any = (e: MouseEvent) => {
+    e.preventDefault()
+    if (dragging && leftHeight && separatorYPosition) {
+      const newEditorHeight = leftHeight - e.clientY + separatorYPosition
+      const newLeftHeight = leftHeight + separatorYPosition - e.clientY
+      setSeparatorYPosition(e.clientY)
+
+      // if (newLeftHeight < MIN_HEIGHT) {
+      //   setLeftHeight(MIN_HEIGHT)
+      //   return
+      // }
+      // if (splitPaneRef.current) {
+      //   const splitPaneHeight = splitPaneRef.current.clientHeight
+
+      //   if (newLeftHeight > splitPaneHeight - MIN_HEIGHT) {
+      //     setLeftHeight(splitPaneHeight - MIN_HEIGHT)
+      //     return
+      //   }
+      // }
+      setLeftHeight(newLeftHeight)
+      props.event.trigger('resize', [newLeftHeight + 32])
+      console.log({ newLeftHeight })
     }
   }
+
+  const onMouseUp = () => {
+    setDragging(false)
+  }
+
+
+  /* end of mouse event */
 
   const cancelGhostbar = (event) => {
     if (event.keyCode === 27) {
@@ -352,11 +394,35 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  useEffect(() => {
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+  })
+
+  React.useEffect(() => {
+    const leftRef = document.getElementById('terminal-view')
+    const editorRef = document.getElementById('mainPanelPluginsContainer-id')
+    if (leftRef) {
+      if (!leftHeight) {
+        setLeftHeight(leftRef.offsetHeight)
+        return
+      }
+
+      leftRef.style.height = `${leftHeight}px`
+    }
+  }, [leftHeight, setLeftHeight])
+
   return (
     <div style={{ height: '323px' }} className='panel_2A0YE0'>
+      {console.log({ props })}
       <div className="bar_2A0YE0">
         {/* ${self._view.dragbar} */}
-        <div className="dragbarHorizontal_2A0YE0" onMouseDown={mousedown}></div>
+        <div className="dragbarHorizontal" onMouseDown={mousedown}></div>
         <div className="menu_2A0YE0 border-top border-dark bg-light" data-id="terminalToggleMenu">
           {/* ${self._view.icon} */}
           <i className={`mx-2 toggleTerminal_2A0YE0 fas ${toggleDownUp}`} data-id="terminalToggleIcon" onClick={ handleMinimizeTerminal }></i>
@@ -400,7 +466,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       <div tabIndex={-1} className="terminal_container_2A0YE0" data-id="terminalContainer" >
         {/* onScroll=${throttle(reattach, 10)} onkeydown=${focusinput} */}
         {/* {props.autoCompletePopup.render()} */}
-        {console.log({ props })}
         <div data-id="terminalContainerDisplay" style = {{
           position: 'absolute',
           height: '100',
@@ -425,8 +490,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </div>
           </div>
           <div id="terminalCli" data-id="terminalCli" className="cli_2A0YE0" onClick={focusinput}>
-            <span className="prompt">{'>'}</span>
-            <span className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onPaste={handlePaste} onKeyDown={ handleKeyDown }></span>
+            <span className="prompt_2A0YE0">{'>'}</span>
+            <span className="input_2A0YE0" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onPaste={handlePaste} onKeyDown={ handleKeyDown }></span>
           </div>
         </div>
       </div>
