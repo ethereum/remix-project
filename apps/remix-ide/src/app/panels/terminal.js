@@ -31,7 +31,7 @@ const profile = {
 }
 
 class Terminal extends Plugin {
-  constructor (opts, api) {
+  constructor (opts, api, config) {
     super(profile)
     this.element = document.createElement('div')
     this.element.setAttribute('class', 'panel_2A0YE0')
@@ -40,6 +40,7 @@ class Terminal extends Plugin {
     this.blockchain = opts.blockchain
     this._api = api
     this._opts = opts
+    this.config = config
     this.version = packageJson.version
     this.data = {
       lineLength: opts.lineLength || 80, // ????
@@ -113,6 +114,7 @@ class Terminal extends Plugin {
   }
 
   renderComponent () {
+
     ReactDOM.render(
       <RemixUiTerminal
         event = {this.event}
@@ -126,6 +128,7 @@ class Terminal extends Plugin {
         registerCommand = {this.registerCommand}
         command = {this.commands}
         version = {this.version}
+        config = {this.config}
       />,
       this.element
     )
