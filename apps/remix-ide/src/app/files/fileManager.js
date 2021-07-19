@@ -552,7 +552,12 @@ class FileManager extends Plugin {
   removeTabsOfPath (path) {
     for (const tab in this.openedFiles) {
       if (tab.substring(0, path.length) === path) {
-        this.fileRemovedEvent(tab)
+        console.log('removeTabsOfPath ', path)
+        if (path === this._deps.config.get('currentFile')) {
+          this._deps.config.set('currentFile', '')
+        }
+        this.editor.discard(path)
+        delete this.openedFiles[path]
       }
     }
   }

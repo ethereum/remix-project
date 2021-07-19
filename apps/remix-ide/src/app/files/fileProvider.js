@@ -186,7 +186,6 @@ class FileProvider {
             }
             this.event.emit('fileRemoved', this._normalizePath(path))
             console.log('file provider remove remove ', path)
-
           }
         } catch (e) {
           console.log(e)

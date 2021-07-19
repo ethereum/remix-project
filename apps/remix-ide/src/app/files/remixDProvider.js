@@ -144,6 +144,7 @@ module.exports = class RemixDProvider extends FileProvider {
           const path = unprefixedpath
           delete this.filesContent[path]
           resolve(true)
+          this.init()
         }).catch(error => {
           if (error) console.log(error)
           resolve(false)
