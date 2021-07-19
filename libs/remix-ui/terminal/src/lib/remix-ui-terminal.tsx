@@ -260,7 +260,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       props.event.trigger('resize', [terminalTopOffset])
       setToggleDownUp('fa-angle-double-down')
     }
-    console.log(props.event, 'event.trigger')
   }
 
   const focusinput = () => {
@@ -304,6 +303,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     if (event.which === 13 && !autoCompletState.showSuggestions) {
       if (event.ctrlKey) { // <ctrl+enter>
+        console.log(event.which === 32, ' enter key')
         // on enter, append the value in the cli input to the journal
         inputEl.current.focus()
       } else { // <enter>
