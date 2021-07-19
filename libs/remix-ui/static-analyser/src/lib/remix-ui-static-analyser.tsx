@@ -197,30 +197,31 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
                   const report = result.data
                   report.map((item) => {
-                    const location: any = {}
-                    const locationString = 'not available'
-                    const column = 0
-                    const row = 0
-                    const fileName = currentFile
-                    // There are issues with location for imported contract
-                    // which stops complete analysis including remix analyzer's
-
-                    // if (item.sourceMap && item.sourceMap.length) {
-                    //   location = {
-                    //     start: item.sourceMap[0].source_mapping.start,
-                    //     length: item.sourceMap[0].source_mapping.length
-                    //   }
-                    //   location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-                    //     location,
-                    //     Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative),
-                    //     lastCompilationSource.sources,
-                    //     lastCompilationResult.sources
-                    //   )
-                    //   row = location.start.line
-                    //   column = location.start.column
-                    //   locationString = row + 1 + ':' + column + ':'
-                    //   fileName = Object.keys(lastCompilationResult.contracts)[0]
-                    // }
+                    let location: any = {}
+                    let locationString = 'not available'
+                    let column = 0
+                    let row = 0
+                    let fileName = currentFile
+                    
+                    if (item.sourceMap && item.sourceMap.length) {
+                      const fileIndex = Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative)
+                      if(fileIndex >=0 ) {
+                        location = {
+                          start: item.sourceMap[0].source_mapping.start,
+                          length: item.sourceMap[0].source_mapping.length
+                        }
+                        location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                          location,
+                          fileIndex,
+                          lastCompilationSource.sources,
+                          lastCompilationResult.sources
+                        )
+                        row = location.start.line
+                        column = location.start.column
+                        locationString = row + 1 + ':' + column + ':'
+                        fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
+                      }
+                    }
                     warningCount++
                     const msg = message(item.title, item.description, item.more, fileName, locationString)
                     const options = {
