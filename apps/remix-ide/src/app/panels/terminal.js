@@ -125,6 +125,7 @@ class Terminal extends Plugin {
   }
 
   renderComponent () {
+
     ReactDOM.render(
       <RemixUiTerminal
         event = {this.event}
