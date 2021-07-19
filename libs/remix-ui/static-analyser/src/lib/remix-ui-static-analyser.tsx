@@ -83,6 +83,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setWarningState([])
       // Reset badge
       props.event.trigger('staticAnaysisWarning', [])
+      // Reset state
+      dispatch({ type: '', payload: {} })
     })
     return () => { }
   }, [props.analysisModule])
