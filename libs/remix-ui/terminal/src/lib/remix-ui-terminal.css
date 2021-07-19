@@ -120,7 +120,7 @@ element.style {
     height            : 0.5em;
     right             : 0;
     left              : 0;
-    cursor            : ns-resize;
+    cursor            : row-resize;
     z-index           : 999;
   }
   .listenOnNetwork {
@@ -135,3 +135,15 @@ element.style {
     left              : 0;
     right             : 0;
   }
+
+
+  .divider-hitbox {
+    color: white;
+    cursor: row-resize;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .ul {margin-left: 0; padding-left: 20px;}
