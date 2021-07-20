@@ -1,16 +1,22 @@
+import { Profile } from '@remixproject/plugin-utils'
 import React, { useState } from 'react'
-import { PluginManagerComponent, PluginManagerProfile } from '../../types'
+import { PluginManagerComponent } from '../../types'
 import '../remix-ui-plugin-manager.css'
-import Button from './button'
+import ActivateButton from './ActivateButton'
+import DeactivateButton from './deactivateButton'
 interface PluginCardProps {
-  profile: Partial<PluginManagerProfile>
+  profile: Profile & {
+    icon?: string
+  }
   pluginComponent: PluginManagerComponent
+  buttonText: string
 }
 
 // eslint-disable-next-line no-empty-pattern
 function PluginCard ({
   profile,
-  pluginComponent
+  pluginComponent,
+  buttonText
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
@@ -18,6 +24,7 @@ function PluginCard ({
       <i aria-hidden="true" className="fas fa-book"/>
     </a>
   ) : null)
+
   const [versionWarning] = useState<JSX.Element>((profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) ? (
     <small title="Version Alpha" className="remixui_versionWarning plugin-version">alpha</small>
   ) : (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) ? (
@@ -34,13 +41,13 @@ function PluginCard ({
               {versionWarning}
             </div>
             { pluginComponent.isActive(profile.name) ? (
-              <Button
-                buttonText="Deactivate"
+              <DeactivateButton
+                buttonText={buttonText}
                 pluginName={profile.name}
                 pluginComponent={pluginComponent}
               />)
-              : <Button
-                buttonText="Activate"
+              : <ActivateButton
+                buttonText={buttonText}
                 pluginName={profile.name}
                 pluginComponent={pluginComponent}
               />
