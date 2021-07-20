@@ -189,7 +189,7 @@ export interface DefaultLocalPlugin extends Profile {
 }
 
 export interface FormStateProps {
-  name: string
+  pname: string
   displayName: string
   url: string
   type: string
