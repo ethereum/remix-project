@@ -69,12 +69,14 @@ export class VerticalIcons extends Plugin {
     title = title.replace(/^\w/, c => c.toUpperCase())
     this.icons[name] = yo`
       <div
-        class="${css.icon}"
+        class="${css.icon} m-2"
         onclick="${() => { this.toggle(name) }}"
         plugin="${name}"
         title="${title}"
         oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
-        data-id="verticalIconsKind${name}">
+        data-id="verticalIconsKind${name}"
+        id="verticalIconsKind${name}"
+      >
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'none'].appendChild(this.icons[name])
@@ -249,13 +251,14 @@ export class VerticalIcons extends Plugin {
   render () {
     const home = yo`
       <div
-        class="${css.homeIcon}"
+        class="m-1 mt-2 ${css.homeIcon}"
         onclick="${async () => {
           await this.appManager.activatePlugin('home')
           this.call('tabs', 'focus', 'home')
         }}"
         plugin="home" title="Home"
         data-id="verticalIconsHomeIcon"
+        id="verticalIconsHomeIcon"
       >
         ${basicLogo()}
       </div>
@@ -270,16 +273,18 @@ export class VerticalIcons extends Plugin {
     this.iconKind.settings = yo`<div id='settingsIcons' data-id="verticalIconsSettingsIcons"></div>`
 
     this.view = yo`
-      <div class=${css.icons}>
-        ${home}
-        ${this.iconKind.fileexplorer}
-        ${this.iconKind.compiler}
-        ${this.iconKind.udapp}
-        ${this.iconKind.testing}
-        ${this.iconKind.analysis}
-        ${this.iconKind.debugging}
-        ${this.iconKind.none}
-        ${this.iconKind.settings}
+      <div class="h-100">
+        <div class=${css.icons}>
+          ${home}
+          ${this.iconKind.fileexplorer}
+          ${this.iconKind.compiler}
+          ${this.iconKind.udapp}
+          ${this.iconKind.testing}
+          ${this.iconKind.analysis}
+          ${this.iconKind.debugging}
+          ${this.iconKind.none}
+          ${this.iconKind.settings}
+        </div>
       </div>
     `
     return this.view
@@ -292,7 +297,6 @@ const css = csjs`
       width: 42px;
       height: 42px;
       margin-bottom: 20px;
-      margin-left: -5px;
       cursor: pointer;
   }
   .homeIcon svg path {
@@ -302,8 +306,6 @@ const css = csjs`
     fill: var(--primary);
   }
   .icons {
-    margin-left: 10px;
-    margin-top: 15px;
   }
   .icon {
     cursor: pointer;

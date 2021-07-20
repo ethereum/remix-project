@@ -19,7 +19,8 @@ export default class WebSocket {
     const listeners = {
       65520: 'remixd',
       65521: 'git',
-      65522: 'hardhat'
+      65522: 'hardhat',
+      65523: 'slither'
     }
 
     this.server.on('error', (error: Error) => {

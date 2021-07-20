@@ -114,7 +114,7 @@ module.exports = {
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
       .click('*[data-id="modalDialogModalFooter"]')
       .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 60000)
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 100000)
   },
 
   'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {

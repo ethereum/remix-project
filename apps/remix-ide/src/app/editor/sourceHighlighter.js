@@ -37,7 +37,7 @@ class SourceHighlighter {
     this.statementMarker = null
     this.fullLineMarker = null
     this.source = null
-    if (lineColumnPos) {
+    if (lineColumnPos && lineColumnPos.start && lineColumnPos.end) {
       this.source = filePath
       this.style = style || 'var(--info)'
       // if (!this.source) this.source = this._deps.fileManager.currentFile()

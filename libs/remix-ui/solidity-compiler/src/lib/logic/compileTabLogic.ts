@@ -7,6 +7,7 @@ const profile = {
   name: 'solidity-logic',
   displayName: 'Solidity compiler logic',
   description: 'Compile solidity contracts - Logic',
+  methods: ['getCompilerState'],
   version: packageJson.version
 }
 export class CompileTab extends Plugin {
@@ -58,6 +59,10 @@ export class CompileTab extends Plugin {
     this.evmVersion = newEvmVersion
     this.queryParams.update({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
+  }
+
+  getCompilerState () {
+    return this.compiler.state
   }
 
   /**
