@@ -70,9 +70,9 @@ module.exports = class TestTab extends ViewPlugin {
         })
       } catch (e) {
         console.log(e)
+        this.data.allTests.push(file)
+        this.data.selectedTests.push(file)
       }
-      this.data.allTests.push(file)
-      this.data.selectedTests.push(file)
     })
 
     this.on('filePanel', 'setWorkspace', async () => {
