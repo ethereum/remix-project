@@ -210,8 +210,7 @@ class PluginManagerComponent extends ViewPlugin {
       .filter(isNotDependent)
       .filter(isNotHome)
       .sort(sortByName)
-    // eslint-disable-next-line no-debugger
-    // debugger
+
     tempArray.forEach(profile => {
       if (this.appManager.actives.includes(profile.name)) {
         activatedPlugins.push(profile)
