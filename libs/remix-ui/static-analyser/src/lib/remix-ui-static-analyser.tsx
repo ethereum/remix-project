@@ -80,13 +80,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [state])
 
   useEffect(() => {
-    props.analysisModule.on('filePanel', 'setWorkspace', () => {
+    props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
       // Reset warning state
       setWarningState([])
       // Reset badge
       props.event.trigger('staticAnaysisWarning', [])
       // Reset state
       dispatch({ type: '', payload: {} })
+      // Show 'Enable Slither Analysis' checkbox
+      if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
     })
     return () => { }
   }, [props.analysisModule])
