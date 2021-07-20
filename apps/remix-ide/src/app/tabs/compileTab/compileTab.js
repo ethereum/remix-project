@@ -69,7 +69,7 @@ class CompileTab extends Plugin {
     this.compiler.set('language', lang)
   }
 
-  getCompilerState (lang) {
+  getCompilerState () {
     return this.compiler.state
   }
 
