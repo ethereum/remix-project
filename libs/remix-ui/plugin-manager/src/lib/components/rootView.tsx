@@ -3,10 +3,10 @@ import React, { Fragment, useEffect, useState } from 'react'
 import ModuleHeading from './moduleHeading'
 import PluginCard from './pluginCard'
 import { ModalDialog } from '@remix-ui/modal-dialog'
-import { FormStateProps, PluginManagerComponent, PluginManagerProfile, PluginManagerSettings } from '../../types'
+import { FormStateProps, PluginManagerComponent } from '../../types'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
-import { Profile } from '@remixproject/plugin-utils'
 import PermisssionsSettings from './permissions/permissionsSettings'
+import { Profile } from '@remixproject/plugin-utils'
 
 const initialState: FormStateProps = {
   name: 'test',
@@ -29,8 +29,8 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const [visible, setVisible] = useState<boolean>(true)
   const [plugin, setPlugin] = useState(initialState)
   const [filterPlugins, setFilterPlugin] = useState('')
-  const [activeP, setActiveP] = useState<Partial<PluginManagerProfile>[]>()
-  const [inactiveP, setInactiveP] = useState<Partial<PluginManagerProfile>[]>()
+  const [activeP, setActiveP] = useState<Profile[]>([])
+  const [inactiveP, setInactiveP] = useState<Profile[]>([])
 
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
@@ -45,46 +45,19 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const closeModal = () => setVisible(true)
   // <-- End Modal Visibility States -->
 
-  /**
-   * Plugins list filtering and Sorting based on search input field state change
-   */
-
-  const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(filterPlugins)
-  const isNotRequired = (profile) => !pluginComponent.appManager.isRequired(profile.name)
-  const isNotDependent = (profile) => !pluginComponent.appManager.isDependent(profile.name)
-  const isNotHome = (profile) => profile.name !== 'home'
-  const sortByName = (profileA, profileB) => {
-    const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
-    const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
-    return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
-  }
-
-  const getAndFilterPlugins = () => {
-    const { actives, inactives } = pluginComponent.appManager.getAll()
-      .filter(isFiltered)
-      .filter(isNotRequired)
-      .filter(isNotDependent)
-      .filter(isNotHome)
-      .sort(sortByName)
-      .reduce(({ actives, inactives }, profile) => {
-        return pluginComponent.isActive(profile.name)
-          ? { actives: [...actives, profile], inactives }
-          : { inactives: [...inactives, profile], actives }
-      }, { actives: [], inactives: [] })
-    setActiveP(actives)
-    console.log('profile property on appmanager', pluginComponent.appManager.profile)
-    setInactiveP(inactives)
-  }
-  //  <-- End Filtering and Sorting based on search input field
-
   useEffect(() => {
-    getAndFilterPlugins()
+    pluginComponent.getAndFilterPlugins(filterPlugins)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterPlugins])
 
   useEffect(() => {
-
-  }, [activeP, inactiveP])
+    if (pluginComponent.activePlugins && pluginComponent.activePlugins.length) {
+      setActiveP(pluginComponent.activePlugins)
+    }
+    if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
+      setInactiveP(pluginComponent.inactivePlugins)
+    }
+  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins])
 
   return (
     <Fragment>
@@ -99,9 +72,9 @@ function RootView ({ pluginComponent }: RootViewProps) {
             if (pluginComponent.appManager.getIds().includes(profile.name)) {
               throw new Error('This name has already been used')
             }
-            const lPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-            pluginComponent.engine.register(lPlugin)
-            pluginComponent.appManager.activatePlugin(lPlugin.name)
+            const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+            pluginComponent.engine.register(localPlugin)
+            pluginComponent.appManager.activatePlugin(localPlugin.name)
           } }
           cancelLabel="Cancel"
           cancelFn={closeModal}
@@ -209,33 +182,30 @@ function RootView ({ pluginComponent }: RootViewProps) {
           </button>
         </header>
         <section data-id="pluginManagerComponentPluginManagerSection">
-          {activeP !== undefined
-            ? (
-              <Fragment>
-                <ModuleHeading headingLabel="Active Modules" actives={activeP} inactives={inactiveP} />
-                {activeP.map((profile) => (
-                  <PluginCard
-                    key={profile.name}
-                    profile={profile}
-                    pluginComponent={pluginComponent}
-                  />
-                ))}
-              </Fragment>
-            )
-            : null
+          {activeP && <Fragment>
+            <ModuleHeading headingLabel="Active Modules" count={activeP.length} />
+            {activeP.map((profile) => (
+              <PluginCard
+                buttonText="Deactivate"
+                key={profile.name}
+                profile={profile}
+                pluginComponent={pluginComponent}
+              />
+            ))}
+          </Fragment>
           }
-          {inactiveP !== undefined ? (
-            <Fragment>
-              <ModuleHeading headingLabel="Inactive Modules" inactives={inactiveP} actives={activeP} />
-              {inactiveP.map((profile) => (
-                <PluginCard
-                  key={profile.name}
-                  profile={profile}
-                  pluginComponent={pluginComponent}
-                />
-              ))}
-            </Fragment>
-          ) : null}
+          {inactiveP && <Fragment>
+            <ModuleHeading headingLabel="Inactive Modules" count={inactiveP.length} />
+            {inactiveP.map((profile) => (
+              <PluginCard
+                buttonText="Activate"
+                key={profile.name}
+                profile={profile}
+                pluginComponent={pluginComponent}
+              />
+            ))}
+          </Fragment>
+          }
         </section>
         <PermisssionsSettings pluginSettings={pluginComponent.pluginSettings}/>
       </div>

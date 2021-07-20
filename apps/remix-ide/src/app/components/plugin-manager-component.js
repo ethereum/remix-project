@@ -92,7 +92,7 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    this.event = new EventEmitter() // already exists in engine so not needed here
+    // this.event = new EventEmitter() // already exists in engine so not needed here
     this.appManager = appManager
     this.engine = engine
     this.pluginManagerSettings = new PluginManagerSettings()
@@ -105,42 +105,53 @@ class PluginManagerComponent extends ViewPlugin {
     this.localPlugin = new LocalPlugin()
     this.filter = ''
     this.pluginNames = this.appManager.actives
-    // this.pluginManagerSettings.
-    // this.appManager.event.on('activate', () => { this.renderComponent() })
-    // this.appManager.event.on('deactivate', () => { this.renderComponent() })
-    // this.engine.event.on('onRegistration', () => { this.renderComponent() })
+    this.activePlugins = []
+    this.inactivePlugins = []
   }
 
+  /**
+   * Checks and returns true or false if plugin name
+   * passed in exists in the actives string array in
+   * RemixAppManager
+   * @param {string} name name of Plugin
+   */
   isActive (name) {
     this.appManager.actives.includes(name)
   }
 
+  /**
+   * Delegates to method activatePlugin in
+   * RemixAppManager to enable plugin activation
+   * @param {string} name name of Plugin
+   */
   activateP (name) {
     this.appManager.activatePlugin(name)
     this.appManager.event.on('activate', () => {
-      this.renderComponent()
-      console.log('activateP method reached. And activation of method was successful')
+      this.getAndFilterPlugins()
     })
     _paq.push(['trackEvent', 'manager', 'activate', name])
-    console.log('activation was logged in _paq and renderComponent has been called.')
   }
 
+  /**
+   * Calls and triggers the event deactivatePlugin
+   * with with manager permission passing in the name
+   * of the plugin
+   * @param {string} name name of Plugin
+   */
   deactivateP (name) {
     this.call('manager', 'deactivatePlugin', name)
-    console.log('deactivateP has been called successfully')
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
-    this.renderComponent()
-    console.log('deactivation was logged and renderComponent has has been called.')
+    this.getAndFilterPlugins()
   }
 
   onActivation () {
+    // this.getAndFilterPlugins()
     this.renderComponent()
   }
 
   renderComponent () {
     ReactDOM.render(
       <RemixUiPluginManager
-        profile={profile}
         pluginComponent={this}
         appManager={this.appManager}
         engine={this.engine}
@@ -176,41 +187,41 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   render () {
-    // Filtering helpers
-    // const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
-    // const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
-    // const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
-    // const isNotHome = (profile) => profile.name !== 'home'
-    // const sortByName = (profileA, profileB) => {
-    //   const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
-    //   const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
-    //   return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
-    // }
-
-    // const { actives, inactives } = this.appManager.getAll()
-    //   .filter(isFiltered)
-    //   .filter(isNotRequired)
-    //   .filter(isNotDependent)
-    //   .filter(isNotHome)
-    //   .sort(sortByName)
-    //   .reduce(({ actives, inactives }, profile) => {
-    //     return this.isActive(profile.name)
-    //       ? { actives: [...actives, profile], inactives }
-    //       : { inactives: [...inactives, profile], actives }
-    //   }, { actives: [], inactives: [] })
-    // this.activePlugins = actives
-    // this.inactivePlugins = inactives
     return this.htmlElement
   }
 
-  // reRender () {
-  //   if (this.views.root) {
-  //     yo.update(this.views.root, this.render())
-  //   }
-  // }
+  getAndFilterPlugins (filter) {
+    this.filter = filter ? filter.toLowerCase() : this.filter
 
-  filterPlugins ({ target }) {
-    this.filter = target.value.toLowerCase()
+    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+    const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
+    const isNotHome = (profile) => profile.name !== 'home'
+    const sortByName = (profileA, profileB) => {
+      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
+      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    }
+    const activatedPlugins = []
+    const deactivatedPlugins = []
+    const tempArray = this.appManager.getAll()
+      .filter(isFiltered)
+      .filter(isNotRequired)
+      .filter(isNotDependent)
+      .filter(isNotHome)
+      .sort(sortByName)
+    // eslint-disable-next-line no-debugger
+    // debugger
+    tempArray.forEach(profile => {
+      if (this.appManager.actives.includes(profile.name)) {
+        activatedPlugins.push(profile)
+      } else {
+        deactivatedPlugins.push(profile)
+      }
+    })
+    this.activePlugins = activatedPlugins
+    this.inactivePlugins = deactivatedPlugins
+
     this.renderComponent()
   }
 }
