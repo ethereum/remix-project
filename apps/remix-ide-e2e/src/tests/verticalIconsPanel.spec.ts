@@ -22,6 +22,7 @@ module.exports = {
   'Checks vertical icons panel contex menu deactivate': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .waitForElementVisible('*[data-id="verticalIconsKinddebugger"]', 7000)
+      .pause(5000)
       .rightClick('[data-id="verticalIconsKinddebugger"]')
       .click('*[id="menuitemdeactivate"]')
       .click('*[data-id="verticalIconsKindsettings"]')
