@@ -9,7 +9,7 @@ import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 
 const initialState: FormStateProps = {
-  name: 'test',
+  pname: 'test',
   displayName: 'test',
   url: '',
   type: 'iframe',
@@ -68,11 +68,20 @@ function RootView ({ pluginComponent }: RootViewProps) {
           title="Local Plugin"
           okLabel="OK"
           okFn={() => {
-            const profile: any = pluginComponent.localPlugin.open(pluginComponent.appManager.getAll())
-            if (pluginComponent.appManager.getIds().includes(profile.name)) {
+            const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
+            console.log('profile from local storage looks like this', profile)
+
+            if (!profile) return
+            if (pluginComponent.appManager.getIds().includes(profile.pname)) {
               throw new Error('This name has already been used')
             }
+            if (!profile.location) throw new Error('Plugin should have a location')
+            if (!profile.pname) throw new Error('Plugin should have a name')
+            if (!profile.url) throw new Error('Plugin should have an URL')
             const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+            debugger
+            localPlugin.profile.hash = `local-${profile.pname}`
+            localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
             pluginComponent.engine.register(localPlugin)
             pluginComponent.appManager.activatePlugin(localPlugin.name)
           } }
@@ -82,20 +91,48 @@ function RootView ({ pluginComponent }: RootViewProps) {
 
           <div className="form-group">
             <label htmlFor="plugin-name">Plugin Name <small>(required)</small></label>
-            <input className="form-control" onChange={e => pluginChangeHandler('name', e.target.value)} value={plugin.name} id="plugin-name" data-id="localPluginName" placeholder="Should be camelCase" />
+            <input
+              className="form-control"
+              onChange={e => pluginChangeHandler('pname', e.target.value)}
+              value={plugin.pname}
+              id="plugin-name"
+              data-id="localPluginName"
+              placeholder="Should be camelCase"
+            />
           </div>
           <div className="form-group">
             <label htmlFor="plugin-displayname">Display Name</label>
-            <input className="form-control" onChange={e => pluginChangeHandler('displayName', e.target.value)} value={plugin.displayName} id="plugin-displayname" data-id="localPluginDisplayName" placeholder="Name in the header" />
+            <input
+              className="form-control"
+              onChange={e => pluginChangeHandler('displayName', e.target.value)}
+              value={plugin.displayName}
+              id="plugin-displayname"
+              data-id="localPluginDisplayName"
+              placeholder="Name in the header"
+            />
           </div>
           <div className="form-group">
             <label htmlFor="plugin-methods">Api (comma separated list of methods name)</label>
-            <input className="form-control" onChange={e => pluginChangeHandler('methods', e.target.value)} value={plugin.methods} id="plugin-methods" data-id="localPluginMethods" placeholder="Name in the header" />
+            <input
+              className="form-control"
+              onChange={e => pluginChangeHandler('methods', e.target.value)}
+              value={plugin.methods}
+              id="plugin-methods"
+              data-id="localPluginMethods"
+              placeholder="Name in the header"
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="plugin-url">Url <small>(required)</small></label>
-            <input className="form-control" onChange={e => pluginChangeHandler('url', e.target.value)} value={plugin.url} id="plugin-url" data-id="localPluginUrl" placeholder="ex: https://localhost:8000" />
+            <input
+              className="form-control"
+              onChange={e => pluginChangeHandler('url', e.target.value)}
+              value={plugin.url}
+              id="plugin-url"
+              data-id="localPluginUrl"
+              placeholder="ex: https://localhost:8000"
+            />
           </div>
           <h6>Type of connection <small>(required)</small></h6>
           <div className="form-check form-group">
