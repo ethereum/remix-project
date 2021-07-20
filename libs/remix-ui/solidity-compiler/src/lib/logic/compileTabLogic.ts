@@ -7,6 +7,7 @@ const profile = {
   name: 'solidity-logic',
   displayName: 'Solidity compiler logic',
   description: 'Compile solidity contracts - Logic',
+  methods: ['getCompilerState'],
   version: packageJson.version
 }
 export class CompileTab extends Plugin {
