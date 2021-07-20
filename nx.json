@@ -105,6 +105,8 @@
     "remix-ui-checkbox": {
       "tags": []
     },
+"remix-ui-terminal": {
+    },
     "remix-core-plugin": {
       "tags": []
     },
