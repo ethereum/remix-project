@@ -7,6 +7,7 @@ import PanelsResize from './lib/panels-resize'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
+import { WalkthroughService } from './walkthroughService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
@@ -112,7 +113,11 @@ const css = csjs`
     fill: var(--secondary);
   }
   .centered svg polygon {
-    fill: var(--secondary);
+    fill              : var(--secondary);
+  }
+  .onboarding {
+    color             : var(--text-info);
+    background-color  : var(--info);
   }
   .matomoBtn {
     width              : 100px;
@@ -126,11 +131,11 @@ class App {
     self._components = {}
     self._view = {}
     self._view.splashScreen = yo`
-    <div class=${css.centered}>
-      ${basicLogo()}
-      <div class="info-secondary" style="text-align:center">
-        REMIX IDE
-      </div>
+      <div class=${css.centered}>
+        ${basicLogo()}
+        <div class="info-secondary" style="text-align:center">
+          REMIX IDE
+        </div>
       </div>
     `
     document.body.appendChild(self._view.splashScreen)
@@ -444,7 +449,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     test,
     filePanel.remixdHandle,
     filePanel.gitHandle,
-    filePanel.hardhatHandle
+    filePanel.hardhatHandle,
+    filePanel.slitherHandle
   ])
 
   if (isElectron()) {
@@ -497,7 +503,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
-  framingService.start(params)
 
   if (params.embed) framingService.embed()
+  framingService.start(params)
+
+  const walkthroughService = new WalkthroughService(localStorage)
+  if (!params.code) {
+    walkthroughService.start()
+  }
 }
