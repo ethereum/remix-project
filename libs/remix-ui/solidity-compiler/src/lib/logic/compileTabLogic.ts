@@ -60,6 +60,10 @@ export class CompileTab extends Plugin {
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
+  getCompilerState () {
+    return this.compiler.state
+  }
+
   /**
    * Set the compiler to using Solidity or Yul (default to Solidity)
    * @params lang {'Solidity' | 'Yul'} ...
