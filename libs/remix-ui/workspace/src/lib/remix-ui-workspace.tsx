@@ -1,57 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, useReducer } from 'react' // eslint-disable-line
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { MenuItems } from 'libs/remix-ui/file-explorer/src/lib/types'
+import { initWorkspace } from './actions/workspace'
+import { browserReducer, browserInitialState } from './reducers/workspace'
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
-  plugin: {
-    setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
-    createWorkspace: (name: string) => void,
-    renameWorkspace: (oldName: string, newName: string) => void
-    workspaceRenamed: ({ name: string }) => void,
-    workspaceCreated: ({ name: string }) => void,
-    workspaceDeleted: ({ name: string }) => void,
-    workspace: any // workspace provider,
-    browser: any // browser provider
-    localhost: any // localhost provider
-    fileManager : any
-    registry: any // registry
-    request: any // api request,
-    workspaces: any,
-    registeredMenuItems: MenuItems // menu items
-    removedMenuItems: MenuItems
-    initialWorkspace: string
-  }
+  setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
+  createWorkspace: (name: string) => void,
+  renameWorkspace: (oldName: string, newName: string) => void
+  workspaceRenamed: ({ name: string }) => void,
+  workspaceCreated: ({ name: string }) => void,
+  workspaceDeleted: ({ name: string }) => void,
+  workspace: any // workspace provider,
+  browser: any // browser provider
+  localhost: any // localhost provider
+  fileManager : any
+  registry: any // registry
+  plugin: any // plugin call and resetFocus
+  request: any // api request,
+  workspaces: any,
+  registeredMenuItems: MenuItems // menu items
+  removedMenuItems: MenuItems
+  initialWorkspace: string
 }
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 export const Workspace = (props: WorkspaceProps) => {
-  const {
-    plugin,
-    plugin: {
-      setWorkspace,
-      createWorkspace,
-      renameWorkspace,
-      workspaceRenamed,
-      workspaceCreated,
-      workspaceDeleted,
-      workspace,
-      browser,
-      localhost,
-      fileManager,
-      registry,
-      request,
-      workspaces,
-      registeredMenuItems,
-      removedMenuItems,
-      initialWorkspace
-    }
-  } = props
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
+
+  /* extends the parent 'plugin' with some function needed by the file explorer */
+  props.plugin.resetFocus = (reset) => {
+    setState(prevState => {
+      return { ...prevState, reset }
+    })
+  }
+
+  props.plugin.resetNewFile = () => {
+    setState(prevState => {
+      return { ...prevState, displayNewFile: !state.displayNewFile }
+    })
+  }
+
+  props.plugin.resetUploadFile = () => {}
 
   /* implement an external API, consumed by the parent */
   props.request.createWorkspace = () => {
@@ -112,32 +107,36 @@ export const Workspace = (props: WorkspaceProps) => {
     }
   }
 
+  // useEffect(() => {
+  //   props.localhost.event.off('disconnected', localhostDisconnect)
+  //   props.localhost.event.on('disconnected', localhostDisconnect)
+  //   props.localhost.event.on('connected', () => {
+  //     remixdExplorer.show()
+  //     setWorkspace(LOCALHOST)
+  //   })
+
+  //   props.localhost.event.on('disconnected', () => {
+  //     remixdExplorer.hide()
+  //   })
+
+  //   props.localhost.event.on('loading', () => {
+  //     remixdExplorer.loading()
+  //   })
+
+  //   props.workspace.event.on('createWorkspace', (name) => {
+  //     createNewWorkspace(name)
+  //   })
+
+  //   if (props.initialWorkspace) {
+  //     props.workspace.setWorkspace(props.initialWorkspace)
+  //     setState(prevState => {
+  //       return { ...prevState, currentWorkspace: props.initialWorkspace }
+  //     })
+  //   }
+  // }, [])
+
   useEffect(() => {
-    props.localhost.event.off('disconnected', localhostDisconnect)
-    props.localhost.event.on('disconnected', localhostDisconnect)
-    props.localhost.event.on('connected', () => {
-      remixdExplorer.show()
-      setWorkspace(LOCALHOST)
-    })
-
-    props.localhost.event.on('disconnected', () => {
-      remixdExplorer.hide()
-    })
-
-    props.localhost.event.on('loading', () => {
-      remixdExplorer.loading()
-    })
-
-    props.workspace.event.on('createWorkspace', (name) => {
-      createNewWorkspace(name)
-    })
-
-    if (props.initialWorkspace) {
-      props.workspace.setWorkspace(props.initialWorkspace)
-      setState(prevState => {
-        return { ...prevState, currentWorkspace: props.initialWorkspace }
-      })
-    }
+    initWorkspace(props.plugin)(dispatch)
   }, [])
 
   const createNewWorkspace = async (workspaceName) => {
@@ -173,6 +172,8 @@ export const Workspace = (props: WorkspaceProps) => {
     loadingLocalhost: false,
     toasterMsg: ''
   })
+
+  const [fs, dispatch] = useReducer(browserReducer, browserInitialState)
 
   const toast = (message: string) => {
     setState(prevState => {
@@ -394,7 +395,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Delete'>
                 </span>
               </span>
-              <select id="workspacesSelect" value={state.currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+              <select id="workspacesSelect" value={fs.browser.currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
                 {
                   state.workspaces
                     .map((folder, index) => {
@@ -416,7 +417,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     registry={props.registry}
                     filesProvider={props.workspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                    plugin={plugin}
+                    plugin={props.plugin}
                     focusRoot={state.reset}
                     contextMenuItems={props.registeredMenuItems}
                     removedContextMenuItems={props.removedMenuItems}
@@ -434,7 +435,7 @@ export const Workspace = (props: WorkspaceProps) => {
                         registry={props.registry}
                         filesProvider={props.localhost}
                         menuItems={['createNewFile', 'createNewFolder']}
-                        plugin={plugin}
+                        plugin={props.plugin}
                         focusRoot={state.reset}
                         contextMenuItems={props.registeredMenuItems}
                         removedContextMenuItems={props.removedMenuItems}
