@@ -93,6 +93,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   openLocalPlugin(): Promise<void>
   render(): HTMLDivElement
   filterPlugins({ target }: { target: any }) : void
+  getAndFilterPlugins: (filter?: string) => void
 }
 
 // eslint-disable-next-line no-use-before-define

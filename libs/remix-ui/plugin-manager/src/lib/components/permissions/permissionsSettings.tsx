@@ -12,37 +12,20 @@ interface PermissionSettingsProps {
 
 }
 
-// <div className="form-group remixui_permissionKey">
-//   <div className="remixui_checkbox">
-//     {fromPluginPermission.allow
-//       ? <span className="mr-2">
-//         <RemixUiCheckbox
-//           checked
-//           onClick={() => togglePermission(fromName, toPlugin, methodName)}
-//           inputType="checkbox"
-//           id={`permission-checkbox-${toPlugin}-${methodName}-${toPlugin}`}
-//           aria-describedby={`module ${fromPluginPermission} asks permission for ${methodName}`}
-//         />
-//       </span>
-//       : <span className="mr-2">
-//         <RemixUiCheckbox
-//           checked={false}
-//           onClick={() => togglePermission(fromName, toPlugin, methodName)}
-//           inputType="checkbox"
-//           id={`permission-checkbox-${toPlugin}-${methodName}-${toPlugin}`}
-//           aria-describedby={`module ${fromPluginPermission} asks permission for ${methodName}`}
-//         />
-//       </span>
-//     }
-//     <label
-//       htmlFor={`permission-checkbox-${toPlugin}-${methodName}-${toPlugin}`}
-//       data-id={`permission-label-${toPlugin}-${methodName}-${toPlugin}`}
-//     >
-//         Allow <u>{fromName}</u> to call <u>{methodName}</u>
-//     </label>
-//   </div>
-//   <i onClick={() => pluginSettings.clearPersmission(fromName, toPlugin, methodName)} className="fa fa-trash-alt" data-id={`pluginManagerSettingsRemovePermission-${toPlugin}-${methodName}-${toPlugin}`}></i>
-// </div>
+interface ShowPermissionsByMethodProps {
+  methodName: string
+  fromPlugins: any
+  toPlugin: string
+  togglePermission: (fromName: string, methodName: string, toPlugin: string) => void
+  pluginSettings: PluginManagerSettings
+}
+
+function ShowPermissionsByMethod (fromPlugins) {
+  const checkBoxes = Object.keys(fromPlugins).map(fromName => {
+    return fromPlugins[fromName]
+  })
+  return checkBoxes
+}
 
 function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   /**
@@ -52,7 +35,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   const toPluginP = ''
   const fromName = ''
   const methodName = ''
-  const openModal = () => setModalVisibility(false)
   const closeModal = () => setModalVisibility(true)
 
   const togglePermission = (fromPlugin: string, toPlugin: string, methodName: string) => {
@@ -75,7 +57,9 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
             <h4>No Permission requested yet.</h4>
             <div className="form-group remixui_permissionKey">
               <div className="remixui_checkbox">
-                {/* ${checkbox} */}
+                {/* { ShowPermissionsByMethod(pluginSettings.permissions).map(fromPluginPermissions => {
+
+                }) } */}
                 <label htmlFor="permission-checkbox-{toPlugin}-{methodName}-{toPlugin}" data-id="permission-label-{toPlugin}-{methodName}-{toPlugin}">Allow <u>{fromName}</u> to call <u>{methodName}</u></label>
               </div>
               <i onClick={() => pluginSettings.clearPersmission(fromName, toPluginP, methodName)} className="fa fa-trash-alt" data-id={`pluginManagerSettingsRemovePermission-${toPluginP}-${methodName}-${toPluginP}`}></i>
