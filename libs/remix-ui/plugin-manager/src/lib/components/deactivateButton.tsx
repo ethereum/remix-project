@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { PluginManagerComponent } from '../../types'
 
 interface DeactivateButtonProps {
@@ -12,7 +12,7 @@ function DeactivateButton ({
   pluginName,
   pluginComponent
 }: DeactivateButtonProps) {
-  const dataId = `pluginManagerComponent${buttonText}Button${pluginName}`
+  const [dataId] = useState(`pluginManagerComponent${buttonText}Button${pluginName}`)
   return (
     <button
       onClick={() => {
