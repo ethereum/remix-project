@@ -69,26 +69,6 @@ class Terminal extends Plugin {
     this._INDEX.allMain = []
     this._INDEX.commands = {}
     this._INDEX.commandsMain = {}
-    this.registerCommand('html', this._blocksRenderer('html'), { activate: true })
-    this.registerCommand('log', this._blocksRenderer('log'), { activate: true })
-    this.registerCommand('info', this._blocksRenderer('info'), { activate: true })
-    this.registerCommand('warn', this._blocksRenderer('warn'), { activate: true })
-    this.registerCommand('error', this._blocksRenderer('error'), { activate: true })
-    this.registerCommand('script', function execute (args, scopedCommands, append) {
-      var script = String(args[0])
-      this._shell(script, scopedCommands, function (error, output) {
-        if (error) scopedCommands.error(error)
-        else if (output) scopedCommands.log(output)
-      })
-    }, { activate: true })
-    function basicFilter (value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
-
-    this.registerFilter('log', basicFilter)
-    this.registerFilter('info', basicFilter)
-    this.registerFilter('warn', basicFilter)
-    this.registerFilter('error', basicFilter)
-    this.registerFilter('script', basicFilter)
-
     if (opts.shell) this._shell = opts.shell // ???
     register(this)
   }
@@ -109,12 +89,18 @@ class Terminal extends Plugin {
     this.renderComponent()
   }
 
+  onDeactivation () {
+    this.off('scriptRunner', 'log')
+    this.off('scriptRunner', 'info')
+    this.off('scriptRunner', 'warn')
+    this.off('scriptRunner', 'error')
+  }
+
   render () {
     return this.element
   }
 
   renderComponent () {
-
     ReactDOM.render(
       <RemixUiTerminal
         event = {this.event}
@@ -129,6 +115,7 @@ class Terminal extends Plugin {
         command = {this.commands}
         version = {this.version}
         config = {this.config}
+        thisState = {this}
       />,
       this.element
     )
@@ -213,6 +200,8 @@ class Terminal extends Plugin {
     if (self._commands[name]) throw new Error(`command "${name}" exists already`)
     if (typeof command !== 'function') throw new Error(`invalid command: ${command}`)
     self._commands[name] = command
+    console.log({ command })
+    console.log(self._commands)
     self._INDEX.commands[name] = []
     self._INDEX.commandsMain[name] = []
     self.commands[name] = function _command () {
