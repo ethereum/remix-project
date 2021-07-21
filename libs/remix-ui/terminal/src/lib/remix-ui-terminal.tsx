@@ -217,16 +217,27 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   // events
   useEffect(() => {
-    // window.addEventListener('resize', function () {
-    //   props.event.trigger('resize', [])
-    //   props.event.trigger('resize', [])
-    // })
-    // return () => {
-    //   window.removeEventListener('resize', function () {
-    //     props.event.trigger('resize', [])
-    //     props.event.trigger('resize', [])
-    //   })
-    // }
+    registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
+    registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
+    registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
+    registerCommandAction('warn', _blocksRenderer('warn'), { activate: true }, dispatch)
+    registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
+    registerCommandAction('script', function execute (args, scopedCommands, append) {
+      var script = String(args[0])
+      props.thisState._shell(script, scopedCommands, function (error, output) {
+        if (error) scopedCommands.error(error)
+        else if (output) scopedCommands.log(output)
+      })
+    }, { activate: true }, dispatch)
+    filterFnAction('log', basicFilter, filterDispatch)
+    filterFnAction('info', basicFilter, filterDispatch)
+    filterFnAction('warn', basicFilter, filterDispatch)
+    filterFnAction('error', basicFilter, filterDispatch)
+    filterFnAction('script', basicFilter, filterDispatch)
+    // console.log({ htmlresullt }, { logresult })
+    // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
+    // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
+    // registerCommand('log', _blocksRenderer('log'), { activate: true })
   }, [])
 
   // handle events
@@ -858,6 +869,55 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setPaste(true)
     setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false}))
   }
+
+  /* block contents that gets rendered from scriptRunner */
+
+  const _blocksRenderer = (mode) => {
+    if (mode === 'html') {
+      return function logger (args) {
+        console.log({ args })
+        if (args.length) {
+          return args[0]
+        }
+      }
+    }
+    mode = {
+      log: 'text-info',
+      info: 'text-info',
+      warn: 'text-warning',
+      error: 'text-danger'
+    }[mode] // defaults
+
+    if (mode) {
+      const filterUndefined = (el) => el !== undefined && el !== null
+      return function logger (args) {
+        var types = args.filter(filterUndefined).map(type => type)
+        var values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
+          if (typeof args[idx] === 'string') {
+            const el = document.createElement('div')
+            el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')
+            val = el.children.length === 0 ? el.firstChild : el
+          }
+          if (types[idx] === 'element') val = jsbeautify.html(val)
+          return val
+        })
+        if (values.length) {
+          console.log({ values })
+          return `<span class="${mode}" >${values}</span>`
+        }
+      }
+    } else {
+      throw new Error('mode is not supported')
+    }
+  }
+
+  function basicFilter (value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
+
+  const registerCommand = (name, command, opts) => {
+    // setState((prevState) => ({ ...prevState, _commands[name]: command }))
+  }
+
+  /* end of block content that gets rendered from script Runner */
 
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
