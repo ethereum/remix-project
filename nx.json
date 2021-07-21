@@ -107,6 +107,15 @@
     },
     "remix-core-plugin": {
       "tags": []
+    },
+    "remix-ui-solidity-compiler": {
+      "tags": []
+    },
+    "remix-ui-publish-to-storage": {
+      "tags": []
+    },
+    "remix-ui-renderer": {
+      "tags": []
     }
   }
 }
