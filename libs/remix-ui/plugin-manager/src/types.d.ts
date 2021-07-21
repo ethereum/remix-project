@@ -150,12 +150,6 @@ export interface PluginManagerContextProviderProps {
 export interface RemixUiPluginManagerProps {
   appManager: RemixAppManager
   pluginComponent: PluginManagerComponent
-  pluginSettings: PluginManagerSettings // Window & typeof globalThis | []
-  activePluginNames: string[]
-  isActive?: (name: string) => boolean
-  filterPlugins: () => void
-  profile: Partial<PluginManagerProfile>
-  headingLabel: string
 }
 /** @class Reference loaders.
  *  A loader is a get,set based object which load a workspace from a defined sources.
