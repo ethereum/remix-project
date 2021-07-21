@@ -1,6 +1,10 @@
-import React, { useState, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
+import { registerCommandAction, filterFnAction } from './actions/terminalAction'
+import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer } from './reducers/terminalReducer'
+import javascriptserialize from 'javascript-serialize'
+import jsbeautify from 'js-beautify'
 
 import './remix-ui-terminal.css'
 
@@ -15,10 +19,10 @@ export interface RemixUiTerminalProps {
   options: any
   data: any
   cmdInterpreter: any
-  registerCommand: any
   command: any
   version: any
   config: any
+  thisState: any
 
   // blockRenderHtml: any
   // blockRenderLog: any
@@ -43,6 +47,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
   const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
   const [dragging, setDragging] = useState(false)
+
+  const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
+  const [filterState, filterDispatch] = useReducer(registerFilterReducer, initialState)
+  const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
 
   const [state, setState] = useState({
     journalBlocks: {
@@ -102,16 +110,27 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const inputEl = useRef(null)
   // events
   useEffect(() => {
-    // window.addEventListener('resize', function () {
-    //   props.event.trigger('resize', [])
-    //   props.event.trigger('resize', [])
-    // })
-    // return () => {
-    //   window.removeEventListener('resize', function () {
-    //     props.event.trigger('resize', [])
-    //     props.event.trigger('resize', [])
-    //   })
-    // }
+    registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
+    registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
+    registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
+    registerCommandAction('warn', _blocksRenderer('warn'), { activate: true }, dispatch)
+    registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
+    registerCommandAction('script', function execute (args, scopedCommands, append) {
+      var script = String(args[0])
+      props.thisState._shell(script, scopedCommands, function (error, output) {
+        if (error) scopedCommands.error(error)
+        else if (output) scopedCommands.log(output)
+      })
+    }, { activate: true }, dispatch)
+    filterFnAction('log', basicFilter, filterDispatch)
+    filterFnAction('info', basicFilter, filterDispatch)
+    filterFnAction('warn', basicFilter, filterDispatch)
+    filterFnAction('error', basicFilter, filterDispatch)
+    filterFnAction('script', basicFilter, filterDispatch)
+    // console.log({ htmlresullt }, { logresult })
+    // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
+    // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
+    // registerCommand('log', _blocksRenderer('log'), { activate: true })
   }, [])
 
   const placeCaretAtEnd = (el) => {
@@ -157,56 +176,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  // const reattached = (event) => {
-  //   let el = event.currentTarget
-  //   var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
-  //   if (isBottomed) {
-
-  //   } else {
-  //     // if (!inserted)  
-  //   }
-  // }
-
-  const registerCommand = (name, command, opts) => {
-    const { _commands, _INDEXcommands, _INDEXallMain, _INDEXcommandsMain, _INDEXall, commands } = state
-    // TODO if no _commands[name] throw an error
-
-    // TODO if typeof command !== 'function' throw error
-
-    _commands[name] = command
-    _INDEXcommands[name] = []
-    _INDEXallMain[name] = []
-
-    // TODO _command function goes here
-    commands[name] = function _command () {
-      const steps = []
-      const args = [...arguments]
-      const gidx = 0
-      const idx = 0
-      const step = 0
-      const root = { steps, cmd: name, gidx, idx }
-      const ITEM = { root, cmd: name, el: {} }
-      root.gidx = _INDEXallMain.push(ITEM) - 1
-      root.idx = _INDEXcommandsMain[name].push(ITEM) - 1
-      function append (cmd, params, el) {
-        let item = { el, cmd, root, gidx, idx, step, args: [...arguments] }
-        if (cmd) {
-          item = { el, cmd, root, gidx, idx, step, args }
-        } else {
-          // item = ITEM
-          item.el = el
-          cmd = name
-        }
-        item.gidx = _INDEXall.push(item) - 1
-        item.idx = _INDEXcommands[cmd].push(item) - 1
-        item.step = steps.push(item) - 1
-        item.args = params
-        _appendItem(item)
-      }
-    }
-
-    return commands[name]
-  }
 
   const _appendItem = (item: any) => {
     let { _JOURNAL, _jobs, data } = state
@@ -259,16 +228,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
     if (isKnownScript) return script
     return `
-      try {
-        const ret = ${script};
-        if (ret instanceof Promise) {
-          ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
-        } else {
-          console.log(ret)
-        }   
-      } catch (e) {
-        console.log(e.message)
-      }`
+        try {
+          const ret = ${script};
+          if (ret instanceof Promise) {
+            ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
+          } else {
+            console.log(ret)
+          }   
+        } catch (e) {
+          console.log(e.message)
+        }
+        `
   }
 
   const handleKeyDown = (event) => {
@@ -289,10 +259,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         // scroll2botton () function not implemented
         props.autoCompletePopup.removeAutoComplete()
       } else { // <enter>
+        console.log('hit enter')
         setCmdIndex(-1)
         setCmdTemp('')
         const script = inputEl.current.innerText.trim()
         console.log({ script }, ' script ')
+        if (script.length) {
+          cmdHistoryDispatch({ type: 'cmdHistory', payload: { script } })
+          const result = newstate.commands.script(wrapScript(script))
+          console.log({ result })
+        }
         // inputEl.current.innerText += '\n'
         // if (script.length) {
         //   // self._cmdHistory.unshift(script)
@@ -417,9 +393,58 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }, [leftHeight, setLeftHeight])
 
+  /* block contents that gets rendered from scriptRunner */
+
+  const _blocksRenderer = (mode) => {
+    if (mode === 'html') {
+      return function logger (args) {
+        console.log({ args })
+        if (args.length) {
+          return args[0]
+        }
+      }
+    }
+    mode = {
+      log: 'text-info',
+      info: 'text-info',
+      warn: 'text-warning',
+      error: 'text-danger'
+    }[mode] // defaults
+
+    if (mode) {
+      const filterUndefined = (el) => el !== undefined && el !== null
+      return function logger (args) {
+        var types = args.filter(filterUndefined).map(type => type)
+        var values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
+          if (typeof args[idx] === 'string') {
+            const el = document.createElement('div')
+            el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')
+            val = el.children.length === 0 ? el.firstChild : el
+          }
+          if (types[idx] === 'element') val = jsbeautify.html(val)
+          return val
+        })
+        if (values.length) {
+          console.log({ values })
+          return `<span class="${mode}" >${values}</span>`
+        }
+      }
+    } else {
+      throw new Error('mode is not supported')
+    }
+  }
+
+  function basicFilter (value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
+
+  const registerCommand = (name, command, opts) => {
+    // setState((prevState) => ({ ...prevState, _commands[name]: command }))
+  }
+
+  /* end of block content that gets rendered from script Runner */
+
   return (
     <div style={{ height: '323px' }} className='panel_2A0YE0'>
-      {console.log({ props })}
+      {console.log({ newstate })}
       <div className="bar_2A0YE0">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown}></div>
