@@ -57,7 +57,7 @@ function RootView ({ pluginComponent }: RootViewProps) {
     if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
       setInactiveP(pluginComponent.inactivePlugins)
     }
-  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins])
+  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, activeP, inactiveP])
 
   return (
     <Fragment>
