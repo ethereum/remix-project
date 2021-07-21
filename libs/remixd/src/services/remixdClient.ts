@@ -180,19 +180,34 @@ export class RemixdClient extends PluginClient {
 
         if (!fs.existsSync(path)) return reject(new Error('File not found ' + path))
         if (!isRealPath(path)) return
-
-        if (this._isFile(path)) {
-          this.emit('fileRemoved', path)
-          console.log('isfile ', path)
-        } else {
-          this.emit('folderRemoved', path)
-          console.log('isFolder ', path)
+        // Saving the content of the item{folder} before removing it
+        const ls = []
+        try {
+          const resolveList = (path) => {
+            if (!this._isFile(path)) {
+              const list = utils.resolveDirectory(path, this.currentSharedFolder)
+              Object.keys(list).forEach(itemPath => {
+                if (list[itemPath].isDirectory) {
+                  resolveList(`${this.currentSharedFolder}${itemPath}`)
+                }
+                ls.push(itemPath)
+              })
+            }
+          }
+          resolveList(path)
+          ls.push(args.path)
+        } catch (e) {
+          throw new Error(e)
         }
         return fs.remove(path, (error: Error) => {
           if (error) {
             console.log(error)
             return reject(new Error('Failed to remove file/directory: ' + error))
           }
+          for (const file in ls) {
+            this.emit('fileRemoved', ls[file])
+          }
+
           resolve(true)
         })
       })
@@ -203,7 +218,6 @@ export class RemixdClient extends PluginClient {
 
   _isFile (path: string): boolean {
     try {
-      console.log('isfile inside ', path)
       return fs.statSync(path).isFile()
     } catch (error) {
       throw new Error(error)
