@@ -35,7 +35,6 @@ module.exports = class RemixDProvider extends FileProvider {
 
     this._appManager.on('remixd', 'fileRemoved', (path) => {
       this.event.emit('fileRemoved', path)
-      console.log('remixd appmanager listener remove ', path)
     })
 
     this._appManager.on('remixd', 'fileRenamed', (oldPath, newPath) => {
