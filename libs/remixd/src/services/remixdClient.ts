@@ -188,7 +188,7 @@ export class RemixdClient extends PluginClient {
               const list = utils.resolveDirectory(path, this.currentSharedFolder)
               Object.keys(list).forEach(itemPath => {
                 if (list[itemPath].isDirectory) {
-                  resolveList(`${this.currentSharedFolder}${itemPath}`)
+                  resolveList(`${this.currentSharedFolder}/${itemPath}`)
                 }
                 ls.push(itemPath)
               })
@@ -227,7 +227,6 @@ export class RemixdClient extends PluginClient {
   isDirectory (args: SharedFolderArgs): boolean {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
-
       return fs.statSync(path).isDirectory()
     } catch (error) {
       throw new Error(error)
@@ -237,7 +236,6 @@ export class RemixdClient extends PluginClient {
   isFile (args: SharedFolderArgs): boolean {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
-
       return fs.statSync(path).isFile()
     } catch (error) {
       throw new Error(error)
