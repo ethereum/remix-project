@@ -17,7 +17,8 @@ export const initialState = {
   _INDEXall: [],
   _INDEXallMain: [],
   _INDEXcommands: {},
-  _INDEXcommandsMain: {}
+  _INDEXcommandsMain: {},
+  message: []
 }
 
 export const registerCommandReducer = (state, action) => {
@@ -116,5 +117,15 @@ export const addCommandHistoryReducer = (state, action) => {
       }
     default :
       return { state }
+  }
+}
+
+export const registerScriptRunnerReducer = (state, action) => {
+  console.log({ state }, { action }, 'register script runner reducer')
+  switch (action.type) {
+    case 'log':
+      return {
+        ...state
+      }
   }
 }
