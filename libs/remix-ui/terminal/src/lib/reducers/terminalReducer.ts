@@ -1,5 +1,6 @@
 export const initialState = {
   journalBlocks: {
+
   },
   data: {
     // lineLength: props.options.lineLength || 80,
@@ -126,6 +127,7 @@ export const registerScriptRunnerReducer = (state, action) => {
     case 'log':
       return {
         ...state
+        
       }
   }
 }
