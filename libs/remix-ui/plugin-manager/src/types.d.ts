@@ -77,6 +77,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   constructor(appManager: RemixAppManager, engine: Engine)
   appManager: RemixAppManager
   pluginSettings: PluginManagerSettings
+  app: PluginApi<any>
   engine: Engine
   htmlElement: HTMLDivElement
   views: { root: null, items: {} }
@@ -92,8 +93,10 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   renderComponent(): void
   openLocalPlugin(): Promise<void>
   render(): HTMLDivElement
-  filterPlugins({ target }: { target: any }) : void
   getAndFilterPlugins: (filter?: string) => void
+  triggerEngineEventListener: () => void
+  activeProfiles: string[]
+  _paq: any
 }
 
 // eslint-disable-next-line no-use-before-define

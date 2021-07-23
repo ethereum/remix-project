@@ -1,6 +1,6 @@
 import { Profile } from '@remixproject/plugin-utils'
 import React, { useState } from 'react'
-import { PersistActivatedPlugin, RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
+import { PersistActivatedPlugin } from '../../pluginManagerStateMachine'
 import { PluginManagerComponent } from '../../types'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
@@ -12,7 +12,7 @@ interface PluginCardProps {
 }
 
 // eslint-disable-next-line no-empty-pattern
-function PluginCard ({
+function InactivePluginCard ({
   profile,
   pluginComponent,
   buttonText
@@ -41,18 +41,8 @@ function PluginCard ({
               {docLink}
               {versionWarning}
             </div>
-            { pluginComponent.isActive(profile.name)
-              ? <button
-                onClick={() => {
-                  pluginComponent.deactivateP(profile.name)
-                  RemoveActivatedPlugin(profile.name)
-                }}
-                className="btn btn-secondary btn-sm"
-                data-id={`pluginManagerComponentDeactivateButton${profile.name}`}
-              >
-                {buttonText}
-              </button>
-              : <button
+            {
+              <button
                 onClick={() => {
                   pluginComponent.activateP(profile.name)
                   PersistActivatedPlugin(pluginComponent, profile)
@@ -74,4 +64,4 @@ function PluginCard ({
   )
 }
 
-export default PluginCard
+export default InactivePluginCard

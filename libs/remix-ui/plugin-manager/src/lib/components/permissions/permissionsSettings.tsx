@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from 'react'
-import { RemixUiCheckbox } from '@remix-ui/checkbox'
 import { PluginManagerSettings } from '../../../types'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 
@@ -12,21 +11,6 @@ interface PermissionSettingsProps {
 
 }
 
-interface ShowPermissionsByMethodProps {
-  methodName: string
-  fromPlugins: any
-  toPlugin: string
-  togglePermission: (fromName: string, methodName: string, toPlugin: string) => void
-  pluginSettings: PluginManagerSettings
-}
-
-function ShowPermissionsByMethod (fromPlugins) {
-  const checkBoxes = Object.keys(fromPlugins).map(fromName => {
-    return fromPlugins[fromName]
-  })
-  return checkBoxes
-}
-
 function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   /**
    * Declare component local state
@@ -36,10 +20,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   const fromName = ''
   const methodName = ''
   const closeModal = () => setModalVisibility(true)
-
-  const togglePermission = (fromPlugin: string, toPlugin: string, methodName: string) => {
-    pluginSettings.permissions[toPlugin][methodName][fromPlugin].allow = !pluginSettings.permissions[toPlugin][methodName][fromPlugin].allow
-  }
 
   return (
     <Fragment>
