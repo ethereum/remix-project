@@ -1,6 +1,7 @@
 import { Profile } from '@remixproject/plugin-utils'
 import React, { useState } from 'react'
-import { PersistActivatedPlugin, RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
+import { RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
+// import { RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
 import { PluginManagerComponent } from '../../types'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
@@ -9,13 +10,15 @@ interface PluginCardProps {
   }
   pluginComponent: PluginManagerComponent
   buttonText: string
+  reRender: () => void
 }
 
 // eslint-disable-next-line no-empty-pattern
-function PluginCard ({
+function ActivePluginCard ({
   profile,
   pluginComponent,
-  buttonText
+  buttonText,
+  reRender
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
@@ -41,24 +44,20 @@ function PluginCard ({
               {docLink}
               {versionWarning}
             </div>
-            { pluginComponent.isActive(profile.name)
-              ? <button
+            {
+              <button
                 onClick={() => {
-                  pluginComponent.deactivateP(profile.name)
+                  // pluginComponent.deactivateP(profile.name)
+                  console.log('calling pluginComponent.call directly...')
+                  pluginComponent.call('manager', 'deactivatePlugin', profile.name)
+                  console.log('called pluginComponent.call successfully')
+                  pluginComponent._paq.push(['trackEvent', 'manager', 'deactivate', profile.name])
+                  console.log('matomo tracking captured for deactivation successfully')
                   RemoveActivatedPlugin(profile.name)
+                  reRender()
                 }}
                 className="btn btn-secondary btn-sm"
                 data-id={`pluginManagerComponentDeactivateButton${profile.name}`}
-              >
-                {buttonText}
-              </button>
-              : <button
-                onClick={() => {
-                  pluginComponent.activateP(profile.name)
-                  PersistActivatedPlugin(pluginComponent, profile)
-                }}
-                className="btn btn-success btn-sm"
-                data-id={`pluginManagerComponentActivateButton${profile.name}`}
               >
                 {buttonText}
               </button>
@@ -74,4 +73,4 @@ function PluginCard ({
   )
 }
 
-export default PluginCard
+export default ActivePluginCard
