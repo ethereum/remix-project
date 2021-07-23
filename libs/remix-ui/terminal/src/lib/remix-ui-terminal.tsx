@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
-import { registerCommandAction, filterFnAction } from './actions/terminalAction'
-import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer } from './reducers/terminalReducer'
+import { registerCommandAction, filterFnAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction } from './actions/terminalAction'
+import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
 import javascriptserialize from 'javascript-serialize'
 import jsbeautify from 'js-beautify'
 
@@ -51,6 +51,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [filterState, filterDispatch] = useReducer(registerFilterReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
+  const [scriptRunnserState, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
 
   const [state, setState] = useState({
     journalBlocks: {
@@ -110,6 +111,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const inputEl = useRef(null)
   // events
   useEffect(() => {
+    registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -127,6 +132,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     filterFnAction('warn', basicFilter, filterDispatch)
     filterFnAction('error', basicFilter, filterDispatch)
     filterFnAction('script', basicFilter, filterDispatch)
+    registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
     // console.log({ htmlresullt }, { logresult })
     // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
     // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
@@ -195,34 +204,34 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     inputEl.current.focus()
   }
 
-  const putCursor2End = (editable) => {
-    var range = document.createRange()
-    console.log({ range })
-    range.selectNode(editable)
-    var child = editable
-    var chars
-    console.log({ child })
-    while (child) {
-      if (child.lastChild) child = child.lastChild
-      else break
-      if (child.nodeType === Node.TEXT_NODE) {
-        chars = child.textContent.length
-      } else {
-        chars = child.innerHTML.length
-      }
-    }
+  // const putCursor2End = (editable) => {
+  //   var range = document.createRange()
+  //   console.log({ range })
+  //   range.selectNode(editable)
+  //   var child = editable
+  //   var chars
+  //   console.log({ child })
+  //   while (child) {
+  //     if (child.lastChild) child = child.lastChild
+  //     else break
+  //     if (child.nodeType === Node.TEXT_NODE) {
+  //       chars = child.textContent.length
+  //     } else {
+  //       chars = child.innerHTML.length
+  //     }
+  //   }
 
-    range.setEnd(child, chars)
-    var toStart = true
-    var toEnd = !toStart
-    range.collapse(toEnd)
+  //   range.setEnd(child, chars)
+  //   var toStart = true
+  //   var toEnd = !toStart
+  //   range.collapse(toEnd)
 
-    var sel = window.getSelection()
-    sel.removeAllRanges()
-    sel.addRange(range)
+  //   var sel = window.getSelection()
+  //   sel.removeAllRanges()
+  //   sel.addRange(range)
 
-    editable.focus()
-  }
+  //   editable.focus()
+  // }
 
   const wrapScript = (script) => {
     const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
@@ -371,10 +380,26 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
+    // document.addEventListener('mousemove', changeBg)
+    // function changeBg () {
+    //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
+    // }
+    // document.addEventListener('mouseup', changeBg2)
+    // function changeBg2 () {
+    //   document.getElementById('dragId').style.backgroundColor = ''
+    // }
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
 
     return () => {
+      // document.addEventListener('mousemove', changeBg)
+      // function changeBg () {
+      //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
+      // }
+      // document.addEventListener('mouseup', changeBg2)
+      // function changeBg2 () {
+      //   document.getElementById('dragId').style.backgroundColor = ''
+      // }
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
     }
@@ -388,7 +413,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         setLeftHeight(leftRef.offsetHeight)
         return
       }
-
       leftRef.style.height = `${leftHeight}px`
     }
   }, [leftHeight, setLeftHeight])
@@ -447,7 +471,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       {console.log({ newstate })}
       <div className="bar_2A0YE0">
         {/* ${self._view.dragbar} */}
-        <div className="dragbarHorizontal" onMouseDown={mousedown}></div>
+        <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
         <div className="menu_2A0YE0 border-top border-dark bg-light" data-id="terminalToggleMenu">
           {/* ${self._view.icon} */}
           <i className={`mx-2 toggleTerminal_2A0YE0 fas ${toggleDownUp}`} data-id="terminalToggleIcon" onClick={ handleMinimizeTerminal }></i>

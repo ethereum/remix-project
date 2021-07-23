@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import * as remixBleach from '../../lib/remixBleach'
 
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
@@ -74,18 +75,18 @@ class Terminal extends Plugin {
   }
 
   onActivation () {
-    this.on('scriptRunner', 'log', (msg) => {
-      this.commands.log.apply(this.commands, msg.data)
-    })
-    this.on('scriptRunner', 'info', (msg) => {
-      this.commands.info.apply(this.commands, msg.data)
-    })
-    this.on('scriptRunner', 'warn', (msg) => {
-      this.commands.warn.apply(this.commands, msg.data)
-    })
-    this.on('scriptRunner', 'error', (msg) => {
-      this.commands.error.apply(this.commands, msg.data)
-    })
+    // this.on('scriptRunner', 'log', (msg) => {
+    //   this.commands.log.apply(this.commands, msg.data)
+    // })
+    // this.on('scriptRunner', 'info', (msg) => {
+    //   this.commands.info.apply(this.commands, msg.data)
+    // })
+    // this.on('scriptRunner', 'warn', (msg) => {
+    //   this.commands.warn.apply(this.commands, msg.data)
+    // })
+    // this.on('scriptRunner', 'error', (msg) => {
+    //   this.commands.error.apply(this.commands, msg.data)
+    // })
     this.renderComponent()
   }
 
@@ -94,6 +95,37 @@ class Terminal extends Plugin {
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
+  }
+
+  log (message) {
+    var command = this.commands[message.type]
+    if (typeof command === 'function') {
+      if (typeof message.value === 'string' && message.type === 'html') {
+        var el = document.createElement('div')
+        el.innerHTML = remixBleach.sanitize(message.value, {
+          list: [
+            'a',
+            'b',
+            'p',
+            'em',
+            'strong',
+            'div',
+            'span',
+            'ul',
+            'li',
+            'ol',
+            'hr'
+          ]
+        })
+        message.value = el
+      }
+      command(message.value)
+    };
+  }
+
+  logHtml (html) {
+    var command = this.commands.html
+    if (typeof command === 'function') command(html)
   }
 
   render () {
