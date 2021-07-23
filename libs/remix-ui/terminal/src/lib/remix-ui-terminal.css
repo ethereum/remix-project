@@ -123,6 +123,11 @@ element.style {
     cursor            : row-resize;
     z-index           : 999;
   }
+
+  .dragbarHorizontal:hover  {
+    background-color: #007AA6;
+    border:2px solid #007AA6; 
+  }
   .listenOnNetwork {
     min-height: auto;
   }
