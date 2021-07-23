@@ -1,12 +1,13 @@
 /* eslint-disable no-debugger */
 import React, { Fragment, useEffect, useState } from 'react'
 import ModuleHeading from './moduleHeading'
-import PluginCard from './pluginCard'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { FormStateProps, PluginManagerComponent } from '../../types'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
+import ActivePluginCard from './ActivePluginCard'
+import InactivePluginCard from './InactivePluginCard'
 
 const initialState: FormStateProps = {
   pname: 'test',
@@ -31,6 +32,7 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const [filterPlugins, setFilterPlugin] = useState('')
   const [activeP, setActiveP] = useState<Profile[]>([])
   const [inactiveP, setInactiveP] = useState<Profile[]>([])
+  // const [storagePlugins, setStoragePlugins] = useLocalStorage('newActivePlugins')
 
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
@@ -45,6 +47,11 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const closeModal = () => setVisible(true)
   // <-- End Modal Visibility States -->
 
+  const reRender = () => {
+    pluginComponent.getAndFilterPlugins()
+    console.log('Called rerender after deactivating a plugin')
+  }
+
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +64,8 @@ function RootView ({ pluginComponent }: RootViewProps) {
     if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
       setInactiveP(pluginComponent.inactivePlugins)
     }
-  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, activeP, inactiveP])
+    console.log('contents of appManager', pluginComponent.appManager)
+  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, activeP, inactiveP, pluginComponent.activeProfiles, pluginComponent])
 
   return (
     <Fragment>
@@ -69,8 +77,6 @@ function RootView ({ pluginComponent }: RootViewProps) {
           okLabel="OK"
           okFn={() => {
             const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
-            console.log('profile from local storage looks like this', profile)
-
             if (!profile) return
             if (pluginComponent.appManager.getIds().includes(profile.pname)) {
               throw new Error('This name has already been used')
@@ -79,7 +85,6 @@ function RootView ({ pluginComponent }: RootViewProps) {
             if (!profile.pname) throw new Error('Plugin should have a name')
             if (!profile.url) throw new Error('Plugin should have an URL')
             const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-            debugger
             localPlugin.profile.hash = `local-${profile.pname}`
             localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
             pluginComponent.engine.register(localPlugin)
@@ -222,10 +227,11 @@ function RootView ({ pluginComponent }: RootViewProps) {
           {activeP && <Fragment>
             <ModuleHeading headingLabel="Active Modules" count={activeP.length} />
             {activeP.map((profile) => (
-              <PluginCard
+              <ActivePluginCard
                 buttonText="Deactivate"
                 key={profile.name}
                 profile={profile}
+                reRender={reRender}
                 pluginComponent={pluginComponent}
               />
             ))}
@@ -234,7 +240,7 @@ function RootView ({ pluginComponent }: RootViewProps) {
           {inactiveP && <Fragment>
             <ModuleHeading headingLabel="Inactive Modules" count={inactiveP.length} />
             {inactiveP.map((profile) => (
-              <PluginCard
+              <InactivePluginCard
                 buttonText="Activate"
                 key={profile.name}
                 profile={profile}
