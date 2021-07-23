@@ -20,6 +20,6 @@
  
    It won't automatically merge to master (this can be done with the first automation).
    
-   It is activated by adding the `autorebase` label.
+   It is activated by adding the `autorebase` label. 
  
    For more [information](https://github.com/marketplace/actions/rebase-pull-requests)
