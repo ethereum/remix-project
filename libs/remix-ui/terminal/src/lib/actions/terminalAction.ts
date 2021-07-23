@@ -101,3 +101,31 @@ export const filterFnAction = (name, filterFn, dispatch) => {
   data.filterFns[name] = filterFn
   dispatch({ type: name, payload: { data: data } })
 }
+
+export const registerLogScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
+  event.on('scriptRunner', commandName, (msg) => {
+    commandFn.log.apply(commandFn, msg.data)
+    dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
+  })
+}
+
+export const registerInfoScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
+  event.on('scriptRunner', commandName, (msg) => {
+    commandFn.info.apply(commandFn, msg.data)
+    dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
+  })
+}
+
+export const registerWarnScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
+  event.on('scriptRunner', commandName, (msg) => {
+    commandFn.warn.apply(commandFn, msg.data)
+    dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
+  })
+}
+
+export const registerErrorScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
+  event.on('scriptRunner', commandName, (msg) => {
+    commandFn.error.apply(commandFn, msg.data)
+    dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
+  })
+}
