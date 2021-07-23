@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 /* eslint-disable no-unused-vars */
 import {
   IframePlugin,
@@ -15,66 +16,6 @@ const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin') // eslint-disable-line
 const addToolTip = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
-
-const css = csjs`
-  .pluginSearch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--light);
-    padding: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    margin-bottom: 0px;
-  }
-  .pluginSearchInput {
-    height: 38px;
-  }
-  .pluginSearchButton {
-    font-size: 13px;
-  }
-  .displayName {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .pluginIcon {
-    height: 0.7rem;
-    width: 0.7rem;
-    filter: invert(0.5);
-  }
-  .description {
-    font-size: 13px;
-    line-height: 18px;
-  }
-  .descriptiontext {
-    display: block;
-  }
-  .descriptiontext:first-letter {
-    text-transform: uppercase;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-  }
-  .isStuck {
-    background-color: var(--primary);
-    color:
-  }
-  .versionWarning {
-    padding: 4px;
-    margin: 0 8px;
-    font-weight: 700;
-    font-size: 9px;
-    line-height: 12px;
-    text-transform: uppercase;
-    cursor: default;
-    border: 1px solid;
-    border-radius: 2px;
-  }
-`
 
 const profile = {
   name: 'pluginManager',
@@ -107,6 +48,12 @@ class PluginManagerComponent extends ViewPlugin {
     this.pluginNames = this.appManager.actives
     this.activePlugins = []
     this.inactivePlugins = []
+    this.activeProfiles = this.appManager.actives
+    this._paq = _paq
+  }
+
+  triggerEngineEventListener () {
+    this.engine.event.on('onRegistration', () => this.getAndFilterPlugins())
   }
 
   /**
@@ -128,6 +75,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager.activatePlugin(name)
     this.appManager.event.on('activate', () => {
       this.getAndFilterPlugins()
+      this.triggerEngineEventListener()
     })
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
@@ -139,6 +87,7 @@ class PluginManagerComponent extends ViewPlugin {
    * @param {string} name name of Plugin
    */
   deactivateP (name) {
+    debugger
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
     this.getAndFilterPlugins()
@@ -214,7 +163,7 @@ class PluginManagerComponent extends ViewPlugin {
     })
     this.activePlugins = activatedPlugins
     this.inactivePlugins = deactivatedPlugins
-
+    console.log('The Length of appManager.actives is :', this.activeProfiles)
     this.renderComponent()
   }
 }
