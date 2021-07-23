@@ -217,6 +217,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   // events
   useEffect(() => {
+    registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -234,6 +238,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     filterFnAction('warn', basicFilter, filterDispatch)
     filterFnAction('error', basicFilter, filterDispatch)
     filterFnAction('script', basicFilter, filterDispatch)
+    registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
     // console.log({ htmlresullt }, { logresult })
     // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
     // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
@@ -398,10 +406,26 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   /* end of mouse event */
 
   useEffect(() => {
+    // document.addEventListener('mousemove', changeBg)
+    // function changeBg () {
+    //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
+    // }
+    // document.addEventListener('mouseup', changeBg2)
+    // function changeBg2 () {
+    //   document.getElementById('dragId').style.backgroundColor = ''
+    // }
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
 
     return () => {
+      // document.addEventListener('mousemove', changeBg)
+      // function changeBg () {
+      //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
+      // }
+      // document.addEventListener('mouseup', changeBg2)
+      // function changeBg2 () {
+      //   document.getElementById('dragId').style.backgroundColor = ''
+      // }
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
     }
