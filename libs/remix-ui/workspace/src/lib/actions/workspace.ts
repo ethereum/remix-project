@@ -18,15 +18,16 @@ export const initWorkspace = (filePanelPlugin) => async (dispatch: React.Dispatc
   const queryParams = new QueryParams()
   const gistHandler = new GistHandler()
   const params = queryParams.get()
+  let initialWorkspace = ''
   // get the file from gist
   let loadedFromGist = false
 
   if (params.gist) {
     await processCreateWorkspace('gist-sample')
-    plugin.initialWorkspace = 'gist-sample'
+    initialWorkspace = 'gist-sample'
     loadedFromGist = gistHandler.loadFromGist(params, plugin.fileManager)
   }
-  if (loadedFromGist) return
+  if (loadedFromGist) return dispatch(setCurrentWorkspace(initialWorkspace))
 
   if (params.code) {
     try {
@@ -36,15 +37,15 @@ export const initWorkspace = (filePanelPlugin) => async (dispatch: React.Dispatc
       const path = fileName
 
       await plugin.fileProviders.workspace.set(path, atob(params.code))
-      plugin.initialWorkspace = 'code-sample'
+      initialWorkspace = 'code-sample'
       await plugin.fileManager.openFile(fileName)
     } catch (e) {
       console.error(e)
     }
-    return
+    return dispatch(setCurrentWorkspace(initialWorkspace))
   }
 
-  return new Promise((resolve, reject) => {
+  initialWorkspace = await new Promise((resolve, reject) => {
     plugin.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
       if (error) return reject(error)
       if (Object.keys(filesList).length === 0) {
@@ -65,6 +66,7 @@ export const initWorkspace = (filePanelPlugin) => async (dispatch: React.Dispatc
       }
     })
   })
+  return dispatch(setCurrentWorkspace(initialWorkspace))
 }
 
 const processCreateWorkspace = async (name: string) => {

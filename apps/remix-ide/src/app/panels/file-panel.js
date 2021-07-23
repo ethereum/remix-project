@@ -47,17 +47,14 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this._components = {}
-    this._components.registry = globalRegistry
-    this._deps = {
-      fileProviders: this._components.registry.get('fileproviders').api,
-      fileManager: this._components.registry.get('filemanager').api
-    }
+    this.registry = globalRegistry
+    this.fileProviders = this.registry.get('fileproviders').api
+    this.fileManager = this.registry.get('filemanager').api
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'fileExplorerView')
 
-    this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
+    this.remixdHandle = new RemixdHandle(this.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
     this.hardhatHandle = new HardhatHandle()
     this.slitherHandle = new SlitherHandle()
@@ -83,11 +80,11 @@ module.exports = class Filepanel extends ViewPlugin {
         workspaceRenamed={this.workspaceRenamed.bind(this)}
         workspaceDeleted={this.workspaceDeleted.bind(this)}
         workspaceCreated={this.workspaceCreated.bind(this)}
-        workspace={this._deps.fileProviders.workspace}
-        browser={this._deps.fileProviders.browser}
-        localhost={this._deps.fileProviders.localhost}
-        fileManager={this._deps.fileManager}
-        registry={this._components.registry}
+        workspace={this.fileProviders.workspace}
+        browser={this.fileProviders.browser}
+        localhost={this.fileProviders.localhost}
+        fileManager={this.fileManager}
+        registry={this.registry}
         plugin={this}
         request={this.request}
         workspaces={this.workspaces}
@@ -131,8 +128,8 @@ module.exports = class Filepanel extends ViewPlugin {
 
   async getWorkspaces () {
     const result = new Promise((resolve, reject) => {
-      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-      this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
+      const workspacesPath = this.fileProviders.workspace.workspacesPath
+      this.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           console.error(error)
           return reject(error)
@@ -161,7 +158,7 @@ module.exports = class Filepanel extends ViewPlugin {
     let loadedFromGist = false
     if (params.gist) {
       await this.processCreateWorkspace('gist-sample')
-      this._deps.fileProviders.workspace.setWorkspace('gist-sample')
+      this.fileProviders.workspace.setWorkspace('gist-sample')
       this.initialWorkspace = 'gist-sample'
       loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
     }
@@ -170,23 +167,23 @@ module.exports = class Filepanel extends ViewPlugin {
     if (params.code || params.url) {
       try {
         await this.processCreateWorkspace('code-sample')
-        this._deps.fileProviders.workspace.setWorkspace('code-sample')
+        this.fileProviders.workspace.setWorkspace('code-sample')
         let path = ''
         let content = ''
         if (params.code) {
           var hash = bufferToHex(keccakFromString(params.code))
           path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
           content = atob(params.code)
-          await this._deps.fileProviders.workspace.set(path, content)
+          await this.fileProviders.workspace.set(path, content)
         }
         if (params.url) {
           const data = await this.call('contentImport', 'resolve', params.url)
           path = data.cleanUrl
           content = data.content
-          await this._deps.fileProviders.workspace.set(path, content)
+          await this.fileProviders.workspace.set(path, content)
         }
         this.initialWorkspace = 'code-sample'
-        await this._deps.fileManager.openFile(path)
+        await this.fileManager.openFile(path)
       } catch (e) {
         console.error(e)
       }
@@ -197,19 +194,19 @@ module.exports = class Filepanel extends ViewPlugin {
     this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
     // insert example contracts if there are no files to show
     return new Promise((resolve, reject) => {
-      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+      this.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
         if (error) return reject(error)
         if (Object.keys(filesList).length === 0) {
           await this.createWorkspace('default_workspace')
           resolve('default_workspace')
         } else {
-          this._deps.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
+          this.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
             if (error) return reject(error)
             if (Object.keys(filesList).length > 0) {
               const workspacePath = Object.keys(filesList)[0].split('/').filter(val => val)
               const workspaceName = workspacePath[workspacePath.length - 1]
 
-              this._deps.fileProviders.workspace.setWorkspace(workspaceName)
+              this.fileProviders.workspace.setWorkspace(workspaceName)
               return resolve(workspaceName)
             }
             return reject(new Error('Can\'t find available workspace.'))
@@ -228,8 +225,8 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async processCreateWorkspace (name) {
-    const workspaceProvider = this._deps.fileProviders.workspace
-    const browserProvider = this._deps.fileProviders.browser
+    const workspaceProvider = this.fileProviders.workspace
+    const browserProvider = this.fileProviders.browser
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
     const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
     const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
@@ -240,8 +237,8 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async workspaceExists (name) {
-    const workspaceProvider = this._deps.fileProviders.workspace
-    const browserProvider = this._deps.fileProviders.browser
+    const workspaceProvider = this.fileProviders.workspace
+    const browserProvider = this.fileProviders.browser
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
     return browserProvider.exists(workspacePath)
   }
@@ -251,7 +248,7 @@ module.exports = class Filepanel extends ViewPlugin {
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     else {
-      const workspaceProvider = this._deps.fileProviders.workspace
+      const workspaceProvider = this.fileProviders.workspace
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
@@ -271,8 +268,8 @@ module.exports = class Filepanel extends ViewPlugin {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    const browserProvider = this.fileProviders.browser
+    const workspacesPath = this.fileProviders.workspace.workspacesPath
     browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
   }
 
@@ -284,7 +281,7 @@ module.exports = class Filepanel extends ViewPlugin {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
     if (setEvent) {
-      this._deps.fileManager.setMode(workspace.isLocalhost ? 'localhost' : 'browser')
+      this.fileManager.setMode(workspace.isLocalhost ? 'localhost' : 'browser')
       this.emit('setWorkspace', workspace)
     }
   }
