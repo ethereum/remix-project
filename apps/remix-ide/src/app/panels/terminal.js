@@ -92,18 +92,6 @@ class Terminal extends Plugin {
   }
 
   onActivation () {
-    // this.on('scriptRunner', 'log', (msg) => {
-    //   this.commands.log.apply(this.commands, msg.data)
-    // })
-    // this.on('scriptRunner', 'info', (msg) => {
-    //   this.commands.info.apply(this.commands, msg.data)
-    // })
-    // this.on('scriptRunner', 'warn', (msg) => {
-    //   this.commands.warn.apply(this.commands, msg.data)
-    // })
-    // this.on('scriptRunner', 'error', (msg) => {
-    //   this.commands.error.apply(this.commands, msg.data)
-    // })
     this.renderComponent()
   }
 
