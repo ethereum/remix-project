@@ -39,6 +39,7 @@ class Terminal extends Plugin {
     this.element.setAttribute('id', 'terminal-view')
     this.event = new EventManager()
     this.blockchain = opts.blockchain
+    this.vm = vm
     this._api = api
     this._opts = opts
     this.config = config
@@ -75,18 +76,6 @@ class Terminal extends Plugin {
   }
 
   onActivation () {
-    // this.on('scriptRunner', 'log', (msg) => {
-    //   this.commands.log.apply(this.commands, msg.data)
-    // })
-    // this.on('scriptRunner', 'info', (msg) => {
-    //   this.commands.info.apply(this.commands, msg.data)
-    // })
-    // this.on('scriptRunner', 'warn', (msg) => {
-    //   this.commands.warn.apply(this.commands, msg.data)
-    // })
-    // this.on('scriptRunner', 'error', (msg) => {
-    //   this.commands.error.apply(this.commands, msg.data)
-    // })
     this.renderComponent()
   }
 
@@ -148,6 +137,7 @@ class Terminal extends Plugin {
         version = {this.version}
         config = {this.config}
         thisState = {this}
+        vm = {this.vm}
       />,
       this.element
     )
