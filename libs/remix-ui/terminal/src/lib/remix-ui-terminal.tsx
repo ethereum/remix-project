@@ -217,6 +217,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   // events
   useEffect(() => {
+    registerRemixWelcomeTextAction(remixWelcome, welcomTextDispath)
     registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
     registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
     registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
@@ -228,9 +229,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
     registerCommandAction('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
-      props.thisState._shell(script, scopedCommands, function (error, output) {
-        if (error) scopedCommands.error(error)
-        else if (output) scopedCommands.log(output)
+      _shell(script, scopedCommands, function (error, output) {
+        console.log({ error }, 'registerCommand scrpt')
+        console.log({ output }, 'registerCommand scrpt 2')
+        if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
+        else if (output) scriptRunnerDispatch({ type: 'error', payload: { message: output } })
       })
     }, { activate: true }, dispatch)
     filterFnAction('log', basicFilter, filterDispatch)
@@ -246,7 +249,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
     // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
     // registerCommand('log', _blocksRenderer('log'), { activate: true })
-  }, [])
+  }, [newstate.journalBlocks, props.thisState.autoCompletePopup, autoCompletState.text])
 
   // handle events
   const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
@@ -322,7 +325,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     if (event.which === 13 && !autoCompletState.showSuggestions) {
       if (event.ctrlKey) { // <ctrl+enter>
-        console.log(event.which === 32, ' enter key')
         // on enter, append the value in the cli input to the journal
         inputEl.current.focus()
       } else { // <enter>
@@ -906,7 +908,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
     }
     mode = {
-      log: 'text-info',
+      log: 'text-log',
       info: 'text-info',
       warn: 'text-warning',
       error: 'text-danger'
@@ -942,6 +944,73 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   /* end of block content that gets rendered from script Runner */
+
+  /* start of autoComplete */
+  const handleSelect = (text) => {
+    props.thisState.event.trigger('handleSelect', [text])
+  }
+
+  const onChange = (event: any) => {
+    event.preventDefault()
+    const inputString = event.target.value
+    console.log(event)
+    console.log({ inputString })
+    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
+    const textList = inputString.split(' ')
+    const autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
+    allPrograms.forEach(item => {
+      const program = getKeyOf(item)
+      console.log({ program })
+      if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
+      } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
+        allCommands.forEach(item => {
+          console.log({ item })
+          const command = getKeyOf(item)
+          if (command.includes(autoCompleteInput.trim())) {
+            setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
+          }
+        })
+      }
+    })
+    autoCompletState.extraCommands.forEach(item => {
+      const command = getKeyOf(item)
+      if (command.includes(autoCompleteInput.trim())) {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
+      }
+    })
+    if (autoCompletState.data._options.length === 1 && event.which === 9) {
+      // if only one option and tab is pressed, we resolve it
+      event.preventDefault()
+      textList.pop()
+      textList.push(getKeyOf(autoCompletState.data._options[0]))
+      handleSelect(`${textList}`.replace(/,/g, ' '))
+    }
+  }
+
+  const handleAutoComplete = () => (
+    <div className="popup alert alert-secondary">
+      <div>
+          ${autoCompletState.data._options.map((item, index) => {
+          return (
+            <div key={index}>auto complete here</div>
+            // <div data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerHide item ${_selectedElement === index ? 'border border-primary' : ''}`}>
+            //   <div value={index} onClick={(event) => { handleSelect(event.srcElement.innerText) }}>
+            //     {getKeyOf(item)}
+            //   </div>
+            //   <div>
+            //     {getValueOf(item)}
+            //   </div>
+            // </div>
+          )
+        })}
+      </div>
+      {/* <div className="listHandlerHide">
+        <div className="pageNumberAlignment">Page ${(self._startingElement / self._elementsToShow) + 1} of ${Math.ceil(data._options.length / self._elementsToShow)}</div>
+      </div> */}
+    </div>
+  )
+  /* end of autoComplete */
 
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
