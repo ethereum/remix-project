@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
-import { registerCommandAction, filterFnAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction } from './actions/terminalAction'
-import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
+import { registerCommandAction, filterFnAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, registerRemixWelcomeTextAction } from './actions/terminalAction'
+import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer, registerScriptRunnerReducer, remixWelcomeTextReducer } from './reducers/terminalReducer'
+import { remixWelcome } from './reducers/remixWelcom'
+import {getKeyOf, getValueOf} from './utils/utils'
+import {allCommands, allPrograms} from './commands' // eslint-disable-line
 import javascriptserialize from 'javascript-serialize'
 import jsbeautify from 'js-beautify'
 
@@ -23,12 +26,7 @@ export interface RemixUiTerminalProps {
   version: any
   config: any
   thisState: any
-
-  // blockRenderHtml: any
-  // blockRenderLog: any
-  // blockRenderInfo: any
-  // blockRenderWarn: any
-  // blockRenderError: any
+  vm: any
 }
 
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -52,6 +50,22 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [filterState, filterDispatch] = useReducer(registerFilterReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [scriptRunnserState, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
+  const [welcomeTextState, welcomTextDispath] = useReducer(remixWelcomeTextReducer, initialState)
+  const [autoCompletState, setAutoCompleteState] = useState({
+    activeSuggestion: 0,
+    data: {
+      _options: []
+    },
+    _startingElement: 0,
+    _elementToShow: 4,
+    _selectedElement: 0,
+    filteredCommands: [],
+    filteredPrograms: [],
+    showSuggestions: false,
+    text: '',
+    userInput: '',
+    extraCommands: []
+  })
 
   const [state, setState] = useState({
     journalBlocks: {
@@ -111,6 +125,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const inputEl = useRef(null)
   // events
   useEffect(() => {
+    registerRemixWelcomeTextAction(remixWelcome, welcomTextDispath)
     registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
     registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
     registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
@@ -122,9 +137,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
     registerCommandAction('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
-      props.thisState._shell(script, scopedCommands, function (error, output) {
-        if (error) scopedCommands.error(error)
-        else if (output) scopedCommands.log(output)
+      _shell(script, scopedCommands, function (error, output) {
+        console.log({ error }, 'registerCommand scrpt')
+        console.log({ output }, 'registerCommand scrpt 2')
+        if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
+        else if (output) scriptRunnerDispatch({ type: 'error', payload: { message: output } })
       })
     }, { activate: true }, dispatch)
     filterFnAction('log', basicFilter, filterDispatch)
@@ -140,7 +157,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
     // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
     // registerCommand('log', _blocksRenderer('log'), { activate: true })
-  }, [])
+  }, [newstate.journalBlocks, props.thisState.autoCompletePopup, autoCompletState.text])
 
   const placeCaretAtEnd = (el) => {
     el.focus()
@@ -150,6 +167,35 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const sel = window.getSelection()
     sel.removeAllRanges()
     sel.addRange(range)
+  }
+
+  const _shell = async (script, scopedCommands, done) => { // default shell
+    if (script.indexOf('remix:') === 0) {
+      return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
+    }
+
+    if (script.indexOf('remix.') === 0) {
+      // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
+      // for all the other case, we use the Code Executor plugin
+      var context = props.cmdInterpreter
+      try {
+        var cmds = props.vm.createContext(context)
+        var result = props.vm.runInContext(script, cmds)
+        return done(null, result)
+      } catch (error) {
+        return done(error.message)
+      }
+    }
+    try {
+      if (script.trim().startsWith('git')) {
+        // result = await this.call('git', 'execute', script)
+      } else {
+        result = await props.thisState.call('scriptRunner', 'execute', script)
+      }
+      done()
+    } catch (error) {
+      done(error.message || error)
+    }
   }
 
   // handle events
@@ -204,35 +250,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     inputEl.current.focus()
   }
 
-  // const putCursor2End = (editable) => {
-  //   var range = document.createRange()
-  //   console.log({ range })
-  //   range.selectNode(editable)
-  //   var child = editable
-  //   var chars
-  //   console.log({ child })
-  //   while (child) {
-  //     if (child.lastChild) child = child.lastChild
-  //     else break
-  //     if (child.nodeType === Node.TEXT_NODE) {
-  //       chars = child.textContent.length
-  //     } else {
-  //       chars = child.innerHTML.length
-  //     }
-  //   }
-
-  //   range.setEnd(child, chars)
-  //   var toStart = true
-  //   var toEnd = !toStart
-  //   range.collapse(toEnd)
-
-  //   var sel = window.getSelection()
-  //   sel.removeAllRanges()
-  //   sel.addRange(range)
-
-  //   editable.focus()
-  // }
-
   const wrapScript = (script) => {
     const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
     if (isKnownScript) return script
@@ -251,39 +268,24 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const handleKeyDown = (event) => {
-    if (props.autoCompletePopup.handleAutoComplete(
-      event,
-      inputEl.current.innerText)) { return }
-    if (inputEl.current.innerText.length === 0) {
-      inputEl.current.innerText += '\n'
-    }
     if (event.which === 13) {
       if (event.ctrlKey) { // <ctrl+enter>
-        console.log(event.which === 32, ' enter key')
         // on enter, append the value in the cli input to the journal
-        // setState(prevState => ({...prevState.journalBlocks, prevState: inputEl})
-        inputEl.current.innerText += '\n'
         inputEl.current.focus()
-        // putCursor2End(inputEl.current)
-        // scroll2botton () function not implemented
-        props.autoCompletePopup.removeAutoComplete()
       } else { // <enter>
+        event.preventDefault()
         console.log('hit enter')
         setCmdIndex(-1)
         setCmdTemp('')
-        const script = inputEl.current.innerText.trim()
-        console.log({ script }, ' script ')
+        const script = autoCompletState.userInput.trim() // inputEl.current.innerText.trim()
         if (script.length) {
           cmdHistoryDispatch({ type: 'cmdHistory', payload: { script } })
-          const result = newstate.commands.script(wrapScript(script))
-          console.log({ result })
+          newstate.commands.script(wrapScript(script))
         }
-        // inputEl.current.innerText += '\n'
-        // if (script.length) {
-        //   // self._cmdHistory.unshift(script)
-        //   props.command.script(wrapScript(script))
-        // }
-        // props.autoCompletePopup.removeAutoComplete()
+        setAutoCompleteState(prevState => ({ ...prevState, userInput: '' }))
+        inputEl.current.innerText = ''
+        inputEl.current.focus()
+        setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false }))
       }
     } else if (event.which === 38) { // <arrowUp>
       const len = _cmdHistory.length
@@ -293,8 +295,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       inputEl.current.innerText = _cmdHistory[_cmdIndex]
       inputEl.current.focus()
-      // putCursor2End(inputEl.current)
-      // self.scroll2bottom()
     }
     else if (event.which === 40) {
       if (_cmdIndex > -1) {
@@ -302,14 +302,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       inputEl.current.innerText = _cmdIndex >= 0 ? _cmdHistory[_cmdIndex] : _cmdTemp
       inputEl.current.focus()
-      // putCursor2End(inputEl.current)
-      // self.scroll2bottom()
     } else {
       setCmdTemp(inputEl.current.innerText)
     }
-    console.log({ _cmdHistory })
-    console.log({ _cmdIndex })
-    console.log({ _cmdTemp })
   }
 
   const moveGhostbar = (event) => {
@@ -347,19 +342,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       const newEditorHeight = leftHeight - e.clientY + separatorYPosition
       const newLeftHeight = leftHeight + separatorYPosition - e.clientY
       setSeparatorYPosition(e.clientY)
-
-      // if (newLeftHeight < MIN_HEIGHT) {
-      //   setLeftHeight(MIN_HEIGHT)
-      //   return
-      // }
-      // if (splitPaneRef.current) {
-      //   const splitPaneHeight = splitPaneRef.current.clientHeight
-
-      //   if (newLeftHeight > splitPaneHeight - MIN_HEIGHT) {
-      //     setLeftHeight(splitPaneHeight - MIN_HEIGHT)
-      //     return
-      //   }
-      // }
       setLeftHeight(newLeftHeight)
       props.event.trigger('resize', [newLeftHeight + 32])
       console.log({ newLeftHeight })
@@ -415,7 +397,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       leftRef.style.height = `${leftHeight}px`
     }
-  }, [leftHeight, setLeftHeight])
+  }, [leftHeight, setLeftHeight, inputEl])
 
   /* block contents that gets rendered from scriptRunner */
 
@@ -429,7 +411,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
     }
     mode = {
-      log: 'text-info',
+      log: 'text-log',
       info: 'text-info',
       warn: 'text-warning',
       error: 'text-danger'
@@ -466,9 +448,78 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   /* end of block content that gets rendered from script Runner */
 
+  /* start of autoComplete */
+  const handleSelect = (text) => {
+    props.thisState.event.trigger('handleSelect', [text])
+  }
+
+  const onChange = (event: any) => {
+    event.preventDefault()
+    const inputString = event.target.value
+    console.log(event)
+    console.log({ inputString })
+    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
+    const textList = inputString.split(' ')
+    const autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
+    allPrograms.forEach(item => {
+      const program = getKeyOf(item)
+      console.log({ program })
+      if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
+      } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
+        allCommands.forEach(item => {
+          console.log({ item })
+          const command = getKeyOf(item)
+          if (command.includes(autoCompleteInput.trim())) {
+            setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
+          }
+        })
+      }
+    })
+    autoCompletState.extraCommands.forEach(item => {
+      const command = getKeyOf(item)
+      if (command.includes(autoCompleteInput.trim())) {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
+      }
+    })
+    if (autoCompletState.data._options.length === 1 && event.which === 9) {
+      // if only one option and tab is pressed, we resolve it
+      event.preventDefault()
+      textList.pop()
+      textList.push(getKeyOf(autoCompletState.data._options[0]))
+      handleSelect(`${textList}`.replace(/,/g, ' '))
+    }
+  }
+
+  const handleAutoComplete = () => (
+    <div className="popup alert alert-secondary">
+      <div>
+          ${autoCompletState.data._options.map((item, index) => {
+          return (
+            <div key={index}>auto complete here</div>
+            // <div data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerHide item ${_selectedElement === index ? 'border border-primary' : ''}`}>
+            //   <div value={index} onClick={(event) => { handleSelect(event.srcElement.innerText) }}>
+            //     {getKeyOf(item)}
+            //   </div>
+            //   <div>
+            //     {getValueOf(item)}
+            //   </div>
+            // </div>
+          )
+        })}
+      </div>
+      {/* <div className="listHandlerHide">
+        <div className="pageNumberAlignment">Page ${(self._startingElement / self._elementsToShow) + 1} of ${Math.ceil(data._options.length / self._elementsToShow)}</div>
+      </div> */}
+    </div>
+  )
+  /* end of autoComplete */
+
   return (
     <div style={{ height: '323px' }} className='panel_2A0YE0'>
       {console.log({ newstate })}
+      {console.log({ props })}
+      {console.log({ autoCompletState })}
       <div className="bar_2A0YE0">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
@@ -513,8 +564,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         </div>
       </div>
       <div tabIndex={-1} className="terminal_container_2A0YE0" data-id="terminalContainer" >
-        {/* onScroll=${throttle(reattach, 10)} onkeydown=${focusinput} */}
-        {/* {props.autoCompletePopup.render()} */}
+        {
+          (autoCompletState.showSuggestions && autoCompletState.userInput) && handleAutoComplete()
+        }
         <div data-id="terminalContainerDisplay" style = {{
           position: 'absolute',
           height: '100',
@@ -524,13 +576,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }}></div>
         <div className="terminal_2A0YE0">
           <div id="journal" className="journal_2A0YE0" data-id="terminalJournal">
-            <div className="px-4 block_2A0YE0" data-id="block_null">
-              {Object.entries(state.journalBlocks).map((x, index) => (
-                <div key={index}>
-                  {x}
-                </div>
-              ))}
-            </div>
+            {(newstate.journalBlocks).map((x, index) => (
+              <div className="px-4 block_2A0YE0" data-id="block_null" key={index}>
+                <span className={x.style}>{x.message}</span>
+              </div>
+            ))}
             <div className="anchor">
               {/* ${background} */}
               <div className="overlay background"></div>
@@ -540,7 +590,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
           <div id="terminalCli" data-id="terminalCli" className="cli_2A0YE0" onClick={focusinput}>
             <span className="prompt_2A0YE0">{'>'}</span>
-            <span className="input_2A0YE0" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onPaste={handlePaste} onKeyDown={ handleKeyDown }></span>
+            <input className="input_2A0YE0" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onChange={(event) => onChange(event)} onKeyDown={(event) => handleKeyDown(event) } value={autoCompletState.userInput}></input>
           </div>
         </div>
       </div>
