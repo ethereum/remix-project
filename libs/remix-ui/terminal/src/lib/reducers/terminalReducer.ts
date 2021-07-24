@@ -1,7 +1,7 @@
-export const initialState = {
-  journalBlocks: {
 
-  },
+export const initialState = {
+  journalBlocks: [
+  ],
   data: {
     // lineLength: props.options.lineLength || 80,
     session: [],
@@ -121,13 +121,43 @@ export const addCommandHistoryReducer = (state, action) => {
   }
 }
 
+export const remixWelcomeTextReducer = (state, action) => {
+  switch (action.type) {
+    case 'welcomeText' :
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push(action.payload.welcomeText)
+      }
+  }
+}
+
 export const registerScriptRunnerReducer = (state, action) => {
   console.log({ state }, { action }, 'register script runner reducer')
   switch (action.type) {
     case 'log':
       return {
-        ...state
-        
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
+      }
+    case 'info':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
+      }
+    case 'warn':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-warning' })
+      }
+    case 'error':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-danger' })
+      }
+    case 'script':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
       }
   }
 }
