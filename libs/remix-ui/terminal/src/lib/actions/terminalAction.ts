@@ -129,3 +129,7 @@ export const registerErrorScriptRunnerAction = (event, commandName, commandFn, d
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
+
+export const registerRemixWelcomeTextAction = (welcomeText, dispatch) => {
+  dispatch({ type: 'welcomeText', payload: { welcomeText } })
+}
