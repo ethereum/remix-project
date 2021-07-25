@@ -1,7 +1,6 @@
 import { Profile } from '@remixproject/plugin-utils'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
-// import { RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
 import { PluginManagerComponent } from '../../types'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
@@ -10,7 +9,7 @@ interface PluginCardProps {
   }
   pluginComponent: PluginManagerComponent
   buttonText: string
-  reRender: () => void
+  syncInactiveProfiles: () => void
 }
 
 // eslint-disable-next-line no-empty-pattern
@@ -18,7 +17,7 @@ function ActivePluginCard ({
   profile,
   pluginComponent,
   buttonText,
-  reRender
+  syncInactiveProfiles
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
@@ -26,13 +25,16 @@ function ActivePluginCard ({
       <i aria-hidden="true" className="fas fa-book"/>
     </a>
   ) : null)
-
   const [versionWarning] = useState<JSX.Element>((profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) ? (
     <small title="Version Alpha" className="remixui_versionWarning plugin-version">alpha</small>
   ) : (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) ? (
     <small title="Version Beta" className="remixui_versionWarning plugin-version">beta</small>
   ) : null)
-  // const [stateManager] = useState<PluginManagerStateMachine>(new PluginManagerStateMachine(pluginComponent))
+  const [triggerRefresh, setTriggerRefresh] = useState(false)
+
+  useEffect(() => {
+
+  }, [triggerRefresh])
 
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
@@ -48,13 +50,10 @@ function ActivePluginCard ({
               <button
                 onClick={() => {
                   // pluginComponent.deactivateP(profile.name)
-                  console.log('calling pluginComponent.call directly...')
                   pluginComponent.call('manager', 'deactivatePlugin', profile.name)
-                  console.log('called pluginComponent.call successfully')
                   pluginComponent._paq.push(['trackEvent', 'manager', 'deactivate', profile.name])
-                  console.log('matomo tracking captured for deactivation successfully')
                   RemoveActivatedPlugin(profile.name)
-                  reRender()
+                  syncInactiveProfiles()
                 }}
                 className="btn btn-secondary btn-sm"
                 data-id={`pluginManagerComponentDeactivateButton${profile.name}`}
