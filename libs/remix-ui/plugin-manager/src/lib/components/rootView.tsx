@@ -8,6 +8,7 @@ import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import ActivePluginCard from './ActivePluginCard'
 import InactivePluginCard from './InactivePluginCard'
+import { GetNewlyActivatedPlugins, PersistNewInactivesState } from '../../pluginManagerStateMachine'
 
 const initialState: FormStateProps = {
   pname: 'test',
@@ -32,8 +33,7 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const [filterPlugins, setFilterPlugin] = useState('')
   const [activeP, setActiveP] = useState<Profile[]>([])
   const [inactiveP, setInactiveP] = useState<Profile[]>([])
-  // const [storagePlugins, setStoragePlugins] = useLocalStorage('newActivePlugins')
-
+  const [triggerRefresh, setTriggerRefresh] = useState(false)
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
   }
@@ -46,10 +46,10 @@ function RootView ({ pluginComponent }: RootViewProps) {
   }
   const closeModal = () => setVisible(true)
   // <-- End Modal Visibility States -->
-
-  const reRender = () => {
-    pluginComponent.getAndFilterPlugins()
-    console.log('Called rerender after deactivating a plugin')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const syncInactiveProfiles = () => {
+    PersistNewInactivesState(inactiveP)
+    setTriggerRefresh(true)
   }
 
   useEffect(() => {
@@ -61,11 +61,43 @@ function RootView ({ pluginComponent }: RootViewProps) {
     if (pluginComponent.activePlugins && pluginComponent.activePlugins.length) {
       setActiveP(pluginComponent.activePlugins)
     }
+    // if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
+    //   setInactiveP(pluginComponent.inactivePlugins)
+    // }
+    const validInactiveProfiles: Profile[] = JSON.parse(window.localStorage.getItem('updatedInactives'))
+    if (validInactiveProfiles && validInactiveProfiles.length) {
+      if (inactiveP.length > validInactiveProfiles.length) {
+        setInactiveP(validInactiveProfiles)
+      }
+    }
     if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
       setInactiveP(pluginComponent.inactivePlugins)
     }
-    console.log('contents of appManager', pluginComponent.appManager)
   }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, activeP, inactiveP, pluginComponent.activeProfiles, pluginComponent])
+
+  useEffect(() => {
+    if (activeP.length === 0) {
+      const activeProfiles = GetNewlyActivatedPlugins()
+      if (activeProfiles !== null && activeProfiles.length) {
+        setActiveP(activeProfiles)
+      } else {
+        setActiveP(pluginComponent.activePlugins)
+      }
+    }
+  }, [activeP, pluginComponent.activePlugins, syncInactiveProfiles])
+
+  useEffect(() => {
+    syncInactiveProfiles()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inactiveP, triggerRefresh])
+
+  useEffect(() => {
+    const validInactiveProfiles: Profile[] = JSON.parse(window.localStorage.getItem('updatedInactives'))
+    if (validInactiveProfiles && validInactiveProfiles.length &&
+      inactiveP.length > validInactiveProfiles.length) {
+      setInactiveP(validInactiveProfiles)
+    }
+  }, [inactiveP, triggerRefresh])
 
   return (
     <Fragment>
@@ -224,14 +256,14 @@ function RootView ({ pluginComponent }: RootViewProps) {
           </button>
         </header>
         <section data-id="pluginManagerComponentPluginManagerSection">
-          {activeP && <Fragment>
+          {(activeP && activeP.length > 0) && <Fragment>
             <ModuleHeading headingLabel="Active Modules" count={activeP.length} />
             {activeP.map((profile) => (
               <ActivePluginCard
                 buttonText="Deactivate"
                 key={profile.name}
                 profile={profile}
-                reRender={reRender}
+                syncInactiveProfiles={syncInactiveProfiles}
                 pluginComponent={pluginComponent}
               />
             ))}
