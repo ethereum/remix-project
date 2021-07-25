@@ -38,7 +38,7 @@ module.exports = class RemixDProvider extends FileProvider {
     })
 
     this._appManager.on('remixd', 'fileRenamed', (oldPath, newPath) => {
-      this.event.emit('fileRemoved', oldPath, newPath)
+      this.event.emit('fileRenamed', oldPath, newPath)
     })
 
     this._appManager.on('remixd', 'rootFolderChanged', () => {
@@ -141,7 +141,6 @@ module.exports = class RemixDProvider extends FileProvider {
       this._appManager.call('remixd', 'remove', { path: unprefixedpath })
         .then(result => {
           const path = unprefixedpath
-
           delete this.filesContent[path]
           resolve(true)
           this.init()
