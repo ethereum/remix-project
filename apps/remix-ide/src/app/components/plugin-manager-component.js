@@ -53,7 +53,7 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   triggerEngineEventListener () {
-    this.engine.event.on('onRegistration', () => this.getAndFilterPlugins())
+    this.engine.event.on('onRegistration', () => this.renderComponent())
   }
 
   /**
@@ -90,7 +90,7 @@ class PluginManagerComponent extends ViewPlugin {
     debugger
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
-    this.getAndFilterPlugins()
+    this.renderComponent()
   }
 
   onActivation () {
