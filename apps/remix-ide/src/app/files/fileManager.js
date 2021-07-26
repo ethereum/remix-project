@@ -155,9 +155,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory
    * @returns {boolean} true if path is a directory.
    */
-  isDirectory (path) {
+  async isDirectory (path) {
     const provider = this.fileProviderOf(path)
-    const result = provider.isDirectory(path)
+    const result = await provider.isDirectory(path)
 
     return result
   }
@@ -362,7 +362,6 @@ class FileManager extends Plugin {
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
-
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
