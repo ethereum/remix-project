@@ -361,7 +361,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings
   ])
 
-
   const queryParams = new QueryParams()
   const params = queryParams.get()
 
@@ -481,7 +480,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['settings'])
   await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
-
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
