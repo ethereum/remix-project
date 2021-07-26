@@ -2,8 +2,17 @@ interface Action {
     type: string
     payload: Record<string, any> | string
 }
+interface State {
+  browser: {
+    currentWorkspace: string,
+    workspaces: string[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  }
+}
 
-export const browserInitialState = {
+export const browserInitialState: State = {
   browser: {
     currentWorkspace: '',
     workspaces: [],
@@ -20,7 +29,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          currentWorkspace: typeof action.payload === 'string' ? action.payload : ''
+          currentWorkspace: typeof action.payload === 'string' ? action.payload : '',
+          workspaces: typeof action.payload === 'string' ? state.browser.workspaces.includes(action.payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload] : state.browser.workspaces
         }
       }
     }
