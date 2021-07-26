@@ -32,6 +32,37 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 export const Workspace = (props: WorkspaceProps) => {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
+  const [state, setState] = useState({
+    workspaces: [],
+    reset: false,
+    currentWorkspace: NO_WORKSPACE,
+    hideRemixdExplorer: true,
+    displayNewFile: false,
+    externalUploads: null,
+    uploadFileEvent: null,
+    modal: {
+      hide: true,
+      title: '',
+      message: null,
+      okLabel: '',
+      okFn: () => {},
+      cancelLabel: '',
+      cancelFn: () => {},
+      handleHide: null
+    },
+    loadingLocalhost: false,
+    toasterMsg: ''
+  })
+  const [currentWorkspace, setCurrentWorkspace] = useState<string>('')
+  const [fs, dispatch] = useReducer(browserReducer, browserInitialState)
+
+  useEffect(() => {
+    initWorkspace(props.plugin)(dispatch)
+  }, [])
+
+  useEffect(() => {
+    if (fs.browser.currentWorkspace) setCurrentWorkspace(fs.browser.currentWorkspace)
+  }, [fs.browser.currentWorkspace])
 
   /* extends the parent 'plugin' with some function needed by the file explorer */
   props.plugin.resetFocus = (reset) => {
@@ -74,30 +105,6 @@ export const Workspace = (props: WorkspaceProps) => {
     return { name: state.currentWorkspace, isLocalhost: state.currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${state.currentWorkspace}` }
   }
 
-  useEffect(() => {
-    let getWorkspaces = async () => {
-      if (props.workspaces && Array.isArray(props.workspaces)) {
-        if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
-          const currentWorkspace = props.workspace.getWorkspace() ? props.workspace.getWorkspace() : props.workspaces[0]
-          await props.workspace.setWorkspace(currentWorkspace)
-          setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace }
-          })
-        } else {
-          setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces }
-          })
-        }
-      }
-    }
-
-    getWorkspaces()
-
-    return () => {
-      getWorkspaces = async () => {}
-    }
-  }, [props.workspaces])
-
   const localhostDisconnect = () => {
     if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
     // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
@@ -106,38 +113,6 @@ export const Workspace = (props: WorkspaceProps) => {
       props.fileManager.setMode('browser')
     }
   }
-
-  // useEffect(() => {
-  //   props.localhost.event.off('disconnected', localhostDisconnect)
-  //   props.localhost.event.on('disconnected', localhostDisconnect)
-  //   props.localhost.event.on('connected', () => {
-  //     remixdExplorer.show()
-  //     setWorkspace(LOCALHOST)
-  //   })
-
-  //   props.localhost.event.on('disconnected', () => {
-  //     remixdExplorer.hide()
-  //   })
-
-  //   props.localhost.event.on('loading', () => {
-  //     remixdExplorer.loading()
-  //   })
-
-  //   props.workspace.event.on('createWorkspace', (name) => {
-  //     createNewWorkspace(name)
-  //   })
-
-  //   if (props.initialWorkspace) {
-  //     props.workspace.setWorkspace(props.initialWorkspace)
-  //     setState(prevState => {
-  //       return { ...prevState, currentWorkspace: props.initialWorkspace }
-  //     })
-  //   }
-  // }, [])
-
-  useEffect(() => {
-    initWorkspace(props.plugin)(dispatch)
-  }, [])
 
   const createNewWorkspace = async (workspaceName) => {
     try {
@@ -150,30 +125,6 @@ export const Workspace = (props: WorkspaceProps) => {
       console.error(e)
     }
   }
-
-  const [state, setState] = useState({
-    workspaces: [],
-    reset: false,
-    currentWorkspace: NO_WORKSPACE,
-    hideRemixdExplorer: true,
-    displayNewFile: false,
-    externalUploads: null,
-    uploadFileEvent: null,
-    modal: {
-      hide: true,
-      title: '',
-      message: null,
-      okLabel: '',
-      okFn: () => {},
-      cancelLabel: '',
-      cancelFn: () => {},
-      handleHide: null
-    },
-    loadingLocalhost: false,
-    toasterMsg: ''
-  })
-
-  const [fs, dispatch] = useReducer(browserReducer, browserInitialState)
 
   const toast = (message: string) => {
     setState(prevState => {
@@ -395,9 +346,9 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Delete'>
                 </span>
               </span>
-              <select id="workspacesSelect" value={fs.browser.currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
                 {
-                  state.workspaces
+                  fs.browser.workspaces
                     .map((folder, index) => {
                       return <option key={index} value={folder}>{folder}</option>
                     })

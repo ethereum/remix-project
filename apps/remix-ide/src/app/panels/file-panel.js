@@ -4,7 +4,6 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
-import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import { checkSpecialChars, checkSlash } from '../../lib/helper'
 const { RemixdHandle } = require('../files/remixd-handle.js')
 const { GitHandle } = require('../files/git-handle.js')
@@ -12,8 +11,6 @@ const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { SlitherHandle } = require('../files/slither-handle.js')
 const globalRegistry = require('../../global/registry')
 const examples = require('../editor/examples')
-const GistHandler = require('../../lib/gist-handler')
-const QueryParams = require('../../lib/query-params')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 /*
   Overview of APIs:
@@ -67,7 +64,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   render () {
-    this.on('editor', 'editorMounted', () => this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error))
     return this.el
   }
 
@@ -147,73 +143,6 @@ module.exports = class Filepanel extends ViewPlugin {
     }
     this.renderComponent()
     return this.workspaces
-  }
-
-  async initWorkspace () {
-    this.renderComponent()
-    const queryParams = new QueryParams()
-    const gistHandler = new GistHandler()
-    const params = queryParams.get()
-    // get the file from gist
-    let loadedFromGist = false
-    if (params.gist) {
-      await this.processCreateWorkspace('gist-sample')
-      this.fileProviders.workspace.setWorkspace('gist-sample')
-      this.initialWorkspace = 'gist-sample'
-      loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
-    }
-    if (loadedFromGist) return
-
-    if (params.code || params.url) {
-      try {
-        await this.processCreateWorkspace('code-sample')
-        this.fileProviders.workspace.setWorkspace('code-sample')
-        let path = ''
-        let content = ''
-        if (params.code) {
-          var hash = bufferToHex(keccakFromString(params.code))
-          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-          content = atob(params.code)
-          await this.fileProviders.workspace.set(path, content)
-        }
-        if (params.url) {
-          const data = await this.call('contentImport', 'resolve', params.url)
-          path = data.cleanUrl
-          content = data.content
-          await this.fileProviders.workspace.set(path, content)
-        }
-        this.initialWorkspace = 'code-sample'
-        await this.fileManager.openFile(path)
-      } catch (e) {
-        console.error(e)
-      }
-      return
-    }
-
-    const self = this
-    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
-    // insert example contracts if there are no files to show
-    return new Promise((resolve, reject) => {
-      this.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-        if (error) return reject(error)
-        if (Object.keys(filesList).length === 0) {
-          await this.createWorkspace('default_workspace')
-          resolve('default_workspace')
-        } else {
-          this.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
-            if (error) return reject(error)
-            if (Object.keys(filesList).length > 0) {
-              const workspacePath = Object.keys(filesList)[0].split('/').filter(val => val)
-              const workspaceName = workspacePath[workspacePath.length - 1]
-
-              this.fileProviders.workspace.setWorkspace(workspaceName)
-              return resolve(workspaceName)
-            }
-            return reject(new Error('Can\'t find available workspace.'))
-          })
-        }
-      })
-    })
   }
 
   async createNewFile () {
