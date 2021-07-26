@@ -448,7 +448,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     test,
     filePanel.remixdHandle,
     filePanel.gitHandle,
-    filePanel.hardhatHandle
+    filePanel.hardhatHandle,
+    filePanel.slitherHandle
   ])
 
   if (isElectron()) {
