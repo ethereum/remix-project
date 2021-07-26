@@ -65,7 +65,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     compilation(props.analysisModule, dispatch)
-  }, [])
+  }, [props])
 
   useEffect(() => {
     setWarningState({})
