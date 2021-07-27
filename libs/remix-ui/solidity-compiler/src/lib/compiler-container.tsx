@@ -35,6 +35,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: '',
     evmVersion: ''
   })
+  const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
   const compileIcon = useRef(null)
   const warningIcon = useRef(null)
   const promptMessageInput = useRef(null)
@@ -83,6 +84,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [compileTabLogic])
 
   useEffect(() => {
+    const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
+
+    setDisableCompileButton(isDisabled)
     setState(prevState => {
       return { ...prevState, compiledFileName }
     })
@@ -266,6 +270,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.classList.add('remixui_spinningIcon')
     warningIcon.current.style.visibility = 'hidden'
     _updateLanguageSelector()
+    setDisableCompileButton(true)
   }
 
   const compilerLoaded = () => {
@@ -273,6 +278,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     if (state.autoCompile) compile()
+    const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
+
+    setDisableCompileButton(isDisabled)
   }
 
   const compilationFinished = () => {
@@ -576,8 +584,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
             </div>
           }
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={!state.compiledFileName || (state.compiledFileName && !isSolFileSelected(state.compiledFileName))}>
-            <span className="text-break">
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
+            <span>
               <i ref={warningIcon} title="Compilation Slow" style={{ visibility: 'hidden' }} className="remixui_warnCompilationSlow fas fa-exclamation-triangle" aria-hidden="true"></i>
               { warningIcon.current && warningIcon.current.style.visibility === 'hidden' && <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
               Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
