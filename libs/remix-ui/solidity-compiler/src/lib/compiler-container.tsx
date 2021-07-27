@@ -8,6 +8,14 @@ import { resetEditorMode, listenToEvents } from './actions/compiler'
 
 import './css/style.css'
 
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+
+const _paq = window._paq = window._paq || [] //eslint-disable-line
+
 export const CompilerContainer = (props: CompilerContainerProps) => {
   const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
@@ -272,6 +280,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', 'idle')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
+    _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
   }
 
   const scheduleCompilation = () => {
