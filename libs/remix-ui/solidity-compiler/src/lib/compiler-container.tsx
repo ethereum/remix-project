@@ -37,7 +37,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   })
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
   const compileIcon = useRef(null)
-  const warningIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const [hhCompilation, sethhCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
@@ -247,14 +246,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compilationDuration = (speed: number) => {
-    if (!warningIcon.current) return
     if (speed > 1000) {
-      const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
-
-      warningIcon.current.setAttribute('title', msg)
-      warningIcon.current.style.visibility = 'visible'
-    } else {
-      warningIcon.current.style.visibility = 'hidden'
+      console.log(`Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
     }
   }
 
@@ -268,7 +261,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
     compileIcon.current.classList.add('remixui_spinningIcon')
-    warningIcon.current.style.visibility = 'hidden'
     _updateLanguageSelector()
     setDisableCompileButton(true)
   }
@@ -586,8 +578,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           }
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
-              <i ref={warningIcon} title="Compilation Slow" style={{ visibility: 'hidden' }} className="remixui_warnCompilationSlow fas fa-exclamation-triangle" aria-hidden="true"></i>
-              { warningIcon.current && warningIcon.current.style.visibility === 'hidden' && <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
+              { <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
               Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>
