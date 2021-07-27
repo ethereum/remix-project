@@ -34,9 +34,14 @@ export const useWindowEvent: WindowEventHook = (eventName, handler) => {
 
 export const useLocalStorage = (key: string) => {
   // initialize the value from localStorage
-  const [currentValue, setCurrentValue] = useState<string | null>(() =>
-    localStorage.getItem(key)
-  )
+  const [currentValue, setCurrentValue] = useState<any | null>(() => {
+    const readFromStore = localStorage.getItem(key)
+    if (readFromStore) {
+      return JSON.parse(readFromStore)
+    } else {
+      localStorage.setItem('plugins/permissions', '{}')
+    }
+  })
 
   const handler = (e: StorageEvent) => {
     if (
@@ -53,7 +58,7 @@ export const useLocalStorage = (key: string) => {
 
   // update localStorage when the currentValue changes via setCurrentValue
   useEffect(() => {
-    localStorage.setItem(key, currentValue)
+    localStorage.setItem(key, JSON.stringify(currentValue))
   }, [key, currentValue])
 
   // use as const to tell TypeScript this is a tuple
