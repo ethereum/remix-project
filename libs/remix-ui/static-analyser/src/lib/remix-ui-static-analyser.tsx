@@ -65,7 +65,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     compilation(props.analysisModule, dispatch)
-  }, [])
+  }, [props])
 
   useEffect(() => {
     setWarningState({})
@@ -91,7 +91,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
     })
     return () => { }
-  }, [props.analysisModule])
+  }, [props])
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
