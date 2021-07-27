@@ -66,11 +66,21 @@ export class PluginManagerSettings {
   currentSetting: any;
   onValidation(): void;
   /** Clear one permission from a plugin */
-  clearPersmission(from: any, to: any, method: any): void;
+  clearPersmission(from: string, to: string, method: string): void;
   /** Clear all persmissions from a plugin */
-  clearAllPersmission(to: any): void;
+  clearAllPersmission(to: string): void;
   settings(): any;
   render(): any;
+}
+
+export type PluginPermissions = {
+  fileManager : {
+    writeFile: {
+      pluginName: {
+        allow: boolean
+      }
+    }
+  }
 }
 
 export class PluginManagerComponent extends ViewPlugin extends Plugin implements PluginBase {
