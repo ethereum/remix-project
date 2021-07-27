@@ -89,6 +89,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       dispatch({ type: '', payload: {} })
       // Show 'Enable Slither Analysis' checkbox
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
+      else setShowSlither('hidden')
     })
     return () => { }
   }, [props])
