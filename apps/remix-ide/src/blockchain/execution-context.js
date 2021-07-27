@@ -20,6 +20,7 @@ export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
     this.executionContext = null
+    this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = 'berlin'
@@ -86,10 +87,10 @@ export class ExecutionContext {
           web3.eth.getBlock(0, (error, block) => {
             if (error) console.log('cant query first block')
             if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
-            callback(err, { id, name })
+            callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
           })
         } else {
-          callback(err, { id, name })
+          callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
         }
       })
     }
@@ -176,6 +177,7 @@ export class ExecutionContext {
         const block = await web3.eth.getBlock('latest')
         // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
         this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        this.lastBlock = block
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
