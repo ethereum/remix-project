@@ -567,7 +567,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           }
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={!state.compiledFileName || (state.compiledFileName && !isSolFileSelected(state.compiledFileName))}>
-            <span>
+            <span className="text-break">
               <i ref={warningIcon} title="Compilation Slow" style={{ visibility: 'hidden' }} className="remixui_warnCompilationSlow fas fa-exclamation-triangle" aria-hidden="true"></i>
               { warningIcon.current && warningIcon.current.style.visibility === 'hidden' && <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
               Compile { state.compiledFileName || '<no file selected>' }
