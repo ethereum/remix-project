@@ -162,17 +162,25 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     }
     const contractProperties = contractsDetails[selectedContract] || {}
     const log = <div className="remixui_detailsJSON">
-      {
-        Object.keys(contractProperties).map((propertyName, index) => {
-          const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} direction='top' /></span>
-          const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
+      <TreeView>
+        {
+          Object.keys(contractProperties).map((propertyName, index) => {
+            const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} direction='top' /></span>
+            const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
 
-          return (<div className="remixui_log" key={index}>
-            <div className="remixui_key">{ propertyName } { copyDetails } { questionMark }</div>
-            { insertValue(contractProperties, propertyName) }
-          </div>)
-        })
-      }
+            return (
+              <div className="remixui_log" key={index}>
+                <TreeViewItem
+                  label={
+                    <div className="remixui_key">{ propertyName } { copyDetails } { questionMark }</div>
+                  }>
+                  { insertValue(contractProperties, propertyName) }
+                </TreeViewItem>
+              </div>
+            )
+          })
+        }
+      </TreeView>
     </div>
 
     modal(selectedContract, log, 'Close', null)
