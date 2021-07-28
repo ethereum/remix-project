@@ -7,6 +7,13 @@ This document includes:
  - how to update remix-beta.ethereum.org
  - how to release remix IDE
 
+## RemixD release
+ - update new version number in remixd libs/remixd/package.json
+ - build remixd
+ - cd into ./dist/libs/remixd
+ - npm publish
+ - create bump PR to master.
+
 ## Remix libs release
  - git fetch origin master
  - git checkout origin/master
