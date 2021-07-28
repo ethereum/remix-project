@@ -55,7 +55,7 @@ async function createVm (hardfork) {
   Init VM / Send Transaction
 */
 export async function initVM (st, privateKey) {
-  var VM = await createVm('london')
+  var VM = await createVm('berlin')
   const vm = VM.vm
 
   var address = Address.fromPrivateKey(privateKey)
