@@ -109,7 +109,7 @@ ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], f
   }\
   .ace-remixDark .ace_type {\
   color:#75ceef;\
-  }]\
+  }\
   .ace-remixDark .ace_visibility (\
     color:#f7d777;\
   )\
