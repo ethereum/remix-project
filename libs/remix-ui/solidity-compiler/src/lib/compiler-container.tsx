@@ -449,6 +449,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleNightliesChange = (e) => {
     const checked = e.target.checked
 
+    if (!checked) handleLoadVersion(state.defaultVersion)
     config.set('includeNightlies', checked)
     setState(prevState => {
       return { ...prevState, includeNightlies: checked }
