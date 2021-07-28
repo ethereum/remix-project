@@ -22,6 +22,9 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
       if (opts.version) {
         browser
           .click('*[data-id="compilation-details"]')
+          .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
+          .pause(2000)
+          .click('*[data-id="remixui_treeviewitem_metadata"]')
           .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcompiler"]')
           .pause(2000)
           .click('*[data-id="treeViewDivtreeViewItemcompiler"]')
