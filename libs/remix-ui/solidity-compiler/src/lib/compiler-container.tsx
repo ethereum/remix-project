@@ -301,7 +301,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!isSolFileSelected()) return
 
     _setCompilerVersionFromPragma(currentFile)
-    compileTabLogic.runCompiler()
+    compileTabLogic.runCompiler(hhCompilation)
   }
 
   const _retrieveVersion = (version?) => {
