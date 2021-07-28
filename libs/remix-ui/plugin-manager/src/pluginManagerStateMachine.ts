@@ -39,8 +39,9 @@ export async function PersistActivatedPlugin (pluginComponent: PluginManagerComp
   const activatedPlugins: Profile[] = JSON.parse(persisted)
 
   const newlyActivatedPlugins: Array<Profile> = []
+  const defaultActivated = defaultActivatedPlugins.includes(newPlugin.name) === false
   if (newPlugin) {
-    if (defaultActivatedPlugins.includes(newPlugin.name) === false) {
+    if (defaultActivated) {
       // if this is true then we are sure that the profile name is in localStorage/workspace
       if (activatedPlugins && activatedPlugins.length && !activatedPlugins.includes(newPlugin)) {
         await FetchAndPersistPlugin(pluginComponent, newPlugin, activatedPlugins)
@@ -83,12 +84,25 @@ export async function UpdateInactivePluginList (deactivatedPlugin: Profile, plug
   return tempArray
 }
 
-export function GetNewlyActivatedPlugins () {
-  const profiles = JSON.parse(window.localStorage.getItem('newActivePlugins'))
-  if (profiles && profiles.length > 0) {
+export function GetNewlyActivatedPlugins (pluginComponent: PluginManagerComponent) {
+  const profiles: Profile[] = JSON.parse(window.localStorage.getItem('newActivePlugins'))
+  let isValid: boolean = false
+  // eslint-disable-next-line no-debugger
+  debugger
+  pluginComponent.activeProfiles.forEach(profileName => {
+    isValid = profiles.some(profile => profile.name === profileName)
+  })
+  if (isValid) {
     return profiles
+  } else {
+    profiles.forEach(profile => {
+      if (!pluginComponent.activeProfiles.includes(profile.name)) {
+        RemoveActivatedPlugin(profile.name)
+      }
+    })
+    const newProfiles = JSON.parse(window.localStorage.getItem('newActivePlugins'))
+    return newProfiles
   }
-  return profiles
 }
 
 async function FetchAndPersistPlugin (pluginComponent: PluginManagerComponent, newPlugin: Profile<any>, newlyActivatedPlugins: Profile<any>[]) {
@@ -111,9 +125,10 @@ export function RemoveActivatedPlugin (pluginName: string) {
 }
 
 /**
- * gets the latest list of inactive plugin profiles and persist them
+ * Gets the latest list of inactive plugin profiles and persist them
  * in local storage
  * @param inactivesList Array of inactive plugin profiles
+ * @returns {void}
  */
 export function PersistNewInactivesState (inactivesList: Profile[]) {
   if (inactivesList && inactivesList.length) {
