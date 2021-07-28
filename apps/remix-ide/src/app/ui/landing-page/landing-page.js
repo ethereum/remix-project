@@ -381,7 +381,7 @@ export class LandingPage extends ViewPlugin {
         </button>
       `
     }
-   
+
     // main
     this.solEnv = createLargeButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
     // Featured
