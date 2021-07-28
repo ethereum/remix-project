@@ -1,22 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { PluginManagerSettings, PluginPermissions } from '../../../types'
 import { ModalDialog } from '@remix-ui/modal-dialog'
-import { RemixUiCheckbox } from '@remix-ui/checkbox'
-import { useLocalStorage } from '../../useLocalStorage'
-import { type } from 'os'
 
 interface PermissionSettingsProps {
   pluginSettings: PluginManagerSettings
-}
-
-type DisplayPermissions = {
-  controlPluginName: {
-    controlPluginAction: {
-      pluginName: {
-        allow: boolean
-      }
-    }
-  }
 }
 
 function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
@@ -24,40 +11,21 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
    * Declare component local state
    */
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
-  const [permissions, setPermissions] = useState<PluginPermissions | null>(
+  const [permissions] = useState<PluginPermissions | null>(
     JSON.parse(localStorage.getItem('plugins/permissions') || '{}'))
-  const [showPermissions, setShowPermissions] = useState<PluginPermissions[]>([])
-  const [akwaiPermission, setAkwaiPermission] = useState(false)
+  const [verifyPermission, setVerifyPermission] = useState(false)
   const closeModal = () => setModalVisibility(true)
 
   const displayPermissions = useCallback(() => {
     if (permissions && Object.length > 0) {
-      setAkwaiPermission(true)
+      setVerifyPermission(true)
     }
   }, [permissions])
-  const getTopLevelPluginNames = useCallback(() => {
-    return Object.keys(permissions).map(pluginName => {
-      return pluginName
-    })
-  }, [permissions])
-
-  const getInnerPluginPermissionDetails = useCallback(() => {
-    const showPermissionsCopy = showPermissions
-    getTopLevelPluginNames().forEach(topLevelName => {
-      Object.keys(permissions[topLevelName]).forEach(functionName => {
-        Object.keys(permissions[topLevelName][functionName]).forEach(pluginName => {
-          showPermissionsCopy.push(permissions[topLevelName][functionName][pluginName])
-          setShowPermissions(showPermissionsCopy)
-        })
-      })
-    })
-  }, [getTopLevelPluginNames, permissions, showPermissions])
 
   useEffect(() => {
-    getInnerPluginPermissionDetails()
     displayPermissions()
-  }, [displayPermissions, getInnerPluginPermissionDetails, permissions, showPermissions])
-  console.log('fetched permissions', permissions)
+  }, [displayPermissions, permissions])
+  // console.log('fetched permissions', permissions)
 
   function ShowPluginHeading ({ headingName }) {
     return (
@@ -79,13 +47,23 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     functionName: string,
     topLevelPluginName: string
   }) {
+    const [checkBoxState, setCheckBoxState] = useState(allow)
+
+    useEffect(() => {
+
+    }, [checkBoxState])
+
+    const handleCheckboxClick = () => {
+      setCheckBoxState(!checkBoxState)
+    }
     return (
       <div className="form-group remixui_permissionKey">
         <div className="remixui_checkbox">
           <span className="mr-2">
-            <RemixUiCheckbox
-              onChange={() => {}}
-              checked={allow}
+            <input
+              type="checkbox"
+              onChange={handleCheckboxClick}
+              checked={checkBoxState}
               id={`permission-checkbox-${topLevelPluginName}-${functionName}-${pluginName}`}
               aria-describedby={`module ${pluginName} asks permission for ${functionName}`}
             />
@@ -98,6 +76,11 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
             </label>
           </span>
         </div>
+        <i
+          onClick={() => pluginSettings.clearPersmission(pluginName, topLevelPluginName, functionName)}
+          className="fa fa-trash-alt"
+          data-id={`pluginManagerSettingsRemovePermission-${topLevelPluginName}-${functionName}-${topLevelPluginName}`}
+        />
       </div>
     )
   }
@@ -109,7 +92,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
         hide={modalVisibility}
         title="Plugin Manager Permissions"
       >
-        {akwaiPermission ? (<h4 className="text-center">Current Permission Settings</h4>) : (<h4 className="text-center">No Permission requested yet.</h4>)}
+        {verifyPermission ? (<h4 className="text-center">Current Permission Settings</h4>) : (<h4 className="text-center">No Permission requested yet.</h4>)}
         <form className="remixui_permissionForm" data-id="pluginManagerSettingsPermissionForm">
           <div className="border p-2">
             {
@@ -118,11 +101,11 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
               ))
             }
             {
-              Object.keys(permissions).forEach(topName => {
-                Object.keys(permissions[topName]).map(funcName => {
+              Object.keys(permissions).map(topName => {
+                return Object.keys(permissions[topName]).map(funcName => {
                   return Object.keys(permissions[topName][funcName]).map(pluginName => (
                     <ShowCheckBox
-                      allow={permissions.fileManager.writeFile[pluginName].allow}
+                      allow={permissions[topName][funcName][pluginName].allow}
                       functionName={funcName}
                       pluginName={pluginName}
                       topLevelPluginName={topName}
