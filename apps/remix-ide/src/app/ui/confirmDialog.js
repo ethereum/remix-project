@@ -112,7 +112,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
       el.querySelector('#gasprice').value = gasPriceValue
       onGasPriceChange()
     }
-    if (el.querySelector('#maxfee') && network && network.lastBlock && network.lastBlock.baseFeePerGas && el.querySelector('#maxfee')) {
+    if (el.querySelector('#maxfee') && network && network.lastBlock && network.lastBlock.baseFeePerGas) {
       el.querySelector('#maxfee').value = parseInt(network.lastBlock.baseFeePerGas, 16)
       onMaxFeeChange()
     }
