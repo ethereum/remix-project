@@ -172,7 +172,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               <div className="remixui_log" key={index}>
                 <TreeViewItem
                   label={
-                    <div className="remixui_key">{ propertyName } { copyDetails } { questionMark }</div>
+                    <div data-id={`remixui_treeviewitem_${propertyName}`} className="remixui_key">{ propertyName } { copyDetails } { questionMark }</div>
                   }>
                   { insertValue(contractProperties, propertyName) }
                 </TreeViewItem>
