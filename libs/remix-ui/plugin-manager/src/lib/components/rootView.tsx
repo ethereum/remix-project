@@ -1,5 +1,5 @@
 /* eslint-disable no-debugger */
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import ModuleHeading from './moduleHeading'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { FormStateProps, PluginManagerComponent } from '../../types'
@@ -8,7 +8,7 @@ import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import ActivePluginCard from './ActivePluginCard'
 import InactivePluginCard from './InactivePluginCard'
-import { GetNewlyActivatedPlugins, PersistNewInactivesState } from '../../pluginManagerStateMachine'
+import { PersistNewInactivesState, RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
 
 const initialState: FormStateProps = {
   pname: 'test',
@@ -33,7 +33,10 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const [filterPlugins, setFilterPlugin] = useState('')
   const [activeP, setActiveP] = useState<Profile[]>([])
   const [inactiveP, setInactiveP] = useState<Profile[]>([])
-  const [triggerRefresh, setTriggerRefresh] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setTriggerRefresh] = useState(false)
+  const [validInactiveProfiles] = useState<Profile[]>(JSON.parse(window.localStorage.getItem('updatedInactives')))
+  const [validActiveProfiles] = useState<Profile[]>(JSON.parse(window.localStorage.getItem('newActivePlugins')))
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
   }
@@ -52,6 +55,39 @@ function RootView ({ pluginComponent }: RootViewProps) {
     setTriggerRefresh(true)
   }
 
+  const GetNewlyActivatedPlugins = useCallback((pluginComponent: PluginManagerComponent) => {
+    // const profiles: Profile[] = JSON.parse(window.localStorage.getItem('newActivePlugins'))
+    let isValid: boolean = false
+    // eslint-disable-next-line no-debugger
+    debugger
+    pluginComponent.activeProfiles.forEach(profileName => {
+      isValid = validActiveProfiles.some(profile => profile.name === profileName)
+    })
+    if (isValid) {
+      return validActiveProfiles
+    } else {
+      const profiles = validActiveProfiles // make a copy of state and don't mutate state directly
+      profiles.forEach(profile => {
+        if (!pluginComponent.activeProfiles.includes(profile.name)) {
+          RemoveActivatedPlugin(profile.name)
+        }
+      })
+      const newProfiles = JSON.parse(window.localStorage.getItem('newActivePlugins'))
+      return newProfiles
+    }
+  }, [validActiveProfiles])
+
+  useEffect(() => {
+    if (activeP.length === 0) {
+      const activeProfiles = GetNewlyActivatedPlugins(pluginComponent)
+      if (activeProfiles !== null && activeProfiles.length) {
+        setActiveP(activeProfiles)
+      } else {
+        setActiveP(pluginComponent.activePlugins)
+      }
+    }
+  }, [GetNewlyActivatedPlugins, activeP, pluginComponent, pluginComponent.activePlugins, syncInactiveProfiles])
+
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,43 +97,48 @@ function RootView ({ pluginComponent }: RootViewProps) {
     if (pluginComponent.activePlugins && pluginComponent.activePlugins.length) {
       setActiveP(pluginComponent.activePlugins)
     }
-    // if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
-    //   setInactiveP(pluginComponent.inactivePlugins)
-    // }
-    const validInactiveProfiles: Profile[] = JSON.parse(window.localStorage.getItem('updatedInactives'))
-    if (validInactiveProfiles && validInactiveProfiles.length) {
-      if (inactiveP.length > validInactiveProfiles.length) {
-        setInactiveP(validInactiveProfiles)
-      }
-    }
+
     if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
       setInactiveP(pluginComponent.inactivePlugins)
     }
-  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, activeP, inactiveP, pluginComponent.activeProfiles, pluginComponent])
-
-  useEffect(() => {
-    if (activeP.length === 0) {
-      const activeProfiles = GetNewlyActivatedPlugins()
-      if (activeProfiles !== null && activeProfiles.length) {
-        setActiveP(activeProfiles)
-      } else {
-        setActiveP(pluginComponent.activePlugins)
+    let inactivesCopy = []
+    if (validInactiveProfiles && validInactiveProfiles.length) {
+      if (validActiveProfiles && validActiveProfiles.length) {
+        validActiveProfiles.forEach(active => {
+          inactivesCopy = validInactiveProfiles.filter(inactive => inactive.name !== active.name)
+            .filter(inactive => inactive.displayName !== active.displayName)
+        })
       }
+      console.log('inactivescopy length', validInactiveProfiles.length)
+      if (inactivesCopy.length) setInactiveP(validInactiveProfiles)
     }
-  }, [activeP, pluginComponent.activePlugins, syncInactiveProfiles])
+  }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, pluginComponent.activeProfiles, pluginComponent, validInactiveProfiles, inactiveP.length, validActiveProfiles])
 
-  useEffect(() => {
-    syncInactiveProfiles()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inactiveP, triggerRefresh])
+  // useEffect(() => {
+  //   if (validInactiveProfiles && validInactiveProfiles.length &&
+  //     inactiveP.length > validInactiveProfiles.length) {
+  //     setInactiveP(validInactiveProfiles)
+  //   }
 
-  useEffect(() => {
-    const validInactiveProfiles: Profile[] = JSON.parse(window.localStorage.getItem('updatedInactives'))
-    if (validInactiveProfiles && validInactiveProfiles.length &&
-      inactiveP.length > validInactiveProfiles.length) {
-      setInactiveP(validInactiveProfiles)
-    }
-  }, [inactiveP, triggerRefresh])
+  //   let inactivesCopy = []
+  //   if (validInactiveProfiles && validInactiveProfiles.length) {
+  //     if (inactiveP.length > validInactiveProfiles.length) {
+  //       if (validActiveProfiles && validActiveProfiles.length) {
+  //         validActiveProfiles.forEach(active => {
+  //           inactivesCopy = validInactiveProfiles.filter(inactive => inactive !== active)
+  //             .filter(inactive => inactive.displayName !== active.displayName)
+  //         })
+  //       }
+  //       console.log('inactivescopy length', validInactiveProfiles.length)
+  //       if (inactivesCopy.length) setInactiveP(validInactiveProfiles)
+  //     }
+  //   }
+  // }, [inactiveP, triggerRefresh, validActiveProfiles, validInactiveProfiles])
+
+  // useEffect(() => {
+  //   syncInactiveProfiles()
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [inactiveP, triggerRefresh])
 
   return (
     <Fragment>
