@@ -9,12 +9,13 @@ This document includes:
 
 ## RemixD release
  - update new version number in remixd libs/remixd/package.json
- - build remixd
+ - nx build remixd
  - cd into ./dist/libs/remixd
  - npm publish
  - create bump PR to master.
 
 ## Remix libs release
+(remove dist and login to npm)
  - git fetch origin master
  - git checkout origin/master
  - git checkout -b bumpLibsVersion
