@@ -58,8 +58,6 @@ function RootView ({ pluginComponent }: RootViewProps) {
   const GetNewlyActivatedPlugins = useCallback((pluginComponent: PluginManagerComponent) => {
     // const profiles: Profile[] = JSON.parse(window.localStorage.getItem('newActivePlugins'))
     let isValid: boolean = false
-    // eslint-disable-next-line no-debugger
-    debugger
     pluginComponent.activeProfiles.forEach(profileName => {
       isValid = validActiveProfiles.some(profile => profile.name === profileName)
     })
@@ -89,11 +87,6 @@ function RootView ({ pluginComponent }: RootViewProps) {
   }, [GetNewlyActivatedPlugins, activeP, pluginComponent, pluginComponent.activePlugins, syncInactiveProfiles])
 
   useEffect(() => {
-    pluginComponent.getAndFilterPlugins(filterPlugins)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterPlugins])
-
-  useEffect(() => {
     if (pluginComponent.activePlugins && pluginComponent.activePlugins.length) {
       setActiveP(pluginComponent.activePlugins)
     }
@@ -113,6 +106,11 @@ function RootView ({ pluginComponent }: RootViewProps) {
       if (inactivesCopy.length) setInactiveP(validInactiveProfiles)
     }
   }, [pluginComponent.activePlugins, pluginComponent.inactivePlugins, pluginComponent.activeProfiles, pluginComponent, validInactiveProfiles, inactiveP.length, validActiveProfiles])
+
+  useEffect(() => {
+    pluginComponent.getAndFilterPlugins(filterPlugins)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterPlugins])
 
   // useEffect(() => {
   //   if (validInactiveProfiles && validInactiveProfiles.length &&
@@ -142,6 +140,50 @@ function RootView ({ pluginComponent }: RootViewProps) {
 
   return (
     <Fragment>
+      <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
+        <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
+          <input
+            type="text"
+            onChange={(event) => {
+              setFilterPlugin(event.target.value.toLowerCase())
+            }}
+            className="form-control"
+            placeholder="Search"
+            data-id="pluginManagerComponentSearchInput"
+          />
+          <button onClick={openModal} className="remixui_pluginSearchButton btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
+            Connect to a Local Plugin
+          </button>
+        </header>
+        <section data-id="pluginManagerComponentPluginManagerSection">
+          {(activeP && activeP.length > 0) && <Fragment>
+            <ModuleHeading headingLabel="Active Modules" count={activeP.length} />
+            {activeP.map((profile) => (
+              <ActivePluginCard
+                buttonText="Deactivate"
+                key={profile.name}
+                profile={profile}
+                syncInactiveProfiles={syncInactiveProfiles}
+                pluginComponent={pluginComponent}
+              />
+            ))}
+          </Fragment>
+          }
+          {inactiveP && <Fragment>
+            <ModuleHeading headingLabel="Inactive Modules" count={inactiveP.length} />
+            {inactiveP.map((profile) => (
+              <InactivePluginCard
+                buttonText="Activate"
+                key={profile.name}
+                profile={profile}
+                pluginComponent={pluginComponent}
+              />
+            ))}
+          </Fragment>
+          }
+        </section>
+        <PermisssionsSettings pluginSettings={pluginComponent.pluginSettings}/>
+      </div>
       <form id="local-plugin-form">
         <ModalDialog
           handleHide={closeModal}
@@ -278,53 +320,8 @@ function RootView ({ pluginComponent }: RootViewProps) {
               <label className="form-check-label" htmlFor="none">None</label>
             </div>
           </div>
-
         </ModalDialog>
       </form>
-      <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
-        <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
-          <input
-            type="text"
-            onChange={(event) => {
-              setFilterPlugin(event.target.value.toLowerCase())
-            }}
-            className="form-control"
-            placeholder="Search"
-            data-id="pluginManagerComponentSearchInput"
-          />
-          <button onClick={openModal} className="remixui_pluginSearchButton btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
-            Connect to a Local Plugin
-          </button>
-        </header>
-        <section data-id="pluginManagerComponentPluginManagerSection">
-          {(activeP && activeP.length > 0) && <Fragment>
-            <ModuleHeading headingLabel="Active Modules" count={activeP.length} />
-            {activeP.map((profile) => (
-              <ActivePluginCard
-                buttonText="Deactivate"
-                key={profile.name}
-                profile={profile}
-                syncInactiveProfiles={syncInactiveProfiles}
-                pluginComponent={pluginComponent}
-              />
-            ))}
-          </Fragment>
-          }
-          {inactiveP && <Fragment>
-            <ModuleHeading headingLabel="Inactive Modules" count={inactiveP.length} />
-            {inactiveP.map((profile) => (
-              <InactivePluginCard
-                buttonText="Activate"
-                key={profile.name}
-                profile={profile}
-                pluginComponent={pluginComponent}
-              />
-            ))}
-          </Fragment>
-          }
-        </section>
-        <PermisssionsSettings pluginSettings={pluginComponent.pluginSettings}/>
-      </div>
     </Fragment>
   )
 }

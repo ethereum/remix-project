@@ -84,26 +84,26 @@ export async function UpdateInactivePluginList (deactivatedPlugin: Profile, plug
   return tempArray
 }
 
-export function GetNewlyActivatedPlugins (pluginComponent: PluginManagerComponent) {
-  const profiles: Profile[] = JSON.parse(window.localStorage.getItem('newActivePlugins'))
-  let isValid: boolean = false
-  // eslint-disable-next-line no-debugger
-  debugger
-  pluginComponent.activeProfiles.forEach(profileName => {
-    isValid = profiles.some(profile => profile.name === profileName)
-  })
-  if (isValid) {
-    return profiles
-  } else {
-    profiles.forEach(profile => {
-      if (!pluginComponent.activeProfiles.includes(profile.name)) {
-        RemoveActivatedPlugin(profile.name)
-      }
-    })
-    const newProfiles = JSON.parse(window.localStorage.getItem('newActivePlugins'))
-    return newProfiles
-  }
-}
+// export function GetNewlyActivatedPlugins (pluginComponent: PluginManagerComponent) {
+//   const profiles: Profile[] = JSON.parse(window.localStorage.getItem('newActivePlugins'))
+//   let isValid: boolean = false
+//   // eslint-disable-next-line no-debugger
+//   debugger
+//   pluginComponent.activeProfiles.forEach(profileName => {
+//     isValid = profiles.some(profile => profile.name === profileName)
+//   })
+//   if (isValid) {
+//     return profiles
+//   } else {
+//     profiles.forEach(profile => {
+//       if (!pluginComponent.activeProfiles.includes(profile.name)) {
+//         RemoveActivatedPlugin(profile.name)
+//       }
+//     })
+//     const newProfiles = JSON.parse(window.localStorage.getItem('newActivePlugins'))
+//     return newProfiles
+//   }
+// }
 
 async function FetchAndPersistPlugin (pluginComponent: PluginManagerComponent, newPlugin: Profile<any>, newlyActivatedPlugins: Profile<any>[]) {
   try {
