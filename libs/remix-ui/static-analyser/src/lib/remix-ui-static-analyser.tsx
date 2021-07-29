@@ -89,6 +89,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       dispatch({ type: '', payload: {} })
       // Show 'Enable Slither Analysis' checkbox
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
+      else {
+        setShowSlither('hidden')
+        setSlitherEnabled(false)
+      }
     })
     return () => { }
   }, [props])
@@ -245,8 +249,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
-              }).catch((error) => {
-                console.log('Error found:', error) // This should be removed once testing done
+              }).catch(() => {
                 props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
                 showWarnings(warningMessage, 'warningModuleName')
               })
