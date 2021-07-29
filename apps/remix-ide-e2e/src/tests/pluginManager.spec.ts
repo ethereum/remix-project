@@ -17,6 +17,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .pause(3000)
       .click('*[plugin="pluginManager"]')
+      .pause(3000)
       .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
   },
