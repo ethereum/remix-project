@@ -361,6 +361,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings
   ])
 
+  const queryParams = new QueryParams()
+  const params = queryParams.get()
+
   const onAcceptMatomo = () => {
     _paq.push(['forgetUserOptOut'])
     // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
@@ -368,12 +371,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings.updateMatomoAnalyticsChoice(true)
     const el = document.getElementById('modal-dialog')
     el.parentElement.removeChild(el)
+    startWalkthroughService()
   }
   const onDeclineMatomo = () => {
     settings.updateMatomoAnalyticsChoice(false)
     _paq.push(['optUserOut'])
     const el = document.getElementById('modal-dialog')
     el.parentElement.removeChild(el)
+    startWalkthroughService()
+  }
+
+  const startWalkthroughService = () => {
+    const walkthroughService = new WalkthroughService(localStorage)
+    if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
+      walkthroughService.start()
+    }
   }
 
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
@@ -407,6 +419,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         fn: null
       }
     )
+  } else {
+    startWalkthroughService()
   }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
@@ -469,9 +483,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['settings'])
   await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
 
-  const queryParams = new QueryParams()
-  const params = queryParams.get()
-
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
     appManager.activatePlugin(workspace).then(async () => {
@@ -505,9 +516,4 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   if (params.embed) framingService.embed()
   framingService.start(params)
-
-  const walkthroughService = new WalkthroughService(localStorage)
-  if (!params.code) {
-    walkthroughService.start()
-  }
 }
