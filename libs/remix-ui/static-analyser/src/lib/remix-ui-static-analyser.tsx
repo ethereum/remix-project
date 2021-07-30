@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useState, useReducer, CSSProperties } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import remixLib from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -401,7 +401,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           />
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
         </div>
-        <div className="d-flex" id="enableSlitherAnalysis">
+        <div className="d-flex" id="enableSlitherAnalysis" style={{ visibility: showSlither} as CSSProperties }>
           <RemixUiCheckbox
             id="enableSlither"
             inputType="checkbox"
@@ -409,8 +409,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             checked={slitherEnabled}
             label="Enable Slither Analysis"
             onChange={() => {}}
-            visibility = {showSlither}
           />
+          <a href="https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis" target="_blank"><i className="ml-2 fas fa-info" title="Know how to use Slither Analysis"></i></a>
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
