@@ -401,7 +401,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           />
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
         </div>
-        <div className="d-flex" id="enableSlitherAnalysis" style={{ visibility: showSlither} as CSSProperties }>
+        <div className="d-flex" id="enableSlitherAnalysis" style={{ visibility: showSlither } as CSSProperties }>
           <RemixUiCheckbox
             id="enableSlither"
             inputType="checkbox"
