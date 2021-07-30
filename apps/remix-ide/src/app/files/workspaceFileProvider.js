@@ -80,8 +80,16 @@ class WorkspaceFileProvider extends FileProvider {
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
   }
 
-  createWorkspace (name) {
+  async createWorkspace (name) {
     if (!name) name = 'default_workspace'
+    this.setWorkspace(name)
+    const workspacePath = 'browser/' + this.workspacesPath + '/' + name
+    const workspaceRootPath = 'browser/' + this.workspacesPath
+    const workspaceRootPathExists = await super.exists(workspaceRootPath)
+    const workspacePathExists = await super.exists(workspacePath)
+
+    if (!workspaceRootPathExists) super.createDir(workspaceRootPath)
+    if (!workspacePathExists) super.createDir(workspacePath)
     this.event.emit('createWorkspace', name)
   }
 }
