@@ -410,7 +410,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Enable Slither Analysis"
             onChange={() => {}}
           />
-          <a href="https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis" target="_blank"><i className="ml-2 fas fa-info" title="Know how to use Slither Analysis"></i></a>
+          <a href="https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis" target="_blank">
+            <i className="ml-3 fas fa-info" title="Know how to use Slither Analysis"></i>
+          </a>
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
