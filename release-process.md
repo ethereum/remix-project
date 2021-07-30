@@ -1,6 +1,7 @@
 # Release process 
 
 This document includes:
+ - how to release the remixd
  - how to publish remix libs to NPM
  - how to update remix.ethereum.org
  - how to update remix-alpha.ethereum.org
