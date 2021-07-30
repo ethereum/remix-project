@@ -34,6 +34,16 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         }
       }
     }
+
+    case 'SET_WORKSPACES': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          workspaces: Array.isArray(action.payload) ? action.payload : state.browser.workspaces
+        }
+      }
+    }
     default:
       throw new Error()
   }
