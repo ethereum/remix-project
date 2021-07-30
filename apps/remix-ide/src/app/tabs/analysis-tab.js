@@ -50,9 +50,7 @@ class AnalysisTab extends ViewPlugin {
   renderComponent () {
     ReactDOM.render(
       <RemixUiStaticAnalyser
-        analysisRunner={this.runner}
         registry={this.registry}
-        staticanalysis={this.staticanalysis}
         analysisModule={this}
         event={this.event}
       />,
