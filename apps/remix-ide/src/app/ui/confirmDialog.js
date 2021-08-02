@@ -26,15 +26,25 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
 
   const onMaxFeeChange = function () {
     var maxFee = el.querySelector('#maxfee').value
+    var confirmBtn = document.querySelector('#modal-footer-ok')
     var maxPriorityFee = el.querySelector('#maxpriorityfee').value
     if (parseInt(network.lastBlock.baseFeePerGas, 16) > parseInt(maxFee)) {
-      el.querySelector('#txfee').innerHTML = 'Transaction is invalid. Base fee should not be bigger than Max fee'
+      el.querySelector('#txfee').innerHTML = 'Transaction is invalid. Max fee should not be less than Base fee'
       el.gasPriceStatus = false
+      confirmBtn.hidden = true
       return
-    } else el.gasPriceStatus = true
+    } else {
+      el.gasPriceStatus = true
+      confirmBtn.hidden = false
+    }
 
     newGasPriceCb(maxFee, (txFeeText, priceStatus) => {
       el.querySelector('#txfee').innerHTML = txFeeText
+      if (priceStatus) {
+        confirmBtn.hidden = false
+      } else {
+        confirmBtn.hidden = true
+      }
       el.gasPriceStatus = priceStatus
       el.txFee = { maxFee, maxPriorityFee, baseFeePerGas: network.lastBlock.baseFeePerGas }
     })
@@ -42,8 +52,9 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
 
   const el = yo`
     <div>
-      <div>You are about to create a transaction on ${network.name}. Confirm the details to send the info to your provider.
-        <br>The provider for many users is MetaMask. The provider will ask you to sign the transaction before it is sent to ${network.name}.</div>
+      <div class="text-dark">You are about to create a transaction on ${network.name} Network. Confirm the details to send the info to your provider.
+        <br>The provider for many users is MetaMask. The provider will ask you to sign the transaction before it is sent to ${network.name} Network.
+      </div>
       <div class="mt-3 ${css.txInfoBox}">
         <div>
           <span class="text-dark mr-2">From:</span>
@@ -53,7 +64,11 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
           <span class="text-dark mr-2">To:</span>
           <span>${tx.to ? tx.to : '(Contract Creation)'}</span>
         </div>
-        <div>
+        <div class="d-flex align-items-center">
+          <span class="text-dark mr-2">Data:</span>
+          <pre class="${css.wrapword} mb-0">${tx.data && tx.data.length > 50 ? tx.data.substring(0, 49) + '...' : tx.data} ${copyToClipboard(() => { return tx.data })}</pre>
+        </div>
+        <div class="mb-3">
           <span class="text-dark mr-2">Amount:</span>
           <span>${amount} Ether</span>
         </div>
@@ -65,36 +80,32 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
           <span class="text-dark mr-2">Gas limit:</span>
           <span>${tx.gas}</span>
         </div>
-        <div>
-          <span class="text-dark mr-2">Max transaction fee:</span>
-          <span id='txfee'></span>
-        </div>
         ${
-          network.lastBlock.baseFeePerGas ? yo`<div class="align-items-center my-1">
-            <div>
-              <span class="text-dark mr-2">Max Priority fee:</span>
-              <input class="form-control mr-1" style='height: 28px;' value="0" id='maxpriorityfee' />
-              <span>Gwei</span>
+          network.lastBlock.baseFeePerGas ? yo`
+          <div class="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
+            <div class='d-flex'>
+              <span class="text-dark mr-2 text-nowrap">Max Priority fee:</span>
+              <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' value="0" id='maxpriorityfee' />
+              <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
             </div>            
-            <div class="text-dark mr-2 font-italic">Represents the part of the tx fee that goes to the miner</div>
           </div>
-          <div class="align-items-center my-1">
-            <div>
-              <span class="text-dark mr-2">Max fee:</span> 
-              <input class="form-control mr-1" style='height: 28px;' id='maxfee' oninput=${onMaxFeeChange} />
-              <span>Gwei</span>            
+          <div class="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
+            <div class='d-flex'>
+              <span class="text-dark mr-2 text-nowrap">Max fee (Not less than base fee - ${parseInt(network.lastBlock.baseFeePerGas, 16)} Gwei):</span>
+              <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' id='maxfee' oninput=${onMaxFeeChange} />
+              <span>Gwei</span>
+              <span class="text-dark ml-2"></span>
             </div>
-            <div class="text-dark mr-2 font-italic">Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.</div>
           </div>`
             : yo`<div class="d-flex align-items-center my-1">
-            <span class="text-dark mr-2">Gas price:</span>
-            <input class="form-control mr-1" style='width: 40px; height: 28px;' id='gasprice' oninput=${onGasPriceChange} />
+            <span class="text-dark mr-2 text-nowrap">Gas price:</span>
+            <input class="form-control mr-1 text-right" style='width: 40px; height: 28px;' id='gasprice' oninput=${onGasPriceChange} />
             <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> for current gas price info.)</span>
           </div>`
         }
-        <div class="d-flex align-items-center">
-          <span class="text-dark mr-2 mb-3">Data:</span>
-          <pre class=${css.wrapword}>${tx.data && tx.data.length > 50 ? tx.data.substring(0, 49) + '...' : tx.data} ${copyToClipboard(() => { return tx.data })}</pre>
+        <div class="mb-3">
+          <span class="text-dark mr-2">Max transaction fee:</span>
+          <span class="text-warning" id='txfee'></span>
         </div>
       </div>
       <div class="d-flex py-1 align-items-center custom-control custom-checkbox ${css.checkbox}">
