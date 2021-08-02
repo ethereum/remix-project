@@ -94,6 +94,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setSlitherEnabled(false)
       }
     })
+    props.analysisModule.on('manager', 'pluginDeactivated', (plugin) => {
+      // Reset warning state
+      setWarningState([])
+      // Reset badge
+      props.event.trigger('staticAnaysisWarning', [])
+      // Reset state
+      dispatch({ type: '', payload: {} })
+      // Hide 'Enable Slither Analysis' checkbox
+      if (plugin.name === 'remixd') {
+        setShowSlither('hidden')
+        setSlitherEnabled(false)
+      }
+    })
     return () => { }
   }, [props])
 
