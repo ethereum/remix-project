@@ -575,6 +575,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             isHardHatProject && <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
+              <a href="https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation" target="_blank">
+                <i className="ml-2 fas fa-info" title="Know how to use Hardhat Compilation"></i>
+              </a>
             </div>
           }
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
