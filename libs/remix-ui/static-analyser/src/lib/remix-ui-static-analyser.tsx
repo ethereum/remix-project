@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useState, useReducer, CSSProperties } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import remixLib from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -89,6 +89,23 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       dispatch({ type: '', payload: {} })
       // Show 'Enable Slither Analysis' checkbox
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
+      else {
+        setShowSlither('hidden')
+        setSlitherEnabled(false)
+      }
+    })
+    props.analysisModule.on('manager', 'pluginDeactivated', (plugin) => {
+      // Hide 'Enable Slither Analysis' checkbox
+      if (plugin.name === 'remixd') {
+        // Reset warning state
+        setWarningState([])
+        // Reset badge
+        props.event.trigger('staticAnaysisWarning', [])
+        // Reset state
+        dispatch({ type: '', payload: {} })
+        setShowSlither('hidden')
+        setSlitherEnabled(false)
+      }
     })
     return () => { }
   }, [props])
@@ -245,8 +262,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
-              }).catch((error) => {
-                console.log('Error found:', error) // This should be removed once testing done
+              }).catch(() => {
                 props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
                 showWarnings(warningMessage, 'warningModuleName')
               })
@@ -398,7 +414,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           />
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
         </div>
-        <div className="d-flex" id="enableSlitherAnalysis">
+        <div className="d-flex" id="enableSlitherAnalysis" style={{ visibility: showSlither } as CSSProperties }>
           <RemixUiCheckbox
             id="enableSlither"
             inputType="checkbox"
@@ -406,8 +422,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             checked={slitherEnabled}
             label="Enable Slither Analysis"
             onChange={() => {}}
-            visibility = {showSlither}
           />
+          <a href="https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis" target="_blank">
+            <i className="ml-3 fas fa-info" title="Know how to use Slither Analysis"></i>
+          </a>
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
