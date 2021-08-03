@@ -1,21 +1,31 @@
+import { getSolidity } from '@remix-ui/plugin-manager'
 import { Profile } from '@remixproject/plugin-utils'
-import React, { useState } from 'react'
-import { PersistActivatedPlugin } from '../../pluginManagerStateMachine'
+import React, { Dispatch, useState } from 'react'
 import { PluginManagerComponent } from '../../types'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
   profile: Profile & {
     icon?: string
   }
-  pluginComponent: PluginManagerComponent
   buttonText: string
+  activatePlugin: (plugin: Profile) => void
+  inactivePlugins: Profile[]
+  setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
+  setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
+  activePlugins: Profile[]
+  pluginComponent: PluginManagerComponent
 }
 
 // eslint-disable-next-line no-empty-pattern
 function InactivePluginCard ({
   profile,
-  pluginComponent,
-  buttonText
+  buttonText,
+  activatePlugin,
+  inactivePlugins,
+  activePlugins,
+  setInactivePlugins,
+  setActivePlugins,
+  pluginComponent
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
@@ -29,7 +39,6 @@ function InactivePluginCard ({
   ) : (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) ? (
     <small title="Version Beta" className="remixui_versionWarning plugin-version">beta</small>
   ) : null)
-  // const [stateManager] = useState<PluginManagerStateMachine>(new PluginManagerStateMachine(pluginComponent))
 
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
@@ -43,9 +52,49 @@ function InactivePluginCard ({
             </div>
             {
               <button
-                onClick={() => {
-                  pluginComponent.activateP(profile.name)
-                  PersistActivatedPlugin(pluginComponent, profile)
+                onClick={async () => {
+                  activatePlugin(profile)
+                  // eslint-disable-next-line no-debugger
+                  debugger
+                  const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
+                  const workspacePlugins = JSON.parse(localStorage.getItem('workspace'))
+                  const tempList = []
+
+                  if (actives && actives.length >= 0) {
+                    actives.forEach(active => {
+                      if (pluginComponent.activeProfiles.includes(active.name) === false) {
+                        const tempActives = actives.filter(target => target.name !== active.name)
+                        tempList.push(...tempActives)
+                      }
+                    })
+                    if (activePlugins && activePlugins.length > 0) {
+                      tempList.push(...activePlugins)
+                    }
+                    if (workspacePlugins.includes('solidity') === true && workspacePlugins.includes('solidity-logic') === true) {
+                      if (pluginComponent.activeProfiles.includes('solidity') && pluginComponent.activeProfiles.includes('solidity-logic')) {
+                        const result = await getSolidity(pluginComponent)
+                        tempList.push(...result)
+                      }
+                    }
+                  }
+                  tempList.push(...actives, profile)
+                  localStorage.setItem('newActivePlugins', JSON.stringify(tempList))
+                  setActivePlugins([...tempList, profile])
+                  const temp = inactivePlugins.filter(plugin => plugin.name !== profile.name).filter(plugin => plugin.name !== 'solidity' && plugin.name !== 'solidity-logic')
+                  setInactivePlugins(temp)
+                  localStorage.setItem('updatedInactives', JSON.stringify(temp))
+                  // const newActives = JSON.parse(localStorage.getItem('newActivePlugins'))
+                  // // const updatedInactives = JSON.parse(localStorage.getItem('updatedInactives'))
+                  // if (newActives === null || newActives.length === 0) {
+                  //       localStorage.setItem('newActivePlugins', JSON.stringify(getSolidity(pluginComponent)))
+                  //       const filteredInactives = pluginComponent.inactivePlugins.filter(inactive => inactive.name !== 'solidity' &&
+                  //       inactive.name !== 'solidity-logic')
+                  //       localStorage.setItem('updatedInactives', JSON.stringify(filteredInactives))
+                  //     }
+                  //   }
+                  // }
+                  // check to make sure that this activated profile is removed from inactives
+                  // this should happen higher up in use effect at the root checking for the length of trackActiveProfiles
                 }}
                 className="btn btn-success btn-sm"
                 data-id={`pluginManagerComponentActivateButton${profile.name}`}

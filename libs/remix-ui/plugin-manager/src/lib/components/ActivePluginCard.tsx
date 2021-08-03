@@ -1,23 +1,28 @@
 import { Profile } from '@remixproject/plugin-utils'
-import React, { useEffect, useState } from 'react'
-import { RemoveActivatedPlugin } from '../../pluginManagerStateMachine'
-import { PluginManagerComponent } from '../../types'
+import React, { Dispatch, useState } from 'react'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
-  profile: Profile & {
-    icon?: string
-  }
-  pluginComponent: PluginManagerComponent
+  // profile: Profile & {
+  //   icon?: string
+  // }
+  profile: any
   buttonText: string
-  syncInactiveProfiles: () => void
+  deactivatePlugin: (pluginName: string) => void
+  inactivePlugins: Profile[]
+  setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
+  setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
+  activePlugins: Profile[]
 }
 
 // eslint-disable-next-line no-empty-pattern
 function ActivePluginCard ({
   profile,
-  pluginComponent,
   buttonText,
-  syncInactiveProfiles
+  deactivatePlugin,
+  inactivePlugins,
+  activePlugins,
+  setInactivePlugins,
+  setActivePlugins
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
@@ -30,11 +35,6 @@ function ActivePluginCard ({
   ) : (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) ? (
     <small title="Version Beta" className="remixui_versionWarning plugin-version">beta</small>
   ) : null)
-  const [triggerRefresh, setTriggerRefresh] = useState(false)
-
-  useEffect(() => {
-
-  }, [triggerRefresh])
 
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
@@ -46,25 +46,32 @@ function ActivePluginCard ({
               {docLink}
               {versionWarning}
             </div>
-            {
-              <button
-                onClick={() => {
-                  // pluginComponent.deactivateP(profile.name)
-                  pluginComponent.call('manager', 'deactivatePlugin', profile.name)
-                  pluginComponent._paq.push(['trackEvent', 'manager', 'deactivate', profile.name])
-                  RemoveActivatedPlugin(profile.name)
-                  syncInactiveProfiles()
-                }}
-                className="btn btn-secondary btn-sm"
-                data-id={`pluginManagerComponentDeactivateButton${profile.name}`}
-              >
-                {buttonText}
-              </button>
-            }
+            {<button
+              onClick={() => {
+                deactivatePlugin(profile.name)
+                const inactivesList = JSON.parse(localStorage.getItem('updatedInactives'))
+                if (inactivesList && inactivesList.length > 0) {
+                  const temp = [...inactivesList, profile]
+                  localStorage.setItem('updatedInactives', JSON.stringify(temp))
+                  setInactivePlugins(temp)
+                }
+                // localStorage.setItem('updatedInactives', JSON.stringify(inactivePlugins))
+                const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
+                if (actives && actives.length) {
+                  const newList = actives.filter(active => active.name !== profile.name)
+                  localStorage.setItem('newActivePlugins', JSON.stringify(newList))
+                  setActivePlugins(newList)
+                }
+              } }
+              className="btn btn-secondary btn-sm"
+              data-id={`pluginManagerComponentDeactivateButton${profile.name}`}
+            >
+              {buttonText}
+            </button>}
           </h6>
         </div>
         <div className="remixui_description d-flex text-body plugin-text mb-2">
-          { profile.icon ? <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/> : null }
+          {profile.icon ? <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon" /> : null}
           <span className="remixui_descriptiontext">{profile.description}</span>
         </div>
       </article>

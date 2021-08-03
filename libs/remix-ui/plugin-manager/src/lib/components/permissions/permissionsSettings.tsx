@@ -17,7 +17,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   const closeModal = () => setModalVisibility(true)
 
   const displayPermissions = useCallback(() => {
-    if (permissions && Object.length > 0) {
+    if (permissions && Object.keys(permissions).length > 0) {
       setVerifyPermission(true)
     }
   }, [permissions])
