@@ -424,7 +424,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onChange={() => {}}
           />
           <a href="https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis" target="_blank">
-            <i className="ml-3 fas fa-info" title="Know how to use Slither Analysis"></i>
+            <i className="ml-3 fas fa-info" title="Learn how to use Slither Analysis"></i>
           </a>
         </div>
       </div>
