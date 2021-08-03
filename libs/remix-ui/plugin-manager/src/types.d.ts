@@ -149,19 +149,13 @@ declare class LocalPlugin {
 }
 
 export interface PluginManagerContextProviderProps {
-  appManager: RemixAppManager
+  children: React.ReactNode
   pluginComponent: PluginManagerComponent
-  pluginSettings: PluginManagerSettings
-  activePluginNames: string[]
-  isActive?: (name: string) => boolean
-  filterPlugins: () => void
-  profile: Partial<PluginManagerProfile>
-  defaultProfile: DefaultLocalPlugin
-  headingLabel: string
 }
 
 export interface RemixUiPluginManagerProps {
-  appManager: RemixAppManager
+  inactivePlugins: Profile[]
+  activePlugins: Profile[]
   pluginComponent: PluginManagerComponent
 }
 /** @class Reference loaders.

@@ -87,10 +87,17 @@ class PluginManagerComponent extends ViewPlugin {
    * @param {string} name name of Plugin
    */
   deactivateP (name) {
-    debugger
+    console.log('deactivateP has just been called')
     this.call('manager', 'deactivatePlugin', name)
+    this.appManager.event.on('deactivate', () => {
+      console.log('this.call HAS JUST BEEN CALLED')
+      this.getAndFilterPlugins()
+      console.log('GETANDFILTERPLUGINS HAS JUST BEEN CALLED!')
+      this.triggerEngineEventListener()
+      console.log('TRIGGERENGINEEVENTLISTENER HAS JUST BEEN CALLED')
+    })
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
-    this.renderComponent()
+    console.log('MATOMO TRACKING IS DONE!')
   }
 
   onActivation () {
@@ -102,6 +109,8 @@ class PluginManagerComponent extends ViewPlugin {
     ReactDOM.render(
       <RemixUiPluginManager
         pluginComponent={this}
+        activePlugins={this.activePlugins}
+        inactivePlugins={this.inactivePlugins}
       />,
       document.getElementById('pluginManager'))
   }
@@ -163,7 +172,6 @@ class PluginManagerComponent extends ViewPlugin {
     })
     this.activePlugins = activatedPlugins
     this.inactivePlugins = deactivatedPlugins
-    console.log('The Length of appManager.actives is :', this.activeProfiles)
     this.renderComponent()
   }
 }
