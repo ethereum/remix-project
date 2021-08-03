@@ -35,7 +35,6 @@ export const Workspace = (props: WorkspaceProps) => {
   const [state, setState] = useState({
     workspaces: [],
     reset: false,
-    currentWorkspace: NO_WORKSPACE,
     hideRemixdExplorer: true,
     displayNewFile: false,
     externalUploads: null,
@@ -53,7 +52,7 @@ export const Workspace = (props: WorkspaceProps) => {
     loadingLocalhost: false,
     toasterMsg: ''
   })
-  const [currentWorkspace, setCurrentWorkspace] = useState<string>('')
+  const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [fs, dispatch] = useReducer(browserReducer, browserInitialState)
 
   useEffect(() => {
@@ -102,14 +101,14 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   props.request.getCurrentWorkspace = () => {
-    return { name: state.currentWorkspace, isLocalhost: state.currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${state.currentWorkspace}` }
+    return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${currentWorkspace}` }
   }
 
   const localhostDisconnect = () => {
-    if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
+    if (currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
     // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
     else {
-      setWorkspace(state.currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
+      setWorkspace(currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
       props.fileManager.setMode('browser')
     }
   }
@@ -161,7 +160,7 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceRenameInput.current.value
 
     try {
-      await props.renameWorkspace(state.currentWorkspace, workspaceName)
+      await props.renameWorkspace(currentWorkspace, workspaceName)
       setWorkspace(workspaceName)
       props.workspaceRenamed({ name: workspaceName })
     } catch (e) {
@@ -188,8 +187,8 @@ export const Workspace = (props: WorkspaceProps) => {
   const onFinishDeleteWorkspace = async () => {
     await props.fileManager.closeAllFiles()
     const workspacesPath = props.workspace.workspacesPath
-    props.browser.remove(workspacesPath + '/' + state.currentWorkspace)
-    const name = state.currentWorkspace
+    props.browser.remove(workspacesPath + '/' + currentWorkspace)
+    const name = currentWorkspace
     setWorkspace(NO_WORKSPACE)
     props.workspaceDeleted({ name })
   }
@@ -284,7 +283,7 @@ export const Workspace = (props: WorkspaceProps) => {
     return (
       <>
         <span>{ state.modal.message }</span>
-        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
   }
@@ -324,7 +323,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Create'>
                 </span>
                 <span
-                  hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspaceRename'
                   data-id='workspaceRename'
                   onClick={(e) => {
@@ -335,7 +334,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Rename'>
                 </span>
                 <span
-                  hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspaceDelete'
                   data-id='workspaceDelete'
                   onClick={(e) => {
@@ -353,8 +352,8 @@ export const Workspace = (props: WorkspaceProps) => {
                       return <option key={index} value={folder}>{folder}</option>
                     })
                 }
-                <option value={LOCALHOST}>{state.currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
-                { state.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
+                <option value={LOCALHOST}>{currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
+                { fs.browser.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
               </select>
             </div>
           </header>
@@ -362,9 +361,9 @@ export const Workspace = (props: WorkspaceProps) => {
         <div className='remixui_fileExplorerTree'>
           <div>
             <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-              { state.hideRemixdExplorer && state.currentWorkspace && state.currentWorkspace !== NO_WORKSPACE && state.currentWorkspace !== LOCALHOST &&
+              { state.hideRemixdExplorer && currentWorkspace && currentWorkspace !== NO_WORKSPACE && currentWorkspace !== LOCALHOST &&
                   <FileExplorer
-                    name={state.currentWorkspace}
+                    name={currentWorkspace}
                     registry={props.registry}
                     filesProvider={props.workspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
