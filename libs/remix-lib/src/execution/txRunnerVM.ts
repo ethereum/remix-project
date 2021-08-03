@@ -72,7 +72,7 @@ export class TxRunnerVM {
         }
       }
 
-      const EIP1559 = this.commonContext.hardfork() !== 'berlin'
+      const EIP1559 = this.commonContext.hardfork() !== 'berlin' // berlin is the only pre eip1559 fork that we handle.
       let tx
       if (!EIP1559) {
         tx = Transaction.fromTxData({

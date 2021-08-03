@@ -420,6 +420,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         fn: null
       }
     )
+  } else {
+    startWalkthroughService()
   }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
@@ -515,6 +517,4 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   if (params.embed) framingService.embed()
   framingService.start(params)
-
-  startWalkthroughService()
 }
