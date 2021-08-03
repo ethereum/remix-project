@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer, CSSProperties } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import remixLib from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -7,7 +7,7 @@ import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
 import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
 const utils = remixLib.util
 
