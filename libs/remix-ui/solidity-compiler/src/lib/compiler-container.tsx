@@ -5,6 +5,7 @@ import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import './css/style.css'
 
@@ -572,11 +573,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           {
-            isHardHatProject && <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+            isHardHatProject &&
+            <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
-              <a href="https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation" target="_blank">
-                <i className="ml-2 fas fa-info" title="Know how to use Hardhat Compilation"></i>
+              <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation' target={'_blank'}>
+                <OverlayTrigger placement={'right'} overlay={
+                  <Tooltip className="text-nowrap" id="overlay-tooltip">
+                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>
+                  </Tooltip>
+                }>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                </OverlayTrigger>
               </a>
             </div>
           }
