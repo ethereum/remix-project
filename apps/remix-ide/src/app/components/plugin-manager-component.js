@@ -87,17 +87,12 @@ class PluginManagerComponent extends ViewPlugin {
    * @param {string} name name of Plugin
    */
   deactivateP (name) {
-    console.log('deactivateP has just been called')
     this.call('manager', 'deactivatePlugin', name)
     this.appManager.event.on('deactivate', () => {
-      console.log('this.call HAS JUST BEEN CALLED')
       this.getAndFilterPlugins()
-      console.log('GETANDFILTERPLUGINS HAS JUST BEEN CALLED!')
       this.triggerEngineEventListener()
-      console.log('TRIGGERENGINEEVENTLISTENER HAS JUST BEEN CALLED')
     })
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
-    console.log('MATOMO TRACKING IS DONE!')
   }
 
   onActivation () {
