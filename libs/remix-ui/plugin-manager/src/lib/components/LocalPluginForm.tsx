@@ -1,6 +1,7 @@
 import { ModalDialog } from '@remix-ui/modal-dialog'
+import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
-import React from 'react'
+import React, { useState } from 'react'
 import { FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
@@ -12,28 +13,51 @@ interface LocalPluginFormProps {
 }
 
 function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
+  const [errorMsg, setErrorMsg] = useState('')
+  const handleModalOkClick = async () => {
+    try {
+      const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
+      // eslint-disable-next-line no-debugger
+      debugger
+      if (!profile) return
+      if (profile.profile) {
+        if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
+          throw new Error('This name has already been used')
+        }
+        // if (!profile.profile.location) throw new Error('Plugin should have a location')
+        // if (!profile.profile.pname) throw new Error('Plugin should have a name')
+        // if (!profile.profile.url) throw new Error('Plugin should have an URL')
+        // const localPlugin = profile.profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+        // localPlugin.profile.hash = `local-${profile.profile.pname}`
+        // localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
+        // pluginManager.engine.register(localPlugin)
+        // await pluginManager.appManager.activatePlugin(localPlugin.name)
+      } else {
+        if (pluginManager.appManager.getIds().includes(profile.name)) {
+          throw new Error('This name has already been used')
+        }
+        if (!profile.location) throw new Error('Plugin should have a location')
+        if (!profile.name) throw new Error('Plugin should have a name')
+        if (!profile.url) throw new Error('Plugin should have an URL')
+        const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+        localPlugin.profile.hash = `local-${profile.name}`
+        pluginManager.engine.register(localPlugin)
+        await pluginManager.appManager.activatePlugin(localPlugin.profile.name)
+        localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
+      }
+    } catch (error) {
+      console.error(error)
+      setErrorMsg(error.message)
+    }
+  }
   return (
-    <ModalDialog
+    <><ModalDialog
       handleHide={closeModal}
       id="pluginManagerLocalPluginModalDialog"
       hide={visible}
       title="Local Plugin"
       okLabel="OK"
-      okFn={() => {
-        const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
-        if (!profile) return
-        if (pluginManager.appManager.getIds().includes(profile.pname)) {
-          throw new Error('This name has already been used')
-        }
-        if (!profile.location) throw new Error('Plugin should have a location')
-        if (!profile.pname) throw new Error('Plugin should have a name')
-        if (!profile.url) throw new Error('Plugin should have an URL')
-        const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-        localPlugin.profile.hash = `local-${profile.pname}`
-        localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
-        pluginManager.engine.register(localPlugin)
-        pluginManager.appManager.activatePlugin(localPlugin.name)
-      } }
+      okFn={handleModalOkClick}
       cancelLabel="Cancel"
       cancelFn={closeModal}
     >
@@ -42,12 +66,11 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <label htmlFor="plugin-name">Plugin Name <small>(required)</small></label>
           <input
             className="form-control"
-            onChange={e => changeHandler('pname', e.target.value)}
-            value={plugin.pname}
+            onChange={e => changeHandler('name', e.target.value)}
+            value={plugin.name}
             id="plugin-name"
             data-id="localPluginName"
-            placeholder="Should be camelCase"
-          />
+            placeholder="Should be camelCase" />
         </div>
         <div className="form-group">
           <label htmlFor="plugin-displayname">Display Name</label>
@@ -57,8 +80,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
             value={plugin.displayName}
             id="plugin-displayname"
             data-id="localPluginDisplayName"
-            placeholder="Name in the header"
-          />
+            placeholder="Name in the header" />
         </div>
         <div className="form-group">
           <label htmlFor="plugin-methods">Api (comma separated list of methods name)</label>
@@ -68,8 +90,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
             value={plugin.methods}
             id="plugin-methods"
             data-id="localPluginMethods"
-            placeholder="Name in the header"
-          />
+            placeholder="Name in the header" />
         </div>
 
         <div className="form-group">
@@ -80,8 +101,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
             value={plugin.url}
             id="plugin-url"
             data-id="localPluginUrl"
-            placeholder="ex: https://localhost:8000"
-          />
+            placeholder="ex: https://localhost:8000" />
         </div>
         <h6>Type of connection <small>(required)</small></h6>
         <div className="form-check form-group">
@@ -150,7 +170,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           </div>
         </div>
       </form>
-    </ModalDialog>
+    </ModalDialog><Toaster message={`Cannot create Plugin : ${errorMsg}`} timeOut={3000} /></>
   )
 }
 
