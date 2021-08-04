@@ -17,21 +17,11 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
   const handleModalOkClick = async () => {
     try {
       const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
-      // eslint-disable-next-line no-debugger
-      debugger
       if (!profile) return
       if (profile.profile) {
         if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
           throw new Error('This name has already been used')
         }
-        // if (!profile.profile.location) throw new Error('Plugin should have a location')
-        // if (!profile.profile.pname) throw new Error('Plugin should have a name')
-        // if (!profile.profile.url) throw new Error('Plugin should have an URL')
-        // const localPlugin = profile.profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-        // localPlugin.profile.hash = `local-${profile.profile.pname}`
-        // localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
-        // pluginManager.engine.register(localPlugin)
-        // await pluginManager.appManager.activatePlugin(localPlugin.name)
       } else {
         if (pluginManager.appManager.getIds().includes(profile.name)) {
           throw new Error('This name has already been used')
@@ -42,12 +32,15 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
         const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
         localPlugin.profile.hash = `local-${profile.name}`
         pluginManager.engine.register(localPlugin)
+        // eslint-disable-next-line no-debugger
+        debugger
         await pluginManager.appManager.activatePlugin(localPlugin.profile.name)
         localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
       }
     } catch (error) {
       console.error(error)
-      setErrorMsg(error.message)
+      // setErrorMsg(error.message)
+      setErrorMsg('This name has already been used')
     }
   }
   return (
