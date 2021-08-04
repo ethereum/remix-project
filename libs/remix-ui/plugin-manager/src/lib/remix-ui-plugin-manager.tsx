@@ -21,47 +21,6 @@ export function getWorkspacePluginNames () {
 }
 
 export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerProps) => {
-  // const [, setWorkspacePlugins] = useState<string[]>([])
-
-  // useEffect(() => {
-  //   const newActives = localStorage.getItem('newActivePlugins')
-  //   const updatedInactives = localStorage.getItem('updatedInactives')
-  //   if (newActives === null && updatedInactives === null) {
-  //     if (getWorkspacePluginNames().includes('solidity') && getWorkspacePluginNames().includes('solidity-logic')) {
-  //       if (pluginComponent.activeProfiles.includes('solidity') && pluginComponent.activeProfiles.includes('solidity-logic')) {
-  //         localStorage.setItem('newActivePlugins', JSON.stringify(getSolidity(pluginComponent)))
-  //         const filteredInactives = pluginComponent.inactivePlugins.filter(inactive => inactive.name !== 'solidity' &&
-  //           inactive.name !== 'solidity-logic')
-  //       }
-  //     }
-  //     localStorage.setItem('newActivePlugins', '[]')
-  //     localStorage.setItem('updatedInactives', '[]')
-  //   }
-  //   console.log('current Active Profiles from pluginComponent', pluginComponent.activeProfiles)
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [pluginComponent.activePlugins, pluginComponent.activeProfiles, pluginComponent.inactivePlugins])
-  // useEffect(() => {
-  //   const workspaceLogic = async () => {
-  //     const workspace = JSON.parse(localStorage.getItem('workspace'))
-  //     const fromLocalStorage = JSON.parse(localStorage.getItem('newActivePlugins')) as Profile[]
-  //     if (workspace && workspace.length > 0) {
-  //       setWorkspacePlugins(workspace)
-  //       if (workspace.includes('solidity') && workspace.includes('solidity-logic')) {
-  //         const solidity = await pluginComponent.appManager.getProfile('solidity')
-  //         const logic = await pluginComponent.appManager.getProfile('solidity-logic')
-  //         const updates = [...fromLocalStorage, solidity, logic]
-  //         localStorage.setItem('newActivePlugins', JSON.stringify(updates))
-  //         // setActiveProfiles(updates)
-  //       }
-  //     }
-  //   }
-  //   workspaceLogic()
-  //   return () => {
-  //     console.log('finished second effect!')
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
   return (
     <RootView pluginComponent={pluginComponent}>
       <section data-id="pluginManagerComponentPluginManagerSection">
