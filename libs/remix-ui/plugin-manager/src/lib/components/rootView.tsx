@@ -6,7 +6,7 @@ import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
 
 const initialState: FormStateProps = {
-  pname: 'test',
+  name: 'test',
   displayName: 'test',
   url: '',
   type: 'iframe',
