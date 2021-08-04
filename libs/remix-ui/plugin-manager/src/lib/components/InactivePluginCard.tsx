@@ -54,8 +54,6 @@ function InactivePluginCard ({
               <button
                 onClick={async () => {
                   activatePlugin(profile)
-                  // eslint-disable-next-line no-debugger
-                  debugger
                   const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
                   const workspacePlugins = JSON.parse(localStorage.getItem('workspace'))
                   const tempList = []
