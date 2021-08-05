@@ -1,7 +1,7 @@
+import React, { useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
-import React, { useState } from 'react'
 import { FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
@@ -12,37 +12,37 @@ interface LocalPluginFormProps {
   pluginManager: PluginManagerComponent
 }
 
+const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin: FormStateProps, setErrorMsg: React.Dispatch<React.SetStateAction<string>>) => {
+  try {
+    const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
+    if (!profile) return
+    if (profile.profile) {
+      if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
+        throw new Error('This name has already been used')
+      }
+    } else {
+      if (pluginManager.appManager.getIds().includes(profile.name)) {
+        throw new Error('This name has already been used')
+      }
+      if (!profile.location) throw new Error('Plugin should have a location')
+      if (!profile.name) throw new Error('Plugin should have a name')
+      if (!profile.url) throw new Error('Plugin should have an URL')
+      const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+      localPlugin.profile.hash = `local-${profile.name}`
+      // <-------------------------------- Plumbing starts here --------------------------------------->
+      pluginManager.engine.register(localPlugin)
+      localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
+      pluginManager.activateP(localPlugin.profile.name)
+    }
+  } catch (error) {
+    console.error(error)
+    // setErrorMsg(error.message)
+    setErrorMsg('This name has already been used')
+  }
+}
 function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
   const [errorMsg, setErrorMsg] = useState('')
-  const handleModalOkClick = async () => {
-    try {
-      const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
-      if (!profile) return
-      if (profile.profile) {
-        if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
-          throw new Error('This name has already been used')
-        }
-      } else {
-        if (pluginManager.appManager.getIds().includes(profile.name)) {
-          throw new Error('This name has already been used')
-        }
-        if (!profile.location) throw new Error('Plugin should have a location')
-        if (!profile.name) throw new Error('Plugin should have a name')
-        if (!profile.url) throw new Error('Plugin should have an URL')
-        const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-        localPlugin.profile.hash = `local-${profile.name}`
-        pluginManager.engine.register(localPlugin)
-        // eslint-disable-next-line no-debugger
-        debugger
-        await pluginManager.appManager.activatePlugin(localPlugin.profile.name)
-        localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
-      }
-    } catch (error) {
-      console.error(error)
-      // setErrorMsg(error.message)
-      setErrorMsg('This name has already been used')
-    }
-  }
+
   return (
     <><ModalDialog
       handleHide={closeModal}
@@ -50,7 +50,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
       hide={visible}
       title="Local Plugin"
       okLabel="OK"
-      okFn={handleModalOkClick}
+      okFn={() => handleModalOkClick(pluginManager, plugin, setErrorMsg) }
       cancelLabel="Cancel"
       cancelFn={closeModal}
     >

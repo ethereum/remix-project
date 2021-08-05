@@ -1,11 +1,22 @@
 import { Profile } from '@remixproject/plugin-utils'
 import React, { Fragment, useEffect, useState } from 'react'
-import { PluginManagerComponent } from '../../types'
+import { PluginManagerComponent, PluginManagerProfile } from '../../types'
 import InactivePluginCard from './InactivePluginCard'
 import ModuleHeading from './moduleHeading'
 
 interface InactivePluginCardContainerProps {
   pluginComponent: PluginManagerComponent
+}
+
+interface LocalPluginInterface {
+  profile: Partial<PluginManagerProfile> // { name: string, displayName: string, url: string, type: 'iframe' | 'ws', hash: string, methods: string, location: 'sidePanel' | 'mainPanel' | 'none'}
+  activateService: {}
+  requestQueue: []
+  options: { queueTimeout: number }
+  id: number
+  pendingRequest: {}
+  listener: []
+  iframe: {}
 }
 function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardContainerProps) {
   const [activeProfiles, setActiveProfiles] = useState<Profile[]>()
@@ -16,14 +27,29 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
   }
 
   useEffect(() => {
-    const savedInactiveProfiles = JSON.parse(localStorage.getItem('updatedInactives'))
+    const savedInactiveProfiles: Profile[] = JSON.parse(localStorage.getItem('updatedInactives'))
+    const savedLocalPlugins: LocalPluginInterface = JSON.parse(localStorage.getItem('plugins/local'))
     if (savedInactiveProfiles === null) {
       localStorage.setItem('updatedInactives', '[]')
     }
-    if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length > 0) {
-      setinactiveProfiles(pluginComponent.inactivePlugins)
-    } else if (savedInactiveProfiles && pluginComponent.inactivePlugins.length > savedInactiveProfiles.length) {
+    if (savedLocalPlugins === null) {
+      localStorage.setItem('plugins/local', '{}')
+    }
+    if (savedInactiveProfiles && pluginComponent.inactivePlugins.length > savedInactiveProfiles.length) {
+      if (Object.keys(savedLocalPlugins).length > 0 && !pluginComponent.inactivePlugins.includes(savedLocalPlugins.profile as Profile)) {
+        const inactiveLocalPlugin = savedLocalPlugins.profile
+        localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
+        savedInactiveProfiles.push(inactiveLocalPlugin as Profile)
+      }
       setinactiveProfiles(savedInactiveProfiles)
+    } else if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length > 0) {
+      const temp = []
+      if (Object.keys(savedLocalPlugins).length > 0) {
+        const inactiveLocalPlugin = savedLocalPlugins.profile
+        localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
+        temp.push([...pluginComponent.inactivePlugins, inactiveLocalPlugin])
+      }
+      setinactiveProfiles(temp)
     }
   }, [pluginComponent, pluginComponent.inactivePlugins])
   return (
