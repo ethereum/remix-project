@@ -1,6 +1,6 @@
-import { getSolidity } from '@remix-ui/plugin-manager'
 import { Profile } from '@remixproject/plugin-utils'
 import React, { Dispatch, useState } from 'react'
+import { getSolidity } from '../../pluginManagerStateMachine'
 import { PluginManagerComponent } from '../../types'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
@@ -71,6 +71,7 @@ function InactivePluginCard ({
                     if (workspacePlugins.includes('solidity') === true && workspacePlugins.includes('solidity-logic') === true) {
                       if (pluginComponent.activeProfiles.includes('solidity') && pluginComponent.activeProfiles.includes('solidity-logic')) {
                         const result = await getSolidity(pluginComponent)
+                        // check to make sure that solidity isn't already in tempList so that it won't be persisted to lcoalstorage twice.
                         tempList.push(...result)
                       }
                     }
@@ -81,18 +82,6 @@ function InactivePluginCard ({
                   const temp = inactivePlugins.filter(plugin => plugin.name !== profile.name).filter(plugin => plugin.name !== 'solidity' && plugin.name !== 'solidity-logic')
                   setInactivePlugins(temp)
                   localStorage.setItem('updatedInactives', JSON.stringify(temp))
-                  // const newActives = JSON.parse(localStorage.getItem('newActivePlugins'))
-                  // // const updatedInactives = JSON.parse(localStorage.getItem('updatedInactives'))
-                  // if (newActives === null || newActives.length === 0) {
-                  //       localStorage.setItem('newActivePlugins', JSON.stringify(getSolidity(pluginComponent)))
-                  //       const filteredInactives = pluginComponent.inactivePlugins.filter(inactive => inactive.name !== 'solidity' &&
-                  //       inactive.name !== 'solidity-logic')
-                  //       localStorage.setItem('updatedInactives', JSON.stringify(filteredInactives))
-                  //     }
-                  //   }
-                  // }
-                  // check to make sure that this activated profile is removed from inactives
-                  // this should happen higher up in use effect at the root checking for the length of trackActiveProfiles
                 }}
                 className="btn btn-success btn-sm"
                 data-id={`pluginManagerComponentActivateButton${profile.name}`}
