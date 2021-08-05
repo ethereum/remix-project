@@ -33,7 +33,7 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
           buttonText="Deactivate"
           profile={profile}
           deactivatePlugin={deactivatePlugin}
-          key={profile.name}
+          key={profile.version}
           setInactivePlugins={setinactiveProfiles}
           inactivePlugins={inactiveProfiles}
           activePlugins={activeProfiles}
