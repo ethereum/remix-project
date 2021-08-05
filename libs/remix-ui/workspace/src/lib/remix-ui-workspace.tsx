@@ -1,56 +1,36 @@
 import React, { useState, useEffect, useRef, useReducer } from 'react' // eslint-disable-line
-import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
+import { FileExplorer, MenuItems } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
-import { MenuItems } from 'libs/remix-ui/file-explorer/src/lib/types'
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { WorkspaceProps, WorkspaceState, Modal } from './types'
 import { initWorkspace } from './actions/workspace'
 import { browserReducer, browserInitialState } from './reducers/workspace'
 
-/* eslint-disable-next-line */
-export interface WorkspaceProps {
-  setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
-  createWorkspace: (name: string) => void,
-  renameWorkspace: (oldName: string, newName: string) => void
-  workspaceRenamed: ({ name: string }) => void,
-  workspaceCreated: ({ name: string }) => void,
-  workspaceDeleted: ({ name: string }) => void,
-  workspace: any // workspace provider,
-  browser: any // browser provider
-  localhost: any // localhost provider
-  fileManager : any
-  registry: any // registry
-  plugin: any // plugin call and resetFocus
-  request: any // api request,
-  workspaces: any,
-  registeredMenuItems: MenuItems // menu items
-  removedMenuItems: MenuItems
-  initialWorkspace: string
-}
+const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
-var canUpload = window.File || window.FileReader || window.FileList || window.Blob
-export const Workspace = (props: WorkspaceProps) => {
+export function Workspace (props: WorkspaceProps) {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
-  const [state, setState] = useState({
+  const [state, setState] = useState<WorkspaceState>({
     workspaces: [],
     reset: false,
     hideRemixdExplorer: true,
     displayNewFile: false,
     externalUploads: null,
     uploadFileEvent: null,
-    modal: {
-      hide: true,
-      title: '',
-      message: null,
-      okLabel: '',
-      okFn: () => {},
-      cancelLabel: '',
-      cancelFn: () => {},
-      handleHide: null
-    },
     loadingLocalhost: false,
     toasterMsg: ''
+  })
+  const [modal, setModal] = useState<Modal>({
+    hide: true,
+    title: '',
+    message: null,
+    okLabel: '',
+    okFn: () => {},
+    cancelLabel: '',
+    cancelFn: () => {},
+    handleHide: null
   })
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [fs, dispatch] = useReducer(browserReducer, browserInitialState)
@@ -63,36 +43,27 @@ export const Workspace = (props: WorkspaceProps) => {
     if (fs.browser.currentWorkspace) setCurrentWorkspace(fs.browser.currentWorkspace)
   }, [fs.browser.currentWorkspace])
 
-  /* extends the parent 'plugin' with some function needed by the file explorer */
-  props.plugin.resetFocus = (reset) => {
-    setState(prevState => {
-      return { ...prevState, reset }
-    })
-  }
-
   props.plugin.resetNewFile = () => {
     setState(prevState => {
       return { ...prevState, displayNewFile: !state.displayNewFile }
     })
   }
 
-  props.plugin.resetUploadFile = () => {}
-
   /* implement an external API, consumed by the parent */
-  props.request.createWorkspace = () => {
+  props.plugin.request.createWorkspace = () => {
     return createWorkspace()
   }
 
-  props.request.setWorkspace = (workspaceName) => {
+  props.plugin.request.setWorkspace = (workspaceName) => {
     return setWorkspace(workspaceName)
   }
 
-  props.request.createNewFile = async () => {
+  props.plugin.request.createNewFile = async () => {
     if (!state.workspaces.length) await createNewWorkspace('default_workspace')
     props.plugin.resetNewFile()
   }
 
-  props.request.uploadFile = async (target) => {
+  props.plugin.request.uploadFile = async (target: EventTarget & HTMLInputElement) => {
     if (!state.workspaces.length) await createNewWorkspace('default_workspace')
 
     setState(prevState => {
@@ -100,23 +71,23 @@ export const Workspace = (props: WorkspaceProps) => {
     })
   }
 
-  props.request.getCurrentWorkspace = () => {
-    return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${currentWorkspace}` }
+  props.plugin.request.getCurrentWorkspace = () => {
+    return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.plugin.workspace.workspacesPath}/${currentWorkspace}` }
   }
 
   const localhostDisconnect = () => {
-    if (currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
+    if (currentWorkspace === LOCALHOST) setWorkspace(props.plugin.workspaces.length > 0 ? props.plugin.workspaces[0] : NO_WORKSPACE)
     // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
     else {
       setWorkspace(currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
-      props.fileManager.setMode('browser')
+      props.plugin.fileManager.setMode('browser')
     }
   }
 
   const createNewWorkspace = async (workspaceName) => {
     try {
-      await props.fileManager.closeAllFiles()
-      await props.createWorkspace(workspaceName)
+      await props.plugin.fileManager.closeAllFiles()
+      await props.plugin.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
       toast('New default workspace has been created.')
     } catch (e) {
@@ -134,20 +105,20 @@ export const Workspace = (props: WorkspaceProps) => {
   /* workspace creation, renaming and deletion */
 
   const renameCurrentWorkspace = () => {
-    modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '', () => {})
+    modalDialog('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '', () => {})
   }
 
   const createWorkspace = () => {
-    modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '', () => {})
+    modalDialog('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '', () => {})
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '', () => {})
+    modalDialog('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '', () => {})
   }
 
   const modalMessage = (title: string, body: string) => {
     setTimeout(() => { // wait for any previous modal a chance to close
-      modal(title, body, 'OK', () => {}, '', null)
+      modalDialog(title, body, 'OK', () => {}, '', null)
     }, 200)
   }
 
@@ -160,9 +131,9 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceRenameInput.current.value
 
     try {
-      await props.renameWorkspace(currentWorkspace, workspaceName)
+      await props.plugin.renameWorkspace(currentWorkspace, workspaceName)
       setWorkspace(workspaceName)
-      props.workspaceRenamed({ name: workspaceName })
+      props.plugin.workspaceRenamed({ name: workspaceName })
     } catch (e) {
       modalMessage('Rename Workspace', e.message)
       console.error(e)
@@ -175,8 +146,8 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceCreateInput.current.value
 
     try {
-      await props.fileManager.closeAllFiles()
-      await props.createWorkspace(workspaceName)
+      await props.plugin.fileManager.closeAllFiles()
+      await props.plugin.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
     } catch (e) {
       modalMessage('Create Workspace', e.message)
@@ -185,12 +156,12 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const onFinishDeleteWorkspace = async () => {
-    await props.fileManager.closeAllFiles()
-    const workspacesPath = props.workspace.workspacesPath
-    props.browser.remove(workspacesPath + '/' + currentWorkspace)
+    await props.plugin.fileManager.closeAllFiles()
+    const workspacesPath = props.plugin.workspace.workspacesPath
+    props.plugin.browser.remove(workspacesPath + '/' + currentWorkspace)
     const name = currentWorkspace
     setWorkspace(NO_WORKSPACE)
-    props.workspaceDeleted({ name })
+    props.plugin.workspaceDeleted({ name })
   }
   /** ** ****/
 
@@ -201,15 +172,15 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const setWorkspace = async (name) => {
-    await props.fileManager.closeAllFiles()
+    await props.plugin.fileManager.closeAllFiles()
     if (name === LOCALHOST) {
-      props.workspace.clearWorkspace()
+      props.plugin.workspace.clearWorkspace()
     } else if (name === NO_WORKSPACE) {
-      props.workspace.clearWorkspace()
+      props.plugin.workspace.clearWorkspace()
     } else {
-      await props.workspace.setWorkspace(name)
+      await props.plugin.workspace.setWorkspace(name)
     }
-    await props.setWorkspace({ name, isLocalhost: name === LOCALHOST }, !(name === LOCALHOST || name === NO_WORKSPACE))
+    await props.plugin.setWorkspace({ name, isLocalhost: name === LOCALHOST }, !(name === LOCALHOST || name === NO_WORKSPACE))
     props.plugin.getWorkspaces()
     setState(prevState => {
       return { ...prevState, currentWorkspace: name }
@@ -221,7 +192,7 @@ export const Workspace = (props: WorkspaceProps) => {
       // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
       // if (props.fileManager.mode === 'localhost') {
       await setWorkspace(NO_WORKSPACE)
-      props.fileManager.setMode('browser')
+      props.plugin.fileManager.setMode('browser')
       setState(prevState => {
         return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
       })
@@ -233,7 +204,7 @@ export const Workspace = (props: WorkspaceProps) => {
       // }
     },
     show: () => {
-      props.fileManager.setMode('localhost')
+      props.plugin.fileManager.setMode('localhost')
       setState(prevState => {
         return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
       })
@@ -246,34 +217,21 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const handleHideModal = () => {
-    setState(prevState => {
-      return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
+    setModal(prevModal => {
+      return { ...prevModal, hide: true, message: null }
     })
   }
-  // eslint-disable-next-line no-undef
-  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
-    await setState(prevState => {
-      return {
-        ...prevState,
-        modal: {
-          ...prevState.modal,
-          hide: false,
-          message,
-          title,
-          okLabel,
-          okFn,
-          cancelLabel,
-          cancelFn,
-          handleHide: handleHideModal
-        }
-      }
+
+  const modalDialog = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
+    await setModal(prevModal => {
+      return { ...prevModal, hide: false, message, title, okLabel, okFn, cancelLabel, cancelFn, handleHide: handleHideModal }
     })
   }
 
   const createModalMessage = () => {
     return (
       <>
-        <span>{ state.modal.message }</span>
+        <span>{ modal.message }</span>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
     )
@@ -282,7 +240,7 @@ export const Workspace = (props: WorkspaceProps) => {
   const renameModalMessage = () => {
     return (
       <>
-        <span>{ state.modal.message }</span>
+        <span>{ modal.message }</span>
         <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
@@ -290,17 +248,8 @@ export const Workspace = (props: WorkspaceProps) => {
 
   return (
     <div className='remixui_container'>
-      { state.modal.message && <ModalDialog
-        id='workspacesModalDialog'
-        title={ state.modal.title }
-        message={ state.modal.message }
-        hide={ state.modal.hide }
-        okLabel={ state.modal.okLabel }
-        okFn={ state.modal.okFn }
-        cancelLabel={ state.modal.cancelLabel }
-        cancelFn={ state.modal.cancelFn }
-        handleHide={ handleHideModal }>
-        { (typeof state.modal.message !== 'string') && state.modal.message }
+      <ModalDialog id='workspacesModalDialog' {...modal}>
+        { (typeof modal.message !== 'string') && modal.message }
       </ModalDialog>
       }
       <Toaster message={state.toasterMsg} />
@@ -364,15 +313,16 @@ export const Workspace = (props: WorkspaceProps) => {
               { state.hideRemixdExplorer && currentWorkspace && currentWorkspace !== NO_WORKSPACE && currentWorkspace !== LOCALHOST &&
                   <FileExplorer
                     name={currentWorkspace}
-                    registry={props.registry}
-                    filesProvider={props.workspace}
+                    registry={props.plugin.registry}
+                    filesProvider={props.plugin.workspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
                     plugin={props.plugin}
                     focusRoot={state.reset}
-                    contextMenuItems={props.registeredMenuItems}
-                    removedContextMenuItems={props.removedMenuItems}
+                    contextMenuItems={props.plugin.registeredMenuItems}
+                    removedContextMenuItems={props.plugin.removedMenuItems}
                     displayInput={state.displayNewFile}
                     externalUploads={state.uploadFileEvent}
+                    resetFocus={resetFocus}
                   />
               }
             </div>
@@ -382,13 +332,14 @@ export const Workspace = (props: WorkspaceProps) => {
                   { !state.hideRemixdExplorer &&
                       <FileExplorer
                         name='localhost'
-                        registry={props.registry}
-                        filesProvider={props.localhost}
+                        registry={props.plugin.registry}
+                        filesProvider={props.plugin.localhost}
                         menuItems={['createNewFile', 'createNewFolder']}
                         plugin={props.plugin}
                         focusRoot={state.reset}
-                        contextMenuItems={props.registeredMenuItems}
-                        removedContextMenuItems={props.removedMenuItems}
+                        contextMenuItems={props.plugin.registeredMenuItems}
+                        removedContextMenuItems={props.plugin.removedMenuItems}
+                        resetFocus={resetFocus}
                       />
                   }
                 </div>

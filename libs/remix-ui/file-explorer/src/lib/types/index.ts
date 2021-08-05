@@ -13,6 +13,7 @@ export interface FileExplorerProps {
     removedContextMenuItems: MenuItems,
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement,
+    resetFocus?: (value: boolean) => void
 }
 
 export interface File {

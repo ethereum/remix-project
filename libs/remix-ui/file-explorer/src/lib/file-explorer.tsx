@@ -18,7 +18,7 @@ import './css/file-explorer.css'
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems } = props
+  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems, resetFocus } = props
   const [state, setState] = useState({
     focusElement: [{
       key: '',
@@ -204,7 +204,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       setState(prevState => {
         return { ...prevState, focusElement: [{ key: '', type: 'folder' }] }
       })
-      plugin.resetFocus(false)
+      resetFocus(false)
     }
   }, [focusRoot])
 
@@ -230,7 +230,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     if (externalUploads) {
       uploadFile(externalUploads)
-      plugin.resetUploadFile()
     }
   }, [externalUploads])
 
@@ -988,7 +987,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               setState(prevState => {
                 return { ...prevState, expandPath }
               })
-              plugin.resetFocus(true)
+              resetFocus(true)
             }}>
               <FileExplorerMenu
                 title={''}
