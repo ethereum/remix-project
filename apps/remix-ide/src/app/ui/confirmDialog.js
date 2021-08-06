@@ -29,7 +29,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
     var maxFee = el.querySelector('#maxfee').value
     var confirmBtn = document.querySelector('#modal-footer-ok')
     var maxPriorityFee = el.querySelector('#maxpriorityfee').value
-    if (Web3.utils.fromWei(Web3.utils.toBN(parseInt(network.lastBlock.baseFeePerGas, 16)), 'Gwei') > parseInt(maxFee)) {
+    if (parseInt(network.lastBlock.baseFeePerGas, 16) > Web3.utils.toWei(maxFee, 'Gwei')) {
       el.querySelector('#txfee').innerHTML = 'Transaction is invalid. Max fee should not be less than Base fee'
       el.gasPriceStatus = false
       confirmBtn.hidden = true
