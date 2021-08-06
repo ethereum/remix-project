@@ -3,7 +3,7 @@ import { PluginManager } from '@remixproject/engine/lib/manager'
 import { EventEmitter } from 'events'
 import { Engine } from '@remixproject/engine/lib/engine'
 import { PluginBase, Profile } from '@remixproject/plugin-utils'
-import { ViewPlugin } from '@remixproject/engine-web'
+import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
 /* eslint-disable camelcase */
 declare module 'yo-yo'{
   interface yo_yo {
@@ -105,6 +105,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   render(): HTMLDivElement
   getAndFilterPlugins: (filter?: string) => void
   triggerEngineEventListener: () => void
+  activateAndRegisterLocalPlugin: (plugin: Profile, localPlugin: IframePlugin | WebsocketPlugin) => Promise<void>
   activeProfiles: string[]
   _paq: any
 }
@@ -193,7 +194,7 @@ export interface FormStateProps {
   name: string
   displayName: string
   url: string
-  type: string
+  type: 'iframe' | 'ws'
   hash: string
   methods: any
   location: string

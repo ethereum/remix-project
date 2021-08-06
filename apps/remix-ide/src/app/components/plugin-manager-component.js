@@ -37,13 +37,13 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager = appManager
     this.engine = engine
     this.pluginManagerSettings = new PluginManagerSettings()
+    this.localPlugin = new LocalPlugin()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
     this.views = {
       root: null,
       items: {}
     }
-    this.localPlugin = new LocalPlugin()
     this.filter = ''
     this.pluginNames = this.appManager.actives
     this.activePlugins = []
@@ -78,6 +78,22 @@ class PluginManagerComponent extends ViewPlugin {
       this.triggerEngineEventListener()
     })
     _paq.push(['trackEvent', 'manager', 'activate', name])
+  }
+
+  /**
+   * Takes the name of a local plugin and does both
+   * activation and registration
+   * @param {Profile} pluginName
+   * @returns {void}
+   */
+  async activateAndRegisterLocalPlugin (plugin, localPlugin) {
+    if (plugin) {
+      debugger
+      this.engine.register(localPlugin)
+      await this.appManager.activatePlugin(plugin)
+      // localStorage.setItem('targetLocalPlugin', plugin.name)
+      // localStorage.setItem('plugins/local', JSON.stringify(properPlugin))
+    }
   }
 
   /**
