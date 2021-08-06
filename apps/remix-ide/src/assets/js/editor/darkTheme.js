@@ -30,7 +30,7 @@ ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], f
   }\
   .ace-remixDark {\
   background-color: #222336;\
-  color: #a2a3bd;\
+  color: #d5d5e9;\
   }\
   .ace-remixDark .ace_cursor {\
   border-left: 2px solid #FFFFFF;\
@@ -110,9 +110,9 @@ ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], f
   .ace-remixDark .ace_type {\
   color:#75ceef;\
   }\
-  .ace-remixDark .ace_visibility (\
+  .ace-remixDark .ace_visibility {\
     color:#f7d777;\
-  )\
+  }\
   .ace-remixDark .ace_identifier {\
     color:#bec1dd;\
   }\
