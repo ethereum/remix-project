@@ -98,13 +98,13 @@ class SettingsUI {
         </label>
         <div class="${css.environment}">
           <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" class="form-control ${css.select} custom-select">
-            <option id="vm-mode-berlin" data-id="settingsVMBerlinMode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm-berlin" name="executionContext" fork="berlin" > JavaScript VM (Berlin)
-            </option>
             <option id="vm-mode-london" data-id="settingsVMLondonMode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm-london" name="executionContext" fork="london"> JavaScript VM (London)
+            </option>
+            <option id="vm-mode-berlin" data-id="settingsVMBerlinMode"
+              title="Execution environment does not connect to any node, everything is local and in memory only."
+              value="vm-berlin" name="executionContext" fork="berlin" > JavaScript VM (Berlin)
             </option>
             <option id="injected-mode" data-id="settingsInjectedMode"
               title="Execution environment has been provided by Metamask or similar provider."

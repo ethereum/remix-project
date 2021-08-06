@@ -40,6 +40,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a href='#' onClick={handleClick} onMouseLeave={reset}>
       <OverlayTrigger placement={direction} overlay={
         <Tooltip id="overlay-tooltip">

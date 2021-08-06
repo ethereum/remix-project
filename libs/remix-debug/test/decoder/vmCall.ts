@@ -11,7 +11,7 @@ export function sendTx (vm, from, to, value, data, cb?) {
   return new Promise ((resolve, reject) => {
     var tx = new Tx({
       nonce: new BN(from.nonce++),
-      gasPrice: new BN(1),
+      // gasPrice: new BN(1),
       gasLimit: new BN(3000000, 10),
       to: to,
       value: new BN(value, 10),
