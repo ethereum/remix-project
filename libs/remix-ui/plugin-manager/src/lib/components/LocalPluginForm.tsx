@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, { useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
@@ -13,31 +14,37 @@ interface LocalPluginFormProps {
 }
 
 const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin: FormStateProps, setErrorMsg: React.Dispatch<React.SetStateAction<string>>) => {
+  debugger
   try {
-    const profile = JSON.parse(localStorage.getItem('plugins/local')) || plugin
-    if (!profile) return
-    if (profile.profile) {
+    const profile = JSON.parse(localStorage.getItem('plugins/local'))
+    if (profile.profile && Object.keys(profile).length > 0) {
       if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
         throw new Error('This name has already been used')
       }
-    } else {
-      if (pluginManager.appManager.getIds().includes(profile.name)) {
-        throw new Error('This name has already been used')
-      }
-      if (!profile.location) throw new Error('Plugin should have a location')
-      if (!profile.name) throw new Error('Plugin should have a name')
-      if (!profile.url) throw new Error('Plugin should have an URL')
-      const localPlugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-      localPlugin.profile.hash = `local-${profile.name}`
-      // <-------------------------------- Plumbing starts here --------------------------------------->
-      pluginManager.engine.register(localPlugin)
-      localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
-      pluginManager.activateP(localPlugin.profile.name)
     }
+    if (!plugin.location) throw new Error('Plugin should have a location')
+    if (!plugin.name) throw new Error('Plugin should have a name')
+    if (!plugin.url) throw new Error('Plugin should have an URL')
+    const localPlugin = plugin.type === 'iframe' ? new IframePlugin(plugin) : new WebsocketPlugin(plugin)
+    localPlugin.profile.hash = `local-${plugin.name}`
+    // <-------------------------------- Plumbing starts here --------------------------------------->
+    const targetPlugin = {
+      name: localPlugin.profile.name,
+      displayName: localPlugin.profile.displayName,
+      description: (localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''),
+      documentation: localPlugin.profile.url,
+      events: (localPlugin.profile.events !== undefined ? localPlugin.profile.events : []),
+      hash: localPlugin.profile.hash,
+      kind: (localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''),
+      methods: localPlugin.profile.methods,
+      type: plugin.type,
+      location: plugin.location
+    }
+    pluginManager.activateAndRegisterLocalPlugin(targetPlugin, localPlugin)
   } catch (error) {
     console.error(error)
     // setErrorMsg(error.message)
-    setErrorMsg('This name has already been used')
+    setErrorMsg(error.message)
   }
 }
 function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
