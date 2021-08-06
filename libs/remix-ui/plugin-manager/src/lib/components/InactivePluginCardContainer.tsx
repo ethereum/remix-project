@@ -35,7 +35,7 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
     if (savedLocalPlugins === null) {
       localStorage.setItem('plugins/local', '{}')
     }
-    if (savedInactiveProfiles && pluginComponent.inactivePlugins.length > savedInactiveProfiles.length) {
+    if (savedInactiveProfiles && savedInactiveProfiles.length > 0 && pluginComponent.inactivePlugins.length > savedInactiveProfiles.length) {
       if (Object.keys(savedLocalPlugins).length > 0 && !pluginComponent.inactivePlugins.includes(savedLocalPlugins.profile as Profile)) {
         const inactiveLocalPlugin = savedLocalPlugins.profile
         localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
@@ -48,8 +48,9 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
         const inactiveLocalPlugin = savedLocalPlugins.profile
         localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
         temp.push([...pluginComponent.inactivePlugins, inactiveLocalPlugin])
+        setinactiveProfiles(temp)
       }
-      setinactiveProfiles(temp)
+      setinactiveProfiles(pluginComponent.inactivePlugins)
     }
   }, [pluginComponent, pluginComponent.inactivePlugins])
   return (
