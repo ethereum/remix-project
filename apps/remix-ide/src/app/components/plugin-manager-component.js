@@ -13,7 +13,7 @@ import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
-const LocalPlugin = require('./local-plugin') // eslint-disable-line
+// const LocalPlugin = require('./local-plugin') // eslint-disable-line
 const addToolTip = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
 
@@ -37,7 +37,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager = appManager
     this.engine = engine
     this.pluginManagerSettings = new PluginManagerSettings()
-    this.localPlugin = new LocalPlugin()
+    // this.localPlugin = new LocalPlugin()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
     this.views = {
@@ -86,13 +86,14 @@ class PluginManagerComponent extends ViewPlugin {
    * @param {Profile} pluginName
    * @returns {void}
    */
-  async activateAndRegisterLocalPlugin (plugin, localPlugin) {
-    if (plugin) {
-      debugger
+  async activateAndRegisterLocalPlugin (localPlugin) {
+    if (localPlugin) {
       this.engine.register(localPlugin)
-      await this.appManager.activatePlugin(plugin)
+      this.appManager.activatePlugin(localPlugin.profile.name)
+      this.getAndFilterPlugins()
+      // this.activateP(localPlugin.profile.name)
       // localStorage.setItem('targetLocalPlugin', plugin.name)
-      // localStorage.setItem('plugins/local', JSON.stringify(properPlugin))
+      localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
     }
   }
 
@@ -120,8 +121,6 @@ class PluginManagerComponent extends ViewPlugin {
     ReactDOM.render(
       <RemixUiPluginManager
         pluginComponent={this}
-        activePlugins={this.activePlugins}
-        inactivePlugins={this.inactivePlugins}
       />,
       document.getElementById('pluginManager'))
   }
@@ -132,29 +131,29 @@ class PluginManagerComponent extends ViewPlugin {
   /**
    * Add a local plugin to the list of plugins
    */
-  async openLocalPlugin () {
-    try {
-      const profile = await this.localPlugin.open(this.appManager.getAll())
-      if (!profile) return
-      if (this.appManager.getIds().includes(profile.name)) {
-        throw new Error('This name has already been used')
-      }
-      const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-      this.engine.register(plugin)
-      await this.appManager.activatePlugin(plugin.name)
-    } catch (err) {
-      // TODO : Use an alert to handle this error instead of a console.log
-      console.log(`Cannot create Plugin : ${err.message}`)
-      addToolTip(`Cannot create Plugin : ${err.message}`)
-    }
-  }
+  // async openLocalPlugin () {
+  //   try {
+  //     const profile = await this.localPlugin.open(this.appManager.getAll())
+  //     if (!profile) return
+  //     if (this.appManager.getIds().includes(profile.name)) {
+  //       throw new Error('This name has already been used')
+  //     }
+  //     const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+  //     this.engine.register(plugin)
+  //     await this.appManager.activatePlugin(plugin.name)
+  //   } catch (err) {
+  //     // TODO : Use an alert to handle this error instead of a console.log
+  //     console.log(`Cannot create Plugin : ${err.message}`)
+  //     addToolTip(`Cannot create Plugin : ${err.message}`)
+  //   }
+  // }
 
   render () {
     return this.htmlElement
   }
 
   getAndFilterPlugins (filter) {
-    this.filter = filter ? filter.toLowerCase() : this.filter
+    this.filter = typeof filter === 'string' ? filter.toLowerCase() : this.filter
 
     const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
     const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)

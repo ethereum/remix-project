@@ -37,7 +37,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
       .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
       .click('*[data-id="pluginManagerComponentSearchInput"]')
-      .keys(browser.Keys.ENTER)
+      .keys(browser.Keys.SPACE)
+      .keys(browser.Keys.BACK_SPACE)
   },
 
   'Should activate plugins': function (browser: NightwatchBrowser) {

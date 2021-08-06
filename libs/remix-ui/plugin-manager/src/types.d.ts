@@ -105,7 +105,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   render(): HTMLDivElement
   getAndFilterPlugins: (filter?: string) => void
   triggerEngineEventListener: () => void
-  activateAndRegisterLocalPlugin: (plugin: Profile, localPlugin: IframePlugin | WebsocketPlugin) => Promise<void>
+  activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | WebsocketPlugin) => Promise<void>
   activeProfiles: string[]
   _paq: any
 }
@@ -155,8 +155,6 @@ export interface PluginManagerContextProviderProps {
 }
 
 export interface RemixUiPluginManagerProps {
-  inactivePlugins: Profile[]
-  activePlugins: Profile[]
   pluginComponent: PluginManagerComponent
 }
 /** @class Reference loaders.
