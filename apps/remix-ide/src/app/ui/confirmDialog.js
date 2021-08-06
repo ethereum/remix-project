@@ -92,7 +92,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
           </div>
           <div class="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
             <div class='d-flex'>
-              <span class="text-dark mr-2 text-nowrap">Max fee (Not less than base fee - ${Web3.utils.fromWei(Web3.utils.toBN(parseInt(network.lastBlock.baseFeePerGas, 16)), 'Gwei')} Gwei):</span>
+              <span class="text-dark mr-2 text-nowrap">Max fee (Not less than base fee ${Web3.utils.fromWei(Web3.utils.toBN(parseInt(network.lastBlock.baseFeePerGas, 16)), 'Gwei')} Gwei):</span>
               <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' id='maxfee' oninput=${onMaxFeeChange} />
               <span>Gwei</span>
               <span class="text-dark ml-2"></span>
