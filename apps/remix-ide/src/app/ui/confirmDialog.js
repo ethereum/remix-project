@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 const copyToClipboard = require('./copy-to-clipboard')
+const Web3 = require('web3')
 
 var css = csjs`
   .txInfoBox {
@@ -28,7 +29,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
     var maxFee = el.querySelector('#maxfee').value
     var confirmBtn = document.querySelector('#modal-footer-ok')
     var maxPriorityFee = el.querySelector('#maxpriorityfee').value
-    if (parseInt(network.lastBlock.baseFeePerGas, 16) > parseInt(maxFee)) {
+    if (Web3.utils.fromWei(Web3.utils.toBN(parseInt(network.lastBlock.baseFeePerGas, 16)), 'Gwei') > parseInt(maxFee)) {
       el.querySelector('#txfee').innerHTML = 'Transaction is invalid. Max fee should not be less than Base fee'
       el.gasPriceStatus = false
       confirmBtn.hidden = true
@@ -91,7 +92,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
           </div>
           <div class="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
             <div class='d-flex'>
-              <span class="text-dark mr-2 text-nowrap">Max fee (Not less than base fee - ${parseInt(network.lastBlock.baseFeePerGas, 16)} Gwei):</span>
+              <span class="text-dark mr-2 text-nowrap">Max fee (Not less than base fee - ${Web3.utils.fromWei(Web3.utils.toBN(parseInt(network.lastBlock.baseFeePerGas, 16)), 'Gwei')} Gwei):</span>
               <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' id='maxfee' oninput=${onMaxFeeChange} />
               <span>Gwei</span>
               <span class="text-dark ml-2"></span>
@@ -124,7 +125,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
       onGasPriceChange()
     }
     if (el.querySelector('#maxfee') && network && network.lastBlock && network.lastBlock.baseFeePerGas) {
-      el.querySelector('#maxfee').value = parseInt(network.lastBlock.baseFeePerGas, 16)
+      el.querySelector('#maxfee').value = Web3.utils.fromWei(Web3.utils.toBN(parseInt(network.lastBlock.baseFeePerGas, 16)), 'Gwei')
       onMaxFeeChange()
     }
     if (gasPriceStatus !== undefined) {
