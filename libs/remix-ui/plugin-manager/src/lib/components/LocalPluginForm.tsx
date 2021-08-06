@@ -14,10 +14,9 @@ interface LocalPluginFormProps {
 }
 
 const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin: FormStateProps, setErrorMsg: React.Dispatch<React.SetStateAction<string>>) => {
-  debugger
   try {
     const profile = JSON.parse(localStorage.getItem('plugins/local'))
-    if (profile.profile && Object.keys(profile).length > 0) {
+    if (profile && profile.profile && Object.keys(profile).length > 0) {
       if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
         throw new Error('This name has already been used')
       }
@@ -25,7 +24,9 @@ const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin:
     if (!plugin.location) throw new Error('Plugin should have a location')
     if (!plugin.name) throw new Error('Plugin should have a name')
     if (!plugin.url) throw new Error('Plugin should have an URL')
+    plugin.methods = plugin.methods.split(',').filter(val => val)
     const localPlugin = plugin.type === 'iframe' ? new IframePlugin(plugin) : new WebsocketPlugin(plugin)
+
     localPlugin.profile.hash = `local-${plugin.name}`
     // <-------------------------------- Plumbing starts here --------------------------------------->
     const targetPlugin = {
@@ -38,9 +39,11 @@ const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin:
       kind: (localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''),
       methods: localPlugin.profile.methods,
       type: plugin.type,
-      location: plugin.location
+      location: plugin.location,
+      icon: 'assets/img/localPlugin.webp'
     }
-    pluginManager.activateAndRegisterLocalPlugin(targetPlugin, localPlugin)
+    localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
+    pluginManager.activateAndRegisterLocalPlugin(localPlugin)
   } catch (error) {
     console.error(error)
     // setErrorMsg(error.message)
