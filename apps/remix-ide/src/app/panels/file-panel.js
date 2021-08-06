@@ -69,25 +69,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   renderComponent () {
     ReactDOM.render(
-      <Workspace
-        createWorkspace={this.createWorkspace.bind(this)}
-        renameWorkspace={this.renameWorkspace.bind(this)}
-        setWorkspace={this.setWorkspace.bind(this)}
-        workspaceRenamed={this.workspaceRenamed.bind(this)}
-        workspaceDeleted={this.workspaceDeleted.bind(this)}
-        workspaceCreated={this.workspaceCreated.bind(this)}
-        workspace={this.fileProviders.workspace}
-        browser={this.fileProviders.browser}
-        localhost={this.fileProviders.localhost}
-        fileManager={this.fileManager}
-        registry={this.registry}
-        plugin={this}
-        request={this.request}
-        workspaces={this.workspaces}
-        registeredMenuItems={this.registeredMenuItems}
-        removedMenuItems={this.removedMenuItems}
-        initialWorkspace={this.initialWorkspace}
-      />
+      <Workspace plugin={this} />
       , this.el)
   }
 
