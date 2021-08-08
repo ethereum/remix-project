@@ -21,7 +21,6 @@ interface LocalPluginInterface {
 function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardContainerProps) {
   const [activeProfiles, setActiveProfiles] = useState<Profile[]>()
   const [inactiveProfiles, setinactiveProfiles] = useState<Profile[]>([])
-
   const activatePlugin = (profile: Profile) => {
     pluginComponent.activateP(profile.name)
   }
@@ -29,12 +28,6 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
   useEffect(() => {
     const savedInactiveProfiles: Profile[] = JSON.parse(localStorage.getItem('updatedInactives'))
     const savedLocalPlugins: LocalPluginInterface = JSON.parse(localStorage.getItem('plugins/local'))
-    if (savedInactiveProfiles === null) {
-      localStorage.setItem('updatedInactives', '[]')
-    }
-    if (savedLocalPlugins === null) {
-      localStorage.setItem('plugins/local', '{}')
-    }
     if (savedInactiveProfiles && savedInactiveProfiles.length > 0 && pluginComponent.inactivePlugins.length > savedInactiveProfiles.length) {
       if (Object.keys(savedLocalPlugins).length > 0 && !pluginComponent.inactivePlugins.includes(savedLocalPlugins.profile as Profile)) {
         const inactiveLocalPlugin = savedLocalPlugins.profile
@@ -62,11 +55,6 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
           profile={profile}
           key={profile.name}
           activatePlugin={activatePlugin}
-          setInactivePlugins={setinactiveProfiles}
-          inactivePlugins={inactiveProfiles}
-          activePlugins={activeProfiles}
-          setActivePlugins={setActiveProfiles}
-          pluginComponent={pluginComponent}
         />
       ))
       }
