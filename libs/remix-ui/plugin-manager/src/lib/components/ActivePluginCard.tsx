@@ -10,8 +10,6 @@ interface PluginCardProps {
   profile: any
   buttonText: string
   deactivatePlugin: (pluginName: string) => void
-  inactivePlugins: Profile[]
-  setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
   setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
   activePlugins: Profile[]
 }
@@ -21,9 +19,7 @@ function ActivePluginCard ({
   profile,
   buttonText,
   deactivatePlugin,
-  inactivePlugins,
   activePlugins,
-  setInactivePlugins,
   setActivePlugins
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)

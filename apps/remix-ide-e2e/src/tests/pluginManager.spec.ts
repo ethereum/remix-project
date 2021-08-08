@@ -133,10 +133,10 @@ module.exports = {
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
       .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
       // .modalFooterOKClick()
-      // .pause(5000)
-      // .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+      .pause(5000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .pause(2000)
-      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
   },
 
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
