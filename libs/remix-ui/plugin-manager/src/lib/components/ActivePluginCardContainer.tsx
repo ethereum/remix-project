@@ -6,10 +6,11 @@ import ModuleHeading from './moduleHeading'
 
 interface ActivePluginCardContainerProps {
   pluginComponent: PluginManagerComponent
+  setActiveProfiles: React.Dispatch<React.SetStateAction<Profile<any>[]>>
+  activeProfiles: Profile[]
 }
 function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContainerProps) {
   const [activeProfiles, setActiveProfiles] = useState<Profile[]>()
-  const [inactiveProfiles, setinactiveProfiles] = useState<Profile[]>([])
   const deactivatePlugin = (pluginName: string) => {
     pluginComponent.deactivateP(pluginName)
   }
@@ -31,8 +32,6 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
           profile={profile}
           deactivatePlugin={deactivatePlugin}
           key={idx}
-          setInactivePlugins={setinactiveProfiles}
-          inactivePlugins={inactiveProfiles}
           activePlugins={activeProfiles}
           setActivePlugins={setActiveProfiles}
         />
