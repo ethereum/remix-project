@@ -1,3 +1,5 @@
+import { Profile } from '@remixproject/plugin-utils'
+import { useState } from 'react'
 import { PluginManagerComponent } from './types'
 
 export const defaultActivatedPlugins = [
@@ -34,4 +36,17 @@ export function getSolidity (pluginComponent: PluginManagerComponent) {
   }
   const materializeFetch = fetchSolidity()
   return materializeFetch
+}
+
+export async function CheckSolidity (pluginComponent: PluginManagerComponent, workspacePlugins: string[]) {
+  if (workspacePlugins.includes('solidity') === true && workspacePlugins.includes('solidity-logic') === true) {
+    if (pluginComponent.activeProfiles.includes('solidity') && pluginComponent.activeProfiles.includes('solidity-logic')) {
+      const result = await getSolidity(pluginComponent)
+      if (result && result.length > 0) {
+        return result
+      }
+    } else {
+      return []
+    }
+  }
 }
