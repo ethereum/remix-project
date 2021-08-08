@@ -1,7 +1,6 @@
+/* eslint-disable no-debugger */
 import { Profile } from '@remixproject/plugin-utils'
-import React, { Dispatch, useState } from 'react'
-import { getSolidity } from '../../pluginManagerStateMachine'
-import { PluginManagerComponent } from '../../types'
+import React, { useState } from 'react'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
   profile: Profile & {
@@ -9,23 +8,18 @@ interface PluginCardProps {
   }
   buttonText: string
   activatePlugin: (plugin: Profile) => void
-  inactivePlugins: Profile[]
-  setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
-  setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
-  activePlugins: Profile[]
-  pluginComponent: PluginManagerComponent
+  // inactivePlugins: Profile[]
+  // setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
+  // setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
+  // activePlugins: Profile[]
+  // pluginComponent: PluginManagerComponent
 }
 
 // eslint-disable-next-line no-empty-pattern
 function InactivePluginCard ({
   profile,
   buttonText,
-  activatePlugin,
-  inactivePlugins,
-  activePlugins,
-  setInactivePlugins,
-  setActivePlugins,
-  pluginComponent
+  activatePlugin
 }: PluginCardProps) {
   const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
   const [docLink] = useState<JSX.Element>((profile.documentation) ? (
@@ -52,36 +46,13 @@ function InactivePluginCard ({
             </div>
             {
               <button
-                onClick={async () => {
+                onClick={() => {
                   activatePlugin(profile)
-                  const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
-                  const workspacePlugins = JSON.parse(localStorage.getItem('workspace'))
-                  const tempList = []
-
-                  if (actives && actives.length >= 0) {
-                    actives.forEach(active => {
-                      if (pluginComponent.activeProfiles.includes(active.name) === false) {
-                        const tempActives = actives.filter(target => target.name !== active.name)
-                        tempList.push(...tempActives)
-                      }
-                    })
-                    if (activePlugins && activePlugins.length > 0) {
-                      tempList.push(...activePlugins)
-                    }
-                    if (workspacePlugins.includes('solidity') === true && workspacePlugins.includes('solidity-logic') === true) {
-                      if (pluginComponent.activeProfiles.includes('solidity') && pluginComponent.activeProfiles.includes('solidity-logic')) {
-                        const result = await getSolidity(pluginComponent)
-                        // check to make sure that solidity isn't already in tempList so that it won't be persisted to lcoalstorage twice.
-                        tempList.push(...result)
-                      }
-                    }
+                  const newActives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
+                  if (!newActives.includes(profile)) {
+                    newActives.push(profile)
+                    localStorage.setItem('newActivePlugins', JSON.stringify(newActives))
                   }
-                  tempList.push(...actives, profile)
-                  localStorage.setItem('newActivePlugins', JSON.stringify(tempList))
-                  setActivePlugins([...tempList, profile])
-                  const temp = inactivePlugins.filter(plugin => plugin.name !== profile.name).filter(plugin => plugin.name !== 'solidity' && plugin.name !== 'solidity-logic')
-                  setInactivePlugins(temp)
-                  localStorage.setItem('updatedInactives', JSON.stringify(temp))
                 }}
                 className="btn btn-success btn-sm"
                 data-id={`pluginManagerComponentActivateButton${profile.name}`}
