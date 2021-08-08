@@ -173,7 +173,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           </div>
         </div>
       </form>
-    </ModalDialog><Toaster message={`Cannot create Plugin : ${errorMsg}`} timeOut={3000} /></>
+    </ModalDialog><Toaster message={`Cannot create Plugin : ${errorMsg}`} timeOut={10000} /></>
   )
 }
 

@@ -1,11 +1,13 @@
 import { Profile } from '@remixproject/plugin-utils'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { PluginManagerComponent, PluginManagerProfile } from '../../types'
 import InactivePluginCard from './InactivePluginCard'
 import ModuleHeading from './moduleHeading'
 
 interface InactivePluginCardContainerProps {
   pluginComponent: PluginManagerComponent
+  setInactiveProfiles: React.Dispatch<React.SetStateAction<Profile<any>[]>>
+  inactiveProfiles: Profile<any>[]
 }
 
 interface LocalPluginInterface {
@@ -18,9 +20,7 @@ interface LocalPluginInterface {
   listener: []
   iframe: {}
 }
-function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardContainerProps) {
-  const [activeProfiles, setActiveProfiles] = useState<Profile[]>()
-  const [inactiveProfiles, setinactiveProfiles] = useState<Profile[]>([])
+function InactivePluginCardContainer ({ pluginComponent, setInactiveProfiles, inactiveProfiles }: InactivePluginCardContainerProps) {
   const activatePlugin = (profile: Profile) => {
     pluginComponent.activateP(profile.name)
   }
@@ -28,32 +28,42 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
   useEffect(() => {
     const savedInactiveProfiles: Profile[] = JSON.parse(localStorage.getItem('updatedInactives'))
     const savedLocalPlugins: LocalPluginInterface = JSON.parse(localStorage.getItem('plugins/local'))
-    if (savedInactiveProfiles && savedInactiveProfiles.length > 0 && pluginComponent.inactivePlugins.length > savedInactiveProfiles.length) {
+    const savedActiveProfiles: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
+    if (savedInactiveProfiles && savedInactiveProfiles.length) {
       if (Object.keys(savedLocalPlugins).length > 0 && !pluginComponent.inactivePlugins.includes(savedLocalPlugins.profile as Profile)) {
         const inactiveLocalPlugin = savedLocalPlugins.profile
         localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
         savedInactiveProfiles.push(inactiveLocalPlugin as Profile)
       }
-      setinactiveProfiles(savedInactiveProfiles)
+      // setinactiveProfiles(savedInactiveProfiles)
     } else if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length > 0) {
-      const temp = []
+      let temp: Profile[] = []
       if (Object.keys(savedLocalPlugins).length > 0) {
         const inactiveLocalPlugin = savedLocalPlugins.profile
         localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
-        temp.push([...pluginComponent.inactivePlugins, inactiveLocalPlugin])
-        setinactiveProfiles(temp)
       }
-      setinactiveProfiles(pluginComponent.inactivePlugins)
+      if (Object.keys(savedLocalPlugins).length) {
+        temp = [...pluginComponent.inactivePlugins, savedLocalPlugins.profile as Profile]
+      } else {
+        temp = [...pluginComponent.inactivePlugins]
+      }
+      const filtered = temp.filter(t => {
+        return !savedActiveProfiles.find(active => {
+          return active.name === t.name
+        })
+      })
+      console.log(filtered)
+      setInactiveProfiles(filtered)
     }
-  }, [pluginComponent, pluginComponent.inactivePlugins])
+  }, [pluginComponent, pluginComponent.inactivePlugins, setInactiveProfiles])
   return (
     <Fragment>
       {(inactiveProfiles && inactiveProfiles.length) ? <ModuleHeading headingLabel="Inactive Modules" count={inactiveProfiles.length} /> : null}
-      {inactiveProfiles && inactiveProfiles.map(profile => (
+      {inactiveProfiles && inactiveProfiles.map((profile, idx) => (
         <InactivePluginCard
           buttonText="Activate"
           profile={profile}
-          key={profile.name}
+          key={profile.name || idx}
           activatePlugin={activatePlugin}
         />
       ))
