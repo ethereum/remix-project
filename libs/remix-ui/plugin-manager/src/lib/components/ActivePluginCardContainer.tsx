@@ -16,9 +16,6 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
 
   useEffect(() => {
     const savedActiveProfiles = JSON.parse(localStorage.getItem('newActivePlugins'))
-    if (savedActiveProfiles === null) {
-      localStorage.setItem('newActivePlugins', '[]')
-    }
     if (pluginComponent.activePlugins && pluginComponent.activePlugins.length > 0) {
       setActiveProfiles(pluginComponent.activePlugins)
     } else if (savedActiveProfiles && savedActiveProfiles.length > 0 && pluginComponent.activePlugins.length === 0) {
@@ -28,12 +25,12 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
   return (
     <Fragment>
       {(activeProfiles && activeProfiles.length) ? <ModuleHeading headingLabel="Active Modules" count={activeProfiles.length} /> : null}
-      {activeProfiles && activeProfiles.map(profile => (
+      {activeProfiles && activeProfiles.map((profile, idx) => (
         <ActivePluginCard
           buttonText="Deactivate"
           profile={profile}
           deactivatePlugin={deactivatePlugin}
-          key={profile.version}
+          key={idx}
           setInactivePlugins={setinactiveProfiles}
           inactivePlugins={inactiveProfiles}
           activePlugins={activeProfiles}
