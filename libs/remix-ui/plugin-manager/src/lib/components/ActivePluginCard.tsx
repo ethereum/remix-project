@@ -1,6 +1,8 @@
+/* eslint-disable no-debugger */
 import { Profile } from '@remixproject/plugin-utils'
 import React, { Dispatch, useState } from 'react'
 import '../remix-ui-plugin-manager.css'
+import * as _ from 'lodash'
 interface PluginCardProps {
   // profile: Profile & {
   //   icon?: string
@@ -49,17 +51,13 @@ function ActivePluginCard ({
             {<button
               onClick={() => {
                 deactivatePlugin(profile.name)
-                const inactivesList = JSON.parse(localStorage.getItem('updatedInactives'))
-                if (inactivesList && inactivesList.length > 0) {
-                  const temp = [...inactivesList, profile]
-                  localStorage.setItem('updatedInactives', JSON.stringify(temp))
-                  setInactivePlugins(temp)
-                }
-                // localStorage.setItem('updatedInactives', JSON.stringify(inactivePlugins))
                 const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
                 if (actives && actives.length) {
-                  const newList = actives.filter(active => active.name !== profile.name)
+                  // const newList = actives.filter(active => active.name !== profile.name)
+                  const newList = _.remove(actives, active => active.name !== profile.name)
+                  console.log('removed using lodash and this is the result', newList)
                   localStorage.setItem('newActivePlugins', JSON.stringify(newList))
+                  setActivePlugins([])
                   setActivePlugins(newList)
                 }
               } }

@@ -233,6 +233,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "browserify-reload": "^1.0.3",
+    "chromedriver": "^92.0.1",
     "component-type": "^1.2.1",
     "copy-text-to-clipboard": "^1.0.4",
     "csjs-inject": "^1.0.1",

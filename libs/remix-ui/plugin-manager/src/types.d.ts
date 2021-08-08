@@ -103,7 +103,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   renderComponent(): void
   openLocalPlugin(): Promise<void>
   render(): HTMLDivElement
-  getAndFilterPlugins: (filter?: string) => void
+  getAndFilterPlugins: (filter?: string, profiles?: Profile[]) => void
   triggerEngineEventListener: () => void
   activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | WebsocketPlugin) => Promise<void>
   activeProfiles: string[]
