@@ -125,29 +125,6 @@ class PluginManagerComponent extends ViewPlugin {
       document.getElementById('pluginManager'))
   }
 
-  /***************
-   * SUB-COMPONENT
-   */
-  /**
-   * Add a local plugin to the list of plugins
-   */
-  // async openLocalPlugin () {
-  //   try {
-  //     const profile = await this.localPlugin.open(this.appManager.getAll())
-  //     if (!profile) return
-  //     if (this.appManager.getIds().includes(profile.name)) {
-  //       throw new Error('This name has already been used')
-  //     }
-  //     const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-  //     this.engine.register(plugin)
-  //     await this.appManager.activatePlugin(plugin.name)
-  //   } catch (err) {
-  //     // TODO : Use an alert to handle this error instead of a console.log
-  //     console.log(`Cannot create Plugin : ${err.message}`)
-  //     addToolTip(`Cannot create Plugin : ${err.message}`)
-  //   }
-  // }
-
   render () {
     return this.htmlElement
   }
