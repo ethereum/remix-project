@@ -26,22 +26,10 @@ function InactivePluginCardContainer ({ pluginComponent, setInactiveProfiles, in
   }
 
   useEffect(() => {
-    const savedInactiveProfiles: Profile[] = JSON.parse(localStorage.getItem('updatedInactives'))
     const savedLocalPlugins: LocalPluginInterface = JSON.parse(localStorage.getItem('plugins/local'))
     const savedActiveProfiles: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
-    if (savedInactiveProfiles && savedInactiveProfiles.length) {
-      if (Object.keys(savedLocalPlugins).length > 0 && !pluginComponent.inactivePlugins.includes(savedLocalPlugins.profile as Profile)) {
-        const inactiveLocalPlugin = savedLocalPlugins.profile
-        localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
-        savedInactiveProfiles.push(inactiveLocalPlugin as Profile)
-      }
-      // setinactiveProfiles(savedInactiveProfiles)
-    } else if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length > 0) {
+    if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
       let temp: Profile[] = []
-      if (Object.keys(savedLocalPlugins).length > 0) {
-        const inactiveLocalPlugin = savedLocalPlugins.profile
-        localStorage.setItem('currentLocalPlugin', inactiveLocalPlugin.name)
-      }
       if (Object.keys(savedLocalPlugins).length) {
         temp = [...pluginComponent.inactivePlugins, savedLocalPlugins.profile as Profile]
       } else {
