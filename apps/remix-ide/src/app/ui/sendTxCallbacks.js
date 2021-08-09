@@ -51,7 +51,7 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
     return continueTxExecution(null)
   }
   var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-  var content = confirmDialog(tx, amount, gasEstimation, self.udappUI,
+  var content = confirmDialog(tx, network, amount, gasEstimation,
     (gasPrice, cb) => {
       let txFeeText, priceStatus
       // TODO: this try catch feels like an anti pattern, can/should be
@@ -93,10 +93,9 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
         )
         // TODO: check if this is check is still valid given the refactor
         if (!content.gasPriceStatus) {
-          cancelCb('Given gas price is not correct')
+          cancelCb('Given transaction fee is not correct')
         } else {
-          var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
-          continueTxExecution(gasPrice)
+          continueTxExecution(content.txFee)
         }
       }
     },

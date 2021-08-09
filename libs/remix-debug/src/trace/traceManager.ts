@@ -40,7 +40,7 @@ export class TraceManager {
           const networkId = await this.web3.eth.net.getId()
           this.fork = execution.forkAt(networkId, tx.blockNumber)
         } catch (e) {
-          this.fork = 'berlin'
+          this.fork = 'london'
           console.log(`unable to detect fork, defaulting to ${this.fork}..`)
           console.error(e)
         }
@@ -151,7 +151,7 @@ export class TraceManager {
     if (this.trace[stepIndex] && this.trace[stepIndex].stack) { // there's always a stack
       const stack = this.trace[stepIndex].stack.slice(0)
       stack.reverse()
-      return stack
+      return stack.map(el => el.startsWith('0x') ? el : '0x' + el)
     } else {
       throw new Error('no stack found')
     }

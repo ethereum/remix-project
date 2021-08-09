@@ -1,9 +1,9 @@
 'use strict'
+import { CompilerImports } from '@remix-project/core-plugin'
 var yo = require('yo-yo')
 var async = require('async')
 var EventManager = require('../lib/events')
 
-var CompilerImport = require('../app/compiler/compiler-imports')
 var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
 var SourceHighlighter = require('../app/editor/sourceHighlighter')
@@ -18,7 +18,7 @@ class CmdInterpreterAPI {
     self._components.registry = localRegistry || globalRegistry
     self._components.terminal = terminal
     self._components.sourceHighlighter = new SourceHighlighter()
-    self._components.fileImport = new CompilerImport()
+    self._components.fileImport = new CompilerImports()
     self._components.gistHandler = new GistHandler()
     self._deps = {
       fileManager: self._components.registry.get('filemanager').api,

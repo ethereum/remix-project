@@ -1,7 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
-import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
-
+import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
@@ -71,9 +70,9 @@ module.exports = class TestTab extends ViewPlugin {
         })
       } catch (e) {
         console.log(e)
+        this.data.allTests.push(file)
+        this.data.selectedTests.push(file)
       }
-      this.data.allTests.push(file)
-      this.data.selectedTests.push(file)
     })
 
     this.on('filePanel', 'setWorkspace', async () => {

@@ -11,13 +11,14 @@ import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem
 import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 import './css/file-explorer.css'
 
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
+  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems } = props
   const [state, setState] = useState({
     focusElement: [{
       key: '',
@@ -34,7 +35,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'newFolder',
       name: 'New Folder',
@@ -42,7 +44,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'rename',
       name: 'Rename',
@@ -50,7 +53,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'delete',
       name: 'Delete',
@@ -58,7 +62,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'run',
       name: 'Run',
@@ -66,7 +71,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: ['.js'],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'pushChangesToGist',
       name: 'Push changes to gist',
@@ -74,7 +80,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'publishFolderToGist',
       name: 'Publish folder to gist',
@@ -82,7 +89,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'publishFileToGist',
       name: 'Publish file to gist',
@@ -90,7 +98,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'copy',
       name: 'Copy',
@@ -98,7 +107,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: false
+      multiselect: false,
+      label: ''
     }, {
       id: 'deleteAll',
       name: 'Delete All',
@@ -106,7 +116,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: [],
-      multiselect: true
+      multiselect: true,
+      label: ''
     }],
     focusContext: {
       element: null,
@@ -204,6 +215,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [contextMenuItems])
 
   useEffect(() => {
+    if (removedContextMenuItems) {
+      removeMenuItems(removedContextMenuItems)
+    }
+  }, [contextMenuItems])
+
+  useEffect(() => {
     if (displayInput) {
       handleNewFileInput()
       plugin.resetNewFile()
@@ -275,10 +292,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
         path: [],
         extension: [],
         pattern: [],
-        multiselect: false
+        multiselect: false,
+        label: ''
       }])
     } else {
-      removeMenuItems(['paste'])
+      removeMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: ''
+      }])
     }
   }, [canPaste])
 
@@ -291,10 +318,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const removeMenuItems = (ids: string[]) => {
+  const removeMenuItems = (items: MenuItems) => {
     setState(prevState => {
-      const actions = prevState.actions.filter(({ id }) => ids.findIndex(value => value === id) === -1)
-
+      const actions = prevState.actions.filter(({ id, name }) => items.findIndex(item => id === item.id && name === item.name) === -1)
       return { ...prevState, actions }
     })
   }
@@ -382,7 +408,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         try {
           await fileManager.remove(p)
         } catch (e) {
-          const isDir = state.fileManager.isDirectory(p)
+          const isDir = await state.fileManager.isDirectory(p)
           toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
         }
       }
@@ -601,8 +627,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const emitContextMenuEvent = (id: string, path: string | string[]) => {
-    plugin.emit(id, path)
+  const emitContextMenuEvent = (cmd: customAction) => {
+    plugin.call(cmd.id, cmd.name, cmd)
   }
 
   const handleHideModal = () => {

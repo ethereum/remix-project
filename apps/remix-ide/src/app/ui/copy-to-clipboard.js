@@ -1,6 +1,6 @@
 var yo = require('yo-yo')
 // -------------- copyToClipboard ----------------------
-const copy = require('copy-text-to-clipboard')
+const copy = require('copy-to-clipboard')
 var addTooltip = require('./tooltip')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')

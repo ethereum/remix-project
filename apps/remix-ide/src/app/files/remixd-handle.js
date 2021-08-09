@@ -43,6 +43,7 @@ export class RemixdHandle extends WebsocketPlugin {
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     if (this.appManager.actives.includes('hardhat')) this.appManager.deactivatePlugin('hardhat')
+    if (this.appManager.actives.includes('slither')) this.appManager.deactivatePlugin('slither')
     this.localhostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -88,6 +89,7 @@ export class RemixdHandle extends WebsocketPlugin {
           this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
         })
         this.call('manager', 'activatePlugin', 'hardhat')
+        this.call('manager', 'activatePlugin', 'slither')
       }
     }
     if (this.localhostProvider.isConnected()) {
@@ -134,23 +136,25 @@ export class RemixdHandle extends WebsocketPlugin {
 }
 
 function remixdDialog () {
-  const commandText = 'remixd -s path-to-the-shared-folder --remix-ide remix-ide-instance-URL'
+  const commandText = 'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
   return yo`
     <div class=${css.dialog}>
       <div class=${css.dialogParagraph}>
         Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.<br/><br/> 
         Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
       </div>
-      <div class=${css.dialogParagraph}>If you are just looking for the remixd command, here it is:
+      <div class=${css.dialogParagraph}>
+        If you are just looking for the remixd command, here it is:
         <br><br><b>${commandText}</b>
         <span class="">${copyToClipboard(() => commandText)}</span>
       </div>
-      <div class=${css.dialogParagraph}>When connected, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>
-         and the shared folder will be in the File Explorers workspace named "localhost". 
-        <br/>Note, if the shared folder is a Hardhat project, an additional Hardhat websocket plugin will be listening at <i>ws://127.0.0.1:65522</i>
+      <div class=${css.dialogParagraph}>
+        When connected, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>.
+         The shared folder will be in the "File Explorers" workspace named "localhost". 
+        <br/>Read more about other <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#ports-usage">Remixd ports usage</a>
       </div>
-      <div class=${css.dialogParagraph}>Please make sure your system is secured enough and ports 65520, 65522 are not opened nor forwarded.
-        This feature is still in Alpha, so we recommend to keep a copy of the shared folder.
+      <div class=${css.dialogParagraph}>
+        This feature is still in Alpha. We recommend to keep a backup of the shared folder.
       </div>
       <div class=${css.dialogParagraph}>
         <h6 class="text-danger">
