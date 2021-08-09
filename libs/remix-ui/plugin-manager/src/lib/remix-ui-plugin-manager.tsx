@@ -12,15 +12,13 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
   if (JSON.parse(localStorage.getItem('newActivePlugins')) === null) {
     localStorage.setItem('newActivePlugins', '[]')
   }
-  if (JSON.parse(localStorage.getItem('updatedInactives')) === null) {
-    localStorage.setItem('updatedInactives', '[]')
-  }
   if (JSON.parse(localStorage.getItem('plugins/local')) === null) {
     localStorage.setItem('plugins/local', '{}')
   }
   if (JSON.parse(localStorage.getItem('activatedPluginNames'))) {
     localStorage.setItem('activatedPluginNames', '[]')
   }
+
   return (
     <RootView pluginComponent={pluginComponent}>
       <section data-id="pluginManagerComponentPluginManagerSection">

@@ -35,8 +35,8 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
    * Component Local State declaration
    */
   const [visible, setVisible] = useState<boolean>(true)
-  const [plugin, setPlugin] = useState(initialState)
-  const [filterPlugins, setFilterPlugin] = useState('')
+  const [plugin, setPlugin] = useState<FormStateProps>(initialState)
+  const [filterPlugins, setFilterPlugin] = useState<string>('')
 
   // const { activeProfiles, inactiveProfiles } = useContext(PluginManagerContext)
 
@@ -52,18 +52,6 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
   }
   const closeModal = () => setVisible(true)
   // <-- End Modal Visibility States -->
-
-  /**
- * Gets the latest list of inactive plugin profiles and persist them
- * in local storage
- * @param inactivesList Array of inactive plugin profiles
- * @returns {void}
- */
-  // function PersistNewInactivesState (inactivesList: Profile[]) {
-  //   if (inactivesList && inactivesList.length) {
-  //     localStorage.setItem('updatedInactives', JSON.stringify(inactivesList))
-  //   }
-  // }
 
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
