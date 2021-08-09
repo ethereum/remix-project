@@ -63,7 +63,7 @@ function InactivePluginCardContainer ({ pluginComponent, setInactiveProfiles, in
         <InactivePluginCard
           buttonText="Activate"
           profile={profile}
-          key={profile.name || idx}
+          key={idx}
           activatePlugin={activatePlugin}
         />
       ))
