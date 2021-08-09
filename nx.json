@@ -106,7 +106,8 @@
       "tags": []
     },
     "remix-ui-plugin-manager": {
-
+      "tags": []
+    },
     "remix-core-plugin": {
       "tags": []
     },
@@ -119,6 +120,5 @@
     "remix-ui-renderer": {
       "tags": []
     }
-  }
 }
 }
