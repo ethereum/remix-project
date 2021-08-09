@@ -1,16 +1,17 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
-import CompilerAbstract from './compiler-abstract'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: [],
+  methods: ['get', 'addResolvedContract'],
   events: [],
-  version: packageJson.version
+  version: '0.0.1'
 }
 
-module.exports = class CompilerArtefacts extends Plugin {
+export class CompilerArtefacts extends Plugin {
+  compilersArtefactsPerFile: any
+  compilersArtefacts: any
   constructor () {
     super(profile)
     this.compilersArtefacts = {}

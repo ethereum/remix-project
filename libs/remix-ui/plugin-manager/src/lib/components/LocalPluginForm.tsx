@@ -46,10 +46,9 @@ const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin:
     localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
     pluginManager.activateAndRegisterLocalPlugin(localPlugin)
   } catch (error) {
-    console.log(error)
-    // setErrorMsg(error.message)
     const action: localPluginReducerActionType = { type: 'show', payload: `${error.message}` }
     toastDispatcher(action)
+    console.log(error)
   }
 }
 function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
@@ -176,7 +175,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
         </div>
       </form>
     </ModalDialog>
-    {errorMsg ? <Toaster message={errorMsg} timeOut={3000} /> : null}
+    {errorMsg ? <Toaster message={errorMsg} /> : null}
     </>
   )
 }
