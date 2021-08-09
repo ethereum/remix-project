@@ -131,7 +131,7 @@ module.exports = {
       .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
       .click('*[data-id="localPluginRadioButtoniframe"]')
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]')
       // .modalFooterOKClick()
       .pause(5000)
       .waitForElementVisible('*[data-shared="tooltipPopup"]')

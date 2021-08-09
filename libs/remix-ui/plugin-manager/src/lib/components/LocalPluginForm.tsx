@@ -1,9 +1,10 @@
 /* eslint-disable no-debugger */
-import React, { useState } from 'react'
+import React, { Dispatch, useReducer } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 import { FormStateProps, PluginManagerComponent } from '../../types'
+import { localPluginReducerActionType, localPluginToastReducer } from '../../pluginManagerReducer'
 
 interface LocalPluginFormProps {
   changeHandler: (propertyName: string, value: any) => void
@@ -13,7 +14,8 @@ interface LocalPluginFormProps {
   pluginManager: PluginManagerComponent
 }
 
-const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin: FormStateProps, setErrorMsg: React.Dispatch<React.SetStateAction<string>>) => {
+const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin: FormStateProps,
+  toastDispatcher: Dispatch<localPluginReducerActionType>) => {
   try {
     const profile = JSON.parse(localStorage.getItem('plugins/local'))
     if (profile && profile.profile && Object.keys(profile).length > 0) {
@@ -28,7 +30,6 @@ const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin:
     const localPlugin = plugin.type === 'iframe' ? new IframePlugin(plugin) : new WebsocketPlugin(plugin)
 
     localPlugin.profile.hash = `local-${plugin.name}`
-    // <-------------------------------- Plumbing starts here --------------------------------------->
     const targetPlugin = {
       name: localPlugin.profile.name,
       displayName: localPlugin.profile.displayName,
@@ -45,13 +46,14 @@ const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin:
     localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
     pluginManager.activateAndRegisterLocalPlugin(localPlugin)
   } catch (error) {
-    console.error(error)
+    console.log(error)
     // setErrorMsg(error.message)
-    setErrorMsg(error.message)
+    const action: localPluginReducerActionType = { type: 'show', payload: `${error.message}` }
+    toastDispatcher(action)
   }
 }
 function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
-  const [errorMsg, setErrorMsg] = useState('')
+  const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
 
   return (
     <><ModalDialog
@@ -60,7 +62,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
       hide={visible}
       title="Local Plugin"
       okLabel="OK"
-      okFn={() => handleModalOkClick(pluginManager, plugin, setErrorMsg) }
+      okFn={() => handleModalOkClick(pluginManager, plugin, dispatchToastMsg) }
       cancelLabel="Cancel"
       cancelFn={closeModal}
     >
@@ -173,7 +175,9 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           </div>
         </div>
       </form>
-    </ModalDialog><Toaster message={`Cannot create Plugin : ${errorMsg}`} timeOut={10000} /></>
+    </ModalDialog>
+    {errorMsg ? <Toaster message={errorMsg} timeOut={3000} /> : null}
+    </>
   )
 }
 
