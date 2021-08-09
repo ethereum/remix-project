@@ -1,20 +1,9 @@
-/* eslint-disable no-debugger */
-/* eslint-disable no-unused-vars */
-import {
-  IframePlugin,
-  ViewPlugin,
-  WebsocketPlugin
-} from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginManagerSettings } from './plugin-manager-settings'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-const yo = require('yo-yo')
-const csjs = require('csjs-inject')
-const EventEmitter = require('events')
-// const LocalPlugin = require('./local-plugin') // eslint-disable-line
-const addToolTip = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
 
 const profile = {
@@ -37,7 +26,6 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager = appManager
     this.engine = engine
     this.pluginManagerSettings = new PluginManagerSettings()
-    // this.localPlugin = new LocalPlugin()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
     this.views = {
@@ -91,8 +79,6 @@ class PluginManagerComponent extends ViewPlugin {
       this.engine.register(localPlugin)
       this.appManager.activatePlugin(localPlugin.profile.name)
       this.getAndFilterPlugins()
-      // this.activateP(localPlugin.profile.name)
-      // localStorage.setItem('targetLocalPlugin', plugin.name)
       localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
     }
   }
@@ -113,7 +99,6 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   onActivation () {
-    // this.getAndFilterPlugins()
     this.renderComponent()
   }
 
