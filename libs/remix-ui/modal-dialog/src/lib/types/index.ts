@@ -1,7 +1,7 @@
 export interface ModalDialogProps {
   id?: string
   title?: string,
-  message?: string,
+  message?: string | JSX.Element,
   okLabel?: string,
   okFn?: () => void,
   cancelLabel?: string,
