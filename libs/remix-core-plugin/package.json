@@ -1,0 +1,12 @@
+{
+    "name": "@remix-project/core-plugin",
+    "version": "0.0.1",
+    "description": "This library was generated with [Nx](https://nx.dev).",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Remix Team",
+    "license": "ISC"
+  }
+  

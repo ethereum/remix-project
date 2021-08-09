@@ -1,26 +1,27 @@
-import * as packageJson from '../../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
-const EventEmitter = require('events')
-var Compiler = require('@remix-project/remix-solidity').Compiler
 
+const packageJson = require('../../../../../../package.json')
+const Compiler = require('@remix-project/remix-solidity').Compiler
+const EventEmitter = require('events')
 const profile = {
   name: 'solidity-logic',
   displayName: 'Solidity compiler logic',
   description: 'Compile solidity contracts - Logic',
+  methods: ['getCompilerState'],
   version: packageJson.version
 }
+export class CompileTab extends Plugin {
+  public compiler
+  public optimize
+  public runs
+  public evmVersion: string
+  public compilerImport
+  public event
 
-class CompileTab extends Plugin {
-  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport) {
+  constructor (public queryParams, public fileManager, public editor, public config, public fileProvider, public contentImport) {
     super(profile)
     this.event = new EventEmitter()
-    this.queryParams = queryParams
-    this.compilerImport = contentImport
-    this.compiler = new Compiler((url, cb) => this.compilerImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.fileManager = fileManager
-    this.editor = editor
-    this.config = config
-    this.fileProvider = fileProvider
+    this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
 
   init () {
@@ -30,7 +31,7 @@ class CompileTab extends Plugin {
     this.compiler.set('optimize', this.optimize)
 
     this.runs = this.queryParams.get().runs
-    this.runs = this.runs || 200
+    this.runs = this.runs && this.runs !== 'undefined' ? this.runs : 200
     this.queryParams.update({ runs: this.runs })
     this.compiler.set('runs', this.runs)
 
@@ -60,6 +61,10 @@ class CompileTab extends Plugin {
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
+  getCompilerState () {
+    return this.compiler.state
+  }
+
   /**
    * Set the compiler to using Solidity or Yul (default to Solidity)
    * @params lang {'Solidity' | 'Yul'} ...
@@ -82,7 +87,7 @@ class CompileTab extends Plugin {
         const sources = { [target]: { content } }
         this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-        setTimeout(() => { this.compiler.compile(sources, target); resolve() }, 100)
+        setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       })
     })
   }
@@ -126,5 +131,3 @@ class CompileTab extends Plugin {
     }
   }
 }
-
-module.exports = CompileTab
