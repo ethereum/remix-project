@@ -785,7 +785,7 @@
               "**/node_modules/**",
               "!libs/remix-ui/plugin-manager/**/*"
             ]
-     }
+     },
     "remix-core-plugin": {
       "root": "libs/remix-core-plugin",
       "sourceRoot": "libs/remix-core-plugin/src",
