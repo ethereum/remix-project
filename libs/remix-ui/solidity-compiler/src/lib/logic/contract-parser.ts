@@ -1,15 +1,12 @@
 'use strict'
+import * as solcTranslate from 'solc/translate'
+import * as remixLib from '@remix-project/remix-lib'
 
-var solcTranslate = require('solc/translate')
-var remixLib = require('@remix-project/remix-lib')
-var txHelper = remixLib.execution.txHelper
+const txHelper = remixLib.execution.txHelper
 
-module.exports = (contractName, contract, compiledSource) => {
-  return getDetails(contractName, contract, compiledSource)
-}
+export function parseContracts (contractName, contract, source) {
+  const detail: Record<string, any> = {}
 
-var getDetails = function (contractName, contract, source) {
-  var detail = {}
   detail.name = contractName
   detail.metadata = contract.metadata
   if (contract.evm.bytecode.object) {
@@ -29,7 +26,7 @@ var getDetails = function (contractName, contract, source) {
   }
 
   detail.functionHashes = {}
-  for (var fun in contract.evm.methodIdentifiers) {
+  for (const fun in contract.evm.methodIdentifiers) {
     detail.functionHashes[contract.evm.methodIdentifiers[fun]] = fun
   }
 
@@ -49,7 +46,7 @@ var getDetails = function (contractName, contract, source) {
   return detail
 }
 
-var retrieveMetadataHash = function (bytecode) {
+const retrieveMetadataHash = function (bytecode) {
   var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
   if (!match) {
     match = /a265627a7a72305820([0-9a-f]{64})6c6578706572696d656e74616cf50037$/.exec(bytecode)
@@ -59,9 +56,9 @@ var retrieveMetadataHash = function (bytecode) {
   }
 }
 
-var gethDeploy = function (contractName, jsonInterface, bytecode) {
-  var code = ''
-  var funABI = txHelper.getConstructorInterface(jsonInterface)
+const gethDeploy = function (contractName, jsonInterface, bytecode) {
+  let code = ''
+  const funABI = txHelper.getConstructorInterface(jsonInterface)
 
   funABI.inputs.forEach(function (inp) {
     code += 'var ' + inp.name + ' = /* var of type ' + inp.type + ' here */ ;\n'
@@ -91,16 +88,16 @@ var gethDeploy = function (contractName, jsonInterface, bytecode) {
   return code
 }
 
-var formatGasEstimates = function (data) {
+const formatGasEstimates = function (data) {
   if (!data) return {}
   if (data.creation === undefined && data.external === undefined && data.internal === undefined) return {}
 
-  var gasToText = function (g) {
+  const gasToText = function (g) {
     return g === null ? 'unknown' : g
   }
 
-  var ret = {}
-  var fun
+  const ret: Record<string, any> = {}
+  let fun
   if ('creation' in data) {
     ret.Creation = data.creation
   }

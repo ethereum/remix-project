@@ -16,6 +16,24 @@ export const ModalDialog = (props: ModalDialogProps) => {
     modal.current.focus()
   }, [props.hide])
 
+  useEffect(() => {
+    function handleBlur (e) {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        e.stopPropagation()
+        if (document.activeElement !== this) {
+          handleHide()
+        }
+      }
+    }
+    if (modal.current) {
+      modal.current.addEventListener('blur', handleBlur)
+
+      return () => {
+        modal.current.removeEventListener('blur', handleBlur)
+      }
+    }
+  }, [modal.current])
+
   const modalKeyEvent = (keyCode) => {
     if (keyCode === 27) { // Esc
       if (props.cancelFn) props.cancelFn()
@@ -40,13 +58,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
     handleHide()
   }
 
-  const handleBlur = (e) => {
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      e.stopPropagation()
-      handleHide()
-    }
-  }
-
   return (
     <div
       data-id={`${props.id}ModalDialogContainer-react`}
@@ -58,7 +69,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
     >
       <div className="modal-dialog" role="document">
         <div
-          onBlur={handleBlur}
           ref={modal}
           tabIndex={-1}
           className={'modal-content remixModalContent ' + (props.modalClass ? props.modalClass : '')}

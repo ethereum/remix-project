@@ -7,6 +7,7 @@ import PanelsResize from './lib/panels-resize'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
+import { WalkthroughService } from './walkthroughService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
@@ -16,7 +17,8 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
-import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
+
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -25,7 +27,7 @@ const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
-const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
+
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -38,13 +40,10 @@ const FileProvider = require('./app/files/fileProvider')
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 const toolTip = require('./app/ui/tooltip')
-const CompilerMetadata = require('./app/files/compiler-metadata')
-const CompilerImport = require('./app/compiler/compiler-imports')
 
 const Blockchain = require('./blockchain/blockchain.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
-const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
@@ -114,7 +113,11 @@ const css = csjs`
     fill: var(--secondary);
   }
   .centered svg polygon {
-    fill: var(--secondary);
+    fill              : var(--secondary);
+  }
+  .onboarding {
+    color             : var(--text-info);
+    background-color  : var(--info);
   }
   .matomoBtn {
     width              : 100px;
@@ -128,11 +131,11 @@ class App {
     self._components = {}
     self._view = {}
     self._view.splashScreen = yo`
-    <div class=${css.centered}>
-      ${basicLogo()}
-      <div class="info-secondary" style="text-align:center">
-        REMIX IDE
-      </div>
+      <div class=${css.centered}>
+        ${basicLogo()}
+        <div class="info-secondary" style="text-align:center">
+          REMIX IDE
+        </div>
       </div>
     `
     document.body.appendChild(self._view.splashScreen)
@@ -262,14 +265,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const dGitProvider = new DGitProvider()
 
   // ----------------- import content service ------------------------
-  const contentImport = new CompilerImport(fileManager)
+  const contentImport = new CompilerImports()
 
   const blockchain = new Blockchain(registry.get('config').api)
 
   // ----------------- compilation metadata generation service ---------
-  const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
+  const compilerMetadataGenerator = new CompilerMetadata()
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
-  const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
+  const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
 
   // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
@@ -335,7 +338,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const hiddenPanel = new HiddenPanel()
   const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
   const filePanel = new FilePanel(appManager)
-  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel)
+  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel, contentImport)
   const settings = new SettingsTab(
     registry.get('config').api,
     editor,
@@ -358,6 +361,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings
   ])
 
+  const queryParams = new QueryParams()
+  const params = queryParams.get()
+
   const onAcceptMatomo = () => {
     _paq.push(['forgetUserOptOut'])
     // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
@@ -365,12 +371,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings.updateMatomoAnalyticsChoice(true)
     const el = document.getElementById('modal-dialog')
     el.parentElement.removeChild(el)
+    startWalkthroughService()
   }
   const onDeclineMatomo = () => {
     settings.updateMatomoAnalyticsChoice(false)
     _paq.push(['optUserOut'])
     const el = document.getElementById('modal-dialog')
     el.parentElement.removeChild(el)
+    startWalkthroughService()
+  }
+
+  const startWalkthroughService = () => {
+    const walkthroughService = new WalkthroughService(localStorage)
+    if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
+      walkthroughService.start()
+    }
   }
 
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
@@ -404,6 +419,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         fn: null
       }
     )
+  } else {
+    startWalkthroughService()
   }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
@@ -445,7 +462,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     test,
     filePanel.remixdHandle,
     filePanel.gitHandle,
-    filePanel.hardhatHandle
+    filePanel.hardhatHandle,
+    filePanel.slitherHandle
   ])
 
   if (isElectron()) {
@@ -458,14 +476,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+  await appManager.activatePlugin(['theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
-
-  const queryParams = new QueryParams()
-  const params = queryParams.get()
+  await appManager.activatePlugin(['settings'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
@@ -497,7 +513,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
-  framingService.start(params)
 
   if (params.embed) framingService.embed()
+  framingService.start(params)
 }

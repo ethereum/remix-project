@@ -65,7 +65,7 @@ export default class HardhatProvider extends Plugin {
         if (error) {
           this.blocked = true
           modalDialogCustom.alert('Hardhat Provider', `Error while connecting to the hardhat provider: ${error.message}`)
-          await this.call('udapp', 'setEnvironmentMode', 'vm')
+          await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
           this.provider = null
           setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
           return reject(error)

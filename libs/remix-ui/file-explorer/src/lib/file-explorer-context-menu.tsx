@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react' // eslint-disable-line
 import { action, FileExplorerContextMenuProps } from './types'
 
 import './css/file-explorer-context-menu.css'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
   const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
@@ -96,11 +97,11 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               break
             default:
-              emit && emit(item.id, getPath())
+              emit && emit({ ...item, path: [path] } as customAction)
               break
           }
           hideContextMenu()
-        }}>{item.name}</li>
+        }}>{item.label || item.name}</li>
     })
   }
 

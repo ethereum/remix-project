@@ -780,6 +780,15 @@
     "remix-ui-plugin-manager": {
       "root": "libs/remix-ui/plugin-manager",
       "sourceRoot": "libs/remix-ui/plugin-manager/src",
+      "tsConfig": ["libs/remix-ui/plugin-manager/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/plugin-manager/**/*"
+            ]
+     }
+    "remix-core-plugin": {
+      "root": "libs/remix-core-plugin",
+      "sourceRoot": "libs/remix-core-plugin/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -787,12 +796,78 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/plugin-manager/tsconfig.lib.json"],
+            "tsConfig": [
+              "libs/remix-core-plugin/tsconfig.lib.json"
+            ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/remix-ui/plugin-manager/**/*"
+              "!libs/remix-core-plugin/**/*"
             ]
           }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core-plugin",
+            "tsConfig": "libs/remix-core-plugin/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/package.json",
+            "main": "libs/remix-core-plugin/src/index.ts"
+          }
+        }
+      }
+    },
+    "remix-ui-solidity-compiler": {
+      "root": "libs/remix-ui/solidity-compiler",
+      "sourceRoot": "libs/remix-ui/solidity-compiler/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/solidity-compiler/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/solidity-compiler/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-publish-to-storage": {
+      "root": "libs/remix-ui/publish-to-storage",
+      "sourceRoot": "libs/remix-ui/publish-to-storage/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/publish-to-storage/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/publish-to-storage/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-renderer": {
+      "root": "libs/remix-ui/renderer",
+      "sourceRoot": "libs/remix-ui/renderer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/renderer/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/renderer/**/*"]
+          }
+
         }
       }
     }
