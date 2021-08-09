@@ -3,7 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 const testData = {
-  validGistId: '1859c97c6e1efc91047d725d5225888e',
+  validGistId: '02a847917a6a7ecaf4a7e0d4e68715bf',
   invalidGistId: '6368b389f9302v32902msk2402'
 }
 // 99266d6da54cc12f37f11586e8171546c7700d67
@@ -20,7 +20,7 @@ module.exports = {
        - switch to a file in the new gist
       */
     console.log('token', process.env.gist_token)
-    const gistid = 'c15ed7c182a7991ea0a4dea1544fa254'
+    const gistid = '17ac9315bc065a3d95cf8dc1b28d71f8'
     browser
       .refresh()
       .pause(10000)
@@ -125,9 +125,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
       .modalFooterOKClick()
-      .openFile(`gist-${testData.validGistId}/ApplicationRegistry`)
-      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/ApplicationRegistry']`)
-      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
+      .openFile(`gist-${testData.validGistId}/README.txt`)
+      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
+      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
       .end()
   }
 }

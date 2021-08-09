@@ -27,10 +27,10 @@ class DGitProvider extends Plugin {
   constructor () {
     super(profile)
     this.ipfsconfig = {
-      host: 'ipfs.komputing.org',
+      host: 'ipfs.remixproject.org',
       port: 443,
       protocol: 'https',
-      ipfsurl: 'https://ipfsgw.komputing.org/ipfs/'
+      ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
       host: 'ipfs.io',
@@ -206,7 +206,20 @@ class DGitProvider extends Plugin {
       const commits = await this.log({ ref: 'HEAD' })
       ob = {
         ref: commits[0].oid,
-        message: commits[0].commit.message
+        message: commits[0].commit.message,
+        commits: JSON.stringify(commits.map((commit) => {
+          return {
+            oid: commit.oid,
+            commit: {
+              parent: commit.commit?.parent,
+              tree: commit.commit?.tree,
+              message: commit.commit?.message,
+              committer: {
+                timestamp: commit.commit?.committer?.timestamp
+              }
+            }
+          }
+        }))
       }
     } catch (e) {
       ob = {

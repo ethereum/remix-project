@@ -20,14 +20,10 @@
       "@remix-project/remix-astwalker": ["dist/libs/remix-astwalker/index.js"],
       "@remix-project/remix-debug": ["dist/libs/remix-debug/src/index.js"],
       "@remix-project/remix-lib": ["dist/libs/remix-lib/src/index.js"],
-      "@remix-project/remix-simulator": [
-        "dist/libs/remix-simulator/src/index.js"
-      ],
+      "@remix-project/remix-simulator": ["dist/libs/remix-simulator/src/index.js"],
       "@remix-project/remix-solidity": ["dist/libs/remix-solidity/index.js"],
       "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
-      "@remix-project/remix-url-resolver": [
-        "dist/libs/remix-url-resolver/index.js"
-      ],
+      "@remix-project/remix-url-resolver": ["dist/libs/remix-url-resolver/index.js"],
       "@remixproject/debugger-plugin": ["apps/debugger/src/index.ts"],
       "@remix-project/remixd": ["dist/libs/remixd/index.js"],
       "@remix-ui/tree-view": ["libs/remix-ui/tree-view/src/index.ts"],
@@ -43,6 +39,13 @@
       "@remix-ui/checkbox": ["libs/remix-ui/checkbox/src/index.ts"],
       "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"],
       "@remix-ui/plugin-manager": ["libs/remix-ui/plugin-manager/src/index.ts"]
+<<<<<<< HEAD
+=======
+      "@remix-project/core-plugin": ["libs/remix-core-plugin/src/index.ts"],
+      "@remix-ui/solidity-compiler": ["libs/remix-ui/solidity-compiler/src/index.ts"],
+      "@remix-ui/publish-to-storage": ["libs/remix-ui/publish-to-storage/src/index.ts"],
+      "@remix-ui/renderer": ["libs/remix-ui/renderer/src/index.ts"]
+>>>>>>> 1f46c590a942e56f8e46ab4fa3b074d450d5ffc8
     }
   },
   "exclude": ["node_modules", "tmp"]

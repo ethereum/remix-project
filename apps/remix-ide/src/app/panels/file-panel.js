@@ -9,6 +9,7 @@ import { checkSpecialChars, checkSlash } from '../../lib/helper'
 const { RemixdHandle } = require('../files/remixd-handle.js')
 const { GitHandle } = require('../files/git-handle.js')
 const { HardhatHandle } = require('../files/hardhat-handle.js')
+const { SlitherHandle } = require('../files/slither-handle.js')
 const globalRegistry = require('../../global/registry')
 const examples = require('../editor/examples')
 const GistHandler = require('../../lib/gist-handler')
@@ -34,7 +35,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem'],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -59,10 +60,13 @@ module.exports = class Filepanel extends ViewPlugin {
     this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
     this.hardhatHandle = new HardhatHandle()
+    this.slitherHandle = new SlitherHandle()
     this.registeredMenuItems = []
+    this.removedMenuItems = []
     this.request = {}
     this.workspaces = []
     this.initialWorkspace = null
+    this.appManager = appManager
   }
 
   render () {
@@ -88,6 +92,7 @@ module.exports = class Filepanel extends ViewPlugin {
         request={this.request}
         workspaces={this.workspaces}
         registeredMenuItems={this.registeredMenuItems}
+        removedMenuItems={this.removedMenuItems}
         initialWorkspace={this.initialWorkspace}
       />
       , this.el)
@@ -101,8 +106,22 @@ module.exports = class Filepanel extends ViewPlugin {
     if (!item) throw new Error('Invalid register context menu argument')
     if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
     if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
-
+    if (this.registeredMenuItems.filter((o) => {
+      return o.id === item.id && o.name === item.name
+    }).length) throw new Error(`Action ${item.name} already exists on ${item.id}`)
     this.registeredMenuItems = [...this.registeredMenuItems, item]
+    this.removedMenuItems = this.removedMenuItems.filter(menuItem => item.id !== menuItem.id)
+    this.renderComponent()
+  }
+
+  removePluginActions (plugin) {
+    this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
+      if (item.id !== plugin.name || item.sticky === true) return true
+      else {
+        this.removedMenuItems.push(item)
+        return false
+      }
+    })
     this.renderComponent()
   }
 
@@ -148,21 +167,34 @@ module.exports = class Filepanel extends ViewPlugin {
     }
     if (loadedFromGist) return
 
-    if (params.code) {
+    if (params.code || params.url) {
       try {
         await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
-        var hash = bufferToHex(keccakFromString(params.code))
-        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-        const path = fileName
-        await this._deps.fileProviders.workspace.set(path, atob(params.code))
+        let path = ''
+        let content = ''
+        if (params.code) {
+          var hash = bufferToHex(keccakFromString(params.code))
+          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+          content = atob(params.code)
+          await this._deps.fileProviders.workspace.set(path, content)
+        }
+        if (params.url) {
+          const data = await this.call('contentImport', 'resolve', params.url)
+          path = data.cleanUrl
+          content = data.content
+          await this._deps.fileProviders.workspace.set(path, content)
+        }
         this.initialWorkspace = 'code-sample'
-        await this._deps.fileManager.openFile(fileName)
+        await this._deps.fileManager.openFile(path)
       } catch (e) {
         console.error(e)
       }
       return
     }
+
+    const self = this
+    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
     // insert example contracts if there are no files to show
     return new Promise((resolve, reject) => {
       this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {

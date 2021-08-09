@@ -48,7 +48,7 @@ export async function extractHexValue (location, storageResolver, byteLength) {
   try {
     slotvalue = await readFromStorage(location.slot, storageResolver)
   } catch (e) {
-    return '0x'
+    return ''
   }
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
 }
