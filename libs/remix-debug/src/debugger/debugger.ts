@@ -100,9 +100,9 @@ export class Debugger {
   }
 
   debug (blockNumber, txNumber, tx, loadingCb): Promise<void> {
-    const web3 = this.debugger.web3
-
     return new Promise((resolve, reject) => {
+      const web3 = this.debugger.web3
+
       if (this.debugger.traceManager.isLoading) {
         return resolve()
       }
@@ -111,8 +111,7 @@ export class Debugger {
         if (!tx.to) {
           tx.to = contractCreationToken('0')
         }
-        this.debugTx(tx, loadingCb)
-        return resolve()
+        return this.debugTx(tx, loadingCb).then(resolve).catch(reject)
       }
 
       try {
@@ -120,23 +119,21 @@ export class Debugger {
           return web3.eth.getTransaction(txNumber, (_error, tx) => {
             if (_error) return reject(_error)
             if (!tx) return reject(new Error('cannot find transaction ' + txNumber))
-            this.debugTx(tx, loadingCb)
-            return resolve()
+            return this.debugTx(tx, loadingCb).then(resolve).catch(reject)
           })
         }
         web3.eth.getTransactionFromBlock(blockNumber, txNumber, (_error, tx) => {
           if (_error) return reject(_error)
           if (!tx) return reject(new Error('cannot find transaction ' + blockNumber + ' ' + txNumber))
-          this.debugTx(tx, loadingCb)
-          return resolve()
+          return this.debugTx(tx, loadingCb).then(resolve).catch(reject)
         })
       } catch (e) {
-        return reject(e.message)
+        return reject(e)
       }
     })
   }
 
-  debugTx (tx, loadingCb) {
+  async debugTx (tx, loadingCb) {
     this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
 
     this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
@@ -162,7 +159,7 @@ export class Debugger {
     })
 
     loadingCb()
-    this.debugger.debug(tx)
+    await this.debugger.debug(tx)
   }
 
   unload () {
