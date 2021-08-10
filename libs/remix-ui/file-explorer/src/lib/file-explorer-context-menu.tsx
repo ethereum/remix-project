@@ -4,6 +4,13 @@ import { action, FileExplorerContextMenuProps } from './types'
 import './css/file-explorer-context-menu.css'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
   const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
@@ -76,15 +83,19 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               break
             case 'Push changes to gist':
+              _paq.push(['trackEvent', 'fileExplorer', 'pushToChangesoGist'])
               pushChangesToGist(path, type)
               break
             case 'Publish folder to gist':
+              _paq.push(['trackEvent', 'fileExplorer', 'publishFolderToGist'])
               publishFolderToGist(path, type)
               break
             case 'Publish file to gist':
+              _paq.push(['trackEvent', 'fileExplorer', 'publishFileToGist'])
               publishFileToGist(path, type)
               break
             case 'Run':
+              _paq.push(['trackEvent', 'fileExplorer', 'runScript'])
               runScript(path)
               break
             case 'Copy':
@@ -97,6 +108,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               break
             default:
+              _paq.push(['trackEvent', 'fileExplorer', 'customAction', item.name])
               emit && emit({ ...item, path: [path] } as customAction)
               break
           }
