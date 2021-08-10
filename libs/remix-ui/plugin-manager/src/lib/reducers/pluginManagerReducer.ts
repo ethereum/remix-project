@@ -8,5 +8,14 @@ export function localPluginToastReducer (currentState: string, toastAction: loca
   switch (toastAction.type) {
     case 'show':
       return `Cannot create Plugin : ${toastAction.payload!}`
+    default:
+      return currentState
   }
+}
+
+export interface activePluginActionType {
+  type: 'load' | 'refresh'
+}
+export function loadActivePluginsReducer (activated: string[], action: activePluginActionType) {
+
 }

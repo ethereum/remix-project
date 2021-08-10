@@ -49,11 +49,9 @@ function ActivePluginCard ({
                 deactivatePlugin(profile.name)
                 const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
                 if (actives && actives.length) {
-                  // const newList = actives.filter(active => active.name !== profile.name)
                   const newList = _.remove(actives, active => active.name !== profile.name)
-                  console.log('removed using lodash and this is the result', newList)
+                  // console.log('removed using lodash and this is the result', newList)
                   localStorage.setItem('newActivePlugins', JSON.stringify(newList))
-                  setActivePlugins([])
                   setActivePlugins(newList)
                 }
               } }
