@@ -22,6 +22,9 @@ export function urlFromVersion (version) {
  * checks a compiler whitelist, browser support and OS.
  */
 export function canUseWorker (selectedVersion) {
+  if (selectedVersion.startsWith('http')) {
+    return browserSupportWorker()
+  }
   const version = semver.coerce(selectedVersion)
   if (!version) {
     return browserSupportWorker()
