@@ -138,7 +138,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   const fetchAllVersion = async (callback) => {
     let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
+    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - ' + state.defaultVersion }]
     // fetch normal builds
     const binRes: any = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds
@@ -350,6 +350,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
+    if (selectedVersion === 'builtin') selectedVersion = state.defaultVersion
     if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
       compileTabLogic.compiler.loadVersion(true, url)
     } else {
