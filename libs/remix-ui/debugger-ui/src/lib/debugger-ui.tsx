@@ -25,7 +25,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     txNumber: '',
     debugging: false,
     opt: {
-      debugWithGeneratedSources: false
+      debugWithGeneratedSources: false,
+      debugWithLocalNode: false
     },
     toastMessage: '',
     validationError: '',
@@ -166,7 +167,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return
     }
 
-    const web3 = await debuggerModule.getDebugWeb3()
+    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3()
     try {
       const networkId = await web3.eth.net.getId()
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
@@ -232,7 +233,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState(prevState => {
           return {
             ...prevState,
-            validationError: message
+            statusMessage: message
           }
         })
       }
@@ -277,10 +278,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
-                return { ...prevState, opt: { debugWithGeneratedSources: checked } }
+                return { ...prevState, opt: {...prevState.opt, debugWithGeneratedSources: checked } }
               })
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
+          </div>
+          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+          <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
+              setState(prevState => {
+                return { ...prevState, opt: {...prevState.opt, debugWithLocalNode: checked } }
+              })
+            }} type="checkbox" title="Force the debugger to use the current local node" />
+            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>          
           </div>
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>

@@ -102,38 +102,33 @@ export class Debugger {
   debug (blockNumber, txNumber, tx, loadingCb): Promise<void> {
     const web3 = this.debugger.web3
 
-    return new Promise((resolve, reject) => {
-      if (this.debugger.traceManager.isLoading) {
-        return resolve()
-      }
+    if (this.debugger.traceManager.isLoading) {
+      return new Promise(resolve => resolve())
+    }
 
-      if (tx) {
-        if (!tx.to) {
-          tx.to = contractCreationToken('0')
-        }
-        this.debugTx(tx, loadingCb)
-        return resolve()
+    if (tx) {
+      if (!tx.to) {
+        tx.to = contractCreationToken('0')
       }
+      return this.debugTx(tx, loadingCb)
+    }
 
-      try {
-        if (txNumber.indexOf('0x') !== -1) {
-          return web3.eth.getTransaction(txNumber, (_error, tx) => {
-            if (_error) return reject(_error)
-            if (!tx) return reject(new Error('cannot find transaction ' + txNumber))
-            this.debugTx(tx, loadingCb)
-            return resolve()
-          })
-        }
-        web3.eth.getTransactionFromBlock(blockNumber, txNumber, (_error, tx) => {
-          if (_error) return reject(_error)
-          if (!tx) return reject(new Error('cannot find transaction ' + blockNumber + ' ' + txNumber))
-          this.debugTx(tx, loadingCb)
-          return resolve()
+    try {
+      if (txNumber.indexOf('0x') !== -1) {
+        return web3.eth.getTransaction(txNumber, (_error, tx) => {
+          if (_error) return new Promise((resolve, reject) => reject(_error))
+          if (!tx) return new Promise((resolve, reject) => reject(new Error('cannot find transaction ' + txNumber)))
+          return this.debugTx(tx, loadingCb)
         })
-      } catch (e) {
-        return reject(e.message)
       }
-    })
+      web3.eth.getTransactionFromBlock(blockNumber, txNumber, (_error, tx) => {
+        if (_error) return new Promise((resolve, reject) => reject(_error))
+        if (!tx) new Promise((resolve, reject) => reject(new Error('cannot find transaction ' + blockNumber + ' ' + txNumber)))
+        return this.debugTx(tx, loadingCb)
+      })
+    } catch (e) {
+      return new Promise((resolve, reject) => reject(e))
+    }
   }
 
   debugTx (tx, loadingCb) {
@@ -162,7 +157,7 @@ export class Debugger {
     })
 
     loadingCb()
-    this.debugger.debug(tx)
+    return this.debugger.debug(tx)
   }
 
   unload () {
