@@ -31,7 +31,7 @@ export class ValueType {
       return { value: this.decodeValue(value), type: this.typeName }
     } catch (e) {
       console.log(e)
-      return { value: '<decoding failed - ' + e.message + '>', type: this.typeName }
+      return { error: '<decoding failed - ' + e.message + '>', type: this.typeName }
     }
   }
 
