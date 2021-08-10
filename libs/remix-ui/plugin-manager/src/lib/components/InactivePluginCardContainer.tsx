@@ -40,7 +40,6 @@ function InactivePluginCardContainer ({ pluginComponent, setInactiveProfiles, in
           return active.name === t.name
         })
       })
-      console.log(filtered)
       setInactiveProfiles(filtered)
     }
   }, [pluginComponent, pluginComponent.inactivePlugins, setInactiveProfiles])
