@@ -220,10 +220,10 @@ export class Web3VmProvider {
       const fnselector = parseInt('0x' + payload.substring(0, 8))
       const iface = new ethers.utils.Interface([`function log${ConsoleLogs[fnselector]} view`])
       console.log('iface--->', iface)
-      console.log('---->', iface.decodeFunctionData("log", '0x' + payload))
+      const functionDesc = iface.getFunction('log')
+      console.log('---->', iface.decodeFunctionData(functionDesc, '0x' + payload))
     }
 
-    // console.log('processingAddress in ==', normalizeHexAddress(step.stack[step.stack.length - 2]))
     if (step.op === 'CREATE' || step.op === 'CALL') {
       if (step.op === 'CREATE') {
         this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'
