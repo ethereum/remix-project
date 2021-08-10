@@ -43,7 +43,7 @@ export class ValueType {
     * @param {String} - memory
     * @return {Object} - decoded value
     */
-  async decodeFromStack (stackDepth, stack, memory, calldata, variableDetails?) {
+  async decodeFromStack (stackDepth, stack, memory, storageResolver, calldata, cursor, variableDetails?) {
     let value
     if (stackDepth >= stack.length) {
       value = this.decodeValue('')
