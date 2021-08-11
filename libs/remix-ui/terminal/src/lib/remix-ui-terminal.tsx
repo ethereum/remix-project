@@ -1,15 +1,26 @@
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
-import { registerCommandAction, filterFnAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, registerRemixWelcomeTextAction } from './actions/terminalAction'
+import { registerCommandAction, filterFnAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, registerRemixWelcomeTextAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer, registerScriptRunnerReducer, remixWelcomeTextReducer } from './reducers/terminalReducer'
 import { remixWelcome } from './reducers/remixWelcom'
-import {getKeyOf, getValueOf} from './utils/utils'
+import { getKeyOf, getValueOf, Objectfilter, matched, find } from './utils/utils'
 import {allCommands, allPrograms} from './commands' // eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog'
+// const TxLogger from '../../../apps/'
+import vm from 'vm'
 import javascriptserialize from 'javascript-serialize'
 import jsbeautify from 'js-beautify'
+import helper from '../../../../../apps/remix-ide/src/lib/helper'
+import parse from 'html-react-parser'
 
 import './remix-ui-terminal.css'
+import { debug } from 'console'
+import { eventNames } from 'process'
+
+const remixLib = require('@remix-project/remix-lib')
+var typeConversion = remixLib.execution.typeConversion
 
 /* eslint-disable-next-line */
 export interface RemixUiTerminalProps {
@@ -27,6 +38,15 @@ export interface RemixUiTerminalProps {
   config: any
   thisState: any
   vm: any
+  commandHelp: any,
+  _deps: any,
+  fileImport: any,
+  gistHandler: any,
+  sourceHighlighter: any,
+  registry: any,
+  commands: any,
+  txListener: any,
+  eventsDecoder: any
 }
 
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -34,7 +54,6 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
-
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [inserted, setInserted] = useState(false)
   const [_cmdIndex, setCmdIndex] = useState(-1)
@@ -51,12 +70,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [scriptRunnserState, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
   const [welcomeTextState, welcomTextDispath] = useReducer(remixWelcomeTextReducer, initialState)
+  const [isListeningOnNetwork, setIsListeningOnNetwork] = useState(false)
   const [autoCompletState, setAutoCompleteState] = useState({
     activeSuggestion: 0,
     data: {
       _options: []
     },
     _startingElement: 0,
+    autoCompleteSelectedItem: {},
     _elementToShow: 4,
     _selectedElement: 0,
     filteredCommands: [],
@@ -64,58 +85,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     showSuggestions: false,
     text: '',
     userInput: '',
-    extraCommands: []
+    extraCommands: [],
+    commandHistoryIndex: 0
   })
 
-  const [state, setState] = useState({
-    journalBlocks: {
-      intro: (
-        <div>
-          <div> - Welcome to Remix {props.version} - </div>
-          <br/>
-          <div>You can use this terminal to: </div>
-          <ul className='ul'>
-            <li>Check transactions details and start debugging.</li>
-            <li>Execute JavaScript scripts:
-              <br />
-              <i> - Input a script directly in the command line interface </i>
-              <br />
-              <i> - Select a Javascript file in the file explorer and then run \`remix.execute()\` or \`remix.exeCurrent()\`  in the command line interface  </i>
-              <br />
-              <i> - Right click on a JavaScript file in the file explorer and then click \`Run\` </i>
-            </li>
-          </ul>
-          <div>The following libraries are accessible:</div>
-          <ul className='ul'>
-            <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
-            <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
-            <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
-            <li>remix (run remix.help() for more info)</li>
-          </ul>
-        </div>
-      ),
-      text: (<div>David</div>)
-    },
-    data: {
-      // lineLength: props.options.lineLength || 80,
-      session: [],
-      activeFilters: { commands: {}, input: '' },
-      filterFns: {}
-    },
-    _commands: {},
-    commands: {},
-    _JOURNAL: [],
-    _jobs: [],
-    _INDEX: {},
-    _INDEXall: [],
-    _INDEXallMain: [],
-    _INDEXcommands: {},
-    _INDEXcommandsMain: {}
-  })
-
-  const _scopedCommands = () => {
-
-  }
+  const [searchInput, setSearchInput] = useState('')
+  // const [showTableDetails, setShowTableDetails] = useState([])
+  const [showTableDetails, setShowTableDetails] = useState(null)
 
   useWindowResize(() => {
     setWindowHeight(window.innerHeight)
@@ -125,7 +101,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const inputEl = useRef(null)
   // events
   useEffect(() => {
-    registerRemixWelcomeTextAction(remixWelcome, welcomTextDispath)
+    initListeningOnNetwork(props, scriptRunnerDispatch)
+    // registerRemixWelcomeTextAction(remixWelcome, welcomTextDispath)
     registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
     registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
     registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
@@ -135,15 +112,18 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
     registerCommandAction('warn', _blocksRenderer('warn'), { activate: true }, dispatch)
     registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
+
     registerCommandAction('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
+      console.log({ script })
+      console.log({ scopedCommands })
+
       _shell(script, scopedCommands, function (error, output) {
-        console.log({ error }, 'registerCommand scrpt')
-        console.log({ output }, 'registerCommand scrpt 2')
         if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
-        else if (output) scriptRunnerDispatch({ type: 'error', payload: { message: output } })
+        if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
       })
     }, { activate: true }, dispatch)
+
     filterFnAction('log', basicFilter, filterDispatch)
     filterFnAction('info', basicFilter, filterDispatch)
     filterFnAction('warn', basicFilter, filterDispatch)
@@ -157,7 +137,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     // dispatch({ type: 'html', payload: { commands: htmlresullt.commands } })
     // dispatch({ type: 'log', payload: { _commands: logresult._commands } })
     // registerCommand('log', _blocksRenderer('log'), { activate: true })
-  }, [newstate.journalBlocks, props.thisState.autoCompletePopup, autoCompletState.text])
+  }, [props.thisState.autoCompletePopup, autoCompletState.text])
 
   const placeCaretAtEnd = (el) => {
     el.focus()
@@ -169,6 +149,53 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     sel.addRange(range)
   }
 
+  const domTerminalFeatures = () => {
+    return {
+      remix: props.cmdInterpreter
+    }
+  }
+
+  function exeCurrent (cb) {
+    return execute(undefined, cb)
+  }
+
+  function execute (file, cb) {
+    function _execute (content, cb) {
+      if (!content) {
+      //  toolTip('no content to execute')
+        if (cb) cb()
+        return
+      }
+
+      newstate.commands.script(content)
+    }
+
+    if (typeof file === 'undefined') {
+      var content = props._deps.editor.currentContent()
+      _execute(content, cb)
+      return
+    }
+
+    var provider = props._deps.fileManager.fileProviderOf(file)
+
+    if (!provider) {
+      // toolTip(`provider for path ${file} not found`)
+      if (cb) cb()
+      return
+    }
+
+    provider.get(file, (error, content) => {
+      if (error) {
+        // toolTip(error)
+        // TODO: pop up
+        if (cb) cb()
+        return
+      }
+
+      _execute(content, cb)
+    })
+  }
+
   const _shell = async (script, scopedCommands, done) => { // default shell
     if (script.indexOf('remix:') === 0) {
       return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
@@ -177,21 +204,36 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
       // for all the other case, we use the Code Executor plugin
-      var context = props.cmdInterpreter
+      var context = domTerminalFeatures()
       try {
-        var cmds = props.vm.createContext(context)
-        var result = props.vm.runInContext(script, cmds)
-        return done(null, result)
+        const cmds = vm.createContext(context)
+        // const result
+        let result = vm.runInContext(script, cmds)
+        if (script === 'remix.exeCurrent()') {
+          result = exeCurrent(undefined)
+        } else {
+          if (result === {}) {
+            for (const k in result) {
+              result = +`<div> {k}: ${result[k]}</div> <br>`
+            }
+          }
+        }
+
+        console.log(result === {}, ' is result === object')
+        console.log({ result })
+        return done(null, '')
       } catch (error) {
         return done(error.message)
       }
     }
     try {
+      let result: any
       if (script.trim().startsWith('git')) {
         // result = await this.call('git', 'execute', script)
       } else {
         result = await props.thisState.call('scriptRunner', 'execute', script)
       }
+      console.log({ result })
       done()
     } catch (error) {
       done(error.message || error)
@@ -231,7 +273,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-
   const _appendItem = (item: any) => {
     let { _JOURNAL, _jobs, data } = state
     const self = props
@@ -268,7 +309,20 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const handleKeyDown = (event) => {
-    if (event.which === 13) {
+    const suggestionCount = autoCompletState.activeSuggestion
+    if (autoCompletState.userInput !== '' && (event.which === 27 || event.which === 8 || event.which === 46)) {
+      console.log(' enter esc and delete')
+      // backspace or any key that should remove the autocompletion
+      setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false }))
+    }
+    if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
+      if (autoCompletState.userInput.length === 1) {
+        setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[0]).toString() }))
+      } else {
+        setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: autoCompletState.userInput }))
+      }
+    }
+    if (event.which === 13 && !autoCompletState.showSuggestions) {
       if (event.ctrlKey) { // <ctrl+enter>
         // on enter, append the value in the cli input to the journal
         inputEl.current.focus()
@@ -287,7 +341,50 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         inputEl.current.focus()
         setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false }))
       }
-    } else if (event.which === 38) { // <arrowUp>
+    } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && (autoCompletState.userInput === '')) {
+      console.log('previous command up')
+      // if (autoCompletState.commandHistoryIndex < 1) {
+      event.preventDefault()
+      console.log(newstate._commandHistory[0], ' up value')
+      setAutoCompleteState(prevState => ({ ...prevState, userInput: newstate._commandHistory[0] }))
+
+      // }
+      // else if (newstate._commandHistory.length < autoCompletState.commandHistoryIndex) {
+      //   setAutoCompleteState(prevState => ({ ...prevState, commandHistoryIndex: --autoCompletState.commandHistoryIndex }))
+      //   console.log(newstate._commandHistory[newstate._commandHistory.length > 1 ? autoCompletState.commandHistoryIndex-- : newstate._commandHistory.length + 1], ' up value')
+      // } else if (newstate._commandHistory.length === autoCompletState.commandHistoryIndex) {
+      //   console.log(newstate._commandHistory.length === autoCompletState.commandHistoryIndex, ' up value middle')
+      //   setAutoCompleteState(prevState => ({ ...prevState, commandHistoryIndex: autoCompletState.commandHistoryIndex - 2, userInput: newstate._commandHistory[autoCompletState.commandHistoryIndex] }))
+      // } else {
+      //   setAutoCompleteState(prevState => ({ ...prevState, commandHistoryIndex: autoCompletState.commandHistoryIndex - 1, userInput: newstate._commandHistory[autoCompletState.commandHistoryIndex] }))
+      //   console.log(newstate._commandHistory[newstate._commandHistory.length - 1], ' up value last')
+      // }
+      // if (newstate._commandHistory.length === 0) {
+      //   setAutoCompleteState(prevState => ({ ...prevState, userInput: newstate[0] }))
+      // }
+      // setAutoCompleteState(prevState => ({ ...prevState, userInput: newstate[autoCompletState.commandHistoryIndex] }))
+      // TODO: giving error => need to work on the logic
+    // // } else if (newstate._commandHistory.length && event.which === 40 && !autoCompletState.showSuggestions && (autoCompletState.userInput !== '')) {
+    // //   console.log('previous command down')
+    // //   if (autoCompletState.commandHistoryIndex < newstate._commandHistory.length) {
+    // //     setAutoCompleteState(prevState => ({ ...prevState, commandHistoryIndex: autoCompletState.commandHistoryIndex + 1, userInput: newstate._commandHistory[autoCompletState.commandHistoryIndex + 1] }))
+    // //     console.log(newstate._commandHistory[newstate._commandHistory.length > 1 ? autoCompletState.commandHistoryIndex++ : newstate._commandHistory.length - 1], ' down ++ value')
+    // //   } else {
+    // //     console.log(newstate._commandHistory[newstate._commandHistory.length - 1], ' down value last')
+    // //     setAutoCompleteState(prevState => ({ ...prevState, commandHistoryIndex: newstate._commandHistory.length - 1, userInput: newstate._commandHistory[newstate._commandHistory.length - 1] }))
+    // //   }
+    // //   // if (autoCompletState.commandHistoryIndex === newstate._commandHistory.length) {
+    // //   //   return
+    // //   // }
+      // setAutoCompleteState(prevState => ({ ...prevState, userInput: newstate[autoCompletState.commandHistoryIndex] + 1 }))
+    } else if (event.which === 38 && autoCompletState.showSuggestions) {
+      event.preventDefault()
+      if (autoCompletState.activeSuggestion === 0) {
+        return
+      }
+      setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount - 1, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion - 1]).toString() }))
+      console.log('disable up an down key in input box')
+    } else if (event.which === 38 && !autoCompletState.showSuggestions) { // <arrowUp>
       const len = _cmdHistory.length
       if (len === 0) event.preventDefault()
       if (_cmdHistory.length - 1 > _cmdIndex) {
@@ -295,8 +392,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       inputEl.current.innerText = _cmdHistory[_cmdIndex]
       inputEl.current.focus()
-    }
-    else if (event.which === 40) {
+    } else if (event.which === 40 && autoCompletState.showSuggestions) {
+      event.preventDefault()
+      if ((autoCompletState.activeSuggestion + 1) === autoCompletState.data._options.length) {
+        return
+      }
+      setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount + 1, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion + 1]).toString() }))
+      console.log('disable up an down key in input box')
+    } else if (event.which === 40 && !autoCompletState.showSuggestions) {
       if (_cmdIndex > -1) {
         setCmdIndex(prevState => prevState--)
       }
@@ -305,6 +408,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     } else {
       setCmdTemp(inputEl.current.innerText)
     }
+    console.log({ autoCompletState })
   }
 
   const moveGhostbar = (event) => {
@@ -326,14 +430,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const mousedown = (event: MouseEvent) => {
     setSeparatorYPosition(event.clientY)
     setDragging(true)
-    // console.log({ windowHeight })
-    // console.log(event.which === 1, 'event.which === 1')
-    // event.preventDefault()
-    // moveGhostbar(event)
-    // if (event.which === 1) {
-    //   console.log('event .which code 1')
-    //   moveGhostbar(event)
-    // }
   }
 
   const onMouseMove: any = (e: MouseEvent) => {
@@ -352,36 +448,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setDragging(false)
   }
 
-
   /* end of mouse event */
 
-  const cancelGhostbar = (event) => {
-    if (event.keyCode === 27) {
-      console.log('event .key code 27')
-    }
-  }
-
   useEffect(() => {
-    // document.addEventListener('mousemove', changeBg)
-    // function changeBg () {
-    //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
-    // }
-    // document.addEventListener('mouseup', changeBg2)
-    // function changeBg2 () {
-    //   document.getElementById('dragId').style.backgroundColor = ''
-    // }
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
 
     return () => {
-      // document.addEventListener('mousemove', changeBg)
-      // function changeBg () {
-      //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
-      // }
-      // document.addEventListener('mouseup', changeBg2)
-      // function changeBg2 () {
-      //   document.getElementById('dragId').style.backgroundColor = ''
-      // }
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
     }
@@ -448,85 +521,378 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   /* end of block content that gets rendered from script Runner */
 
+  const handleClearConsole = () => {
+    dispatch({ type: 'clearconsole', payload: [] })
+    inputEl.current.focus()
+  }
   /* start of autoComplete */
-  const handleSelect = (text) => {
-    props.thisState.event.trigger('handleSelect', [text])
+
+  const listenOnNetwork = (event: any) => {
+    const isListening = event.target.checked
+    setIsListeningOnNetwork(isListening)
+    listenOnNetworkAction(props, isListening)
   }
 
   const onChange = (event: any) => {
     event.preventDefault()
     const inputString = event.target.value
-    console.log(event)
-    console.log({ inputString })
-    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
-    const textList = inputString.split(' ')
-    const autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
-    allPrograms.forEach(item => {
-      const program = getKeyOf(item)
-      console.log({ program })
-      if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
-        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
-      } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
-        allCommands.forEach(item => {
-          console.log({ item })
-          const command = getKeyOf(item)
-          if (command.includes(autoCompleteInput.trim())) {
-            setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
-          }
-        })
+    if (matched(allPrograms, inputString) || inputString.includes('.')) {
+      setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
+      const textList = inputString.split('.')
+      if (textList.length === 1) {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [] } }))
+        const result = Objectfilter(allPrograms, autoCompletState.userInput)
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: result } }))
+      } else {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [] } }))
+        const result = Objectfilter(allCommands, autoCompletState.userInput)
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: result } }))
       }
-    })
-    autoCompletState.extraCommands.forEach(item => {
-      const command = getKeyOf(item)
-      if (command.includes(autoCompleteInput.trim())) {
-        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
-      }
-    })
-    if (autoCompletState.data._options.length === 1 && event.which === 9) {
-      // if only one option and tab is pressed, we resolve it
-      event.preventDefault()
-      textList.pop()
-      textList.push(getKeyOf(autoCompletState.data._options[0]))
-      handleSelect(`${textList}`.replace(/,/g, ' '))
+    } else {
+      setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: inputString }))
     }
   }
 
+  const handleSelect = (event) => {
+    const suggestionCount = autoCompletState.activeSuggestion
+    if (event.keyCode === 38) {
+      if (autoCompletState.activeSuggestion === 0) {
+        return
+      }
+      setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount - 1 }))
+    } else if (event.keyCode === 40) {
+      if (autoCompletState.activeSuggestion - 1 === autoCompletState.data._options.length) {
+        return
+      }
+      setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount + 1 }))
+    }
+    // props.thisState.event.trigger('handleSelect', [text])
+  }
+
+  const checkTxStatus = (tx, type) => {
+    if (tx.status === '0x1' || tx.status === true) {
+      return (<i className='txStatus succeeded fas fa-check-circle'></i>)
+    }
+    if (type === 'call' || type === 'unknownCall' || type === 'unknown') {
+      return (<i className='txStatus call'>call</i>)
+    } else if (tx.status === '0x0' || tx.status === false) {
+      return (<i className='txStatus failed fas fa-times-circle'></i>)
+    } else {
+      return (<i className='txStatus notavailable fas fa-circle-thin' title='Status not available' ></i>)
+    }
+  }
+
+  const context = (opts, blockchain) => {
+    const data = opts.tx || ''
+    const from = opts.from ? helper.shortenHexData(opts.from) : ''
+    let to = opts.to
+    if (data.to) to = to + ' ' + helper.shortenHexData(data.to)
+    const val = data.value
+    let hash = data.hash ? helper.shortenHexData(data.hash) : ''
+    const input = data.input ? helper.shortenHexData(data.input) : ''
+    const logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
+    const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
+    const i = data ? data.transactionIndex : data.transactionIndex
+    const value = val ? typeConversion.toInt(val) : 0
+
+    if (blockchain.getProvider() === 'vm') {
+      return (
+        <div>
+          <span className='txLog_7Xiho'>
+            <span className='tx'>[{vm}]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
+            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
+            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+          </span>
+        </div>)
+    } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
+      return (
+        <div>
+          <span className='txLog_7Xiho'>
+            <span className='tx'>[block:${block} txIndex:${i}]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
+            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
+            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+          </span>
+        </div>)
+    } else {
+      to = helper.shortenHexData(to)
+      hash = helper.shortenHexData(data.blockHash)
+      return (
+        <div>
+          <span className='txLog'>
+            <span className='tx'>[block:${block} txIndex:${i}]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
+          </span>
+        </div>)
+    }
+  }
+
+  const txDetails = (event, tx, obj) => {
+    if (showTableDetails === null) {
+      setShowTableDetails(true)
+    } else {
+      setShowTableDetails(null)
+    }
+    // if (showTableDetails.length === 0) {
+    //   setShowTableDetails([{ hash: tx.hash, show: true }])
+    // }
+    // const id = showTableDetails.filter(x => x.hash !== tx.hash)
+    // if ((showTableDetails.length !== 0) && (id[0] === tx.hash)) {
+    //   setShowTableDetails(currentState => ([...currentState, { hash: tx.hash, show: false }]))
+    // }
+    // console.log((showTableDetails.length !== 0) && (id[0] === tx.hash))
+    // console.log({ showTableDetails }, ' clicked button')
+  }
+
+  const showTable = (opts) => {
+    let msg = ''
+    let toHash
+    const data = opts.data // opts.data = data.tx
+    if (data.to) {
+      toHash = opts.to + ' ' + data.to
+    } else {
+      toHash = opts.to
+    }
+    let callWarning = ''
+    if (opts.isCall) {
+      callWarning = '(Cost only applies when called by a contract)'
+    }
+    if (!opts.isCall) {
+      if (opts.status !== undefined && opts.status !== null) {
+        if (opts.status === '0x0' || opts.status === false) {
+          msg = ' Transaction mined but execution failed'
+        } else if (opts.status === '0x1' || opts.status === true) {
+          msg = ' Transaction mined and execution succeed'
+        }
+      } else {
+        msg = ' Status not available at the moment'
+      }
+    }
+
+    let stringified = ' - '
+    if (opts.logs && opts.logs.decoded) {
+      stringified = typeConversion.stringify(opts.logs.decoded)
+    }
+    const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
+    return (
+      <table className='txTable' id='txTable' data-id={`txLoggerTable${opts.hash}`}>
+        <tr className='tr'>
+          <td className='td' data-shared={`key_${opts.hash}`}> status </td>
+          <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.status}{msg}</td>
+        </tr>
+        <tr className='tr'>
+          <td className='td' data-shared={`key_${opts.hash}`}> transaction hash </td>
+          <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
+            <CopyToClipboard content={opts.hash}/>
+          </td>
+        </tr>
+        {
+          opts.contractAddress && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> contract address </td>
+              <td className='td' data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.contractAddress}
+                <CopyToClipboard content={opts.contractAddress}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.from && (
+            <tr className='tr'>
+              <td className='td tableTitle' data-shared={`key_${opts.hash}`}> from </td>
+              <td className='td' data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.from}
+                <CopyToClipboard content={opts.from}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.to && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> to </td>
+              <td className='td' data-id={`txLoggerTableTo${opts.hash}`} data-shared={`pair_${opts.hash}`}>{toHash}
+                <CopyToClipboard content={data.to ? data.to : toHash}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.gas && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> gas </td>
+              <td className='td' data-id={`txLoggerTableGas${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.gas} gas
+                <CopyToClipboard content={opts.gas}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.transactionCost && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> transaction cost </td>
+              <td className='td' data-id={`txLoggerTableTransactionCost${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.transactionCost} gas {callWarning}
+                <CopyToClipboard content={opts.transactionCost}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.executionCost && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> execution cost </td>
+              <td className='td' data-id={`txLoggerTableExecutionHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.executionCost} gas {callWarning}
+                <CopyToClipboard content={opts.executionCost}/>
+              </td>
+            </tr>
+          )
+        }
+        {opts.hash && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> hash </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
+              <CopyToClipboard content={opts.hash}/>
+            </td>
+          </tr>
+        )}
+        {opts.input && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> input </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{helper.shortenHexData(opts.input)}
+              <CopyToClipboard content={opts.input}/>
+            </td>
+          </tr>
+        )}
+        {opts['decoded input'] && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> decode input </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input']}
+              <CopyToClipboard content={opts['decoded input']}/>
+            </td>
+          </tr>
+        )}
+        {opts['decoded output'] && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> decode output </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded output']}
+              <CopyToClipboard content={opts['decoded output']}/>
+            </td>
+          </tr>
+        )}
+        {opts.logs && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> logs </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
+              {JSON.stringify(stringified, null, '\t')}
+              <CopyToClipboard content={JSON.stringify(stringified, null, '\t')}/>
+              <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')}/>
+            </td>
+          </tr>
+        )}
+        {opts.val && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> val </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{val} wei
+              <CopyToClipboard content={`${val} wei`}/>
+            </td>
+          </tr>
+        )}
+      </table>
+    )
+  }
+
+  const debug = (event, tx) => {
+    event.stopPropagation()
+    if (tx.isCall && tx.envMode !== 'vm') {
+      console.log('start debugging')
+      return (<ModalDialog
+        hide={false}
+        handleHide={() => {} }
+        message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
+      />)
+    } else {
+      props.event.trigger('debuggingRequested', [tx.hash])
+      console.log('trigger ', { tx: props.event.trigger })
+    }
+  }
+
+  const renderKnownTransactions = (tx, receipt, index) => {
+    const from = tx.from
+    const to = tx.to
+    const obj = { from, to }
+    const showDetails = showTableDetails === tx.from
+    const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
+    return (
+      <span id={`tx${tx.hash}`} key={index}>
+        <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
+          {/* onClick={e => txDetails(e, tx, data, obj)} */}
+          {checkTxStatus(receipt || tx, txType)}
+          {context({ from, to, tx }, props.blockchain)}
+          <div className='buttons'>
+            <div className='debug btn btn-primary btn-sm' onClick={(event) => debug(event, tx)}>Debug</div>
+          </div>
+          <i className = {`arrow fas ${(showDetails) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
+        </div>
+        {showTableDetails ? showTable({
+          hash: tx.hash,
+          status: receipt !== null ? receipt.status : null,
+          isCall: tx.isCall,
+          contractAddress: tx.contractAddress,
+          data: tx,
+          from,
+          to,
+          gas: tx.gas,
+          input: tx.input,
+          'decoded input': tx.resolvedData && tx.resolvedData.params ? JSON.stringify(typeConversion.stringify(tx.resoparams), null, '\t') : ' - ',
+          'decoded output': tx.resolvedData && tx.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(tx.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+          logs: tx.logs,
+          val: tx.value,
+          transactionCost: tx.transactionCost,
+          executionCost: tx.executionCost
+        }) : null}
+      </span>
+    )
+  }
+
   const handleAutoComplete = () => (
-    <div className="popup alert alert-secondary">
+    <div className='popup alert alert-secondary' style={{ display: autoCompletState.showSuggestions && autoCompletState.userInput !== '' ? 'block' : 'none' }}>
       <div>
-          ${autoCompletState.data._options.map((item, index) => {
+        {autoCompletState.data._options.map((item, index) => {
           return (
-            <div key={index}>auto complete here</div>
-            // <div data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerHide item ${_selectedElement === index ? 'border border-primary' : ''}`}>
-            //   <div value={index} onClick={(event) => { handleSelect(event.srcElement.innerText) }}>
-            //     {getKeyOf(item)}
-            //   </div>
-            //   <div>
-            //     {getValueOf(item)}
-            //   </div>
-            // </div>
+            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary selectedOptions' : ''}`} onKeyDown={ handleSelect }>
+              <div>
+                {getKeyOf(item)}
+              </div>
+              <div>
+                {getValueOf(item)}
+              </div>
+            </div>
           )
         })}
       </div>
-      {/* <div className="listHandlerHide">
-        <div className="pageNumberAlignment">Page ${(self._startingElement / self._elementsToShow) + 1} of ${Math.ceil(data._options.length / self._elementsToShow)}</div>
-      </div> */}
     </div>
   )
   /* end of autoComplete */
 
   return (
-    <div style={{ height: '323px' }} className='panel_2A0YE0'>
+    <div style={{ height: '323px', flexGrow: 1 }} className='panel_2A0YE0'>
       {console.log({ newstate })}
       {console.log({ props })}
-      {console.log({ autoCompletState })}
       <div className="bar_2A0YE0">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
         <div className="menu_2A0YE0 border-top border-dark bg-light" data-id="terminalToggleMenu">
           {/* ${self._view.icon} */}
           <i className={`mx-2 toggleTerminal_2A0YE0 fas ${toggleDownUp}`} data-id="terminalToggleIcon" onClick={ handleMinimizeTerminal }></i>
-          <div className="mx-2" id="clearConsole" data-id="terminalClearConsole" >
+          <div className="mx-2 console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
             <i className="fas fa-ban" aria-hidden="true" title="Clear console"
             ></i>
           </div>
@@ -537,7 +903,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <input
               className="custom-control-input"
               id="listenNetworkCheck"
-              // onChange=${listenOnNetwork}
+              onChange={listenOnNetwork}
               type="checkbox"
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
             />
@@ -554,6 +920,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             {/* ${self._view.inputSearch} */}
             <input
               // spellcheck = "false"
+              onChange={(event) => setSearchInput(event.target.value) }
               type="text"
               className="border filter_2A0YE0 form-control"
               id="searchInput"
@@ -565,7 +932,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       </div>
       <div tabIndex={-1} className="terminal_container_2A0YE0" data-id="terminalContainer" >
         {
-          (autoCompletState.showSuggestions && autoCompletState.userInput) && handleAutoComplete()
+          handleAutoComplete()
         }
         <div data-id="terminalContainerDisplay" style = {{
           position: 'absolute',
@@ -576,11 +943,26 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }}></div>
         <div className="terminal_2A0YE0">
           <div id="journal" className="journal_2A0YE0" data-id="terminalJournal">
-            {(newstate.journalBlocks).map((x, index) => (
-              <div className="px-4 block_2A0YE0" data-id="block_null" key={index}>
-                <span className={x.style}>{x.message}</span>
-              </div>
-            ))}
+            {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
+              if (x.name === 'emptyBlock') {
+                return (
+                  <div className="px-4 block_2A0YE0" data-id="block_null" key={index}>
+                    <span className='txLog'>
+                      <span className='tx'><div className='txItem'>[<span className='txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ] </div></span></span>
+                  </div>
+                )
+              } else if (x.name === 'unknownTransaction' || x.name === 'knownTransaction') {
+                return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || x.tx.to.includes(searchInput)).map((trans) => {
+                  return (<div className='px-4 block_2A0YE0' data-id={`block_tx${trans.tx.hash}`}> {renderKnownTransactions(trans.tx, trans.receipt, index)} </div>)
+                })
+              } else {
+                return (
+                  <div className="px-4 block_2A0YE0" data-id="block_null" key={index}>
+                    <span className={x.style}>{x.message}</span>
+                  </div>
+                )
+              }
+            })}
             <div className="anchor">
               {/* ${background} */}
               <div className="overlay background"></div>
