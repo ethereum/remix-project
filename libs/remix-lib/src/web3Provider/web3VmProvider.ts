@@ -208,20 +208,17 @@ export class Web3VmProvider {
       error: data.error === false ? undefined : data.error
     }
     this.vmTraces[this.processingHash].structLogs.push(step)
-    if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === "0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67") {
+    // Track hardhat console.log call
+    if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
       const stackLength = step.stack.length
-      const address = step.stack[stackLength-2]
-      const payloadStart = parseInt(step.stack[stackLength-3], 16)
+      const payloadStart = parseInt(step.stack[stackLength - 3], 16)
       const memory = step.memory.join('')
-      const payloadLength = parseInt(step.stack[stackLength-4], 16)
-      console.log('payloadLength in pushTrace--->', payloadLength)
-      const payload = memory.substring(payloadStart*2, payloadStart*2 + payloadLength)
-      console.log('memory payload in pushTrace--->', payload)
+      const payload = memory.substring(payloadStart * 2, memory.length)
       const fnselector = parseInt('0x' + payload.substring(0, 8))
       const iface = new ethers.utils.Interface([`function log${ConsoleLogs[fnselector]} view`])
-      console.log('iface--->', iface)
-      const functionDesc = iface.getFunction('log')
-      console.log('---->', iface.decodeFunctionData(functionDesc, '0x' + payload))
+      const functionDesc = iface.getFunction(`log${ConsoleLogs[fnselector]}`)
+      const consoleArgs = iface.decodeFunctionData(functionDesc, '0x' + payload)
+      console.log(consoleArgs)
     }
 
     if (step.op === 'CREATE' || step.op === 'CALL') {
