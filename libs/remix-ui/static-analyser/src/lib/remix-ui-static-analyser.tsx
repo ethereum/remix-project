@@ -7,6 +7,7 @@ import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
 import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
 const utils = remixLib.util
 
@@ -56,7 +57,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
-  const [showSlither, setShowSlither] = useState('hidden')
+  const [showSlither, setShowSlither] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -88,7 +89,24 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset state
       dispatch({ type: '', payload: {} })
       // Show 'Enable Slither Analysis' checkbox
-      if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
+      if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither(true)
+      else {
+        setShowSlither(false)
+        setSlitherEnabled(false)
+      }
+    })
+    props.analysisModule.on('manager', 'pluginDeactivated', (plugin) => {
+      // Hide 'Enable Slither Analysis' checkbox
+      if (plugin.name === 'remixd') {
+        // Reset warning state
+        setWarningState([])
+        // Reset badge
+        props.event.trigger('staticAnaysisWarning', [])
+        // Reset state
+        dispatch({ type: '', payload: {} })
+        setShowSlither(false)
+        setSlitherEnabled(false)
+      }
     })
     return () => { }
   }, [props])
@@ -245,8 +263,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
-              }).catch((error) => {
-                console.log('Error found:', error) // This should be removed once testing done
+              }).catch(() => {
                 props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
                 showWarnings(warningMessage, 'warningModuleName')
               })
@@ -398,17 +415,28 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           />
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
         </div>
-        <div className="d-flex" id="enableSlitherAnalysis">
-          <RemixUiCheckbox
-            id="enableSlither"
-            inputType="checkbox"
-            onClick={handleSlitherEnabled}
-            checked={slitherEnabled}
-            label="Enable Slither Analysis"
-            onChange={() => {}}
-            visibility = {showSlither}
-          />
-        </div>
+        { showSlither &&
+          <div className="d-flex mt-2" id="enableSlitherAnalysis">
+            <RemixUiCheckbox
+              id="enableSlither"
+              inputType="checkbox"
+              onClick={handleSlitherEnabled}
+              checked={slitherEnabled}
+              label="Enable Slither Analysis"
+              onChange={() => {}}
+            />
+
+            <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
+              <OverlayTrigger placement={'right'} overlay={
+                <Tooltip className="text-nowrap" id="overlay-tooltip">
+                  <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Slither Analysis</span>
+                </Tooltip>
+              }>
+                <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
+              </OverlayTrigger>
+            </a>
+          </div>
+        }
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
         {Object.keys(groupedModules).map((categoryId, i) => {
