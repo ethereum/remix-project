@@ -40,12 +40,11 @@ export interface WorkspaceState {
 }
 
 export interface Modal {
-  hide: boolean
+  hide?: boolean
   title: string
   message: string | JSX.Element
   okLabel: string
   okFn: () => void
   cancelLabel: string
   cancelFn: () => void
-  handleHide: () => void
 }
