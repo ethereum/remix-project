@@ -41,6 +41,7 @@ export class Blocks {
     }
 
     const b = {
+      baseFeePerGas: '0x01',
       number: this.toHex(block.header.number),
       hash: this.toHex(block.hash()),
       parentHash: this.toHex(block.header.parentHash),
@@ -73,6 +74,7 @@ export class Blocks {
     const block = this.vmContext.blocks[payload.params[0]]
 
     const b = {
+      baseFeePerGas: '0x01',
       number: this.toHex(block.header.number),
       hash: this.toHex(block.hash()),
       parentHash: this.toHex(block.header.parentHash),
