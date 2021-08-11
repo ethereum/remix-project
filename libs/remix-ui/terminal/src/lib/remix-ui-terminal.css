@@ -17,6 +17,18 @@ element.style {
 input #terminalCliInput {
 
 }
+
+.border-primary {
+  border-color: #007aa6!important;
+}
+.border {
+  border: 1px solid #3f4455!important;
+}
+
+.selectedOptions {
+  background-color: #222336;
+}
+
 .panel              {
     position          : relative;
     display           : flex;
@@ -138,6 +150,10 @@ input #terminalCliInput {
     cursor            : row-resize;
     z-index           : 999;
   }
+  
+  .console {
+    cursor           : pointer;
+  }
 
   .dragbarHorizontal:hover  {
     background-color: #007AA6;
@@ -171,7 +187,6 @@ input #terminalCliInput {
   .popup             {
     position         : absolute;
     text-align       : left;
-    display          : none;
     width            : 95%;
     font-family      : monospace;
     background-color : var(--secondary);
@@ -234,4 +249,108 @@ input #terminalCliInput {
   @keyframes animatetop {
     from {bottom: -300px; opacity: 0}
     to {bottom: 0; opacity: 1}
+  }
+
+
+
+
+  /* tx logger css*/
+
+  .log {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    cursor: pointer;
+  }
+  .log:hover {
+    opacity: 0.8;
+  }
+  .arrow {
+    color: var(--text-info);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    margin-left: 10px;
+  }
+  .arrow:hover {
+    color: var(--secondary);
+  }
+  .txLog {
+  }
+  .txStatus {
+    display: flex;
+    font-size: 20px;
+    margin-right: 20px;
+    float: left;
+  }
+  .succeeded {
+    color: var(--success);
+  }
+  .failed {
+    color: var(--danger);
+  }
+  .notavailable {
+  }
+  .call {
+    font-size: 7px;
+    border-radius: 50%;
+    min-width: 20px;
+    min-height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-info);
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .txItem {
+    color: var(--text-info);
+    margin-right: 5px;
+    float: left;
+  }
+  .txItemTitle {
+    font-weight: bold;
+  }
+  .tx {
+    color: var(--text-info);
+    font-weight: bold;
+    float: left;
+    margin-right: 10px;
+  }
+  .txTable,
+  .tr,
+  .td {
+    border-collapse: collapse;
+    font-size: 10px;
+    color: var(--text-info);
+    border: 1px solid var(--text-info);
+  }
+  #txTable {
+    margin-top: 1%;
+    margin-bottom: 5%;
+    align-self: center;
+    width: 85%;
+  }
+  .tr, .td {
+    padding: 4px;
+    vertical-align: baseline;
+  }
+  .td:first-child {
+    min-width: 30%;
+    width: 30%;
+    align-items: baseline;
+    font-weight: bold;
+  }
+  .tableTitle {
+    width: 25%;
+  }
+  .buttons {
+    display: flex;
+    margin-left: auto;
+  }
+  .debug {
+    white-space: nowrap;
+  }
+  .debug:hover {
+    opacity: 0.8;
   }
