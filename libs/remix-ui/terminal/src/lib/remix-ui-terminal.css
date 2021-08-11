@@ -289,8 +289,6 @@ input #terminalCliInput {
   .failed {
     color: var(--danger);
   }
-  .notavailable {
-  }
   .call {
     font-size: 7px;
     border-radius: 50%;
@@ -354,4 +352,3 @@ input #terminalCliInput {
   .debug:hover {
     opacity: 0.8;
   }
-
