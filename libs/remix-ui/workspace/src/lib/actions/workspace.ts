@@ -1,10 +1,13 @@
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import { checkSpecialChars, checkSlash } from '../../../../../../apps/remix-ide/src/lib/helper'
+import React from 'react'
 
 // const GistHandler = require('../../../../../../apps/remix-ide/src/lib/gist-handler')
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
-let plugin
+// const queuedEvents = []
+// const pendingEvents = {}
+let plugin, dispatch: React.Dispatch<any>
 
 const setCurrentWorkspace = (workspace: string) => {
   return {
@@ -18,6 +21,53 @@ const setWorkspaces = (workspaces: string[]) => {
     type: 'SET_WORKSPACES',
     payload: workspaces
   }
+}
+
+const setMode = (mode: 'browser' | 'localhost') => {
+  return {
+    type: 'SET_MODE',
+    payload: mode
+  }
+}
+
+const fetchDirectoryError = (error: any) => {
+  return {
+    type: 'FETCH_DIRECTORY_ERROR',
+    payload: error
+  }
+}
+
+const fetchDirectoryRequest = (promise: Promise<any>) => {
+  return {
+    type: 'FETCH_DIRECTORY_REQUEST',
+    payload: promise
+  }
+}
+
+const fetchDirectorySuccess = (path: string, files) => {
+  return {
+    type: 'FETCH_DIRECTORY_SUCCESS',
+    payload: { path, files }
+  }
+}
+
+export const fetchDirectory = (mode: 'browser' | 'localhost', path: string) => (dispatch: React.Dispatch<any>) => {
+  const provider = mode === 'browser' ? plugin.fileProviders.workspace : plugin.fileProviders.localhost
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+
+      resolve(fileTree)
+    })
+  })
+
+  dispatch(fetchDirectoryRequest(promise))
+  promise.then((fileTree) => {
+    dispatch(fetchDirectorySuccess(path, fileTree))
+  }).catch((error) => {
+    dispatch(fetchDirectoryError({ error }))
+  })
+  return promise
 }
 
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
@@ -35,12 +85,14 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
           try {
             const queryParams = new QueryParams()
             const params = queryParams.get()
-            await plugin.fileProviders.worspace.createWorkspace(workspaceName)
+
+            await workspaceProvider.createWorkspace(workspaceName)
+
             const hash = bufferToHex(keccakFromString(params.code))
             const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
             const path = fileName
 
-            await plugin.fileProviders.workspace.set(path, atob(params.code))
+            await workspaceProvider.set(path, atob(params.code))
             await plugin.fileManager.openFile(fileName)
           } catch (e) {
             console.error(e)
@@ -73,63 +125,6 @@ const workspaceExists = async (name: string) => {
   return browserProvider.exists(workspacePath)
 }
 
-export const initWorkspace = (filePanelPlugin) => async (dispatch: React.Dispatch<any>) => {
-  plugin = filePanelPlugin
-  const queryParams = new QueryParams()
-  // const gistHandler = new GistHandler()
-  const params = queryParams.get()
-  // let loadedFromGist = false
-  const workspaces = await getWorkspaces() || []
-
-  dispatch(setWorkspaces(workspaces))
-  // if (params.gist) {
-  //   initialWorkspace = 'gist-sample'
-  //   await filePanelPlugin.fileProviders.workspace.createWorkspace(initialWorkspace)
-  //   loadedFromGist = gistHandler.loadFromGist(params, plugin.fileManager)
-  // }
-  // if (loadedFromGist) {
-  //   dispatch(setWorkspaces(workspaces))
-  //   dispatch(setCurrentWorkspace(initialWorkspace))
-  //   return
-  // }
-
-  if (params.gist) {
-
-  } else if (params.code) {
-    await createWorkspaceTemplate('code-sample', true, 'code-template')
-    dispatch(setCurrentWorkspace('code-sample'))
-  } else {
-    if (workspaces.length === 0) {
-      await createWorkspaceTemplate('default_workspace')
-      dispatch(setCurrentWorkspace('default_workspace'))
-    } else {
-      if (workspaces.length > 0) {
-        plugin.fileProviders.workspace.setWorkspace(workspaces[workspaces.length - 1])
-        dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
-      }
-    }
-  }
-
-  // plugin.fileProviders.localhost.event.off('disconnected', localhostDisconnect)
-  // plugin.fileProviders.localhost.event.on('disconnected', localhostDisconnect)
-  // plugin.fileProviders.localhost.event.on('connected', () => {
-  //   remixdExplorer.show()
-  //   setWorkspace(LOCALHOST)
-  // })
-
-  // plugin.fileProviders.localhost.event.on('disconnected', () => {
-  //   remixdExplorer.hide()
-  // })
-
-  // plugin.fileProviders.localhost.event.on('loading', () => {
-  //   remixdExplorer.loading()
-  // })
-
-  // plugin.fileProviders.workspace.event.on('createWorkspace', (name) => {
-  //   createNewWorkspace(name)
-  // })
-}
-
 const getWorkspaces = async (): Promise<string[]> | undefined => {
   try {
     const workspaces: string[] = await new Promise((resolve, reject) => {
@@ -152,3 +147,201 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
     console.log(e)
   }
 }
+
+export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
+  if (filePanelPlugin) {
+    console.log('filePanelPlugin: ', filePanelPlugin)
+    plugin = filePanelPlugin
+    dispatch = reducerDispatch
+    const provider = filePanelPlugin.fileProviders.workspace
+    const queryParams = new QueryParams()
+    // const gistHandler = new GistHandler()
+    const params = queryParams.get()
+    // let loadedFromGist = false
+    const workspaces = await getWorkspaces() || []
+    // if (params.gist) {
+    //   initialWorkspace = 'gist-sample'
+    //   await provider.createWorkspace(initialWorkspace)
+    //   loadedFromGist = gistHandler.loadFromGist(params, plugin.fileManager)
+    // }
+    // if (loadedFromGist) {
+    //   dispatch(setWorkspaces(workspaces))
+    //   dispatch(setCurrentWorkspace(initialWorkspace))
+    //   return
+    // }
+
+    if (params.gist) {
+
+    } else if (params.code) {
+      await createWorkspaceTemplate('code-sample', true, 'code-template')
+      dispatch(setCurrentWorkspace('code-sample'))
+    } else {
+      if (workspaces.length === 0) {
+        await createWorkspaceTemplate('default_workspace')
+        dispatch(setCurrentWorkspace('default_workspace'))
+      } else {
+        if (workspaces.length > 0) {
+          provider.setWorkspace(workspaces[workspaces.length - 1])
+          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+        }
+      }
+    }
+    // provider.event.on('fileAdded', async (filePath) => {
+    //   await executeEvent('fileAdded', filePath)
+    // })
+    // provider.event.on('folderAdded', async (folderPath) => {
+    //   await executeEvent('folderAdded', folderPath)
+    // })
+    // provider.event.on('fileRemoved', async (removePath) => {
+    //   await executeEvent('fileRemoved', removePath)
+    // })
+    // provider.event.on('fileRenamed', async (oldPath) => {
+    //   await executeEvent('fileRenamed', oldPath)
+    // })
+    // provider.event.on('rootFolderChanged', async () => {
+    //   await executeEvent('rootFolderChanged')
+    // })
+    // provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
+    //   const config = plugin.registry.get('config').api
+    //   const editor = plugin.registry.get('editor').api
+
+    //   if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
+    //     if (provider.isReadOnly(path)) return editor.setText(file.content)
+    //     dispatch(displayNotification(
+    //       path + ' changed',
+    //       'This file has been changed outside of Remix IDE.',
+    //       'Replace by the new content', 'Keep the content displayed in Remix',
+    //       () => {
+    //         editor.setText(file.content)
+    //       }
+    //     ))
+    //   }
+    // })
+    // provider.event.on('fileRenamedError', async () => {
+    //   dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
+    // })
+    // dispatch(fetchProviderSuccess(provider))
+
+    // provider.event.on('createWorkspace', (name) => {
+    //   createNewWorkspace(name)
+    // })
+    dispatch(setWorkspaces(workspaces))
+    dispatch(setMode('browser'))
+  }
+}
+
+export const initLocalhost = (filePanelPlugin) => async (dispatch: React.Dispatch<any>) => {
+  if (filePanelPlugin) {
+  // plugin.fileProviders.localhost.event.off('disconnected', localhostDisconnect)
+  // plugin.fileProviders.localhost.event.on('disconnected', localhostDisconnect)
+  // plugin.fileProviders.localhost.event.on('connected', () => {
+  //   remixdExplorer.show()
+  //   setWorkspace(LOCALHOST)
+  // })
+
+    // plugin.fileProviders.localhost.event.on('disconnected', () => {
+    //   remixdExplorer.hide()
+    // })
+
+    // plugin.fileProviders.localhost.event.on('loading', () => {
+    //   remixdExplorer.loading()
+    // })
+    dispatch(setMode('localhost'))
+  }
+}
+
+// const fileAdded = async (filePath: string) => {
+//   if (extractParentFromKey(filePath) === '/.workspaces') return
+//   const path = extractParentFromKey(filePath) || provider.workspace || provider.type || ''
+//   const data = await fetchDirectoryContent(provider, path)
+
+//   await dispatch(fileAddedSuccess(path, data))
+//   if (filePath.includes('_test.sol')) {
+//     plugin.emit('newTestFileCreated', filePath)
+//   }
+// }
+
+// const folderAdded = async (folderPath: string) => {
+//   if (extractParentFromKey(folderPath) === '/.workspaces') return
+//   const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
+//   const data = await fetchDirectoryContent(provider, path)
+
+//   await dispatch(folderAddedSuccess(path, data))
+// }
+
+// const fileRemoved = async (removePath: string) => {
+//   const path = extractParentFromKey(removePath) || provider.workspace || provider.type || ''
+
+//   await dispatch(fileRemovedSuccess(path, removePath))
+// }
+
+// const fileRenamed = async (oldPath: string) => {
+//   const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
+//   const data = await fetchDirectoryContent(provider, path)
+
+//   await dispatch(fileRenamedSuccess(path, oldPath, data))
+// }
+
+// const rootFolderChanged = async () => {
+//   const workspaceName = provider.workspace || provider.type || ''
+
+//   await fetchDirectory(provider, workspaceName)(dispatch)
+// }
+
+// const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', path?: string) => {
+//   if (Object.keys(pendingEvents).length) {
+//     return queuedEvents.push({ eventName, path })
+//   }
+//   pendingEvents[eventName + path] = { eventName, path }
+//   switch (eventName) {
+//     case 'fileAdded':
+//       await fileAdded(path)
+//       delete pendingEvents[eventName + path]
+//       if (queuedEvents.length) {
+//         const next = queuedEvents.pop()
+
+//         await executeEvent(next.eventName, next.path)
+//       }
+//       break
+
+//     case 'folderAdded':
+//       await folderAdded(path)
+//       delete pendingEvents[eventName + path]
+//       if (queuedEvents.length) {
+//         const next = queuedEvents.pop()
+
+//         await executeEvent(next.eventName, next.path)
+//       }
+//       break
+
+//     case 'fileRemoved':
+//       await fileRemoved(path)
+//       delete pendingEvents[eventName + path]
+//       if (queuedEvents.length) {
+//         const next = queuedEvents.pop()
+
+//         await executeEvent(next.eventName, next.path)
+//       }
+//       break
+
+//     case 'fileRenamed':
+//       await fileRenamed(path)
+//       delete pendingEvents[eventName + path]
+//       if (queuedEvents.length) {
+//         const next = queuedEvents.pop()
+
+//         await executeEvent(next.eventName, next.path)
+//       }
+//       break
+
+//     case 'rootFolderChanged':
+//       await rootFolderChanged()
+//       delete pendingEvents[eventName + path]
+//       if (queuedEvents.length) {
+//         const next = queuedEvents.pop()
+
+//         await executeEvent(next.eventName, next.path)
+//       }
+//       break
+//   }
+// }
