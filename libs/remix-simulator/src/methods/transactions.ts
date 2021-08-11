@@ -57,6 +57,7 @@ export class Transactions {
       eth_getTransactionByBlockHashAndIndex: this.eth_getTransactionByBlockHashAndIndex.bind(this),
       eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this),
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
+      eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this)
     }
   }
@@ -81,6 +82,11 @@ export class Transactions {
   eth_getExecutionResultFromSimulator (payload, cb) {
     const txHash = payload.params[0]
     cb(null, this.vmContext.exeResults[txHash])
+  }
+
+  eth_getHHLogsForTx (payload, cb) {
+    const txHash = payload.params[0]
+    cb(null, this.vmContext.currentVm.web3vm.hhLogs[txHash])
   }
 
   eth_getTransactionReceipt (payload, cb) {

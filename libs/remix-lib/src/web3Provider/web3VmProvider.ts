@@ -11,6 +11,7 @@ export class Web3VmProvider {
   vmTraces
   txs
   txsReceipt
+  hhLogs
   processingHash
   processingAddress
   processingIndex
@@ -43,6 +44,7 @@ export class Web3VmProvider {
     this.vmTraces = {}
     this.txs = {}
     this.txsReceipt = {}
+    this.hhLogs = {}
     this.processingHash = null
     this.processingAddress = null
     this.processingIndex = null
@@ -218,7 +220,8 @@ export class Web3VmProvider {
       const iface = new ethers.utils.Interface([`function log${ConsoleLogs[fnselector]} view`])
       const functionDesc = iface.getFunction(`log${ConsoleLogs[fnselector]}`)
       const consoleArgs = iface.decodeFunctionData(functionDesc, '0x' + payload)
-      console.log(consoleArgs)
+      this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
+      this.hhLogs[this.processingHash].push(consoleArgs)
     }
 
     if (step.op === 'CREATE' || step.op === 'CALL') {
