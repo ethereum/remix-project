@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { waterfall } from 'async'
 import { EventEmitter } from 'events'
@@ -9,10 +10,20 @@ import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
+const packageJson = require('../../../../package.json')
 
-class Blockchain {
+const profile = {
+  name: 'blockchain',
+  displayName: 'Blockchain',
+  description: 'Blockchain - Logic',
+  methods: [],
+  version: packageJson.version
+}
+
+class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config) {
+    super(profile)
     this.event = new EventManager()
     this.executionContext = new ExecutionContext()
 
@@ -489,6 +500,7 @@ class Blockchain {
       if (isVM) {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
         console.log('hhLogs--2->', hhlogs)
+        this.call('terminal', 'log', { type: 'info', value: hhlogs })
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
