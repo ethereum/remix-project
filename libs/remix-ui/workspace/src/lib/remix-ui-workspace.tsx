@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef, useReducer } from 'react' // eslint-disable-line
-import { FileExplorer, MenuItems } from '@remix-ui/file-explorer' // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
+import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
-import { WorkspaceProps, WorkspaceState, Modal } from './types'
-import { initWorkspace } from './actions/workspace'
-import { browserReducer, browserInitialState } from './reducers/workspace'
+import { WorkspaceProps, WorkspaceState } from './types'
+import { FileSystemContext } from './contexts'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -22,26 +20,16 @@ export function Workspace (props: WorkspaceProps) {
     loadingLocalhost: false,
     toasterMsg: ''
   })
-  const [modal, setModal] = useState<Modal>({
-    hide: true,
-    title: '',
-    message: null,
-    okLabel: '',
-    okFn: () => {},
-    cancelLabel: '',
-    cancelFn: () => {},
-    handleHide: null
-  })
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
-  const [fs, dispatch] = useReducer(browserReducer, browserInitialState)
+  const global = useContext(FileSystemContext)
 
   useEffect(() => {
-    initWorkspace(props.plugin)(dispatch)
+    global.dispatchInitWorkspace()
   }, [])
 
   useEffect(() => {
-    if (fs.browser.currentWorkspace) setCurrentWorkspace(fs.browser.currentWorkspace)
-  }, [fs.browser.currentWorkspace])
+    if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
+  }, [global.fs.browser.currentWorkspace])
 
   props.plugin.resetNewFile = () => {
     setState(prevState => {
@@ -91,7 +79,7 @@ export function Workspace (props: WorkspaceProps) {
       await setWorkspace(workspaceName)
       toast('New default workspace has been created.')
     } catch (e) {
-      modalMessage('Create Default Workspace', e.message)
+      global.modal('Create Default Workspace', e.message, 'OK', onFinishRenameWorkspace, '')
       console.error(e)
     }
   }
@@ -105,21 +93,15 @@ export function Workspace (props: WorkspaceProps) {
   /* workspace creation, renaming and deletion */
 
   const renameCurrentWorkspace = () => {
-    modalDialog('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '', () => {})
+    global.modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
   }
 
   const createWorkspace = () => {
-    modalDialog('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '', () => {})
+    global.modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '')
   }
 
   const deleteCurrentWorkspace = () => {
-    modalDialog('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '', () => {})
-  }
-
-  const modalMessage = (title: string, body: string) => {
-    setTimeout(() => { // wait for any previous modal a chance to close
-      modalDialog(title, body, 'OK', () => {}, '', null)
-    }, 200)
+    global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
   }
 
   const workspaceRenameInput = useRef()
@@ -135,7 +117,7 @@ export function Workspace (props: WorkspaceProps) {
       setWorkspace(workspaceName)
       props.plugin.workspaceRenamed({ name: workspaceName })
     } catch (e) {
-      modalMessage('Rename Workspace', e.message)
+      global.modal('Rename Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
     }
   }
@@ -150,7 +132,7 @@ export function Workspace (props: WorkspaceProps) {
       await props.plugin.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
     } catch (e) {
-      modalMessage('Create Workspace', e.message)
+      global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
     }
   }
@@ -216,22 +198,9 @@ export function Workspace (props: WorkspaceProps) {
     }
   }
 
-  const handleHideModal = () => {
-    setModal(prevModal => {
-      return { ...prevModal, hide: true, message: null }
-    })
-  }
-
-  const modalDialog = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
-    await setModal(prevModal => {
-      return { ...prevModal, hide: false, message, title, okLabel, okFn, cancelLabel, cancelFn, handleHide: handleHideModal }
-    })
-  }
-
   const createModalMessage = () => {
     return (
       <>
-        <span>{ modal.message }</span>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
     )
@@ -240,7 +209,6 @@ export function Workspace (props: WorkspaceProps) {
   const renameModalMessage = () => {
     return (
       <>
-        <span>{ modal.message }</span>
         <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
@@ -248,10 +216,6 @@ export function Workspace (props: WorkspaceProps) {
 
   return (
     <div className='remixui_container'>
-      <ModalDialog id='workspacesModalDialog' {...modal}>
-        { (typeof modal.message !== 'string') && modal.message }
-      </ModalDialog>
-      }
       <Toaster message={state.toasterMsg} />
       <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
         <div>
@@ -296,13 +260,13 @@ export function Workspace (props: WorkspaceProps) {
               </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
                 {
-                  fs.browser.workspaces
+                  global.fs.browser.workspaces
                     .map((folder, index) => {
                       return <option key={index} value={folder}>{folder}</option>
                     })
                 }
                 <option value={LOCALHOST}>{currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
-                { fs.browser.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
+                { global.fs.browser.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
               </select>
             </div>
           </header>

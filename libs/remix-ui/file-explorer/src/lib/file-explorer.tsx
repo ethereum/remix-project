@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 // import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -19,12 +18,25 @@ const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems, resetFocus } = props
-  const [state, setState] = useState({
+  const [state, setState] = useState<{
+    focusElement: { key: string, type: 'folder' | 'file' | 'gist' }[],
+    fileManager: any,
+    ctrlKey: boolean,
+    newFileName: string,
+    actions: { id: string, name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], multiselect: boolean, label: string }[],
+    focusContext: { element: string, x: string, y: string, type: string },
+    focusEdit: { element: string, type: string, isNew: boolean, lastEdit: string },
+    expandPath: string[],
+    toasterMsg: string,
+    mouseOverElement: string,
+    showContextMenu: boolean,
+    reservedKeywords: string[],
+    copyElement: string[]
+  }>({
     focusElement: [{
       key: '',
       type: 'folder'
     }],
-    files: [],
     fileManager: null,
     ctrlKey: false,
     newFileName: '',
@@ -32,90 +44,60 @@ export const FileExplorer = (props: FileExplorerProps) => {
       id: 'newFile',
       name: 'New File',
       type: ['folder', 'gist'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'newFolder',
       name: 'New Folder',
       type: ['folder', 'gist'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'rename',
       name: 'Rename',
       type: ['file', 'folder'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'delete',
       name: 'Delete',
       type: ['file', 'folder', 'gist'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'run',
       name: 'Run',
-      type: [],
-      path: [],
       extension: ['.js'],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'pushChangesToGist',
       name: 'Push changes to gist',
       type: ['gist'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'publishFolderToGist',
       name: 'Publish folder to gist',
       type: ['folder'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'publishFileToGist',
       name: 'Publish file to gist',
       type: ['file'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'copy',
       name: 'Copy',
       type: ['folder', 'file'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: false,
       label: ''
     }, {
       id: 'deleteAll',
       name: 'Delete All',
       type: ['folder', 'file'],
-      path: [],
-      extension: [],
-      pattern: [],
       multiselect: true,
       label: ''
     }],
@@ -132,17 +114,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       lastEdit: ''
     },
     expandPath: [name],
-    focusModal: {
-      hide: true,
-      title: '',
-      message: '',
-      okLabel: '',
-      okFn: () => {},
-      cancelLabel: '',
-      cancelFn: () => {},
-      handleHide: null
-    },
-    modals: [],
     toasterMsg: '',
     mouseOverElement: null,
     showContextMenu: false,
@@ -232,30 +203,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       uploadFile(externalUploads)
     }
   }, [externalUploads])
-
-  useEffect(() => {
-    if (state.modals.length > 0) {
-      setState(prevState => {
-        const focusModal = {
-          hide: false,
-          title: prevState.modals[0].title,
-          message: prevState.modals[0].message,
-          okLabel: prevState.modals[0].okLabel,
-          okFn: prevState.modals[0].okFn,
-          cancelLabel: prevState.modals[0].cancelLabel,
-          cancelFn: prevState.modals[0].cancelFn,
-          handleHide: prevState.modals[0].handleHide
-        }
-
-        prevState.modals.shift()
-        return {
-          ...prevState,
-          focusModal,
-          modals: prevState.modals
-        }
-      })
-    }
-  }, [state.modals])
 
   useEffect(() => {
     const keyPressHandler = (e: KeyboardEvent) => {
@@ -630,30 +577,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     plugin.call(cmd.id, cmd.name, cmd)
   }
 
-  const handleHideModal = () => {
-    setState(prevState => {
-      return { ...prevState, focusModal: { ...state.focusModal, hide: true } }
-    })
-  }
-  // eslint-disable-next-line no-undef
-  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        modals: [...prevState.modals,
-          {
-            message,
-            title,
-            okLabel,
-            okFn,
-            cancelLabel,
-            cancelFn,
-            handleHide: handleHideModal
-          }]
-      }
-    })
-  }
-
   const toast = (message: string) => {
     setState(prevState => {
       return { ...prevState, toasterMsg: message }
@@ -1012,19 +935,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           </div>
         </TreeViewItem>
       </TreeView>
-      {
-        props.name && <ModalDialog
-          id={ props.name }
-          title={ state.focusModal.title }
-          message={ state.focusModal.message }
-          hide={ state.focusModal.hide }
-          okLabel={ state.focusModal.okLabel }
-          okFn={ state.focusModal.okFn }
-          cancelLabel={ state.focusModal.cancelLabel }
-          cancelFn={ state.focusModal.cancelFn }
-          handleHide={ handleHideModal }
-        />
-      }
       <Toaster message={state.toasterMsg} />
       { state.showContextMenu &&
         <FileExplorerContextMenu
