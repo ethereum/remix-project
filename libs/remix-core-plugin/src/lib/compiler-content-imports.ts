@@ -21,9 +21,14 @@ export class CompilerImports extends Plugin {
   }
 
   async setToken () {
-    const protocol = typeof window !== 'undefined' && window.location.protocol
-    const token = await this.call('settings', 'get', 'settings/gist-access-token')
-    this.urlResolver.setGistToken(token, protocol)
+    try {
+      const protocol = typeof window !== 'undefined' && window.location.protocol
+      const token = await this.call('settings', 'get', 'settings/gist-access-token')
+
+      this.urlResolver.setGistToken(token, protocol)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   isRelativeImport (url) {

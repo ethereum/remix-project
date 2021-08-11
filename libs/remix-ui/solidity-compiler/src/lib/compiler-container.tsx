@@ -5,8 +5,17 @@ import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 
 import './css/style.css'
+
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+
+const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
   const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
@@ -27,8 +36,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: '',
     evmVersion: ''
   })
+  const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
   const compileIcon = useRef(null)
-  const warningIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const [hhCompilation, sethhCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
@@ -75,6 +84,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [compileTabLogic])
 
   useEffect(() => {
+    const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
+
+    setDisableCompileButton(isDisabled)
     setState(prevState => {
       return { ...prevState, compiledFileName }
     })
@@ -235,14 +247,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compilationDuration = (speed: number) => {
-    if (!warningIcon.current) return
     if (speed > 1000) {
-      const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
-
-      warningIcon.current.setAttribute('title', msg)
-      warningIcon.current.style.visibility = 'visible'
-    } else {
-      warningIcon.current.style.visibility = 'hidden'
+      console.log(`Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
     }
   }
 
@@ -256,8 +262,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
     compileIcon.current.classList.add('remixui_spinningIcon')
-    warningIcon.current.style.visibility = 'hidden'
     _updateLanguageSelector()
+    setDisableCompileButton(true)
   }
 
   const compilerLoaded = () => {
@@ -265,6 +271,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     if (state.autoCompile) compile()
+    const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
+
+    setDisableCompileButton(isDisabled)
   }
 
   const compilationFinished = () => {
@@ -272,6 +281,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', 'idle')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
+    _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
   }
 
   const scheduleCompilation = () => {
@@ -292,7 +302,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!isSolFileSelected()) return
 
     _setCompilerVersionFromPragma(currentFile)
-    compileTabLogic.runCompiler()
+    compileTabLogic.runCompiler(hhCompilation)
   }
 
   const _retrieveVersion = (version?) => {
@@ -440,6 +450,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleNightliesChange = (e) => {
     const checked = e.target.checked
 
+    if (!checked) handleLoadVersion(state.defaultVersion)
     config.set('includeNightlies', checked)
     setState(prevState => {
       return { ...prevState, includeNightlies: checked }
@@ -522,6 +533,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
             <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
               <option data-id={state.evmVersion === 'default' ? 'selected' : ''} value="default">compiler default</option>
+              <option data-id={state.evmVersion === 'berlin' ? 'selected' : ''} value="berlin">berlin</option>
               <option data-id={state.evmVersion === 'muirGlacier' ? 'selected' : ''} value="muirGlacier">muirGlacier</option>
               <option data-id={state.evmVersion === 'istanbul' ? 'selected' : ''} value="istanbul">istanbul</option>
               <option data-id={state.evmVersion === 'petersburg' ? 'selected' : ''} value="petersburg">petersburg</option>
@@ -561,16 +573,25 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           {
-            isHardHatProject && <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+            isHardHatProject &&
+            <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
+              <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation' target={'_blank'}>
+                <OverlayTrigger placement={'right'} overlay={
+                  <Tooltip className="text-nowrap" id="overlay-tooltip">
+                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>
+                  </Tooltip>
+                }>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                </OverlayTrigger>
+              </a>
             </div>
           }
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={!state.compiledFileName || (state.compiledFileName && !isSolFileSelected(state.compiledFileName))}>
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
-              <i ref={warningIcon} title="Compilation Slow" style={{ visibility: 'hidden' }} className="remixui_warnCompilationSlow fas fa-exclamation-triangle" aria-hidden="true"></i>
-              { warningIcon.current && warningIcon.current.style.visibility === 'hidden' && <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
-              Compile { state.compiledFileName || '<no file selected>' }
+              { <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
+              Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>
         </header>
