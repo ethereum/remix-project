@@ -342,7 +342,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const hiddenPanel = new HiddenPanel()
   const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
   const filePanel = new FilePanel(appManager)
-  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel)
+  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel, contentImport)
   const settings = new SettingsTab(
     registry.get('config').api,
     editor,
@@ -423,6 +423,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         fn: null
       }
     )
+  } else {
+    startWalkthroughService()
   }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
@@ -518,6 +520,4 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   if (params.embed) framingService.embed()
   framingService.start(params)
-
-  startWalkthroughService()
 }

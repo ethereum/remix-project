@@ -17,7 +17,7 @@ export function forkAt (networkId, blockNumber) {
     }
     return currentForkName
   }
-  return 'berlin'
+  return 'london'
 }
 
 // see https://github.com/ethereum/go-ethereum/blob/master/params/config.go
@@ -46,6 +46,10 @@ const forks = {
     {
       number: 12244000,
       name: 'berlin'
+    },
+    {
+      number: 12965000,
+      name: 'london'
     }
   ],
   3: [

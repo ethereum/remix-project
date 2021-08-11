@@ -9,7 +9,7 @@ var remixLib = require('@remix-project/remix-lib')
 function sendTx (vm, from, to, value, data, cb) {
   var tx = new Tx({
     nonce: new BN(from.nonce++),
-    gasPrice: new BN(1),
+    // gasPrice: new BN(1),
     gasLimit: new BN(3000000, 10),
     to: to,
     value: new BN(value, 10),

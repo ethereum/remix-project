@@ -15,8 +15,18 @@ export class TxRunnerWeb3 {
     this._api = api
   }
 
-  _executeTx (tx, gasPrice, api, promptCb, callback) {
-    if (gasPrice) tx.gasPrice = this.getWeb3().utils.toHex(gasPrice)
+  _executeTx (tx, txFee, api, promptCb, callback) {
+    if (txFee) {
+      if (txFee.baseFeePerGas) {
+        tx.maxPriorityFee = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei'))
+        tx.maxFee = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei'))
+        tx.type = 2
+      } else {
+        tx.gasPrice = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei'))
+        tx.type = 1
+      }
+    }
+
     if (api.personalMode()) {
       promptCb(
         (value) => {
@@ -100,8 +110,8 @@ export class TxRunnerWeb3 {
             return
           }
 
-          confirmCb(network, tx, tx['gas'], (gasPrice) => {
-            return this._executeTx(tx, gasPrice, this._api, promptCb, callback)
+          confirmCb(network, tx, tx['gas'], (txFee) => {
+            return this._executeTx(tx, txFee, this._api, promptCb, callback)
           }, (error) => {
             callback(error)
           })
