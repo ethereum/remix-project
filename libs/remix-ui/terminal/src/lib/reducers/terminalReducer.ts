@@ -67,6 +67,17 @@ export const registerCommandReducer = (state, action) => {
         commands: Object.assign(initialState.commands, action.payload.commands),
         data: Object.assign(initialState.data, action.payload.data)
       }
+    case 'clearconsole':
+      return {
+        ...state,
+        ...state.journalBlocks.splice(0)
+      }
+    case 'listenOnNetWork':
+      console.log({ action: action.payload })
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
+      }
     default :
       return { state }
   }
@@ -75,14 +86,12 @@ export const registerCommandReducer = (state, action) => {
 export const registerFilterReducer = (state, action) => {
   switch (action.type) {
     case 'log':
-      console.log({ action }, { state }, 'register Filter')
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
 
       }
     case 'info':
-      console.log({ action }, 'registerFilter')
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
@@ -132,7 +141,8 @@ export const remixWelcomeTextReducer = (state, action) => {
 }
 
 export const registerScriptRunnerReducer = (state, action) => {
-  console.log({ state }, { action }, 'register script runner reducer')
+  const result = Object.assign([], action.payload.message)
+  console.log({ result })
   switch (action.type) {
     case 'log':
       return {
@@ -158,6 +168,27 @@ export const registerScriptRunnerReducer = (state, action) => {
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
+      }
+    case 'knownTransaction':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'knownTransaction' })
+      }
+    case 'unknownTransaction':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'knownTransaction' })
+      }
+    case 'emptyBlock':
+      console.log({ action: action.payload.message }, ' emptyBLock reducer')
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'emptyBlock' })
+      }
+    case 'newTransaction':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '' })
       }
   }
 }

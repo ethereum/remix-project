@@ -70,8 +70,9 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
   if (activate.filterFn) {
     registerFilter(name, activate.filterFn)
   }
-  dispatch({ type: name, payload: { commands: commands, _commands: _commands, data: data } })
-
+  if (name !== ('knownTransaction' || 'unkownTransaction' || 'emptyBlock')) {
+    dispatch({ type: name, payload: { commands: commands, _commands: _commands, data: data } })
+  }
   const blockify = (el) => {
     return `<div class="px-4 block_2A0YE0" data-id="block_null">${el}</div>`
   }
@@ -89,7 +90,6 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
     console.log({ scopedCommands })
     return scopedCommands
   }
-
 }
 
 export const filterFnAction = (name, filterFn, dispatch) => {
@@ -132,4 +132,104 @@ export const registerErrorScriptRunnerAction = (event, commandName, commandFn, d
 
 export const registerRemixWelcomeTextAction = (welcomeText, dispatch) => {
   dispatch({ type: 'welcomeText', payload: { welcomeText } })
+}
+
+export const listenOnNetworkAction = async (props, isListening) => {
+  props.event.trigger('listenOnNetWork', [isListening])
+}
+
+export const initListeningOnNetwork = (props, dispatch) => {
+  props.txListener.event.register('newBlock', (block) => {
+    if (!block.transactions || (block.transactions && !block.transactions.length)) {
+      dispatch({ type: 'emptyBlock', payload: { message: 0 } })
+      console.log({ block }, ' david')
+      // registerCommandAction('emptyBlock', (args, cmds, append) => {
+      //   const data = args[0]
+      //   console.log({ data }, ' useEffect props')
+      // // // var el = renderEmptyBlock(this, data)
+      // // //  append(el)
+      // }, { activate: true }, dispatch)
+    } else {
+      registerCommandAction('knownTransaction', function (args, cmds, append) {
+        var data = args[0]
+        console.log({ data })
+        // let el
+        // if (data.tx.isCall) {
+        //   console.log({ data })
+        //   // el = renderCall(this, data)
+        // } else {
+        //   // el = renderKnownTransaction(this, data, blockchain)
+        // }
+        // this.seen[data.tx.hash] = el
+        // append(el)
+      }, { activate: true }, dispatch)
+    }
+  })
+  props.txListener.event.register('newCall', (tx) => {
+    console.log('new call action')
+    // log(this, tx, null)
+  })
+  props.txListener.event.register('newTransaction', (tx, receipt) => {
+    log(props, tx, receipt, dispatch)
+    registerCommandAction('knownTransaction', function (args, cmds, append) {
+      var data = args[0]
+      console.log({ data })
+    // let el
+    // if (data.tx.isCall) {
+    //   console.log({ data })
+    //   // el = renderCall(this, data)
+    // } else {
+    //   // el = renderKnownTransaction(this, data, blockchain)
+    // }
+    // this.seen[data.tx.hash] = el
+    // append(el)
+    }, { activate: true }, dispatch)
+    // const result = Object.assign([], tx)
+    // console.log({ result })
+    // scriptRunnerDispatch({ type: 'knownTransaction', payload: { message: result } })
+  })
+
+  const log = async (props, tx, receipt, dispatch) => {
+    const resolvedTransaction = await props.txListener.resolvedTransaction(tx.hash)
+    if (resolvedTransaction) {
+      var compiledContracts = null
+      if (props._deps.compilersArtefacts.__last) {
+        compiledContracts = await props._deps.compilersArtefacts.__last.getContracts()
+      }
+      console.log({ compiledContracts })
+      await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
+        if (!error) {
+          console.log({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
+          console.log('knownTransaction')
+          // logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
+          registerCommandAction('knownTransaction', function (args, cmds, append) {
+            var data = args[0]
+            console.log({ data }, 'knownTransaction')
+          // let el
+          // if (data.tx.isCall) {
+          //   console.log({ data })
+          //   // el = renderCall(this, data)
+          // } else {
+          //   // el = renderKnownTransaction(this, data, blockchain)
+          // }
+          // this.seen[data.tx.hash] = el
+          // append(el)
+          }, { activate: true }, dispatch)
+        }
+      })
+    } else {
+      console.log('unknownTransaction')
+      // contract unknown - just displaying raw tx.
+      // logUnknownTX({ tx: tx, receipt: receipt })
+      await dispatch({ type: 'unknownTransaction', payload: { message: [{ tx: tx, receipt: receipt }] } })
+    }
+  }
+
+  props.txListener.event.register('debuggingRequested', async (hash) => {
+    // TODO should probably be in the run module
+    console.log({ hash }, 'register Call')
+    if (!await props.options.appManager.isActive('debugger')) await props.options.appManager.activatePlugin('debugger')
+    props.thisState.call('menuicons', 'select', 'debugger')
+    props.thisState.call('debugger', 'debug', hash)
+  })
 }
