@@ -16,7 +16,6 @@ import vm from 'vm'
 import javascriptserialize from 'javascript-serialize'
 import jsbeautify from 'js-beautify'
 import helper from '../../../../../apps/remix-ide/src/lib/helper'
-
 const remixLib = require('@remix-project/remix-lib')
 var typeConversion = remixLib.execution.typeConversion
 
@@ -178,6 +177,53 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   function loadgist (id, cb) {
     props.gistHandler.loadFromGist({ gist: id }, props._deps.fileManager)
     if (cb) cb()
+  }
+
+  const domTerminalFeatures = () => {
+    return {
+      remix: props.cmdInterpreter
+    }
+  }
+
+  function exeCurrent (cb) {
+    return execute(undefined, cb)
+  }
+
+  function execute (file, cb) {
+    function _execute (content, cb) {
+      if (!content) {
+      //  toolTip('no content to execute')
+        if (cb) cb()
+        return
+      }
+
+      newstate.commands.script(content)
+    }
+
+    if (typeof file === 'undefined') {
+      var content = props._deps.editor.currentContent()
+      _execute(content, cb)
+      return
+    }
+
+    var provider = props._deps.fileManager.fileProviderOf(file)
+
+    if (!provider) {
+      // toolTip(`provider for path ${file} not found`)
+      if (cb) cb()
+      return
+    }
+
+    provider.get(file, (error, content) => {
+      if (error) {
+        // toolTip(error)
+        // TODO: pop up
+        if (cb) cb()
+        return
+      }
+
+      _execute(content, cb)
+    })
   }
 
   const _shell = async (script, scopedCommands, done) => { // default shell
@@ -408,26 +454,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   /* end of mouse event */
 
   useEffect(() => {
-    // document.addEventListener('mousemove', changeBg)
-    // function changeBg () {
-    //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
-    // }
-    // document.addEventListener('mouseup', changeBg2)
-    // function changeBg2 () {
-    //   document.getElementById('dragId').style.backgroundColor = ''
-    // }
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
 
     return () => {
-      // document.addEventListener('mousemove', changeBg)
-      // function changeBg () {
-      //   document.getElementById('dragId').style.backgroundColor = 'skyblue'
-      // }
-      // document.addEventListener('mouseup', changeBg2)
-      // function changeBg2 () {
-      //   document.getElementById('dragId').style.backgroundColor = ''
-      // }
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
     }
@@ -945,69 +975,363 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   /* end of block content that gets rendered from script Runner */
 
+  const handleClearConsole = () => {
+    dispatch({ type: 'clearconsole', payload: [] })
+    inputEl.current.focus()
+  }
   /* start of autoComplete */
-  const handleSelect = (text) => {
-    props.thisState.event.trigger('handleSelect', [text])
+
+  const listenOnNetwork = (event: any) => {
+    const isListening = event.target.checked
+    setIsListeningOnNetwork(isListening)
+    listenOnNetworkAction(props, isListening)
   }
 
   const onChange = (event: any) => {
     event.preventDefault()
     const inputString = event.target.value
-    console.log(event)
-    console.log({ inputString })
-    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
-    const textList = inputString.split(' ')
-    const autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
-    allPrograms.forEach(item => {
-      const program = getKeyOf(item)
-      console.log({ program })
-      if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
-        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
-      } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
-        allCommands.forEach(item => {
-          console.log({ item })
-          const command = getKeyOf(item)
-          if (command.includes(autoCompleteInput.trim())) {
-            setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
-          }
-        })
+    if (matched(allPrograms, inputString) || inputString.includes('.')) {
+      setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
+      const textList = inputString.split('.')
+      if (textList.length === 1) {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [] } }))
+        const result = Objectfilter(allPrograms, autoCompletState.userInput)
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: result } }))
+      } else {
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [] } }))
+        const result = Objectfilter(allCommands, autoCompletState.userInput)
+        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: result } }))
       }
-    })
-    autoCompletState.extraCommands.forEach(item => {
-      const command = getKeyOf(item)
-      if (command.includes(autoCompleteInput.trim())) {
-        setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [item] } }))
-      }
-    })
-    if (autoCompletState.data._options.length === 1 && event.which === 9) {
-      // if only one option and tab is pressed, we resolve it
-      event.preventDefault()
-      textList.pop()
-      textList.push(getKeyOf(autoCompletState.data._options[0]))
-      handleSelect(`${textList}`.replace(/,/g, ' '))
+    } else {
+      setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: inputString }))
     }
   }
 
+  const handleSelect = (event) => {
+    const suggestionCount = autoCompletState.activeSuggestion
+    if (event.keyCode === 38) {
+      if (autoCompletState.activeSuggestion === 0) {
+        return
+      }
+      setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount - 1 }))
+    } else if (event.keyCode === 40) {
+      if (autoCompletState.activeSuggestion - 1 === autoCompletState.data._options.length) {
+        return
+      }
+      setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount + 1 }))
+    }
+    // props.thisState.event.trigger('handleSelect', [text])
+  }
+
+  const checkTxStatus = (tx, type) => {
+    if (tx.status === '0x1' || tx.status === true) {
+      return (<i className='txStatus succeeded fas fa-check-circle'></i>)
+    }
+    if (type === 'call' || type === 'unknownCall' || type === 'unknown') {
+      return (<i className='txStatus call'>call</i>)
+    } else if (tx.status === '0x0' || tx.status === false) {
+      return (<i className='txStatus failed fas fa-times-circle'></i>)
+    } else {
+      return (<i className='txStatus notavailable fas fa-circle-thin' title='Status not available' ></i>)
+    }
+  }
+
+  const context = (opts, blockchain) => {
+    const data = opts.tx || ''
+    const from = opts.from ? helper.shortenHexData(opts.from) : ''
+    let to = opts.to
+    if (data.to) to = to + ' ' + helper.shortenHexData(data.to)
+    const val = data.value
+    let hash = data.hash ? helper.shortenHexData(data.hash) : ''
+    const input = data.input ? helper.shortenHexData(data.input) : ''
+    const logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
+    const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
+    const i = data ? data.transactionIndex : data.transactionIndex
+    const value = val ? typeConversion.toInt(val) : 0
+
+    if (blockchain.getProvider() === 'vm') {
+      return (
+        <div>
+          <span className='txLog_7Xiho'>
+            <span className='tx'>[{vm}]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
+            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
+            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+          </span>
+        </div>)
+    } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
+      return (
+        <div>
+          <span className='txLog_7Xiho'>
+            <span className='tx'>[block:${block} txIndex:${i}]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
+            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
+            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+          </span>
+        </div>)
+    } else {
+      to = helper.shortenHexData(to)
+      hash = helper.shortenHexData(data.blockHash)
+      return (
+        <div>
+          <span className='txLog'>
+            <span className='tx'>[block:${block} txIndex:${i}]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
+          </span>
+        </div>)
+    }
+  }
+
+  const txDetails = (event, tx, obj) => {
+    if (showTableDetails === null) {
+      setShowTableDetails(true)
+    } else {
+      setShowTableDetails(null)
+    }
+    // if (showTableDetails.length === 0) {
+    //   setShowTableDetails([{ hash: tx.hash, show: true }])
+    // }
+    // const id = showTableDetails.filter(x => x.hash !== tx.hash)
+    // if ((showTableDetails.length !== 0) && (id[0] === tx.hash)) {
+    //   setShowTableDetails(currentState => ([...currentState, { hash: tx.hash, show: false }]))
+    // }
+    // console.log((showTableDetails.length !== 0) && (id[0] === tx.hash))
+    // console.log({ showTableDetails }, ' clicked button')
+  }
+
+  const showTable = (opts) => {
+    let msg = ''
+    let toHash
+    const data = opts.data // opts.data = data.tx
+    if (data.to) {
+      toHash = opts.to + ' ' + data.to
+    } else {
+      toHash = opts.to
+    }
+    let callWarning = ''
+    if (opts.isCall) {
+      callWarning = '(Cost only applies when called by a contract)'
+    }
+    if (!opts.isCall) {
+      if (opts.status !== undefined && opts.status !== null) {
+        if (opts.status === '0x0' || opts.status === false) {
+          msg = ' Transaction mined but execution failed'
+        } else if (opts.status === '0x1' || opts.status === true) {
+          msg = ' Transaction mined and execution succeed'
+        }
+      } else {
+        msg = ' Status not available at the moment'
+      }
+    }
+
+    let stringified = ' - '
+    if (opts.logs && opts.logs.decoded) {
+      stringified = typeConversion.stringify(opts.logs.decoded)
+    }
+    const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
+    return (
+      <table className='txTable' id='txTable' data-id={`txLoggerTable${opts.hash}`}>
+        <tr className='tr'>
+          <td className='td' data-shared={`key_${opts.hash}`}> status </td>
+          <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.status}{msg}</td>
+        </tr>
+        <tr className='tr'>
+          <td className='td' data-shared={`key_${opts.hash}`}> transaction hash </td>
+          <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
+            <CopyToClipboard content={opts.hash}/>
+          </td>
+        </tr>
+        {
+          opts.contractAddress && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> contract address </td>
+              <td className='td' data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.contractAddress}
+                <CopyToClipboard content={opts.contractAddress}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.from && (
+            <tr className='tr'>
+              <td className='td tableTitle' data-shared={`key_${opts.hash}`}> from </td>
+              <td className='td' data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.from}
+                <CopyToClipboard content={opts.from}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.to && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> to </td>
+              <td className='td' data-id={`txLoggerTableTo${opts.hash}`} data-shared={`pair_${opts.hash}`}>{toHash}
+                <CopyToClipboard content={data.to ? data.to : toHash}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.gas && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> gas </td>
+              <td className='td' data-id={`txLoggerTableGas${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.gas} gas
+                <CopyToClipboard content={opts.gas}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.transactionCost && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> transaction cost </td>
+              <td className='td' data-id={`txLoggerTableTransactionCost${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.transactionCost} gas {callWarning}
+                <CopyToClipboard content={opts.transactionCost}/>
+              </td>
+            </tr>
+          )
+        }
+        {
+          opts.executionCost && (
+            <tr className='tr'>
+              <td className='td' data-shared={`key_${opts.hash}`}> execution cost </td>
+              <td className='td' data-id={`txLoggerTableExecutionHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.executionCost} gas {callWarning}
+                <CopyToClipboard content={opts.executionCost}/>
+              </td>
+            </tr>
+          )
+        }
+        {opts.hash && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> hash </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
+              <CopyToClipboard content={opts.hash}/>
+            </td>
+          </tr>
+        )}
+        {opts.input && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> input </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{helper.shortenHexData(opts.input)}
+              <CopyToClipboard content={opts.input}/>
+            </td>
+          </tr>
+        )}
+        {opts['decoded input'] && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> decode input </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input']}
+              <CopyToClipboard content={opts['decoded input']}/>
+            </td>
+          </tr>
+        )}
+        {opts['decoded output'] && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> decode output </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded output']}
+              <CopyToClipboard content={opts['decoded output']}/>
+            </td>
+          </tr>
+        )}
+        {opts.logs && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> logs </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
+              {JSON.stringify(stringified, null, '\t')}
+              <CopyToClipboard content={JSON.stringify(stringified, null, '\t')}/>
+              <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')}/>
+            </td>
+          </tr>
+        )}
+        {opts.val && (
+          <tr className='tr'>
+            <td className='td' data-shared={`key_${opts.hash}`}> val </td>
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{val} wei
+              <CopyToClipboard content={`${val} wei`}/>
+            </td>
+          </tr>
+        )}
+      </table>
+    )
+  }
+
+  const debug = (event, tx) => {
+    event.stopPropagation()
+    if (tx.isCall && tx.envMode !== 'vm') {
+      console.log('start debugging')
+      return (<ModalDialog
+        hide={false}
+        handleHide={() => {} }
+        message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
+      />)
+    } else {
+      props.event.trigger('debuggingRequested', [tx.hash])
+      console.log('trigger ', { tx: props.event.trigger })
+    }
+  }
+
+  const renderKnownTransactions = (tx, receipt, index) => {
+    const from = tx.from
+    const to = tx.to
+    const obj = { from, to }
+    const showDetails = showTableDetails === tx.from
+    const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
+    return (
+      <span id={`tx${tx.hash}`} key={index}>
+        <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
+          {/* onClick={e => txDetails(e, tx, data, obj)} */}
+          {checkTxStatus(receipt || tx, txType)}
+          {context({ from, to, tx }, props.blockchain)}
+          <div className='buttons'>
+            <div className='debug btn btn-primary btn-sm' onClick={(event) => debug(event, tx)}>Debug</div>
+          </div>
+          <i className = {`arrow fas ${(showDetails) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
+        </div>
+        {showTableDetails ? showTable({
+          hash: tx.hash,
+          status: receipt !== null ? receipt.status : null,
+          isCall: tx.isCall,
+          contractAddress: tx.contractAddress,
+          data: tx,
+          from,
+          to,
+          gas: tx.gas,
+          input: tx.input,
+          'decoded input': tx.resolvedData && tx.resolvedData.params ? JSON.stringify(typeConversion.stringify(tx.resoparams), null, '\t') : ' - ',
+          'decoded output': tx.resolvedData && tx.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(tx.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+          logs: tx.logs,
+          val: tx.value,
+          transactionCost: tx.transactionCost,
+          executionCost: tx.executionCost
+        }) : null}
+      </span>
+    )
+  }
+
   const handleAutoComplete = () => (
-    <div className="popup alert alert-secondary">
+    <div className='popup alert alert-secondary' style={{ display: autoCompletState.showSuggestions && autoCompletState.userInput !== '' ? 'block' : 'none' }}>
       <div>
-          ${autoCompletState.data._options.map((item, index) => {
+        {autoCompletState.data._options.map((item, index) => {
           return (
-            <div key={index}>auto complete here</div>
-            // <div data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerHide item ${_selectedElement === index ? 'border border-primary' : ''}`}>
-            //   <div value={index} onClick={(event) => { handleSelect(event.srcElement.innerText) }}>
-            //     {getKeyOf(item)}
-            //   </div>
-            //   <div>
-            //     {getValueOf(item)}
-            //   </div>
-            // </div>
+            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary selectedOptions' : ''}`} onKeyDown={ handleSelect }>
+              <div>
+                {getKeyOf(item)}
+              </div>
+              <div>
+                {getValueOf(item)}
+              </div>
+            </div>
           )
         })}
       </div>
-      {/* <div className="listHandlerHide">
-        <div className="pageNumberAlignment">Page ${(self._startingElement / self._elementsToShow) + 1} of ${Math.ceil(data._options.length / self._elementsToShow)}</div>
-      </div> */}
     </div>
   )
   /* end of autoComplete */

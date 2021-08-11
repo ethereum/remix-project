@@ -15,6 +15,11 @@ var globalRegistry = require('../../global/registry')
 var SourceHighlighter = require('../../app/editor/sourceHighlighter')
 var GistHandler = require('../../lib/gist-handler')
 
+import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
+var globalRegistry = require('../../global/registry')
+var SourceHighlighter = require('../../app/editor/sourceHighlighter')
+var GistHandler = require('../../lib/gist-handler')
+
 var KONSOLES = []
 
 function register (api) { KONSOLES.push(api) }
