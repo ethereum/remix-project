@@ -487,6 +487,8 @@ class Blockchain {
       let execResult
       let returnValue = null
       if (isVM) {
+        const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
+        console.log('hhLogs--2->', hhlogs)
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
