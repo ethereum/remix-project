@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
-import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
+import { FileSystemProvider, Workspace } from '@remix-ui/workspace' // eslint-disable-line
 import { checkSpecialChars, checkSlash } from '../../lib/helper'
 const { RemixdHandle } = require('../files/remixd-handle.js')
 const { GitHandle } = require('../files/git-handle.js')
@@ -69,7 +69,9 @@ module.exports = class Filepanel extends ViewPlugin {
 
   renderComponent () {
     ReactDOM.render(
-      <Workspace plugin={this} />
+      <FileSystemProvider plugin={this}>
+        <Workspace plugin={this} />
+      </FileSystemProvider>
       , this.el)
   }
 
