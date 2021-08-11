@@ -639,6 +639,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const txDetails = (event, tx, obj) => {
     if (showTableDetails === null) {
       setShowTableDetails(true)
+      console.log({tx: tx.hash})
     } else {
       setShowTableDetails(null)
     }

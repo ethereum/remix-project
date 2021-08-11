@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.15.0-dev",
+  "version": "0.17.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "keywords": [
@@ -130,10 +130,10 @@
   },
   "dependencies": {
     "@erebos/bzz-node": "^0.13.0",
-    "@ethereumjs/block": "^3.3.0",
-    "@ethereumjs/common": "^2.3.1",
-    "@ethereumjs/tx": "^3.2.1",
-    "@ethereumjs/vm": "^5.4.1",
+    "@ethereumjs/block": "^3.4.0",
+    "@ethereumjs/common": "^2.4.0",
+    "@ethereumjs/tx": "^3.3.0",
+    "@ethereumjs/vm": "^5.5.0",
     "@remixproject/engine": "^0.3.17",
     "@remixproject/engine-web": "^0.3.17",
     "@remixproject/plugin": "^0.3.17",
@@ -153,7 +153,7 @@
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
     "ethereumjs-util": "^7.0.10",
-    "ethers": "^5.1.4",
+    "ethers": "^5.4.2",
     "express-ws": "^4.0.0",
     "file-saver": "^2.0.5",
     "form-data": "^4.0.0",
