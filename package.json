@@ -206,6 +206,7 @@
     "@types/chai": "^4.2.11",
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "25.1.4",
+    "@types/lodash": "^4.14.172",
     "@types/mocha": "^7.0.2",
     "@types/nightwatch": "^1.1.6",
     "@types/node": "~8.9.4",
