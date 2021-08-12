@@ -138,17 +138,17 @@ class PluginManagerComponent extends ViewPlugin {
     })
   }
 
-  activateP(name) {
+  activateP (name) {
     this.appManager.activatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
-  deactivateP(name) {
+  deactivateP (name) {
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
-  renderItem(profile) {
+  renderItem (profile) {
     const displayName = (profile.displayName) ? profile.displayName : profile.name
     const doclink = profile.documentation ? yo`<a href="${profile.documentation}" class="px-1" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>`
       : yo``
@@ -207,7 +207,7 @@ class PluginManagerComponent extends ViewPlugin {
   /**
    * Add a local plugin to the list of plugins
    */
-  async openLocalPlugin() {
+  async openLocalPlugin () {
     try {
       const profile = await this.localPlugin.open(this.appManager.getAll())
       if (!profile) return
@@ -224,7 +224,7 @@ class PluginManagerComponent extends ViewPlugin {
     }
   }
 
-  render() {
+  render () {
     // Filtering helpers
     const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
     const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
@@ -291,13 +291,13 @@ class PluginManagerComponent extends ViewPlugin {
     return rootView
   }
 
-  reRender() {
+  reRender () {
     if (this.views.root) {
       yo.update(this.views.root, this.render())
     }
   }
 
-  filterPlugins({ target }) {
+  filterPlugins ({ target }) {
     this.filter = target.value.toLowerCase()
     this.reRender()
   }
