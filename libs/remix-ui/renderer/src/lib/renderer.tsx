@@ -4,12 +4,11 @@ interface RendererProps {
   message: any;
   opt?: any,
   plugin: any,
-  editor: any,
   config: any,
   fileManager: any
 }
 
-export const Renderer = ({ message, opt = {}, editor, config, fileManager, plugin }: RendererProps) => {
+export const Renderer = ({ message, opt = {}, config, fileManager, plugin }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
@@ -101,13 +100,13 @@ export const Renderer = ({ message, opt = {}, editor, config, fileManager, plugi
       if (provider) {
         provider.exists(errFile).then(() => {
           fileManager.open(errFile)
-          editor.gotoLine(errLine, errCol)
+          plugin.call('editor', 'gotoLine', errLine, errCol)
         }).catch(error => {
           if (error) return console.log(error)
         })
       }
     } else {
-      editor.gotoLine(errLine, errCol)
+      plugin.call('editor', 'gotoLine', errLine, errCol)
     }
   }
 
