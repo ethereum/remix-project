@@ -52,7 +52,7 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
-    this.compileTabLogic = new CompileTabLogic(
+    this.compileTabLogic = new CompileTabLogic(this,
       this.queryParams,
       this.fileManager,
       this.config,
@@ -275,6 +275,14 @@ class CompileTab extends ViewPlugin {
     ReactDOM.render(
       <SolidityCompiler plugin={this}/>
       , this.el)
+  }
+
+  getParameters () {
+    return this.queryParams.get()
+  }
+
+  setParameters (params) {
+    this.queryParams.update(params)
   }
 
   onActivation () {

@@ -18,46 +18,46 @@ export class CompileTab extends Plugin {
   public compilerImport
   public event
 
-  constructor (public queryParams, public fileManager, public config, public fileProvider, public contentImport) {
+  constructor (public api, public fileManager, public config, public fileProvider, public contentImport) {
     super(profile)
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
 
   init () {
-    this.optimize = this.queryParams.get().optimize
+    this.optimize = this.api.getParameters().optimize
     this.optimize = this.optimize === 'true'
-    this.queryParams.update({ optimize: this.optimize })
+    this.api.setParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
 
-    this.runs = this.queryParams.get().runs
+    this.runs = this.api.getParameters().runs
     this.runs = this.runs && this.runs !== 'undefined' ? this.runs : 200
-    this.queryParams.update({ runs: this.runs })
+    this.api.setParameters({ runs: this.runs })
     this.compiler.set('runs', this.runs)
 
-    this.evmVersion = this.queryParams.get().evmVersion
+    this.evmVersion = this.api.getParameters().evmVersion
     if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
       this.evmVersion = null
     }
-    this.queryParams.update({ evmVersion: this.evmVersion })
+    this.api.setParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
   setOptimize (newOptimizeValue) {
     this.optimize = newOptimizeValue
-    this.queryParams.update({ optimize: this.optimize })
+    this.api.setParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
   }
 
   setRuns (runs) {
     this.runs = runs
-    this.queryParams.update({ runs: this.runs })
+    this.api.setParameters({ runs: this.runs })
     this.compiler.set('runs', this.runs)
   }
 
   setEvmVersion (newEvmVersion) {
     this.evmVersion = newEvmVersion
-    this.queryParams.update({ evmVersion: this.evmVersion })
+    this.api.setParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
