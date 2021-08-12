@@ -499,8 +499,13 @@ class Blockchain extends Plugin {
       let returnValue = null
       if (isVM) {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
-        console.log('hhLogs--2->', hhlogs)
-        this.call('terminal', 'log', { type: 'info', value: hhlogs })
+        if (hhlogs && hhlogs.length) {
+          let finalLogs = 'Console.log:\n'
+          for (const log of hhlogs) {
+            finalLogs = finalLogs + log.join('') + '\n'
+          }
+          this.call('terminal', 'log', { type: 'info', value: finalLogs })
+        }
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
