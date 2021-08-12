@@ -5,7 +5,6 @@ export interface SolidityCompilerProps {
     } | Record<string, any>
     compileErrors: any,
     isHardHatProject: boolean,
-    queryParams: any,
     compileTabLogic: any,
     currentFile: string,
     contractsDetails: Record<string, any>,
@@ -22,8 +21,8 @@ export interface SolidityCompilerProps {
 }
 
 export interface CompilerContainerProps {
+  api: any,
   config: any,
-  queryParams: any,
   compileTabLogic: any,
   tooltip: (message: string | JSX.Element) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,

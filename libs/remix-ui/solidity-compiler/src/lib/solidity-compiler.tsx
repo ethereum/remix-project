@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { plugin, plugin: { config, queryParams, compileTabLogic, currentFile, fileProvider, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
+  const { plugin, plugin: { config, compileTabLogic, currentFile, fileProvider, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -78,7 +78,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   return (
     <>
       <div id="compileTabView">
-        <CompilerContainer config={config} queryParams={queryParams} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} setHardHatCompilation={setHardHatCompilation.bind(plugin)} updateCurrentVersion={updateCurrentVersion} isHardHatProject={isHardHatProject} configurationSettings={configurationSettings} />
+        <CompilerContainer api={plugin} config={config} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} setHardHatCompilation={setHardHatCompilation.bind(plugin)} updateCurrentVersion={updateCurrentVersion} isHardHatProject={isHardHatProject} configurationSettings={configurationSettings} />
         <ContractSelection contractMap={contractMap} fileProvider={fileProvider} fileManager={fileManager} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
