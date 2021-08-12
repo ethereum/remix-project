@@ -116,13 +116,21 @@ class CompileTab extends ViewPlugin {
       this.call('editor', 'clearAnnotations')
     }
 
-    this.on('filePanel', 'setWorkspace', (workspace) => {
+    const resetView = (isLocalhost) => {
       this.compileTabLogic.isHardhatProject().then((result) => {
-        if (result && workspace.isLocalhost) this.isHardHatProject = true
+        if (result && isLocalhost) this.isHardHatProject = true
         else this.isHardHatProject = false
         this.renderComponent()
       })
       this.resetResults()
+    }
+
+    this.on('filePanel', 'setWorkspace', (workspace) => {
+      resetView(workspace.isLocalhost)
+    })
+
+    this.on('remixd', 'rootFolderChanged', () => {
+      resetView(true)
     })
 
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
