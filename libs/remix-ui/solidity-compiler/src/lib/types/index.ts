@@ -9,7 +9,6 @@ export interface SolidityCompilerProps {
     compileTabLogic: any,
     currentFile: string,
     contractsDetails: Record<string, any>,
-    editor: any,
     config: any,
     fileProvider: any,
     fileManager: any,
@@ -23,7 +22,6 @@ export interface SolidityCompilerProps {
 }
 
 export interface CompilerContainerProps {
-  editor: any,
   config: any,
   queryParams: any,
   compileTabLogic: any,
