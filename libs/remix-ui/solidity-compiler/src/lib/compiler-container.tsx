@@ -18,7 +18,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
+  const { config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -59,7 +59,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const currentFileName = config.get('currentFile')
 
     currentFile(currentFileName)
-    listenToEvents(editor, compileTabLogic)(dispatch)
+    listenToEvents(compileTabLogic)(dispatch)
   }, [])
 
   useEffect(() => {
