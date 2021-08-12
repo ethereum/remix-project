@@ -71,7 +71,7 @@ const css = csjs`
 const profile = {
   name: 'pluginManager',
   displayName: 'Plugin manager',
-  methods: ['registerFlattener'],
+  methods: ['registerFlattener', 'registerOptimismCompiler'],
   events: [],
   icon: 'assets/img/pluginManager.webp',
   description: 'Start/stop services, modules and plugins',
@@ -116,8 +116,8 @@ class PluginManagerComponent extends ViewPlugin {
         if (!res) {
           reporCompileIssue()
         } else {
-          await this.call('menuicons', 'select', 'flattener1')
-          const path = await this.call('flattener1', 'flattenAndSave', res)
+          await this.call('menuicons', 'select', 'flattener')
+          const path = await this.call('flattener', 'flattenAndSave', res)
           await this.call('fileManager', 'open', path)
         }
       } else {
@@ -126,11 +126,26 @@ class PluginManagerComponent extends ViewPlugin {
     }, 1000)
   }
 
+  async registerOptimismCompiler (event) {
+    await this.call('optimism-compiler', 'compile', event.path[0])
+    await this.call('menuicons', 'select', 'optimism-compiler')
+    await this.call('fileManager', 'open', event.path[0])
+  }
+
   async onActivation () {
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'pluginManager',
       name: 'registerFlattener',
       label: 'Flatten',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: []
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'pluginManager',
+      name: 'registerOptimismCompiler',
+      label: 'Compile with Optimism',
       type: [],
       extension: ['.sol'],
       path: [],
