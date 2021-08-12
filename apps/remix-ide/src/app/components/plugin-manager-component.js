@@ -71,7 +71,7 @@ const css = csjs`
 const profile = {
   name: 'pluginManager',
   displayName: 'Plugin manager',
-  methods: [],
+  methods: ['registerFlattener'],
   events: [],
   icon: 'assets/img/pluginManager.webp',
   description: 'Start/stop services, modules and plugins',
@@ -102,17 +102,52 @@ class PluginManagerComponent extends ViewPlugin {
     return this.appManager.actives.includes(name)
   }
 
-  activateP (name) {
+  async registerFlattener (event) {
+    if (!this.appManager.isActive('solidity')) { await this.appManager.activatePlugin('solidity') }
+    const compiledSuccessfully = await this.call('solidity', 'compileFile', event)
+    const reporCompileIssue = () => {
+      this.call('fileManager', 'open', event.path[0])
+      addToolTip('Cannot flatten the file. Please make sure it is compiling successfully.')
+      this.call('menuicons', 'select', 'solidity')
+    }
+    setTimeout(async () => {
+      if (compiledSuccessfully) {
+        const res = await this.call('solidity', 'getCompilationResult')
+        if (!res) {
+          reporCompileIssue()
+        } else {
+          this.call('menuicons', 'select', 'flattener1')
+          await this.call('flattener1', 'flatten', res)
+        }
+      } else {
+        reporCompileIssue()
+      }
+    }, 1000)
+  }
+
+  onActivation () {
+    this.call('filePanel', 'registerContextMenuItem', {
+      id: 'pluginManager',
+      name: 'registerFlattener',
+      label: 'Flatten',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: []
+    })
+  }
+
+  activateP(name) {
     this.appManager.activatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
-  deactivateP (name) {
+  deactivateP(name) {
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
-  renderItem (profile) {
+  renderItem(profile) {
     const displayName = (profile.displayName) ? profile.displayName : profile.name
     const doclink = profile.documentation ? yo`<a href="${profile.documentation}" class="px-1" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>`
       : yo``
@@ -171,7 +206,7 @@ class PluginManagerComponent extends ViewPlugin {
   /**
    * Add a local plugin to the list of plugins
    */
-  async openLocalPlugin () {
+  async openLocalPlugin() {
     try {
       const profile = await this.localPlugin.open(this.appManager.getAll())
       if (!profile) return
@@ -188,7 +223,7 @@ class PluginManagerComponent extends ViewPlugin {
     }
   }
 
-  render () {
+  render() {
     // Filtering helpers
     const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
     const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
@@ -255,13 +290,13 @@ class PluginManagerComponent extends ViewPlugin {
     return rootView
   }
 
-  reRender () {
+  reRender() {
     if (this.views.root) {
       yo.update(this.views.root, this.render())
     }
   }
 
-  filterPlugins ({ target }) {
+  filterPlugins({ target }) {
     this.filter = target.value.toLowerCase()
     this.reRender()
   }
