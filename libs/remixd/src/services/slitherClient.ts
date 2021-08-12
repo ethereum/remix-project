@@ -123,7 +123,19 @@ export class SlitherClient extends PluginClient {
       const allowPathsOption: string = allowPaths ? `--allow-paths ${allowPaths}` : ''
       const optimizeOption: string = optimize ? ' --optimize ' : ''
       const evmOption: string = evmVersion ? ` --evm-version ${evmVersion}` : ''
-      const solcArgs: string = optimizeOption || evmOption || allowPathsOption ? `--solc-args '${allowPathsOption}${optimizeOption}${evmOption}'` : ''
+      let solcArgs = ''
+      if (optimizeOption) {
+          solcArgs += ' ' + optimizeOption
+      }
+      if (evmOption) {
+          solcArgs += ' ' + evmOption
+      }
+      if (allowPathsOption) {
+          solcArgs += ' ' + allowPathsOption
+      }
+      if (solcArgs) {
+          solcArgs = `--solc-args "${solcArgs.trim()}"`
+      }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
       const outputFile: string = 'remix-slitherReport_' + Math.floor(Date.now() / 1000) + '.json'
