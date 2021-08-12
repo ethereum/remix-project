@@ -500,7 +500,7 @@ class Blockchain extends Plugin {
       if (isVM) {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
-          let finalLogs = 'Console.log:\n'
+          let finalLogs = 'console.log:\n'
           for (const log of hhlogs) {
             finalLogs = finalLogs + log.join('') + '\n'
           }

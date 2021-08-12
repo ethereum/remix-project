@@ -86,7 +86,7 @@ export class Transactions {
 
   eth_getHHLogsForTx (payload, cb) {
     const txHash = payload.params[0]
-    cb(null, this.vmContext.currentVm.web3vm.hhLogs[txHash])
+    cb(null, this.vmContext.currentVm.web3vm.hhLogs[txHash] ? this.vmContext.currentVm.web3vm.hhLogs[txHash] : [])
   }
 
   eth_getTransactionReceipt (payload, cb) {
