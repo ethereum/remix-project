@@ -18,7 +18,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
+  const { api, config, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -65,7 +65,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
       setState(prevState => {
-        const params = queryParams.get()
+        const params = api.getParameters()
         const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
         const runs = params.runs
         const evmVersion = params.evmVersion
@@ -152,7 +152,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
-      if (queryParams.get().version) selectedVersion = queryParams.get().version
+      if (api.getParameters().version) selectedVersion = api.getParameters().version
       // Check if version is a URL and corresponding filename starts with 'soljson'
       if (selectedVersion.startsWith('https://')) {
         const urlArr = selectedVersion.split('/')
@@ -321,7 +321,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
     updateCurrentVersion(selectedVersion)
-    queryParams.update({ version: selectedVersion })
+    api.setParameters({ version: selectedVersion })
     let url
 
     if (customUrl !== '') {
@@ -331,7 +331,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      queryParams.update({ version: selectedVersion })
+      api.setParameters({ version: selectedVersion })
     } else if (selectedVersion === 'builtin') {
       let location: string | Location = window.document.location
       let path = location.pathname
