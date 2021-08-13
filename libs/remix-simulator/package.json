@@ -32,7 +32,7 @@
     "merge": "^1.2.0",
     "string-similarity": "^4.0.4",
     "time-stamp": "^2.0.0",
-    "web3": "^1.2.4"
+    "web3": "^1.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
