@@ -16,7 +16,6 @@ export class TxRunnerWeb3 {
   }
 
   _executeTx (tx, network, txFee, api, promptCb, callback) {
-    
     if (network && network.lastBlock && network.lastBlock.baseFeePerGas) {
       // the sending stack (web3.js / metamask need to have the type defined)
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
@@ -114,7 +113,7 @@ export class TxRunnerWeb3 {
 
           if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
             return this._executeTx(tx, network, null, this._api, promptCb, callback)
-          }       
+          }
 
           confirmCb(network, tx, tx['gas'], (txFee) => {
             return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
