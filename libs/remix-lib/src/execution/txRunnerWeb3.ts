@@ -15,15 +15,21 @@ export class TxRunnerWeb3 {
     this._api = api
   }
 
-  _executeTx (tx, txFee, api, promptCb, callback) {
+  _executeTx (tx, network, txFee, api, promptCb, callback) {
+    
+    if (network && network.lastBlock && network.lastBlock.baseFeePerGas) {
+      // the sending stack (web3.js / metamask need to have the type defined)
+      // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
+      tx.type = '0x2'
+    }
     if (txFee) {
       if (txFee.baseFeePerGas) {
         tx.maxPriorityFee = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei'))
         tx.maxFee = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei'))
-        tx.type = 2
+        tx.type = '0x2'
       } else {
         tx.gasPrice = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei'))
-        tx.type = 1
+        tx.type = '0x1'
       }
     }
 
@@ -100,18 +106,18 @@ export class TxRunnerWeb3 {
         // callback is called whenever no error
         tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
 
-        if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-          return this._executeTx(tx, null, this._api, promptCb, callback)
-        }
-
         this._api.detectNetwork((err, network) => {
           if (err) {
             console.log(err)
             return
           }
 
+          if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+            return this._executeTx(tx, network, null, this._api, promptCb, callback)
+          }       
+
           confirmCb(network, tx, tx['gas'], (txFee) => {
-            return this._executeTx(tx, txFee, this._api, promptCb, callback)
+            return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
           }, (error) => {
             callback(error)
           })
