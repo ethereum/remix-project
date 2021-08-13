@@ -1,5 +1,4 @@
 import { MenuItems } from '@remix-ui/file-explorer'
-
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
@@ -29,7 +28,6 @@ export interface WorkspaceProps {
   }
 }
 export interface WorkspaceState {
-  workspaces: string[]
   reset: boolean
   hideRemixdExplorer: boolean
   displayNewFile: boolean
@@ -47,4 +45,12 @@ export interface Modal {
   okFn: () => void
   cancelLabel: string
   cancelFn: () => void
+}
+
+export interface File {
+  path: string,
+  name: string,
+  isDirectory: boolean,
+  type: 'folder' | 'file' | 'gist',
+  child?: File[]
 }
