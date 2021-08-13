@@ -20,10 +20,10 @@ export class TxRunnerWeb3 {
       if (txFee.baseFeePerGas) {
         tx.maxPriorityFee = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei'))
         tx.maxFee = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei'))
-        tx.type = 2
+        tx.type = '0x2'
       } else {
         tx.gasPrice = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei'))
-        tx.type = 1
+        tx.type = '0x1'
       }
     }
 
