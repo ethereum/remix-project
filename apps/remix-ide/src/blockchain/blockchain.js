@@ -19,7 +19,7 @@ class Blockchain {
     this.events = new EventEmitter()
     this.config = config
     const web3Runner = new TxRunnerWeb3({
-      config: config,
+      config: this.config,
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
