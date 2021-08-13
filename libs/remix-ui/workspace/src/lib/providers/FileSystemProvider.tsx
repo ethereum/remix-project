@@ -1,13 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useReducer, useState, useEffect } from 'react'
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, initLocalhost, fetchDirectory } from '../actions/workspace'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Modal } from '../types'
+import { Modal, WorkspaceProps } from '../types'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Workspace } from '../remix-ui-workspace'
 
-export const FileSystemProvider = ({ filePanel, children }) => {
+export const FileSystemProvider = (props: WorkspaceProps) => {
+  const { plugin } = props
   const [fs, fsDispatch] = useReducer(browserReducer, browserInitialState)
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
@@ -21,11 +24,11 @@ export const FileSystemProvider = ({ filePanel, children }) => {
   const [modals, setModals] = useState<Modal[]>([])
 
   const dispatchInitWorkspace = async () => {
-    await initWorkspace(filePanel)(fsDispatch)
+    await initWorkspace(plugin)(fsDispatch)
   }
 
   const dispatchInitLocalhost = async () => {
-    await initLocalhost(filePanel)(fsDispatch)
+    await initLocalhost(plugin)(fsDispatch)
   }
 
   const dispatchFetchDirectory = async (path: string) => {
@@ -34,7 +37,7 @@ export const FileSystemProvider = ({ filePanel, children }) => {
 
   useEffect(() => {
     if (modals.length > 0) {
-      setModals(modals => {
+      setFocusModal(() => {
         const focusModal = {
           hide: false,
           title: modals[0].title,
@@ -44,14 +47,12 @@ export const FileSystemProvider = ({ filePanel, children }) => {
           cancelLabel: modals[0].cancelLabel,
           cancelFn: modals[0].cancelFn
         }
-
-        modals.shift()
-        return {
-          ...modals,
-          focusModal,
-          modals: modals
-        }
+        return focusModal
       })
+      const modalList = modals.slice()
+
+      modalList.shift()
+      setModals(modalList)
     }
   }, [modals])
 
@@ -62,7 +63,10 @@ export const FileSystemProvider = ({ filePanel, children }) => {
   }
 
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
-    setModals(modals => [...modals, { message, title, okLabel, okFn, cancelLabel, cancelFn }])
+    setModals(modals => {
+      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
+      return [...modals]
+    })
   }
 
   const value = {
@@ -74,7 +78,7 @@ export const FileSystemProvider = ({ filePanel, children }) => {
   }
   return (
     <FileSystemContext.Provider value={value}>
-      { children }
+      <Workspace plugin={plugin} />
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
     </FileSystemContext.Provider>
   )
