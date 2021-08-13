@@ -1,4 +1,4 @@
-import { extractNameFromKey } from '@remix-ui/file-explorer'
+import { extractNameFromKey, File } from '@remix-ui/file-explorer'
 interface Action {
     type: string
     payload: any
@@ -7,36 +7,52 @@ export interface BrowserState {
   browser: {
     currentWorkspace: string,
     workspaces: string[],
-    files: []
+    files: { [x: string]: Record<string, File> }
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
   },
   localhost: {
-    files: [],
+    files: { [x: string]: Record<string, File> },
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
   },
-  mode: 'browser' | 'localhost'
+  mode: 'browser' | 'localhost',
+  notification: {
+    title: string,
+    message: string,
+    actionOk: () => void,
+    actionCancel: (() => void) | null,
+    labelOk: string,
+    labelCancel: string
+  }
 }
 
 export const browserInitialState: BrowserState = {
   browser: {
     currentWorkspace: '',
     workspaces: [],
-    files: [],
+    files: {},
     isRequesting: false,
     isSuccessful: false,
     error: null
   },
   localhost: {
-    files: [],
+    files: {},
     isRequesting: false,
     isSuccessful: false,
     error: null
   },
-  mode: 'browser'
+  mode: 'browser',
+  notification: {
+    title: '',
+    message: '',
+    actionOk: () => {},
+    actionCancel: () => {},
+    labelOk: '',
+    labelCancel: ''
+  }
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -67,9 +83,11 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'SET_MODE': {
+      const payload = action.payload as 'browser' | 'localhost'
+
       return {
         ...state,
-        mode: action.payload
+        mode: payload
       }
     }
 
@@ -84,6 +102,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         }
       }
     }
+
     case 'FETCH_DIRECTORY_SUCCESS': {
       const payload = action.payload as { path: string, files }
 
@@ -98,6 +117,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         }
       }
     }
+
     case 'FETCH_DIRECTORY_ERROR': {
       return {
         ...state,
@@ -107,6 +127,29 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           isSuccessful: false,
           error: action.payload
         }
+      }
+    }
+
+    case 'DISPLAY_NOTIFICATION': {
+      const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
+
+      return {
+        ...state,
+        notification: {
+          title: payload.title,
+          message: payload.message,
+          actionOk: payload.actionOk || browserInitialState.notification.actionOk,
+          actionCancel: payload.actionCancel || browserInitialState.notification.actionCancel,
+          labelOk: payload.labelOk,
+          labelCancel: payload.labelCancel
+        }
+      }
+    }
+
+    case 'HIDE_NOTIFICATION': {
+      return {
+        ...state,
+        notification: browserInitialState.notification
       }
     }
     default:
@@ -120,7 +163,7 @@ const fetchDirectoryContent = (fileTree, folderPath: string) => {
   return { [extractNameFromKey(folderPath)]: files }
 }
 
-const normalize = (filesList): any => {
+const normalize = (filesList): Record<string, File> => {
   const folders = {}
   const files = {}
 

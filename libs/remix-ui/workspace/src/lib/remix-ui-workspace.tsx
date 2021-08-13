@@ -11,7 +11,6 @@ export function Workspace (props: WorkspaceProps) {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [state, setState] = useState<WorkspaceState>({
-    workspaces: [],
     reset: false,
     hideRemixdExplorer: true,
     displayNewFile: false,
@@ -28,7 +27,10 @@ export function Workspace (props: WorkspaceProps) {
   }, [])
 
   useEffect(() => {
-    if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
+    if (global.fs.browser.currentWorkspace) {
+      setCurrentWorkspace(global.fs.browser.currentWorkspace)
+      global.dispatchFetchDirectory(global.fs.browser.currentWorkspace)
+    }
   }, [global.fs.browser.currentWorkspace])
 
   props.plugin.resetNewFile = () => {
@@ -46,18 +48,18 @@ export function Workspace (props: WorkspaceProps) {
     return setWorkspace(workspaceName)
   }
 
-  props.plugin.request.createNewFile = async () => {
-    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
-    props.plugin.resetNewFile()
-  }
+  // props.plugin.request.createNewFile = async () => {
+  //   if (!state.workspaces.length) await createNewWorkspace('default_workspace')
+  //   props.plugin.resetNewFile()
+  // }
 
-  props.plugin.request.uploadFile = async (target: EventTarget & HTMLInputElement) => {
-    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
+  // props.plugin.request.uploadFile = async (target: EventTarget & HTMLInputElement) => {
+  //   if (!state.workspaces.length) await createNewWorkspace('default_workspace')
 
-    setState(prevState => {
-      return { ...prevState, uploadFileEvent: target }
-    })
-  }
+  //   setState(prevState => {
+  //     return { ...prevState, uploadFileEvent: target }
+  //   })
+  // }
 
   props.plugin.request.getCurrentWorkspace = () => {
     return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.plugin.workspace.workspacesPath}/${currentWorkspace}` }
@@ -287,6 +289,7 @@ export function Workspace (props: WorkspaceProps) {
                     displayInput={state.displayNewFile}
                     externalUploads={state.uploadFileEvent}
                     resetFocus={resetFocus}
+                    files={global.fs.browser.files}
                   />
               }
             </div>
@@ -304,6 +307,7 @@ export function Workspace (props: WorkspaceProps) {
                         contextMenuItems={props.plugin.registeredMenuItems}
                         removedContextMenuItems={props.plugin.removedMenuItems}
                         resetFocus={resetFocus}
+                        files={global.fs.localhost.files}
                       />
                   }
                 </div>

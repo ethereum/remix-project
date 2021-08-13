@@ -13,14 +13,15 @@ export interface FileExplorerProps {
     removedContextMenuItems: MenuItems,
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement,
-    resetFocus?: (value: boolean) => void
+    resetFocus?: (value: boolean) => void,
+    files: { [x: string]: Record<string, File> }
 }
 
 export interface File {
     path: string,
     name: string,
     isDirectory: boolean,
-    type: string,
+    type: 'folder' | 'file' | 'gist',
     child?: File[]
 }
 
@@ -34,7 +35,7 @@ export interface FileExplorerMenuProps {
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
 
-export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean, label: string }
+export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string }
 
 export interface FileExplorerContextMenuProps {
     actions: action[],
@@ -58,3 +59,44 @@ export interface FileExplorerContextMenuProps {
     copy?: (path: string, type: string) => void,
     paste?: (destination: string, type: string) => void
 }
+
+export interface FileExplorerState {
+    focusElement: {
+      key: string
+      type: 'folder' | 'file' | 'gist'
+    }[]
+    fileManager: any
+    ctrlKey: boolean
+    newFileName: string
+    actions: {
+      id: string
+      name: string
+      type?: Array<'folder' | 'gist' | 'file'>
+      path?: string[]
+      extension?: string[]
+      pattern?: string[]
+      multiselect: boolean
+      label: string
+    }[]
+    focusContext: {
+      element: string
+      x: number
+      y: number
+      type: string
+    }
+    focusEdit: {
+      element: string
+      type: string
+      isNew: boolean
+      lastEdit: string
+    }
+    expandPath: string[]
+    toasterMsg: string
+    mouseOverElement: string
+    showContextMenu: boolean
+    reservedKeywords: string[]
+    copyElement: {
+      key: string
+      type: 'folder' | 'gist' | 'file'
+    }[]
+  }
