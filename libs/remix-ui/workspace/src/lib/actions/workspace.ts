@@ -1,8 +1,8 @@
-import { bufferToHex, keccakFromString } from 'ethereumjs-util'
-import { checkSpecialChars, checkSlash } from '../../../../../../apps/remix-ide/src/lib/helper'
 import React from 'react'
+import { bufferToHex, keccakFromString } from 'ethereumjs-util'
+import axios, { AxiosResponse } from 'axios'
+import { checkSpecialChars, checkSlash } from '@remix-ui/helper'
 
-// const GistHandler = require('../../../../../../apps/remix-ide/src/lib/gist-handler')
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
 // const queuedEvents = []
@@ -51,6 +51,19 @@ const fetchDirectorySuccess = (path: string, files) => {
   }
 }
 
+export const displayNotification = (title: string, message: string, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
+  return {
+    type: 'DISPLAY_NOTIFICATION',
+    payload: { title, message, labelOk, labelCancel, actionOk, actionCancel }
+  }
+}
+
+export const hideNotification = () => {
+  return {
+    type: 'DISPLAY_NOTIFICATION'
+  }
+}
+
 export const fetchDirectory = (mode: 'browser' | 'localhost', path: string) => (dispatch: React.Dispatch<any>) => {
   const provider = mode === 'browser' ? plugin.fileProviders.workspace : plugin.fileProviders.localhost
   const promise = new Promise((resolve) => {
@@ -73,34 +86,75 @@ export const fetchDirectory = (mode: 'browser' | 'localhost', path: string) => (
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
-  if (await workspaceExists(workspaceName)) throw new Error('workspace already exists')
+  if (await workspaceExists(workspaceName) && template === 'default-template') throw new Error('workspace already exists')
   else {
     const workspaceProvider = plugin.fileProviders.workspace
 
     await workspaceProvider.createWorkspace(workspaceName)
     if (setDefaults) {
+      const queryParams = new QueryParams()
+      const params = queryParams.get()
+
       switch (template) {
         case 'code-template':
           // creates a new workspace code-sample and loads code from url params.
           try {
-            const queryParams = new QueryParams()
-            const params = queryParams.get()
-
             await workspaceProvider.createWorkspace(workspaceName)
+            let path = ''; let content = ''
 
-            const hash = bufferToHex(keccakFromString(params.code))
-            const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-            const path = fileName
+            if (params.code) {
+              const hash = bufferToHex(keccakFromString(params.code))
 
-            await workspaceProvider.set(path, atob(params.code))
-            await plugin.fileManager.openFile(fileName)
+              path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+              content = atob(params.code)
+              await workspaceProvider.set(path, content)
+            } else if (params.url) {
+              const data = await plugin.call('contentImport', 'resolve', params.url)
+
+              path = data.cleanUrl
+              content = data.content
+              await workspaceProvider.set(path, content)
+            }
+            await plugin.fileManager.openFile(path)
           } catch (e) {
             console.error(e)
           }
           break
+
         case 'gist-template':
           // creates a new workspace gist-sample and get the file from gist
+          try {
+            const gistId = params.gist
+            const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
+            const data = response.data
+
+            console.log('data: ', data)
+            if (!data.files) {
+              dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => {}, null))
+              return
+            }
+            // const obj = {}
+
+            // Object.keys(data.files).forEach((element) => {
+            //   const path = element.replace(/\.\.\./g, '/')
+
+            //   obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
+            // })
+            // fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
+            //   if (!errorLoadingFile) {
+            //     const provider = fileManager.getProvider('workspace')
+
+            //     provider.lastLoadedGistId = gistId
+            //   } else {
+            //     // modalDialogCustom.alert('', errorLoadingFile.message || errorLoadingFile)
+            //   }
+            // })
+          } catch (e) {
+            dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => {}, null))
+            console.error(e)
+          }
           break
+
         case 'default-template':
           // creates a new workspace and populates it with default project template.
           // insert example contracts
@@ -150,29 +204,17 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
-    console.log('filePanelPlugin: ', filePanelPlugin)
     plugin = filePanelPlugin
     dispatch = reducerDispatch
     const provider = filePanelPlugin.fileProviders.workspace
     const queryParams = new QueryParams()
-    // const gistHandler = new GistHandler()
     const params = queryParams.get()
-    // let loadedFromGist = false
     const workspaces = await getWorkspaces() || []
-    // if (params.gist) {
-    //   initialWorkspace = 'gist-sample'
-    //   await provider.createWorkspace(initialWorkspace)
-    //   loadedFromGist = gistHandler.loadFromGist(params, plugin.fileManager)
-    // }
-    // if (loadedFromGist) {
-    //   dispatch(setWorkspaces(workspaces))
-    //   dispatch(setCurrentWorkspace(initialWorkspace))
-    //   return
-    // }
 
     if (params.gist) {
-
-    } else if (params.code) {
+      await createWorkspaceTemplate('gist-sample', true, 'gist-template')
+      dispatch(setCurrentWorkspace('gist-sample'))
+    } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', true, 'code-template')
       dispatch(setCurrentWorkspace('code-sample'))
     } else {
@@ -225,7 +267,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     // provider.event.on('createWorkspace', (name) => {
     //   createNewWorkspace(name)
     // })
-    dispatch(setWorkspaces(workspaces))
+    // dispatch(setWorkspaces(workspaces))
     dispatch(setMode('browser'))
   }
 }
