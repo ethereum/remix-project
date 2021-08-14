@@ -1,5 +1,5 @@
 /* eslint-disable no-debugger */
-import React, { Dispatch, useReducer } from 'react'
+import React, { Dispatch, useReducer, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
@@ -14,45 +14,49 @@ interface LocalPluginFormProps {
   pluginManager: PluginManagerComponent
 }
 
-const handleModalOkClick = async (pluginManager: PluginManagerComponent, plugin: FormStateProps,
-  toastDispatcher: Dispatch<localPluginReducerActionType>) => {
-  try {
-    const profile = JSON.parse(localStorage.getItem('plugins/local'))
-    if (profile && profile.profile && Object.keys(profile).length > 0) {
-      if (pluginManager.appManager.getIds().includes(profile.profile.name)) {
-        throw new Error('This name has already been used')
-      }
-    }
-    if (!plugin.location) throw new Error('Plugin should have a location')
-    if (!plugin.name) throw new Error('Plugin should have a name')
-    if (!plugin.url) throw new Error('Plugin should have an URL')
-    plugin.methods = plugin.methods.split(',').filter(val => val)
-    const localPlugin = plugin.type === 'iframe' ? new IframePlugin(plugin) : new WebsocketPlugin(plugin)
-
-    localPlugin.profile.hash = `local-${plugin.name}`
-    const targetPlugin = {
-      name: localPlugin.profile.name,
-      displayName: localPlugin.profile.displayName,
-      description: (localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''),
-      documentation: localPlugin.profile.url,
-      events: (localPlugin.profile.events !== undefined ? localPlugin.profile.events : []),
-      hash: localPlugin.profile.hash,
-      kind: (localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''),
-      methods: localPlugin.profile.methods,
-      type: plugin.type,
-      location: plugin.location,
-      icon: 'assets/img/localPlugin.webp'
-    }
-    localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
-    pluginManager.activateAndRegisterLocalPlugin(localPlugin)
-  } catch (error) {
-    const action: localPluginReducerActionType = { type: 'show', payload: `${error.message}` }
-    toastDispatcher(action)
-    console.log(error)
-  }
+const defaultProfile = {
+  methods: [],
+  location: 'sidePanel',
+  type: 'iframe'
 }
+
 function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
   const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
+  const [defaultPlugin] = useState<FormStateProps>(JSON.parse(localStorage.getItem('plugins/local')) || defaultProfile)
+
+  const handleModalOkClick = async () => {
+    try {
+      if (!plugin.name) throw new Error('Plugin should have a name')
+      if (pluginManager.appManager.getIds().includes(plugin.name)) {
+        throw new Error('This name has already been used')
+      }
+      if (!plugin.location) throw new Error('Plugin should have a location')
+      if (!plugin.url) throw new Error('Plugin should have an URL')
+      plugin.methods = typeof plugin.methods === 'string' ? plugin.methods.split(',').filter(val => val) : []
+      const localPlugin = plugin.type === 'iframe' ? new IframePlugin(plugin) : new WebsocketPlugin(plugin)
+
+      localPlugin.profile.hash = `local-${plugin.name}`
+      const targetPlugin = {
+        name: localPlugin.profile.name,
+        displayName: localPlugin.profile.displayName,
+        description: (localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''),
+        documentation: localPlugin.profile.url,
+        events: (localPlugin.profile.events !== undefined ? localPlugin.profile.events : []),
+        hash: localPlugin.profile.hash,
+        kind: (localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''),
+        methods: localPlugin.profile.methods,
+        type: plugin.type,
+        location: plugin.location,
+        icon: 'assets/img/localPlugin.webp'
+      }
+      localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
+      pluginManager.activateAndRegisterLocalPlugin(localPlugin)
+    } catch (error) {
+      const action: localPluginReducerActionType = { type: 'show', payload: `${error.message}` }
+      dispatchToastMsg(action)
+      console.log(error)
+    }
+  }
 
   return (
     <><ModalDialog
@@ -61,7 +65,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
       hide={visible}
       title="Local Plugin"
       okLabel="OK"
-      okFn={() => handleModalOkClick(pluginManager, plugin, dispatchToastMsg) }
+      okFn={ handleModalOkClick }
       cancelLabel="Cancel"
       cancelFn={closeModal}
     >
@@ -71,7 +75,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <input
             className="form-control"
             onChange={e => changeHandler('name', e.target.value)}
-            value={plugin.name}
+            value={ plugin.name || defaultPlugin.name }
             id="plugin-name"
             data-id="localPluginName"
             placeholder="Should be camelCase" />
@@ -81,7 +85,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <input
             className="form-control"
             onChange={e => changeHandler('displayName', e.target.value)}
-            value={plugin.displayName}
+            value={ plugin.displayName || defaultPlugin.displayName }
             id="plugin-displayname"
             data-id="localPluginDisplayName"
             placeholder="Name in the header" />
@@ -91,7 +95,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <input
             className="form-control"
             onChange={e => changeHandler('methods', e.target.value)}
-            value={plugin.methods}
+            value={plugin.methods || defaultPlugin.methods}
             id="plugin-methods"
             data-id="localPluginMethods"
             placeholder="Name in the header" />
@@ -102,7 +106,7 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <input
             className="form-control"
             onChange={e => changeHandler('url', e.target.value)}
-            value={plugin.url}
+            value={ plugin.url || defaultPlugin.url }
             id="plugin-url"
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />
