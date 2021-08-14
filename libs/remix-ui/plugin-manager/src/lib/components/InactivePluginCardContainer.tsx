@@ -21,39 +21,42 @@ interface LocalPluginInterface {
   iframe: {}
 }
 function InactivePluginCardContainer ({ pluginComponent, setInactiveProfiles, inactiveProfiles }: InactivePluginCardContainerProps) {
-  const activatePlugin = (profile: Profile) => {
-    pluginComponent.activateP(profile.name)
+  const activatePlugin = (pluginName: string) => {
+    pluginComponent.activateP(pluginName)
   }
 
-  useEffect(() => {
-    const savedLocalPlugins: LocalPluginInterface = JSON.parse(localStorage.getItem('plugins/local'))
-    const savedActiveProfiles: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
-    if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
-      let temp: Profile[] = []
-      if (Object.keys(savedLocalPlugins).length) {
-        temp = [...pluginComponent.inactivePlugins, savedLocalPlugins.profile as Profile]
-      } else {
-        temp = [...pluginComponent.inactivePlugins]
-      }
-      const filtered = temp.filter(t => {
-        return !savedActiveProfiles.find(active => {
-          return active.name === t.name
-        })
-      })
-      setInactiveProfiles(filtered)
-    }
-  }, [pluginComponent, pluginComponent.inactivePlugins, setInactiveProfiles])
+  // useEffect(() => {
+  //   const savedLocalPlugins: LocalPluginInterface = JSON.parse(localStorage.getItem('plugins/local'))
+  //   const savedActiveProfiles: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
+  //   if (pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) {
+  //     let temp: Profile[] = []
+  //     if (Object.keys(savedLocalPlugins).length) {
+  //       temp = [...pluginComponent.inactivePlugins, savedLocalPlugins.profile as Profile]
+  //     } else {
+  //       temp = [...pluginComponent.inactivePlugins]
+  //     }
+  //     const filtered = temp.filter(t => {
+  //       return !savedActiveProfiles.find(active => {
+  //         return active.name === t.name
+  //       })
+  //     })
+  //     setInactiveProfiles(filtered)
+  //   }
+  // }, [pluginComponent, pluginComponent.inactivePlugins, setInactiveProfiles])
   return (
     <Fragment>
-      {(inactiveProfiles && inactiveProfiles.length) ? <ModuleHeading headingLabel="Inactive Modules" count={inactiveProfiles.length} /> : null}
-      {inactiveProfiles && inactiveProfiles.map((profile, idx) => (
-        <InactivePluginCard
-          buttonText="Activate"
-          profile={profile}
-          key={idx}
-          activatePlugin={activatePlugin}
-        />
-      ))
+      {(pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) ? <ModuleHeading headingLabel="Inactive Modules" count={pluginComponent.inactivePlugins.length} /> : null}
+      {pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.map((profile, idx) => {
+        // console.log('profile: ', profile)
+        return (
+          <InactivePluginCard
+            buttonText="Activate"
+            profile={profile}
+            key={idx}
+            activatePlugin={activatePlugin}
+          />
+        )
+      })
       }
     </Fragment>
   )

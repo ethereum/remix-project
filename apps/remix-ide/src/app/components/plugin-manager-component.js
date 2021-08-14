@@ -38,10 +38,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.inactivePlugins = []
     this.activeProfiles = this.appManager.actives
     this._paq = _paq
-  }
-
-  triggerEngineEventListener () {
-    this.engine.event.on('onRegistration', () => this.renderComponent())
+    this.listenOnEvent()
   }
 
   /**
@@ -61,10 +58,6 @@ class PluginManagerComponent extends ViewPlugin {
    */
   activateP (name) {
     this.appManager.activatePlugin(name)
-    this.appManager.event.on('activate', () => {
-      this.getAndFilterPlugins()
-      this.triggerEngineEventListener()
-    })
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
@@ -91,10 +84,6 @@ class PluginManagerComponent extends ViewPlugin {
    */
   deactivateP (name) {
     this.call('manager', 'deactivatePlugin', name)
-    this.appManager.event.on('deactivate', () => {
-      this.getAndFilterPlugins()
-      this.triggerEngineEventListener()
-    })
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
@@ -107,7 +96,7 @@ class PluginManagerComponent extends ViewPlugin {
       <RemixUiPluginManager
         pluginComponent={this}
       />,
-      document.getElementById('pluginManager'))
+      this.htmlElement)
   }
 
   render () {
@@ -145,6 +134,16 @@ class PluginManagerComponent extends ViewPlugin {
     this.activePlugins = activatedPlugins
     this.inactivePlugins = deactivatedPlugins
     this.renderComponent()
+  }
+
+  listenOnEvent () {
+    this.engine.event.on('onRegistration', () => this.renderComponent())
+    this.appManager.event.on('activate', () => {
+      this.getAndFilterPlugins()
+    })
+    this.appManager.event.on('deactivate', () => {
+      this.getAndFilterPlugins()
+    })
   }
 }
 

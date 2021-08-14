@@ -82,7 +82,7 @@ module.exports = {
   'Close Remixd': function (browser) {
     browser
       .clickLaunchIcon('pluginManager')
-      .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+      .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
       .end()
   }
 }
