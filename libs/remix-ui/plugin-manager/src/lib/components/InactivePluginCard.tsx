@@ -7,7 +7,7 @@ interface PluginCardProps {
     icon?: string
   }
   buttonText: string
-  activatePlugin: (plugin: Profile) => void
+  activatePlugin: (plugin: string) => void
   // inactivePlugins: Profile[]
   // setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
   // setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
@@ -21,38 +21,34 @@ function InactivePluginCard ({
   buttonText,
   activatePlugin
 }: PluginCardProps) {
-  const [displayName] = useState<string>((profile.displayName) ? profile.displayName : profile.name)
-  const [docLink] = useState<JSX.Element>((profile.documentation) ? (
-    <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
-      <i aria-hidden="true" className="fas fa-book"/>
-    </a>
-  ) : null)
-
-  const [versionWarning] = useState<JSX.Element>((profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) ? (
-    <small title="Version Alpha" className="remixui_versionWarning plugin-version">alpha</small>
-  ) : (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) ? (
-    <small title="Version Beta" className="remixui_versionWarning plugin-version">beta</small>
-  ) : null)
-
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-      <article className="list-group-item py-1 mb-1 plugins-list-group-item" title={displayName}>
+      <article className="list-group-item py-1 mb-1 plugins-list-group-item" title={profile.displayName || profile.name}>
         <div className="remixui_row justify-content-between align-items-center mb-2">
           <h6 className="remixui_displayName plugin-name">
             <div>
-              {displayName}
-              {docLink}
-              {versionWarning}
+              { profile.displayName || profile.name }
+              { profile.documentation &&
+                <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
+                  <i aria-hidden="true" className="fas fa-book"/>
+                </a>
+              }
+              { profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)
+                ? <small title="Version Alpha" className="remixui_versionWarning plugin-version">alpha</small>
+                : profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)
+                  ? <small title="Version Beta" className="remixui_versionWarning plugin-version">beta</small>
+                  : null
+              }
             </div>
             {
               <button
                 onClick={() => {
-                  activatePlugin(profile)
-                  const newActives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
-                  if (!newActives.includes(profile)) {
-                    newActives.push(profile)
-                    localStorage.setItem('newActivePlugins', JSON.stringify(newActives))
-                  }
+                  activatePlugin(profile.name)
+                  // const newActives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
+                  // if (!newActives.includes(profile)) {
+                  //   newActives.push(profile)
+                  //   localStorage.setItem('newActivePlugins', JSON.stringify(newActives))
+                  // }
                 }}
                 className="btn btn-success btn-sm"
                 data-id={`pluginManagerComponentActivateButton${profile.name}`}
