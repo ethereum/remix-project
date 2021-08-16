@@ -114,24 +114,23 @@ export class SlitherClient extends PluginClient {
       // Allow paths and set solc remapping for import URLs
       const fileContent = readFileSync(`${this.currentSharedFolder}/${filePath}`, 'utf8')
       const importsArr = fileContent.match(/import ['"][^.|..](.+?)['"];/g)
-      let allowPaths = ''; let remaps = ''
+      let remaps = ''
       if (importsArr?.length) {
-        const { remapString, allowPathString } = this.mapNpmDepsDir(importsArr)
-        allowPaths = allowPathString
+        const { remapString } = this.mapNpmDepsDir(importsArr)
         remaps = remapString.trim()
       }
       const optimizeOption: string = optimize ? '--optimize' : ''
       const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
       let solcArgs = ''
       if (optimizeOption) {
-          solcArgs += optimizeOption + ' '
+        solcArgs += optimizeOption + ' '
       }
       if (evmOption) {
-          if (!solcArgs.endsWith(' ')) solcArgs += ' '
-          solcArgs += evmOption;
+        if (!solcArgs.endsWith(' ')) solcArgs += ' '
+        solcArgs += evmOption
       }
       if (solcArgs) {
-          solcArgs = `--solc-args "${solcArgs.trimStart()}"`;
+        solcArgs = `--solc-args "${solcArgs.trimStart()}"`
       }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
