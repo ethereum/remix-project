@@ -23,6 +23,7 @@ element.style {
   border: 1px solid #3f4455!important;
 }
 
+/* seleted option should reflect the theme color */
 .selectedOptions {
   background-color: #222336;
 }
