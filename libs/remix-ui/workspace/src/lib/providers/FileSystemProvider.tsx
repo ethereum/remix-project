@@ -56,6 +56,12 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     }
   }, [modals])
 
+  useEffect(() => {
+    if (fs.notification.title) {
+      modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
+    }
+  }, [fs.notification])
+
   const handleHideModal = () => {
     setFocusModal(modal => {
       return { ...modal, hide: true, message: null }
