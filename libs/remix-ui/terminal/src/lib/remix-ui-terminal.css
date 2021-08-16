@@ -141,7 +141,7 @@ element.style {
   .dragbarHorizontal  {
     position          : absolute;
     top               : 0;
-    height            : 0.5em;
+    height            : 0.2em;
     right             : 0;
     left              : 0;
     cursor            : row-resize;
