@@ -4,6 +4,9 @@ const copyToClipboard = require('./copy-to-clipboard')
 const Web3 = require('web3')
 
 var css = csjs`
+  #confirmsetting {
+    z-index: 1;
+  }
   .txInfoBox {
   }
   .wrapword {
