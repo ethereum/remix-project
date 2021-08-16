@@ -125,16 +125,16 @@ export class SlitherClient extends PluginClient {
       const evmOption: string = evmVersion ? ` --evm-version ${evmVersion}` : ''
       let solcArgs = ''
       if (optimizeOption) {
-          solcArgs += ' ' + optimizeOption
+        solcArgs += ' ' + optimizeOption
       }
       if (evmOption) {
-          solcArgs += ' ' + evmOption
+        solcArgs += ' ' + evmOption
       }
       if (allowPathsOption) {
-          solcArgs += ' ' + allowPathsOption
+        solcArgs += ' ' + allowPathsOption
       }
       if (solcArgs) {
-          solcArgs = `--solc-args "${solcArgs.trim()}"`
+        solcArgs = `--solc-args "${solcArgs.trim()}"`
       }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
