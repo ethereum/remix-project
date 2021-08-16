@@ -744,7 +744,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       <div>
         {autoCompletState.data._options.map((item, index) => {
           return (
-            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary selectedOptions' : ''}`} onKeyDown={ handleSelect } >
+            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`} onKeyDown={ handleSelect } >
               <div>
                 {getKeyOf(item)}
               </div>
