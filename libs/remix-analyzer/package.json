@@ -28,7 +28,7 @@
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
     "string-similarity": "^4.0.4",
-    "web3": "1.2.4"
+    "web3": "^1.5.1"
   },
   "publishConfig": {
     "access": "public"
