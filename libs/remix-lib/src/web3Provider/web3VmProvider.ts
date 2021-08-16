@@ -223,7 +223,7 @@ export class Web3VmProvider {
       const iface = new ethers.utils.Interface([`function log${fnArgs} view`])
       const functionDesc = iface.getFunction(`log${fnArgs}`)
       const sigHash = iface.getSighash(`log${fnArgs}`)
-      if(fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
+      if (fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
         payload = payload.replace(fnselectorStr, sigHash)
       } else {
         payload = '0x' + payload
