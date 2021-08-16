@@ -14,9 +14,6 @@ element.style {
 #terminalCliInput:focus {
   outline: none;
 }
-input #terminalCliInput {
-
-}
 
 .border-primary {
   border-color: #007aa6!important;
@@ -90,13 +87,13 @@ input #terminalCliInput {
     font-family       : monospace;
     padding           : .4em;
     color             : var(--primary);
-    border-top        : solid 2px var(--secondary);
   }
   .prompt             {
     margin-right      : 0.5em;
     font-family       : monospace;
     font-weight       : bold;
     font-size         : 14px;
+    color             : lightgray;
   }
   .input              {
     word-break        : break-word;
@@ -275,8 +272,6 @@ input #terminalCliInput {
   .arrow:hover {
     color: var(--secondary);
   }
-  .txLog {
-  }
   .txStatus {
     display: flex;
     font-size: 20px;
@@ -324,6 +319,10 @@ input #terminalCliInput {
     font-size: 10px;
     color: var(--text-info);
     border: 1px solid var(--text-info);
+    transition: max-height 0.3s, padding 0.3s;
+  }
+  table .active {
+    transition: max-height 0.6s, padding 0.6s;
   }
   #txTable {
     margin-top: 1%;
