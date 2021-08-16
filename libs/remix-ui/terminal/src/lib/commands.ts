@@ -2,13 +2,13 @@ export const allPrograms = [
   { ethers: 'The ethers.js library is a compact and complete JavaScript library for Ethereum.' },
   { remix: 'Ethereum IDE and tools for the web.' },
   { web3: 'The web3.js library is a collection of modules which contain specific functionality for the ethereum ecosystem.' },
-  { swarmgw: 'This library can be used to upload/download files to Swarm via https://swarm-gateways.net/.' }
+  // { swarmgw: 'This library can be used to upload/download files to Swarm via https://swarm-gateways.net/.' }
 ]
 
 export const allCommands = [
-  { 'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.' },
+  // { 'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.' },
   { 'remix.exeCurrent()': 'Run the script currently displayed in the editor.' },
-  { 'remix.help()': 'Display this help message.' },
+  // { 'remix.help()': 'Display this help message.' },
   { 'remix.loadgist(id)': 'Load a gist in the file explorer.' },
   { 'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.' },
 
