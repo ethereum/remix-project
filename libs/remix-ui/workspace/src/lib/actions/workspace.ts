@@ -60,7 +60,7 @@ export const displayNotification = (title: string, message: string, labelOk: str
 
 export const hideNotification = () => {
   return {
-    type: 'DISPLAY_NOTIFICATION'
+    type: 'HIDE_NOTIFICATION'
   }
 }
 
@@ -128,27 +128,25 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
             const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
             const data = response.data
 
-            console.log('data: ', data)
             if (!data.files) {
-              dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => {}, null))
-              return
+              return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => {}, null))
             }
-            // const obj = {}
+            const obj = {}
 
-            // Object.keys(data.files).forEach((element) => {
-            //   const path = element.replace(/\.\.\./g, '/')
+            Object.keys(data.files).forEach((element) => {
+              const path = element.replace(/\.\.\./g, '/')
 
-            //   obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-            // })
-            // fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
-            //   if (!errorLoadingFile) {
-            //     const provider = fileManager.getProvider('workspace')
+              obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
+            })
+            plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
+              if (!errorLoadingFile) {
+                const provider = plugin.fileManager.getProvider('workspace')
 
-            //     provider.lastLoadedGistId = gistId
-            //   } else {
-            //     // modalDialogCustom.alert('', errorLoadingFile.message || errorLoadingFile)
-            //   }
-            // })
+                provider.lastLoadedGistId = gistId
+              } else {
+                displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null)
+              }
+            })
           } catch (e) {
             dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => {}, null))
             console.error(e)
