@@ -22,7 +22,13 @@ export function urlFromVersion (version) {
  * checks a compiler whitelist, browser support and OS.
  */
 export function canUseWorker (selectedVersion) {
+  if (selectedVersion.startsWith('http')) {
+    return browserSupportWorker()
+  }
   const version = semver.coerce(selectedVersion)
+  if (!version) {
+    return browserSupportWorker()
+  }
   const isNightly = selectedVersion.includes('nightly')
   return browserSupportWorker() && (
     // All compiler versions (including nightlies) after 0.6.3 are wasm compiled
