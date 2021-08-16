@@ -4,7 +4,7 @@ import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
 import { existsSync, readFileSync, readdirSync } from 'fs'
 import { OutputStandard } from '../types' // eslint-disable-line
-const { spawn, execSync } = require('child_process')
+const { spawn, execSync, unlink } = require('child_process')
 
 export class SlitherClient extends PluginClient {
   methods: Array<string>
@@ -150,6 +150,9 @@ export class SlitherClient extends PluginClient {
         if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
           report = JSON.parse(report)
+          try {
+            unlink(outputFileAbsPath)
+          } catch (e) {}
           if (report['success']) {
             response['status'] = true
             if (!report['results'] || !report['results'].detectors || !report['results'].detectors.length) {
