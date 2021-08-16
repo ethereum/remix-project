@@ -3,6 +3,7 @@ import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { waterfall } from 'async'
 import { EventEmitter } from 'events'
+import { format } from 'util'
 import { ExecutionContext } from './execution-context'
 import VMProvider from './providers/vm.js'
 import InjectedProvider from './providers/injected.js'
@@ -502,7 +503,13 @@ class Blockchain extends Plugin {
         if (hhlogs && hhlogs.length) {
           let finalLogs = 'console.log:\n'
           for (const log of hhlogs) {
-            finalLogs = finalLogs + log.join('') + '\n'
+            let formattedLog
+            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+              formattedLog = format(log[0], ...log.slice(1))
+            } else {
+              formattedLog = log.join('')
+            }
+            finalLogs = finalLogs + formattedLog + '\n'
           }
           this.call('terminal', 'log', { type: 'info', value: finalLogs })
         }
