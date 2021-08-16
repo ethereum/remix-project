@@ -131,10 +131,11 @@ module.exports = {
       .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
       .click('*[data-id="localPluginRadioButtoniframe"]')
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
+      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]', 60000)
       .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]')
       // .modalFooterOKClick()
       // .pause(2000)
-      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .pause(5000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
   },
