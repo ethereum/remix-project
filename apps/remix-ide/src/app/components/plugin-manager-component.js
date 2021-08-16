@@ -105,7 +105,7 @@ class PluginManagerComponent extends ViewPlugin {
   async registerFlattener (event) {
     if (!this.appManager.isActive('solidity')) { await this.appManager.activatePlugin('solidity') }
     const compiledSuccessfully = await this.call('solidity', 'compileFile', event)
-    const reporCompileIssue = async () => {
+    const reportCompileIssue = async () => {
       this.call('fileManager', 'open', event.path[0])
       addToolTip('Cannot flatten the file. Please make sure it is compiling successfully.')
       await this.call('menuicons', 'select', 'solidity')
@@ -114,14 +114,14 @@ class PluginManagerComponent extends ViewPlugin {
       if (compiledSuccessfully) {
         const res = await this.call('solidity', 'getCompilationResult')
         if (!res) {
-          reporCompileIssue()
+          reportCompileIssue()
         } else {
           await this.call('menuicons', 'select', 'flattener')
           const path = await this.call('flattener', 'flattenAndSave', res)
           await this.call('fileManager', 'open', path)
         }
       } else {
-        reporCompileIssue()
+        reportCompileIssue()
       }
     }, 1000)
   }
