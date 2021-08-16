@@ -121,20 +121,11 @@ export class SlitherClient extends PluginClient {
         remaps = remapString.trim()
       }
       const allowPathsOption: string = allowPaths ? `--allow-paths ${allowPaths}` : ''
-      const optimizeOption: string = optimize ? ' --optimize ' : ''
-      const evmOption: string = evmVersion ? ` --evm-version ${evmVersion}` : ''
-      let solcArgs = ''
-      if (optimizeOption) {
-          solcArgs += ' ' + optimizeOption
-      }
-      if (evmOption) {
-          solcArgs += ' ' + evmOption
-      }
-      if (allowPathsOption) {
-          solcArgs += ' ' + allowPathsOption
-      }
+      const optimizeOption: string = optimize ? '--optimize' : ''
+      const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
+      let solcArgs: string = `${allowPathsOption}${optimizeOption}${evmOption}`.trim()
       if (solcArgs) {
-          solcArgs = `--solc-args "${solcArgs.trim()}"`
+        solcArgs = `--solc-args "${solcArgs}"`
       }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
