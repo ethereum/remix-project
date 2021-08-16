@@ -209,7 +209,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
-  'Should start debugging using remix debug nodes (rinkeby)': function (browser: NightwatchBrowser) {
+  'Should start debugging using remix debug nodes (rinkeby)': '' + function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.4+commit.c7e474f2.js')
