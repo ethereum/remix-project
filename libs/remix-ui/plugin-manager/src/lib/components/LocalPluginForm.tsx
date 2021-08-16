@@ -1,5 +1,4 @@
-/* eslint-disable no-debugger */
-import React, { Dispatch, useReducer, useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'

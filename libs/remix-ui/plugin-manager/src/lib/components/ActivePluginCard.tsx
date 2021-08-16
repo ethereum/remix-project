@@ -1,26 +1,15 @@
-/* eslint-disable no-debugger */
-import { Profile } from '@remixproject/plugin-utils'
-import React, { Dispatch, useState } from 'react'
+import React from 'react'
 import '../remix-ui-plugin-manager.css'
-import * as _ from 'lodash'
 interface PluginCardProps {
-  // profile: Profile & {
-  //   icon?: string
-  // }
   profile: any
   buttonText: string
   deactivatePlugin: (pluginName: string) => void
-  // setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
-  // activePlugins: Profile[]
 }
 
-// eslint-disable-next-line no-empty-pattern
 function ActivePluginCard ({
   profile,
   buttonText,
   deactivatePlugin
-  // activePlugins,
-  // setActivePlugins
 }: PluginCardProps) {
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
@@ -44,13 +33,6 @@ function ActivePluginCard ({
             {<button
               onClick={() => {
                 deactivatePlugin(profile.name)
-                // const actives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
-                // if (actives && actives.length) {
-                //   const newList = _.remove(actives, active => active.name !== profile.name)
-                //   // console.log('removed using lodash and this is the result', newList)
-                //   localStorage.setItem('newActivePlugins', JSON.stringify(newList))
-                //   setActivePlugins(newList)
-                // }
               } }
               className="btn btn-secondary btn-sm"
               data-id={`pluginManagerComponentDeactivateButton${profile.name}`}
