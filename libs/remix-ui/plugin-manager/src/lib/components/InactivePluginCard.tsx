@@ -1,6 +1,6 @@
 /* eslint-disable no-debugger */
 import { Profile } from '@remixproject/plugin-utils'
-import React, { useState } from 'react'
+import React from 'react'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
   profile: Profile & {
@@ -8,14 +8,8 @@ interface PluginCardProps {
   }
   buttonText: string
   activatePlugin: (plugin: string) => void
-  // inactivePlugins: Profile[]
-  // setInactivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
-  // setActivePlugins: Dispatch<React.SetStateAction<Profile<any>[]>>
-  // activePlugins: Profile[]
-  // pluginComponent: PluginManagerComponent
 }
 
-// eslint-disable-next-line no-empty-pattern
 function InactivePluginCard ({
   profile,
   buttonText,
@@ -44,11 +38,6 @@ function InactivePluginCard ({
               <button
                 onClick={() => {
                   activatePlugin(profile.name)
-                  // const newActives: Profile[] = JSON.parse(localStorage.getItem('newActivePlugins'))
-                  // if (!newActives.includes(profile)) {
-                  //   newActives.push(profile)
-                  //   localStorage.setItem('newActivePlugins', JSON.stringify(newActives))
-                  // }
                 }}
                 className="btn btn-success btn-sm"
                 data-id={`pluginManagerComponentActivateButton${profile.name}`}

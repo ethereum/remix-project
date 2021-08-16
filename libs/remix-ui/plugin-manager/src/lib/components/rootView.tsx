@@ -38,8 +38,6 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
   const [plugin, setPlugin] = useState<FormStateProps>(initialState)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
 
-  // const { activeProfiles, inactiveProfiles } = useContext(PluginManagerContext)
-
   function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
     setPlugin({ ...plugin, [formProps]: value })
   }
@@ -51,7 +49,6 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
     setVisible(false)
   }
   const closeModal = () => setVisible(true)
-  // <-- End Modal Visibility States -->
 
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
