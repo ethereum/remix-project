@@ -37,7 +37,7 @@ class Terminal extends Plugin {
     this.registry = registry
     this.globalRegistry = globalRegistry
     this.element = document.createElement('div')
-    this.element.setAttribute('class', 'panel_2A0YE0')
+    this.element.setAttribute('class', 'panel')
     this.element.setAttribute('id', 'terminal-view')
     this.eventsDecoder = this.globalRegistry.get('eventsDecoder').api
     this.txListener = this.globalRegistry.get('txlistener').api
@@ -82,6 +82,12 @@ class Terminal extends Plugin {
     this._INDEX.commandsMain = {}
     if (opts.shell) this._shell = opts.shell // ???
     register(this)
+    this.event.register('debuggingRequested', async (hash) => {
+      // TODO should probably be in the run module
+      if (!await this._opts.appManager.isActive('debugger')) await this._opts.appManager.activatePlugin('debugger')
+      this.call('menuicons', 'select', 'debugger')
+      this.call('debugger', 'debug', hash)
+    })
   }
 
   onActivation () {
