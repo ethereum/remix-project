@@ -121,24 +121,26 @@ export class SlitherClient extends PluginClient {
         remaps = remapString.trim()
       }
       const allowPathsOption: string = allowPaths ? `--allow-paths ${allowPaths}` : ''
-      const optimizeOption: string = optimize ? ' --optimize ' : ''
-      const evmOption: string = evmVersion ? ` --evm-version ${evmVersion}` : ''
+      const optimizeOption: string = optimize ? '--optimize' : ''
+      const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
       let solcArgs = ''
+      if (allowPathsOption) {
+        if (!solcArgs.endsWith(' ')) solcArgs += ' '
+        solcArgs += allowPathsOption;
+      }
       if (optimizeOption) {
-        solcArgs += ' ' + optimizeOption
+          solcArgs += optimizeOption;
       }
       if (evmOption) {
-        solcArgs += ' ' + evmOption
-      }
-      if (allowPathsOption) {
-        solcArgs += ' ' + allowPathsOption
+          if (!solcArgs.endsWith(' ')) solcArgs += ' '
+          solcArgs += evmOption;
       }
       if (solcArgs) {
-        solcArgs = `--solc-args "${solcArgs.trim()}"`
+          solcArgs = `--solc-args "${solcArgs.trim()}"`;
       }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
-      const outputFile: string = 'remix-slitherReport_' + Math.floor(Date.now() / 1000) + '.json'
+      const outputFile: string = 'remix-slitherReport.json'
       const cmd: string = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
