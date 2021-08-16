@@ -12,10 +12,3 @@ export function localPluginToastReducer (currentState: string, toastAction: loca
       return currentState
   }
 }
-
-export interface activePluginActionType {
-  type: 'load' | 'refresh'
-}
-export function loadActivePluginsReducer (activated: string[], action: activePluginActionType) {
-
-}

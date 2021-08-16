@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
-import React, { Fragment } from 'react'
+import React from 'react'
 import { PluginManagerComponent, PluginManagerProfile } from '../../types'
 import InactivePluginCard from './InactivePluginCard'
 import ModuleHeading from './moduleHeading'
@@ -26,7 +27,7 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
   }
 
   return (
-    <Fragment>
+    <React.Fragment>
       {(pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) ? <ModuleHeading headingLabel="Inactive Modules" count={pluginComponent.inactivePlugins.length} /> : null}
       {pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.map((profile, idx) => {
         return (
@@ -39,7 +40,7 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
         )
       })
       }
-    </Fragment>
+    </React.Fragment>
   )
 }
 
