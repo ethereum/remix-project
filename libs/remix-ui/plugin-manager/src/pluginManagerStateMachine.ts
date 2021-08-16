@@ -1,5 +1,3 @@
-import { Profile } from '@remixproject/plugin-utils'
-import { useState } from 'react'
 import { PluginManagerComponent } from './types'
 
 export const defaultActivatedPlugins = [
