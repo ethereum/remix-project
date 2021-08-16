@@ -4,7 +4,8 @@ element.style {
 }
 #terminalCliInput{
   width: 95%;
-  background-color: #222336;
+  background: transparent;
+  border: none;
   color: #a2a3bd;
   border-top-style: hidden;
   border-right-style: hidden;
