@@ -215,11 +215,20 @@ export class Web3VmProvider {
       const stackLength = step.stack.length
       const payloadStart = parseInt(step.stack[stackLength - 3], 16)
       const memory = step.memory.join('')
-      const payload = memory.substring(payloadStart * 2, memory.length)
-      const fnselector = parseInt('0x' + payload.substring(0, 8))
-      const iface = new ethers.utils.Interface([`function log${ConsoleLogs[fnselector]} view`])
-      const functionDesc = iface.getFunction(`log${ConsoleLogs[fnselector]}`)
-      const consoleArgs = iface.decodeFunctionData(functionDesc, '0x' + payload)
+      let payload = memory.substring(payloadStart * 2, memory.length)
+      const fnselectorStr = payload.substring(0, 8)
+      const fnselectorStrInHex = '0x' + fnselectorStr
+      const fnselector = parseInt(fnselectorStrInHex)
+      const fnArgs = ConsoleLogs[fnselector]
+      const iface = new ethers.utils.Interface([`function log${fnArgs} view`])
+      const functionDesc = iface.getFunction(`log${fnArgs}`)
+      const sigHash = iface.getSighash(`log${fnArgs}`)
+      if(fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
+        payload = payload.replace(fnselectorStr, sigHash)
+      } else {
+        payload = '0x' + payload
+      }
+      const consoleArgs = iface.decodeFunctionData(functionDesc, payload)
       this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
       this.hhLogs[this.processingHash].push(consoleArgs)
     }
