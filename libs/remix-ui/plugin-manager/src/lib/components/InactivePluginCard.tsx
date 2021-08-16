@@ -1,5 +1,6 @@
 /* eslint-disable no-debugger */
 import { Profile } from '@remixproject/plugin-utils'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from 'react'
 import '../remix-ui-plugin-manager.css'
 interface PluginCardProps {
