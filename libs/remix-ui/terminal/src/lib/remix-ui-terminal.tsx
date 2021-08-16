@@ -797,7 +797,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             {/* ${self._view.inputSearch} */}
             <input
               // spellcheck = "false"
-              onChange={(event) => setSearchInput(event.target.value) }
+              onChange={(event) => setSearchInput(event.target.value.trim()) }
               type="text"
               className="border filter form-control"
               id="searchInput"
@@ -830,7 +830,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   </div>
                 )
               } else if (x.name === 'unknownTransaction' || x.name === 'knownTransaction') {
-                return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || x.tx.to.includes(searchInput)).map((trans) => {
+                return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`}> {renderKnownTransactions(trans.tx, trans.receipt, index)} </div>)
                 })
               } else {
