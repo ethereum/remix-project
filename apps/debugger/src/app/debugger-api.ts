@@ -16,6 +16,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       }
     }
     this._web3 = new Web3(this.web3Provider)
+    remixDebug.init.extendWeb3(this._web3)
 
     this.offsetToLineColumnConverter = {
       async offsetToLineColumn (rawLocation, file, sources, asts) {
