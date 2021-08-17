@@ -5,8 +5,9 @@ import { checkSpecialChars, checkSlash } from '@remix-ui/helper'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
-// const queuedEvents = []
-// const pendingEvents = {}
+const queuedEvents = []
+const pendingEvents = {}
+
 let plugin, dispatch: React.Dispatch<any>
 
 const setCurrentWorkspace = (workspace: string) => {
@@ -51,36 +52,31 @@ const fetchDirectorySuccess = (path: string, files) => {
   }
 }
 
-export const displayNotification = (title: string, message: string, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
+const displayNotification = (title: string, message: string, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
   return {
     type: 'DISPLAY_NOTIFICATION',
     payload: { title, message, labelOk, labelCancel, actionOk, actionCancel }
   }
 }
 
-export const hideNotification = () => {
+const hideNotification = () => {
   return {
     type: 'HIDE_NOTIFICATION'
   }
 }
 
-export const fetchDirectory = (mode: 'browser' | 'localhost', path: string) => (dispatch: React.Dispatch<any>) => {
-  const provider = mode === 'browser' ? plugin.fileProviders.workspace : plugin.fileProviders.localhost
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
-      if (error) console.error(error)
+const fileAddedSuccess = (filePath: string) => {
+  return {
+    type: 'FILE_ADDED_SUCCESS',
+    payload: filePath
+  }
+}
 
-      resolve(fileTree)
-    })
-  })
-
-  dispatch(fetchDirectoryRequest(promise))
-  promise.then((fileTree) => {
-    dispatch(fetchDirectorySuccess(path, fileTree))
-  }).catch((error) => {
-    dispatch(fetchDirectoryError({ error }))
-  })
-  return promise
+const folderAddedSuccess = (folderPath: string) => {
+  return {
+    type: 'FOLDER_ADDED_SUCCESS',
+    payload: folderPath
+  }
 }
 
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
@@ -129,7 +125,7 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
             const data = response.data
 
             if (!data.files) {
-              return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => {}, null))
+              return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => { dispatch(hideNotification()) }, null))
             }
             const obj = {}
 
@@ -148,7 +144,7 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
               }
             })
           } catch (e) {
-            dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => {}, null))
+            dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
             console.error(e)
           }
           break
@@ -200,6 +196,16 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
   }
 }
 
+const listenOnEvents = (provider) => {
+  provider.event.on('fileAdded', async (filePath) => {
+    await executeEvent('fileAdded', filePath)
+  })
+
+  provider.event.on('folderAdded', async (folderPath) => {
+    await executeEvent('folderAdded', folderPath)
+  })
+}
+
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
     plugin = filePanelPlugin
@@ -226,12 +232,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         }
       }
     }
-    // provider.event.on('fileAdded', async (filePath) => {
-    //   await executeEvent('fileAdded', filePath)
-    // })
-    // provider.event.on('folderAdded', async (folderPath) => {
-    //   await executeEvent('folderAdded', folderPath)
-    // })
+
+    listenOnEvents(provider)
+
     // provider.event.on('fileRemoved', async (removePath) => {
     //   await executeEvent('fileRemoved', removePath)
     // })
@@ -290,16 +293,35 @@ export const initLocalhost = (filePanelPlugin) => async (dispatch: React.Dispatc
   }
 }
 
-// const fileAdded = async (filePath: string) => {
-//   if (extractParentFromKey(filePath) === '/.workspaces') return
-//   const path = extractParentFromKey(filePath) || provider.workspace || provider.type || ''
-//   const data = await fetchDirectoryContent(provider, path)
+export const fetchDirectory = (path: string) => (dispatch: React.Dispatch<any>) => {
+  const provider = plugin.fileManager.currentFileProvider()
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
 
-//   await dispatch(fileAddedSuccess(path, data))
-//   if (filePath.includes('_test.sol')) {
-//     plugin.emit('newTestFileCreated', filePath)
-//   }
-// }
+      resolve(fileTree)
+    })
+  })
+
+  dispatch(fetchDirectoryRequest(promise))
+  promise.then((fileTree) => {
+    dispatch(fetchDirectorySuccess(path, fileTree))
+  }).catch((error) => {
+    dispatch(fetchDirectoryError({ error }))
+  })
+  return promise
+}
+
+const fileAdded = async (filePath: string) => {
+  await dispatch(fileAddedSuccess(filePath))
+  if (filePath.includes('_test.sol')) {
+    plugin.emit('newTestFileCreated', filePath)
+  }
+}
+
+const folderAdded = async (folderPath: string) => {
+  await dispatch(folderAddedSuccess(folderPath))
+}
 
 // const folderAdded = async (folderPath: string) => {
 //   if (extractParentFromKey(folderPath) === '/.workspaces') return
@@ -328,60 +350,60 @@ export const initLocalhost = (filePanelPlugin) => async (dispatch: React.Dispatc
 //   await fetchDirectory(provider, workspaceName)(dispatch)
 // }
 
-// const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', path?: string) => {
-//   if (Object.keys(pendingEvents).length) {
-//     return queuedEvents.push({ eventName, path })
-//   }
-//   pendingEvents[eventName + path] = { eventName, path }
-//   switch (eventName) {
-//     case 'fileAdded':
-//       await fileAdded(path)
-//       delete pendingEvents[eventName + path]
-//       if (queuedEvents.length) {
-//         const next = queuedEvents.pop()
+const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', path?: string) => {
+  if (Object.keys(pendingEvents).length) {
+    return queuedEvents.push({ eventName, path })
+  }
+  pendingEvents[eventName + path] = { eventName, path }
+  switch (eventName) {
+    case 'fileAdded':
+      await fileAdded(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
 
-//         await executeEvent(next.eventName, next.path)
-//       }
-//       break
+        await executeEvent(next.eventName, next.path)
+      }
+      break
 
-//     case 'folderAdded':
-//       await folderAdded(path)
-//       delete pendingEvents[eventName + path]
-//       if (queuedEvents.length) {
-//         const next = queuedEvents.pop()
+    case 'folderAdded':
+      await folderAdded(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
 
-//         await executeEvent(next.eventName, next.path)
-//       }
-//       break
+        await executeEvent(next.eventName, next.path)
+      }
+      break
 
-//     case 'fileRemoved':
-//       await fileRemoved(path)
-//       delete pendingEvents[eventName + path]
-//       if (queuedEvents.length) {
-//         const next = queuedEvents.pop()
+    // case 'fileRemoved':
+    //   await fileRemoved(path)
+    //   delete pendingEvents[eventName + path]
+    //   if (queuedEvents.length) {
+    //     const next = queuedEvents.pop()
 
-//         await executeEvent(next.eventName, next.path)
-//       }
-//       break
+    //     await executeEvent(next.eventName, next.path)
+    //   }
+    //   break
 
-//     case 'fileRenamed':
-//       await fileRenamed(path)
-//       delete pendingEvents[eventName + path]
-//       if (queuedEvents.length) {
-//         const next = queuedEvents.pop()
+    // case 'fileRenamed':
+    //   await fileRenamed(path)
+    //   delete pendingEvents[eventName + path]
+    //   if (queuedEvents.length) {
+    //     const next = queuedEvents.pop()
 
-//         await executeEvent(next.eventName, next.path)
-//       }
-//       break
+    //     await executeEvent(next.eventName, next.path)
+    //   }
+    //   break
 
-//     case 'rootFolderChanged':
-//       await rootFolderChanged()
-//       delete pendingEvents[eventName + path]
-//       if (queuedEvents.length) {
-//         const next = queuedEvents.pop()
+    // case 'rootFolderChanged':
+    //   await rootFolderChanged()
+    //   delete pendingEvents[eventName + path]
+    //   if (queuedEvents.length) {
+    //     const next = queuedEvents.pop()
 
-//         await executeEvent(next.eventName, next.path)
-//       }
-//       break
-//   }
-// }
+    //     await executeEvent(next.eventName, next.path)
+    //   }
+    //   break
+  }
+}

@@ -29,7 +29,7 @@ export function Workspace (props: WorkspaceProps) {
   useEffect(() => {
     if (global.fs.browser.currentWorkspace) {
       setCurrentWorkspace(global.fs.browser.currentWorkspace)
-      global.dispatchFetchDirectory(global.fs.browser.currentWorkspace)
+      // global.dispatchFetchDirectory(global.fs.browser.currentWorkspace)
     }
   }, [global.fs.browser.currentWorkspace])
 
