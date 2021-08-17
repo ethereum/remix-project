@@ -33,7 +33,6 @@ export class Ethdebugger {
   storageResolver
   callTree
   breakpointManager
-  statusMessage
 
   constructor (opts) {
     this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
@@ -151,22 +150,19 @@ export class Ethdebugger {
     this.event.trigger('traceUnloaded')
   }
 
-  debug (tx) {
+  async debug (tx) {
     if (this.traceManager.isLoading) {
       return
     }
     tx.to = tx.to || contractCreationToken('0')
     this.tx = tx
 
-    this.traceManager.resolveTrace(tx).then(async (result) => {
-      this.setCompilationResult(await this.compilationResult(tx.to))
-      this.event.trigger('newTraceLoaded', [this.traceManager.trace])
-      if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
-        this.breakpointManager.jumpNextBreakpoint(false)
-      }
-      this.storageResolver = new StorageResolver({ web3: this.traceManager.web3 })
-    }).catch((error) => {
-      this.statusMessage = error ? error.message : 'Trace not loaded'
-    })
+    await this.traceManager.resolveTrace(tx)
+    this.setCompilationResult(await this.compilationResult(tx.to))
+    this.event.trigger('newTraceLoaded', [this.traceManager.trace])
+    if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
+      this.breakpointManager.jumpNextBreakpoint(false)
+    }
+    this.storageResolver = new StorageResolver({ web3: this.traceManager.web3 })
   }
 }
