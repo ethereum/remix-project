@@ -124,7 +124,7 @@ export class CompileTab extends Plugin {
       }
       this.fileManager.saveCurrentFile()
       this.event.emit('removeAnnotations')
-      var currentFile = this.config.get('currentFile')
+      var currentFile = this.api.getConfiguration('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err)
