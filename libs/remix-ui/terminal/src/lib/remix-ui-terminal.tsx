@@ -169,6 +169,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     return ''
   }
 
+  function loadgist (id, cb) {
+    console.log('load gist')
+    props.gistHandler.loadFromGist({ gist: id }, props._deps.fileManager)
+    if (cb) cb()
+  }
+
   const _shell = async (script, scopedCommands, done) => { // default shell
     if (script.indexOf('remix:') === 0) {
       return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
@@ -176,7 +182,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
       // for all the other case, we use the Code Executor plugin
-      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) } } } 
+      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) }, loadgist:  () => { return loadgist(script, undefined) } } }  
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds)
