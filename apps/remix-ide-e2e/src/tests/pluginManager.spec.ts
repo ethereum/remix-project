@@ -2,6 +2,10 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
+declare global {
+  interface Window { testmode: boolean; }
+}
+
 const testData = {
   pluginName: 'remixIde',
   pluginDisplayName: 'Remix IDE',
@@ -105,13 +109,16 @@ module.exports = {
 
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .execute(function () {
+        window.testmode = true
+      })
       .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
       .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
       .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
       .waitForElementVisible('*[data-id="localPluginName"]')
-      .setValue('*[data-id="localPluginName"]', testData.pluginName)
-      .setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
-      .setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
+      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
+      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
+      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
       .click('*[data-id="localPluginRadioButtoniframe"]')
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
       .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
