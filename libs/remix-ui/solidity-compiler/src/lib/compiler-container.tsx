@@ -18,7 +18,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -574,7 +574,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           {
-            isHardHatProject &&
+            api.isHardHatProject &&
             <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
