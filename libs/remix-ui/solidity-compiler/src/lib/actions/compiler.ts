@@ -26,8 +26,8 @@ export const resetCompilerMode = () => (dispatch: React.Dispatch<any>) => {
   })
 }
 
-export const listenToEvents = (compileTabLogic) => (dispatch: React.Dispatch<any>) => {
-  compileTabLogic.on('editor', 'sessionSwitched', () => {
+export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
+  api.on('editor', 'sessionSwitched', () => {
     dispatch(setEditorMode('sessionSwitched'))
   })
 
@@ -39,7 +39,7 @@ export const listenToEvents = (compileTabLogic) => (dispatch: React.Dispatch<any
     dispatch(setCompilerMode('compilationDuration', speed))
   })
 
-  compileTabLogic.on('editor', 'contentChanged', () => {
+  api.on('editor', 'contentChanged', () => {
     dispatch(setEditorMode('contentChanged'))
   })
 

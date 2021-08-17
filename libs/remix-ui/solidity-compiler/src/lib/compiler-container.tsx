@@ -59,7 +59,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const currentFileName = api.getConfiguration('currentFile')
 
     currentFile(currentFileName)
-    listenToEvents(compileTabLogic)(dispatch)
+    listenToEvents(compileTabLogic, api)(dispatch)
   }, [])
 
   useEffect(() => {
