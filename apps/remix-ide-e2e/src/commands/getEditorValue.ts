@@ -12,7 +12,6 @@ class GetEditorValue extends EventEmitter {
         done()
         const value = typeof result.value === 'string' ? result.value : null
 
-        console.log('value')
         callback(value)
         this.emit('complete')
       })
