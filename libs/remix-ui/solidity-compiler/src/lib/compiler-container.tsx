@@ -18,7 +18,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, configurationSettings  } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -483,7 +483,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = event.target.checked
 
     sethhCompilation(checked)
-    setHardHatCompilation(checked)
+    api.setHardHatCompilation(checked)
   }
 
   /*
