@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
 import React, { useState } from 'react'
 import { RemixUiPluginManagerProps } from '../types'
