@@ -7,7 +7,6 @@ export interface SolidityCompilerProps {
     isHardHatProject: boolean,
     compileTabLogic: any,
     contractsDetails: Record<string, any>,
-    fileProvider: any,
     fileManager: any,
     contentImport: any,
     call: (...args) => void
@@ -32,11 +31,11 @@ export interface CompilerContainerProps {
   configurationSettings: ConfigurationSettings
 }
 export interface ContractSelectionProps {
+  api: any,
   contractMap: {
     file: string
   } | Record<string, any>,
   fileManager: any,
-  fileProvider: any,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
 }
