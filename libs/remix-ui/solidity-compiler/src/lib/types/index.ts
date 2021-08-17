@@ -6,7 +6,6 @@ export interface SolidityCompilerProps {
     compileErrors: any,
     isHardHatProject: boolean,
     compileTabLogic: any,
-    currentFile: string,
     contractsDetails: Record<string, any>,
     fileProvider: any,
     fileManager: any,
