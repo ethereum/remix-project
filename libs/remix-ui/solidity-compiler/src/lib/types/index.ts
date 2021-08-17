@@ -4,7 +4,6 @@ export interface SolidityCompilerProps {
       file: string
     } | Record<string, any>
     compileErrors: any,
-    isHardHatProject: boolean,
     compileTabLogic: any,
     contractsDetails: Record<string, any>,
     contentImport: any,
@@ -26,7 +25,6 @@ export interface CompilerContainerProps {
   compiledFileName: string,
   setHardHatCompilation: (value: boolean) => void,
   updateCurrentVersion: any,
-  isHardHatProject: boolean,
   configurationSettings: ConfigurationSettings
 }
 export interface ContractSelectionProps {
