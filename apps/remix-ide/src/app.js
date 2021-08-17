@@ -310,6 +310,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const contextualListener = new ContextualListener({ editor })
 
   engine.register([
+    blockchain,
     contentImport,
     themeModule,
     editor,
@@ -485,7 +486,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['settings'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
