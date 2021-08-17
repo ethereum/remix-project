@@ -1339,6 +1339,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   )
   /* end of autoComplete */
 
+  const handlePaste = () => {
+    setPaste(true)
+    setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false}))
+  }
+
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
       {console.log({ newstate })}
