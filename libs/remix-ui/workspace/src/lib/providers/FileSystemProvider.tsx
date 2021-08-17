@@ -32,7 +32,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchFetchDirectory = async (path: string) => {
-    await fetchDirectory(fs.mode, path)(fsDispatch)
+    await fetchDirectory(path)(fsDispatch)
   }
 
   useEffect(() => {

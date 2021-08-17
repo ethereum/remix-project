@@ -1,4 +1,5 @@
 import { extractNameFromKey, File } from '@remix-ui/file-explorer'
+import * as _ from 'lodash'
 interface Action {
     type: string
     payload: any
@@ -7,13 +8,15 @@ export interface BrowserState {
   browser: {
     currentWorkspace: string,
     workspaces: string[],
-    files: { [x: string]: Record<string, File> }
+    files: { [x: string]: Record<string, File> },
+    expandPath: string[]
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
   },
   localhost: {
     files: { [x: string]: Record<string, File> },
+    expandPath: string[],
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
@@ -34,12 +37,14 @@ export const browserInitialState: BrowserState = {
     currentWorkspace: '',
     workspaces: [],
     files: {},
+    expandPath: [],
     isRequesting: false,
     isSuccessful: false,
     error: null
   },
   localhost: {
     files: {},
+    expandPath: [],
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -152,6 +157,43 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         notification: browserInitialState.notification
       }
     }
+
+    case 'FILE_ADDED_SUCCESS': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: fileAdded(state, payload),
+          expandPath: [...new Set([...state.browser.expandPath, payload])]
+        },
+        localhost: {
+          ...state.localhost,
+          files: fileAdded(state, payload),
+          expandPath: [...new Set([...state.localhost.expandPath, payload])]
+        }
+      }
+    }
+
+    case 'FOLDER_ADDED_SUCCESS': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: folderAdded(state, payload),
+          expandPath: [...new Set([...state.browser.expandPath, payload])]
+        },
+        localhost: {
+          ...state.localhost,
+          files: folderAdded(state, payload),
+          expandPath: [...new Set([...state.localhost.expandPath, payload])]
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
@@ -210,4 +252,33 @@ const normalize = (filesList): Record<string, File> => {
   // }
 
   return Object.assign({}, folders, files)
+}
+
+const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
+  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+  const _path = splitPath(state, path)
+
+  files = _.set(files, _path)
+  return files
+}
+
+const folderAdded = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
+  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+  const _path = splitPath(state, path)
+
+  files = _.set(files, _path)
+  return files
+}
+
+const splitPath = (state: BrowserState, path: string): string[] | string => {
+  const root = state.mode === 'browser' ? state.browser.currentWorkspace : 'localhost'
+
+  const pathArr: string[] = path.split('/').filter(value => value)
+
+  if (pathArr[0] !== root) pathArr.unshift(root)
+  const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
+    return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
+  }, [])
+
+  return _path
 }
