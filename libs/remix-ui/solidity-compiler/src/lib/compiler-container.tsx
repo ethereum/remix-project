@@ -18,7 +18,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, config, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -56,7 +56,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector(selectedVersion)
       }
     })
-    const currentFileName = config.get('currentFile')
+    const currentFileName = api.getConfiguration('currentFile')
 
     currentFile(currentFileName)
     listenToEvents(compileTabLogic)(dispatch)
@@ -72,10 +72,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
         return {
           ...prevState,
-          hideWarnings: config.get('hideWarnings') || false,
-          autoCompile: config.get('autoCompile') || false,
-          includeNightlies: config.get('includeNightlies') || false,
-          optimise: (optimize !== null) && (optimize !== undefined) ? optimize : config.get('optimise') || false,
+          hideWarnings: api.getConfiguration('hideWarnings') || false,
+          autoCompile: api.getConfiguration('autoCompile') || false,
+          includeNightlies: api.getConfiguration('includeNightlies') || false,
+          optimise: (optimize !== null) && (optimize !== undefined) ? optimize : api.getConfiguration('optimise') || false,
           runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
@@ -228,7 +228,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const isSolFileSelected = (currentFile = '') => {
-    if (!currentFile) currentFile = config.get('currentFile')
+    if (!currentFile) currentFile = api.getConfiguration('currentFile')
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
@@ -297,7 +297,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
-    const currentFile = config.get('currentFile')
+    const currentFile = api.getConfiguration('currentFile')
 
     if (!isSolFileSelected()) return
 
@@ -406,7 +406,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleAutoCompile = (e) => {
     const checked = e.target.checked
 
-    config.set('autoCompile', checked)
+    api.setConfiguration('autoCompile', checked)
     setState(prevState => {
       return { ...prevState, autoCompile: checked }
     })
@@ -415,7 +415,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleOptimizeChange = (value) => {
     const checked = !!value
 
-    config.set('optimise', checked)
+    api.setConfiguration('optimise', checked)
     compileTabLogic.setOptimize(checked)
     if (compileTabLogic.optimize) {
       compileTabLogic.setRuns(parseInt(state.runs))
@@ -441,7 +441,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleHideWarningsChange = (e) => {
     const checked = e.target.checked
 
-    config.set('hideWarnings', checked)
+    api.setConfiguration('hideWarnings', checked)
     state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, hideWarnings: checked }
@@ -452,7 +452,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = e.target.checked
 
     if (!checked) handleLoadVersion(state.defaultVersion)
-    config.set('includeNightlies', checked)
+    api.setConfiguration('includeNightlies', checked)
     setState(prevState => {
       return { ...prevState, includeNightlies: checked }
     })

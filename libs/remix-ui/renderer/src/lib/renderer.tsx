@@ -4,11 +4,10 @@ interface RendererProps {
   message: any;
   opt?: any,
   plugin: any,
-  config: any,
   fileManager: any
 }
 
-export const Renderer = ({ message, opt = {}, config, fileManager, plugin }: RendererProps) => {
+export const Renderer = ({ message, opt = {}, fileManager, plugin }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
@@ -76,7 +75,7 @@ export const Renderer = ({ message, opt = {}, config, fileManager, plugin }: Ren
   }
 
   const addAnnotation = (file, error) => {
-    if (file === config.get('currentFile')) {
+    if (file === plugin.getConfiguration('currentFile')) {
       plugin.call('editor', 'addAnnotation', error, file)
     }
   }
@@ -94,7 +93,7 @@ export const Renderer = ({ message, opt = {}, config, fileManager, plugin }: Ren
   }
 
   const _errorClick = (errFile, errLine, errCol) => {
-    if (errFile !== config.get('currentFile')) {
+    if (errFile !== plugin.getConfiguration('currentFile')) {
       // TODO: refactor with this._components.contextView.jumpTo
       const provider = fileManager.fileProviderOf(errFile)
       if (provider) {
