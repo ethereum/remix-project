@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { plugin, plugin: { compileTabLogic, fileProvider, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
+  const { plugin, plugin: { compileTabLogic, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -80,7 +80,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     <>
       <div id="compileTabView">
         <CompilerContainer api={plugin} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} setHardHatCompilation={setHardHatCompilation.bind(plugin)} updateCurrentVersion={updateCurrentVersion} isHardHatProject={isHardHatProject} configurationSettings={configurationSettings} />
-        <ContractSelection contractMap={contractMap} fileProvider={fileProvider} fileManager={fileManager} contractsDetails={contractsDetails} modal={modal} />
+        <ContractSelection api={plugin} contractMap={contractMap} fileManager={fileManager} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
           { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={plugin} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} fileManager={fileManager} /> }
