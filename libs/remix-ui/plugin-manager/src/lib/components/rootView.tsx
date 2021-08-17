@@ -1,4 +1,4 @@
-/* eslint-disable no-debugger */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, ReactNode, useEffect, useState } from 'react'
 import { FormStateProps, PluginManagerComponent } from '../../types'
 import PermisssionsSettings from './permissions/permissionsSettings'
