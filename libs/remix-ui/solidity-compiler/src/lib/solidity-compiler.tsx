@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { plugin, plugin: { compileTabLogic, contractsDetails, contractMap, compileErrors, setHardHatCompilation, configurationSettings } } = props
+  const { plugin, plugin: { compileTabLogic, contractsDetails, contractMap, compileErrors, configurationSettings } } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -79,7 +79,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   return (
     <>
       <div id="compileTabView">
-        <CompilerContainer api={plugin} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} setHardHatCompilation={setHardHatCompilation.bind(plugin)} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
+        <CompilerContainer api={plugin} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
         <ContractSelection api={plugin} contractMap={contractMap} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
