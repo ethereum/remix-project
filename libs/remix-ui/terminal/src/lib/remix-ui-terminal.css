@@ -6,7 +6,8 @@ element.style {
   width: 95%;
   background: transparent;
   border: none;
-  color: #a2a3bd;
+  font-weight: bold;
+  color: #a2a3b4;
   border-top-style: hidden;
   border-right-style: hidden;
   border-left-style: hidden;
