@@ -290,10 +290,6 @@ class CompileTab extends ViewPlugin {
     this.config.set(name, value)
   }
 
-  readFile (fileName) {
-    return this.call('fileManager', 'readFile', fileName)
-  }
-
   fileProviderOf (fileName) {
     return this.fileManager.fileProviderOf(fileName)
   }
