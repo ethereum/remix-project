@@ -504,7 +504,7 @@ class Blockchain extends Plugin {
           let finalLogs = 'console.log:\n'
           for (const log of hhlogs) {
             let formattedLog
-            // Hardhat implements the same formatting options that can be found in Node.js' console.log, 
+            // Hardhat implements the same formatting options that can be found in Node.js' console.log,
             // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
             // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
             // We check first arg to determine if 'util.format' is needed
