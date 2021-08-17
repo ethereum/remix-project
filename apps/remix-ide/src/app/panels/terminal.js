@@ -139,7 +139,12 @@ class Terminal extends Plugin {
         txListener = {this.txListener}
         eventsDecoder = {this.eventsDecoder}
       />,
-      this.element
+      this.element,
+      () => {
+        this.blockchain.events.on('newTransaction', (tx, receipt) => {
+          this.emit('newTransaction', tx, receipt)
+        })
+      }
     )
   }
 
