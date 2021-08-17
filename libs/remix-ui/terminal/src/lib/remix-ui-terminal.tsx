@@ -182,7 +182,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
       // for all the other case, we use the Code Executor plugin
-      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) }, loadgist:  () => { return loadgist(script, undefined) } } }  
+      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) }, loadgist: () => { return loadgist(script, () => {}) } } }
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds)
