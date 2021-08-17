@@ -284,6 +284,14 @@ class CompileTab extends ViewPlugin {
     this.queryParams.update(params)
   }
 
+  getConfiguration (name) {
+    return this.config.get(name)
+  }
+
+  setConfiguration (name, value) {
+    this.config.set(name, value)
+  }
+
   onActivation () {
     this.call('manager', 'activatePlugin', 'solidity-logic')
     this.listenToEvents()
