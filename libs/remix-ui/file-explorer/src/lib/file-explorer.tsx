@@ -64,12 +64,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [fileSystem.notification.message])
 
   useEffect(() => {
-    if (fileSystem.files.expandPath.length > 0) {
+    if (global.fs.mode === 'browser') {
       setState(prevState => {
-        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...fileSystem.files.expandPath])] }
+        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...global.fs.browser.expandPath])] }
+      })
+    } else if (global.fs.mode === 'localhost') {
+      setState(prevState => {
+        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...global.fs.localhost.expandPath])] }
       })
     }
-  }, [fileSystem.files.expandPath])
+  }, [global.fs.browser.expandPath, global.fs.localhost.expandPath])
 
   useEffect(() => {
     if (state.focusEdit.element) {
