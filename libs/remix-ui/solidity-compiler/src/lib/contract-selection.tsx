@@ -7,7 +7,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { api, contractMap, fileManager, contractsDetails, modal } = props
+  const { api, contractMap, contractsDetails, modal } = props
   const [contractList, setContractList] = useState([])
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
@@ -234,7 +234,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           <span className="mt-2 mx-3 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
         </article></section>
       }
-      <PublishToStorage api={api} storage={storage} fileManager={fileManager} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
+      <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
     </>
   )
 }

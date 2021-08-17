@@ -6,7 +6,7 @@ const ipfsNodes = [
   new IpfsClient({ host: '127.0.0.1', port: 5001, protocol: 'http' })
 ]
 
-export const publishToIPFS = async (contract, fileManager) => {
+export const publishToIPFS = async (contract, api) => {
   // gather list of files to publish
   const sources = []
   let metadata
@@ -42,16 +42,14 @@ export const publishToIPFS = async (contract, fileManager) => {
       throw new Error('Error while extracting the hash from metadata.json')
     }
 
-    fileManager.fileProviderOf(fileName).get(fileName, (error, content) => {
-      if (error) {
-        console.log(error)
-      } else {
-        sources.push({
-          content: content,
-          hash: hash,
-          filename: fileName
-        })
-      }
+    api.readFile(fileName).then((content) => {
+      sources.push({
+        content: content,
+        hash: hash,
+        filename: fileName
+      })
+    }).catch((error) => {
+      console.log(error)
     })
   }))
   // publish the list of sources in order, fail if any failed
