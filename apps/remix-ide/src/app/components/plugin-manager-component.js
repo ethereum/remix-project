@@ -48,7 +48,7 @@ class PluginManagerComponent extends ViewPlugin {
    * @param {string} name name of Plugin
    */
   isActive (name) {
-    this.appManager.actives.includes(name)
+    return this.appManager.actives.includes(name)
   }
 
   /**
