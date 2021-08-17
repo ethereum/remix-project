@@ -200,21 +200,8 @@ export const initListeningOnNetwork = (props, dispatch) => {
       await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
         if (!error) {
           console.log({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
-          console.log('knownTransaction')
-          // logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
-          registerCommandAction('knownTransaction', function (args, cmds, append) {
-            var data = args[0]
-            console.log({ data }, 'knownTransaction')
-          // let el
-          // if (data.tx.isCall) {
-          //   console.log({ data })
-          //   // el = renderCall(this, data)
-          // } else {
-          //   // el = renderKnownTransaction(this, data, blockchain)
-          // }
-          // this.seen[data.tx.hash] = el
-          // append(el)
-          }, { activate: true }, dispatch)
+          console.log('knownTransaction dispatch')
+          dispatch({ type: 'knownTransaction', payload: { message: [{ tx: tx, receipt: receipt }] } })
         }
       })
     } else {
