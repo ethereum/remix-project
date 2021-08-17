@@ -507,7 +507,7 @@ class Blockchain extends Plugin {
             if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
               formattedLog = format(log[0], ...log.slice(1))
             } else {
-              formattedLog = log.join('')
+              formattedLog = log.join(' ')
             }
             finalLogs = finalLogs + formattedLog + '\n'
           }
