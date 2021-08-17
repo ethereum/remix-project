@@ -8,7 +8,6 @@ export interface SolidityCompilerProps {
     compileTabLogic: any,
     currentFile: string,
     contractsDetails: Record<string, any>,
-    config: any,
     fileProvider: any,
     fileManager: any,
     contentImport: any,
@@ -16,13 +15,14 @@ export interface SolidityCompilerProps {
     on: (...args) => void,
     setHardHatCompilation: (value: boolean) => void,
     setSelectedVersion: (value: string) => void,
-    configurationSettings: ConfigurationSettings
+    configurationSettings: ConfigurationSettings,
+    getConfiguration: (value: string) => string,
+    setConfiguration: (name: string, value: string) => void
   },
 }
 
 export interface CompilerContainerProps {
   api: any,
-  config: any,
   compileTabLogic: any,
   tooltip: (message: string | JSX.Element) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
