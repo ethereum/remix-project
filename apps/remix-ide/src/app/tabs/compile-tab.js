@@ -52,9 +52,7 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
-    this.compileTabLogic = new CompileTabLogic(this,
-      this.fileManager,
-      this.contentImport)
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
     this.contractMap = {}
@@ -290,6 +288,38 @@ class CompileTab extends ViewPlugin {
 
   setConfiguration (name, value) {
     this.config.set(name, value)
+  }
+
+  readFile (fileName) {
+    return this.call('fileManager', 'readFile', fileName)
+  }
+
+  fileProviderOf (fileName) {
+    return this.fileManager.fileProviderOf(fileName)
+  }
+
+  getFileManagerMode () {
+    return this.fileManager.mode
+  }
+
+  fileExists (fileName) {
+    return this.call('fileManager', 'exists', fileName)
+  }
+
+  writeFile (fileName, content) {
+    return this.call('fileManager', 'writeFile', fileName, content)
+  }
+
+  readFile (fileName) {
+    return this.call('fileManager', 'readFile', fileName)
+  }
+
+  saveCurrentFile () {
+    return this.fileManager.saveCurrentFile()
+  }
+
+  open (fileName) {
+    return this.call('fileManager', 'open', fileName)
   }
 
   onActivation () {
