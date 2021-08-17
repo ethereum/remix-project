@@ -849,9 +849,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 )
               } else if (x.name === 'unknownTransaction' || x.name === 'knownTransaction') {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
+                  console.log({ trans }, 'first output from deploy')
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`}> {renderKnownTransactions(trans.tx, trans.receipt, index)} </div>)
                 })
               } else {
+                console.log({ x }, 'second output from deploy')
                 return (
                   <div className="px-4 block" data-id="block_null" key={index}>
                     <span className={x.style}>{x.message}</span>
