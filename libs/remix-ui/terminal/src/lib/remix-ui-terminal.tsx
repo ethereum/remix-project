@@ -67,6 +67,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [scriptRunnserState, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
   const [isListeningOnNetwork, setIsListeningOnNetwork] = useState(false)
   const [clearConsole, setClearConsole] = useState(false)
+  const [paste, setPaste] = useState(false)
   const [autoCompletState, setAutoCompleteState] = useState({
     activeSuggestion: 0,
     data: {
@@ -175,7 +176,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
       // for all the other case, we use the Code Executor plugin
-      const context = execute(undefined, undefined)
+      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) } } } 
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds)
@@ -420,7 +421,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     event.preventDefault()
     const inputString = event.target.value
     if (matched(allPrograms, inputString) || inputString.includes('.')) {
-      setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
+      console.log(paste, 'onchange')
+      if (paste) {
+        setPaste(false)
+        setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: inputString }))
+      } else {
+        setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: true, userInput: inputString }))
+      }
       const textList = inputString.split('.')
       if (textList.length === 1) {
         setAutoCompleteState(prevState => ({ ...prevState, data: { _options: [] } }))
@@ -495,7 +502,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       return (
         <div>
           <span className='txLog_7Xiho'>
-            <span className='tx'>[block:${block} txIndex:${i}]</span>
+            <span className='tx'>[block:{block} txIndex:{i}]</span>
             <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
@@ -510,7 +517,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       return (
         <div>
           <span className='txLog'>
-            <span className='tx'>[block:${block} txIndex:${i}]</span>
+            <span className='tx'>[block:{block} txIndex:{i}]</span>
             <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
@@ -759,10 +766,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   )
   /* end of autoComplete */
 
+  const handlePaste = () => {
+    setPaste(true)
+    setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false}))
+  }
+
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
       {console.log({ newstate })}
       {console.log({ props })}
+      {console.log({ autoCompletState })}
       <div className="bar">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
@@ -824,7 +837,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === 'emptyBlock') {
                 return (
-                  <div className="px-4 block" data-id="block_null" key={index}>
+                  <div className="px-4 block" data-id='block_null' key={index}>
                     <span className='txLog'>
                       <span className='tx'><div className='txItem'>[<span className='txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ] </div></span></span>
                   </div>
@@ -845,7 +858,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
           <div id="terminalCli" data-id="terminalCli" className="cli" onClick={focusinput}>
             <span className="prompt">{'>'}</span>
-            <input className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onChange={(event) => onChange(event)} onKeyDown={(event) => handleKeyDown(event) } value={autoCompletState.userInput}></input>
+            <input className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onChange={(event) => onChange(event)} onKeyDown={(event) => handleKeyDown(event) } value={autoCompletState.userInput} onPaste={handlePaste}></input>
           </div>
         </div>
       </div>
