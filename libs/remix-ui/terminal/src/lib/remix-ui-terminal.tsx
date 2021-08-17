@@ -170,7 +170,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   function loadgist (id, cb) {
-    console.log('load gist')
     props.gistHandler.loadFromGist({ gist: id }, props._deps.fileManager)
     if (cb) cb()
   }
@@ -182,7 +181,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
       // for all the other case, we use the Code Executor plugin
-      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) }, loadgist: () => { return loadgist(script, () => {}) } } }
+      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) }, loadgist: (id: any) => { return loadgist(id, () => {}) } } }
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds)
