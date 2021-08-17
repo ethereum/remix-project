@@ -4,10 +4,9 @@ interface RendererProps {
   message: any;
   opt?: any,
   plugin: any,
-  fileManager: any
 }
 
-export const Renderer = ({ message, opt = {}, fileManager, plugin }: RendererProps) => {
+export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
@@ -95,10 +94,10 @@ export const Renderer = ({ message, opt = {}, fileManager, plugin }: RendererPro
   const _errorClick = (errFile, errLine, errCol) => {
     if (errFile !== plugin.getConfiguration('currentFile')) {
       // TODO: refactor with this._components.contextView.jumpTo
-      const provider = fileManager.fileProviderOf(errFile)
+      const provider = plugin.fileProviderOf(errFile)
       if (provider) {
         provider.exists(errFile).then(() => {
-          fileManager.open(errFile)
+          plugin.open(errFile)
           plugin.call('editor', 'gotoLine', errLine, errCol)
         }).catch(error => {
           if (error) return console.log(error)

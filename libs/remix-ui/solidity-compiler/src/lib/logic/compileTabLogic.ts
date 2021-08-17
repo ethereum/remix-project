@@ -18,7 +18,7 @@ export class CompileTab extends Plugin {
   public compilerImport
   public event
 
-  constructor (public api, public fileManager, public contentImport) {
+  constructor (public api, public contentImport) {
     super(profile)
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
@@ -79,7 +79,7 @@ export class CompileTab extends Plugin {
    */
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
-    const provider = this.fileManager.fileProviderOf(target)
+    const provider = this.api.fileProviderOf(target)
     if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
     return new Promise((resolve, reject) => {
       provider.get(target, (error, content) => {
@@ -93,14 +93,14 @@ export class CompileTab extends Plugin {
   }
 
   async isHardhatProject () {
-    if (this.fileManager.mode === 'localhost') {
-      return await this.fileManager.exists('hardhat.config.js')
+    if (this.api.getFileManagerMode() === 'localhost') {
+      return await this.api.fileExists('hardhat.config.js')
     } else return false
   }
 
   runCompiler (hhCompilation) {
     try {
-      if (this.fileManager.mode === 'localhost' && hhCompilation) {
+      if (this.api.getFileManagerMode() === 'localhost' && hhCompilation) {
         const { currentVersion, optimize, runs } = this.compiler.state
         if (currentVersion) {
           const fileContent = `module.exports = {
@@ -114,7 +114,7 @@ export class CompileTab extends Plugin {
           }
           `
           const configFilePath = 'remix-compiler.config.js'
-          this.fileManager.setFileContent(configFilePath, fileContent)
+          this.api.writeFile(configFilePath, fileContent)
           this.call('hardhat', 'compile', configFilePath).then((result) => {
             this.call('terminal', 'log', { type: 'info', value: result })
           }).catch((error) => {
@@ -122,7 +122,7 @@ export class CompileTab extends Plugin {
           })
         }
       }
-      this.fileManager.saveCurrentFile()
+      this.api.saveCurrentFile()
       this.event.emit('removeAnnotations')
       var currentFile = this.api.getConfiguration('currentFile')
       return this.compileFile(currentFile)
