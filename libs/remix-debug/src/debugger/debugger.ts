@@ -115,7 +115,7 @@ export class Debugger {
 
     if (txNumber.indexOf('0x') !== -1) {
       tx = await web3.eth.getTransaction(txNumber)
-      if (!tx) throw new Error('cannot find transaction ' + txNumber)      
+      if (!tx) throw new Error('cannot find transaction ' + txNumber)
     } else {
       tx = await web3.eth.getTransactionFromBlock(blockNumber, txNumber)
       if (!tx) throw new Error('cannot find transaction ' + blockNumber + ' ' + txNumber)
