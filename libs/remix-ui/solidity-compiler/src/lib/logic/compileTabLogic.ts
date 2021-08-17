@@ -18,7 +18,7 @@ export class CompileTab extends Plugin {
   public compilerImport
   public event
 
-  constructor (public api, public fileManager, public config, public fileProvider, public contentImport) {
+  constructor (public api, public fileManager, public contentImport) {
     super(profile)
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
