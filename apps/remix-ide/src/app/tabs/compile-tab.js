@@ -54,10 +54,7 @@ class CompileTab extends ViewPlugin {
     }
     this.compileTabLogic = new CompileTabLogic(this,
       this.fileManager,
-      this.fileProvider,
-      this.contentImport,
-      this.setCompileErrors.bind(this)
-    )
+      this.contentImport)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
     this.contractMap = {}
@@ -198,6 +195,10 @@ class CompileTab extends ViewPlugin {
 
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
+  }
+
+  addExternalFile (fileName, content) {
+    this.fileProvider.addExternal(fileName, content)
   }
 
   /**
