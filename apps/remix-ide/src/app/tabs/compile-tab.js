@@ -53,7 +53,6 @@ class CompileTab extends ViewPlugin {
       loading: false
     }
     this.compileTabLogic = new CompileTabLogic(this,
-      this.queryParams,
       this.fileManager,
       this.config,
       this.fileProvider,
