@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { plugin, plugin: { compileTabLogic, fileManager, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
+  const { plugin, plugin: { compileTabLogic, contractsDetails, contractMap, compileErrors, isHardHatProject, setHardHatCompilation, configurationSettings } } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -80,18 +80,18 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     <>
       <div id="compileTabView">
         <CompilerContainer api={plugin} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} setHardHatCompilation={setHardHatCompilation.bind(plugin)} updateCurrentVersion={updateCurrentVersion} isHardHatProject={isHardHatProject} configurationSettings={configurationSettings} />
-        <ContractSelection api={plugin} contractMap={contractMap} fileManager={fileManager} contractsDetails={contractsDetails} modal={modal} />
+        <ContractSelection api={plugin} contractMap={contractMap} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
-          { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={plugin} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} fileManager={fileManager} /> }
+          { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={plugin} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} /> }
           { compileErrors.error && (compileErrors.error.mode === 'panic') && modal('Error', panicMessage(compileErrors.error.formattedMessage), 'Close', null) }
           { compileErrors.errors && compileErrors.errors.length && compileErrors.errors.map((err, index) => {
             if (plugin.getConfiguration('hideWarnings')) {
               if (err.severity !== 'warning') {
-                return <Renderer key={index} message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} fileManager={fileManager} />
+                return <Renderer key={index} message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} />
               }
             } else {
-              return <Renderer key={index} message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} fileManager={fileManager} />
+              return <Renderer key={index} message={err.formattedMessage} plugin={plugin} opt={{ type: err.severity, errorType: err.type }} />
             }
           }) }
         </div>

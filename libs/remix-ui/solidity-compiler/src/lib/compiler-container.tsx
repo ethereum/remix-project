@@ -197,7 +197,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // Load solc compiler version according to pragma in contract file
   const _setCompilerVersionFromPragma = (filename: string) => {
     if (!state.allversions) return
-    compileTabLogic.fileManager.readFile(filename).then(data => {
+    api.readFile(filename).then(data => {
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
