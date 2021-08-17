@@ -9,7 +9,6 @@ export interface SolidityCompilerProps {
     contentImport: any,
     call: (...args) => void
     on: (...args) => void,
-    setHardHatCompilation: (value: boolean) => void,
     setSelectedVersion: (value: string) => void,
     configurationSettings: ConfigurationSettings,
     getConfiguration: (value: string) => string,
@@ -23,7 +22,6 @@ export interface CompilerContainerProps {
   tooltip: (message: string | JSX.Element) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   compiledFileName: string,
-  setHardHatCompilation: (value: boolean) => void,
   updateCurrentVersion: any,
   configurationSettings: ConfigurationSettings
 }
