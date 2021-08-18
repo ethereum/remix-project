@@ -180,6 +180,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   testCallback (result, runningTests) {
+    console.log('result in testCallback', result)
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
       this.testSuite = result.value
