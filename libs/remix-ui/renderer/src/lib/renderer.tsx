@@ -57,7 +57,7 @@ export const Renderer = ({ message, opt = {}, editor, config, fileManager, plugi
     setMessageText(text)
     setEditorOptions(options)
     setClose(false)
-  }, [message])
+  }, [message, opt])
 
   const getPositionDetails = (msg: any) => {
     const result = { } as Record<string, number | string>
