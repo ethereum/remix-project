@@ -496,7 +496,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         <div>
           {console.log('inside context method return')}
           <span className='txLog_7Xiho'>
-            <span className='tx'>[{vm}]</span>
+            <span className='tx'>[vm]</span>
             <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
@@ -763,7 +763,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     return (
       <span id={`tx${tx.hash}`} key={index}>
         <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
-          {/* onClick={e => txDetails(e, tx, data, obj)} */}
           {checkTxStatus(receipt, txType)}
           {context({ from, to, tx }, props.blockchain)}
           <div className='buttons'>
