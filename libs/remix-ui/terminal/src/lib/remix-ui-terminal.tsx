@@ -1228,16 +1228,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </td>
           </tr>
         )}
-        {console.log(opts['decoded input'], 'opts["decoded input"]')}
-        {console.log(opts.log, 'opts log')}
-        {/* {opts['decoded input'] && (
+        {opts['decoded input'] && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> decode input </td>
             <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input']}
               <CopyToClipboard content={opts['decoded input']}/>
             </td>
           </tr>
-        )} */}
+        )}
         {opts['decoded output'] && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> decode output </td>
@@ -1246,7 +1244,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </td>
           </tr>
         )}
-        {/* {opts.logs && (
+        {opts.logs && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> logs </td>
             <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
@@ -1255,7 +1253,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')}/>
             </td>
           </tr>
-        )} */}
+        )}
         {opts.val && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> val </td>
@@ -1283,9 +1281,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const renderUnKnownTransactions = (tx, receipt, resolvedData, logs, index) => {
+  const renderUnKnownTransactions = (tx, receipt, index) => {
     const from = tx.from
-    const to = tx.to ? tx.to : resolvedData.contractName + '.' + resolvedData.fn
+    const to = tx.to
     const obj = { from, to }
     const showDetails = showTableDetails === tx.from
     const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
@@ -1297,7 +1295,44 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           {context({ from, to, tx }, props.blockchain)}
           { console.log('under context and checkTxStatus')}
           <div className='buttons'>
-            <div className='debug btn btn-primary btn-sm' onClick={(event) => debug(event, tx)}>Debug</div>
+            <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
+          </div>
+          <i className = {`arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
+        </div>
+        {showTableHash.includes(tx.hash) ? showTable({
+          hash: tx.hash,
+          status: receipt !== null ? receipt.status : null,
+          isCall: tx.isCall,
+          contractAddress: tx.contractAddress,
+          data: tx,
+          from,
+          to,
+          gas: tx.gas,
+          input: tx.input,
+          'decoded output': ' - ',
+          val: tx.value,
+          transactionCost: tx.transactionCost,
+          executionCost: tx.executionCost
+        }) : null}
+        { console.log('end')}
+      </span>
+    )
+  }
+
+  const renderKnownTransactions = (tx, receipt, resolvedData, logs, index) => {
+    const from = tx.from
+    const to = resolvedData.contractName + '.' + resolvedData.fn
+    const obj = { from, to }
+    const txType = 'knownTx'
+    console.log('render unknown transaction ')
+    return (
+      <span id={`tx${tx.hash}`} key={index}>
+        <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
+          {/* onClick={e => txDetails(e, tx, data, obj)} */}
+          {checkTxStatus(receipt, txType)}
+          {context({ from, to, tx }, props.blockchain)}
+          <div className='buttons'>
+            <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
           </div>
           <i className = {`arrow fas ${(showDetails) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
         </div>
