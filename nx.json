@@ -121,7 +121,11 @@
     "remix-ui-renderer": {
       "tags": []
     },
+<<<<<<< HEAD
     "remix-ui-vertical-icons": {
+=======
+    "solidity-compiler": {
+>>>>>>> aeaebb6a4 (create solidity web app)
       "tags": []
     }
   }

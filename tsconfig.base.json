@@ -30,6 +30,7 @@
         "dist/libs/remix-url-resolver/index.js"
       ],
       "@remixproject/debugger-plugin": ["apps/debugger/src/index.ts"],
+      "@remixproject/solidity-compiler-plugin": ["apps/solidity-compiler/src/index.ts"],
       "@remix-project/remixd": ["dist/libs/remixd/index.js"],
       "@remix-ui/tree-view": ["libs/remix-ui/tree-view/src/index.ts"],
       "@remix-ui/debugger-ui": ["libs/remix-ui/debugger-ui/src/index.ts"],
