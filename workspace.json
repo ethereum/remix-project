@@ -876,25 +876,6 @@
         }
       }
     },
-    "remix-ui-vertical-icons": {
-      "root": "libs/remix-ui/vertical-icons",
-          "sourceRoot": "libs/remix-ui/vertical-icons/src",
-          "projectType": "library",
-          "schematics": {},
-          "architect": {
-            "lint": {
-              "builder": "@nrwl/linter:lint",
-              "options": {
-                "linter": "eslint",
-                "tsConfig": ["libs/remix-ui/vertical-icons/tsconfig.lib.json"],
-                "exclude": [
-                  "**/node_modules/**",
-                  "!libs/remix-ui/vertical-icons/**/*"
-                ]
-              }
-            }
-          }
-        },
     "solidity-compiler": {
       "root": "apps/solidity-compiler",
       "sourceRoot": "apps/solidity-compiler/src",
