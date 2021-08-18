@@ -14,6 +14,8 @@ const addTooltip = require('../ui/tooltip')
 
 const css = require('./styles/compile-tab-styles')
 
+const css = require('./styles/compile-tab-styles')
+
 const profile = {
   name: 'solidity',
   displayName: 'Solidity compiler',

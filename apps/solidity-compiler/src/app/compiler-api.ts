@@ -30,7 +30,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
       errorContainer: null,
       contractEl: null
     }
-
     this.contractsDetails = {}
     this.data = {
       eventHandlers: {},
@@ -236,13 +235,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onCurrentFileChanged) this.onCurrentFileChanged(name)
     }
     this.on('fileManager', 'currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
-
     this.data.eventHandlers.onNoFileSelected = () => {
       this.currentFile = ''
       if (this.onNoFileSelected) this.onNoFileSelected()
     }
     this.on('fileManager', 'noFileSelected', this.data.eventHandlers.onNoFileSelected)
-
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       this.compileErrors = data
       if (success) {
