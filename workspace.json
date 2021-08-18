@@ -1,6 +1,213 @@
 {
   "version": 1,
   "projects": {
+    "debugger": {
+      "root": "apps/debugger",
+      "sourceRoot": "apps/debugger/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/debugger",
+            "index": "apps/debugger/src/index.html",
+            "main": "apps/debugger/src/main.tsx",
+            "polyfills": "apps/debugger/src/polyfills.ts",
+            "tsConfig": "apps/debugger/tsconfig.app.json",
+            "assets": [
+              "apps/debugger/src/assets",
+              "apps/debugger/src/index.html",
+              "apps/debugger/src/favicon.ico"
+            ],
+            "styles": [],
+            "scripts": [],
+            "webpackConfig": "apps/debugger/webpack.config.js",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/debugger/src/environments/environment.ts",
+                  "with": "apps/debugger/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "debugger:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "debugger:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["apps/debugger/tsconfig.app.json"],
+            "exclude": ["**/node_modules/**", "!apps/debugger/**/*"]
+          }
+        }
+      }
+    },
+    "remix-analyzer": {
+      "root": "libs/remix-analyzer",
+      "sourceRoot": "libs/remix-analyzer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-analyzer/.eslintrc",
+            "tsConfig": ["libs/remix-analyzer/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "libs/remix-analyzer/test/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
+            "cwd": "libs/remix-analyzer"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-analyzer",
+            "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
+            "packageJson": "libs/remix-analyzer/package.json",
+            "main": "libs/remix-analyzer/src/index.ts",
+            "assets": ["libs/remix-analyzer/*.md"]
+          }
+        }
+      }
+    },
+    "remix-astwalker": {
+      "root": "libs/remix-astwalker",
+      "sourceRoot": "libs/remix-astwalker/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-astwalker/.eslintrc",
+            "tsConfig": ["libs/remix-astwalker/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "libs/remix-astwalker/tests/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
+            "cwd": "libs/remix-astwalker"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-astwalker",
+            "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
+            "packageJson": "libs/remix-astwalker/package.json",
+            "main": "libs/remix-astwalker/src/index.ts",
+            "assets": ["libs/remix-astwalker/*.md"]
+          }
+        }
+      }
+    },
+    "remix-core-plugin": {
+      "root": "libs/remix-core-plugin",
+      "sourceRoot": "libs/remix-core-plugin/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-core-plugin/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-core-plugin/**/*"]
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core-plugin",
+            "tsConfig": "libs/remix-core-plugin/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/package.json",
+            "main": "libs/remix-core-plugin/src/index.ts"
+          }
+        }
+      }
+    },
+    "remix-debug": {
+      "root": "libs/remix-debug",
+      "sourceRoot": "libs/remix-debug/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-debug/.eslintrc",
+            "tsConfig": ["libs/remix-debug/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "libs/remix-debug/test/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
+            "cwd": "libs/remix-debug"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-debug",
+            "tsConfig": "libs/remix-debug/tsconfig.lib.json",
+            "packageJson": "libs/remix-debug/package.json",
+            "main": "libs/remix-debug/src/index.ts",
+            "assets": [
+              {
+                "glob": "rdb",
+                "input": "libs/remix-debug/bin/",
+                "output": "bin/"
+              },
+              {
+                "glob": "*.md",
+                "input": "libs/remix-debug/",
+                "output": "/"
+              }
+            ]
+          }
+        }
+      }
+    },
     "remix-ide": {
       "root": "apps/remix-ide",
       "sourceRoot": "apps/remix-ide/src",
@@ -105,119 +312,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/remix-ide-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/remix-ide-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "remix-analyzer": {
-      "root": "libs/remix-analyzer",
-      "sourceRoot": "libs/remix-analyzer/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/remix-analyzer/.eslintrc",
-            "tsConfig": ["libs/remix-analyzer/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-analyzer/test/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": ["./../../node_modules/.bin/npm-run-all test"],
-            "cwd": "libs/remix-analyzer"
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/remix-analyzer",
-            "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
-            "packageJson": "libs/remix-analyzer/package.json",
-            "main": "libs/remix-analyzer/src/index.ts",
-            "assets": ["libs/remix-analyzer/*.md"]
-          }
-        }
-      }
-    },
-    "remix-astwalker": {
-      "root": "libs/remix-astwalker",
-      "sourceRoot": "libs/remix-astwalker/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/remix-astwalker/.eslintrc",
-            "tsConfig": ["libs/remix-astwalker/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-astwalker/tests/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": ["./../../node_modules/.bin/npm-run-all test"],
-            "cwd": "libs/remix-astwalker"
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/remix-astwalker",
-            "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
-            "packageJson": "libs/remix-astwalker/package.json",
-            "main": "libs/remix-astwalker/src/index.ts",
-            "assets": ["libs/remix-astwalker/*.md"]
-          }
-        }
-      }
-    },
-    "remix-debug": {
-      "root": "libs/remix-debug",
-      "sourceRoot": "libs/remix-debug/",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/remix-debug/.eslintrc",
-            "tsConfig": ["libs/remix-debug/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-debug/test/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": ["./../../node_modules/.bin/npm-run-all test"],
-            "cwd": "libs/remix-debug"
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/remix-debug",
-            "tsConfig": "libs/remix-debug/tsconfig.lib.json",
-            "packageJson": "libs/remix-debug/package.json",
-            "main": "libs/remix-debug/src/index.ts",
-            "assets": [
-              {
-                "glob": "rdb",
-                "input": "libs/remix-debug/bin/",
-                "output": "bin/"
-              },
-              {
-                "glob": "*.md",
-                "input": "libs/remix-debug/",
-                "output": "/"
-              }
-            ]
           }
         }
       }
@@ -384,6 +478,315 @@
         }
       }
     },
+    "remix-ui-checkbox": {
+      "root": "libs/remix-ui/checkbox",
+      "sourceRoot": "libs/remix-ui/checkbox/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/checkbox/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/checkbox/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-clipboard": {
+      "root": "libs/remix-ui/clipboard",
+      "sourceRoot": "libs/remix-ui/clipboard/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/clipboard/tsconfig.lib.json",
+              "libs/remix-ui/clipboard/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/clipboard/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/clipboard/jest.config.js",
+            "tsConfig": "libs/remix-ui/clipboard/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "remix-ui-debugger-ui": {
+      "root": "libs/remix-ui/debugger-ui",
+      "sourceRoot": "libs/remix-ui/debugger-ui/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/debugger-ui/tsconfig.lib.json",
+              "libs/remix-ui/debugger-ui/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/debugger-ui/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/debugger-ui/jest.config.js",
+            "tsConfig": "libs/remix-ui/debugger-ui/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "remix-ui-file-explorer": {
+      "root": "libs/remix-ui/file-explorer",
+      "sourceRoot": "libs/remix-ui/file-explorer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/file-explorer/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/file-explorer/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-modal-dialog": {
+      "root": "libs/remix-ui/modal-dialog",
+      "sourceRoot": "libs/remix-ui/modal-dialog/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/modal-dialog/tsconfig.lib.json",
+              "libs/remix-ui/modal-dialog/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/modal-dialog/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/modal-dialog/jest.config.js",
+            "tsConfig": "libs/remix-ui/modal-dialog/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "remix-ui-publish-to-storage": {
+      "root": "libs/remix-ui/publish-to-storage",
+      "sourceRoot": "libs/remix-ui/publish-to-storage/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/publish-to-storage/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/publish-to-storage/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-renderer": {
+      "root": "libs/remix-ui/renderer",
+      "sourceRoot": "libs/remix-ui/renderer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/renderer/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/renderer/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-run-and-deploy": {
+      "root": "libs/remix-ui/run-and-deploy",
+      "sourceRoot": "libs/remix-ui/run-and-deploy/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/remix-ui/run-and-deploy/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-settings": {
+      "root": "libs/remix-ui/settings",
+      "sourceRoot": "libs/remix-ui/settings/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/settings/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/settings/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-solidity-compiler": {
+      "root": "libs/remix-ui/solidity-compiler",
+      "sourceRoot": "libs/remix-ui/solidity-compiler/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/solidity-compiler/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/solidity-compiler/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-static-analyser": {
+      "root": "libs/remix-ui/static-analyser",
+      "sourceRoot": "libs/remix-ui/static-analyser/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/static-analyser/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/static-analyser/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-toaster": {
+      "root": "libs/remix-ui/toaster",
+      "sourceRoot": "libs/remix-ui/toaster/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/toaster/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/toaster/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-tree-view": {
+      "root": "libs/remix-ui/tree-view",
+      "sourceRoot": "libs/remix-ui/tree-view/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/tree-view/tsconfig.lib.json",
+              "libs/remix-ui/tree-view/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/tree-view/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/tree-view/jest.config.js",
+            "tsConfig": "libs/remix-ui/tree-view/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "remix-ui-utils": {
+      "root": "libs/remix-ui/utils",
+      "sourceRoot": "libs/remix-ui/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/utils/tsconfig.lib.json",
+              "libs/remix-ui/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/utils/jest.config.js",
+            "tsConfig": "libs/remix-ui/utils/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "remix-ui-workspace": {
+      "root": "libs/remix-ui/workspace",
+      "sourceRoot": "libs/remix-ui/workspace/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/workspace/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/workspace/**/*"]
+          }
+        }
+      }
+    },
     "remix-url-resolver": {
       "root": "libs/remix-url-resolver",
       "sourceRoot": "libs/remix-url-resolver/src/",
@@ -464,399 +867,6 @@
                 "command": "SERVE_SCRIPT='chmod +x dist/libs/remixd/bin/remixd.js; dist/libs/remixd/bin/remixd.js '; if [ {args.folder} != undefined ]; then SERVE_SCRIPT=${SERVE_SCRIPT}' -s {args.folder}'; fi; if [ {args.remixide} != undefined ]; then SERVE_SCRIPT=${SERVE_SCRIPT}' --remix-ide {args.remixide}'; fi; eval $SERVE_SCRIPT;"
               }
             ]
-          }
-        }
-      }
-    },
-    "remix-ui-tree-view": {
-      "root": "libs/remix-ui/tree-view",
-      "sourceRoot": "libs/remix-ui/tree-view/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/tree-view/tsconfig.lib.json",
-              "libs/remix-ui/tree-view/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/tree-view/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/remix-ui/tree-view/jest.config.js",
-            "tsConfig": "libs/remix-ui/tree-view/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "remix-ui-debugger-ui": {
-      "root": "libs/remix-ui/debugger-ui",
-      "sourceRoot": "libs/remix-ui/debugger-ui/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/debugger-ui/tsconfig.lib.json",
-              "libs/remix-ui/debugger-ui/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/debugger-ui/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/remix-ui/debugger-ui/jest.config.js",
-            "tsConfig": "libs/remix-ui/debugger-ui/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "remix-ui-utils": {
-      "root": "libs/remix-ui/utils",
-      "sourceRoot": "libs/remix-ui/utils/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/utils/tsconfig.lib.json",
-              "libs/remix-ui/utils/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/utils/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/remix-ui/utils/jest.config.js",
-            "tsConfig": "libs/remix-ui/utils/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "remix-ui-clipboard": {
-      "root": "libs/remix-ui/clipboard",
-      "sourceRoot": "libs/remix-ui/clipboard/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/clipboard/tsconfig.lib.json",
-              "libs/remix-ui/clipboard/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/clipboard/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/remix-ui/clipboard/jest.config.js",
-            "tsConfig": "libs/remix-ui/clipboard/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "remix-ui-modal-dialog": {
-      "root": "libs/remix-ui/modal-dialog",
-      "sourceRoot": "libs/remix-ui/modal-dialog/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/modal-dialog/tsconfig.lib.json",
-              "libs/remix-ui/modal-dialog/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/modal-dialog/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/remix-ui/modal-dialog/jest.config.js",
-            "tsConfig": "libs/remix-ui/modal-dialog/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "remix-ui-toaster": {
-      "root": "libs/remix-ui/toaster",
-      "sourceRoot": "libs/remix-ui/toaster/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/toaster/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/toaster/**/*"]
-          }
-        }
-      }
-    },
-    "remix-ui-file-explorer": {
-      "root": "libs/remix-ui/file-explorer",
-      "sourceRoot": "libs/remix-ui/file-explorer/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/file-explorer/tsconfig.lib.json"],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/file-explorer/**/*"
-            ]
-          }
-        }
-      }
-    },
-    "debugger": {
-      "root": "apps/debugger",
-      "sourceRoot": "apps/debugger/src",
-      "projectType": "application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/web:build",
-          "options": {
-            "outputPath": "dist/apps/debugger",
-            "index": "apps/debugger/src/index.html",
-            "main": "apps/debugger/src/main.tsx",
-            "polyfills": "apps/debugger/src/polyfills.ts",
-            "tsConfig": "apps/debugger/tsconfig.app.json",
-            "assets": [
-              "apps/debugger/src/assets",
-              "apps/debugger/src/index.html",
-              "apps/debugger/src/favicon.ico"
-            ],
-            "styles": [],
-            "scripts": [],
-            "webpackConfig": "apps/debugger/webpack.config.js",
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/debugger/src/environments/environment.ts",
-                  "with": "apps/debugger/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/web:dev-server",
-          "options": {
-            "buildTarget": "debugger:build"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "debugger:build:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["apps/debugger/tsconfig.app.json"],
-            "exclude": ["**/node_modules/**", "!apps/debugger/**/*"]
-          }
-        }
-      }
-    },
-    "remix-ui-workspace": {
-      "root": "libs/remix-ui/workspace",
-      "sourceRoot": "libs/remix-ui/workspace/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/workspace/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/workspace/**/*"]
-          }
-        }
-      }
-    },
-    "remix-ui-settings": {
-      "root": "libs/remix-ui/settings",
-      "sourceRoot": "libs/remix-ui/settings/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/settings/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/settings/**/*"]
-          }
-        }
-      }
-    },
-    "remix-ui-static-analyser": {
-      "root": "libs/remix-ui/static-analyser",
-      "sourceRoot": "libs/remix-ui/static-analyser/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/static-analyser/tsconfig.lib.json"],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/static-analyser/**/*"
-            ]
-          }
-        }
-      }
-    },
-    "remix-ui-checkbox": {
-      "root": "libs/remix-ui/checkbox",
-      "sourceRoot": "libs/remix-ui/checkbox/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/checkbox/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/checkbox/**/*"]
-          }
-        }
-      }
-    },
-    "remix-core-plugin": {
-      "root": "libs/remix-core-plugin",
-      "sourceRoot": "libs/remix-core-plugin/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-core-plugin/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-core-plugin/**/*"
-            ]
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/core-plugin",
-            "tsConfig": "libs/remix-core-plugin/tsconfig.lib.json",
-            "packageJson": "libs/remix-core-plugin/package.json",
-            "main": "libs/remix-core-plugin/src/index.ts"
-          }
-        }
-      }
-    },
-    "remix-ui-solidity-compiler": {
-      "root": "libs/remix-ui/solidity-compiler",
-      "sourceRoot": "libs/remix-ui/solidity-compiler/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/solidity-compiler/tsconfig.lib.json"],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/solidity-compiler/**/*"
-            ]
-          }
-        }
-      }
-    },
-    "remix-ui-publish-to-storage": {
-      "root": "libs/remix-ui/publish-to-storage",
-      "sourceRoot": "libs/remix-ui/publish-to-storage/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/publish-to-storage/tsconfig.lib.json"],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/publish-to-storage/**/*"
-            ]
-          }
-        }
-      }
-    },
-    "remix-ui-renderer": {
-      "root": "libs/remix-ui/renderer",
-      "sourceRoot": "libs/remix-ui/renderer/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/renderer/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/renderer/**/*"]
           }
         }
       }

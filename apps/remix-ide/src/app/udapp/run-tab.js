@@ -1,3 +1,6 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { RunAndDeploy } from '@remix-ui/runAndDeploy'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 
@@ -36,17 +39,23 @@ const profile = {
 export class RunTab extends ViewPlugin {
   constructor (blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView, fileProvider) {
     super(profile)
-    this.event = new EventManager()
-    this.config = config
-    this.blockchain = blockchain
-    this.fileManager = fileManager
-    this.editor = editor
-    this.logCallback = (msg) => { mainView.getTerminal().logHtml(yo`<pre>${msg}</pre>`) }
-    this.filePanel = filePanel
-    this.compilersArtefacts = compilersArtefacts
-    this.networkModule = networkModule
-    this.fileProvider = fileProvider
-    this.setupEvents()
+    // this.event = new EventManager()
+    // this.config = config
+    // this.blockchain = blockchain
+    // this.fileManager = fileManager
+    // this.editor = editor
+    // this.logCallback = (msg) => { mainView.getTerminal().logHtml(yo`<pre>${msg}</pre>`) }
+    // this.filePanel = filePanel
+    // this.compilersArtefacts = compilersArtefacts
+    // this.networkModule = networkModule
+    // this.fileProvider = fileProvider
+    // this.setupEvents()
+    this.htmlElement = document.createElement('div')
+    this.htmlElement.setAttribute('id', 'runTabView')
+  }
+
+  onActivation () {
+    this.renderComponent()
   }
 
   setupEvents () {
@@ -55,232 +64,237 @@ export class RunTab extends ViewPlugin {
     })
   }
 
-  getSettings () {
-    return new Promise((resolve, reject) => {
-      if (!this.container) reject(new Error('UI not ready'))
-      else {
-        resolve({
-          selectedAccount: this.settingsUI.getSelectedAccount(),
-          selectedEnvMode: this.blockchain.getProvider(),
-          networkEnvironment: this.container.querySelector('*[data-id="settingsNetworkEnv"]').textContent
-        }
-        )
-      }
-    })
+  // getSettings () {
+  //   return new Promise((resolve, reject) => {
+  //     if (!this.container) reject(new Error('UI not ready'))
+  //     else {
+  //       resolve({
+  //         selectedAccount: this.settingsUI.getSelectedAccount(),
+  //         selectedEnvMode: this.blockchain.getProvider(),
+  //         networkEnvironment: this.container.querySelector('*[data-id="settingsNetworkEnv"]').textContent
+  //       }
+  //       )
+  //     }
+  //   })
+  // }
+
+  // async setEnvironmentMode (env) {
+  //   const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
+  //   if (canCall) {
+  //     toaster(yo`
+  //       <div>
+  //         <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
+  //         <span>
+  //           ${this.currentRequest.from}
+  //           <span class="font-weight-bold text-warning">
+  //             is changing your environment to
+  //           </span> ${env}
+  //         </span>
+  //       </div>
+  //     `, '', { time: 3000 })
+  //     this.settingsUI.setExecutionContext(env)
+  //   }
+  // }
+
+  // createVMAccount (newAccount) {
+  //   return this.blockchain.createVMAccount(newAccount)
+  // }
+
+  // sendTransaction (tx) {
+  //   _paq.push(['trackEvent', 'udapp', 'sendTx'])
+  //   return this.blockchain.sendTransaction(tx)
+  // }
+
+  // getAccounts (cb) {
+  //   return this.blockchain.getAccounts(cb)
+  // }
+
+  // pendingTransactionsCount () {
+  //   return this.blockchain.pendingTransactionsCount()
+  // }
+
+  // renderContainer () {
+  //   this.container = yo`<div class="${css.runTabView} run-tab" id="runTabView" data-id="runTabView"></div>`
+
+  //   var el = yo`
+  //   <div class="list-group list-group-flush">
+  //     ${this.settingsUI.render()}
+  //     ${this.contractDropdownUI.render()}
+  //     ${this.recorderCard.render()}
+  //     ${this.instanceContainer}
+  //   </div>
+  //   `
+  //   this.container.appendChild(el)
+  //   return this.container
+  // }
+
+  renderComponent () {
+    ReactDOM.render(<RunAndDeploy />, this.htmlElement)
   }
 
-  async setEnvironmentMode (env) {
-    const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
-    if (canCall) {
-      toaster(yo`
-        <div>
-          <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
-          <span>
-            ${this.currentRequest.from}
-            <span class="font-weight-bold text-warning">
-              is changing your environment to
-            </span> ${env}
-          </span>
-        </div>
-      `, '', { time: 3000 })
-      this.settingsUI.setExecutionContext(env)
-    }
-  }
+  // renderInstanceContainer () {
+  //   this.instanceContainer = yo`<div class="${css.instanceContainer} border-0 list-group-item"></div>`
 
-  createVMAccount (newAccount) {
-    return this.blockchain.createVMAccount(newAccount)
-  }
+  //   const instanceContainerTitle = yo`
+  //     <div class="d-flex justify-content-between align-items-center pl-2 ml-1 mb-2"
+  //       title="Autogenerated generic user interfaces for interaction with deployed contracts">
+  //       Deployed Contracts
+  //       <i class="mr-2 ${css.icon} far fa-trash-alt" data-id="deployAndRunClearInstances" onclick=${() => this.event.trigger('clearInstance', [])}
+  //         title="Clear instances list and reset recorder" aria-hidden="true">
+  //       </i>
+  //     </div>`
 
-  sendTransaction (tx) {
-    _paq.push(['trackEvent', 'udapp', 'sendTx'])
-    return this.blockchain.sendTransaction(tx)
-  }
+  //   this.noInstancesText = yo`
+  //     <span class="mx-2 mt-3 alert alert-warning" data-id="deployAndRunNoInstanceText" role="alert">
+  //       Currently you have no contract instances to interact with.
+  //     </span>`
 
-  getAccounts (cb) {
-    return this.blockchain.getAccounts(cb)
-  }
+  //   this.event.register('clearInstance', () => {
+  //     this.instanceContainer.innerHTML = '' // clear the instances list
+  //     this.instanceContainer.appendChild(instanceContainerTitle)
+  //     this.instanceContainer.appendChild(this.noInstancesText)
+  //   })
 
-  pendingTransactionsCount () {
-    return this.blockchain.pendingTransactionsCount()
-  }
+  //   this.instanceContainer.appendChild(instanceContainerTitle)
+  //   this.instanceContainer.appendChild(this.noInstancesText)
+  // }
 
-  renderContainer () {
-    this.container = yo`<div class="${css.runTabView} run-tab" id="runTabView" data-id="runTabView"></div>`
+  // renderSettings () {
+  //   this.settingsUI = new SettingsUI(this.blockchain, this.networkModule)
 
-    var el = yo`
-    <div class="list-group list-group-flush">
-      ${this.settingsUI.render()}
-      ${this.contractDropdownUI.render()}
-      ${this.recorderCard.render()}
-      ${this.instanceContainer}
-    </div>
-    `
-    this.container.appendChild(el)
-    return this.container
-  }
+  //   this.settingsUI.event.register('clearInstance', () => {
+  //     this.event.trigger('clearInstance', [])
+  //   })
+  // }
 
-  renderInstanceContainer () {
-    this.instanceContainer = yo`<div class="${css.instanceContainer} border-0 list-group-item"></div>`
+  // renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, logCallback) {
+  //   const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
+  //   this.contractDropdownUI = new ContractDropdownUI(this.blockchain, dropdownLogic, logCallback, this)
 
-    const instanceContainerTitle = yo`
-      <div class="d-flex justify-content-between align-items-center pl-2 ml-1 mb-2"
-        title="Autogenerated generic user interfaces for interaction with deployed contracts">
-        Deployed Contracts
-        <i class="mr-2 ${css.icon} far fa-trash-alt" data-id="deployAndRunClearInstances" onclick=${() => this.event.trigger('clearInstance', [])}
-          title="Clear instances list and reset recorder" aria-hidden="true">
-        </i>
-      </div>`
+  //   fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
 
-    this.noInstancesText = yo`
-      <span class="mx-2 mt-3 alert alert-warning" data-id="deployAndRunNoInstanceText" role="alert">
-        Currently you have no contract instances to interact with.
-      </span>`
+  //   this.contractDropdownUI.event.register('clearInstance', () => {
+  //     const noInstancesText = this.noInstancesText
+  //     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+  //   })
+  //   this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
+  //     this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, '<at address>'))
+  //   })
+  //   this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
+  //     this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
+  //   })
+  // }
 
-    this.event.register('clearInstance', () => {
-      this.instanceContainer.innerHTML = '' // clear the instances list
-      this.instanceContainer.appendChild(instanceContainerTitle)
-      this.instanceContainer.appendChild(this.noInstancesText)
-    })
+  // renderRecorder (udappUI, fileManager, config, logCallback) {
+  //   this.recorderCount = yo`<span>0</span>`
 
-    this.instanceContainer.appendChild(instanceContainerTitle)
-    this.instanceContainer.appendChild(this.noInstancesText)
-  }
+  //   const recorder = new Recorder(this.blockchain)
+  //   recorder.event.register('recorderCountChange', (count) => {
+  //     this.recorderCount.innerText = count
+  //   })
+  //   this.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-  renderSettings () {
-    this.settingsUI = new SettingsUI(this.blockchain, this.networkModule)
+  //   this.recorderInterface = new RecorderUI(this.blockchain, fileManager, recorder, logCallback, config)
 
-    this.settingsUI.event.register('clearInstance', () => {
-      this.event.trigger('clearInstance', [])
-    })
-  }
+  //   this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
+  //     var noInstancesText = this.noInstancesText
+  //     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+  //     this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, contractName))
+  //   })
 
-  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, logCallback) {
-    const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
-    this.contractDropdownUI = new ContractDropdownUI(this.blockchain, dropdownLogic, logCallback, this)
+  //   this.recorderInterface.render()
+  // }
 
-    fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
+  // renderRecorderCard () {
+  //   const collapsedView = yo`
+  //     <div class="d-flex flex-column">
+  //       <div class="ml-2 badge badge-pill badge-primary" title="The number of recorded transactions">${this.recorderCount}</div>
+  //     </div>`
 
-    this.contractDropdownUI.event.register('clearInstance', () => {
-      const noInstancesText = this.noInstancesText
-      if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-    })
-    this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
-      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, '<at address>'))
-    })
-    this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
-      this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
-    })
-  }
+  //   const expandedView = yo`
+  //     <div class="d-flex flex-column">
+  //       <div class="${css.recorderDescription} mt-2">
+  //         All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
+  //         another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
+  //       </div>
+  //       <div class="${css.transactionActions}">
+  //         ${this.recorderInterface.recordButton}
+  //         ${this.recorderInterface.runButton}
+  //         </div>
+  //       </div>
+  //     </div>`
 
-  renderRecorder (udappUI, fileManager, config, logCallback) {
-    this.recorderCount = yo`<span>0</span>`
-
-    const recorder = new Recorder(this.blockchain)
-    recorder.event.register('recorderCountChange', (count) => {
-      this.recorderCount.innerText = count
-    })
-    this.event.register('clearInstance', recorder.clearAll.bind(recorder))
-
-    this.recorderInterface = new RecorderUI(this.blockchain, fileManager, recorder, logCallback, config)
-
-    this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
-      var noInstancesText = this.noInstancesText
-      if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, contractName))
-    })
-
-    this.recorderInterface.render()
-  }
-
-  renderRecorderCard () {
-    const collapsedView = yo`
-      <div class="d-flex flex-column">
-        <div class="ml-2 badge badge-pill badge-primary" title="The number of recorded transactions">${this.recorderCount}</div>
-      </div>`
-
-    const expandedView = yo`
-      <div class="d-flex flex-column">
-        <div class="${css.recorderDescription} mt-2">
-          All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
-          another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
-        </div>
-        <div class="${css.transactionActions}">
-          ${this.recorderInterface.recordButton}
-          ${this.recorderInterface.runButton}
-          </div>
-        </div>
-      </div>`
-
-    this.recorderCard = new Card({}, {}, { title: 'Transactions recorded', collapsedView: collapsedView })
-    this.recorderCard.event.register('expandCollapseCard', (arrow, body, status) => {
-      body.innerHTML = ''
-      status.innerHTML = ''
-      if (arrow === 'down') {
-        status.appendChild(collapsedView)
-        body.appendChild(expandedView)
-      } else if (arrow === 'up') {
-        status.appendChild(collapsedView)
-      }
-    })
-  }
+  //   this.recorderCard = new Card({}, {}, { title: 'Transactions recorded', collapsedView: collapsedView })
+  //   this.recorderCard.event.register('expandCollapseCard', (arrow, body, status) => {
+  //     body.innerHTML = ''
+  //     status.innerHTML = ''
+  //     if (arrow === 'down') {
+  //       status.appendChild(collapsedView)
+  //       body.appendChild(expandedView)
+  //     } else if (arrow === 'up') {
+  //       status.appendChild(collapsedView)
+  //     }
+  //   })
+  // }
 
   render () {
-    this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
-    this.blockchain.resetAndInit(this.config, {
-      getAddress: (cb) => {
-        cb(null, $('#txorigin').val())
-      },
-      getValue: (cb) => {
-        try {
-          const number = document.querySelector('#value').value
-          const select = document.getElementById('unit')
-          const index = select.selectedIndex
-          const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          let unit = 'ether' // default
-          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-            unit = selectedUnit
-          }
-          cb(null, Web3.utils.toWei(number, unit))
-        } catch (e) {
-          cb(e)
-        }
-      },
-      getGasLimit: (cb) => {
-        try {
-          cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
-        } catch (e) {
-          cb(e.message)
-        }
-      }
-    })
-    this.renderInstanceContainer()
-    this.renderSettings()
-    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
-    this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
-    this.renderRecorderCard()
+    return this.htmlElement
+  //   this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
+  //   this.blockchain.resetAndInit(this.config, {
+  //     getAddress: (cb) => {
+  //       cb(null, $('#txorigin').val())
+  //     },
+  //     getValue: (cb) => {
+  //       try {
+  //         const number = document.querySelector('#value').value
+  //         const select = document.getElementById('unit')
+  //         const index = select.selectedIndex
+  //         const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+  //         let unit = 'ether' // default
+  //         if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+  //           unit = selectedUnit
+  //         }
+  //         cb(null, Web3.utils.toWei(number, unit))
+  //       } catch (e) {
+  //         cb(e)
+  //       }
+  //     },
+  //     getGasLimit: (cb) => {
+  //       try {
+  //         cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
+  //       } catch (e) {
+  //         cb(e.message)
+  //       }
+  //     }
+  //   })
+  //   this.renderInstanceContainer()
+  //   this.renderSettings()
+  //   this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
+  //   this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
+  //   this.renderRecorderCard()
 
-    const addPluginProvider = (profile) => {
-      if (profile.kind === 'provider') {
-        ((profile, app) => {
-          const web3Provider = {
-            async sendAsync (payload, callback) {
-              try {
-                const result = await app.call(profile.name, 'sendAsync', payload)
-                callback(null, result)
-              } catch (e) {
-                callback(e)
-              }
-            }
-          }
-          app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
-        })(profile, this)
-      }
-    }
-    const removePluginProvider = (profile) => {
-      if (profile.kind === 'provider') this.blockchain.removeProvider(profile.displayName)
-    }
-    this.on('manager', 'pluginActivated', addPluginProvider.bind(this))
-    this.on('manager', 'pluginDeactivated', removePluginProvider.bind(this))
-    return this.renderContainer()
+  //   const addPluginProvider = (profile) => {
+  //     if (profile.kind === 'provider') {
+  //       ((profile, app) => {
+  //         const web3Provider = {
+  //           async sendAsync (payload, callback) {
+  //             try {
+  //               const result = await app.call(profile.name, 'sendAsync', payload)
+  //               callback(null, result)
+  //             } catch (e) {
+  //               callback(e)
+  //             }
+  //           }
+  //         }
+  //         app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
+  //       })(profile, this)
+  //     }
+  //   }
+  //   const removePluginProvider = (profile) => {
+  //     if (profile.kind === 'provider') this.blockchain.removeProvider(profile.displayName)
+  //   }
+  //   this.on('manager', 'pluginActivated', addPluginProvider.bind(this))
+  //   this.on('manager', 'pluginDeactivated', removePluginProvider.bind(this))
+  //   return this.renderContainer()
   }
 }

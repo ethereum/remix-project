@@ -19,35 +19,23 @@
     }
   },
   "projects": {
-    "remix-lib": {
+    "debugger": {
       "tags": []
-    },
-    "remix-astwalker": {
-      "tags": [],
-      "implicitDependencies": ["remix-lib"]
     },
     "remix-analyzer": {
       "tags": [],
       "implicitDependencies": ["remix-astwalker", "remix-lib"]
     },
+    "remix-astwalker": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
+    },
+    "remix-core-plugin": {
+      "tags": []
+    },
     "remix-debug": {
       "tags": [],
       "implicitDependencies": ["remix-astwalker", "remix-lib"]
-    },
-    "remix-simulator": {
-      "tags": [],
-      "implicitDependencies": ["remix-lib"]
-    },
-    "remix-solidity": {
-      "tags": [],
-      "implicitDependencies": ["remix-lib"]
-    },
-    "remix-tests": {
-      "tags": [],
-      "implicitDependencies": ["remix-lib", "remix-simulator", "remix-solidity"]
-    },
-    "remix-url-resolver": {
-      "tags": []
     },
     "remix-ide": {
       "tags": [],
@@ -66,55 +54,70 @@
       "tags": [],
       "implicitDependencies": ["remix-ide"]
     },
-    "remixd": {
+    "remix-lib": {
       "tags": []
     },
-    "remix-ui-tree-view": {
-      "tags": []
+    "remix-simulator": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
     },
-    "remix-ui-debugger-ui": {
-      "tags": []
+    "remix-solidity": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
     },
-    "remix-ui-utils": {
+    "remix-tests": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib", "remix-simulator", "remix-solidity"]
+    },
+    "remix-ui-checkbox": {
       "tags": []
     },
     "remix-ui-clipboard": {
       "tags": []
     },
-    "remix-ui-modal-dialog": {
-      "tags": []
-    },
-    "remix-ui-toaster": {
+    "remix-ui-debugger-ui": {
       "tags": []
     },
     "remix-ui-file-explorer": {
       "tags": []
     },
-    "debugger": {
-      "tags": []
-    },
-    "remix-ui-workspace": {
-      "tags": []
-    },
-    "remix-ui-settings": {
-       "tags": []
-    },
-    "remix-ui-static-analyser": {
-      "tags": []
-    },
-    "remix-ui-checkbox": {
-      "tags": []
-    },
-    "remix-core-plugin": {
-      "tags": []
-    },
-    "remix-ui-solidity-compiler": {
+    "remix-ui-modal-dialog": {
       "tags": []
     },
     "remix-ui-publish-to-storage": {
       "tags": []
     },
     "remix-ui-renderer": {
+      "tags": []
+    },
+    "remix-ui-run-and-deploy": {
+      "tags": []
+    },
+    "remix-ui-settings": {
+      "tags": []
+    },
+    "remix-ui-solidity-compiler": {
+      "tags": []
+    },
+    "remix-ui-static-analyser": {
+      "tags": []
+    },
+    "remix-ui-toaster": {
+      "tags": []
+    },
+    "remix-ui-tree-view": {
+      "tags": []
+    },
+    "remix-ui-utils": {
+      "tags": []
+    },
+    "remix-ui-workspace": {
+      "tags": []
+    },
+    "remix-url-resolver": {
+      "tags": []
+    },
+    "remixd": {
       "tags": []
     }
   }
