@@ -313,7 +313,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     assertMethod,
                     returned: testEvent[3],
                     expected: testEvent[4],
-                    location,
+                    location
                   }
                   if (hhLogs) resp.hhLogs = hhLogs
                   testCallback(undefined, resp)
@@ -332,7 +332,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
               value: changeCase.sentenceCase(func.name),
               filename: testObject.filename,
               time: time,
-              context: testName,
+              context: testName
             }
             if (hhLogs) resp.hhLogs = hhLogs
             testCallback(undefined, resp)
