@@ -197,11 +197,11 @@ export const initListeningOnNetwork = (props, dispatch) => {
         compiledContracts = await props._deps.compilersArtefacts.__last.getContracts()
       }
       console.log({ compiledContracts })
-      await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
+      await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, async (error, logs) => {
         if (!error) {
           console.log({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
           console.log('knownTransaction dispatch')
-          dispatch({ type: 'knownTransaction', payload: { message: [{ tx: tx, receipt: receipt }] } })
+          await dispatch({ type: 'knownTransaction', payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
         }
       })
     } else {

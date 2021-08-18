@@ -714,9 +714,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const renderKnownTransactions = (tx, receipt, index) => {
+  const renderUnKnownTransactions = (tx, receipt, resolvedData, logs, index) => {
     const from = tx.from
-    const to = tx.to
+    const to = tx.to ? tx.to : resolvedData.contractName + '.' + resolvedData.fn
     const obj = { from, to }
     const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
     return (
@@ -740,9 +740,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           to,
           gas: tx.gas,
           input: tx.input,
-          'decoded input': tx.resolvedData && tx.resolvedData.params ? JSON.stringify(typeConversion.stringify(tx.resoparams), null, '\t') : ' - ',
-          'decoded output': tx.resolvedData && tx.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(tx.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-          logs: tx.logs,
+          'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
+          'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
+          logs: logs,
           val: tx.value,
           transactionCost: tx.transactionCost,
           executionCost: tx.executionCost
@@ -850,7 +850,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               } else if (x.name === 'unknownTransaction' || x.name === 'knownTransaction') {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
                   console.log({ trans }, 'first output from deploy')
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`}> {renderKnownTransactions(trans.tx, trans.receipt, index)} </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderUnKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
               } else {
                 console.log({ x }, 'second output from deploy')
