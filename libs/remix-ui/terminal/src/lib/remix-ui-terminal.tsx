@@ -614,7 +614,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
             <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
             <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div> */}
           </span>
         </div>)
     } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
