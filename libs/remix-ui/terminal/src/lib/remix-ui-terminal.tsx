@@ -579,7 +579,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       <table className={`txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`} id='txTable' data-id={`txLoggerTable${opts.hash}`}>
         <tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}> status </td>
-          <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.status}{msg}</td>
+          <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
         </tr>
         <tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}> transaction hash </td>
