@@ -5,15 +5,15 @@ import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
 
-const initialState: FormStateProps = {
-  name: 'test',
-  displayName: 'test',
-  url: '',
-  type: 'iframe',
-  hash: '',
-  methods: 'test',
-  location: 'sidePanel'
-}
+// const initialState: FormStateProps = {
+//   name: 'test',
+//   displayName: 'test',
+//   url: '',
+//   type: 'iframe',
+//   hash: '',
+//   methods: 'test',
+//   location: 'sidePanel'
+// }
 
 interface RootViewProps {
   pluginComponent: PluginManagerComponent
@@ -35,12 +35,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
    * Component Local State declaration
    */
   const [visible, setVisible] = useState<boolean>(true)
-  const [plugin, setPlugin] = useState<FormStateProps>(initialState)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
-
-  function pluginChangeHandler<P extends keyof FormStateProps> (formProps: P, value: FormStateProps[P]) {
-    setPlugin({ ...plugin, [formProps]: value })
-  }
 
   /**
    * Modal Visibility States
@@ -77,9 +72,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
       </div>
       <LocalPluginForm
         closeModal={closeModal}
-        changeHandler={pluginChangeHandler}
         visible={visible}
-        plugin={plugin}
         pluginManager={pluginComponent}
       />
     </Fragment>
