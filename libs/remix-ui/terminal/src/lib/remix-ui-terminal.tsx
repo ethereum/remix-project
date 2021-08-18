@@ -487,7 +487,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const input = data.input ? helper.shortenHexData(data.input) : ''
     const logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
     const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
-    const i = data ? data.transactionIndex : data.transactionIndex
+    const i = data.receipt ? data.transactionIndex : data.transactionIndex
     const value = val ? typeConversion.toInt(val) : 0
 
     if (blockchain.getProvider() === 'vm') {
@@ -495,12 +495,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         <div>
           <span className='txLog_7Xiho'>
             <span className='tx'>[{vm}]</span>
-            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            {/* <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
             <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
             <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div> */}
           </span>
         </div>)
     } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
