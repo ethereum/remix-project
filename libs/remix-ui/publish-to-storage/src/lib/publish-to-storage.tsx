@@ -5,7 +5,7 @@ import { publishToIPFS } from './publishToIPFS'
 import { publishToSwarm } from './publishOnSwarm'
 
 export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
-  const { storage, fileProvider, fileManager, contract, resetStorage } = props
+  const { api, storage, contract, resetStorage } = props
   const [state, setState] = useState({
     modal: {
       title: '',
@@ -25,11 +25,11 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
       } else {
         if (storage === 'swarm') {
           try {
-            const result = await publishToSwarm(contract, fileManager)
+            const result = await publishToSwarm(contract, api)
 
             modal(`Published ${contract.name}'s Metadata`, publishMessage(result.uploaded))
             // triggered each time there's a new verified publish (means hash correspond)
-            fileProvider.addExternal('swarm/' + result.item.hash, result.item.content)
+            api.addExternalFile('swarm/' + result.item.hash, result.item.content)
           } catch (err) {
             let parseError = err
             try {
@@ -39,11 +39,11 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
           }
         } else {
           try {
-            const result = await publishToIPFS(contract, fileManager)
+            const result = await publishToIPFS(contract, api)
 
             modal(`Published ${contract.name}'s Metadata`, publishMessage(result.uploaded))
             // triggered each time there's a new verified publish (means hash correspond)
-            fileProvider.addExternal('ipfs/' + result.item.hash, result.item.content)
+            api.addExternalFile('ipfs/' + result.item.hash, result.item.content)
           } catch (err) {
             modal('IPFS Publish Failed', publishMessageFailed(storage, err))
           }
