@@ -7,48 +7,70 @@ import { FormStateProps, PluginManagerComponent } from '../../types'
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 
 interface LocalPluginFormProps {
-  changeHandler: (propertyName: string, value: any) => void
-  plugin: FormStateProps
   closeModal: () => void
   visible: boolean
   pluginManager: PluginManagerComponent
 }
 
+const initialState: FormStateProps = {
+  name: '',
+  displayName: '',
+  url: '',
+  type: 'iframe',
+  hash: '',
+  methods: [],
+  location: 'sidePanel'
+}
+
 const defaultProfile = {
   methods: [],
   location: 'sidePanel',
-  type: 'iframe'
+  type: 'iframe',
+  name: '',
+  displayName: '',
+  url: '',
+  hash: ''
 }
 
-function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginManager }: LocalPluginFormProps) {
+function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFormProps) {
   const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
   const [defaultPlugin] = useState<FormStateProps>(JSON.parse(localStorage.getItem('plugins/local')) || defaultProfile)
+  const [name, setName] = useState<string>('')
+  const [displayName, setDisplayName] = useState<string>('')
+  const [url, setUrl] = useState<string>('')
+  const [type, setType] = useState<'iframe' | 'ws'>('iframe')
+  const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
+  const [methods, setMethods] = useState<string>('')
 
   const handleModalOkClick = async () => {
     try {
-      if (!plugin.name) throw new Error('Plugin should have a name')
-      if (pluginManager.appManager.getIds().includes(plugin.name)) {
+      if (!name) throw new Error('Plugin should have a name')
+      if (pluginManager.appManager.getIds().includes(name)) {
         throw new Error('This name has already been used')
       }
-      if (!plugin.location) throw new Error('Plugin should have a location')
-      if (!plugin.url) throw new Error('Plugin should have an URL')
-      plugin.methods = typeof plugin.methods === 'string' ? plugin.methods.split(',').filter(val => val) : []
-      const localPlugin = plugin.type === 'iframe' ? new IframePlugin(plugin) : new WebsocketPlugin(plugin)
-
-      localPlugin.profile.hash = `local-${plugin.name}`
+      if (!location) throw new Error('Plugin should have a location')
+      if (!url) throw new Error('Plugin should have an URL')
+      // eslint-disable-next-line no-debugger
+      debugger
+      const newMethods = typeof methods === 'string' ? methods.split(',').filter(val => val) : []
       const targetPlugin = {
-        name: localPlugin.profile.name,
-        displayName: localPlugin.profile.displayName,
-        description: (localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''),
-        documentation: localPlugin.profile.url,
-        events: (localPlugin.profile.events !== undefined ? localPlugin.profile.events : []),
-        hash: localPlugin.profile.hash,
-        kind: (localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''),
-        methods: localPlugin.profile.methods,
-        type: plugin.type,
-        location: plugin.location,
+        name: name,
+        displayName: displayName,
+        description: '',
+        documentation: url,
+        events: [],
+        hash: '',
+        kind: '',
+        methods: newMethods,
+        type: type,
+        location: location,
         icon: 'assets/img/localPlugin.webp'
       }
+      const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
+      localPlugin.profile.hash = `local-${name}`
+      targetPlugin.description = localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''
+      targetPlugin.events = localPlugin.profile.events !== undefined ? localPlugin.profile.events : []
+      targetPlugin.kind = localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
       localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
       pluginManager.activateAndRegisterLocalPlugin(localPlugin)
     } catch (error) {
@@ -74,8 +96,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <label htmlFor="plugin-name">Plugin Name <small>(required)</small></label>
           <input
             className="form-control"
-            onChange={e => changeHandler('name', e.target.value)}
-            value={ plugin.name || defaultPlugin.name }
+            onChange={e => setName(e.target.value)}
+            value={ name || defaultPlugin.name }
             id="plugin-name"
             data-id="localPluginName"
             placeholder="Should be camelCase" />
@@ -84,8 +106,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <label htmlFor="plugin-displayname">Display Name</label>
           <input
             className="form-control"
-            onChange={e => changeHandler('displayName', e.target.value)}
-            value={ plugin.displayName || defaultPlugin.displayName }
+            onChange={e => setDisplayName(e.target.value)}
+            value={ displayName || defaultPlugin.displayName }
             id="plugin-displayname"
             data-id="localPluginDisplayName"
             placeholder="Name in the header" />
@@ -94,8 +116,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <label htmlFor="plugin-methods">Api (comma separated list of methods name)</label>
           <input
             className="form-control"
-            onChange={e => changeHandler('methods', e.target.value)}
-            value={plugin.methods || defaultPlugin.methods}
+            onChange={e => setMethods(e.target.value)}
+            value={methods || defaultPlugin.methods}
             id="plugin-methods"
             data-id="localPluginMethods"
             placeholder="Name in the header" />
@@ -105,8 +127,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
           <label htmlFor="plugin-url">Url <small>(required)</small></label>
           <input
             className="form-control"
-            onChange={e => changeHandler('url', e.target.value)}
-            value={ plugin.url || defaultPlugin.url }
+            onChange={e => setUrl(e.target.value)}
+            value={ url || defaultPlugin.url }
             id="plugin-url"
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />
@@ -121,8 +143,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
               value="iframe"
               id="iframe"
               data-id='localPluginRadioButtoniframe'
-              checked={plugin.type === 'iframe'}
-              onChange={(e) => changeHandler('type', e.target.value)} />
+              checked={type === 'iframe'}
+              onChange={(e) => setType(e.target.value as 'iframe' | 'ws')} />
             <label className="form-check-label" htmlFor="iframe">Iframe</label>
           </div>
           <div className="radio">
@@ -133,8 +155,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
               value="ws"
               id="ws"
               data-id='localPluginRadioButtonws'
-              checked={plugin.type === 'ws'}
-              onChange={(e) => changeHandler('type', e.target.value)} />
+              checked={type === 'ws'}
+              onChange={(e) => setType(e.target.value as 'iframe' | 'ws')} />
             <label className="form-check-label" htmlFor="ws">Websocket</label>
           </div>
         </div>
@@ -148,8 +170,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
               value="sidePanel"
               id="sidePanel"
               data-id='localPluginRadioButtonsidePanel'
-              checked={plugin.location === 'sidePanel'}
-              onChange={(e) => changeHandler('location', e.target.value)} />
+              checked={location === 'sidePanel'}
+              onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
             <label className="form-check-label" htmlFor="sidePanel">Side Panel</label>
           </div>
           <div className="radio">
@@ -160,8 +182,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
               value="mainPanel"
               id="mainPanel"
               data-id='localPluginRadioButtonmainPanel'
-              checked={plugin.location === 'mainPanel'}
-              onChange={(e) => changeHandler('location', e.target.value)} />
+              checked={location === 'mainPanel'}
+              onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
             <label className="form-check-label" htmlFor="mainPanel">Main Panel</label>
           </div>
           <div className="radio">
@@ -172,8 +194,8 @@ function LocalPluginForm ({ changeHandler, plugin, closeModal, visible, pluginMa
               value="none"
               id="none"
               data-id='localPluginRadioButtonnone'
-              checked={plugin.location === 'none'}
-              onChange={(e) => changeHandler('location', e.target.value)} />
+              checked={location === 'none'}
+              onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
             <label className="form-check-label" htmlFor="none">None</label>
           </div>
         </div>
