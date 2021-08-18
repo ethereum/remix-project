@@ -32,12 +32,12 @@ const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
 
   if (!message) return
   let position = getPositionDetails(message)
-  //if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
+  if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
     // Updated error reported includes '-->' before file details
-    //const errorDetails = message.split('-->')
+    const errorDetails = message.split('-->')
     // errorDetails[1] will have file details
-    //if (errorDetails.length > 1) position = getPositionDetails(errorDetails[1])
- // }
+    if (errorDetails.length > 1) position = getPositionDetails(errorDetails[1])
+  }
   opt.errLine = position.errLine
   opt.errCol = position.errCol
   opt.errFile = position.errFile.trim()
