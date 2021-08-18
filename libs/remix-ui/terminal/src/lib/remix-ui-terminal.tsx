@@ -465,6 +465,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const checkTxStatus = (tx, type) => {
+    console.log('inside checkTxStatus')
     if (tx.status === '0x1' || tx.status === true) {
       return (<i className='txStatus succeeded fas fa-check-circle'></i>)
     }
@@ -489,18 +490,19 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
     const i = data.receipt ? data.transactionIndex : data.transactionIndex
     const value = val ? typeConversion.toInt(val) : 0
-
+    console.log('inside context method')
     if (blockchain.getProvider() === 'vm') {
       return (
         <div>
+          {console.log('inside context method return')}
           <span className='txLog_7Xiho'>
             <span className='tx'>[{vm}]</span>
-            {/* <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
             <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
             <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div> */}
+            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
           </span>
         </div>)
     } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
@@ -719,12 +721,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const to = tx.to ? tx.to : resolvedData.contractName + '.' + resolvedData.fn
     const obj = { from, to }
     const txType = resolvedData ? 'knownTx' : 'unknown' + (tx.isCall ? 'Call' : 'Tx')
+    console.log('render unknown transaction ')
     return (
       <span id={`tx${tx.hash}`} key={index}>
         <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
           {/* onClick={e => txDetails(e, tx, data, obj)} */}
           {checkTxStatus(receipt || tx, txType)}
           {context({ from, to, tx }, props.blockchain)}
+          { console.log('under context and checkTxStatus')}
           <div className='buttons'>
             <div className='debug btn btn-primary btn-sm' onClick={(event) => debug(event, tx)}>Debug</div>
           </div>
@@ -747,6 +751,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           transactionCost: tx.transactionCost,
           executionCost: tx.executionCost
         }) : null}
+        { console.log('end')}
       </span>
     )
   }
