@@ -3,7 +3,6 @@ import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import { BN } from 'ethereumjs-util'
 
 export const GlobalVariables = ({ block, receipt, tx }) => {
-  console.log(block, receipt, tx)
   // see https://docs.soliditylang.org/en/latest/units-and-global-variables.html#block-and-transaction-properties
   const globals = {
     'block.basefee': (new BN(block.baseFeePerGas.replace('0x', ''), 'hex')).toString(10) + ` Wei (${block.baseFeePerGas})`,
