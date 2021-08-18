@@ -262,6 +262,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.config.set(name, value)
   }
 
+
   getCompilerParameters () {
     const params = this.queryParams.get()
     params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
@@ -272,7 +273,6 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   setCompilerParameters (params) {
     this.queryParams.update(params)
   }
-
   getAppParameter (name) {
     // first look in the URL params then in the local storage
     const params = this.queryParams.get()
