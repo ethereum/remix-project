@@ -3,8 +3,6 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import { CompilerApiMixin } from './compiler-api'
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
-import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 
 const profile = {
   name: 'solidity',
@@ -95,19 +93,27 @@ const getOptimize = () => {
   value = value === 'true'
 }
 
-const defaultAppParameters = {
-  hideWarnings: false,
-  autoCompile: false,
-  includeNightlies: false
-}
+export class CompilerClientApi extends CompilerApiMixin(PluginClient) {
+  contractMap: {
+    file: string
+  } | Record<string, any>
+  compileErrors: any
+  compileTabLogic: any
+  contractsDetails: Record<string, any>
+  contentImport: any
+  call: (...args) => void
+  on: (...args) => void
+  setSelectedVersion: (value: string) => void
+  configurationSettings: ConfigurationSettings
+  getConfiguration: (value: string) => string
+  setConfiguration: (name: string, value: string) => void
+  currentFile: string
 
-const defaultCompilerParameters = {
-  runs: '200',
-  optimize: false,
-  version: 'soljson-v0.8.7+commit.e28d00a7',
-  evmVersion: null, // compiler default
-  language: 'Solidity'
-}
+  onCurrentFileChanged: (fileName: string) => void
+  onResetResults: () => void
+  onSetWorkspace: (workspace: any) => void
+  onNoFileSelected: () => void
+  onCompilationFinished: (contractsDetails: any, contractMap: any) => void
 
 constructor () {
   super()
