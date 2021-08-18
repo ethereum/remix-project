@@ -876,6 +876,7 @@
         }
       }
     },
+<<<<<<< HEAD
     "remix-ui-vertical-icons": {
           "root": "libs/remix-ui/vertical-icons",
           "sourceRoot": "libs/remix-ui/vertical-icons/src",
@@ -901,6 +902,16 @@
       "projectType": "application",
       "schematics": {},
       "architect": {
+<<<<<<< HEAD
+=======
+=======
+    "solidity-compiler": {
+      "root": "apps/solidity-compiler",
+      "sourceRoot": "apps/solidity-compiler/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+>>>>>>> 2775c3469 (create solidity web app)
         "build": {
           "builder": "@nrwl/web:build",
           "options": {
@@ -955,12 +966,29 @@
             }
           }
         },
+<<<<<<< HEAD
+=======
+>>>>>>> aeaebb6a4 (create solidity web app)
+>>>>>>> 2775c3469 (create solidity web app)
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
+<<<<<<< HEAD
             "tsConfig": ["apps/solidity-compiler/tsconfig.app.json"],
             "exclude": ["**/node_modules/**", "!apps/solidity-compiler/**/*"]
+=======
+<<<<<<< HEAD
+            "tsConfig": ["libs/remix-ui/vertical-icons/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/vertical-icons/**/*"
+            ]
+=======
+            "tsConfig": ["apps/solidity-compiler/tsconfig.app.json"],
+            "exclude": ["**/node_modules/**", "!apps/solidity-compiler/**/*"]
+>>>>>>> aeaebb6a4 (create solidity web app)
+>>>>>>> 2775c3469 (create solidity web app)
           }
         }
       }
