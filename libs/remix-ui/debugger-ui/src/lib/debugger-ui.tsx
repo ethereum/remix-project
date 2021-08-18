@@ -218,9 +218,32 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
 
+<<<<<<< HEAD
     try {
       await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
         listenToEvents(debuggerInstance, currentReceipt)
+=======
+    debuggerInstance.debug(blockNumber, txNumber, tx, () => {
+      listenToEvents(debuggerInstance, currentReceipt)
+      setState(prevState => {
+        return {
+          ...prevState,
+          blockNumber,
+          txNumber,
+          debugging: true,
+          currentReceipt,
+          currentBlock,
+          currentTransaction,
+          debugger: debuggerInstance,
+          toastMessage: `debugging ${txNumber}`,
+          validationError: ''
+        }
+      })
+    }).catch((error) => {
+      if (JSON.stringify(error) !== '{}') {
+        let message = 'Error: ' + JSON.stringify(error)
+        message = message.split('\\"').join('\'')
+>>>>>>> fb08ffc6f... display global variables while debugging
         setState(prevState => {
           return {
             ...prevState,
@@ -303,6 +326,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         { state.debugging && <StepManager stepManager={ stepManager } /> }
         { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>
+<<<<<<< HEAD
+=======
+      { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
+>>>>>>> fb08ffc6f... display global variables while debugging
       { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
     </div>
   )
