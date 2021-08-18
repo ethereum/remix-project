@@ -1,8 +1,12 @@
 /* global */
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
+<<<<<<< HEAD
 import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
+=======
+import { SolidityCompiler, CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
+>>>>>>> 2775c3469 (create solidity web app)
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
 import QueryParams from '../../lib/query-params'
@@ -33,6 +37,7 @@ const profile = {
 // - events: ['compilationFinished'],
 // - methods: ['getCompilationResult']
 
+<<<<<<< HEAD
 class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerApi
   constructor (config, fileManager) {
     super(profile)
@@ -56,6 +61,21 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   onResetResults () {
+=======
+class CompileTab extends CompilerApiMixin(ViewPlugin) {
+  constructor () {
+    super(profile)
+    this.initCompilerApi()
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <SolidityCompiler plugin={this}/>
+      , this.el)
+  }
+
+  onCurrentFileChanged () {
+>>>>>>> 2775c3469 (create solidity web app)
     this.renderComponent()
   }
 
@@ -172,14 +192,24 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     })
   }
 
+<<<<<<< HEAD
   onNoFileSelected () {
     this.renderComponent()
+=======
+  onResetResults () {
+    this.renderComponent()
+  }
+
+  setHardHatCompilation (value) {
+    this.hhCompilation = value
+>>>>>>> 2775c3469 (create solidity web app)
   }
 
   onCompilationFinished () {
     this.renderComponent()
   }
 
+<<<<<<< HEAD
   render () {
     if (this.el) return this.el
     this.el = yo`
@@ -201,6 +231,29 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
 
   getFileManagerMode () {
     return this.fileManager.mode
+=======
+  onSetWorkspace () {
+    this.renderComponent()
+  }
+
+  onNoFileSelected () {
+    this.renderComponent()
+  }
+
+  onCompilationFinished () {
+    this.renderComponent()
+  }
+
+  render () {
+    if (this.el) return this.el
+    this.el = yo`
+      <div class="${css.debuggerTabView}" id="compileTabView">
+        <div id="compiler" class="${css.compiler}"></div>
+      </div>`
+    this.renderComponent()
+
+    return this.el
+>>>>>>> 2775c3469 (create solidity web app)
   }
 
   /**
@@ -208,7 +261,11 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
    * This function is used by remix-plugin compiler API.
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
+<<<<<<< HEAD
   setCompilerConfig (settings) {
+=======
+   setCompilerConfig (settings) {
+>>>>>>> 2775c3469 (create solidity web app)
     super.setCompilerConfig(settings)
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
@@ -218,6 +275,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   compile (fileName) {
     addTooltip(yo`<div><b>${this.currentRequest.from}</b> is requiring to compile <b>${fileName}</b></div>`)
     super.compile(fileName)
+<<<<<<< HEAD
   }
 
   compileFile (event) {
@@ -225,6 +283,11 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   async onActivation () {
+=======
+  }
+
+  onActivation () {
+>>>>>>> 2775c3469 (create solidity web app)
     super.onActivation()
     this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidity',
@@ -237,6 +300,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     })
     this.currentFile = await this.call('fileManager', 'file')
   }
+<<<<<<< HEAD
 
   getCompilerParameters () {
     const params = this.queryParams.get()
@@ -261,6 +325,8 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   setAppParameter (name, value) {
     this.config.set(name, value)
   }
+=======
+>>>>>>> 2775c3469 (create solidity web app)
 }
 
 module.exports = CompileTab
