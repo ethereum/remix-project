@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { api, api: { currentFile, compileTabLogic, contractsDetails, contractMap, compileErrors, configurationSettings } } = props
+  const { plugin, plugin: { currentFile, compileTabLogic, contractsDetails, contractMap, compileErrors, configurationSettings } } = props
   const [state, setState] = useState({
     isHardhatProject: false,
     currentFile,
@@ -32,32 +32,32 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   })
   const [currentVersion, setCurrentVersion] = useState('')
 
-  api.onCurrentFileChanged = (currentFile: string) => {
+  plugin.onCurrentFileChanged = (currentFile: string) => {
     setState(prevState => {
       return { ...prevState, currentFile }
     })
   }
 
-  api.onResetResults = () => {
+  plugin.onResetResults = () => {
     setState(prevState => {
       return { ...prevState, currentFile: '', contractsDetails: {}, contractMap: {} }
     })
   }
 
-  api.onSetWorkspace = async (isLocalhost: boolean) => {
-    const isHardhat = isLocalhost && await compileTabLogic.isHardhatProject()
+  plugin.onSetWorkspace = async (workspace: any) => {
+    const isHardhat = workspace.isLocalhost && await compileTabLogic.isHardhatProject()
     setState(prevState => {
       return { ...prevState, currentFile, isHardhatProject: isHardhat }
     })
   }
 
-  api.onNoFileSelected = () => {
+  plugin.onNoFileSelected = () => {
     setState(prevState => {
       return { ...prevState, currentFile: '' }
     })
   }
 
-  api.onCompilationFinished = (contractsDetails: any, contractMap: any) => {
+  plugin.onCompilationFinished = (contractsDetails: any, contractMap: any) => {
     setState(prevState => {
       return { ...prevState, contractsDetails, contractMap }
     })
@@ -111,8 +111,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   return (
     <>
       <div id="compileTabView">
-        <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
-        <ContractSelection api={api} contractMap={contractMap} contractsDetails={contractsDetails} modal={modal} />
+        <CompilerContainer api={plugin} isHardhatProject={state.isHardhatProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
+        <ContractSelection api={plugin} contractMap={contractMap} contractsDetails={contractsDetails} modal={modal} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
           <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
           { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={api} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} /> }

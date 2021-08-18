@@ -90,24 +90,18 @@ export class CompileTab extends Plugin {
    * Compile a specific file of the file manager
    * @param {string} target the path to the file to compile
    */
-  compileFile(target) {
-    if (!target) throw new Error('No target provided for compiliation');
+  compileFile (target) {
+    if (!target) throw new Error('No target provided for compiliation')
     return new Promise((resolve, reject) => {
-      this.api
-        .readFile(target)
-        .then(content => {
-          const sources = { [target]: { content } };
-          this.event.emit('startingCompilation');
-          // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-          setTimeout(() => {
-            this.compiler.compile(sources, target);
-            resolve(true);
-          }, 100);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+      this.api.readFile(target).then((content) => {
+        const sources = { [target]: { content } }
+        this.event.emit('startingCompilation')
+        // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
+        setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
   }
 
   async isHardhatProject() {
@@ -147,10 +141,10 @@ export class CompileTab extends Plugin {
         }
       }
       // TODO readd saving current file
-      this.api.saveCurrentFile();
-      this.event.emit('removeAnnotations');
-      var currentFile = this.api.currentFile;
-      return this.compileFile(currentFile);
+      // this.api.saveCurrentFile()
+      this.event.emit('removeAnnotations')
+      var currentFile = this.api.getConfiguration('currentFile')
+      return this.compileFile(currentFile)
     } catch (err) {
       console.error(err);
     }
