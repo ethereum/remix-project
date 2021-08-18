@@ -22,7 +22,6 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    // this.event = new EventEmitter() // already exists in engine so not needed here
     this.appManager = appManager
     this.engine = engine
     this.pluginManagerSettings = new PluginManagerSettings()
