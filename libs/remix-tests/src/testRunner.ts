@@ -282,65 +282,65 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       }
       if (!sendParams) sendParams = {}
       sendParams.gas = 10000000 * 8
-      method.send(sendParams).on('receipt', (receipt) => {
+      method.send(sendParams).on('receipt', async (receipt) => {
         try {
-          web3.eth.getHHLogsForTx(receipt.transactionHash).then((hhLogs) => {
-            const time: number = (Date.now() - startTime) / 1000.0
-            const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
-            let testPassed = false
-            for (const i in receipt.events) {
-              let events = receipt.events[i]
-              if (!Array.isArray(events)) events = [events]
-              for (const event of events) {
-                const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
-                if (eIndex >= 0) {
-                  const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
-                  if (!testEvent[0]) {
-                    const assertMethod = testEvent[2]
-                    if (assertMethod === 'ok') { // for 'Assert.ok' method
-                      testEvent[3] = 'false'
-                      testEvent[4] = 'true'
-                    }
-                    const location = getAssertMethodLocation(fileAST, testName, func.name, assertMethod)
-                    const resp: TestResultInterface = {
-                      type: 'testFailure',
-                      value: changeCase.sentenceCase(func.name),
-                      filename: testObject.filename,
-                      time: time,
-                      errMsg: testEvent[1],
-                      context: testName,
-                      assertMethod,
-                      returned: testEvent[3],
-                      expected: testEvent[4],
-                      location,
-                      hhLogs
-                    }
-                    testCallback(undefined, resp)
-                    failureNum += 1
-                    timePassed += time
-                    return next()
+          let hhLogs
+          if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(receipt.transactionHash)
+          const time: number = (Date.now() - startTime) / 1000.0
+          const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
+          let testPassed = false
+          for (const i in receipt.events) {
+            let events = receipt.events[i]
+            if (!Array.isArray(events)) events = [events]
+            for (const event of events) {
+              const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
+              if (eIndex >= 0) {
+                const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
+                if (!testEvent[0]) {
+                  const assertMethod = testEvent[2]
+                  if (assertMethod === 'ok') { // for 'Assert.ok' method
+                    testEvent[3] = 'false'
+                    testEvent[4] = 'true'
                   }
-                  testPassed = true
+                  const location = getAssertMethodLocation(fileAST, testName, func.name, assertMethod)
+                  const resp: TestResultInterface = {
+                    type: 'testFailure',
+                    value: changeCase.sentenceCase(func.name),
+                    filename: testObject.filename,
+                    time: time,
+                    errMsg: testEvent[1],
+                    context: testName,
+                    assertMethod,
+                    returned: testEvent[3],
+                    expected: testEvent[4],
+                    location,
+                  }
+                  if (hhLogs) resp.hhLogs = hhLogs
+                  testCallback(undefined, resp)
+                  failureNum += 1
+                  timePassed += time
+                  return next()
                 }
+                testPassed = true
               }
             }
+          }
 
-            if (testPassed) {
-              const resp: TestResultInterface = {
-                type: 'testPass',
-                value: changeCase.sentenceCase(func.name),
-                filename: testObject.filename,
-                time: time,
-                context: testName,
-                hhLogs
-              }
-              testCallback(undefined, resp)
-              passingNum += 1
-              timePassed += time
+          if (testPassed) {
+            const resp: TestResultInterface = {
+              type: 'testPass',
+              value: changeCase.sentenceCase(func.name),
+              filename: testObject.filename,
+              time: time,
+              context: testName,
             }
+            if (hhLogs) resp.hhLogs = hhLogs
+            testCallback(undefined, resp)
+            passingNum += 1
+            timePassed += time
+          }
 
-            return next()
-          })
+          return next()
         } catch (err) {
           console.error(err)
           return next(err)
