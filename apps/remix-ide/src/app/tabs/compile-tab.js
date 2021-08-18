@@ -14,6 +14,8 @@ const addTooltip = require('../ui/tooltip')
 
 const css = require('./styles/compile-tab-styles')
 
+const css = require('./styles/compile-tab-styles')
+
 const profile = {
   name: 'solidity',
   displayName: 'Solidity compiler',
@@ -248,46 +250,9 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   getAppParameter (name) {
-<<<<<<< HEAD
-<<<<<<< HEAD
     // first look in the URL params then in the local storage
     const params = this.queryParams.get()
     const param = params[name] ? params[name] : this.config.get(name)
-    if (param === 'true') return true
-    if (param === 'false') return false
-    return param
-  }
-
-  setAppParameter (name, value) {
-    this.config.set(name, value)
-  }
-
-
-  getCompilerParameters () {
-    const params = this.queryParams.get()
-    params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
-    params.optimize = params.optimize === 'true' ? true : params.optimize
-    return params
-  }
-
-  setCompilerParameters (params) {
-    this.queryParams.update(params)
-  }
-  getAppParameter (name) {
-    // first look in the URL params then in the local storage
-    const params = this.queryParams.get()
-    const param = params[name] ? params[name] : this.config.get(name)
-=======
-    let param
-    // first look in the URL params then in the local storage
-    const params = this.queryParams.get()
-    param = params[name] ? params[name] : this.config.get(name)
->>>>>>> 02a8d636b (make sure we look for the param in the URL params first)
-=======
-    // first look in the URL params then in the local storage
-    const params = this.queryParams.get()
-    const param = params[name] ? params[name] : this.config.get(name)
->>>>>>> a256d9ab2 (linting)
     if (param === 'true') return true
     if (param === 'false') return false
     return param
