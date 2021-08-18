@@ -69,11 +69,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
         const runs = params.runs
         const evmVersion = params.evmVersion
+        const autoCompile = params.autoCompile === 'false' ? false : params.autoCompile === 'true' ? true : null
 
         return {
           ...prevState,
           hideWarnings: config.get('hideWarnings') || false,
-          autoCompile: config.get('autoCompile') || false,
+          autoCompile: (autoCompile !== null) && (autoCompile !== undefined) ? autoCompile : config.get('autoCompile') || false,
           includeNightlies: config.get('includeNightlies') || false,
           optimise: (optimize !== null) && (optimize !== undefined) ? optimize : config.get('optimise') || false,
           runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
