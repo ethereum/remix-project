@@ -1228,14 +1228,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </td>
           </tr>
         )}
-        {opts['decoded input'] && (
+        {console.log(opts['decoded input'], 'opts["decoded input"]')}
+        {console.log(opts.log, 'opts log')}
+        {/* {opts['decoded input'] && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> decode input </td>
             <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input']}
               <CopyToClipboard content={opts['decoded input']}/>
             </td>
           </tr>
-        )}
+        )} */}
         {opts['decoded output'] && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> decode output </td>
@@ -1244,7 +1246,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </td>
           </tr>
         )}
-        {opts.logs && (
+        {/* {opts.logs && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> logs </td>
             <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
@@ -1253,7 +1255,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')}/>
             </td>
           </tr>
-        )}
+        )} */}
         {opts.val && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> val </td>
