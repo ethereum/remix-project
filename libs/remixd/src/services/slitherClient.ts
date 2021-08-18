@@ -149,13 +149,9 @@ export class SlitherClient extends PluginClient {
         if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
           report = JSON.parse(report)
-          try {
-            unlink(outputFileAbsPath, (err) => {
-              console.log(err)
-            })
-          } catch (e) {
-            console.log(e)
-          }
+          unlink(outputFileAbsPath, (err) => {
+            if (err) console.log(err)
+          })
           if (report['success']) {
             response['status'] = true
             if (!report['results'] || !report['results'].detectors || !report['results'].detectors.length) {
