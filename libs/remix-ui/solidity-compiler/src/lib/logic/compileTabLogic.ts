@@ -87,15 +87,14 @@ export class CompileTab extends Plugin {
    */
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
-    const provider = this.api.fileProviderOf(target)
-    if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
     return new Promise((resolve, reject) => {
-      provider.get(target, (error, content) => {
-        if (error) return reject(error)
+      this.api.readFile(target).then((content) => {
         const sources = { [target]: { content } }
         this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
+      }).catch((error) => {
+        reject(error)
       })
     })
   }
@@ -131,7 +130,8 @@ export class CompileTab extends Plugin {
           })
         }
       }
-      this.api.saveCurrentFile()
+      // TODO readd saving current file
+      // this.api.saveCurrentFile()
       this.event.emit('removeAnnotations')
       var currentFile = this.api.getConfiguration('currentFile')
       return this.compileFile(currentFile)
