@@ -193,6 +193,7 @@ export class Transactions {
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
+        chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
@@ -239,6 +240,7 @@ export class Transactions {
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
+        chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
@@ -282,6 +284,7 @@ export class Transactions {
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
+        chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,

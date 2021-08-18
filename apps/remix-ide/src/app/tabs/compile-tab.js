@@ -52,15 +52,7 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
-    this.compileTabLogic = new CompileTabLogic(
-      this.queryParams,
-      this.fileManager,
-      this.editor,
-      this.config,
-      this.fileProvider,
-      this.contentImport,
-      this.setCompileErrors.bind(this)
-    )
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
     this.contractMap = {}
@@ -203,6 +195,10 @@ class CompileTab extends ViewPlugin {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
+  addExternalFile (fileName, content) {
+    this.fileProvider.addExternal(fileName, content)
+  }
+
   /**
    * compile using @arg fileName.
    * The module UI will be updated accordingly to the new compilation result.
@@ -276,6 +272,50 @@ class CompileTab extends ViewPlugin {
     ReactDOM.render(
       <SolidityCompiler plugin={this}/>
       , this.el)
+  }
+
+  getParameters () {
+    return this.queryParams.get()
+  }
+
+  setParameters (params) {
+    this.queryParams.update(params)
+  }
+
+  getConfiguration (name) {
+    return this.config.get(name)
+  }
+
+  setConfiguration (name, value) {
+    this.config.set(name, value)
+  }
+
+  fileProviderOf (fileName) {
+    return this.fileManager.fileProviderOf(fileName)
+  }
+
+  getFileManagerMode () {
+    return this.fileManager.mode
+  }
+
+  fileExists (fileName) {
+    return this.call('fileManager', 'exists', fileName)
+  }
+
+  writeFile (fileName, content) {
+    return this.call('fileManager', 'writeFile', fileName, content)
+  }
+
+  readFile (fileName) {
+    return this.call('fileManager', 'readFile', fileName)
+  }
+
+  saveCurrentFile () {
+    return this.fileManager.saveCurrentFile()
+  }
+
+  open (fileName) {
+    return this.call('fileManager', 'open', fileName)
   }
 
   onActivation () {

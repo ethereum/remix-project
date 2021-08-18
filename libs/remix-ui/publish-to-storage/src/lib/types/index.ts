@@ -1,7 +1,6 @@
 export interface RemixUiPublishToStorageProps {
+  api: any,
   storage: string,
-  fileProvider: any,
-  fileManager: any,
   contract: any,
   resetStorage: () => void
 }

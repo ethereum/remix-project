@@ -2,7 +2,7 @@ import swarm from 'swarmgw'
 
 const swarmgw = swarm()
 
-export const publishToSwarm = async (contract, fileManager) => {
+export const publishToSwarm = async (contract, api) => {
   // gather list of files to publish
   const sources = []
   let metadata
@@ -38,16 +38,14 @@ export const publishToSwarm = async (contract, fileManager) => {
       throw new Error('Error while extracting the hash from metadata.json')
     }
 
-    fileManager.fileProviderOf(fileName).get(fileName, (error, content) => {
-      if (error) {
-        console.log(error)
-      } else {
-        sources.push({
-          content: content,
-          hash: hash,
-          filename: fileName
-        })
-      }
+    api.readFile(fileName).then((content) => {
+      sources.push({
+        content: content,
+        hash: hash,
+        filename: fileName
+      })
+    }).catch((error) => {
+      console.log(error)
     })
   }))
   // publish the list of sources in order, fail if any failed

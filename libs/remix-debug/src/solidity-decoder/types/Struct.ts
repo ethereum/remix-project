@@ -22,7 +22,7 @@ export class Struct extends RefType {
         ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageResolver)
       } catch (e) {
         console.log(e)
-        ret[item.name] = '<decoding failed - ' + e.message + '>'
+        ret[item.name] = { error: '<decoding failed - ' + e.message + '>' }
       }
     }
     return { value: ret, type: this.typeName }

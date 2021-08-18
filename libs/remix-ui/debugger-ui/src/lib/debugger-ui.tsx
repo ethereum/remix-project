@@ -20,6 +20,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       contractAddress: null,
       to: null
     },
+    currentBlock: null,
+    currentTransaction: null,
     blockNumber: null,
     txNumber: '',
     debugging: false,
@@ -137,6 +139,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           contractAddress: null,
           to: null
         },
+        currentBlock: null,
+        currentTransaction: null,
         blockNumber: null,
         ready: {
           vmDebugger: false,
@@ -182,8 +186,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       console.error(e)
     }
     let currentReceipt
+    let currentBlock
+    let currentTransaction
     try {
       currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+      currentBlock = await web3.eth.getBlock(currentReceipt.blockHash)
+      currentTransaction = await web3.eth.getTransaction(txNumber)
     } catch (e) {
       setState(prevState => {
         return {
@@ -220,6 +228,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             txNumber,
             debugging: true,
             currentReceipt,
+            currentBlock,
+            currentTransaction,
             debugger: debuggerInstance,
             toastMessage: `debugging ${txNumber}`,
             validationError: ''
@@ -293,7 +303,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         { state.debugging && <StepManager stepManager={ stepManager } /> }
         { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>
-      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
+      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
     </div>
   )
 }
