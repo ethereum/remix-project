@@ -499,7 +499,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
             <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
+            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs.toString()}</div>
             <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
           </span>
         </div>)
@@ -512,7 +512,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
             <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
             <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
+            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs.toString()}</div>
             <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
           </span>
         </div>)
@@ -718,7 +718,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const from = tx.from
     const to = tx.to ? tx.to : resolvedData.contractName + '.' + resolvedData.fn
     const obj = { from, to }
-    const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
+    const txType = resolvedData ? 'knownTx' : 'unknown' + (tx.isCall ? 'Call' : 'Tx')
     return (
       <span id={`tx${tx.hash}`} key={index}>
         <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
