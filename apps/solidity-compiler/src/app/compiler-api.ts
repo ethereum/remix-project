@@ -35,16 +35,27 @@ export const CompilerApiMixin = (Base) => class extends Base {
       eventHandlers: {},
       loading: false
     }
+<<<<<<< HEAD
+=======
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
+>>>>>>> aeaebb6a4 (create solidity web app)
 
     this.contractMap = {}
     this.contractsDetails = {}
 
     this.compileErrors = {}
     this.compiledFileName = ''
+<<<<<<< HEAD
+=======
+    this.selectedVersion = ''
+>>>>>>> aeaebb6a4 (create solidity web app)
     this.currentFile = ''
   }
 
   onActivation () {
+<<<<<<< HEAD
     this.listenToEvents()
   }
 
@@ -100,12 +111,35 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('terminal', 'log', content)
   }
   
+=======
+    this.call('manager', 'activatePlugin', 'solidity-logic')
+    this.listenToEvents()    
+  }
+
+  onDeactivation () {
+    this.call('manager', 'deactivatePlugin', 'solidity-logic')
+  }
+
+  setHardHatCompilation (value) {
+    this.hhCompilation = value
+  }
+
+  setSelectedVersion (version) {
+    this.selectedVersion = version
+  }
+
+>>>>>>> aeaebb6a4 (create solidity web app)
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
+<<<<<<< HEAD
   getCompilerState () {
     return this.compileTabLogic.getCompilerState()
+=======
+  addExternalFile (fileName, content) {
+    this.fileProvider.addExternal(fileName, content)
+>>>>>>> aeaebb6a4 (create solidity web app)
   }
 
   /**
@@ -115,13 +149,19 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {string} fileName to compile
    */
   compile (fileName) {
+<<<<<<< HEAD
     this.currentFile = fileName
+=======
+>>>>>>> aeaebb6a4 (create solidity web app)
     return this.compileTabLogic.compileFile(fileName)
   }
 
   compileFile (event) {
     if (event.path.length > 0) {
+<<<<<<< HEAD
       this.currentFile = event.path[0]
+=======
+>>>>>>> aeaebb6a4 (create solidity web app)
       this.compileTabLogic.compileFile(event.path[0])
     }
   }
@@ -134,14 +174,19 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
+<<<<<<< HEAD
     const compilerState = this.getCompilerState()
     settings.version = settings.version || compilerState.currentVersion
+=======
+    settings.version = settings.version || this.selectedVersion
+>>>>>>> aeaebb6a4 (create solidity web app)
     const res = await compile(compilationTargets, settings, (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     return res
   }
 
   // This function is used for passing the compiler configuration to 'remix-tests'
   getCurrentCompilerConfig () {
+<<<<<<< HEAD
     const compilerState = this.getCompilerState()
     return {
       currentVersion: compilerState.currentVersion,
@@ -151,6 +196,17 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
   }
 
+=======
+    return {
+      currentVersion: this.selectedVersion,
+      evmVersion: this.compileTabLogic.evmVersion,
+      optimize: this.compileTabLogic.optimize,
+      runs: this.compileTabLogic.runs
+    }
+  }
+
+
+>>>>>>> aeaebb6a4 (create solidity web app)
   /**
    * set the compiler configuration
    * This function is used by remix-plugin compiler API.
@@ -158,7 +214,34 @@ export const CompilerApiMixin = (Base) => class extends Base {
    */
   setCompilerConfig (settings) {
     this.configurationSettings = settings    
+<<<<<<< HEAD
   }  
+=======
+  }
+
+  getParameters () {
+    return {}
+  }
+
+  setParameters (params) {}
+
+  getConfiguration (name) {
+    const conf = {
+      'currentFile': () => this.currentFile,
+      'hideWarnings': () => false,
+      'autoCompile': () => false,
+      'includeNightlies': () => false,
+      'optimise': () => false
+    }
+    return conf[name]()
+  }
+
+  setConfiguration (name, value) {}
+
+  getFileManagerMode () {
+    return 'browser'
+  }
+>>>>>>> aeaebb6a4 (create solidity web app)
 
   fileExists (fileName) {
     return this.call('fileManager', 'exists', fileName)
@@ -176,14 +259,18 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('fileManager', 'open', fileName)
   }
 
+<<<<<<< HEAD
   saveCurrentFile () {
     return this.call('fileManager', 'saveCurrentFile')
   }
 
+=======
+>>>>>>> aeaebb6a4 (create solidity web app)
   resetResults () {
     this.currentFile = ''
     this.contractsDetails = {}
     this.emit('statusChanged', { key: 'none' })
+<<<<<<< HEAD
     if (this.onResetResults) this.onResetResults()
   }
 
@@ -193,6 +280,17 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onContentChanged) this.onContentChanged()
     })
 
+=======
+    if (this.onResetResults()) this.onResetResults()
+  }
+
+  listenToEvents () {
+    this.data.eventHandlers.onContentChanged = () => {
+      this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
+    }
+    this.on('editor', 'contentChanged', this.data.eventHandlers.onContentChanged)
+    
+>>>>>>> aeaebb6a4 (create solidity web app)
     this.data.eventHandlers.onLoadingCompiler = () => {
       this.data.loading = true
       this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
@@ -215,6 +313,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.resetResults()
+<<<<<<< HEAD
       if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost)
     })
 
@@ -227,6 +326,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onSessionSwitched) this.onSessionSwitched()
     })    
 
+=======
+      if (this.onSetWorkspace) this.onSetWorkspace(workspace)
+    })
+
+>>>>>>> aeaebb6a4 (create solidity web app)
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
     this.compileTabLogic.event.on('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
 
@@ -264,8 +368,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
           )
         })
       } else {
+<<<<<<< HEAD
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
         this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
+=======
+        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
+        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error' })
+>>>>>>> aeaebb6a4 (create solidity web app)
       }
       // Update contract Selection
       this.contractMap = {}
@@ -282,6 +391,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       }
     }
     this.on('themeModule', 'themeChanged', this.data.eventHandlers.onThemeChanged)
+<<<<<<< HEAD
 
     // Run the compiler instead of trying to save the website
     this.data.eventHandlers.onKeyDown = (e) => {
@@ -292,5 +402,16 @@ export const CompilerApiMixin = (Base) => class extends Base {
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
+=======
+    
+    // Run the compiler instead of trying to save the website
+    window.document.addEventListener('keydown', (e) => {
+      // ctrl+s or command+s
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+        e.preventDefault()
+        this.compileTabLogic.runCompiler(this.hhCompilation)
+      }
+    })
+>>>>>>> aeaebb6a4 (create solidity web app)
   }
 }
