@@ -50,8 +50,6 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
       }
       if (!location) throw new Error('Plugin should have a location')
       if (!url) throw new Error('Plugin should have an URL')
-      // eslint-disable-next-line no-debugger
-      debugger
       const newMethods = typeof methods === 'string' ? methods.split(',').filter(val => val) : []
       const targetPlugin = {
         name: name,

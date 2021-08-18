@@ -5,16 +5,6 @@ import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
 
-// const initialState: FormStateProps = {
-//   name: 'test',
-//   displayName: 'test',
-//   url: '',
-//   type: 'iframe',
-//   hash: '',
-//   methods: 'test',
-//   location: 'sidePanel'
-// }
-
 interface RootViewProps {
   pluginComponent: PluginManagerComponent
   children: ReactNode
