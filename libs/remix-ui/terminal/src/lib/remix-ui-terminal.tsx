@@ -1281,9 +1281,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const renderKnownTransactions = (tx, receipt, index) => {
+  const renderUnKnownTransactions = (tx, receipt, resolvedData, logs, index) => {
     const from = tx.from
-    const to = tx.to
+    const to = tx.to ? tx.to : resolvedData.contractName + '.' + resolvedData.fn
     const obj = { from, to }
     const showDetails = showTableDetails === tx.from
     const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
@@ -1308,9 +1308,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           to,
           gas: tx.gas,
           input: tx.input,
-          'decoded input': tx.resolvedData && tx.resolvedData.params ? JSON.stringify(typeConversion.stringify(tx.resoparams), null, '\t') : ' - ',
-          'decoded output': tx.resolvedData && tx.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(tx.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-          logs: tx.logs,
+          'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
+          'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
+          logs: logs,
           val: tx.value,
           transactionCost: tx.transactionCost,
           executionCost: tx.executionCost
