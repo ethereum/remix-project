@@ -91,10 +91,12 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
         handleHide={closeModal}
         hide={modalVisibility}
         title="Plugin Manager Permissions"
+        okLabel="OK"
+        cancelLabel="Cancel"
       >
         {verifyPermission ? (<h4 className="text-center">Current Permission Settings</h4>) : (<h4 className="text-center">No Permission requested yet.</h4>)}
         <form className="remixui_permissionForm" data-id="pluginManagerSettingsPermissionForm">
-          <div className="border p-2">
+          <div className="p-2">
             {
               Object.keys(permissions).map(toplevelName => (
                 <ShowPluginHeading key={toplevelName} headingName={toplevelName} />
