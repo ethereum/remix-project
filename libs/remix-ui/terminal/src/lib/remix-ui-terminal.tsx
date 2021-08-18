@@ -544,7 +544,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const showTable = (opts) => {
-    console.log({ opts }, ' show table')
     let msg = ''
     let toHash
     const data = opts.data // opts.data = data.tx
