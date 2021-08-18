@@ -1,14 +1,32 @@
-import { ICompilerApi, ConfigurationSettings } from '@remix-project/remix-lib-ts'
-import { CompileTabLogic } from '../logic/compileTabLogic'
 export type onCurrentFileChanged = (fileName: string) => void
 
 export interface SolidityCompilerProps {
-  api: ICompilerApi
+  plugin: {
+    currentFile: string
+    contractMap: {
+      file: string
+    } | Record<string, any>
+    compileErrors: any,
+    compileTabLogic: any,
+    contractsDetails: Record<string, any>,
+    contentImport: any,
+    call: (...args) => void
+    on: (...args) => void,
+    setSelectedVersion: (value: string) => void,
+    configurationSettings: ConfigurationSettings,
+    getConfiguration: (value: string) => string,
+    setConfiguration: (name: string, value: string) => void,
+    onCurrentFileChanged: (fileName: string) => void,
+    onResetResults: () => void,
+    onSetWorkspace: (workspace: any) => void,
+    onNoFileSelected: () => void,
+    onCompilationFinished: (contractsDetails: any, contractMap: any) => void
+  },
 }
 
 export interface CompilerContainerProps {
-  api: ICompilerApi,
-  compileTabLogic: CompileTabLogic,
+  api: any,
+  compileTabLogic: any,
   isHardhatProject: boolean,
   tooltip: (message: string | JSX.Element) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,

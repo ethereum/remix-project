@@ -1,26 +1,7 @@
 import { compile } from '@remix-project/remix-solidity'
-import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import { CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 
 export const CompilerApiMixin = (Base) => class extends Base {
-  currentFile: string
-  contractMap: {
-    file: string
-  } | Record<string, any>
-  compileErrors: any
-  compileTabLogic: CompileTabLogic
-  contractsDetails: Record<string, any>
-
-  configurationSettings: ConfigurationSettings
-
-  onCurrentFileChanged: (fileName: string) => void
-  onResetResults: () => void
-  onSetWorkspace: (workspace: any) => void
-  onNoFileSelected: () => void
-  onCompilationFinished: (contractsDetails: any, contractMap: any) => void
-  onSessionSwitched: () => void
-  onContentChanged: () => void
-
   initCompilerApi () {
     this.configurationSettings = null
 
@@ -35,77 +16,42 @@ export const CompilerApiMixin = (Base) => class extends Base {
       eventHandlers: {},
       loading: false
     }
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
 
     this.contractMap = {}
     this.contractsDetails = {}
 
     this.compileErrors = {}
     this.compiledFileName = ''
+    this.selectedVersion = ''
     this.currentFile = ''
   }
 
   onActivation () {
-    this.listenToEvents()
+    this.call('manager', 'activatePlugin', 'solidity-logic')
+    this.listenToEvents()    
   }
 
   onDeactivation () {
-    this.off('editor', 'contentChanged')
-
-    if (this.data.eventHandlers.onLoadingCompiler) {
-      this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
-    }
-    
-    if (this.data.eventHandlers.onCompilerLoaded) {
-      this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
-    }
-
-    if (this.data.eventHandlers.onCompilationFinished) {
-      this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
-    }
-    
-    this.off('filePanel', 'setWorkspace')
-
-    this.off('remixd', 'rootFolderChanged')
-
-    this.off('editor', 'sessionSwitched')
-
-    if (this.data.eventHandlers.onStartingCompilation) {
-      this.compileTabLogic.event.off('startingCompilation', this.data.eventHandlers.onStartingCompilation)
-    }
-    
-    if (this.data.eventHandlers.onRemoveAnnotations) {
-      this.compileTabLogic.event.off('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
-    }    
-
-    this.off('fileManager', 'currentFileChanged')
-    
-    this.off('fileManager', 'noFileSelected')    
-    
-    this.off('themeModule', 'themeChanged')
-    
-    if (this.data.eventHandlers.onKeyDown) {
-      window.document.removeEventListener('keydown', this.data.eventHandlers.onKeyDown)  
-    }
+    this.call('manager', 'deactivatePlugin', 'solidity-logic')
   }
 
-  resolveContentAndSave (url) {
-    return this.call('contentImport', 'resolveAndSave', url)
+  setHardHatCompilation (value) {
+    this.hhCompilation = value
   }
 
-  compileWithHardhat (configFile) {
-    return this.call('hardhat', 'compile', configFile)
+  setSelectedVersion (version) {
+    this.selectedVersion = version
   }
 
-  logToTerminal (content) {
-    return this.call('terminal', 'log', content)
-  }
-  
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
-  getCompilerState () {
-    return this.compileTabLogic.getCompilerState()
+  addExternalFile (fileName, content) {
+    this.fileProvider.addExternal(fileName, content)
   }
 
   /**
@@ -115,13 +61,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {string} fileName to compile
    */
   compile (fileName) {
-    this.currentFile = fileName
     return this.compileTabLogic.compileFile(fileName)
   }
 
   compileFile (event) {
     if (event.path.length > 0) {
-      this.currentFile = event.path[0]
       this.compileTabLogic.compileFile(event.path[0])
     }
   }
@@ -134,22 +78,21 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
-    const compilerState = this.getCompilerState()
-    settings.version = settings.version || compilerState.currentVersion
+    settings.version = settings.version || this.selectedVersion
     const res = await compile(compilationTargets, settings, (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     return res
   }
 
   // This function is used for passing the compiler configuration to 'remix-tests'
   getCurrentCompilerConfig () {
-    const compilerState = this.getCompilerState()
     return {
-      currentVersion: compilerState.currentVersion,
-      evmVersion: compilerState.evmVersion,
-      optimize: compilerState.optimize,
-      runs: compilerState.runs
+      currentVersion: this.selectedVersion,
+      evmVersion: this.compileTabLogic.evmVersion,
+      optimize: this.compileTabLogic.optimize,
+      runs: this.compileTabLogic.runs
     }
   }
+
 
   /**
    * set the compiler configuration
@@ -158,7 +101,30 @@ export const CompilerApiMixin = (Base) => class extends Base {
    */
   setCompilerConfig (settings) {
     this.configurationSettings = settings    
-  }  
+  }
+
+  getParameters () {
+    return {}
+  }
+
+  setParameters (params) {}
+
+  getConfiguration (name) {
+    const conf = {
+      'currentFile': () => this.currentFile,
+      'hideWarnings': () => false,
+      'autoCompile': () => false,
+      'includeNightlies': () => false,
+      'optimise': () => false
+    }
+    return conf[name]()
+  }
+
+  setConfiguration (name, value) {}
+
+  getFileManagerMode () {
+    return 'browser'
+  }
 
   fileExists (fileName) {
     return this.call('fileManager', 'exists', fileName)
@@ -176,23 +142,19 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('fileManager', 'open', fileName)
   }
 
-  saveCurrentFile () {
-    return this.call('fileManager', 'saveCurrentFile')
-  }
-
   resetResults () {
     this.currentFile = ''
     this.contractsDetails = {}
     this.emit('statusChanged', { key: 'none' })
-    if (this.onResetResults) this.onResetResults()
+    if (this.onResetResults()) this.onResetResults()
   }
 
   listenToEvents () {
-    this.on('editor', 'contentChanged', () => {
+    this.data.eventHandlers.onContentChanged = () => {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
-      if (this.onContentChanged) this.onContentChanged()
-    })
-
+    }
+    this.on('editor', 'contentChanged', this.data.eventHandlers.onContentChanged)
+    
     this.data.eventHandlers.onLoadingCompiler = () => {
       this.data.loading = true
       this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
@@ -215,17 +177,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost)
+      if (this.onSetWorkspace) this.onSetWorkspace(workspace)
     })
-
-    this.on('remixd', 'rootFolderChanged', () => {
-      this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(true)
-    })
-
-    this.on('editor', 'sessionSwitched', () => {
-      if (this.onSessionSwitched) this.onSessionSwitched()
-    })    
 
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
     this.compileTabLogic.event.on('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
@@ -264,8 +217,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
           )
         })
       } else {
-        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
-        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
+        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
+        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
       this.contractMap = {}
@@ -284,13 +237,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('themeModule', 'themeChanged', this.data.eventHandlers.onThemeChanged)
     
     // Run the compiler instead of trying to save the website
-    this.data.eventHandlers.onKeyDown = (e) => {
+    window.document.addEventListener('keydown', (e) => {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
-        this.compileTabLogic.runCompiler(this.getAppParameter('hardhat-compilation'))
+        this.compileTabLogic.runCompiler(this.hhCompilation)
       }
-    }
-    window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
+    })
   }
 }
