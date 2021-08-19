@@ -96,7 +96,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setName(e.target.value)}
-            value={ name || defaultPlugin.name }
+            value={ name }
             id="plugin-name"
             data-id="localPluginName"
             placeholder="Should be camelCase" />
@@ -106,7 +106,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setDisplayName(e.target.value)}
-            value={ displayName || defaultPlugin.displayName }
+            value={ displayName }
             id="plugin-displayname"
             data-id="localPluginDisplayName"
             placeholder="Name in the header" />
@@ -116,7 +116,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setMethods(e.target.value)}
-            value={methods || defaultPlugin.methods}
+            value={ methods }
             id="plugin-methods"
             data-id="localPluginMethods"
             placeholder="Name in the header" />
@@ -127,7 +127,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setUrl(e.target.value)}
-            value={ url || defaultPlugin.url }
+            value={ url }
             id="plugin-url"
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />
