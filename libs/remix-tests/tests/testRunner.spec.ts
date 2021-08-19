@@ -43,7 +43,6 @@ let accounts: string[]
 let provider: any = new Provider()
 
 async function compileAndDeploy(filename: string, callback: Function) {
-  console.log('Inside compileAndDeploy')
   let web3: Web3 = new Web3()
   let sourceASTs: any = {}
   await provider.init()
@@ -52,7 +51,6 @@ async function compileAndDeploy(filename: string, callback: Function) {
   let compilationData: object
   async.waterfall([
     function getAccountList(next: Function): void {
-    console.log('Inside compileAndDeploy- getAccountList')
       web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
         accounts = _accounts
         web3.eth.defaultAccount = accounts[0]
@@ -60,11 +58,9 @@ async function compileAndDeploy(filename: string, callback: Function) {
       })
     },
     function compile(next: Function): void {
-      console.log('Inside compileAndDeploy- compile')
       compileFileOrFiles(filename, false, { accounts }, null, next)
     },
     function deployAllContracts(compilationResult: compilationInterface, asts, next: Function): void {
-      console.log('Inside compileAndDeploy- deployAllContracts')
       for(const filename in asts) {
         if(filename.endsWith('_test.sol'))
           sourceASTs[filename] = asts[filename].ast
@@ -77,7 +73,6 @@ async function compileAndDeploy(filename: string, callback: Function) {
       }
     }
   ], function (_err: Error | null | undefined, contracts: any): void {
-    console.log('Outside compileAndDeploy')
     callback(null, compilationData, contracts, sourceASTs, accounts, web3)
   })
 }
@@ -85,7 +80,6 @@ async function compileAndDeploy(filename: string, callback: Function) {
 // Use `export NODE_OPTIONS="--max-old-space-size=4096"` if there is a JavaScript heap out of memory issue
 
 describe('testRunner', () => {
-  console.log('Inside testRunner')
     let tests: any[] = [], results: ResultsInterface;
 
     const testCallback: TestCbInterface = (err, test) => {
@@ -108,13 +102,11 @@ describe('testRunner', () => {
     }
 
     describe('#runTest', () => {
-      console.log('Inside runTest')
 
       describe('assert library OK method tests', () => {
       const filename: string = __dirname + '/examples_0/assert_ok_test.sol'
 
       beforeAll((done) => {
-        console.log('Inside beforeAll', filename)
         compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[], web3: any) => {
           runTest('AssertOkTest', contracts.AssertOkTest, compilationData[filename]['AssertOkTest'], asts[filename], { accounts, web3 }, testCallback, resultsCallback(done))
         })
