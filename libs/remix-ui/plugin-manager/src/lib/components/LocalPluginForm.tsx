@@ -55,11 +55,12 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
         name: name,
         displayName: displayName,
         description: '',
-        documentation: url,
+        documentation: '',
         events: [],
         hash: '',
         kind: '',
         methods: newMethods,
+        url: url,
         type: type,
         location: location,
         icon: 'assets/img/localPlugin.webp'
