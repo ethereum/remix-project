@@ -323,8 +323,8 @@ class Blockchain extends Plugin {
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
   startListening (txlistener) {
-    txlistener.event.register('newTransaction', (tx) => {
-      this.events.emit('newTransaction', tx)
+    txlistener.event.register('newTransaction', (tx, receipt) => {
+      this.events.emit('newTransaction', tx, receipt)
     })
   }
 
