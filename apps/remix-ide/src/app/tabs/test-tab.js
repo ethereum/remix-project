@@ -181,7 +181,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   printHHLogs (logsArr, testName) {
-    let finalLogs = `${testName}:-\n`
+    let finalLogs = `<b>${testName}:</b>\n`
     for (const log of logsArr) {
       let formattedLog
       // Hardhat implements the same formatting options that can be found in Node.js' console.log,
@@ -193,7 +193,7 @@ module.exports = class TestTab extends ViewPlugin {
       } else {
         formattedLog = log.join(' ')
       }
-      finalLogs = finalLogs + formattedLog + '\n'
+      finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
     this.call('terminal', 'log', { type: 'info', value: finalLogs })
   }
@@ -216,7 +216,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
-      if(result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       this.testsOutput.appendChild(yo`
         <div
           id="${this.runningTestFileName}"
@@ -228,7 +228,7 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
-      if(result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
         <div
