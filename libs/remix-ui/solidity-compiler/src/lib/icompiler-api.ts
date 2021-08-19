@@ -23,6 +23,5 @@ export interface ICompilerApi {
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
-    addExternalFile: (file: string, content: string) => void
     onCurrentFileChanged: (listener: onCurrentFileChanged) => void
 }
