@@ -16,10 +16,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: '0.0.1',
-<<<<<<< HEAD
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
-=======
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile']
 }
 
 export interface ConfigurationSettings {
@@ -28,7 +25,6 @@ export interface ConfigurationSettings {
   language: string,
   optimize: boolean,
   runs: string
->>>>>>> 64dac2477 (ensure API is public)
 }
 
 const defaultAppParameters = {
