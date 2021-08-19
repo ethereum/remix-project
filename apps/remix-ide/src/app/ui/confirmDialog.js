@@ -4,6 +4,9 @@ const copyToClipboard = require('./copy-to-clipboard')
 const Web3 = require('web3')
 
 var css = csjs`
+  #confirmsetting {
+    z-index: 1;
+  }
   .txInfoBox {
   }
   .wrapword {
@@ -110,8 +113,8 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
         </div>
       </div>
       <div class="d-flex py-1 align-items-center custom-control custom-checkbox ${css.checkbox}">
-        <input class="form-check-input custom-control-input" id='confirmsetting' type="checkbox">
-        <label class="m-0 form-check-label custom-control-label">Do not show this warning again.</label>
+        <input class="form-check-input custom-control-input" id="confirmsetting" type="checkbox">
+        <label class="m-0 form-check-label custom-control-label" for="confirmsetting">Do not show this warning again.</label>
       </div>
     </div>
   `
