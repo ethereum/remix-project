@@ -71,7 +71,7 @@ const css = csjs`
 const profile = {
   name: 'pluginManager',
   displayName: 'Plugin manager',
-  methods: ['registerFlattener', 'registerOptimismCompiler'],
+  methods: [],
   events: [],
   icon: 'assets/img/pluginManager.webp',
   description: 'Start/stop services, modules and plugins',
@@ -100,57 +100,6 @@ class PluginManagerComponent extends ViewPlugin {
 
   isActive (name) {
     return this.appManager.actives.includes(name)
-  }
-
-  async registerFlattener (event) {
-    if (!this.appManager.isActive('solidity')) { await this.appManager.activatePlugin('solidity') }
-    const compiledSuccessfully = await this.call('solidity', 'compileFile', event)
-    console.log(compiledSuccessfully)
-    const reportCompileIssue = async () => {
-      this.call('fileManager', 'open', event.path[0])
-      addToolTip('Cannot flatten the file. Please make sure it is compiling successfully.')
-      await this.call('menuicons', 'select', 'solidity')
-    }
-
-    if (compiledSuccessfully) {
-      const res = await this.call('solidity', 'getCompilationResult')
-      if (!res) {
-        reportCompileIssue()
-      } else {
-        await this.call('menuicons', 'select', 'f3')
-        console.log(res)
-        await this.call('f3', 'flattenAndSave', res)
-      }
-    } else {
-      reportCompileIssue()
-    }
-  }
-
-  async registerOptimismCompiler (event) {
-    await this.call('optimism-compiler', 'compile', event.path[0])
-    await this.call('menuicons', 'select', 'optimism-compiler')
-    await this.call('fileManager', 'open', event.path[0])
-  }
-
-  async onActivation () {
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'pluginManager',
-      name: 'registerFlattener',
-      label: 'Flatten',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: []
-    })
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'pluginManager',
-      name: 'registerOptimismCompiler',
-      label: 'Compile with Optimism',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: []
-    })
   }
 
   activateP (name) {
