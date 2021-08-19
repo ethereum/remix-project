@@ -101,7 +101,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: true,
+          isRequesting: state.mode === 'browser',
+          isSuccessful: false,
+          error: null
+        },
+        localhost: {
+          ...state.localhost,
+          isRequesting: state.mode === 'localhost',
           isSuccessful: false,
           error: null
         }
@@ -115,7 +121,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          files: fetchDirectoryContent(payload.files, payload.path),
+          files: state.mode === 'browser' ? fetchDirectoryContent(payload.files, payload.path) : state.browser.files,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? fetchDirectoryContent(payload.files, payload.path) : state.localhost.files,
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -130,7 +143,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           ...state.browser,
           isRequesting: false,
           isSuccessful: false,
-          error: action.payload
+          error: state.mode === 'browser' ? action.payload : null
+        },
+        localhost: {
+          ...state.localhost,
+          isRequesting: false,
+          isSuccessful: false,
+          error: state.mode === 'localhost' ? action.payload : null
         }
       }
     }
@@ -165,13 +184,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          files: fileAdded(state, payload),
-          expandPath: [...new Set([...state.browser.expandPath, payload])]
+          files: state.mode === 'browser' ? fileAdded(state, payload) : state.browser.files,
+          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
         },
         localhost: {
           ...state.localhost,
-          files: fileAdded(state, payload),
-          expandPath: [...new Set([...state.localhost.expandPath, payload])]
+          files: state.mode === 'localhost' ? fileAdded(state, payload) : state.localhost.files,
+          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
         }
       }
     }
@@ -183,13 +202,31 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          files: folderAdded(state, payload),
-          expandPath: [...new Set([...state.browser.expandPath, payload])]
+          files: state.mode === 'browser' ? folderAdded(state, payload) : state.browser.files,
+          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
         },
         localhost: {
           ...state.localhost,
-          files: folderAdded(state, payload),
-          expandPath: [...new Set([...state.localhost.expandPath, payload])]
+          files: state.mode === 'localhost' ? folderAdded(state, payload) : state.localhost.files,
+          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+        }
+      }
+    }
+
+    case 'FILE_REMOVED_SUCCESS': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: state.mode === 'browser' ? fileRemoved(state, payload) : state.browser.files,
+          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? fileRemoved(state, payload) : state.localhost.files,
+          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
         }
       }
     }
@@ -267,6 +304,14 @@ const folderAdded = (state: BrowserState, path: string): { [x: string]: Record<s
   const _path = splitPath(state, path)
 
   files = _.set(files, _path)
+  return files
+}
+
+const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
+  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+  const _path = splitPath(state, path)
+
+  files = _.unset(files, _path)
   return files
 }
 
