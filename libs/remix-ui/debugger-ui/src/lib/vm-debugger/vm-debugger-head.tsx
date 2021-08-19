@@ -15,6 +15,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
     'remaining gas': '-',
     'loaded address': '-'
   })
+
   const [solidityState, setSolidityState] = useState({
     calldata: null,
     message: null

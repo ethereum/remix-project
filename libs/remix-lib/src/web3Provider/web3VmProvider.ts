@@ -1,7 +1,9 @@
 import { hexListFromBNs, formatMemory } from '../util'
 import { normalizeHexAddress } from '../helpers/uiHelper'
+import { ConsoleLogs } from '../helpers/hhconsoleSigs'
 import { toChecksumAddress, BN, bufferToHex, Address } from 'ethereumjs-util'
 import Web3 from 'web3'
+import { ethers } from 'ethers'
 
 export class Web3VmProvider {
   web3
@@ -9,6 +11,7 @@ export class Web3VmProvider {
   vmTraces
   txs
   txsReceipt
+  hhLogs
   processingHash
   processingAddress
   processingIndex
@@ -41,6 +44,7 @@ export class Web3VmProvider {
     this.vmTraces = {}
     this.txs = {}
     this.txsReceipt = {}
+    this.hhLogs = {}
     this.processingHash = null
     this.processingAddress = null
     this.processingIndex = null
@@ -206,6 +210,29 @@ export class Web3VmProvider {
       error: data.error === false ? undefined : data.error
     }
     this.vmTraces[this.processingHash].structLogs.push(step)
+    // Track hardhat console.log call
+    if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
+      const stackLength = step.stack.length
+      const payloadStart = parseInt(step.stack[stackLength - 3], 16)
+      const memory = step.memory.join('')
+      let payload = memory.substring(payloadStart * 2, memory.length)
+      const fnselectorStr = payload.substring(0, 8)
+      const fnselectorStrInHex = '0x' + fnselectorStr
+      const fnselector = parseInt(fnselectorStrInHex)
+      const fnArgs = ConsoleLogs[fnselector]
+      const iface = new ethers.utils.Interface([`function log${fnArgs} view`])
+      const functionDesc = iface.getFunction(`log${fnArgs}`)
+      const sigHash = iface.getSighash(`log${fnArgs}`)
+      if (fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
+        payload = payload.replace(fnselectorStr, sigHash)
+      } else {
+        payload = '0x' + payload
+      }
+      const consoleArgs = iface.decodeFunctionData(functionDesc, payload)
+      this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
+      this.hhLogs[this.processingHash].push(consoleArgs)
+    }
+
     if (step.op === 'CREATE' || step.op === 'CALL') {
       if (step.op === 'CREATE') {
         this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'

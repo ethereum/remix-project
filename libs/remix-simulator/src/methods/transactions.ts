@@ -57,6 +57,7 @@ export class Transactions {
       eth_getTransactionByBlockHashAndIndex: this.eth_getTransactionByBlockHashAndIndex.bind(this),
       eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this),
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
+      eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this)
     }
   }
@@ -81,6 +82,11 @@ export class Transactions {
   eth_getExecutionResultFromSimulator (payload, cb) {
     const txHash = payload.params[0]
     cb(null, this.vmContext.exeResults[txHash])
+  }
+
+  eth_getHHLogsForTx (payload, cb) {
+    const txHash = payload.params[0]
+    cb(null, this.vmContext.currentVm.web3vm.hhLogs[txHash] ? this.vmContext.currentVm.web3vm.hhLogs[txHash] : [])
   }
 
   eth_getTransactionReceipt (payload, cb) {
@@ -187,6 +193,7 @@ export class Transactions {
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
+        chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
@@ -233,6 +240,7 @@ export class Transactions {
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
+        chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
@@ -276,6 +284,7 @@ export class Transactions {
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
+        chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
