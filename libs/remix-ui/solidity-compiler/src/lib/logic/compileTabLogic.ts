@@ -17,21 +17,17 @@ declare global {
 const _paq = (window._paq = window._paq || []); //eslint-disable-line
 
 export class CompileTab extends Plugin {
-  public compiler;
-  public optimize;
-  public runs;
-  public evmVersion: string;
-  public compilerImport;
-  public event;
+  public compiler
+  public optimize
+  public runs
+  public evmVersion: string
+  public compilerImport
+  public event
 
-  constructor(public api: ICompilerApi, public contentImport) {
-    this.event = new EventEmitter();
-    this.compiler = new Compiler((url, cb) =>
-      api
-        .resolveContentAndSave(url)
-        .then(result => cb(null, result))
-        .catch(error => cb(error.message))
-    );
+  constructor (public api, public contentImport) {
+    super(profile)
+    this.event = new EventEmitter()
+    this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
 
   init() {
@@ -127,17 +123,15 @@ export class CompileTab extends Plugin {
               }
             }
           }
-          `;
-          const configFilePath = 'remix-compiler.config.js';
-          this.api.writeFile(configFilePath, fileContent);
-          _paq.push(['trackEvent', 'compiler', 'compileWithHardhat']);
-          this.call('hardhat', 'compile', configFilePath)
-            .then(result => {
-              this.call('terminal', 'log', { type: 'info', value: result });
-            })
-            .catch(error => {
-              this.api.logToTerminal({ type: 'error', value: error });
-            });
+          `
+          const configFilePath = 'remix-compiler.config.js'
+          this.api.writeFile(configFilePath, fileContent)
+          _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
+          this.api.compileWithHardhat(configFilePath).then((result) => {
+            this.api.logToTerminal({ type: 'info', value: result })
+          }).catch((error) => {
+            this.api.logToTerminal({ type: 'error', value: error })
+          })
         }
       }
       // TODO readd saving current file
