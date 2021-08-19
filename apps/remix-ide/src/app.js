@@ -450,7 +450,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   engine.register([
     compileTab,
-    compileTab.compileTabLogic,
     run,
     debug,
     analysis,
