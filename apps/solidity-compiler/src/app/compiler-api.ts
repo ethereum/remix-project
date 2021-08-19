@@ -50,7 +50,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   onActivation () {
     this.call('manager', 'activatePlugin', 'solidity-logic')
-    this.listenToEvents()    
+    this.listenToEvents()
   }
 
   onDeactivation () {
@@ -89,6 +89,18 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onKeyDown) {
       window.document.removeEventListener('keydown', this.data.eventHandlers.onKeyDown)
     }
+  }
+
+  resolveContentAndSave (url) {
+    return this.call('contentImport', 'resolveAndSave', url)
+  }
+
+  compileWithHardhat (configFile) {
+    return this.call('hardhat', 'compile', configFile)
+  }
+
+  logToTerminal (content) {
+    return this.call('terminal', 'log', content)
   }
 
   setHardHatCompilation (value) {
@@ -150,7 +162,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
   }
 
-
   /**
    * set the compiler configuration
    * This function is used by remix-plugin compiler API.
@@ -188,7 +199,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
     }
     this.on('editor', 'contentChanged', this.data.eventHandlers.onContentChanged)
-    
+
     this.data.eventHandlers.onLoadingCompiler = () => {
       this.data.loading = true
       this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
