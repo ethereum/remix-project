@@ -1,6 +1,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
+import { format } from 'util'
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
@@ -179,8 +180,25 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  printHHLogs (logsArr, testName) {
+    let finalLogs = `${testName}:-\n`
+    for (const log of logsArr) {
+      let formattedLog
+      // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+      // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+      // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+      // We check first arg to determine if 'util.format' is needed
+      if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+        formattedLog = format(log[0], ...log.slice(1))
+      } else {
+        formattedLog = log.join(' ')
+      }
+      finalLogs = finalLogs + formattedLog + '\n'
+    }
+    this.call('terminal', 'log', { type: 'info', value: finalLogs })
+  }
+
   testCallback (result, runningTests) {
-    console.log('result in testCallback', result)
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
       this.testSuite = result.value
@@ -198,6 +216,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
+      if(result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       this.testsOutput.appendChild(yo`
         <div
           id="${this.runningTestFileName}"
@@ -209,6 +228,7 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
+      if(result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
         <div
