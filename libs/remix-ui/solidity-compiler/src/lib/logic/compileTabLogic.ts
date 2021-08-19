@@ -116,17 +116,15 @@ export class CompileTabLogic {
               }
             }
           }
-          `;
-          const configFilePath = 'remix-compiler.config.js';
-          this.api.writeFile(configFilePath, fileContent);
-          _paq.push(['trackEvent', 'compiler', 'compileWithHardhat']);
-          this.call('hardhat', 'compile', configFilePath)
-            .then(result => {
-              this.call('terminal', 'log', { type: 'info', value: result });
-            })
-            .catch(error => {
-              this.api.logToTerminal({ type: 'error', value: error });
-            });
+          `
+          const configFilePath = 'remix-compiler.config.js'
+          this.api.writeFile(configFilePath, fileContent)
+          _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
+          this.api.compileWithHardhat(configFilePath).then((result) => {
+            this.api.logToTerminal({ type: 'info', value: result })
+          }).catch((error) => {
+            this.api.logToTerminal({ type: 'error', value: error })
+          })
         }
       }
       // TODO readd saving current file
