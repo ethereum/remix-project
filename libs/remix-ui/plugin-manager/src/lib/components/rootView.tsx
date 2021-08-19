@@ -49,6 +49,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
             onChange={(event) => {
               setFilterPlugin(event.target.value.toLowerCase())
             }}
+            value={filterPlugins}
             className="form-control"
             placeholder="Search"
             data-id="pluginManagerComponentSearchInput"
