@@ -306,6 +306,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const contextualListener = new ContextualListener({ editor })
 
   engine.register([
+    blockchain,
     contentImport,
     themeModule,
     editor,

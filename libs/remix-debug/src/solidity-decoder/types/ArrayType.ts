@@ -36,7 +36,7 @@ export class ArrayType extends RefType {
     } catch (e) {
       console.log(e)
       return {
-        value: '<decoding failed - ' + e.message + '>',
+        error: '<decoding failed - ' + e.message + '>',
         type: this.typeName
       }
     }
@@ -56,7 +56,7 @@ export class ArrayType extends RefType {
         ret.push(await this.underlyingType.decodeFromStorage(currentLocation, storageResolver))
       } catch (e) {
         return {
-          value: '<decoding failed - ' + e.message + '>',
+          error: '<decoding failed - ' + e.message + '>',
           type: this.typeName
         }
       }
@@ -84,7 +84,7 @@ export class ArrayType extends RefType {
     }
     if (isNaN(length)) {
       return {
-        value: '<decoding failed - length is NaN>',
+        error: '<decoding failed - length is NaN>',
         type: 'Error'
       }
     }
