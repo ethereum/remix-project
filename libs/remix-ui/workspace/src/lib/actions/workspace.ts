@@ -79,6 +79,13 @@ const folderAddedSuccess = (folderPath: string) => {
   }
 }
 
+const fileRemovedSuccess = (removePath: string) => {
+  return {
+    type: 'FILE_REMOVED_SUCCESS',
+    payload: removePath
+  }
+}
+
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
@@ -191,7 +198,7 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
 
     return workspaces
   } catch (e) {
-    // modalDialogCustom.alert('Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.')
+    dispatch(displayNotification('Workspaces', 'Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.', 'OK', null, () => { dispatch(hideNotification()) }, null))
     console.log(e)
   }
 }
@@ -203,6 +210,10 @@ const listenOnEvents = (provider) => {
 
   provider.event.on('folderAdded', async (folderPath) => {
     await executeEvent('folderAdded', folderPath)
+  })
+
+  provider.event.on('fileRemoved', async (removePath) => {
+    await executeEvent('fileRemoved', removePath)
   })
 }
 
@@ -234,10 +245,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     }
 
     listenOnEvents(provider)
-
-    // provider.event.on('fileRemoved', async (removePath) => {
-    //   await executeEvent('fileRemoved', removePath)
-    // })
     // provider.event.on('fileRenamed', async (oldPath) => {
     //   await executeEvent('fileRenamed', oldPath)
     // })
@@ -323,19 +330,9 @@ const folderAdded = async (folderPath: string) => {
   await dispatch(folderAddedSuccess(folderPath))
 }
 
-// const folderAdded = async (folderPath: string) => {
-//   if (extractParentFromKey(folderPath) === '/.workspaces') return
-//   const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
-//   const data = await fetchDirectoryContent(provider, path)
-
-//   await dispatch(folderAddedSuccess(path, data))
-// }
-
-// const fileRemoved = async (removePath: string) => {
-//   const path = extractParentFromKey(removePath) || provider.workspace || provider.type || ''
-
-//   await dispatch(fileRemovedSuccess(path, removePath))
-// }
+const fileRemoved = async (removePath: string) => {
+  await dispatch(fileRemovedSuccess(removePath))
+}
 
 // const fileRenamed = async (oldPath: string) => {
 //   const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
@@ -376,15 +373,15 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       }
       break
 
-    // case 'fileRemoved':
-    //   await fileRemoved(path)
-    //   delete pendingEvents[eventName + path]
-    //   if (queuedEvents.length) {
-    //     const next = queuedEvents.pop()
+    case 'fileRemoved':
+      await fileRemoved(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
 
-    //     await executeEvent(next.eventName, next.path)
-    //   }
-    //   break
+        await executeEvent(next.eventName, next.path)
+      }
+      break
 
     // case 'fileRenamed':
     //   await fileRenamed(path)
