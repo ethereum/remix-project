@@ -87,21 +87,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   resolveContentAndSave (url) {
     return this.call('contentImport', 'resolveAndSave', url)
-<<<<<<< HEAD
-=======
-  }
-
-  compileWithHardhat (configFile) {
-    return this.call('hardhat', 'compile', configFile)
-  }
-
-  logToTerminal (content) {
-    return this.call('terminal', 'log', content)
-  }
-
-  setHardHatCompilation (value) {
-    this.hhCompilation = value
->>>>>>> bc275008c (make sure compile-logic do not use call directly)
   }
 
   compileWithHardhat (configFile) {
