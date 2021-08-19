@@ -15,17 +15,17 @@ export class StringType extends DynamicByteArray {
       decoded = await super.decodeFromStorage(location, storageResolver)
     } catch (e) {
       console.log(e)
-      return '<decoding failed - ' + e.message + '>'
+      return { error: '<decoding failed - ' + e.message + '>' }
     }
     return format(decoded)
   }
 
-  async decodeFromStack (stackDepth, stack, memory, calldata, variableDetails?) {
+  async decodeFromStack (stackDepth, stack, memory, storageResolver, calldata, cursor, variableDetails?) {
     try {
-      return await super.decodeFromStack(stackDepth, stack, memory, null, calldata, variableDetails)
+      return await super.decodeFromStack(stackDepth, stack, memory, storageResolver, calldata, cursor, variableDetails)
     } catch (e) {
       console.log(e)
-      return '<decoding failed - ' + e.message + '>'
+      return { error: '<decoding failed - ' + e.message + '>' }
     }
   }
 
