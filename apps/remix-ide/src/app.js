@@ -483,7 +483,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['settings'])
   await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
-
+  await appManager.registerContextMenuItems()
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
     appManager.activatePlugin(workspace).then(async () => {
