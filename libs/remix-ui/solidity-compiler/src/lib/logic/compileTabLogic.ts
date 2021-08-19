@@ -1,13 +1,5 @@
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
-
 const Compiler = require('@remix-project/remix-solidity').Compiler
 const EventEmitter = require('events')
-
-declare global {
-  interface Window {
-    _paq: any;
-  }
-}
 
 declare global {
   interface Window {
@@ -16,7 +8,7 @@ declare global {
 }
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
-export class CompileTab extends Plugin {
+export class CompileTab {
   public compiler
   public optimize
   public runs
@@ -24,7 +16,7 @@ export class CompileTab extends Plugin {
   public compilerImport
   public event
 
-  constructor (public api: ICompilerApi, public contentImport) {
+  constructor (public api, public contentImport) {
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
