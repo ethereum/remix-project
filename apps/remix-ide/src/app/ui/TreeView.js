@@ -27,7 +27,7 @@ var css = csjs`
     word-break: break-all;
   }
   .label_key {
-    min-width: 15%;
+    min-width: max-content;
     max-width: 80%;
     word-break: break-word;
   }

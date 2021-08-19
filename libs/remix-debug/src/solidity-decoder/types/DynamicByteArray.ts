@@ -16,7 +16,7 @@ export class DynamicByteArray extends RefType {
       value = await extractHexValue(location, storageResolver, this.storageBytes)
     } catch (e) {
       console.log(e)
-      return { value: '<decoding failed - ' + e.message + '>', type: this.typeName }
+      return { error: '<decoding failed - ' + e.message + '>', type: this.typeName }
     }
     const length = new BN(value, 16)
     if (length.testn(0)) {
@@ -27,7 +27,7 @@ export class DynamicByteArray extends RefType {
         currentSlot = await readFromStorage(dataPos, storageResolver)
       } catch (e) {
         console.log(e)
-        return { value: '<decoding failed - ' + e.message + '>', type: this.typeName }
+        return { error: '<decoding failed - ' + e.message + '>', type: this.typeName }
       }
       while (length.gt(new BN(ret.length)) && ret.length < 32000) {
         currentSlot = currentSlot.replace('0x', '')
@@ -37,7 +37,7 @@ export class DynamicByteArray extends RefType {
           currentSlot = await readFromStorage(dataPos, storageResolver)
         } catch (e) {
           console.log(e)
-          return { value: '<decoding failed - ' + e.message + '>', type: this.typeName }
+          return { error: '<decoding failed - ' + e.message + '>', type: this.typeName }
         }
       }
       return { value: '0x' + ret.replace(/(00)+$/, ''), length: '0x' + length.toString(16), type: this.typeName }
