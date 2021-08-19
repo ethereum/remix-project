@@ -21,15 +21,9 @@ export interface pluginActivated {
 }
 
 function RootView ({ pluginComponent, children }: RootViewProps) {
-  /**
-   * Component Local State declaration
-   */
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
 
-  /**
-   * Modal Visibility States
-   */
   const openModal = () => {
     setVisible(false)
   }
