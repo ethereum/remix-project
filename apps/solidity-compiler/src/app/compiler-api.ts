@@ -44,6 +44,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   onActivation () {
+<<<<<<< HEAD
     this.listenToEvents()
   }
 
@@ -84,6 +85,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
       window.document.removeEventListener('keydown', this.data.eventHandlers.onKeyDown)
     }
   }
+=======
+    this.listenToEvents()    
+  }
+
+  onDeactivation () {}
+>>>>>>> 5fc82dd4e (fix usage of solidity logic)
 
   resolveContentAndSave (url) {
     return this.call('contentImport', 'resolveAndSave', url)
