@@ -196,12 +196,20 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) {
     return this.el
   }
 
+  async compileWithParameters (compilationTargets, settings) {
+    return await super.compileWithParameters(compilationTargets, settings)
+  }
+
+  getCompilationResult () {
+    return super.getCompilationResult()
+  }
+
   /**
    * set the compiler configuration
    * This function is used by remix-plugin compiler API.
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
-   setCompilerConfig (settings) {
+  setCompilerConfig (settings) {
     super.setCompilerConfig(settings)
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
@@ -211,6 +219,10 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) {
   compile (fileName) {
     addTooltip(yo`<div><b>${this.currentRequest.from}</b> is requiring to compile <b>${fileName}</b></div>`)
     super.compile(fileName)
+  }
+
+  compileFile (event) {
+    return super.compileFile(event)
   }
 
   onActivation () {
