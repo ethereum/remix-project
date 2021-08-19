@@ -146,7 +146,7 @@ export class RemixAppManager extends PluginManager {
       sticky: true
     })
     await this.call('filePanel', 'registerContextMenuItem', {
-      id: '2o',
+      id: 'optimism-compiler',
       name: 'compileCustomAction',
       label: 'Compile with Optimism',
       type: [],
