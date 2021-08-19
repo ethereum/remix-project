@@ -38,6 +38,18 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.call('manager', 'deactivatePlugin', 'solidity-logic')
   }
 
+  resolveContentAndSave (url) {
+    return this.call('contentImport', 'resolveAndSave', url)
+  }
+
+  compileWithHardhat (configFile) {
+    return this.call('hardhat', 'compile', configFile)
+  }
+
+  logToTerminal (content) {
+    return this.call('terminal', 'log', content)
+  }
+
   setHardHatCompilation (value) {
     this.hhCompilation = value
   }
