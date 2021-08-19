@@ -10,11 +10,7 @@ declare global {
 }
 const _paq = (window._paq = window._paq || []); //eslint-disable-line
 
-<<<<<<< HEAD
 export class CompileTabLogic {
-=======
-export class CompileTab extends Plugin {
->>>>>>> beb4432f5 (make sure compile-logic do not use call directly)
   public compiler
   public optimize
   public runs
@@ -22,12 +18,7 @@ export class CompileTab extends Plugin {
   public compilerImport
   public event
 
-<<<<<<< HEAD
   constructor (public api: ICompilerApi, public contentImport) {
-=======
-  constructor (public api, public contentImport) {
-    super(profile)
->>>>>>> beb4432f5 (make sure compile-logic do not use call directly)
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
@@ -135,7 +126,6 @@ export class CompileTab extends Plugin {
           const configFilePath = 'remix-compiler.config.js'
           this.api.writeFile(configFilePath, fileContent)
           _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
-<<<<<<< HEAD
           this.call('hardhat', 'compile', configFilePath)
             .then(result => {
               this.call('terminal', 'log', { type: 'info', value: result })
@@ -143,13 +133,6 @@ export class CompileTab extends Plugin {
             .catch(error => {
               this.api.logToTerminal({ type: 'error', value: error })
             })
-=======
-          this.api.compileWithHardhat(configFilePath).then((result) => {
-            this.api.logToTerminal({ type: 'info', value: result })
-          }).catch((error) => {
-            this.api.logToTerminal({ type: 'error', value: error })
-          })
->>>>>>> beb4432f5 (make sure compile-logic do not use call directly)
         }
       }
       // TODO readd saving current file

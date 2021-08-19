@@ -119,8 +119,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
-  addExternalFile (fileName, content) {
-    this.fileProvider.addExternal(fileName, content)
+  getCompilerState () {
+    return this.compileTabLogic.getCompilerState()
   }
 
   /**
