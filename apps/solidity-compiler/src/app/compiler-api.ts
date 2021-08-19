@@ -29,8 +29,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   onActivation () {
-    this.call('manager', 'activatePlugin', 'solidity-logic')
-    this.listenToEvents()    
+    this.listenToEvents()
   }
 
   onDeactivation () {
@@ -98,8 +97,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
-  addExternalFile (fileName, content) {
-    this.fileProvider.addExternal(fileName, content)
+  getCompilerState () {
+    return this.compileTabLogic.getCompilerState()
   }
 
   /**
