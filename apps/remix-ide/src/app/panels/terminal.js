@@ -88,7 +88,6 @@ class Terminal extends Plugin {
       this.call('menuicons', 'select', 'debugger')
       this.call('debugger', 'debug', hash)
     })
-    this.logHtmlResponse = []
   }
 
   onActivation () {
@@ -103,9 +102,8 @@ class Terminal extends Plugin {
   }
 
   logHtml (html) {
-    // console.log({ html: html.innerText })
-    this.logHtmlResponse.push(html.innerText)
-    this.renderComponent()
+    var command = this.commands.html
+    if (typeof command === 'function') command(html)
   }
 
   render () {
@@ -140,7 +138,6 @@ class Terminal extends Plugin {
         commands = {this.commands}
         txListener = {this.txListener}
         eventsDecoder = {this.eventsDecoder}
-        logHtml = {this.logHtmlResponse}
       />,
       this.element
     )
