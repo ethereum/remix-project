@@ -15,6 +15,7 @@ export interface BrowserState {
     error: string
   },
   localhost: {
+    sharedFolder: string,
     files: { [x: string]: Record<string, File> },
     expandPath: string[],
     isRequesting: boolean,
@@ -43,6 +44,7 @@ export const browserInitialState: BrowserState = {
     error: null
   },
   localhost: {
+    sharedFolder: '',
     files: {},
     expandPath: [],
     isRequesting: false,
@@ -227,6 +229,18 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           ...state.localhost,
           files: state.mode === 'localhost' ? fileRemoved(state, payload) : state.localhost.files,
           expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+        }
+      }
+    }
+
+    case 'ROOT_FOLDER_CHANGED': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        localhost: {
+          ...state.localhost,
+          sharedFolder: payload
         }
       }
     }
