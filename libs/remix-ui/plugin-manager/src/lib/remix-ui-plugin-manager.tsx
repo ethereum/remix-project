@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
 import React, { useState } from 'react'
-import { RemixUiPluginManagerProps } from '../types'
+import { RemixUiPluginManagerProps } from '../types/types'
 import ActivePluginCardContainer from './components/ActivePluginCardContainer'
 import InactivePluginCardContainer from './components/InactivePluginCardContainer'
 import RootView from './components/rootView'
