@@ -1,6 +1,5 @@
 
 export const registerCommandAction = (name, command, activate, dispatch) => {
-  console.log(name, ' object key')
   const commands: any = {}
   const _commands: any = {}
   _commands[name] = command
@@ -91,8 +90,6 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
     console.log({ scopedCommands })
     return scopedCommands
   }
-
-  console.log('david test dispatch')
 }
 
 export const filterFnAction = (name, filterFn, dispatch) => {
@@ -173,8 +170,23 @@ export const initListeningOnNetwork = (props, dispatch) => {
     // log(this, tx, null)
   })
   props.txListener.event.register('newTransaction', (tx, receipt) => {
-    console.log('new Transaction now')
     log(props, tx, receipt, dispatch)
+    registerCommandAction('knownTransaction', function (args, cmds, append) {
+      var data = args[0]
+      console.log({ data })
+    // let el
+    // if (data.tx.isCall) {
+    //   console.log({ data })
+    //   // el = renderCall(this, data)
+    // } else {
+    //   // el = renderKnownTransaction(this, data, blockchain)
+    // }
+    // this.seen[data.tx.hash] = el
+    // append(el)
+    }, { activate: true }, dispatch)
+    // const result = Object.assign([], tx)
+    // console.log({ result })
+    // scriptRunnerDispatch({ type: 'knownTransaction', payload: { message: result } })
   })
 
   const log = async (props, tx, receipt, dispatch) => {
@@ -202,12 +214,9 @@ export const initListeningOnNetwork = (props, dispatch) => {
 
   props.txListener.event.register('debuggingRequested', async (hash) => {
     // TODO should probably be in the run module
+    console.log({ hash }, 'register Call')
     if (!await props.options.appManager.isActive('debugger')) await props.options.appManager.activatePlugin('debugger')
     props.thisState.call('menuicons', 'select', 'debugger')
     props.thisState.call('debugger', 'debug', hash)
-  })
-
-  props.thisState.on('udapp', 'logHtml', (log) => {
-    console.log({ log }, ' listen to logHTML call')
   })
 }
