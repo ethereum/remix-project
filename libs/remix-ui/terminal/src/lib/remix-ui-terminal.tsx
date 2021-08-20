@@ -919,7 +919,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const handlePaste = () => {
     setPaste(true)
-    setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false}))
+    setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false }))
   }
 
   /* block contents that gets rendered from scriptRunner */
