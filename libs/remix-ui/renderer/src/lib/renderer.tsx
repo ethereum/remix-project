@@ -39,12 +39,12 @@ export const Renderer = ({ message, opt = {}, editor, config, fileManager, plugi
     options.errCol = positionDetails.errCol
     options.errFile = positionDetails.errFile.trim()
 
-    if (!opt.noAnnotations && opt.errFile) {
+    if (!opt.noAnnotations && options.errFile && options.errFile !== '') {
       addAnnotation(opt.errFile, {
-        row: opt.errLine,
-        column: opt.errCol,
+        row: options.errLine,
+        column: options.errCol,
         text: text,
-        type: opt.type
+        type: options.type
       })
     }
 
@@ -57,8 +57,9 @@ export const Renderer = ({ message, opt = {}, editor, config, fileManager, plugi
     const result = { } as Record<string, number | string>
 
     // To handle some compiler warning without location like SPDX license warning etc
-    if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
+    if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: '' }
 
+    if (!msg.includes('-->')) return { errLine: -1, errCol: -1, errFile: '' }
     msg = msg.split('-->')[1].trim()
 
     // extract line / column
@@ -68,7 +69,7 @@ export const Renderer = ({ message, opt = {}, editor, config, fileManager, plugi
 
     // extract file
     pos = msg.match(/^(https:.*?|http:.*?|.*?):/)
-    result.errFile = pos ? pos[1] : ''
+    result.errFile = pos ? pos[1] : msg
     return result
   }
 
