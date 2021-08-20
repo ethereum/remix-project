@@ -4,7 +4,7 @@ import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, initLocalhost, fetchDirectory } from '../actions/workspace'
+import { initWorkspace, fetchDirectory } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -25,10 +25,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchInitWorkspace = async () => {
     await initWorkspace(plugin)(fsDispatch)
-  }
-
-  const dispatchInitLocalhost = async () => {
-    await initLocalhost(plugin)(fsDispatch)
   }
 
   const dispatchFetchDirectory = async (path: string) => {
@@ -79,7 +75,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     fs,
     modal,
     dispatchInitWorkspace,
-    dispatchInitLocalhost,
     dispatchFetchDirectory
   }
   return (
