@@ -36,6 +36,7 @@ export interface TestResultInterface {
   returned?: string | number
   expected?: string | number
   location?: string
+  hhLogs?: []
 }
 export interface TestCbInterface {
   (error: Error | null | undefined, result: TestResultInterface) : void;
