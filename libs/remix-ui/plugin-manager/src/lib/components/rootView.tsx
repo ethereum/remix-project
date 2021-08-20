@@ -31,7 +31,6 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
 
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterPlugins])
 
   return (

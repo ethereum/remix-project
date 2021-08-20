@@ -154,9 +154,9 @@ module.exports = {
           .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
           .pause(3000)
           .perform((done) => {
-            const filtered = plugins.filter(plugin => plugin !== 'testremixIde') // remove this when localplugin bug is resolved
-            filtered.forEach(plugin => {
-              if (plugin !== testData.pluginName) {
+            // const filtered = plugins.filter(plugin => plugin !== 'testremixIde') // remove this when localplugin bug is resolved
+            plugins.forEach(plugin => {
+              if (plugin !== testData.pluginName && plugin !== 'testremixIde') {
                 browser.waitForElementVisible(`[plugin="${plugin}"`)
               }
             })
