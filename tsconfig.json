@@ -43,7 +43,6 @@
       "@remix-ui/publish-to-storage": ["libs/remix-ui/publish-to-storage/src/index.ts"],
       "@remix-ui/renderer": ["libs/remix-ui/renderer/src/index.ts"]
     }
-    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", "tmp"]
 }
