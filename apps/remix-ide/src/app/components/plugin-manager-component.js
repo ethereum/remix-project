@@ -27,12 +27,8 @@ class PluginManagerComponent extends ViewPlugin {
     this.pluginManagerSettings = new PluginManagerSettings()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
-    this.views = {
-      root: null,
-      items: {}
-    }
     this.filter = ''
-    this.pluginNames = this.appManager.actives
+
     this.activePlugins = []
     this.inactivePlugins = []
     this.activeProfiles = this.appManager.actives
