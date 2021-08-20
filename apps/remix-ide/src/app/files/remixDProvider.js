@@ -41,8 +41,8 @@ module.exports = class RemixDProvider extends FileProvider {
       this.event.emit('fileRenamed', oldPath, newPath)
     })
 
-    this._appManager.on('remixd', 'rootFolderChanged', () => {
-      this.event.emit('rootFolderChanged')
+    this._appManager.on('remixd', 'rootFolderChanged', (path) => {
+      this.event.emit('rootFolderChanged', path)
     })
   }
 
