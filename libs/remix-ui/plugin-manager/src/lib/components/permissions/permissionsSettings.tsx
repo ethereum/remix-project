@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
-import { PluginManagerSettings, PluginPermissions } from '../../../types'
+import { PluginManagerSettings, PluginPermissions } from '../../../types/types'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 
 interface PermissionSettingsProps {
