@@ -3,8 +3,9 @@ import React, { useReducer, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
-import { FormStateProps, PluginManagerComponent } from '../../types'
+
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
+import { FormStateProps, PluginManagerComponent } from '../../types/types'
 
 interface LocalPluginFormProps {
   closeModal: () => void

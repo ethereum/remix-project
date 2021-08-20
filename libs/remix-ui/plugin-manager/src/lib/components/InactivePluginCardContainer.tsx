@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
 import React from 'react'
-import { PluginManagerComponent, PluginManagerProfile } from '../../types'
+import { PluginManagerComponent, PluginManagerProfile } from '../../types/types'
 import InactivePluginCard from './InactivePluginCard'
 import ModuleHeading from './moduleHeading'
 
