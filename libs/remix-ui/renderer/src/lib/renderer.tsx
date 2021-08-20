@@ -34,7 +34,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
 
     options.errLine = positionDetails.errLine
     options.errCol = positionDetails.errCol
-    options.errFile = positionDetails.errFile.trim()
+    options.errFile = positionDetails.errFile ? positionDetails.errFile.toString().trim() : ''
 
     if (!opt.noAnnotations && options.errFile && options.errFile !== '') {
       addAnnotation(opt.errFile, {
@@ -50,7 +50,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     setClose(false)
   }, [message, opt])
 
-  const getPositionDetails = (msg: any) => {
+  const getPositionDetails = (msg: string) => {
     const result = { } as Record<string, number | string>
 
     // To handle some compiler warning without location like SPDX license warning etc
