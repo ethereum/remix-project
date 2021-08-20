@@ -2,7 +2,7 @@
 
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
-import { existsSync, readFileSync, readdirSync } from 'fs'
+import { existsSync, readFileSync, readdirSync, unlink } from 'fs'
 import { OutputStandard } from '../types' // eslint-disable-line
 const { spawn, execSync } = require('child_process')
 
@@ -114,21 +114,30 @@ export class SlitherClient extends PluginClient {
       // Allow paths and set solc remapping for import URLs
       const fileContent = readFileSync(`${this.currentSharedFolder}/${filePath}`, 'utf8')
       const importsArr = fileContent.match(/import ['"][^.|..](.+?)['"];/g)
-      let allowPaths = ''; let remaps = ''
+      let remaps = ''
       if (importsArr?.length) {
-        const { remapString, allowPathString } = this.mapNpmDepsDir(importsArr)
-        allowPaths = allowPathString
+        const { remapString } = this.mapNpmDepsDir(importsArr)
         remaps = remapString.trim()
       }
-      const allowPathsOption: string = allowPaths ? `--allow-paths ${allowPaths} ` : ''
-      const optimizeOption: string = optimize ? '--optimize ' : ''
+      const optimizeOption: string = optimize ? '--optimize' : ''
       const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
-      const solcArgs: string = optimizeOption || evmOption || allowPathsOption ? `--solc-args '${allowPathsOption}${optimizeOption}${evmOption}'` : ''
+      let solcArgs = ''
+      if (optimizeOption) {
+        solcArgs += optimizeOption + ' '
+      }
+      if (evmOption) {
+        if (!solcArgs.endsWith(' ')) solcArgs += ' '
+        solcArgs += evmOption
+      }
+      if (solcArgs) {
+        solcArgs = `--solc-args "${solcArgs.trimStart()}"`
+      }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
       const outputFile: string = 'remix-slitherReport_' + Math.floor(Date.now() / 1000) + '.json'
       const cmd: string = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
+      console.log(cmd)
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
       // get too big and hangs the process. We process analysis from the report file only
       const child = spawn(cmd, { cwd: this.currentSharedFolder, shell: true, stdio: 'ignore' })
@@ -140,6 +149,9 @@ export class SlitherClient extends PluginClient {
         if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
           report = JSON.parse(report)
+          unlink(outputFileAbsPath, (err) => {
+            if (err) console.log(err)
+          })
           if (report['success']) {
             response['status'] = true
             if (!report['results'] || !report['results'].detectors || !report['results'].detectors.length) {

@@ -323,8 +323,8 @@ class Blockchain extends Plugin {
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
   startListening (txlistener) {
-    txlistener.event.register('newTransaction', (tx) => {
-      this.events.emit('newTransaction', tx)
+    txlistener.event.register('newTransaction', (tx, receipt) => {
+      this.events.emit('newTransaction', tx, receipt)
     })
   }
 
@@ -501,7 +501,7 @@ class Blockchain extends Plugin {
       if (isVM) {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
-          let finalLogs = 'console.log:\n'
+          let finalLogs = '<b>console.log:</b>\n'
           for (const log of hhlogs) {
             let formattedLog
             // Hardhat implements the same formatting options that can be found in Node.js' console.log,
@@ -513,7 +513,7 @@ class Blockchain extends Plugin {
             } else {
               formattedLog = log.join(' ')
             }
-            finalLogs = finalLogs + formattedLog + '\n'
+            finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
           }
           this.call('terminal', 'log', { type: 'info', value: finalLogs })
         }
