@@ -86,6 +86,13 @@ const fileRemovedSuccess = (removePath: string) => {
   }
 }
 
+const rootFolderChangedSuccess = (path: string) => {
+  return {
+    type: 'ROOT_FOLDER_CHANGED',
+    payload: path
+  }
+}
+
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
@@ -215,13 +222,54 @@ const listenOnEvents = (provider) => {
   provider.event.on('fileRemoved', async (removePath) => {
     await executeEvent('fileRemoved', removePath)
   })
+
+  plugin.on('remixd', 'rootFolderChanged', async (path) => {
+    await executeEvent('rootFolderChanged', path)
+  })
+
+  provider.event.on('disconnected', () => {
+    dispatch(setMode('browser'))
+  })
+  // provider.event.on('connected', () => {
+  //   remixdExplorer.show()
+  //   setWorkspace(LOCALHOST)
+  // })
+
+  // provider.event.on('disconnected', () => {
+  //   remixdExplorer.hide()
+  // })
+
+  // provider.event.on('loading', () => {
+  //   remixdExplorer.loading()
+  // })
+
+  provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
+    const config = plugin.registry.get('config').api
+    const editor = plugin.registry.get('editor').api
+
+    if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
+      if (provider.isReadOnly(path)) return editor.setText(file.content)
+      dispatch(displayNotification(
+        path + ' changed',
+        'This file has been changed outside of Remix IDE.',
+        'Replace by the new content', 'Keep the content displayed in Remix',
+        () => {
+          editor.setText(file.content)
+        }
+      ))
+    }
+  })
+  provider.event.on('fileRenamedError', async () => {
+    dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
+  })
 }
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
     plugin = filePanelPlugin
     dispatch = reducerDispatch
-    const provider = filePanelPlugin.fileProviders.workspace
+    const workspaceProvider = filePanelPlugin.fileProviders.workspace
+    const localhostProvider = filePanelPlugin.fileProviders.localhost
     const queryParams = new QueryParams()
     const params = queryParams.get()
     const workspaces = await getWorkspaces() || []
@@ -238,65 +286,23 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         dispatch(setCurrentWorkspace('default_workspace'))
       } else {
         if (workspaces.length > 0) {
-          provider.setWorkspace(workspaces[workspaces.length - 1])
+          workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
           dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
         }
       }
     }
 
-    listenOnEvents(provider)
+    listenOnEvents(workspaceProvider)
+    listenOnEvents(localhostProvider)
     // provider.event.on('fileRenamed', async (oldPath) => {
     //   await executeEvent('fileRenamed', oldPath)
     // })
-    // provider.event.on('rootFolderChanged', async () => {
-    //   await executeEvent('rootFolderChanged')
-    // })
-    // provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
-    //   const config = plugin.registry.get('config').api
-    //   const editor = plugin.registry.get('editor').api
-
-    //   if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
-    //     if (provider.isReadOnly(path)) return editor.setText(file.content)
-    //     dispatch(displayNotification(
-    //       path + ' changed',
-    //       'This file has been changed outside of Remix IDE.',
-    //       'Replace by the new content', 'Keep the content displayed in Remix',
-    //       () => {
-    //         editor.setText(file.content)
-    //       }
-    //     ))
-    //   }
-    // })
-    // provider.event.on('fileRenamedError', async () => {
-    //   dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
-    // })
-    // dispatch(fetchProviderSuccess(provider))
 
     // provider.event.on('createWorkspace', (name) => {
     //   createNewWorkspace(name)
     // })
     // dispatch(setWorkspaces(workspaces))
     dispatch(setMode('browser'))
-  }
-}
-
-export const initLocalhost = (filePanelPlugin) => async (dispatch: React.Dispatch<any>) => {
-  if (filePanelPlugin) {
-  // plugin.fileProviders.localhost.event.off('disconnected', localhostDisconnect)
-  // plugin.fileProviders.localhost.event.on('disconnected', localhostDisconnect)
-  // plugin.fileProviders.localhost.event.on('connected', () => {
-  //   remixdExplorer.show()
-  //   setWorkspace(LOCALHOST)
-  // })
-
-    // plugin.fileProviders.localhost.event.on('disconnected', () => {
-    //   remixdExplorer.hide()
-    // })
-
-    // plugin.fileProviders.localhost.event.on('loading', () => {
-    //   remixdExplorer.loading()
-    // })
-    dispatch(setMode('localhost'))
   }
 }
 
@@ -341,11 +347,9 @@ const fileRemoved = async (removePath: string) => {
 //   await dispatch(fileRenamedSuccess(path, oldPath, data))
 // }
 
-// const rootFolderChanged = async () => {
-//   const workspaceName = provider.workspace || provider.type || ''
-
-//   await fetchDirectory(provider, workspaceName)(dispatch)
-// }
+const rootFolderChanged = async (path) => {
+  await dispatch(rootFolderChangedSuccess(path))
+}
 
 const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', path?: string) => {
   if (Object.keys(pendingEvents).length) {
@@ -383,24 +387,24 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       }
       break
 
-    // case 'fileRenamed':
-    //   await fileRenamed(path)
-    //   delete pendingEvents[eventName + path]
-    //   if (queuedEvents.length) {
-    //     const next = queuedEvents.pop()
+      // case 'fileRenamed':
+      //   await fileRenamed(path)
+      //   delete pendingEvents[eventName + path]
+      //   if (queuedEvents.length) {
+      //     const next = queuedEvents.pop()
 
-    //     await executeEvent(next.eventName, next.path)
-    //   }
-    //   break
+      //     await executeEvent(next.eventName, next.path)
+      //   }
+      //   break
 
-    // case 'rootFolderChanged':
-    //   await rootFolderChanged()
-    //   delete pendingEvents[eventName + path]
-    //   if (queuedEvents.length) {
-    //     const next = queuedEvents.pop()
+    case 'rootFolderChanged':
+      await rootFolderChanged(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
 
-    //     await executeEvent(next.eventName, next.path)
-    //   }
-    //   break
+        await executeEvent(next.eventName, next.path)
+      }
+      break
   }
 }
