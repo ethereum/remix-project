@@ -27,11 +27,17 @@ export function Workspace (props: WorkspaceProps) {
   }, [])
 
   useEffect(() => {
-    if (global.fs.browser.currentWorkspace) {
+    if (global.fs.mode === 'browser') {
       setCurrentWorkspace(global.fs.browser.currentWorkspace)
       global.dispatchFetchDirectory(global.fs.browser.currentWorkspace)
+    } else if (global.fs.mode === 'localhost') {
+      global.dispatchFetchDirectory('localhost')
     }
-  }, [global.fs.browser.currentWorkspace])
+  }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder])
+
+  useEffect(() => {
+    if (global.fs.mode === 'localhost') setCurrentWorkspace(LOCALHOST)
+  }, [global.fs.mode])
 
   props.plugin.resetNewFile = () => {
     setState(prevState => {
@@ -63,15 +69,6 @@ export function Workspace (props: WorkspaceProps) {
 
   props.plugin.request.getCurrentWorkspace = () => {
     return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.plugin.workspace.workspacesPath}/${currentWorkspace}` }
-  }
-
-  const localhostDisconnect = () => {
-    if (currentWorkspace === LOCALHOST) setWorkspace(props.plugin.workspaces.length > 0 ? props.plugin.workspaces[0] : NO_WORKSPACE)
-    // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
-    else {
-      setWorkspace(currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
-      props.plugin.fileManager.setMode('browser')
-    }
   }
 
   const createNewWorkspace = async (workspaceName) => {
