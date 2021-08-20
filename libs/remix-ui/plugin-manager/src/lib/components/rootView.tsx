@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, ReactNode, useEffect, useState } from 'react'
-import { FormStateProps, PluginManagerComponent } from '../../types'
+import { FormStateProps, PluginManagerComponent } from '../../types/types'
 import PermisssionsSettings from './permissions/permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
