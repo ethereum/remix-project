@@ -43,8 +43,7 @@ export interface RemixUiTerminalProps {
   registry: any,
   commands: any,
   txListener: any,
-  eventsDecoder: any,
-  logHtml: any
+  eventsDecoder: any
 }
 
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -102,11 +101,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }
 
-  useEffect(() => {
-    scriptRunnerDispatch({ type: 'html', payload: { message: props.logHtml } })
-  }, [props.logHtml])
-
-  console.log({ logHtml: props.logHtml })
   // events
   useEffect(() => {
     initListeningOnNetwork(props, scriptRunnerDispatch)
@@ -114,6 +108,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
     registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
     registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
+
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -122,13 +117,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
     registerCommandAction('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
-      console.log({ script }, 'script')
       _shell(script, scopedCommands, function (error, output) {
         if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
       })
     }, { activate: true }, dispatch)
-  }, [props.thisState.autoCompletePopup, autoCompletState.text, props.logHtml])
+  }, [props.thisState.autoCompletePopup, autoCompletState.text])
 
   useEffect(() => {
     scrollToBottom()
@@ -1435,15 +1429,15 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         {
           handleAutoComplete()
         }
-        <div data-id='terminalContainerDisplay' style = {{
+        <div data-id="terminalContainerDisplay" style = {{
           position: 'absolute',
-          height: '100%',
-          width: '100%',
+          height: '100',
+          width: '100',
           opacity: '0.1',
           zIndex: -1
         }}></div>
         <div className="terminal">
-          <div id='journal' className='journal' data-id='terminalJournal'>
+          <div id="journal" className="journal" data-id="terminalJournal">
             {!clearConsole && <TerminalWelcomeMessage packageJson={props.version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === 'emptyBlock') {
