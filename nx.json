@@ -6,8 +6,9 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
+    "tsconfig.base.json": "*",
     "tslint.json": "*",
+    ".eslintrc": "*",
     "nx.json": "*"
   },
   "tasksRunnerOptions": {
