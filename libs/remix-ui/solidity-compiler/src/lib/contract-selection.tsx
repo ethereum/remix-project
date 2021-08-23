@@ -7,7 +7,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { contractMap, fileProvider, fileManager, contractsDetails, modal } = props
+  const { api, contractMap, contractsDetails, modal } = props
   const [contractList, setContractList] = useState([])
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
@@ -203,10 +203,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <button id="publishOnSwarm" className="btn btn-secondary btn-block" title="Publish on Swarm" onClick={() => { handlePublishToStorage('swarm') }}>
-              <span>Publish on Swarm</span>
-              <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
-            </button>
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" title="Publish on Ipfs" onClick={() => { handlePublishToStorage('ipfs') }}>
               <span>Publish on Ipfs</span>
               <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
@@ -238,7 +234,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           <span className="mt-2 mx-3 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
         </article></section>
       }
-      <PublishToStorage storage={storage} fileManager={fileManager} fileProvider={fileProvider} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
+      <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
     </>
   )
 }

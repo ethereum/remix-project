@@ -99,44 +99,31 @@ export class Debugger {
     this.debugger.web3 = web3
   }
 
-  debug (blockNumber, txNumber, tx, loadingCb): Promise<void> {
+  async debug (blockNumber, txNumber, tx, loadingCb) {
     const web3 = this.debugger.web3
 
-    return new Promise((resolve, reject) => {
-      if (this.debugger.traceManager.isLoading) {
-        return resolve()
-      }
+    if (this.debugger.traceManager.isLoading) {
+      return
+    }
 
-      if (tx) {
-        if (!tx.to) {
-          tx.to = contractCreationToken('0')
-        }
-        this.debugTx(tx, loadingCb)
-        return resolve()
+    if (tx) {
+      if (!tx.to) {
+        tx.to = contractCreationToken('0')
       }
+      return await this.debugTx(tx, loadingCb)
+    }
 
-      try {
-        if (txNumber.indexOf('0x') !== -1) {
-          return web3.eth.getTransaction(txNumber, (_error, tx) => {
-            if (_error) return reject(_error)
-            if (!tx) return reject(new Error('cannot find transaction ' + txNumber))
-            this.debugTx(tx, loadingCb)
-            return resolve()
-          })
-        }
-        web3.eth.getTransactionFromBlock(blockNumber, txNumber, (_error, tx) => {
-          if (_error) return reject(_error)
-          if (!tx) return reject(new Error('cannot find transaction ' + blockNumber + ' ' + txNumber))
-          this.debugTx(tx, loadingCb)
-          return resolve()
-        })
-      } catch (e) {
-        return reject(e.message)
-      }
-    })
+    if (txNumber.indexOf('0x') !== -1) {
+      tx = await web3.eth.getTransaction(txNumber)
+      if (!tx) throw new Error('cannot find transaction ' + txNumber)
+    } else {
+      tx = await web3.eth.getTransactionFromBlock(blockNumber, txNumber)
+      if (!tx) throw new Error('cannot find transaction ' + blockNumber + ' ' + txNumber)
+    }
+    return await this.debugTx(tx, loadingCb)
   }
 
-  debugTx (tx, loadingCb) {
+  async debugTx (tx, loadingCb) {
     this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
 
     this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
@@ -162,7 +149,7 @@ export class Debugger {
     })
 
     loadingCb()
-    this.debugger.debug(tx)
+    await this.debugger.debug(tx)
   }
 
   unload () {

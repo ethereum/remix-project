@@ -103,6 +103,15 @@ export function extend (web3) {
     }))
   }
 
+  if (!(web3.eth && web3.eth.getHHLogsForTx)) {
+    methods.push(new web3.extend.Method({
+      name: 'getHHLogsForTx',
+      call: 'eth_getHHLogsForTx',
+      inputFormatter: [null],
+      params: 1
+    }))
+  }
+
   if (!(web3.eth && web3.eth.getHashFromTagBySimulator)) {
     methods.push(new web3.extend.Method({
       name: 'getHashFromTagBySimulator',

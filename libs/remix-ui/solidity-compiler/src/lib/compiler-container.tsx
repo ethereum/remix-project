@@ -18,7 +18,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName, setHardHatCompilation, updateCurrentVersion, isHardHatProject, configurationSettings  } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -28,7 +28,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     allversions: [],
     customVersions: [],
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.4+commit.c7e474f2.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.7+commit.e28d00a7.js', // this default version is defined: in makeMockCompiler (for browser test)
     selectedLanguage: '',
     runs: '',
     compiledFileName: '',
@@ -56,26 +56,26 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector(selectedVersion)
       }
     })
-    const currentFileName = config.get('currentFile')
+    const currentFileName = api.getConfiguration('currentFile')
 
     currentFile(currentFileName)
-    listenToEvents(editor, compileTabLogic)(dispatch)
+    listenToEvents(compileTabLogic, api)(dispatch)
   }, [])
 
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
       setState(prevState => {
-        const params = queryParams.get()
+        const params = api.getParameters()
         const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
         const runs = params.runs
         const evmVersion = params.evmVersion
 
         return {
           ...prevState,
-          hideWarnings: config.get('hideWarnings') || false,
-          autoCompile: config.get('autoCompile') || false,
-          includeNightlies: config.get('includeNightlies') || false,
-          optimise: (optimize !== null) && (optimize !== undefined) ? optimize : config.get('optimise') || false,
+          hideWarnings: api.getConfiguration('hideWarnings') || false,
+          autoCompile: api.getConfiguration('autoCompile') || false,
+          includeNightlies: api.getConfiguration('includeNightlies') || false,
+          optimise: (optimize !== null) && (optimize !== undefined) ? optimize : api.getConfiguration('optimise') || false,
           runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
@@ -152,7 +152,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
-      if (queryParams.get().version) selectedVersion = queryParams.get().version
+      if (api.getParameters().version) selectedVersion = api.getParameters().version
       // Check if version is a URL and corresponding filename starts with 'soljson'
       if (selectedVersion.startsWith('https://')) {
         const urlArr = selectedVersion.split('/')
@@ -197,7 +197,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // Load solc compiler version according to pragma in contract file
   const _setCompilerVersionFromPragma = (filename: string) => {
     if (!state.allversions) return
-    compileTabLogic.fileManager.readFile(filename).then(data => {
+    api.readFile(filename).then(data => {
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
@@ -228,7 +228,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const isSolFileSelected = (currentFile = '') => {
-    if (!currentFile) currentFile = config.get('currentFile')
+    if (!currentFile) currentFile = api.getConfiguration('currentFile')
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
@@ -297,7 +297,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
-    const currentFile = config.get('currentFile')
+    const currentFile = api.getConfiguration('currentFile')
 
     if (!isSolFileSelected()) return
 
@@ -321,7 +321,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
     updateCurrentVersion(selectedVersion)
-    queryParams.update({ version: selectedVersion })
+    api.setParameters({ version: selectedVersion })
     let url
 
     if (customUrl !== '') {
@@ -331,7 +331,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      queryParams.update({ version: selectedVersion })
+      api.setParameters({ version: selectedVersion })
     } else if (selectedVersion === 'builtin') {
       let location: string | Location = window.document.location
       let path = location.pathname
@@ -406,7 +406,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleAutoCompile = (e) => {
     const checked = e.target.checked
 
-    config.set('autoCompile', checked)
+    api.setConfiguration('autoCompile', checked)
     setState(prevState => {
       return { ...prevState, autoCompile: checked }
     })
@@ -415,7 +415,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleOptimizeChange = (value) => {
     const checked = !!value
 
-    config.set('optimise', checked)
+    api.setConfiguration('optimise', checked)
     compileTabLogic.setOptimize(checked)
     if (compileTabLogic.optimize) {
       compileTabLogic.setRuns(parseInt(state.runs))
@@ -441,7 +441,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleHideWarningsChange = (e) => {
     const checked = e.target.checked
 
-    config.set('hideWarnings', checked)
+    api.setConfiguration('hideWarnings', checked)
     state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, hideWarnings: checked }
@@ -452,7 +452,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = e.target.checked
 
     if (!checked) handleLoadVersion(state.defaultVersion)
-    config.set('includeNightlies', checked)
+    api.setConfiguration('includeNightlies', checked)
     setState(prevState => {
       return { ...prevState, includeNightlies: checked }
     })
@@ -483,7 +483,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = event.target.checked
 
     sethhCompilation(checked)
-    setHardHatCompilation(checked)
+    api.setHardHatCompilation(checked)
   }
 
   /*
@@ -534,6 +534,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
             <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
               <option data-id={state.evmVersion === 'default' ? 'selected' : ''} value="default">compiler default</option>
+              <option data-id={state.evmVersion === 'london' ? 'selected' : ''} value="london">london</option>
               <option data-id={state.evmVersion === 'berlin' ? 'selected' : ''} value="berlin">berlin</option>
               <option data-id={state.evmVersion === 'muirGlacier' ? 'selected' : ''} value="muirGlacier">muirGlacier</option>
               <option data-id={state.evmVersion === 'istanbul' ? 'selected' : ''} value="istanbul">istanbul</option>
@@ -574,7 +575,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           {
-            isHardHatProject &&
+            api.isHardHatProject &&
             <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
