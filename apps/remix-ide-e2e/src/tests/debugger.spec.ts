@@ -72,8 +72,8 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n0', 60000)
       .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
       .pause(10000)
-      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n348', 60000)
-      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n348', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n352', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n352', 60000)
   },
 
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
