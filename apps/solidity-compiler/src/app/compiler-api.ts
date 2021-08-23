@@ -222,7 +222,20 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(workspace)
+      if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost)
+    })
+
+    this.on('remixd', 'rootFolderChanged', () => {
+      this.resetResults()
+      if (this.onSetWorkspace) this.onSetWorkspace(true)
+    })
+
+    this.on('editor', 'sessionSwitched', () => {
+      if (this.onSessionSwitched) this.onSessionSwitched()
+    })
+
+    this.on('editor', 'contentChanged', () => {
+      if (this.onContentChanged) this.onContentChanged()
     })
 
     this.on('editor', 'sessionSwitched', () => {
@@ -266,8 +279,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
           )
         })
       } else {
-        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
-        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error' })
+        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0) + data.error ? 1 : 0
+        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
       this.contractMap = {}
