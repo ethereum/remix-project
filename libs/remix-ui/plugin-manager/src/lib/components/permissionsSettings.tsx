@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
-import { PluginManagerSettings, PluginPermissions } from '../../../types/types'
+/* eslint-disable-line */
 import { ModalDialog } from '@remix-ui/modal-dialog'
+import { useLocalStorage } from '../custom-hooks/useLocalStorage'
+// import { PluginManagerSettings, PluginPermissions } from '../../types'
 
 interface PermissionSettingsProps {
-  pluginSettings: PluginManagerSettings
+  pluginSettings: any
 }
 
 function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
@@ -12,28 +14,20 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
    * Declare component local state
    */
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
-  const [permissions] = useState<PluginPermissions | null>(
-    JSON.parse(localStorage.getItem('plugins/permissions') || '{}'))
-  const [verifyPermission, setVerifyPermission] = useState(false)
+  // const [permissions] = useState<any | null>(
+  //   JSON.parse(localStorage.getItem('plugins/permissions') || '{}'))
+  const [permissions, setPermissions] = useLocalStorage('plugins/permissions', '{}')
   const closeModal = () => setModalVisibility(true)
-
-  const displayPermissions = useCallback(() => {
-    if (permissions && Object.keys(permissions).length > 0) {
-      setVerifyPermission(true)
-    }
-  }, [permissions])
-
-  useEffect(() => {
-    displayPermissions()
-  }, [displayPermissions, permissions])
-  // console.log('fetched permissions', permissions)
 
   function ShowPluginHeading ({ headingName }) {
     return (
       <div className="pb-2 remixui_permissionKey">
         <h3>{headingName} permissions:</h3>
         <i
-          onClick={() => pluginSettings.clearAllPersmission('topLevelPluginNameP')}
+          onClick={() => {
+            console.log(`${headingName}`)
+            clearPersmission(headingName)
+          }}
           className="far fa-trash-alt"
           data-id={`pluginManagerSettingsClearAllPermission-${headingName}`}>
 
@@ -55,7 +49,10 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     }, [checkBoxState])
 
     const handleCheckboxClick = () => {
+      const copyPermissions = permissions
+      copyPermissions[pluginName][functionName][topLevelPluginName].allow = !checkBoxState
       setCheckBoxState(!checkBoxState)
+      setPermissions(copyPermissions)
     }
     return (
       <div className="form-group remixui_permissionKey">
@@ -78,12 +75,39 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
           </span>
         </div>
         <i
-          onClick={() => pluginSettings.clearPersmission(pluginName, topLevelPluginName, functionName)}
+          onClick={() => {
+            console.log(`${pluginName}'s trash icon was clicked!`)
+            clearAllPersmissions(pluginName, topLevelPluginName, functionName)
+          }}
           className="fa fa-trash-alt"
           data-id={`pluginManagerSettingsRemovePermission-${topLevelPluginName}-${functionName}-${topLevelPluginName}`}
         />
       </div>
     )
+  }
+
+  function clearAllPersmissions (pluginName: string, topLevelPluginName: string, funcName: string) {
+    const permissionsCopy = permissions // don't mutate state
+    if (permissionsCopy[topLevelPluginName] && permissionsCopy[topLevelPluginName][funcName]) {
+      delete permissionsCopy[topLevelPluginName][funcName][pluginName]
+      if (Object.keys(permissionsCopy[topLevelPluginName][funcName]).length === 0) {
+        delete permissionsCopy[topLevelPluginName][funcName]
+      }
+      if (Object.keys(permissionsCopy[topLevelPluginName]).length === 0) {
+        delete permissionsCopy[topLevelPluginName]
+      }
+    }
+    // eslint-disable-next-line no-debugger
+    debugger
+    setPermissions({ ...permissionsCopy })
+  }
+
+  function clearPersmission (topLevelPluginName: string) {
+    const permissionsCopy = permissions
+    if (permissionsCopy[topLevelPluginName]) {
+      delete permissionsCopy[topLevelPluginName]
+    }
+    setPermissions({})
   }
 
   return (
@@ -95,20 +119,23 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
         okLabel="OK"
         cancelLabel="Cancel"
       >
-        {verifyPermission ? (<h4 className="text-center">Current Permission Settings</h4>) : (<h4 className="text-center">No Permission requested yet.</h4>)}
+        {JSON.parse(localStorage.getItem('plugins/permissions')) && Object.keys(JSON.parse(localStorage.getItem('plugins/permissions'))).length > 0
+          ? (<h4 className="text-center">Current Permission Settings</h4>)
+          : (<h4 className="text-center">No Permission requested yet.</h4>)
+        }
         <form className="remixui_permissionForm" data-id="pluginManagerSettingsPermissionForm">
           <div className="p-2">
             {
-              Object.keys(permissions).map(toplevelName => (
+              Object.keys(JSON.parse(localStorage.getItem('plugins/permissions'))).map(toplevelName => (
                 <ShowPluginHeading key={toplevelName} headingName={toplevelName} />
               ))
             }
             {
-              Object.keys(permissions).map(topName => {
-                return Object.keys(permissions[topName]).map(funcName => {
-                  return Object.keys(permissions[topName][funcName]).map(pluginName => (
+              Object.keys(JSON.parse(localStorage.getItem('plugins/permissions'))).map(topName => {
+                return Object.keys(JSON.parse(localStorage.getItem('plugins/permissions'))[topName]).map(funcName => {
+                  return Object.keys(JSON.parse(localStorage.getItem('plugins/permissions'))[topName][funcName]).map(pluginName => (
                     <ShowCheckBox
-                      allow={permissions[topName][funcName][pluginName].allow}
+                      allow={JSON.parse(localStorage.getItem('plugins/permissions'))[topName][funcName][pluginName].allow}
                       functionName={funcName}
                       pluginName={pluginName}
                       topLevelPluginName={topName}
