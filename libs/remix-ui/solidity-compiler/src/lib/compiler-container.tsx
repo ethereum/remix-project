@@ -76,7 +76,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           hideWarnings: api.getConfiguration('hideWarnings') || false,
           autoCompile: typeof autoCompile === 'boolean' ? autoCompile : api.getConfiguration('autoCompile') || false,
           includeNightlies: api.getConfiguration('includeNightlies') || false,
-          optimise: typeof optimize === 'boolean' ? optimize : api.getConfiguration('optimise') || false,
+          optimize: (optimize !== null) && (optimize !== undefined) ? optimize : false,
           runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
