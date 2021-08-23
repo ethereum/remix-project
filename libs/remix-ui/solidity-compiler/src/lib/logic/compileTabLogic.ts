@@ -16,7 +16,7 @@ export class CompileTab extends Plugin {
   public runs
   public evmVersion: string
   public compilerImport
-  public event
+  public eventz
 
   constructor (public api, public contentImport) {
     super(profile)
