@@ -25,7 +25,7 @@ export async function decodeState (stateVars, storageResolver) {
       ret[stateVar.name] = decoded
     } catch (e) {
       console.log(e)
-      ret[stateVar.name] = '<decoding failed - ' + e.message + '>'
+      ret[stateVar.name] = { error: '<decoding failed - ' + e.message + '>' }
     }
   }
   return ret
@@ -64,6 +64,6 @@ export async function solidityState (storageResolver, astList, contractName) {
   try {
     return await decodeState(stateVars, storageResolver)
   } catch (e) {
-    return '<decoding failed - ' + e.message + '>'
+    return { error: '<decoding failed - ' + e.message + '>' }
   }
 }

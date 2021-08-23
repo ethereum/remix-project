@@ -30,9 +30,8 @@ export class TraceManager {
     this.init()
     if (!this.web3) throw new Error('web3 not loaded')
     this.isLoading = true
+    const result = await this.getTrace(tx.hash)
     try {
-      const result = await this.getTrace(tx.hash)
-
       if (result['structLogs'].length > 0) {
         this.trace = result['structLogs']
 

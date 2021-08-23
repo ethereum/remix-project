@@ -1,7 +1,9 @@
 import Web3 from 'web3'
+import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { waterfall } from 'async'
 import { EventEmitter } from 'events'
+import { format } from 'util'
 import { ExecutionContext } from './execution-context'
 import VMProvider from './providers/vm.js'
 import InjectedProvider from './providers/injected.js'
@@ -9,10 +11,20 @@ import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
+const packageJson = require('../../../../package.json')
 
-class Blockchain {
+const profile = {
+  name: 'blockchain',
+  displayName: 'Blockchain',
+  description: 'Blockchain - Logic',
+  methods: [],
+  version: packageJson.version
+}
+
+class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config) {
+    super(profile)
     this.event = new EventManager()
     this.executionContext = new ExecutionContext()
 
@@ -311,8 +323,8 @@ class Blockchain {
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
   startListening (txlistener) {
-    txlistener.event.register('newTransaction', (tx) => {
-      this.events.emit('newTransaction', tx)
+    txlistener.event.register('newTransaction', (tx, receipt) => {
+      this.events.emit('newTransaction', tx, receipt)
     })
   }
 
@@ -487,6 +499,24 @@ class Blockchain {
       let execResult
       let returnValue = null
       if (isVM) {
+        const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
+        if (hhlogs && hhlogs.length) {
+          let finalLogs = '<b>console.log:</b>\n'
+          for (const log of hhlogs) {
+            let formattedLog
+            // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+            // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+            // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+            // We check first arg to determine if 'util.format' is needed
+            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+              formattedLog = format(log[0], ...log.slice(1))
+            } else {
+              formattedLog = log.join(' ')
+            }
+            finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
+          }
+          this.call('terminal', 'log', { type: 'info', value: finalLogs })
+        }
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.

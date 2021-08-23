@@ -5,7 +5,7 @@ import { deployAll } from './deployer'
 import { runTest } from './testRunner'
 
 import Web3 from 'web3'
-import { Provider } from '@remix-project/remix-simulator'
+import { Provider, extend } from '@remix-project/remix-simulator'
 import {
   FinalResult, SrcIfc, compilationInterface, ASTInterface, Options,
   TestResultInterface, AstNode, CompilerConfiguration
@@ -17,6 +17,7 @@ const createWeb3Provider = async function () {
   const provider: any = new Provider()
   await provider.init()
   web3.setProvider(provider)
+  extend(web3)
   return web3
 }
 
@@ -102,7 +103,7 @@ export async function runTestSources (contractSources: SrcIfc, compilerConfig: C
 
       async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
         const fileAST: AstNode = sourceASTs[contracts[contractName]['filename']]
-        runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
+        runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts, web3 }, _testCallback, (err, result) => {
           if (err) {
             return cb(err)
           }
