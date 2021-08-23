@@ -90,6 +90,7 @@ class PluginManagerComponent extends ViewPlugin {
     ReactDOM.render(
       <RemixUiPluginManager
         pluginComponent={this}
+        pluginManagerSettings={this.pluginManagerSettings}
       />,
       this.htmlElement)
   }
