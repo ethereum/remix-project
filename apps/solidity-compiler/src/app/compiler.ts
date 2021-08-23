@@ -25,6 +25,7 @@ const defaultAppParameters = {
   includeNightlies: false
 }
 
+<<<<<<< HEAD
 const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
@@ -34,6 +35,9 @@ const defaultCompilerParameters = {
 }
 
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
+=======
+export class CompilerClientApi extends CompilerApiMixin(PluginClient) {
+>>>>>>> 5a22644c4 (fix iframe plugin api)
   // interface matches libs/remix-ui/solidity-compiler/types/index.ts : ICompilerApi
   currentFile: string
   contractMap: {
@@ -49,10 +53,18 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   getParameters: () => ConfigurationSettings
   setParameters: (params: Partial<ConfigurationSettings>) => void
   setCompilerConfig: (settings: ConfigurationSettings) => void
+<<<<<<< HEAD
 
   getConfiguration: (value: string) => string
   setConfiguration: (name: string, value: string) => void
   getFileManagerMode: () => string
+=======
+  
+  getConfiguration: (value: string) => string
+  setConfiguration: (name: string, value: string) => void
+  getFileManagerMode: () => string
+  
+>>>>>>> 5a22644c4 (fix iframe plugin api)
 
   getCompilationResult: () => any
 
@@ -68,12 +80,15 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   writeFile: (file: string, content: string) => Promise<void>
   readFile: (file: string) => Promise<string>
   open: (file: string) => void
+<<<<<<< HEAD
 
 const getOptimize = () => {
   let value = localStorage.getItem('optimize') || defaultCompilerParameters['optimize']
   value = (value === 'false' || value === null || value === undefined) ? false : value
   value = value === 'true'
 }
+=======
+>>>>>>> 5a22644c4 (fix iframe plugin api)
 
 const defaultAppParameters = {
   hideWarnings: false,
