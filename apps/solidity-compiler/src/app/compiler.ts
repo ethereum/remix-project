@@ -24,26 +24,40 @@ export interface ConfigurationSettings {
 }
 
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) {
+  // interface matches libs/remix-ui/solidity-compiler/types/index.ts : ICompilerApi
+  currentFile: string
   contractMap: {
     file: string
   } | Record<string, any>
   compileErrors: any
   compileTabLogic: any
   contractsDetails: Record<string, any>
-  contentImport: any
-  call: (...args) => void
-  on: (...args) => void
-  setSelectedVersion: (value: string) => void
   configurationSettings: ConfigurationSettings
+
+  setHardHatCompilation: (value: boolean) => void
+  getParameters: () => ConfigurationSettings
+  setParameters: (params: Partial<ConfigurationSettings>) => void
+  setCompilerConfig: (settings: ConfigurationSettings) => void
+  
   getConfiguration: (value: string) => string
   setConfiguration: (name: string, value: string) => void
-  currentFile: string
+  getFileManagerMode: () => string
+  
+
+  getCompilationResult: () => any
 
   onCurrentFileChanged: (fileName: string) => void
   onResetResults: () => void
-  onSetWorkspace: (workspace: any) => void
+  onSetWorkspace: (isLocalhost: boolean) => void
   onNoFileSelected: () => void
   onCompilationFinished: (contractsDetails: any, contractMap: any) => void
+  onSessionSwitched: () => void
+  onContentChanged: () => void
+
+  fileExists: (file: string) => Promise<boolean>
+  writeFile: (file: string, content: string) => Promise<void>
+  readFile: (file: string) => Promise<string>
+  open: (file: string) => void
 
   constructor () {
     super()
