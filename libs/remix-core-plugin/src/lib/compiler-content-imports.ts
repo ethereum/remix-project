@@ -2,7 +2,6 @@
 import { Plugin } from '@remixproject/engine'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
 const remixTests = require('@remix-project/remix-tests')
-const async = require('async')
 
 const profile = {
   name: 'contentImport',
@@ -104,7 +103,7 @@ export class CompilerImports extends Plugin {
           }
           resolve(content)
         }, null)
-    })    
+    })
   }
 
   /**
@@ -140,16 +139,16 @@ export class CompilerImports extends Plugin {
                 if (error) return reject(error)
                 resolve(content)
               })
-            })              
+            })
           })()
-          return content         
+          return content
         } else {
           const localhostProvider = await this.call('fileManager', 'getProviderByName', 'localhost')
           if (localhostProvider.isConnected()) {
             var splitted = /([^/]+)\/(.*)$/g.exec(url)
 
             const possiblePaths = ['localhost/installed_contracts/' + url]
-            if (splitted) possiblePaths.push('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2])              
+            if (splitted) possiblePaths.push('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2])
             possiblePaths.push('localhost/node_modules/' + url)
             if (splitted) possiblePaths.push('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2])
 
