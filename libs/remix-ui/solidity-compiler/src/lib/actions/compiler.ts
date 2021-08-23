@@ -26,7 +26,7 @@ export const resetCompilerMode = () => (dispatch: React.Dispatch<any>) => {
   })
 }
 
-export const listenToEvents = (compileTabLogic: CompileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
+export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
   api.onSessionSwitched = () => {
     dispatch(setEditorMode('sessionSwitched'))
   }
