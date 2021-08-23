@@ -41,8 +41,4 @@ export class FramingService {
     this.mainView.minimizeTerminal()
     this.resizeFeature.hidePanel()
   }
-
-  code () {
-    this.verticalIcons.select('solidity')
-  }
 }
