@@ -69,11 +69,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
         const runs = params.runs
         const evmVersion = params.evmVersion
+        const autoCompile = params.autoCompile === 'false' ? false : params.autoCompile === 'true' ? true : null
 
         return {
           ...prevState,
           hideWarnings: api.getConfiguration('hideWarnings') || false,
-          autoCompile: api.getConfiguration('autoCompile') || false,
+          autoCompile: (autoCompile !== null) && (autoCompile !== undefined) ? autoCompile : api.getConfiguration('autoCompile') || false,
           includeNightlies: api.getConfiguration('includeNightlies') || false,
           optimise: (optimize !== null) && (optimize !== undefined) ? optimize : api.getConfiguration('optimise') || false,
           runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
@@ -407,6 +408,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = e.target.checked
 
     api.setConfiguration('autoCompile', checked)
+    state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, autoCompile: checked }
     })
