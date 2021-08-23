@@ -44,8 +44,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     })
   }
 
-  plugin.onSetWorkspace = async (workspace: any) => {
-    const isHardhat = workspace.isLocalhost && await compileTabLogic.isHardhatProject()
+  plugin.onSetWorkspace = async (isLocalhost: boolean) => {
+    const isHardhat = isLocalhost && await compileTabLogic.isHardhatProject()
     setState(prevState => {
       return { ...prevState, currentFile, isHardhatProject: isHardhat }
     })
@@ -71,7 +71,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   const updateCurrentVersion = (value) => {
     setCurrentVersion(value)
-    plugin.setSelectedVersion(value)
+    plugin.setParameters({ version: value })
   }
 
   const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
