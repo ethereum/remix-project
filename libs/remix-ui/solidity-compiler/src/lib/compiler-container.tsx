@@ -72,11 +72,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
         return {
           ...prevState,
-          hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
-          autoCompile: api.getAppParameter('autoCompile') as boolean || false,
-          includeNightlies: api.getAppParameter('includeNightlies') as boolean || false,
-          optimize: optimize,
-          runs: runs,
+          hideWarnings: api.getConfiguration('hideWarnings') || false,
+          autoCompile: typeof autoCompile === 'boolean' ? autoCompile : api.getConfiguration('autoCompile') || false,
+          includeNightlies: api.getConfiguration('includeNightlies') || false,
+          optimize: (optimize !== null) && (optimize !== undefined) ? optimize : false,
+          runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
       })
