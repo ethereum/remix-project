@@ -78,7 +78,7 @@ module.exports = {
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.7.4+commit.3f05b770')
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
       .verify.elementPresent('#optimize:checked')
-      .verify.elementPresent('#autoCompile:checked') 
+      .verify.elementPresent('#autoCompile:checked')
       .verify.attributeEquals('#runs', 'value', '300')
   },
 
