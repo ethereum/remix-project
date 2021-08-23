@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, ReactNode, useEffect, useState } from 'react'
-import { FormStateProps, PluginManagerComponent } from '../../types/types'
-import PermisssionsSettings from './permissions/permissionsSettings'
+import { PluginManagerComponent, PluginManagerSettings } from '../../types'
+import PermisssionsSettings from './permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
 
 interface RootViewProps {
   pluginComponent: PluginManagerComponent
+  pluginManagerSettings: PluginManagerSettings
   children: ReactNode
 }
 
@@ -20,7 +21,7 @@ export interface pluginActivated {
   profile: Profile
 }
 
-function RootView ({ pluginComponent, children }: RootViewProps) {
+function RootView ({ pluginComponent, pluginManagerSettings, children }: RootViewProps) {
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
 
@@ -32,7 +33,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
   }, [filterPlugins])
-
+  // console.log('This is the state of pluginSettings instance passed from pluginmanager', pluginComponent.pluginSettings)
   return (
     <Fragment>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
@@ -52,7 +53,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
           </button>
         </header>
         {children}
-        <PermisssionsSettings pluginSettings={pluginComponent.pluginSettings}/>
+        <PermisssionsSettings pluginSettings={pluginManagerSettings}/>
       </div>
       <LocalPluginForm
         closeModal={closeModal}
