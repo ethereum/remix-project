@@ -170,6 +170,11 @@ class FileManager extends Plugin {
   async open (path) {
     try {
       path = this.limitPluginScope(path)
+      try {
+        path = this._resolveFromExternalPath(path).file || path
+      } catch (e) {
+        return console.error(e)
+      }
       await this._handleExists(path, `Cannot open file ${path}`)
       await this._handleIsFile(path, `Cannot open file ${path}`)
       return this.openFile(path)
@@ -538,6 +543,22 @@ class FileManager extends Plugin {
     }
   }
 
+  /**
+   * Try to resolve the given file path.
+   * e.g if it's specified a github link, npm library, or any external content, 
+   * it returns the actual path where the content can be find.
+   * @param {string} file path we are trying to resolve
+   * @returns {{ string, provider }} file path resolved and its provider.
+   */
+  _resolveFromExternalPath (file) {
+    const provider = this.fileProviderOf(file)
+    if (!provider) throw new Error(`no provider for ${file}`)
+    return { 
+      file: provider.getPathFromUrl(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
+      provider
+    }
+  }
+
   removeTabsOf (provider) {
     for (var tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
@@ -569,9 +590,14 @@ class FileManager extends Plugin {
   openFile (file) {
     const _openFile = (file) => {
       this.saveCurrentFile()
-      const provider = this.fileProviderOf(file)
-      if (!provider) return console.error(`no provider for ${file}`)
-      file = provider.getPathFromUrl(file) || file // in case an external URL is given as input, we resolve it to the right internal path
+      let resolved
+      try {
+        resolved = this._resolveFromExternalPath(file)
+        file = resolved.file
+      } catch (e) {
+        return console.error(e)
+      }
+      const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
       provider.get(file, (error, content) => {
