@@ -56,8 +56,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-  const [_cmdHistory, setCmdHistory] = useState([])
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight)
+  // const [_cmdHistory, setCmdHistory] = useState([])
+  const [, setWindowHeight] = useState(window.innerHeight)
   // dragable state
   const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
   const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
@@ -65,8 +65,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
-  const [scriptRunnserState, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
-  const [isListeningOnNetwork, setIsListeningOnNetwork] = useState(false)
+  const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
+  const [, setIsListeningOnNetwork] = useState(false)
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
   const [autoCompletState, setAutoCompleteState] = useState({
@@ -121,7 +121,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerCommandAction('warn', _blocksRenderer('warn'), { activate: true }, dispatch)
     registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
 
-    registerCommandAction('script', function execute (args, scopedCommands, append) {
+    registerCommandAction('script', function execute (args, scopedCommands) {
       var script = String(args[0])
       console.log({ script }, 'script')
       _shell(script, scopedCommands, function (error, output) {
@@ -296,12 +296,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount - 1, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() }))
       console.log({ autoCompletState }, 'disable up an down key in input box')
     } else if (event.which === 38 && !autoCompletState.showSuggestions) { // <arrowUp>
-      const len = _cmdHistory.length
-      if (len === 0) event.preventDefault()
-      if (_cmdHistory.length - 1 > _cmdIndex) {
+      // const len = _cmdHistory.length
+      // if (len === 0) event.preventDefault()
+      if (cmdHistory.length - 1 > _cmdIndex) {
         setCmdIndex(prevState => prevState++)
       }
-      inputEl.current.innerText = _cmdHistory[_cmdIndex]
+      // console.log({ _cmdIndex }, 'history')
+      inputEl.current.innerText = cmdHistory[_cmdIndex]
       inputEl.current.focus()
     } else if (event.which === 40 && autoCompletState.showSuggestions) {
       event.preventDefault()
@@ -309,12 +310,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         return
       }
       setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount + 1, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion + 1]).toString() }))
-      console.log('disable up an down key in input box')
     } else if (event.which === 40 && !autoCompletState.showSuggestions) {
       if (_cmdIndex > -1) {
         setCmdIndex(prevState => prevState--)
       }
-      inputEl.current.innerText = _cmdIndex >= 0 ? _cmdHistory[_cmdIndex] : _cmdTemp
+      inputEl.current.innerText = _cmdIndex >= 0 ? cmdHistory[_cmdIndex] : _cmdTemp
       inputEl.current.focus()
     } else {
       setCmdTemp(inputEl.current.innerText)
@@ -336,7 +336,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setSeparatorYPosition(e.clientY)
       setLeftHeight(newLeftHeight)
       props.event.trigger('resize', [newLeftHeight + 32])
-      console.log({ newLeftHeight })
     }
   }
 
@@ -373,7 +372,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const _blocksRenderer = (mode) => {
     if (mode === 'html') {
       return function logger (args) {
-        console.log({ args })
         if (args.length) {
           return args[0]
         }
@@ -400,7 +398,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           return val
         })
         if (values.length) {
-          console.log({ values })
           return `<span class="${mode}" >${values}</span>`
         }
       }
@@ -428,7 +425,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     event.preventDefault()
     const inputString = event.target.value
     if (matched(allPrograms, inputString) || inputString.includes('.')) {
-      console.log(paste, 'onchange')
       if (paste) {
         setPaste(false)
         setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: inputString }))
@@ -467,7 +463,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const checkTxStatus = (tx, type) => {
-    console.log('inside checkTxStatus')
     if (tx.status === '0x1' || tx.status === true) {
       return (<i className='txStatus succeeded fas fa-check-circle'></i>)
     }
@@ -492,11 +487,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
     const i = data.receipt ? data.transactionIndex : data.transactionIndex
     const value = val ? typeConversion.toInt(val) : 0
-    console.log('inside context method')
     if (blockchain.getProvider() === 'vm') {
       return (
         <div>
-          {console.log('inside context method return')}
           <span className='txLog_7Xiho'>
             <span className='tx'>[vm]</span>
             <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
@@ -538,7 +531,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const txDetails = (event, tx) => {
     if (showTableHash.includes(tx.hash)) {
       const index = showTableHash.indexOf(tx.hash)
-      console.log({ index })
       if (index > -1) {
         setShowTableHash((prevState) => prevState.filter((x) => x !== tx.hash))
       }
@@ -706,7 +698,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
-      console.log('start debugging')
       return (<ModalDialog
         hide={false}
         handleHide={() => {} }
@@ -714,7 +705,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       />)
     } else {
       props.event.trigger('debuggingRequested', [tx.hash])
-      console.log('trigger ', { tx: props.event.trigger })
     }
   }
 
@@ -723,13 +713,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const to = tx.to
     // const obj = { from, to }
     const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
-    console.log('render unknown transaction ')
     return (
       <span id={`tx${tx.hash}`} key={index}>
         <div className="log" onClick={(event) => txDetails(event, tx)}>
           {checkTxStatus(receipt || tx, txType)}
           {context({ from, to, tx }, props.blockchain)}
-          { console.log('under context and checkTxStatus')}
           <div className='buttons'>
             <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
           </div>
@@ -750,7 +738,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           transactionCost: tx.transactionCost,
           executionCost: tx.executionCost
         }) : null}
-        { console.log('end')}
       </span>
     )
   }
@@ -760,7 +747,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const to = resolvedData.contractName + '.' + resolvedData.fn
     // const obj = { from, to }
     const txType = 'knownTx'
-    console.log('render unknown transaction ')
     return (
       <span id={`tx${tx.hash}`} key={index}>
         <div className="log" onClick={(event) => txDetails(event, tx)}>
@@ -788,7 +774,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           transactionCost: tx.transactionCost,
           executionCost: tx.executionCost
         }) : null}
-        { console.log('end')}
       </span>
     )
   }
@@ -821,8 +806,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
       {console.log({ newstate })}
-      {console.log({ props })}
-      {console.log({ autoCompletState })}
+      {console.log({ _cmdIndex })}
+      {console.log({ cmdHistory })}
       <div className="bar">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
@@ -891,16 +876,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 )
               } else if (x.name === 'unknownTransaction') {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
-                  console.log({ trans }, 'first output from deploy')
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderUnKnownTransactions(trans.tx, trans.receipt, index)} </div>)
                 })
               } else if (x.name === 'knownTransaction') {
                 return x.message.map((trans) => {
-                  console.log({ trans }, 'first output from deploy')
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
               } else {
-                console.log({ x }, 'second output from deploy')
                 return (
                   <div className="px-4 block" data-id="block_null" key={index}>
                     <span className={x.style}>{x.message}</span>
