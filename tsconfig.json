@@ -14,8 +14,35 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
-    "allowSyntheticDefaultImports": true
+    "paths": {
+      "@remix-project/remix-analyzer": ["dist/libs/remix-analyzer/index.js"],
+      "@remix-project/remix-astwalker": ["dist/libs/remix-astwalker/index.js"],
+      "@remix-project/remix-debug": ["dist/libs/remix-debug/src/index.js"],
+      "@remix-project/remix-lib": ["dist/libs/remix-lib/src/index.js"],
+      "@remix-project/remix-simulator": ["dist/libs/remix-simulator/src/index.js"],
+      "@remix-project/remix-solidity": ["dist/libs/remix-solidity/index.js"],
+      "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
+      "@remix-project/remix-url-resolver": ["dist/libs/remix-url-resolver/index.js"],
+      "@remixproject/debugger-plugin": ["apps/debugger/src/index.ts"],
+      "@remix-project/remixd": ["dist/libs/remixd/index.js"],
+      "@remix-ui/tree-view": ["libs/remix-ui/tree-view/src/index.ts"],
+      "@remix-ui/debugger-ui": ["libs/remix-ui/debugger-ui/src/index.ts"],
+      "@remix-ui/utils": ["libs/remix-ui/utils/src/index.ts"],
+      "@remix-ui/clipboard": ["libs/remix-ui/clipboard/src/index.ts"],
+      "@remix-project/remix-solidity-ts": ["libs/remix-solidity/src/index.ts"],
+      "@remix-ui/modal-dialog": ["libs/remix-ui/modal-dialog/src/index.ts"],
+      "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
+      "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"],
+      "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"],
+      "@remix-ui/static-analyser": ["libs/remix-ui/static-analyser/src/index.ts"],
+      "@remix-ui/checkbox": ["libs/remix-ui/checkbox/src/index.ts"],
+      "@remix-ui/terminal": ["libs/remix-ui/terminal/src/index.ts"],
+      "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"],
+      "@remix-project/core-plugin": ["libs/remix-core-plugin/src/index.ts"],
+      "@remix-ui/solidity-compiler": ["libs/remix-ui/solidity-compiler/src/index.ts"],
+      "@remix-ui/publish-to-storage": ["libs/remix-ui/publish-to-storage/src/index.ts"],
+      "@remix-ui/renderer": ["libs/remix-ui/renderer/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
