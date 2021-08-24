@@ -471,7 +471,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   <span className="text-dark h6">{element[0]}</span>
                   {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
                     x.hasWarning ? ( // eslint-disable-next-line  dot-notation
-                      <div id={`staticAnalysisModule${element[1]['warningModuleName']}`} key={i}>
+                      <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
                         <ErrorRenderer message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
                       </div>
 
