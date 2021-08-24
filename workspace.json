@@ -778,9 +778,25 @@
         }
       }
     },
+    "remix-ui-terminal": {
+      "root": "libs/remix-ui/terminal",
+      "sourceRoot": "libs/remix-ui/terminal/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/terminal/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/terminal/**/*"]
+          }
+        }
+      }
+    },
     "remix-ui-plugin-manager": {
-      "root": "libs/remix-ui/plugin-manager",
-      "sourceRoot": "libs/remix-ui/plugin-manager/src",
+     "root": "libs/remix-ui/plugin-manager",
+      "sourceRoot": "libs/remix-ui/plugin-manager/src", 
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -836,41 +852,6 @@
             "exclude": [
               "**/node_modules/**",
               "!libs/remix-ui/solidity-compiler/**/*"
-            ]
-          }
-        }
-      }
-    },
-"remix-ui-terminal": {
-  "root": "libs/remix-ui/terminal",
-  "sourceRoot": "libs/remix-ui/terminal/src",
-  "projectType": "library",
-  "schematics": {},
-  "architect": {
-    "lint": {
-      "builder": "@nrwl/linter:lint",
-      "options": {
-        "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/terminal/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/terminal/**/*"]
-          }
-        },
-        "build": {
-          "builder": "@nrwl/web:package",
-          "options": {
-            "outputPath": "dist/libs/remix-ui/terminal",
-            "tsConfig": "libs/remix-ui/terminal/tsconfig.lib.json",
-            "project": "libs/remix-ui/terminal/package.json",
-            "entryFile": "libs/remix-ui/terminal/src/index.ts",
-            "external": ["react", "react-dom"],
-            "babelConfig": "@nrwl/react/plugins/bundle-babel",
-            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-            "assets": [
-              {
-                "glob": "README.md",
-                "input": ".",
-                "output": "."
-              }
             ]
           }
         }
