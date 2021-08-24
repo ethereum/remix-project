@@ -17,6 +17,11 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
   const closeModal = () => setModalVisibility(true)
+  const openModal = () => {
+    const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions'))
+    setPermissions(currentValue)
+    setModalVisibility(!modalVisibility)
+  }
 
   function ShowPluginHeading ({ headingName }) {
     return (
@@ -43,10 +48,9 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     const [checkBoxState, setCheckBoxState] = useState(allow)
     const [showPermissions, setShowPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
 
-    useEffect(() => {
-      window.addEventListener('storage', () => setPermissions(showPermissions))
-      return () => window.removeEventListener('storage', () => setPermissions(showPermissions))
-    }, [checkBoxState])
+    // useEffect(() => {
+    //   console.log({ permissions })
+    // }, [checkBoxState, permissions])
 
     const handleCheckboxClick = () => {
       const copyPermissions = showPermissions
@@ -54,7 +58,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
       setCheckBoxState(!checkBoxState)
       setShowPermissions(copyPermissions)
     }
-    console.log('showPermissions', showPermissions)
     return (
       <div className="form-group remixui_permissionKey">
         { showPermissions && Object.keys(showPermissions).length > 0
@@ -87,6 +90,9 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     )
   }
 
+  useEffect(() => {
+    console.log({ permissions })
+  }, [Object.keys(permissions).length])
   function clearAllPersmissions (pluginName: string, topLevelPluginName: string, funcName: string) {
     const permissionsCopy = permissions // don't mutate state
     if (permissionsCopy[topLevelPluginName] && permissionsCopy[topLevelPluginName][funcName]) {
@@ -130,7 +136,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
               ))
             }
             {
-              Object.keys(permissions).map(topName => {
+              permissions && Object.keys(permissions).length > 0 ? Object.keys(permissions).map(topName => {
                 return Object.keys(permissions[topName]).map(funcName => {
                   return Object.keys(permissions[topName][funcName]).map(pluginName => (
                     <ShowCheckBox
@@ -142,14 +148,14 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
                     />
                   ))
                 })
-              })
+              }) : null
             }
           </div>
         </form>
       </ModalDialog>
       <footer className="bg-light remixui_permissions remix-bg-opacity">
         <button
-          onClick={() => setModalVisibility(!modalVisibility)}
+          onClick={openModal}
           className="btn btn-primary settings-button"
           data-id="pluginManagerPermissionsButton">
           Permissions
