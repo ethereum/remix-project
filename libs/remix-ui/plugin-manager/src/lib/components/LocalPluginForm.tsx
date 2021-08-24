@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
@@ -35,13 +35,22 @@ const defaultProfile = {
 
 function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFormProps) {
   const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
-  const [defaultPlugin] = useState<FormStateProps>(JSON.parse(localStorage.getItem('plugins/local')) || defaultProfile)
   const [name, setName] = useState<string>('')
   const [displayName, setDisplayName] = useState<string>('')
   const [url, setUrl] = useState<string>('')
   const [type, setType] = useState<'iframe' | 'ws'>('iframe')
   const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
   const [methods, setMethods] = useState<string>('')
+
+  useEffect(() => {
+    const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
+    setName(storagePlugin.name)
+    setUrl(storagePlugin.url)
+    setLocation(storagePlugin.location as 'sidePanel' | 'mainPanel' | 'none')
+    setMethods(storagePlugin.methods)
+    setType(storagePlugin.type)
+    setDisplayName(storagePlugin.displayName)
+  }, [])
 
   const handleModalOkClick = async () => {
     try {
@@ -97,7 +106,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setName(e.target.value)}
-            value={ name || defaultPlugin.name }
+            value={ name}
             id="plugin-name"
             data-id="localPluginName"
             placeholder="Should be camelCase" />
@@ -107,7 +116,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setDisplayName(e.target.value)}
-            value={ displayName || defaultPlugin.displayName }
+            value={ displayName }
             id="plugin-displayname"
             data-id="localPluginDisplayName"
             placeholder="Name in the header" />
@@ -117,7 +126,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setMethods(e.target.value)}
-            value={ methods || defaultPlugin.methods }
+            value={ methods }
             id="plugin-methods"
             data-id="localPluginMethods"
             placeholder="Name in the header" />
@@ -128,7 +137,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setUrl(e.target.value)}
-            value={ url || defaultPlugin.url }
+            value={ url }
             id="plugin-url"
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />

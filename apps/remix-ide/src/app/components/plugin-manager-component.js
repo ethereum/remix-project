@@ -67,7 +67,7 @@ class PluginManagerComponent extends ViewPlugin {
       this.engine.register(localPlugin)
       this.appManager.activatePlugin(localPlugin.profile.name)
       this.getAndFilterPlugins()
-      localStorage.setItem('plugins/local', JSON.stringify(localPlugin))
+      localStorage.setItem('plugins/local', JSON.stringify(localPlugin.profile))
     }
   }
 
