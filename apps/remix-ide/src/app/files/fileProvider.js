@@ -40,7 +40,7 @@ class FileProvider {
   }
 
   getUrlFromPath (path) {
-    if (!path.startsWith(this.type)) path = this.type + '/' + path 
+    if (!path.startsWith(this.type)) path = this.type + '/' + path
     return this.providerExternalsStorage.get(path)
   }
 

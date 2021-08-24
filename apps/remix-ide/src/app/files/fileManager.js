@@ -545,29 +545,29 @@ class FileManager extends Plugin {
 
   /**
    * Try to resolve the given file path (the actual path in the file system)
-   * e.g if it's specified a github link, npm library, or any external content, 
+   * e.g if it's specified a github link, npm library, or any external content,
    * it returns the actual path where the content can be found.
    * @param {string} file url we are trying to resolve
    * @returns {{ string, provider }} file path resolved and its provider.
    */
-   getPathFromUrl (file) {
+  getPathFromUrl (file) {
     const provider = this.fileProviderOf(file)
     if (!provider) throw new Error(`no provider for ${file}`)
-    return { 
+    return {
       file: provider.getPathFromUrl(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
       provider
     }
   }
 
   /**
-   * Try to resolve the given file URl. opposite of getPathFromUrl   * 
+   * Try to resolve the given file URl. opposite of getPathFromUrl
    * @param {string} file path we are trying to resolve
    * @returns {{ string, provider }} file url resolved and its provider.
    */
-   getUrlFromPath (file) {
+  getUrlFromPath (file) {
     const provider = this.fileProviderOf(file)
     if (!provider) throw new Error(`no provider for ${file}`)
-    return { 
+    return {
       file: provider.getUrlFromPath(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
       provider
     }
