@@ -15,17 +15,19 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   const debuggerModule = props.debuggerAPI
   const [state, setState] = useState({
     isActive: false,
-    statusMessage: '',
     debugger: null,
     currentReceipt: {
       contractAddress: null,
       to: null
     },
+    currentBlock: null,
+    currentTransaction: null,
     blockNumber: null,
     txNumber: '',
     debugging: false,
     opt: {
-      debugWithGeneratedSources: false
+      debugWithGeneratedSources: false,
+      debugWithLocalNode: false
     },
     toastMessage: '',
     validationError: '',
@@ -132,12 +134,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return {
         ...prevState,
         isActive: false,
-        statusMessage: '',
         debugger: null,
         currentReceipt: {
           contractAddress: null,
           to: null
         },
+        currentBlock: null,
+        currentTransaction: null,
         blockNumber: null,
         ready: {
           vmDebugger: false,
@@ -166,7 +169,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return
     }
 
-    const web3 = await debuggerModule.getDebugWeb3()
+    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3()
     try {
       const networkId = await web3.eth.net.getId()
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
@@ -183,8 +186,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       console.error(e)
     }
     let currentReceipt
+    let currentBlock
+    let currentTransaction
     try {
       currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+      currentBlock = await web3.eth.getBlock(currentReceipt.blockHash)
+      currentTransaction = await web3.eth.getTransaction(txNumber)
     } catch (e) {
       setState(prevState => {
         return {
@@ -211,33 +218,33 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
 
-    debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-      listenToEvents(debuggerInstance, currentReceipt)
-      setState(prevState => {
-        return {
-          ...prevState,
-          blockNumber,
-          txNumber,
-          debugging: true,
-          currentReceipt,
-          debugger: debuggerInstance,
-          toastMessage: `debugging ${txNumber}`,
-          validationError: ''
-        }
-      })
-    }).catch((error) => {
-      if (JSON.stringify(error) !== '{}') {
-        let message = 'Error: ' + JSON.stringify(error)
-        message = message.split('\\"').join('\'')
+    try {
+      await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
+        listenToEvents(debuggerInstance, currentReceipt)
         setState(prevState => {
           return {
             ...prevState,
-            validationError: message
+            blockNumber,
+            txNumber,
+            debugging: true,
+            currentReceipt,
+            currentBlock,
+            currentTransaction,
+            debugger: debuggerInstance,
+            toastMessage: `debugging ${txNumber}`,
+            validationError: ''
           }
         })
-      }
+      })
+    } catch (error) {
       unLoad()
-    })
+      setState(prevState => {
+        return {
+          ...prevState,
+          validationError: error.message || error
+        }
+      })
+    }
   }
 
   const debug = (txHash) => {
@@ -277,10 +284,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
-                return { ...prevState, opt: { debugWithGeneratedSources: checked } }
+                return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
               })
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
+          </div>
+          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+            <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
+              setState(prevState => {
+                return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
+              })
+            }} type="checkbox" title="Force the debugger to use the current local node" />
+            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>
           </div>
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
@@ -288,8 +303,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         { state.debugging && <StepManager stepManager={ stepManager } /> }
         { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>
-      { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
-      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
+      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
     </div>
   )
 }

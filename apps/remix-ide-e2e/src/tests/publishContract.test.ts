@@ -20,25 +20,35 @@ module.exports = {
       .verifyContracts(['Ballot'])
       .click('#publishOnIpfs')
       .pause(8000)
-      .getModalBody((value, done) => {
-        if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
-        if (value.indexOf('ipfs://') === -1) browser.assert.fail('ipfs deploy failed', '', '')
-        done()
+      .waitForElementVisible('[data-id="publishToStorageModalDialogModalBody-react"]', 60000)
+      .getText('[data-id="publishToStorageModalDialogModalBody-react"]', (result) => {
+        const value = <string>(result.value)
+
+        browser.perform((done) => {
+          if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
+          done()
+        })
       })
-      .modalFooterOKClick()
+      .click('[data-id="publishToStorage-modal-footer-ok-react"]')
   },
 
+  /* Disableing the test untill refactoring and the new swarm usage
   'Publish on Swarm': '' + function (browser: NightwatchBrowser) {
     browser
       .click('#publishOnSwarm')
       .pause(8000)
-      .getModalBody((value, done) => {
-        if (value.indexOf('Metadata of "ballot" was successfully.') === -1) browser.assert.fail('swarm deploy failed', '', '')
-        if (value.indexOf('bzz') === -1) browser.assert.fail('swarm deploy failed', '', '')
-        done()
+      .getText('[data-id="publishToStorageModalDialogModalBody-react"]', (result) => {
+        const value = <string>(result.value)
+
+        browser.perform((done) => {
+          if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('swarm deploy failed')
+          if (value.indexOf('bzz') === -1) browser.assert.fail('swarm deploy failed')
+          done()
+        })
       })
-      .modalFooterOKClick()
+      .click('[data-id="publishToStorage-modal-footer-ok-react"]')
   },
+  */
 
   'Should publish contract metadata to ipfs on deploy': function (browser: NightwatchBrowser) {
     browser
@@ -48,10 +58,11 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
       .click('*[data-id="contractDropdownIpfsCheckbox"]')
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(8000)
       .getModalBody((value, done) => {
-        if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
+        if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
         done()
       })
       .modalFooterOKClick()

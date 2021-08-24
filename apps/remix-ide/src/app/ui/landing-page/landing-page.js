@@ -6,7 +6,6 @@ import JSZip from 'jszip'
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const globalRegistry = require('../../../global/registry')
-const CompilerImport = require('../../compiler/compiler-imports')
 const modalDialogCustom = require('../modal-dialog-custom')
 const modalDialog = require('../modaldialog')
 const tooltip = require('../tooltip')
@@ -119,11 +118,12 @@ const profile = {
 }
 
 export class LandingPage extends ViewPlugin {
-  constructor (appManager, verticalIcons, fileManager, filePanel) {
+  constructor (appManager, verticalIcons, fileManager, filePanel, contentImport) {
     super(profile)
     this.profile = profile
     this.fileManager = fileManager
     this.filePanel = filePanel
+    this.contentImport = contentImport
     this.appManager = appManager
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
@@ -216,7 +216,7 @@ export class LandingPage extends ViewPlugin {
 
     const invertNum = (themeQuality === 'dark') ? 1 : 0
     if (this.solEnv.getElementsByTagName('img')[0]) this.solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    if (this.debuggerEnv.getElementsByTagName('img')[0]) this.debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.optimismEnv.getElementsByTagName('img')[0]) this.optimismEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.solhintEnv.getElementsByTagName('img')[0]) this.solhintEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.learnEthEnv.getElementsByTagName('img')[0]) this.learnEthEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.sourcifyEnv.getElementsByTagName('img')[0]) this.sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
@@ -240,7 +240,7 @@ export class LandingPage extends ViewPlugin {
 
   render () {
     const load = (service, item, examples, info) => {
-      const compilerImport = new CompilerImport()
+      const contentImport = this.contentImport
       const fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`
         <div class="p-2">
@@ -252,7 +252,7 @@ export class LandingPage extends ViewPlugin {
       const title = `Import from ${service}`
       modalDialogCustom.prompt(title, msg, null, (target) => {
         if (target !== '') {
-          compilerImport.import(
+          contentImport.import(
             target,
             (loadingMsg) => { tooltip(loadingMsg) },
             (error, content, cleanUrl, type, url) => {
@@ -277,10 +277,10 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('solidity')
       _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidity'])
     }
-    const startDebugger = async () => {
-      await this.appManager.activatePlugin('debugger')
-      this.verticalIcons.select('debugger')
-      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'debugger'])
+    const startOptimism = async () => {
+      await this.appManager.activatePlugin('optimism-compiler')
+      this.verticalIcons.select('optimism-compiler')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'optimism-compiler'])
     }
     const startSolhint = async () => {
       await this.appManager.activatePlugin(['solidity', 'solhint'])
@@ -385,8 +385,8 @@ export class LandingPage extends ViewPlugin {
     // main
     this.solEnv = createLargeButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
     // Featured
-    this.debuggerEnv = createLargeButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
-    this.solhintEnv = createLargeButton('assets/img/solhintLogo.png', 'solhintLogo', 'solhint linter', startSolhint)
+    this.optimismEnv = createLargeButton('assets/img/optimismLogo.webp', 'optimismLogo', 'Optimism', startOptimism)
+    this.solhintEnv = createLargeButton('assets/img/solhintLogo.png', 'solhintLogo', 'Solhint linter', startSolhint)
     this.learnEthEnv = createLargeButton('assets/img/learnEthLogo.webp', 'learnEthLogo', 'LearnEth', startLearnEth)
     this.sourcifyEnv = createLargeButton('assets/img/sourcifyLogo.webp', 'sourcifyLogo', 'Sourcify', startSourceVerify)
     this.moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
@@ -395,7 +395,7 @@ export class LandingPage extends ViewPlugin {
     const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
     const invertNum = (themeQuality === 'dark') ? 1 : 0
     this.solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    this.debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.optimismEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.solhintEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.learnEthEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
@@ -505,10 +505,10 @@ export class LandingPage extends ViewPlugin {
                     <h4>Featured Plugins</h4>
                     <div class="d-flex flex-row pt-2">
                       ${this.solEnv}
+                      ${this.optimismEnv}
                       ${this.learnEthEnv}
                       ${this.solhintEnv}
-                      ${this.sourcifyEnv}
-                      ${this.debuggerEnv}
+                      ${this.sourcifyEnv}                      
                       ${this.moreEnv}
                     </div>
                   </div>
@@ -538,7 +538,6 @@ export class LandingPage extends ViewPlugin {
                       <div class="btn-group">
                         <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}">GitHub</button>
-                        <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}">https</button>
                       </div><!-- end of btn-group -->

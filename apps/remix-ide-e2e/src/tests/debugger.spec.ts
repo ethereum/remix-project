@@ -72,8 +72,8 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n0', 60000)
       .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
       .pause(10000)
-      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n348', 60000)
-      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n348', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n352', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n352', 60000)
   },
 
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
@@ -209,10 +209,10 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
-  'Should start debugging using remix debug nodes (rinkeby)': function (browser: NightwatchBrowser) {
+  'Should start debugging using remix debug nodes (rinkeby)': '' + function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.4+commit.c7e474f2.js')
+      .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
@@ -423,7 +423,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0xa38bff6f06e7c4fc91df1db6aa31a69ab5d5882faa953b1e7a88bfa523268ed7')
+      const result = await remix.call('debugger', 'getTrace', '0x9341be49e911afe99bf1abc67cbcf36739d2e6470a08a69511c205a0737d7332')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -432,7 +432,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0xa38bff6f06e7c4fc91df1db6aa31a69ab5d5882faa953b1e7a88bfa523268ed7')
+      const result = await remix.call('debugger', 'debug', '0x9341be49e911afe99bf1abc67cbcf36739d2e6470a08a69511c205a0737d7332')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)

@@ -6,8 +6,9 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
+    "tsconfig.base.json": "*",
     "tslint.json": "*",
+    ".eslintrc": "*",
     "nx.json": "*"
   },
   "tasksRunnerOptions": {
@@ -105,7 +106,16 @@
     "remix-ui-checkbox": {
       "tags": []
     },
-    "remix-ui-settings": {
+    "remix-core-plugin": {
+      "tags": []
+    },
+    "remix-ui-solidity-compiler": {
+      "tags": []
+    },
+    "remix-ui-publish-to-storage": {
+      "tags": []
+    },
+    "remix-ui-renderer": {
       "tags": []
     }
   }
