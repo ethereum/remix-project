@@ -18,7 +18,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
   const closeModal = () => setModalVisibility(true)
   const openModal = () => {
-    const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions'))
+    const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions') || '{}')
     setPermissions(currentValue)
     setModalVisibility(!modalVisibility)
   }
