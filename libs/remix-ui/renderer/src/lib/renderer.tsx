@@ -29,25 +29,19 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     // ^ e.g:
     // browser/gm.sol: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.6.12
     // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
-    let positionDetails = getPositionDetails(text)
+    const positionDetails = getPositionDetails(text)
     const options = opt
 
-    if (!positionDetails.errFile || (opt.errorType && opt.errorType === positionDetails.errFile)) {
-      // Updated error reported includes '-->' before file details
-      const errorDetails = text.split('-->')
-      // errorDetails[1] will have file details
-      if (errorDetails.length > 1) positionDetails = getPositionDetails(errorDetails[1])
-    }
     options.errLine = positionDetails.errLine
     options.errCol = positionDetails.errCol
-    options.errFile = positionDetails.errFile.trim()
+    options.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
 
-    if (!opt.noAnnotations && opt.errFile) {
+    if (!opt.noAnnotations && options.errFile && options.errFile !== '') {
       addAnnotation(opt.errFile, {
-        row: opt.errLine,
-        column: opt.errCol,
+        row: options.errLine,
+        column: options.errCol,
         text: text,
-        type: opt.type
+        type: options.type
       })
     }
 
@@ -56,11 +50,13 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     setClose(false)
   }, [message, opt])
 
-  const getPositionDetails = (msg: any) => {
+  const getPositionDetails = (msg: string) => {
     const result = { } as Record<string, number | string>
 
     // To handle some compiler warning without location like SPDX license warning etc
-    if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
+    if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: '' }
+
+    if (msg.includes('-->')) msg = msg.split('-->')[1].trim()
 
     // extract line / column
     let pos = msg.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
@@ -69,7 +65,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
 
     // extract file
     pos = msg.match(/^(https:.*?|http:.*?|.*?):/)
-    result.errFile = pos ? pos[1] : ''
+    result.errFile = pos ? pos[1] : msg
     return result
   }
 
