@@ -39,6 +39,11 @@ class FileProvider {
     return this.providerExternalsStorage.get(this.reverseKey + url)
   }
 
+  getUrlFromPath (path) {
+    if (!path.startsWith(this.type)) path = this.type + '/' + path 
+    return this.providerExternalsStorage.get(path)
+  }
+
   isExternalFolder (path) {
     return this.externalFolders.includes(path)
   }
