@@ -355,11 +355,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
       if (autoCompletState.userInput.length === 1) {
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[0]).toString() }))
-      }
-      // else if (autoCompletState.activeSuggestion === 0) {
-      //   setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: autoCompletState.userInput }))
-      // }
-      else {
+      } else {
         console.log(autoCompletState.activeSuggestion, 'autoCompletState.userInput.length')
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() }))
       }
@@ -433,7 +429,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const onMouseMove: any = (e: MouseEvent) => {
     e.preventDefault()
     if (dragging && leftHeight && separatorYPosition) {
-      const newEditorHeight = leftHeight - e.clientY + separatorYPosition
+      // const newEditorHeight = leftHeight - e.clientY + separatorYPosition
       const newLeftHeight = leftHeight + separatorYPosition - e.clientY
       setSeparatorYPosition(e.clientY)
       setLeftHeight(newLeftHeight)
@@ -460,7 +456,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   React.useEffect(() => {
     const leftRef = document.getElementById('terminal-view')
-    const editorRef = document.getElementById('mainPanelPluginsContainer-id')
+    // const editorRef = document.getElementById('mainPanelPluginsContainer-id')
     if (leftRef) {
       if (!leftHeight) {
         setLeftHeight(leftRef.offsetHeight)
@@ -637,7 +633,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const txDetails = (event, tx, obj) => {
+  const txDetails = (event, tx) => {
     if (showTableHash.includes(tx.hash)) {
       const index = showTableHash.indexOf(tx.hash)
       console.log({ index })
@@ -823,13 +819,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const renderUnKnownTransactions = (tx, receipt, index) => {
     const from = tx.from
     const to = tx.to
-    const obj = { from, to }
+    // const obj = { from, to }
     const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
     console.log('render unknown transaction ')
     return (
       <span id={`tx${tx.hash}`} key={index}>
-        <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
-          {/* onClick={e => txDetails(e, tx, data, obj)} */}
+        <div className="log" onClick={(event) => txDetails(event, tx)}>
           {checkTxStatus(receipt || tx, txType)}
           {context({ from, to, tx }, props.blockchain)}
           { console.log('under context and checkTxStatus')}
@@ -861,12 +856,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const renderKnownTransactions = (tx, receipt, resolvedData, logs, index) => {
     const from = tx.from
     const to = resolvedData.contractName + '.' + resolvedData.fn
-    const obj = { from, to }
+    // const obj = { from, to }
     const txType = 'knownTx'
     console.log('render unknown transaction ')
     return (
       <span id={`tx${tx.hash}`} key={index}>
-        <div className="log" onClick={(event) => txDetails(event, tx, obj)}>
+        <div className="log" onClick={(event) => txDetails(event, tx)}>
           {checkTxStatus(receipt, txType)}
           {context({ from, to, tx }, props.blockchain)}
           <div className='buttons'>

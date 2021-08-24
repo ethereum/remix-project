@@ -150,7 +150,7 @@ export const initListeningOnNetwork = (props, dispatch) => {
       // // //  append(el)
       // }, { activate: true }, dispatch)
     } else {
-      registerCommandAction('knownTransaction', function (args, cmds, append) {
+      registerCommandAction('knownTransaction', function (args) {
         var data = args[0]
         console.log({ data })
         // let el
@@ -165,7 +165,7 @@ export const initListeningOnNetwork = (props, dispatch) => {
       }, { activate: true }, dispatch)
     }
   })
-  props.txListener.event.register('newCall', (tx) => {
+  props.txListener.event.register('newCall', () => {
     console.log('new call action')
     // log(this, tx, null)
   })
