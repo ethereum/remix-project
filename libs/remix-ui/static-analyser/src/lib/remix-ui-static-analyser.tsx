@@ -209,14 +209,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           })
           // Slither Analysis
           if (slitherEnabled) {
-            props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
+            props.analysisModule.call('solidity-logic', 'getCompilerState').then(async (compilerState) => {
               const { currentVersion, optimize, evmVersion } = compilerState
               props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
-              props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then((result) => {
+              props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(async (result) => {
                 if (result.status) {
                   props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
                   const report = result.data
-                  report.map((item) => {
+                  for (const item of report) {
                     let location: any = {}
                     let locationString = 'not available'
                     let column = 0
@@ -224,7 +224,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     let fileName = currentFile
 
                     if (item.sourceMap && item.sourceMap.length) {
-                      const fileIndex = Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative)
+                      let path = item.sourceMap[0].source_mapping.filename_relative
+                      let fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path)
+                      if (fileIndex === -1) {
+                        path = await props.analysisModule.call('fileManager', 'getUrlFromPath', path)
+                        fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path.file)
+                      }
                       if (fileIndex >= 0) {
                         location = {
                           start: item.sourceMap[0].source_mapping.start,
@@ -259,7 +264,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     }
                     warningErrors.push(options)
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
-                  })
+                  }
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
