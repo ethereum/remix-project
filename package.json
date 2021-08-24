@@ -54,6 +54,7 @@
     "make-mock-compiler": "node apps/remix-ide/ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
     "build:production": "NODE_ENV=production npx nx build remix-ide --with-deps",
+    "serve:production": "npx http-server ./dist/apps/remix-ide",
     "nightwatch_parallel": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome,firefox",
     "nightwatch_local_firefox": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=firefox",
     "nightwatch_local_chrome": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome",
