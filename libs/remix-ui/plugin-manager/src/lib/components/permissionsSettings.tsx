@@ -91,7 +91,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   }
 
   useEffect(() => {
-    console.log({ permissions })
   }, [Object.keys(permissions).length])
   function clearAllPersmissions (pluginName: string, topLevelPluginName: string, funcName: string) {
     const permissionsCopy = permissions // don't mutate state
