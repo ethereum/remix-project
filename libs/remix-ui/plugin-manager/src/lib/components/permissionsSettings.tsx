@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment, useCallback, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 /* eslint-disable-line */
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { useLocalStorage } from '../custom-hooks/useLocalStorage'
@@ -14,8 +14,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
    * Declare component local state
    */
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
-  // const [permissions] = useState<any | null>(
-  //   JSON.parse(localStorage.getItem('plugins/permissions') || '{}'))
   const [permissions, setPermissions] = useLocalStorage('plugins/permissions', '{}')
   const closeModal = () => setModalVisibility(true)
 
