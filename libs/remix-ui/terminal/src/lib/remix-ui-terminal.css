@@ -287,11 +287,8 @@ element.style {
   .failed {
     color: var(--danger);
   }
-<<<<<<< HEAD
   .notavailable {
   }
-=======
->>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
   .call {
     font-size: 7px;
     border-radius: 50%;

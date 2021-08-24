@@ -1,7 +1,7 @@
 export const allPrograms = [
   { ethers: 'The ethers.js library is a compact and complete JavaScript library for Ethereum.' },
   { remix: 'Ethereum IDE and tools for the web.' },
-  { web3: 'The web3.js library is a collection of modules which contain specific functionality for the ethereum ecosystem.' },
+  { web3: 'The web3.js library is a collection of modules which contain specific functionality for the ethereum ecosystem.' }
   // { swarmgw: 'This library can be used to upload/download files to Swarm via https://swarm-gateways.net/.' }
 ]
 
@@ -9,7 +9,7 @@ export const allCommands = [
   // { 'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.' },
   { 'remix.exeCurrent()': 'Run the script currently displayed in the editor.' },
   // { 'remix.help()': 'Display this help message.' },
-   { 'remix.loadgist(id)': 'Load a gist in the file explorer.' },
+  { 'remix.loadgist(id)': 'Load a gist in the file explorer.' },
   // { 'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.' },
 
   // { 'swarmgw.get(url, cb)': 'Download files from Swarm via https://swarm-gateways.net/' },
@@ -28,7 +28,7 @@ export const allCommands = [
 
   { 'web3.eth': 'Eth module for interacting with the Ethereum network.' },
   { 'web3.eth.accounts': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.' },
-  //TODO: need to break down the object return from abi response
+  // TODO: need to break down the object return from abi response
   // { 'web3.eth.abi': 'The web3.eth.abi functions let you de- and encode parameters to ABI (Application Binary Interface) for function calls to the EVM (Ethereum Virtual Machine).' },
   { 'web3.eth.ens': 'The web3.eth.ens functions let you interacting with ENS.' },
   { 'web3.eth.Iban': 'The web3.eth.Iban function lets convert Ethereum addresses from and to IBAN and BBAN.' },
@@ -42,7 +42,7 @@ export const allCommands = [
   { 'web3.utils': 'This package provides utility functions for Ethereum dapps and other web3.js packages.' },
   { 'web3.version': 'Contains the version of the web3 container object.' },
 
-  { 'web3.eth.clearSubscriptions();': 'Resets subscriptions.' },
+  { 'web3.eth.clearSubscriptions();': 'Resets subscriptions.' }
 //   { 'web3.eth.Contract(jsonInterface[, address][, options])': 'The web3.eth.Contract object makes it easy to interact with smart contracts on the ethereum blockchain.' },
 //   { 'web3.eth.accounts.create([entropy]);': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.' },
 //   { 'web3.eth.getAccounts();': 'Retrieve the list of accounts' },
@@ -51,6 +51,3 @@ export const allCommands = [
 //   { 'web3.eth.accounts.recoverTransaction(rawTransaction);': 'Sign Transaction' },
 //   { 'web3.eth.accounts.hashMessage(message);': 'Hash message' }
 ]
-
-
-  
