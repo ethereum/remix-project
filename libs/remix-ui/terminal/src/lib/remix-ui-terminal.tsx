@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
+<<<<<<< HEAD
 import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, registerRemixWelcomeTextAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, registerFilterReducer, addCommandHistoryReducer, registerScriptRunnerReducer, remixWelcomeTextReducer } from './reducers/terminalReducer'
+=======
+import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
+import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer, remixWelcomeTextReducer } from './reducers/terminalReducer'
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
 import { remixWelcome } from './reducers/remixWelcom' // eslint-disable-line
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
 import {allCommands, allPrograms} from './commands' // eslint-disable-line
@@ -44,8 +49,12 @@ export interface RemixUiTerminalProps {
   registry: any,
   commands: any,
   txListener: any,
+<<<<<<< HEAD
   eventsDecoder: any,
   logHtml: any
+=======
+  eventsDecoder: any
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
 }
 
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -115,6 +124,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
     registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
     registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -123,13 +136,20 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
     registerCommandAction('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
+<<<<<<< HEAD
       console.log({ script }, 'script')
+=======
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
       _shell(script, scopedCommands, function (error, output) {
         if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
       })
     }, { activate: true }, dispatch)
+<<<<<<< HEAD
   }, [props.thisState.autoCompletePopup, autoCompletState.text, props.logHtml])
+=======
+  }, [props.thisState.autoCompletePopup, autoCompletState.text])
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
 
   useEffect(() => {
     scrollToBottom()
@@ -820,7 +840,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const handlePaste = () => {
     setPaste(true)
+<<<<<<< HEAD
     setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false}))
+=======
+    setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false }))
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
   }
 
   return (
@@ -876,15 +900,26 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         {
           handleAutoComplete()
         }
+<<<<<<< HEAD
         <div data-id='terminalContainerDisplay' style = {{
           position: 'absolute',
           height: '100%',
           width: '100%',
+=======
+        <div data-id="terminalContainerDisplay" style = {{
+          position: 'absolute',
+          height: '100',
+          width: '100',
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
           opacity: '0.1',
           zIndex: -1
         }}></div>
         <div className="terminal">
+<<<<<<< HEAD
           <div id='journal' className='journal' data-id='terminalJournal'>
+=======
+          <div id="journal" className="journal" data-id="terminalJournal">
+>>>>>>> 627341f6a5ea4905e5a0330bcb41dc9aed7b420b
             {!clearConsole && <TerminalWelcomeMessage packageJson={props.version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === 'emptyBlock') {
