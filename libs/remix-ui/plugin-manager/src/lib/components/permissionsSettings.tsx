@@ -16,7 +16,17 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
    */
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
-  const [checkBoxState, setCheckBoxState] = useState<boolean[]>([])
+  const [checkBoxState, setCheckBoxState] = useState<boolean[]>(() => {
+    const newAllowValues = []
+    Object.keys(permissions).map(topName => {
+      Object.keys(permissions[topName]).map(methodName => {
+        Object.keys(permissions[topName][methodName]).map(pluginName => {
+          newAllowValues.push(permissions[topName][methodName][pluginName].allow)
+        })
+      })
+    })
+    return newAllowValues
+  })
   const closeModal = () => setModalVisibility(true)
   const openModal = () => {
     const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions') || '{}')
@@ -29,6 +39,15 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
       index === position ? !item : item
     )
     setCheckBoxState(updatedCheckedState)
+    checkBoxState.map(value => {
+      Object.keys(permissions).map(topName => {
+        Object.keys(permissions[topName]).map(methodName => {
+          Object.keys(permissions[topName][methodName]).map(pluginName => {
+
+          })
+        })
+      })
+    })
   }
 
   function ShowPluginHeading ({ headingName }) {
@@ -47,24 +66,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     )
   }
 
-  useEffect(() => {
-    let newStates = []
-    if (Object.keys(permissions).length > 0) {
-      Object.keys(permissions).map(topName => {
-        Object.keys(permissions[topName]).map(methodName => {
-          Object.keys(permissions[topName][methodName]).map(pluginName => {
-            newStates = checkBoxState.map(current => {
-              current = permissions[topName][methodName][pluginName].allow
-            })
-          })
-        })
-      })
-    }
-    setCheckBoxState(newStates)
-  }, [])
-
-  useEffect(() => {
-  }, [Object.keys(permissions).length])
   function clearAllPersmissions (pluginName: string, topLevelPluginName: string, funcName: string) {
     const permissionsCopy = permissions // don't mutate state
     if (permissionsCopy[topLevelPluginName] && permissionsCopy[topLevelPluginName][funcName]) {
@@ -119,7 +120,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
                               <input
                                 type="checkbox"
                                 onChange={() => handleCheckboxClick(index)}
-                                checked={permissions[topName][funcName][pluginName].allow}
+                                checked={checkBoxState[index]}
                                 id={`permission-checkbox-${topName}-${funcName}-${pluginName}`}
                                 aria-describedby={`module ${pluginName} asks permission for ${funcName}`} />
                               <label
