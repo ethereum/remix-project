@@ -599,8 +599,7 @@ class FileManager extends Plugin {
       this.events.emit('noFileSelected')
     } else {
       this.saveCurrentFile()
-      let resolved
-      resolved = this.getPathFromUrl(file)
+      const resolved = this.getPathFromUrl(file)
       file = resolved.file
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
