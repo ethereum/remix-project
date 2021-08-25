@@ -759,7 +759,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         {opts['decoded input'] && (
           <tr className='tr'>
             <td className='td' data-shared={`key_${opts.hash}`}> decode input </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input']}
+            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input'].trim()}
               <CopyToClipboard content={opts['decoded input']}/>
             </td>
           </tr>
