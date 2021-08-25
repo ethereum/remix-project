@@ -177,7 +177,7 @@ class FileManager extends Plugin {
       }
       await this._handleExists(path, `Cannot open file ${path}`)
       await this._handleIsFile(path, `Cannot open file ${path}`)
-      return this.openFile(path)
+      await this.openFile(path)
     } catch (e) {
       throw new Error(e)
     }
@@ -601,8 +601,11 @@ class FileManager extends Plugin {
     this.events.emit('noFileSelected')
   }
 
-  openFile (file) {
-    const _openFile = (file) => {
+  async openFile (file) {
+    if (!file) {
+      this.emit('noFileSelected')
+      this.events.emit('noFileSelected')
+    } else {
       this.saveCurrentFile()
       let resolved
       try {
@@ -614,26 +617,27 @@ class FileManager extends Plugin {
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
-      provider.get(file, (error, content) => {
-        if (error) {
-          console.log(error)
-        } else {
-          if (provider.isReadOnly(file)) {
-            this.editor.openReadOnly(file, content)
-          } else {
-            this.editor.open(file, content)
-          }
-          // TODO: Only keep `this.emit` (issue#2210)
-          this.emit('currentFileChanged', file)
-          this.events.emit('currentFileChanged', file)
-        }
-      })
-    }
-    if (file) return _openFile(file)
-    else {
-      this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
-    }
+      await (() => {
+        return new Promise((resolve, reject) => {
+          provider.get(file, (error, content) => {
+            if (error) {
+              console.log(error)
+              reject(error)
+            } else {
+              if (provider.isReadOnly(file)) {
+                this.editor.openReadOnly(file, content)
+              } else {
+                this.editor.open(file, content)
+              }
+              // TODO: Only keep `this.emit` (issue#2210)
+              this.emit('currentFileChanged', file)
+              this.events.emit('currentFileChanged', file)
+              resolve()
+            }
+          })
+        })
+      })()      
+    }    
   }
 
   /**
