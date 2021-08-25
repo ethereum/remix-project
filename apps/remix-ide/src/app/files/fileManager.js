@@ -168,19 +168,11 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
-    try {
-      path = this.limitPluginScope(path)
-      try {
-        path = this.getPathFromUrl(path).file
-      } catch (e) {
-        throw e
-      }
-      await this._handleExists(path, `Cannot open file ${path}`)
-      await this._handleIsFile(path, `Cannot open file ${path}`)
-      await this.openFile(path)
-    } catch (e) {
-      throw e
-    }
+    path = this.limitPluginScope(path)
+    path = this.getPathFromUrl(path).file
+    await this._handleExists(path, `Cannot open file ${path}`)
+    await this._handleIsFile(path, `Cannot open file ${path}`)
+    await this.openFile(path)
   }
 
   /**
@@ -608,12 +600,8 @@ class FileManager extends Plugin {
     } else {
       this.saveCurrentFile()
       let resolved
-      try {
-        resolved = this.getPathFromUrl(file)
-        file = resolved.file
-      } catch (e) {
-        throw e
-      }
+      resolved = this.getPathFromUrl(file)
+      file = resolved.file
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
