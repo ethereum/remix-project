@@ -636,8 +636,8 @@ class FileManager extends Plugin {
             }
           })
         })
-      })()      
-    }    
+      })()
+    }
   }
 
   /**
