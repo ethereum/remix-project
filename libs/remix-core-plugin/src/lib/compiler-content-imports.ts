@@ -167,7 +167,7 @@ export class CompilerImports extends Plugin {
         }
       }
     } catch (e) {
-      return await this.importExternal(url, targetPath)
+      throw new Error(`not found ${url}`)
     }
   }
 }
