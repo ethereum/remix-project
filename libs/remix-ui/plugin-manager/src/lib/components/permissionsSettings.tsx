@@ -16,11 +16,19 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
    */
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
+  const [checkBoxState, setCheckBoxState] = useState<boolean[]>([])
   const closeModal = () => setModalVisibility(true)
   const openModal = () => {
     const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions'))
     setPermissions(currentValue)
     setModalVisibility(!modalVisibility)
+  }
+
+  const handleCheckboxClick = (position: number) => {
+    const updatedCheckedState = checkBoxState.map((item, index) =>
+      index === position ? !item : item
+    )
+    setCheckBoxState(updatedCheckedState)
   }
 
   function ShowPluginHeading ({ headingName }) {
@@ -39,60 +47,22 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     )
   }
 
-  function ShowCheckBox ({ allow, pluginName, functionName, topLevelPluginName }: {
-    allow: boolean,
-    pluginName: string,
-    functionName: string,
-    topLevelPluginName: string
-  }) {
-    const [checkBoxState, setCheckBoxState] = useState(allow)
-    const [showPermissions, setShowPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
-
-    // useEffect(() => {
-    //   console.log({ permissions })
-    // }, [checkBoxState, permissions])
-
-    const handleCheckboxClick = () => {
-      const copyPermissions = showPermissions
-      copyPermissions[pluginName][functionName][topLevelPluginName].allow = !checkBoxState
-      setCheckBoxState(!checkBoxState)
-      setShowPermissions(copyPermissions)
-    }
-    return (
-      <div className="form-group remixui_permissionKey">
-        { showPermissions && Object.keys(showPermissions).length > 0
-          ? (
-            <><div className="remixui_checkbox">
-              <span className="mr-2">
-                <input
-                  type="checkbox"
-                  onChange={handleCheckboxClick}
-                  checked={checkBoxState}
-                  id={`permission-checkbox-${topLevelPluginName}-${functionName}-${pluginName}`}
-                  aria-describedby={`module ${pluginName} asks permission for ${functionName}`} />
-                <label
-                  className="ml-4"
-                  htmlFor={`permission-checkbox-${topLevelPluginName}-${functionName}-${topLevelPluginName}`}
-                  data-id={`permission-label-${topLevelPluginName}-${functionName}-${topLevelPluginName}`}
-                >
-                  Allow <u>{pluginName}</u> to call <u>{functionName}</u>
-                </label>
-              </span>
-            </div><i
-              onClick={() => {
-                clearAllPersmissions(pluginName, topLevelPluginName, functionName)
-              } }
-              className="fa fa-trash-alt"
-              data-id={`pluginManagerSettingsRemovePermission-${topLevelPluginName}-${functionName}-${topLevelPluginName}`} /></>
-          ) : null
-        }
-      </div>
-    )
-  }
-
   useEffect(() => {
-    console.log({ permissions })
-  }, [Object.keys(permissions).length])
+    let newStates = []
+    if (Object.keys(permissions).length > 0) {
+      Object.keys(permissions).map(topName => {
+        Object.keys(permissions[topName]).map(methodName => {
+          Object.keys(permissions[topName][methodName]).map(pluginName => {
+            newStates = checkBoxState.map(current => {
+              current = permissions[topName][methodName][pluginName].allow
+            })
+          })
+        })
+      })
+    }
+    setCheckBoxState(newStates)
+  }, [])
+
   function clearAllPersmissions (pluginName: string, topLevelPluginName: string, funcName: string) {
     const permissionsCopy = permissions // don't mutate state
     if (permissionsCopy[topLevelPluginName] && permissionsCopy[topLevelPluginName][funcName]) {
@@ -138,14 +108,35 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
             {
               permissions && Object.keys(permissions).length > 0 ? Object.keys(permissions).map(topName => {
                 return Object.keys(permissions[topName]).map(funcName => {
-                  return Object.keys(permissions[topName][funcName]).map(pluginName => (
-                    <ShowCheckBox
-                      allow={permissions[topName][funcName][pluginName].allow}
-                      functionName={funcName}
-                      pluginName={pluginName}
-                      topLevelPluginName={topName}
-                      key={pluginName}
-                    />
+                  return Object.keys(permissions[topName][funcName]).map((pluginName, index) => (
+                    <div className="form-group remixui_permissionKey" key={pluginName}>
+                      { permissions && Object.keys(permissions).length > 0
+                        ? (
+                          <><div className="remixui_checkbox">
+                            <span className="mr-2">
+                              <input
+                                type="checkbox"
+                                onChange={() => handleCheckboxClick(index)}
+                                checked={permissions[topName][funcName][pluginName].allow}
+                                id={`permission-checkbox-${topName}-${funcName}-${pluginName}`}
+                                aria-describedby={`module ${pluginName} asks permission for ${funcName}`} />
+                              <label
+                                className="ml-4"
+                                htmlFor={`permission-checkbox-${topName}-${funcName}-${topName}`}
+                                data-id={`permission-label-${topName}-${funcName}-${topName}`}
+                              >
+                                Allow <u>{pluginName}</u> to call <u>{funcName}</u>
+                              </label>
+                            </span>
+                          </div><i
+                            onClick={() => {
+                              clearAllPersmissions(pluginName, topName, funcName)
+                            } }
+                            className="fa fa-trash-alt"
+                            data-id={`pluginManagerSettingsRemovePermission-${topName}-${funcName}-${topName}`} /></>
+                        ) : null
+                      }
+                    </div>
                   ))
                 })
               }) : null
