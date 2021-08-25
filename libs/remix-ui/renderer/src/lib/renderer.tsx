@@ -30,23 +30,22 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     // browser/gm.sol: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.6.12
     // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
     const positionDetails = getPositionDetails(text)
-    const options = opt
 
-    options.errLine = positionDetails.errLine
-    options.errCol = positionDetails.errCol
-    options.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
+    opt.errLine = positionDetails.errLine
+    opt.errCol = positionDetails.errCol
+    opt.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
 
-    if (!opt.noAnnotations && options.errFile && options.errFile !== '') {
+    if (!opt.noAnnotations && opt.errFile && opt.errFile !== '') {
       addAnnotation(opt.errFile, {
-        row: options.errLine,
-        column: options.errCol,
+        row: opt.errLine,
+        column: opt.errCol,
         text: text,
-        type: options.type
+        type: opt.type
       })
     }
 
     setMessageText(text)
-    setEditorOptions(options)
+    setEditorOptions(opt)
     setClose(false)
   }, [message, opt])
 
