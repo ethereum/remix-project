@@ -33,7 +33,6 @@ function RootView ({ pluginComponent, pluginManagerSettings, children }: RootVie
   useEffect(() => {
     pluginComponent.getAndFilterPlugins(filterPlugins)
   }, [filterPlugins])
-  // console.log('This is the state of pluginSettings instance passed from pluginmanager', pluginComponent.pluginSettings)
   return (
     <Fragment>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
