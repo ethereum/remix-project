@@ -19,7 +19,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   const [checkBoxState, setCheckBoxState] = useState<boolean[]>([])
   const closeModal = () => setModalVisibility(true)
   const openModal = () => {
-    const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions'))
+    const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions') || '{}')
     setPermissions(currentValue)
     setModalVisibility(!modalVisibility)
   }
@@ -63,6 +63,8 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     setCheckBoxState(newStates)
   }, [])
 
+  useEffect(() => {
+  }, [Object.keys(permissions).length])
   function clearAllPersmissions (pluginName: string, topLevelPluginName: string, funcName: string) {
     const permissionsCopy = permissions // don't mutate state
     if (permissionsCopy[topLevelPluginName] && permissionsCopy[topLevelPluginName][funcName]) {
