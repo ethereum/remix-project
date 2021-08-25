@@ -126,7 +126,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   useEffect(() => {
     scrollToBottom()
     console.log({ messagesEndRef: messagesEndRef.current }, ' onScroll')
-  }, [newstate.journalBlocks.length])
+  }, [newstate.journalBlocks.length, props.logHtml.length])
 
   function execute (file, cb) {
     console.log('called execute scriptRunner')
@@ -357,8 +357,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[0]).toString() }))
       } else {
         console.log(autoCompletState.activeSuggestion, 'autoCompletState.userInput.length')
-        setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() }))
+        setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: inputEl.current.value }))
       }
+      console.log({ autoCompletState }, 'autoCompletState')
     }
     if (event.which === 13 && !autoCompletState.showSuggestions) {
       if (event.ctrlKey) { // <ctrl+enter>
@@ -1435,11 +1436,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
               } else {
-                return (
-                  <div className="px-4 block" data-id="block_null" key={index}>
-                    <span className={x.style}>{x.message}</span>
-                  </div>
-                )
+                return x.message.map((x, i) => {
+                  return (
+                    <div className="px-4 block" data-id="block_null" key={i}>{ x }</div>
+                  )
+                })
               }
             })}
             <div ref={messagesEndRef} />
