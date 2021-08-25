@@ -145,7 +145,7 @@ export class CompilerImports extends Plugin {
         } else {
           const localhostProvider = await this.call('fileManager', 'getProviderByName', 'localhost')
           if (localhostProvider.isConnected()) {
-            var splitted = /([^/]+)\/(.*)$/g.exec(url)
+            const splitted = /([^/]+)\/(.*)$/g.exec(url)
 
             const possiblePaths = ['localhost/installed_contracts/' + url]
             if (splitted) possiblePaths.push('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2])
