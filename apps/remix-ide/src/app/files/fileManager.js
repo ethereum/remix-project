@@ -173,13 +173,13 @@ class FileManager extends Plugin {
       try {
         path = this.getPathFromUrl(path).file
       } catch (e) {
-        return console.error(e)
+        throw e
       }
       await this._handleExists(path, `Cannot open file ${path}`)
       await this._handleIsFile(path, `Cannot open file ${path}`)
       await this.openFile(path)
     } catch (e) {
-      throw new Error(e)
+      throw e
     }
   }
 
@@ -612,7 +612,7 @@ class FileManager extends Plugin {
         resolved = this.getPathFromUrl(file)
         file = resolved.file
       } catch (e) {
-        return console.error(e)
+        throw e
       }
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
