@@ -7,18 +7,17 @@ export interface ICompilerApi {
     compileTabLogic: any
     contractsDetails: Record<string, any>
     configurationSettings: ConfigurationSettings
-
-    getCompilerParameters: () => ConfigurationSettings
-    setCompilerParameters: (ConfigurationSettings?) => void
-
-    getAppParameter: (value: string) => string | boolean
-    setAppParameter: (name: string, value: string | boolean) => void
-
+  
+    setHardHatCompilation: (value: boolean) => void
+    getParameters: () => any
+    setParameters: (params) => void
+    getConfiguration: (value: string) => string
+    setConfiguration: (name: string, value: string) => void
     getFileManagerMode: () => string
     setCompilerConfig: (settings: any) => void
-
+  
     getCompilationResult: () => any
-
+  
     onCurrentFileChanged: (fileName: string) => void
     onResetResults: () => void,
     onSetWorkspace: (workspace: any) => void
@@ -26,23 +25,12 @@ export interface ICompilerApi {
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
-
-    resolveContentAndSave: (url: string) => Promise<string>
+  
     fileExists: (file: string) => Promise<boolean>
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
-    saveCurrentFile: () => void
-
-    logToTerminal: (log: terminalLog) => {}
-
-    compileWithHardhat: (configPath: string) => Promise<string>
-}
-
-export type terminalLog = {
-    type: 'info' | 'error' | 'warning'
-    value: string
-}
+  }
 
 export interface ConfigurationSettings {
     version: string,
