@@ -108,7 +108,7 @@ class Blockchain extends Plugin {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
 
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
@@ -122,7 +122,7 @@ class Blockchain extends Plugin {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + (error.message ? error.message : error))
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
 
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
@@ -139,7 +139,7 @@ class Blockchain extends Plugin {
     this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb,
       (error, txResult, address) => {
         if (error) {
-          return finalCb(`creation of ${selectedContract.name} errored: ${(error.message ? error.message : error)}`)
+          return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
         }
         if (txResult.receipt.status === false || txResult.receipt.status === '0x0') {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
@@ -265,7 +265,7 @@ class Blockchain extends Plugin {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
       if (error) {
-        return logCallback(`${logMsg} errored: ${error} `)
+        return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
       }
       if (!lookupOnly) {
         logCallback(`${logMsg} pending ... `)
@@ -282,7 +282,7 @@ class Blockchain extends Plugin {
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
       this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
         if (error) {
-          return logCallback(`${logMsg} errored: ${error} `)
+          return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
         }
         if (lookupOnly) {
           outputCb(returnValue)
