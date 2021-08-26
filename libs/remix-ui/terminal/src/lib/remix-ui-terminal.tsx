@@ -673,13 +673,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         <tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}> status </td>
           <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
-        </tr>
-        <tr className='tr'>
+        </tr>)
+        {opts.hash && (<tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}> transaction hash </td>
           <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
             <CopyToClipboard content={opts.hash}/>
           </td>
-        </tr>
+        </tr>) }
         {
           opts.contractAddress && (
             <tr className='tr'>
@@ -758,7 +758,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         )}
         {opts['decoded input'] && (
           <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> decode input </td>
+            <td className='td' data-shared={`key_${opts.hash}`}> decoded input </td>
             <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input'].trim()}
               <CopyToClipboard content={opts['decoded input']}/>
             </td>
@@ -766,7 +766,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         )}
         {opts['decoded output'] && (
           <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> decode output </td>
+            <td className='td' data-shared={`key_${opts.hash}`}> decoded output </td>
             <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded output']}
               <CopyToClipboard content={opts['decoded output']}/>
             </td>
@@ -870,6 +870,48 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
           logs: logs,
           val: tx.value,
+          transactionCost: tx.transactionCost,
+          executionCost: tx.executionCost
+        }) : null}
+      </span>
+    )
+  }
+
+  const renderCall = (tx, resolvedData, logs, index) => {
+    const to = resolvedData.contractName + '.' + resolvedData.fn
+    const from = tx.from ? tx.from : ' - '
+    const input = tx.input ? helper.shortenHexData(tx.input) : ''
+    const obj = { from, to }
+    const txType = 'call'
+
+    return (
+      <span id={`tx${tx.hash}`} key={index}>
+        <div className="log" onClick={(event) => txDetails(event, tx)}>
+          {checkTxStatus(tx, txType)}
+          <span className="txLog">
+            <span className="tx">[call]</span>
+            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
+            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
+            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
+          </span>
+          <div className='buttons'>
+            <div className="debug btn btn-primary btn-sm" onClick={(event) => debug(event, tx)}>Debug</div>
+          </div>
+          <i className="arrow fas fa-angle-down"></i>
+        </div>
+        {showTableHash.includes(tx.hash) ? showTable({
+          hash: tx.hash,
+          isCall: tx.isCall,
+          contractAddress: tx.contractAddress,
+          data: tx,
+          from,
+          to,
+          gas: tx.gas,
+          input: tx.input,
+          'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
+          'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
+          val: tx.value,
+          logs: logs,
           transactionCost: tx.transactionCost,
           executionCost: tx.executionCost
         }) : null}
@@ -1433,7 +1475,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 })
               } else if (x.name === 'knownTransaction') {
                 return x.message.map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
+                  console.log({ trans }, ' resolveData')
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
               } else {
                 return x.message.map((x, i) => {

@@ -102,8 +102,10 @@ class Terminal extends Plugin {
   }
 
   logHtml (html) {
-    var command = this.commands.html
-    if (typeof command === 'function') command(html)
+    // console.log({ html: html.innerText })
+    this.logHtmlResponse.push(html.innerText)
+    this.renderComponent()
+    this.logHtmlResponse = []
   }
 
   render () {
