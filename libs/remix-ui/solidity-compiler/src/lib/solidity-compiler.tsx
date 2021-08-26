@@ -71,11 +71,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   const updateCurrentVersion = (value) => {
     setCurrentVersion(value)
-<<<<<<< HEAD
-    api.setCompilerParameters({ version: value })
-=======
     plugin.setParameters({ version: value })
->>>>>>> 5a22644c4 (fix iframe plugin api)
   }
 
   const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
