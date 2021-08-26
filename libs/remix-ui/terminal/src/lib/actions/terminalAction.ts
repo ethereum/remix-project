@@ -138,23 +138,6 @@ export const initListeningOnNetwork = (props, dispatch) => {
   props.txListener.event.register('newBlock', (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
       dispatch({ type: 'emptyBlock', payload: { message: 0 } })
-      // registerCommandAction('emptyBlock', (args, cmds, append) => {
-      //   const data = args[0]
-      // // // var el = renderEmptyBlock(this, data)
-      // // //  append(el)
-      // }, { activate: true }, dispatch)
-    } else {
-      registerCommandAction('knownTransaction', function (args) {
-        var data = args[0]
-        // let el
-        // if (data.tx.isCall) {
-        //   // el = renderCall(this, data)
-        // } else {
-        //   // el = renderKnownTransaction(this, data, blockchain)
-        // }
-        // this.seen[data.tx.hash] = el
-        // append(el)
-      }, { activate: true }, dispatch)
     }
   })
   props.txListener.event.register('knownTransaction', (block) => {
