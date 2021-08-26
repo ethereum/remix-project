@@ -10,15 +10,19 @@ interface PermissionSettingsProps {
 }
 
 function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
-
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
-
+  const [permissionCache, setpermissionCache] = useState<PluginPermissions>()
   const closeModal = () => setModalVisibility(true)
   const openModal = () => {
     const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions') || '{}')
+    setpermissionCache(currentValue)
     setPermissions(currentValue)
     setModalVisibility(!modalVisibility)
+  }
+
+  const cancel = () => {
+    setPermissions(permissionCache)
   }
 
   const getState = (targetPlugin:string, funcName:string, pluginName :string) => {
@@ -103,6 +107,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
     <Fragment>
       <ModalDialog
         handleHide={closeModal}
+        cancelFn={cancel}
         hide={modalVisibility}
         title="Plugin Manager Permissions"
         okLabel="OK"
@@ -116,10 +121,10 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
           <div className="p-2">
             {
               Object.keys(permissions).map(targetPlugin => (
-                <>
-                  <RenderPluginHeader key={targetPlugin} headingName={targetPlugin} />
-                  <RenderPermissions targetPlugin={targetPlugin}/>
-                </>
+                <div key={`container-${targetPlugin}`}>
+                  <RenderPluginHeader key={`header-${targetPlugin}`} headingName={targetPlugin} />
+                  <RenderPermissions key={`permissions-${targetPlugin}`} targetPlugin={targetPlugin}/>
+                </div>
               ))
             }
           </div>
