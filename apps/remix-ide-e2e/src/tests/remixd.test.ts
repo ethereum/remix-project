@@ -104,7 +104,7 @@ module.exports = {
   'Close Remixd': function (browser) {
     browser
       .clickLaunchIcon('pluginManager')
-      .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+      .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
       .end()
   }
 }
@@ -121,10 +121,11 @@ function runTests (browser: NightwatchBrowser) {
     .waitForElementVisible('#icon-panel', 2000)
     .clickLaunchIcon('filePanel')
     .clickLaunchIcon('pluginManager')
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+    .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentActivateButtonremixd"]')
     .waitForElementVisible('#modal-footer-ok', 2000)
     .pause(2000)
     .click('#modal-footer-ok')
+    // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
     .clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
     .click('[data-path="folder1"]')
