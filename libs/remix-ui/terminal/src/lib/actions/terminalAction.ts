@@ -1,6 +1,5 @@
 
 export const registerCommandAction = (name, command, activate, dispatch) => {
-  console.log(name, ' object key')
   const commands: any = {}
   const _commands: any = {}
   _commands[name] = command
@@ -55,12 +54,10 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
       item.step = steps.push(item) - 1
       item.args = params
       // _appendItem(item)
-      console.log({ item }, 'append items')
       // self._appendItem(item)
     }
     var scopedCommands = _scopeCommands(append)
     command(args, scopedCommands, el => append(null, args, blockify(el)))
-    console.log({ args })
   }
   const help = typeof command.help === 'string' ? command.help : [
     '// no help available for:', `terminal.command.${name}`
@@ -84,15 +81,11 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
       var command = _commands[cmd]
       scopedCommands[cmd] = function _command () {
         var args = [...arguments]
-        console.log({ cmd }, { args }, { blockify })
         command(args, scopedCommands, el => append(cmd, args, blockify(el)))
       }
     })
-    console.log({ scopedCommands })
     return scopedCommands
   }
-
-  console.log('david test dispatch')
 }
 
 export const filterFnAction = (name, filterFn, dispatch) => {
@@ -145,20 +138,16 @@ export const initListeningOnNetwork = (props, dispatch) => {
   props.txListener.event.register('newBlock', (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
       dispatch({ type: 'emptyBlock', payload: { message: 0 } })
-      console.log({ block }, ' david')
       // registerCommandAction('emptyBlock', (args, cmds, append) => {
       //   const data = args[0]
-      //   console.log({ data }, ' useEffect props')
       // // // var el = renderEmptyBlock(this, data)
       // // //  append(el)
       // }, { activate: true }, dispatch)
     } else {
       registerCommandAction('knownTransaction', function (args) {
         var data = args[0]
-        console.log({ data })
         // let el
         // if (data.tx.isCall) {
-        //   console.log({ data })
         //   // el = renderCall(this, data)
         // } else {
         //   // el = renderKnownTransaction(this, data, blockchain)
@@ -168,12 +157,14 @@ export const initListeningOnNetwork = (props, dispatch) => {
       }, { activate: true }, dispatch)
     }
   })
-  props.txListener.event.register('newCall', () => {
-    console.log('new call action')
+  props.txListener.event.register('knownTransaction', (block) => {
+    console.log({ block }, ' is call transaction test')
+  })
+  props.txListener.event.register('newCall', (tx, receipt) => {
+    log(props, tx, receipt, dispatch)
     // log(this, tx, null)
   })
   props.txListener.event.register('newTransaction', (tx, receipt) => {
-    console.log('new Transaction now')
     log(props, tx, receipt, dispatch)
   })
 
@@ -184,16 +175,12 @@ export const initListeningOnNetwork = (props, dispatch) => {
       if (props._deps.compilersArtefacts.__last) {
         compiledContracts = await props._deps.compilersArtefacts.__last.getContracts()
       }
-      console.log({ compiledContracts })
       await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, async (error, logs) => {
         if (!error) {
-          console.log({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
-          console.log('knownTransaction dispatch')
           await dispatch({ type: 'knownTransaction', payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
         }
       })
     } else {
-      console.log('unknownTransaction')
       // contract unknown - just displaying raw tx.
       // logUnknownTX({ tx: tx, receipt: receipt })
       await dispatch({ type: 'unknownTransaction', payload: { message: [{ tx: tx, receipt: receipt }] } })
@@ -205,9 +192,5 @@ export const initListeningOnNetwork = (props, dispatch) => {
     if (!await props.options.appManager.isActive('debugger')) await props.options.appManager.activatePlugin('debugger')
     props.thisState.call('menuicons', 'select', 'debugger')
     props.thisState.call('debugger', 'debug', hash)
-  })
-
-  props.thisState.on('udapp', 'logHtml', (log) => {
-    console.log({ log }, ' listen to logHTML call')
   })
 }
