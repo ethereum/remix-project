@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { SolidityCompiler, CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
 
 const EventEmitter = require('events')
@@ -32,7 +33,7 @@ const profile = {
 // - events: ['compilationFinished'],
 // - methods: ['getCompilationResult']
 
-class CompileTab extends CompilerApiMixin(ViewPlugin) {
+class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerApi
   constructor () {
     super(profile)
     this.initCompilerApi()
