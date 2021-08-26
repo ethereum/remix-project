@@ -180,7 +180,6 @@ export const registerScriptRunnerReducer = (state, action) => {
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'unknownTransaction' })
       }
     case 'emptyBlock':
-      console.log({ action: action.payload.message }, ' emptyBLock reducer')
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'emptyBlock' })
