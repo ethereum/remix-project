@@ -19,7 +19,6 @@ module.exports = config => {
     return {
       ...webpackConfig,
       mode: 'production',
-      devtool: 'source-map',
       optimization: {
         minimize: true,
         minimizer: [new TerserPlugin()]
