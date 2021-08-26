@@ -136,7 +136,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (cb) cb()
         return
       }
-
       newstate.commands.script(content)
     }
 
@@ -881,7 +880,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const to = resolvedData.contractName + '.' + resolvedData.fn
     const from = tx.from ? tx.from : ' - '
     const input = tx.input ? helper.shortenHexData(tx.input) : ''
-    const obj = { from, to }
     const txType = 'call'
 
     return (
