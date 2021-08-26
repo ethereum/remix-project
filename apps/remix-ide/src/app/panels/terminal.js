@@ -106,6 +106,7 @@ class Terminal extends Plugin {
     // console.log({ html: html.innerText })
     this.logHtmlResponse.push(html.innerText)
     this.renderComponent()
+    this.logHtmlResponse = []
   }
 
   render () {
