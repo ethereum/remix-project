@@ -499,8 +499,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         console.log(e)
       }
 
-      // If plugins are loaded from the URL params, we focus on the last one.
-      if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+      if (params.code) {
+        // if code is given in url we focus on solidity plugin
+        menuicons.select('solidity')
+      } else {
+        // If plugins are loaded from the URL params, we focus on the last one.
+        if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+      }
 
       if (params.call) {
         const callDetails = params.call.split('//')
