@@ -89,7 +89,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
           <div class="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
             <div class='d-flex'>
               <span class="text-dark mr-2 text-nowrap">Max Priority fee:</span>
-              <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' value="0" id='maxpriorityfee' />
+              <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' value="1" id='maxpriorityfee' />
               <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
             </div>            
           </div>
