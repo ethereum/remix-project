@@ -3,6 +3,7 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "@remixproject/plugin-webview";
 import { CompilerApiMixin } from './compiler-api'
+import { ICompilerApi } from '@remix-project/remix-lib-ts'
 
 const profile = {
   name: 'solidity',
