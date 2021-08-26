@@ -29,8 +29,14 @@
   --theme-divider-color: #0d2131;
   --theme-foreground-gray: #4b6479;
   --theme-foreground-comment: #637777;
+  --theme-background-input: #234d708c;
   --theme-background: #011627;
   --theme-background-panels: #011628;
+  --theme-border-tab: 1px solid #7fdbca;
+  --theme-ace-identifier: #ffcb8bcc;
+  --theme-ace-operator: #ffcb8b;
+  --theme-ace-symbols: #7fdbca;
+  --theme-ace-keyword: #c792ea;
   --font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -1620,10 +1626,10 @@ pre code {
   font-weight: 400;
   line-height: 1.25;
   color: #dfe1ea !important;
-  background-color: #35384C !important;
+  background-color: var(--theme-background-input)!important;
   background-clip: padding-box;
-  border: none !important;
-  border-radius: 2px !important;
+  border: var(--theme-border-tab)!important;
+  border-radius: 0px !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
@@ -3345,7 +3351,8 @@ input[type="submit"].btn-block {
   background-repeat: no-repeat;
   background-size: 8px;
   background-position: right 7px center;
-  border: 1px solid transparent !important;
+  border: var(--theme-border-tab) !important;
+  background-color: var(--theme-background-input)!important;
   border-radius: 2px;
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -8841,3 +8848,20 @@ remix-tab .close {
 remix-tab .fak {
     line-height: 1.2!important;
 }
+
+.ace-chaos .ace_keyword {
+    color: var(--theme-ace-keyword)!important;
+}
+
+
+.ace_storage .ace_type {
+    color: var(--theme-ace-keyword)!important;
+}
+
+.ace_identifier {
+    color: var(--theme-ace-identifier)!important;
+}
+
+.ace_paren > .ace_lparen, .ace_paren .ace_rparen {
+    color: var(--theme-ace-symbols)!important;
+/*  */
