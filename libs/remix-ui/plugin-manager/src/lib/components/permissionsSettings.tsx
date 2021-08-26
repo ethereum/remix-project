@@ -122,11 +122,6 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
                 </>
               ))
             }
-            {
-              permissions && Object.keys(permissions).length > 0 ? Object.keys(permissions).map(targetPlugin => {
-
-              }) : null
-            }
           </div>
         </form>
       </ModalDialog>
