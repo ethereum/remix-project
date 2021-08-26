@@ -18,36 +18,29 @@ import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
+export { ICompilerApi, ConfigurationSettings} from './types/ICompilerApi' 
 
-export = modules()
-
-function modules () {
-  return {
-    EventManager: EventManager,
-    helpers: {
-      ui: uiHelper,
-      compiler: compilerHelper,
-      txResultHelper
-    },
-    vm: {
-      Web3Providers: Web3Providers,
-      DummyProvider: DummyProvider,
-      Web3VMProvider: Web3VmProvider
-    },
-    Storage: Storage,
-    util: util,
-    execution: {
-      EventsDecoder: EventsDecoder,
-      txExecution: txExecution,
-      txHelper: txHelper,
-      txFormat: txFormat,
-      txListener: TxListener,
-      TxRunner: TxRunner,
-      TxRunnerWeb3: TxRunnerWeb3,
-      TxRunnerVM: TxRunnerVM,
-      typeConversion: typeConversion,
-      LogsManager,
-      forkAt
-    }
-  }
+const helpers = {
+  ui: uiHelper,
+  compiler: compilerHelper,
+  txResultHelper
 }
+const vm = {
+  Web3Providers: Web3Providers,
+  DummyProvider: DummyProvider,
+  Web3VMProvider: Web3VmProvider
+}
+const execution = {
+  EventsDecoder: EventsDecoder,
+  txExecution: txExecution,
+  txHelper: txHelper,
+  txFormat: txFormat,
+  txListener: TxListener,
+  TxRunner: TxRunner,
+  TxRunnerWeb3: TxRunnerWeb3,
+  TxRunnerVM: TxRunnerVM,
+  typeConversion: typeConversion,
+  LogsManager,
+  forkAt
+}
+export { EventManager, helpers, vm, Storage, util, execution }
