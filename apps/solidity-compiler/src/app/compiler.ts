@@ -1,6 +1,7 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "@remixproject/plugin-webview";
 import { CompilerApiMixin } from './compiler-api'
+import { ICompilerApi } from '@remix-project/remix-lib-ts'
 
 const profile = {
   name: 'solidity',
@@ -23,7 +24,7 @@ export interface ConfigurationSettings {
   runs: string
 }
 
-export class CompilerClientApi extends CompilerApiMixin(PluginClient) {
+export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
   // interface matches libs/remix-ui/solidity-compiler/types/index.ts : ICompilerApi
   currentFile: string
   contractMap: {

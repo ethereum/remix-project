@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 import semver from 'semver'
-import { CompilerContainerProps, ConfigurationSettings } from './types'
+import { CompilerContainerProps } from './types'
+import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
