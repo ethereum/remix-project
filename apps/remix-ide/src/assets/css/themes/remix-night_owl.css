@@ -29,6 +29,7 @@
   --theme-divider-color: #0d2131;
   --theme-foreground-gray: #4b6479;
   --theme-foreground-comment: #637777;
+  --theme-foreground-alpha-1: #ffffffce;
   --theme-background-input: #234d708c;
   --theme-background: #011627;
   --theme-background-panels: #011628;
@@ -8853,7 +8854,6 @@ remix-tab .fak {
     color: var(--theme-ace-keyword)!important;
 }
 
-
 .ace_storage .ace_type {
     color: var(--theme-ace-keyword)!important;
 }
@@ -8864,4 +8864,28 @@ remix-tab .fak {
 
 .ace_paren > .ace_lparen, .ace_paren .ace_rparen {
     color: var(--theme-ace-symbols)!important;
-/*  */
+}
+
+.ace_editor.ace_autocomplete .ace_completion-highlight {
+  color: var(--white)!important;
+}
+
+.ace_ {
+  color: var(--theme-foreground-alpha-1)!important;
+}
+
+.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+  background-color: var(--theme-background-input)!important;
+}
+
+.ace-chaos .ace_marker-layer .ace_active-line {
+  background-color: var(--theme-divider-color)!important;
+}
+
+.ace-chaos .ace_gutter-active-line {
+  background-color: var(--theme-divider-color)!important;
+}
+
+.ace_rightAlignedText {
+  color: var(--theme-ace-symbols)!important;
+}
