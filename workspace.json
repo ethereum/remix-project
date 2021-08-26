@@ -777,6 +777,15 @@
         }
       }
     },
+    "remix-ui-plugin-manager": {
+      "root": "libs/remix-ui/plugin-manager",
+      "sourceRoot": "libs/remix-ui/plugin-manager/src",
+      "tsConfig": ["libs/remix-ui/plugin-manager/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/plugin-manager/**/*"
+            ]
+     },
     "remix-core-plugin": {
       "root": "libs/remix-core-plugin",
       "sourceRoot": "libs/remix-core-plugin/src",
@@ -858,6 +867,7 @@
             "tsConfig": ["libs/remix-ui/renderer/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/remix-ui/renderer/**/*"]
           }
+
         }
       }
     }
