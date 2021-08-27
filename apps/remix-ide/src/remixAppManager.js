@@ -117,6 +117,12 @@ export class RemixAppManager extends PluginManager {
         }
         return true
       })
+      // temp dgit hack
+      for (const profile of plugins) {
+        if (profile.name === 'dgit') {
+          profile.url = 'https://dgit3remix.web.app/'
+        }
+      }
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {
       console.log('getting plugins list from localstorage...')

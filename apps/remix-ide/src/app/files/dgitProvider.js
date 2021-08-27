@@ -58,7 +58,7 @@ class DGitProvider extends Plugin {
 
   async parseInput (input) {
     return {
-      corsProxy: 'https://corsproxy.remixproject.org/',
+      corsProxy: 'http://static.220.14.12.49.clients.your-server.de:3001',
       http,
       onAuth: url => {
         const auth = {
@@ -142,7 +142,7 @@ class DGitProvider extends Plugin {
     return name
   }
 
-  async branches () {
+  async branches (input) {
     const cmd = {
       ...await this.getGitConfig()
     }
@@ -165,9 +165,7 @@ class DGitProvider extends Plugin {
         ...cmd
       })
       return sha
-    } catch (e) {
-      throw new Error(e)
-    }
+    } catch (e) { }
   }
 
   async lsfiles (cmd) {
@@ -226,7 +224,7 @@ class DGitProvider extends Plugin {
   async clone (input) {
     const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
     if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+    if (this.calculateLocalStorage() > 10000) throw new Error('Local browser storage is full.')
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, false)
 
     const cmd = {
@@ -237,6 +235,7 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
+    console.log(cmd)
 
     const result = await git.clone(cmd)
     await this.call('fileManager', 'refresh')
@@ -244,6 +243,7 @@ class DGitProvider extends Plugin {
   }
 
   async push (input) {
+    console.log('push')
     const cmd = {
       force: input.force,
       ref: input.ref,
@@ -256,6 +256,7 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
+    console.log(cmd)
     return await git.push(cmd)
   }
 
@@ -271,6 +272,7 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
+    console.log(cmd)
     const result = await git.pull(cmd)
     await this.call('fileManager', 'refresh')
     return result
@@ -288,13 +290,14 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
+    console.log(cmd)
     const result = await git.fetch(cmd)
     await this.call('fileManager', 'refresh')
     return result
   }
 
-  async export (config) {
-    if (!this.checkIpfsConfig(config)) return false
+  async export () {
+    if (!this.checkIpfsConfig()) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
@@ -431,10 +434,10 @@ class DGitProvider extends Plugin {
         const dir = path.dirname(file.path)
         try {
           this.createDirectories(`${workspace.absolutePath}/${dir}`)
-        } catch (e) { throw new Error(e) }
+        } catch (e) { }
         try {
           window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
-        } catch (e) { throw new Error(e) }
+        } catch (e) { }
       }
     } catch (e) {
       throw new Error(e)
@@ -517,12 +520,8 @@ class DGitProvider extends Plugin {
       if (i > 0) previouspath = '/' + directories.slice(0, i).join('/')
       const finalPath = previouspath + '/' + directories[i]
       try {
-        if (!window.remixFileSystem.existsSync(finalPath)) {
-          window.remixFileSystem.mkdirSync(finalPath)
-        }
-      } catch (e) {
-        console.log(e)
-      }
+        window.remixFileSystem.mkdirSync(finalPath)
+      } catch (e) { }
     }
   }
 
