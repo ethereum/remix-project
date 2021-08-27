@@ -1,4 +1,5 @@
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
+import { helpers } from '@remix-project/remix-lib'
 
 const Compiler = require('@remix-project/remix-solidity').Compiler
 const EventEmitter = require('events')
@@ -41,12 +42,10 @@ export class CompileTabLogic {
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
-    this.language = this.api.getParameters().language
-    if(this.language === 'undefined' || this.language === 'null' || !this.language) {
-      this.language = null
+    this.language = helpers.compiler.getValidLanguage(this.api.getCompilerParameters().language)
+    if (this.language != null) {
+      this.compiler.set('language', this.language)
     }
-    this.api.setParameters({ 'language': this.language })
-    this.compiler.set('language', this.language)
   }
 
   setOptimize (newOptimizeValue) {
@@ -76,8 +75,8 @@ export class CompileTabLogic {
    * @params lang {'Solidity' | 'Yul'} ...
    */
   setLanguage (lang) {
-    this.language = lang;
-    this.api.setParameters({ language: lang })
+    this.language = lang
+    this.api.setCompilerParameters({ language: lang })
     this.compiler.set('language', lang)
   }
 
