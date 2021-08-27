@@ -168,35 +168,6 @@ export function Workspace (props: WorkspaceProps) {
     })
   }
 
-  const remixdExplorer = {
-    hide: async () => {
-      // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
-      // if (props.fileManager.mode === 'localhost') {
-      await setWorkspace(NO_WORKSPACE)
-      props.plugin.fileManager.setMode('browser')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-      })
-      // } else {
-      //   // Hide spinner in file explorer
-      //   setState(prevState => {
-      //     return { ...prevState, loadingLocalhost: false }
-      //   })
-      // }
-    },
-    show: () => {
-      props.plugin.fileManager.setMode('localhost')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
-      })
-    },
-    loading: () => {
-      setState(prevState => {
-        return { ...prevState, loadingLocalhost: true }
-      })
-    }
-  }
-
   const createModalMessage = () => {
     return (
       <>
