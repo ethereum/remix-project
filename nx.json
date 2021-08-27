@@ -121,6 +121,9 @@
     "remix-ui-renderer": {
       "tags": []
     },
+    "remix-ui-vertical-icons": {
+      "tags": []
+    },
     "solidity-compiler": {
       "tags": []
     }
