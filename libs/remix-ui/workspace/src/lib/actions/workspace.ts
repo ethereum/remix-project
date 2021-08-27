@@ -45,10 +45,10 @@ const fetchDirectoryRequest = (promise: Promise<any>) => {
   }
 }
 
-const fetchDirectorySuccess = (path: string, files) => {
+const fetchDirectorySuccess = (path: string, fileTree) => {
   return {
     type: 'FETCH_DIRECTORY_SUCCESS',
-    payload: { path, files }
+    payload: { path, fileTree }
   }
 }
 
@@ -231,16 +231,32 @@ const listenOnEvents = (provider) => {
     dispatch(setMode('browser'))
   })
   // provider.event.on('connected', () => {
-  //   remixdExplorer.show()
-  //   setWorkspace(LOCALHOST)
+  //         props.plugin.fileManager.setMode('localhost')
+  // setState(prevState => {
+  //   return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
+  // })
   // })
 
   // provider.event.on('disconnected', () => {
-  //   remixdExplorer.hide()
+  //         // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
+  // if (props.fileManager.mode === 'localhost') {
+  // await setWorkspace(NO_WORKSPACE)
+  // props.plugin.fileManager.setMode('browser')
+  // setState(prevState => {
+  //   return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
+  // })
+  // } else {
+  //   // Hide spinner in file explorer
+  //   setState(prevState => {
+  //     return { ...prevState, loadingLocalhost: false }
+  //   })
+  // }
   // })
 
   // provider.event.on('loading', () => {
-  //   remixdExplorer.loading()
+  //         setState(prevState => {
+  //   return { ...prevState, loadingLocalhost: true }
+  // })
   // })
 
   provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
