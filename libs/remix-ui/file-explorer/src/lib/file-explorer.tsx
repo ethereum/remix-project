@@ -7,7 +7,7 @@ import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File, MenuItems, FileExplorerState } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
-import { init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
+import { addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { FileSystemContext } from '@remix-ui/workspace'
@@ -52,16 +52,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
   const global = useContext(FileSystemContext)
-
-  useEffect(() => {
-    init(props.filesProvider, props.plugin, props.registry)(dispatch)
-  }, [])
-
-  useEffect(() => {
-    if (fileSystem.notification.message) {
-      global.modal(fileSystem.notification.title, fileSystem.notification.message, fileSystem.notification.labelOk, fileSystem.notification.actionOk, fileSystem.notification.labelCancel, fileSystem.notification.actionCancel)
-    }
-  }, [fileSystem.notification.message])
 
   useEffect(() => {
     if (global.fs.mode === 'browser') {
@@ -550,7 +540,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
       if (!state.expandPath.includes(path)) {
         expandPath = [...new Set([...state.expandPath, path])]
-        resolveDirectory(fileSystem.provider.provider, path)(dispatch)
+        global.dispatchFetchDirectory(path)
       } else {
         expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
       }
