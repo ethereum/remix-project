@@ -117,20 +117,20 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'FETCH_DIRECTORY_SUCCESS': {
-      const payload = action.payload as { path: string, files }
+      const payload = action.payload as { path: string, fileTree }
 
       return {
         ...state,
         browser: {
           ...state.browser,
-          files: state.mode === 'browser' ? fetchDirectoryContent(payload.files, payload.path) : state.browser.files,
+          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
           isRequesting: false,
           isSuccessful: true,
           error: null
         },
         localhost: {
           ...state.localhost,
-          files: state.mode === 'localhost' ? fetchDirectoryContent(payload.files, payload.path) : state.localhost.files,
+          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -250,10 +250,36 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 }
 
-const fetchDirectoryContent = (fileTree, folderPath: string) => {
-  const files = normalize(fileTree)
+const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }) => {
+  if (state.mode === 'browser') {
+    if (payload.path === state.browser.currentWorkspace) {
+      const files = normalize(payload.fileTree)
 
-  return { [extractNameFromKey(folderPath)]: files }
+      return { [state.browser.currentWorkspace]: files }
+    } else {
+      let files = state.browser.files
+      const _path = splitPath(state, payload.path)
+      const prevFiles = _.get(files, _path)
+
+      prevFiles.child = _.merge(normalize(payload.fileTree), prevFiles.child)
+      files = _.set(files, _path, prevFiles)
+      return files
+    }
+  } else {
+    if (payload.path === state.mode) {
+      const files = normalize(payload.fileTree)
+
+      return { [state.mode]: files }
+    } else {
+      let files = state.localhost.files
+      const _path = splitPath(state, payload.path)
+      const prevFiles = _.get(files, _path)
+
+      prevFiles.child = _.merge(normalize(payload.fileTree), prevFiles.child)
+      files = _.set(files, _path, prevFiles)
+      return files
+    }
+  }
 }
 
 const normalize = (filesList): Record<string, File> => {
