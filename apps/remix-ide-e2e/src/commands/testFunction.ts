@@ -54,7 +54,6 @@ class TestFunction extends EventEmitter {
             })
           }).perform(() => done())
       })
-      .click(`[data-id="block_tx${txHash}"]`)
       .perform(() => {
         Object.keys(expectedValue).forEach(key => {
           let equal = false
