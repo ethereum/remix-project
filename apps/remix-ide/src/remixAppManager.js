@@ -124,8 +124,8 @@ export class RemixAppManager extends PluginManager {
         }
       }
       const github = {
-        name: 'GitHub',
-        displayName: 'GITHUB',
+        name: 'dgitcompact',
+        displayName: 'dGit Compact',
         methods: [],
         version: '0.0.1',
         documentation: 'https://github.com/bunsenstraat/remix-storage-plugin',
