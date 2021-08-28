@@ -91,9 +91,8 @@ module.exports = {
       .clickInstance(0)
       .click('*[data-id="terminalClearConsole"]')
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
-      .pause(5000)
-      // .journalLastChildIncludes('Ballot.delegate(address)')
-      // .journalLastChildIncludes('data: 0x5c1...a733c')
+      .journalLastChildIncludes('Ballot.delegate(address)')
+      .journalLastChildIncludes('data: 0x5c1...a733c')
   },
 
   'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
