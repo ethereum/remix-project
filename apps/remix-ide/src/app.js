@@ -521,6 +521,5 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
 
   if (params.embed) framingService.embed()
-  if (params.code) framingService.code()
   framingService.start(params)
 }
