@@ -90,7 +90,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    this.call('fileManager', 'refresh')
+    await this.call('fileManager', 'refresh')
   }
 
   async rm (cmd) {
@@ -98,7 +98,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    this.call('fileManager', 'refresh')
+    await this.call('fileManager', 'refresh')
   }
 
   async checkout (cmd) {
@@ -131,7 +131,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    this.call('fileManager', 'refresh')
+    await this.call('fileManager', 'refresh')
     return status
   }
 
