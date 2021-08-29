@@ -121,6 +121,9 @@ export class RemixAppManager extends PluginManager {
       for (const profile of plugins) {
         if (profile.name === 'dgit') {
           profile.url = 'https://dgit3remix.web.app/'
+          profile.canActivate = [
+            'dGitProvider', 'gitdiff'
+          ]
         }
       }
       const github = {
