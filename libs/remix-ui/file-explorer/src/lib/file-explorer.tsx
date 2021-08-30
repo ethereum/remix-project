@@ -6,8 +6,6 @@ import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File, MenuItems, FileExplorerState } from './types'
-import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
-import { addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { FileSystemContext } from '@remix-ui/workspace'
@@ -49,7 +47,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
-  const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
   const global = useContext(FileSystemContext)
 
@@ -256,7 +253,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const deletePath = async (path: string | string[]) => {
-    const filesProvider = fileSystem.provider.provider
+    // const filesProvider = fileSystem.provider.provider
     if (!Array.isArray(path)) path = [path]
     for (const p of path) {
       if (filesProvider.isReadOnly(p)) {
@@ -572,7 +569,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
-    if (fileSystem.provider.provider.isReadOnly(path)) return
+    if (global.fs.readonly) return
     setState(prevState => {
       return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
     })
@@ -584,7 +581,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     if (!content || (content.trim() === '')) {
       if (state.focusEdit.isNew) {
-        removeInputField(parentFolder)(dispatch)
+        global.dispatchRemoveInputField(parentFolder)
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
@@ -606,11 +603,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
       } else {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
-            removeInputField(parentFolder)(dispatch)
+            global.dispatchRemoveInputField(parentFolder)
             global.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-            removeInputField(parentFolder)(dispatch)
+            global.dispatchRemoveInputField(parentFolder)
           }
         } else {
           if (hasReservedKeyword(content)) {
@@ -636,7 +633,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
-    await addInputField(fileSystem.provider.provider, 'file', parentFolder)(dispatch)
+    await global.dispatchAddInputField(parentFolder, 'file')
     setState(prevState => {
       return { ...prevState, expandPath }
     })
@@ -648,7 +645,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
-    await addInputField(fileSystem.provider.provider, 'folder', parentFolder)(dispatch)
+    await global.dispatchAddInputField(parentFolder, 'folder')
     setState(prevState => {
       return { ...prevState, expandPath }
     })
