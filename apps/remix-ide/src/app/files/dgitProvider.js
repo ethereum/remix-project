@@ -34,7 +34,7 @@ class DGitProvider extends Plugin {
       ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
-      host: 'ipfs.io',
+      host: 'ipfs2.io',
       port: 443,
       protocol: 'https',
       ipfsurl: 'https://ipfs.io/ipfs/'
@@ -417,9 +417,12 @@ class DGitProvider extends Plugin {
     const ipfs = IpfsHttpClient(config)
     let result = false
     try {
+      console.log('try ', config)
       const data = ipfs.get(cid, { timeout: 60000 })
+      console.log(config, cid, workspace, data)
       for await (const file of data) {
         if (file.path) result = true
+        console.log(file.path)
         file.path = file.path.replace(cid, '')
         if (!file.content) {
           continue
@@ -431,12 +434,13 @@ class DGitProvider extends Plugin {
         const dir = path.dirname(file.path)
         try {
           this.createDirectories(`${workspace.absolutePath}/${dir}`)
-        } catch (e) { }
+        } catch (e) { console.log(e) }
         try {
           window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
-        } catch (e) { }
+        } catch (e) { console.log(e) }
       }
     } catch (e) {
+      console.log(e)
     }
     return result
   }
@@ -462,7 +466,7 @@ class DGitProvider extends Plugin {
     const cid = cmd.cid
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, false)
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
-    const result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
+    const result = await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.remixIPFS, cid, workspace)
     await this.call('fileManager', 'refresh')
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
