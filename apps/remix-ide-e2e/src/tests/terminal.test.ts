@@ -30,16 +30,16 @@ module.exports = {
       .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 
-  'Should execute remix.help() command': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="terminalCli"]')
-      .executeScript('remix.help()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadgist(id)', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadurl(url)', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.execute(filepath)', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.exeCurrent()', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.help()', 60000)
-  },
+  // 'Should execute remix.help() command': function (browser: NightwatchBrowser) {
+  //   browser
+  //     .waitForElementVisible('*[data-id="terminalCli"]')
+  //     // .executeScript('remix.help()')
+  //     .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadgist(id)', 60000)
+  //     .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadurl(url)', 60000)
+  //     .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.execute(filepath)', 60000)
+  //     .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.exeCurrent()', 60000)
+  //     // .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.help()', 60000)
+  // },
 
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
