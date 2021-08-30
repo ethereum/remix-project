@@ -2,8 +2,8 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const modalDialog = require('../ui/modaldialog')
 
-const css = csjs` 
-.permissions {
+const css = csjs`
+.remixui_permissions {
   position: sticky;
   bottom: 0;
   display: flex;
@@ -44,9 +44,12 @@ const css = csjs`
 `
 
 export class PluginManagerSettings {
-  openDialog () {
+  constructor () {
     const fromLocal = window.localStorage.getItem('plugins/permissions')
     this.permissions = JSON.parse(fromLocal || '{}')
+  }
+
+  openDialog () {
     this.currentSetting = this.settings()
     modalDialog('Plugin Manager Permissions', this.currentSetting,
       { fn: () => this.onValidation() }
@@ -60,6 +63,8 @@ export class PluginManagerSettings {
 
   /** Clear one permission from a plugin */
   clearPersmission (from, to, method) {
+    // eslint-disable-next-line no-debugger
+    debugger
     if (this.permissions[to] && this.permissions[to][method]) {
       delete this.permissions[to][method][from]
       if (Object.keys(this.permissions[to][method]).length === 0) {
@@ -74,6 +79,8 @@ export class PluginManagerSettings {
 
   /** Clear all persmissions from a plugin */
   clearAllPersmission (to) {
+    // eslint-disable-next-line no-debugger
+    debugger
     if (!this.permissions[to]) return
     delete this.permissions[to]
     yo.update(this.currentSetting, this.settings())
