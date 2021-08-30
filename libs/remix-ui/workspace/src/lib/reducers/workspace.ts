@@ -30,7 +30,8 @@ export interface BrowserState {
     actionCancel: (() => void) | null,
     labelOk: string,
     labelCancel: string
-  }
+  },
+  readonly: boolean
 }
 
 export const browserInitialState: BrowserState = {
@@ -59,7 +60,8 @@ export const browserInitialState: BrowserState = {
     actionCancel: () => {},
     labelOk: '',
     labelCancel: ''
-  }
+  },
+  readonly: false
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -245,44 +247,87 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'ADD_INPUT_FIELD': {
+      const payload = action.payload as { path: string, fileTree, type: 'file' | 'folder' }
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload, true) : state.browser.files
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, true) : state.localhost.files
+        }
+      }
+    }
+
+    case 'REMOVE_INPUT_FIELD': {
+      const payload = action.payload as { path: string, fileTree }
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: state.mode === 'browser' ? removeInputField(state, payload) : state.browser.files
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? removeInputField(state, payload) : state.localhost.files
+        }
+      }
+    }
+
+    case 'SET_READ_ONLY_MODE': {
+      const payload = action.payload as boolean
+
+      return {
+        ...state,
+        readonly: payload
+      }
+    }
+
     default:
       throw new Error()
   }
 }
 
-const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }) => {
+const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }) => {
   if (state.mode === 'browser') {
     if (payload.path === state.browser.currentWorkspace) {
-      const files = normalize(payload.fileTree)
+      let files = normalize(payload.fileTree, payload.path, payload.type)
 
+      files = _.merge(files, state.browser.files[state.browser.currentWorkspace])
       return { [state.browser.currentWorkspace]: files }
     } else {
       let files = state.browser.files
       const _path = splitPath(state, payload.path)
       const prevFiles = _.get(files, _path)
 
-      prevFiles.child = _.merge(normalize(payload.fileTree), prevFiles.child)
+      prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
       files = _.set(files, _path, prevFiles)
       return files
     }
   } else {
     if (payload.path === state.mode) {
-      const files = normalize(payload.fileTree)
+      let files = normalize(payload.fileTree, payload.path, payload.type)
 
+      files = _.merge(files, state[state.mode].files[state.mode])
       return { [state.mode]: files }
     } else {
       let files = state.localhost.files
       const _path = splitPath(state, payload.path)
       const prevFiles = _.get(files, _path)
 
-      prevFiles.child = _.merge(normalize(payload.fileTree), prevFiles.child)
+      prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
       files = _.set(files, _path, prevFiles)
       return files
     }
   }
 }
 
-const normalize = (filesList): Record<string, File> => {
+const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'file'): Record<string, File> => {
   const folders = {}
   const files = {}
 
@@ -308,25 +353,25 @@ const normalize = (filesList): Record<string, File> => {
     }
   })
 
-  // if (newInputType === 'folder') {
-  //   const path = parent + '/blank'
+  if (newInputType === 'folder') {
+    const path = directory + '/blank'
 
-  //   folders[path] = {
-  //     path: path,
-  //     name: '',
-  //     isDirectory: true,
-  //     type: 'folder'
-  //   }
-  // } else if (newInputType === 'file') {
-  //   const path = parent + '/blank'
+    folders[path] = {
+      path: path,
+      name: '',
+      isDirectory: true,
+      type: 'folder'
+    }
+  } else if (newInputType === 'file') {
+    const path = directory + '/blank'
 
-  //   files[path] = {
-  //     path: path,
-  //     name: '',
-  //     isDirectory: false,
-  //     type: 'file'
-  //   }
-  // }
+    files[path] = {
+      path: path,
+      name: '',
+      isDirectory: false,
+      type: 'file'
+    }
+  }
 
   return Object.assign({}, folders, files)
 }
@@ -335,7 +380,7 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
-  files = _.set(files, _path)
+  files = _.set(files, _path, null)
   return files
 }
 
@@ -343,7 +388,7 @@ const folderAdded = (state: BrowserState, path: string): { [x: string]: Record<s
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
-  files = _.set(files, _path)
+  files = _.set(files, _path, null)
   return files
 }
 
@@ -351,7 +396,49 @@ const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<s
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
-  files = _.unset(files, _path)
+  // files = _.unset(files, _path)
+  return files
+}
+
+const removeInputField = (state: BrowserState, payload: { path: string, fileTree }) => {
+  if (state.mode === 'browser') {
+    if (payload.path === state.browser.currentWorkspace) {
+      const files = state.browser.files
+
+      delete files[state.browser.currentWorkspace][payload.path + '/' + 'blank']
+      return files
+    }
+    return fetchDirectoryContent(state, payload)
+  } else {
+    if (payload.path === state.mode) {
+      const files = state[state.mode].files
+
+      delete files[state.mode][payload.path + '/' + 'blank']
+      return files
+    }
+    return fetchDirectoryContent(state, payload)
+  }
+}
+// IDEA: pass new parameter to fetchDirectoryContent for delete Path option.
+const removePath = (state: BrowserState, path: string, pathName, files) => {
+  const pathArr: string[] = path.split('/').filter(value => value)
+
+  if (pathArr[0] !== root) pathArr.unshift(root)
+  const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
+    return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
+  }, [])
+  const prevFiles = _.get(files, _path)
+  if (prevFiles) {
+    prevFiles.child && prevFiles.child[pathName] && delete prevFiles.child[pathName]
+    files = _.set(files, _path, {
+      isDirectory: true,
+      path,
+      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+      child: prevFiles ? prevFiles.child : {}
+    })
+  }
+
   return files
 }
 
