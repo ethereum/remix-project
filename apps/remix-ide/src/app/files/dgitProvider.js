@@ -34,7 +34,7 @@ class DGitProvider extends Plugin {
       ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
-      host: 'ipfs.io',
+      host: 'ipfs2.io',
       port: 443,
       protocol: 'https',
       ipfsurl: 'https://ipfs.io/ipfs/'
@@ -420,6 +420,7 @@ class DGitProvider extends Plugin {
       console.log(config, cid, workspace, data)
       for await (const file of data) {
         if (file.path) result = true
+        console.log(file.path)
         file.path = file.path.replace(cid, '')
         if (!file.content) {
           continue
