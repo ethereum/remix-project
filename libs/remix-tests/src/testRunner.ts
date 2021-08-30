@@ -338,6 +338,17 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             testCallback(undefined, resp)
             passingNum += 1
             timePassed += time
+          } else if (hhLogs) {
+            const resp: TestResultInterface = {
+              type: 'logOnly',
+              value: changeCase.sentenceCase(func.name),
+              filename: testObject.filename,
+              time: time,
+              context: testName,
+              hhLogs
+            }
+            testCallback(undefined, resp)
+            timePassed += time
           }
 
           return next()
