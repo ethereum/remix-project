@@ -298,7 +298,7 @@ class DGitProvider extends Plugin {
     const ipfs = IpfsHttpClient(config)
     let result = false
     try {
-      const data = ipfs.get(cid, { timeout: 10000 })
+      const data = ipfs.get(cid, { timeout: 60000 })
       for await (const file of data) {
         if (file.path) result = true
         file.path = file.path.replace(cid, '')
