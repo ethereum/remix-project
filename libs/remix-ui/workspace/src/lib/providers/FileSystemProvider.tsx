@@ -4,7 +4,7 @@ import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -29,6 +29,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchFetchDirectory = async (path: string) => {
     await fetchDirectory(path)(fsDispatch)
+  }
+
+  const dispatchAddInputField = async (path: string, type: 'file' | 'folder') => {
+    await addInputField(type, path)(fsDispatch)
+  }
+
+  const dispatchRemoveInputField = async (path: string) => {
+    await removeInputField(path)(fsDispatch)
   }
 
   useEffect(() => {
@@ -75,7 +83,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     fs,
     modal,
     dispatchInitWorkspace,
-    dispatchFetchDirectory
+    dispatchFetchDirectory,
+    dispatchAddInputField,
+    dispatchRemoveInputField
   }
   return (
     <FileSystemContext.Provider value={value}>
