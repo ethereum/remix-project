@@ -105,6 +105,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
+      - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
@@ -171,6 +172,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
+      - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
