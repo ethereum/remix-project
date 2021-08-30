@@ -1477,10 +1477,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
               } else {
-                return x.message.map((x, i) => {
-                  return (
-                    <div className="px-4 block" data-id="block_null" key={i}>{ x }</div>
-                  )
+                return x.message.map((msg, i) => {
+                  if (typeof msg === 'object') {
+                    return (
+                      <div className="px-4 block" data-id="block_null" key={i}><span className={x.style}>{ JSON.stringify(msg) } </span></div>
+                    )
+                  } else {
+                    return (
+                      <div className="px-4 block" data-id="block_null" key={i}>{ msg }</div>
+                    )
+                  }
                 })
               }
             })}
