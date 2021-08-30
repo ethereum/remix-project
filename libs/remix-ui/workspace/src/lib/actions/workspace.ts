@@ -93,6 +93,27 @@ const rootFolderChangedSuccess = (path: string) => {
   }
 }
 
+const addInputFieldSuccess = (path: string, fileTree, type: 'file' | 'folder' | 'gist') => {
+  return {
+    type: 'ADD_INPUT_FIELD',
+    payload: { path, fileTree, type }
+  }
+}
+
+const removeInputFieldSuccess = (path: string, fileTree) => {
+  return {
+    type: 'REMOVE_INPUT_FIELD',
+    payload: { path, fileTree }
+  }
+}
+
+const setReadOnlyMode = (mode: boolean) => {
+  return {
+    type: 'SET_READ_ONLY_MODE',
+    payload: mode
+  }
+}
+
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
@@ -337,6 +358,42 @@ export const fetchDirectory = (path: string) => (dispatch: React.Dispatch<any>) 
     dispatch(fetchDirectorySuccess(path, fileTree))
   }).catch((error) => {
     dispatch(fetchDirectoryError({ error }))
+  })
+  return promise
+}
+
+export const addInputField = (type: 'file' | 'folder', path: string) => (dispatch: React.Dispatch<any>) => {
+  const provider = plugin.fileManager.currentFileProvider()
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+
+      resolve(fileTree)
+    })
+  })
+
+  promise.then((files) => {
+    dispatch(addInputFieldSuccess(path, files, type))
+  }).catch((error) => {
+    console.error(error)
+  })
+  return promise
+}
+
+export const removeInputField = (path: string) => (dispatch: React.Dispatch<any>) => {
+  const provider = plugin.fileManager.currentFileProvider()
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+
+      resolve(fileTree)
+    })
+  })
+
+  promise.then((files) => {
+    dispatch(removeInputFieldSuccess(path, files))
+  }).catch((error) => {
+    console.error(error)
   })
   return promise
 }
