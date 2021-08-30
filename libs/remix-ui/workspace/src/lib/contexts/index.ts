@@ -4,6 +4,8 @@ import { BrowserState } from '../reducers/workspace'
 export const FileSystemContext = createContext<{
   fs: BrowserState,
   modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
-  dispatchInitWorkspace:() => void,
-  dispatchFetchDirectory:(path: string) => void
+  dispatchInitWorkspace:() => Promise<void>,
+  dispatchFetchDirectory:(path: string) => Promise<void>,
+  dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
+  dispatchRemoveInputField:(path: string) => Promise<void>
     }>(null)
