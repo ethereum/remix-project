@@ -7,12 +7,11 @@ const _paq = window._paq = window._paq || []
 
 const themes = [
   { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
-  { name: 'HackerOwl', quality: 'dark', url: 'assets/css/themes/remix-night_owl.css' },
   { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
+  { name: 'HackerOwl', quality: 'dark', url: 'assets/css/themes/remix-hacker_owl.css' },
   { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
   { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
   { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
-
   { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
   { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
   { name: 'Spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
