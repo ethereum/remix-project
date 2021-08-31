@@ -7,7 +7,7 @@ export interface ICompilerApi {
     compileTabLogic: any
     contractsDetails: Record<string, any>
     configurationSettings: ConfigurationSettings
-  
+
     setHardHatCompilation: (value: boolean) => void
     getParameters: () => any
     setParameters: (params) => void
@@ -15,9 +15,9 @@ export interface ICompilerApi {
     setConfiguration: (name: string, value: string) => void
     getFileManagerMode: () => string
     setCompilerConfig: (settings: any) => void
-  
+
     getCompilationResult: () => any
-  
+
     onCurrentFileChanged: (fileName: string) => void
     onResetResults: () => void,
     onSetWorkspace: (workspace: any) => void
@@ -25,7 +25,7 @@ export interface ICompilerApi {
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
-  
+
     fileExists: (file: string) => Promise<boolean>
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
