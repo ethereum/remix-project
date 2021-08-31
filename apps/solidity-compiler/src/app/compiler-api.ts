@@ -195,7 +195,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   listenToEvents () {
-    this.data.eventHandlers.onContentChanged = () => {
+    this.on('editor', 'contentChanged', () => {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
     }
     this.on('editor', 'contentChanged', this.data.eventHandlers.onContentChanged)
@@ -232,11 +232,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('editor', 'sessionSwitched', () => {
       if (this.onSessionSwitched) this.onSessionSwitched()
-    })
-
-    this.on('editor', 'contentChanged', () => {
-      if (this.onContentChanged) this.onContentChanged()
-    })
+    })    
 
     this.on('editor', 'sessionSwitched', () => {
       if (this.onSessionSwitched) this.onSessionSwitched()
