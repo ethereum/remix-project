@@ -18,7 +18,7 @@ import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
-export { ICompilerApi, ConfigurationSettings} from './types/ICompilerApi' 
+export { ICompilerApi, ConfigurationSettings } from './types/ICompilerApi'
 
 const helpers = {
   ui: uiHelper,

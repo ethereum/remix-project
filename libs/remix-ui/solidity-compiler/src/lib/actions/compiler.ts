@@ -42,7 +42,7 @@ export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatc
   api.onContentChanged = () => {
     dispatch(setEditorMode('contentChanged'))
   }
- 
+
   compileTabLogic.compiler.event.register('loadingCompiler', () => {
     dispatch(setCompilerMode('loadingCompiler'))
   })
