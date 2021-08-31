@@ -333,19 +333,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       updateCurrentVersion(selectedVersion)
       url = customUrl
       api.setParameters({ version: selectedVersion })
-    } else if (selectedVersion === 'builtin') {
-      let location: string | Location = window.document.location
-      let path = location.pathname
-      if (!path.startsWith('/')) path = '/' + path
-      location = `${location.protocol}//${location.host}${path}assets/js`
-      if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
-      if (!location.endsWith('/')) location += '/'
-      url = location + 'soljson.js'
     } else {
-      if (selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(selectedVersion)) {
-        return console.log('loading ' + selectedVersion + ' not allowed')
+      if (helper.checkSpecialChars(selectedVersion)) {
+        return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
       }
-      url = `${urlFromVersion(selectedVersion)}`
+      if (selectedVersion === 'builtin' || selectedVersion.indexOf('soljson') === 0) {
+        url = urlFromVersion(selectedVersion)
+      } else {
+        return console.log('loading ' + selectedVersion + ' not allowed, version should start with "soljson"')
+      }
     }
 
     // Workers cannot load js on "file:"-URLs and we get a
