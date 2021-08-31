@@ -5,13 +5,11 @@ import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
+// import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
 
 const yo = require('yo-yo')
 const addTooltip = require('../ui/tooltip')
-
-const css = require('./styles/compile-tab-styles')
 
 const css = require('./styles/compile-tab-styles')
 
