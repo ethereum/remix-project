@@ -7,7 +7,6 @@ export interface ICompilerApi {
     compileTabLogic: any
     contractsDetails: Record<string, any>
     configurationSettings: ConfigurationSettings
-<<<<<<< HEAD
 
     getCompilerParameters: () => ConfigurationSettings
     setCompilerParameters: (ConfigurationSettings?) => void
@@ -20,19 +19,6 @@ export interface ICompilerApi {
 
     getCompilationResult: () => any
 
-=======
-  
-    setHardHatCompilation: (value: boolean) => void
-    getParameters: () => any
-    setParameters: (params) => void
-    getConfiguration: (value: string) => string
-    setConfiguration: (name: string, value: string) => void
-    getFileManagerMode: () => string
-    setCompilerConfig: (settings: any) => void
-  
-    getCompilationResult: () => any
-  
->>>>>>> 49c62946c (better org of types)
     onCurrentFileChanged: (fileName: string) => void
     onResetResults: () => void,
     onSetWorkspace: (workspace: any) => void
@@ -40,17 +26,13 @@ export interface ICompilerApi {
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
-<<<<<<< HEAD
 
     resolveContentAndSave: (url: string) => Promise<string>
-=======
-  
->>>>>>> 49c62946c (better org of types)
+
     fileExists: (file: string) => Promise<boolean>
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
-<<<<<<< HEAD
     saveCurrentFile: () => void
 
     logToTerminal: (log: terminalLog) => {}
@@ -62,9 +44,6 @@ export type terminalLog = {
     type: 'info' | 'error' | 'warning'
     value: string
 }
-=======
-  }
->>>>>>> 49c62946c (better org of types)
 
 export interface ConfigurationSettings {
     version: string,
@@ -72,8 +51,5 @@ export interface ConfigurationSettings {
     language: string,
     optimize: boolean,
     runs: string
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 49c62946c (better org of types)
