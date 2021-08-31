@@ -17,13 +17,6 @@ declare global {
 }
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
-declare global {
-  interface Window {
-    _paq: any
-  }
-}
-const _paq = window._paq = window._paq || []  //eslint-disable-line
-
 /* eslint-disable-next-line */
 export interface RemixUiStaticAnalyserProps {
   registry: any,
