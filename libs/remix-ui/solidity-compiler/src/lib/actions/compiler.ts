@@ -42,6 +42,10 @@ export const listenToEvents = (compileTabLogic: CompileTabLogic, api) => (dispat
   api.onContentChanged = () => {
     dispatch(setEditorMode('contentChanged'))
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2b57e7e1e (linting)
   compileTabLogic.compiler.event.register('loadingCompiler', () => {
     dispatch(setCompilerMode('loadingCompiler'))
   })
