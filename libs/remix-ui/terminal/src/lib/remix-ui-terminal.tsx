@@ -585,6 +585,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
     const i = data.receipt ? data.transactionIndex : data.transactionIndex
     const value = val ? typeConversion.toInt(val) : 0
+    console.log({ blockChainProvider: blockchain.getProvider() }, ' blockChain Provider')
     if (blockchain.getProvider() === 'vm') {
       return (
         <div>
@@ -612,7 +613,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </span>
         </div>)
     } else {
-      to = helper.shortenHexData(to)
+      // to = helper.shortenHexData(to)
       hash = helper.shortenHexData(data.blockHash)
       return (
         <div>
