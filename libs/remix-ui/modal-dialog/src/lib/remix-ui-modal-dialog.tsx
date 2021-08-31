@@ -3,6 +3,10 @@ import { ModalDialogProps } from './types' // eslint-disable-line
 
 import './remix-ui-modal-dialog.css'
 
+declare global {
+  interface Window { testmode: boolean; }
+}
+
 export const ModalDialog = (props: ModalDialogProps) => {
   const [state, setState] = useState({
     toggleBtn: true
@@ -21,7 +25,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       if (!e.currentTarget.contains(e.relatedTarget)) {
         e.stopPropagation()
         if (document.activeElement !== this) {
-          handleHide()
+          !window.testmode && handleHide()
         }
       }
     }
