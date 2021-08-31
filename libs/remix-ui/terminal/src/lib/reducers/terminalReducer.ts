@@ -73,7 +73,6 @@ export const registerCommandReducer = (state, action) => {
         ...state.journalBlocks.splice(0)
       }
     case 'listenOnNetWork':
-      console.log({ action: action.payload })
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
@@ -119,7 +118,6 @@ export const registerFilterReducer = (state, action) => {
 export const addCommandHistoryReducer = (state, action) => {
   switch (action.type) {
     case 'cmdHistory':
-      console.log({ action }, { state }, 'cmd history')
       return {
         ...state,
         _commandHistory: initialState._commandHistory.unshift(action.payload.script)

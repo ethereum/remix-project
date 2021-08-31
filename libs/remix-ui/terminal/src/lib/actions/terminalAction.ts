@@ -140,8 +140,7 @@ export const initListeningOnNetwork = (props, dispatch) => {
       dispatch({ type: 'emptyBlock', payload: { message: 0 } })
     }
   })
-  props.txListener.event.register('knownTransaction', (block) => {
-    console.log({ block }, ' is call transaction test')
+  props.txListener.event.register('knownTransaction', () => {
   })
   props.txListener.event.register('newCall', (tx, receipt) => {
     log(props, tx, receipt, dispatch)

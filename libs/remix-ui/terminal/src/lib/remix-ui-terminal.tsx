@@ -107,7 +107,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     scriptRunnerDispatch({ type: 'html', payload: { message: props.logHtml } })
   }, [props.logHtml])
 
-  console.log({ logHtml: props.logHtml })
   // events
   useEffect(() => {
     initListeningOnNetwork(props, scriptRunnerDispatch)
@@ -123,7 +122,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
     registerCommandAction('script', function execute (args, scopedCommands) {
       var script = String(args[0])
-      console.log({ script }, 'script')
       _shell(script, scopedCommands, function (error, output) {
         if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
@@ -133,11 +131,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     scrollToBottom()
-    console.log({ messagesEndRef: messagesEndRef.current }, ' onScroll')
   }, [newstate.journalBlocks.length, props.logHtml.length])
 
   function execute (file, cb) {
-    console.log('called execute scriptRunner')
     function _execute (content, cb) {
       if (!content) {
       //  toolTip('no content to execute')
@@ -190,22 +186,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds)
-        console.log(done, ' done func')
         return done(null, result)
       } catch (error) {
         return done(error.message)
       }
     }
     try {
-      console.log(' remix command by david 2')
       let result: any
       if (script.trim().startsWith('git')) {
         // result = await this.call('git', 'execute', script)
       } else {
-        console.log(' remix command by david 3')
         result = await props.thisState.call('scriptRunner', 'execute', script)
-
-        console.log({ result }, ' me ')
       }
       console.log({ result })
       done()
@@ -218,7 +209,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     event.preventDefault()
     event.stopPropagation()
     if (toggleDownUp === 'fa-angle-double-down') {
-      console.log('clikced down')
       setToggleDownUp('fa-angle-double-up')
       props.event.trigger('resize', [])
     } else {
@@ -259,10 +249,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       if (autoCompletState.userInput.length === 1) {
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[0]).toString() }))
       } else {
-        console.log(autoCompletState.activeSuggestion, 'autoCompletState.userInput.length')
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: inputEl.current.value }))
       }
-      console.log({ autoCompletState }, 'autoCompletState')
     }
     if (event.which === 13 && !autoCompletState.showSuggestions) {
       if (event.ctrlKey) { // <ctrl+enter>
@@ -283,10 +271,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false }))
       }
     } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && (autoCompletState.userInput === '')) {
-      console.log('previous command up')
       // if (autoCompletState.commandHistoryIndex < 1) {
       event.preventDefault()
-      console.log(newstate._commandHistory[0], ' up value')
       setAutoCompleteState(prevState => ({ ...prevState, userInput: newstate._commandHistory[0] }))
     } else if (event.which === 38 && autoCompletState.showSuggestions) {
       event.preventDefault()
@@ -294,14 +280,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         return
       }
       setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount - 1, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() }))
-      console.log({ autoCompletState }, 'disable up an down key in input box')
     } else if (event.which === 38 && !autoCompletState.showSuggestions) { // <arrowUp>
       // const len = _cmdHistory.length
       // if (len === 0) event.preventDefault()
       if (cmdHistory.length - 1 > _cmdIndex) {
         setCmdIndex(prevState => prevState++)
       }
-      // console.log({ _cmdIndex }, 'history')
       inputEl.current.innerText = cmdHistory[_cmdIndex]
       inputEl.current.focus()
     } else if (event.which === 40 && autoCompletState.showSuggestions) {
@@ -487,7 +471,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
     const i = data.receipt ? data.transactionIndex : data.transactionIndex
     const value = val ? typeConversion.toInt(val) : 0
-    console.log({ blockChainProvider: blockchain.getProvider() }, ' blockChain Provider')
     if (blockchain.getProvider() === 'vm') {
       return (
         <div>
@@ -849,9 +832,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
-      {console.log({ newstate })}
-      {console.log({ _cmdIndex })}
-      {console.log({ cmdHistory })}
       <div className="bar">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
@@ -924,7 +904,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 })
               } else if (x.name === 'knownTransaction') {
                 return x.message.map((trans) => {
-                  console.log({ trans }, ' resolveData')
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
               } else {
