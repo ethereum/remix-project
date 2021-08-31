@@ -1,16 +1,9 @@
 import { ICompilerApi, ConfigurationSettings } from '@remix-project/remix-lib-ts'
-<<<<<<< HEAD
 import { CompileTabLogic } from '../logic/compileTabLogic'
 export type onCurrentFileChanged = (fileName: string) => void
 
 export interface SolidityCompilerProps {
   api: ICompilerApi
-=======
-export type onCurrentFileChanged = (fileName: string) => void
-
-export interface SolidityCompilerProps {
-  plugin: ICompilerApi
->>>>>>> 49c62946c (better org of types)
 }
 
 export interface CompilerContainerProps {
@@ -30,8 +23,5 @@ export interface ContractSelectionProps {
   } | Record<string, any>,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 49c62946c (better org of types)

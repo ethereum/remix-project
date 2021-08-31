@@ -5,12 +5,9 @@ import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
-<<<<<<< HEAD
+
 import QueryParams from '../../lib/query-params'
 // import { ICompilerApi } from '@remix-project/remix-lib-ts'
-=======
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
->>>>>>> 49c62946c (better org of types)
 import * as packageJson from '../../../../../package.json'
 
 const yo = require('yo-yo')
@@ -36,11 +33,7 @@ const profile = {
 // - methods: ['getCompilationResult']
 
 class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerApi
-<<<<<<< HEAD
   constructor (config, fileManager) {
-=======
-  constructor () {
->>>>>>> 49c62946c (better org of types)
     super(profile)
     this.fileManager = fileManager
     this.config = config

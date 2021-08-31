@@ -26,11 +26,7 @@ export const resetCompilerMode = () => (dispatch: React.Dispatch<any>) => {
   })
 }
 
-<<<<<<< HEAD
 export const listenToEvents = (compileTabLogic: CompileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
-=======
-export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
->>>>>>> 5a22644c4 (fix iframe plugin api)
   api.onSessionSwitched = () => {
     dispatch(setEditorMode('sessionSwitched'))
   }
@@ -46,11 +42,6 @@ export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatc
   api.onContentChanged = () => {
     dispatch(setEditorMode('contentChanged'))
   }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 5a22644c4 (fix iframe plugin api)
   compileTabLogic.compiler.event.register('loadingCompiler', () => {
     dispatch(setCompilerMode('loadingCompiler'))
   })
