@@ -515,7 +515,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </span>
         </div>)
     } else {
-      // to = helper.shortenHexData(to)
       hash = helper.shortenHexData(data.blockHash)
       return (
         <div>
