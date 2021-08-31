@@ -187,16 +187,8 @@ module.exports = {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
-      .pause(5000)
-      .execute(function () {
-        const env: any = document.getElementById('journal')
-        return env.value
-      }, [], function (result) {
-        console.log({ result })
-        browser.assert.ok(result.value.includes('result { "gas": "0x575f", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":'), 'value not found')
-      })
-      .pause(5000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result { "gas": "0x575f", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":', 60000)
+      .pause(1000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
 
   'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
