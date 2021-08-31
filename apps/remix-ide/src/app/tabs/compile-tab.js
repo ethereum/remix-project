@@ -4,15 +4,11 @@ import ReactDOM from 'react-dom'
 import { SolidityCompiler, CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
+// import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
 
-const EventEmitter = require('events')
-const $ = require('jquery')
 const yo = require('yo-yo')
-var QueryParams = require('../../lib/query-params')
 const addTooltip = require('../ui/tooltip')
-const globalRegistry = require('../../global/registry')
 
 const css = require('./styles/compile-tab-styles')
 
