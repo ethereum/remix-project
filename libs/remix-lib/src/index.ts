@@ -18,11 +18,8 @@ import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
-<<<<<<< HEAD
+
 export { ICompilerApi, ConfigurationSettings } from './types/ICompilerApi'
-=======
-export { ICompilerApi, ConfigurationSettings} from './types/ICompilerApi' 
->>>>>>> 49c62946c (better org of types)
 
 const helpers = {
   ui: uiHelper,
