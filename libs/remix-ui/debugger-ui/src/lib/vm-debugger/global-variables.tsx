@@ -18,7 +18,7 @@ export const GlobalVariables = ({ block, receipt, tx }) => {
   }
   if (block.baseFeePerGas) {
     globals['block.basefee'] = (new BN(block.baseFeePerGas.replace('0x', ''), 'hex')).toString(10) + ` Wei (${block.baseFeePerGas})`
-  )
+  }
 
   return (
     <div id='globalvariable' data-id='globalvariable'>
