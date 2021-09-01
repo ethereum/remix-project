@@ -21,7 +21,7 @@ module.exports = {
     browser
       .addFile('test_jsCompile.js', { content: jsCompile })
       .executeScript('remix.exeCurrent()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '"languageversion": "0.6.8+commit.0bbfe453"', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '"languageversion":"0.6.8+commit.0bbfe453"', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
