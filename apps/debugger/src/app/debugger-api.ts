@@ -62,6 +62,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     this.onEditorContentChangedListener = listener
   }
 
+  onEnvChanged (listener) {
+    this.onEnvChangedListener = listener
+  }
+
   onDebugRequested (listener) {
     this.onDebugRequestedListener = listener
   }
@@ -126,6 +130,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     this.on('editor', 'breakpointCleared', (fileName, row) => { if (this.onBreakpointClearedListener) this.onBreakpointClearedListener(fileName, row) })
     this.on('editor', 'breakpointAdded', (fileName, row) => { if (this.onBreakpointAddedListener) this.onBreakpointAddedListener(fileName, row) })
     this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })  
+    this.on('network', 'providerChanged', (provider) => { if (this.onEnvChangedListener) this.onEnvChangedListener(provider) })
   }
 
   onDeactivation () {
