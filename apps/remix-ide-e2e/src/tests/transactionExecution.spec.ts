@@ -99,7 +99,7 @@ module.exports = {
           'decoded output': {
             0: 'uint256: _uret 2343242',
             1: 'int256: _iret -4324324',
-            2: 'string: _strret string _ string _ string _ string _ string _ string _ string _ string _ string _ string _'
+            2: 'string: _strret string _ string _  string _  string _  string _  string _  string _  string _  string _  string _'
           }
         })
       .pause(500)
@@ -147,12 +147,13 @@ module.exports = {
       .waitForElementPresent('.instance:nth-of-type(3)')
       .click('.instance:nth-of-type(3) > div > button')
       .clickFunction('g - transact (not payable)')
+      .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description')
       .journalLastChildIncludes('Parameters:')
-      .journalLastChildIncludes('"value": "2",')
-      .journalLastChildIncludes('"value": "3",')
-      .journalLastChildIncludes('"value": "error_string_2",')
+      .journalLastChildIncludes('"value": "2"')
+      .journalLastChildIncludes('"value": "3"')
+      .journalLastChildIncludes('"value": "error_string_2"')
       .journalLastChildIncludes('"documentation": "param1"')
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
@@ -170,9 +171,9 @@ module.exports = {
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description')
       .journalLastChildIncludes('Parameters:')
-      .journalLastChildIncludes('"value": "2",')
-      .journalLastChildIncludes('"value": "3",')
-      .journalLastChildIncludes('"value": "error_string_2",')
+      .journalLastChildIncludes('"value": "2"')
+      .journalLastChildIncludes('"value": "3"')
+      .journalLastChildIncludes('"value": "error_string_2"')
       .journalLastChildIncludes('"documentation": "param1"')
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
