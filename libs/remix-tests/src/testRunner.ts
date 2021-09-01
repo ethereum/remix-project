@@ -244,8 +244,15 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
     const startTime = Date.now()
     if (func.constant) {
-      method.call(sendParams).then((result) => {
+      sendParams = {}
+      const tagTimestamp = 'remix_tests_tag' + Date.now()
+      sendParams.timestamp = tagTimestamp
+      method.call(sendParams).then(async (result) => {
         const time = (Date.now() - startTime) / 1000.0
+        let tagTxHash
+        let hhLogs
+        if (web3.eth && web3.eth.getHashFromTagBySimulator) tagTxHash = await web3.eth.getHashFromTagBySimulator(tagTimestamp)
+        if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(tagTxHash)
         if (result) {
           const resp: TestResultInterface = {
             type: 'testPass',
@@ -254,6 +261,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             time: time,
             context: testName
           }
+          if (hhLogs) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
           passingNum += 1
           timePassed += time
@@ -266,6 +274,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             errMsg: 'function returned false',
             context: testName
           }
+          if (hhLogs) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
           failureNum += 1
           timePassed += time
@@ -337,6 +346,17 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             if (hhLogs) resp.hhLogs = hhLogs
             testCallback(undefined, resp)
             passingNum += 1
+            timePassed += time
+          } else if (hhLogs) {
+            const resp: TestResultInterface = {
+              type: 'logOnly',
+              value: changeCase.sentenceCase(func.name),
+              filename: testObject.filename,
+              time: time,
+              context: testName,
+              hhLogs
+            }
+            testCallback(undefined, resp)
             timePassed += time
           }
 
