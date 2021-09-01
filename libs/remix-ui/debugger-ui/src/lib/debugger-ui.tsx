@@ -31,7 +31,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     },
     toastMessage: '',
     validationError: '',
-    txNumberIsEmpty: true
+    txNumberIsEmpty: true,
+    isLocalNodeUsed: false
   })
 
   useEffect(() => {
@@ -62,6 +63,17 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
 
     setEditor()
+
+    const providerChanged = () => {
+      debuggerModule.onEnvChanged((provider) => {
+        setState(prevState => {
+          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected'
+          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
+        })
+      })
+    }
+
+    providerChanged()
   }, [state.debugger])
 
   const listenToEvents = (debuggerInstance, currentReceipt) => {
@@ -289,7 +301,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
           </div>
-          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+          { state.isLocalNodeUsed && <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
@@ -297,6 +309,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Force the debugger to use the current local node" />
             <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>
           </div>
+          }
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
