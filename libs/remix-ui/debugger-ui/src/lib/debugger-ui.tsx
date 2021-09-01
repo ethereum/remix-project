@@ -196,11 +196,15 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return
     }
 
+<<<<<<< HEAD
     const web3 =
       optWeb3 ||
       (state.opt.debugWithLocalNode
         ? await debuggerModule.web3()
         : await debuggerModule.getDebugWeb3())
+=======
+    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : (optWeb3 || await debuggerModule.getDebugWeb3())
+>>>>>>> 9cc039ec6 (linting fix)
     try {
       const networkId = await web3.eth.net.getId()
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
