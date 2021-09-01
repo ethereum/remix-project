@@ -253,20 +253,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const deletePath = async (path: string | string[]) => {
-    // const filesProvider = fileSystem.provider.provider
+    if (global.fs.readonly) return toast('cannot delete file. ' + name + ' is a read only explorer')
     if (!Array.isArray(path)) path = [path]
-    for (const p of path) {
-      if (filesProvider.isReadOnly(p)) {
-        return toast('cannot delete file. ' + name + ' is a read only explorer')
-      }
-    }
+
     global.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', async () => {
       const fileManager = state.fileManager
+
       for (const p of path) {
         try {
           await fileManager.remove(p)
         } catch (e) {
           const isDir = await state.fileManager.isDirectory(p)
+
           toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
         }
       }
