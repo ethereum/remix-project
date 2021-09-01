@@ -225,7 +225,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
       // for all the other case, we use the Code Executor plugin
-      const context = { remix: { exeCurrent: () => { return execute(undefined, undefined) }, loadgist: (id: any) => { return loadgist(id, () => {}) } } }
+      const context = { remix: { exeCurrent: (script: any) => { return execute(undefined, script) }, loadgist: (id: any) => { return loadgist(id, () => {}) }, execute: (fileName, callback) => { return execute(fileName, callback) } } }
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds)
@@ -345,9 +345,15 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
       if (autoCompletState.userInput.length === 1) {
+        console.log('enter with single autoComplete')
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[0]).toString() }))
       } else {
-        setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: inputEl.current.value }))
+        if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
+          setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: autoCompletState.data._options[autoCompletState.activeSuggestion] ? Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() : inputEl.current.value }))
+        } else {
+          console.log('enter with muti autoCOmplete', { autoCompletState })
+          setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: autoCompletState.data._options.length === 1 ? Object.keys(autoCompletState.data._options[0]).toString() : inputEl.current.value }))
+        }
       }
     }
     if (event.which === 13 && !autoCompletState.showSuggestions) {
@@ -1386,6 +1392,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
+      { console.log({ newstate })}
       <div className="bar">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
@@ -1460,7 +1467,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 return x.message.map((trans) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
                 })
-              } else {
+              } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
                   if (typeof msg === 'object') {
                     return (
@@ -1468,10 +1475,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     )
                   } else {
                     return (
-                      <div className="px-4 block" data-id="block_null" key={i}>{ msg }</div>
+                      <div className="px-4 block" data-id="block_null" key={i}>{ msg ? msg.toString().replace(/,/g, '') : msg }</div>
                     )
                   }
                 })
+              } else {
+                return (
+                  <div className="px-4 block" data-id="block_null" key={index}> <span className={`${x.style}`}> {x.message}</span></div>
+                )
               }
             })}
             <div ref={messagesEndRef} />
