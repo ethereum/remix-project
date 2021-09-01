@@ -34,8 +34,8 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="editorInput"]')
       .waitForElementVisible('*[class="ace_content"]')
       .click('*[class="ace_content"]')
+      .editorScroll('down', 27) // scroll down to line 27 and add the error word
       .sendKeys('*[class="ace_text-input"]', 'error')
-      .pause(2000)
       .waitForElementVisible('.ace_error', 120000)
       .checkAnnotations('error', 28)
       .clickLaunchIcon('udapp')
