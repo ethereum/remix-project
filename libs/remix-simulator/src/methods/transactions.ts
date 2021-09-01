@@ -103,7 +103,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         gasUsed: receipt.gasUsed,
-        cumulativeGasUsed: Web3.utils.toHex(receipt.gas),
+        cumulativeGasUsed: receipt.gasUsed, // only 1 tx per block
         contractAddress: receipt.contractAddress,
         logs: receipt.logs,
         status: receipt.status,
