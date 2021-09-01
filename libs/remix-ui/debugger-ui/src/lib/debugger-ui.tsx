@@ -8,11 +8,11 @@ import { DebuggerUIProps } from './idebugger-api'; // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster'; // eslint-disable-line
 /* eslint-disable-next-line */
 import './debugger-ui.css';
-const helper = require('../../../../../apps/remix-ide/src/lib/helper');
-const _paq = ((window as any)._paq = (window as any)._paq || []);
+const helper = require('../../../../../apps/remix-ide/src/lib/helper')
+const _paq = ((window as any)._paq = (window as any)._paq || [])
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
-  const debuggerModule = props.debuggerAPI;
+  const debuggerModule = props.debuggerAPI
   const [state, setState] = useState({
     isActive: false,
     debugger: null,
@@ -33,24 +33,19 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     validationError: '',
     txNumberIsEmpty: true,
     isLocalNodeUsed: false
-  });
+  })
 
   useEffect(() => {
-    return unLoad();
-  }, []);
+    return unLoad()
+  }, [])
 
   debuggerModule.onDebugRequested((hash, web3?) => {
-<<<<<<< HEAD
-    if (hash) debug(hash, web3);
-  });
-=======
     if (hash) debug(hash, web3)
   })
->>>>>>> 48662e068 (sample implementation)
 
   debuggerModule.onRemoveHighlights(async () => {
-    await debuggerModule.discardHighlight();
-  });
+    await debuggerModule.discardHighlight()
+  })
 
   useEffect(() => {
     const setEditor = () => {
@@ -59,92 +54,92 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           state.debugger.breakPointManager.remove({
             fileName: fileName,
             row: row
-          });
+          })
         }
-      });
+      })
 
       debuggerModule.onBreakpointAdded((fileName, row) => {
         if (state.debugger) {
           state.debugger.breakPointManager.add({
             fileName: fileName,
             row: row
-          });
+          })
         }
-      });
+      })
 
       debuggerModule.onEditorContentChanged(() => {
-        if (state.debugger) unLoad();
-      });
-    };
+        if (state.debugger) unLoad()
+      })
+    }
 
-    setEditor();
+    setEditor()
 
     const providerChanged = () => {
       debuggerModule.onEnvChanged(provider => {
         setState(prevState => {
-          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected';
-          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed };
-        });
-      });
-    };
+          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected'
+          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
+        })
+      })
+    }
 
-    providerChanged();
-  }, [state.debugger]);
+    providerChanged()
+  }, [state.debugger])
 
   const listenToEvents = (debuggerInstance, currentReceipt) => {
-    if (!debuggerInstance) return;
+    if (!debuggerInstance) return
 
     debuggerInstance.event.register('debuggerStatus', async isActive => {
-      await debuggerModule.discardHighlight();
+      await debuggerModule.discardHighlight()
       setState(prevState => {
-        return { ...prevState, isActive };
-      });
-    });
+        return { ...prevState, isActive }
+      })
+    })
 
     debuggerInstance.event.register(
       'newSourceLocation',
       async (lineColumnPos, rawLocation, generatedSources, address) => {
-        if (!lineColumnPos) return;
+        if (!lineColumnPos) return
         const contracts = await debuggerModule.fetchContractAndCompile(
           address || currentReceipt.contractAddress || currentReceipt.to,
           currentReceipt
-        );
+        )
         if (contracts) {
-          let path = contracts.getSourceName(rawLocation.file);
+          let path = contracts.getSourceName(rawLocation.file)
           if (!path) {
             // check in generated sources
             for (const source of generatedSources) {
               if (source.id === rawLocation.file) {
-                path = `browser/.debugger/generated-sources/${source.name}`;
-                let content;
+                path = `browser/.debugger/generated-sources/${source.name}`
+                let content
                 try {
-                  content = await debuggerModule.getFile(path);
+                  content = await debuggerModule.getFile(path)
                 } catch (e) {
                   const message =
-                    "Unable to fetch generated sources, the file probably doesn't exist yet.";
-                  console.log(message, ' ', e);
+                    "Unable to fetch generated sources, the file probably doesn't exist yet."
+                  console.log(message, ' ', e)
                 }
                 if (content !== source.contents) {
-                  await debuggerModule.setFile(path, source.contents);
+                  await debuggerModule.setFile(path, source.contents)
                 }
-                break;
+                break
               }
             }
           }
           if (path) {
-            await debuggerModule.discardHighlight();
-            await debuggerModule.highlight(lineColumnPos, path);
+            await debuggerModule.discardHighlight()
+            await debuggerModule.highlight(lineColumnPos, path)
           }
         }
       }
-    );
+    )
 
-    debuggerInstance.event.register('debuggerUnloaded', () => unLoad());
-  };
+    debuggerInstance.event.register('debuggerUnloaded', () => unLoad())
+  }
 
   const requestDebug = (blockNumber, txNumber, tx) => {
-    startDebugging(blockNumber, txNumber, tx);
-  };
+    startDebugging(blockNumber, txNumber, tx)
+  }
 
   const updateTxNumberFlag = (empty: boolean) => {
     setState(prevState => {
@@ -152,16 +147,16 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         ...prevState,
         txNumberIsEmpty: empty,
         validationError: ''
-      };
-    });
-  };
+      }
+    })
+  }
 
   const unloadRequested = (blockNumber, txIndex, tx) => {
-    unLoad();
-  };
+    unLoad()
+  }
 
   const unLoad = () => {
-    if (state.debugger) state.debugger.unload();
+    if (state.debugger) state.debugger.unload()
     setState(prevState => {
       return {
         ...prevState,
@@ -179,77 +174,59 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebuggerHead: false
         },
         debugging: false
-<<<<<<< HEAD
-      };
-    });
-  };
-  const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
-    if (state.debugger) unLoad();
-    if (!txNumber) return;
-=======
       }
     })
   }
   const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
->>>>>>> 48662e068 (sample implementation)
     setState(prevState => {
       return {
         ...prevState,
         txNumber: txNumber
-      };
-    });
+      }
+    })
     if (!helper.isValidHash(txNumber)) {
       setState(prevState => {
         return {
           ...prevState,
           validationError: 'Invalid transaction hash.'
-        };
-      });
-      return;
+        }
+      })
+      return
     }
-
-<<<<<<< HEAD
-    const web3 =
-      optWeb3 ||
-      (state.opt.debugWithLocalNode
-        ? await debuggerModule.web3()
-        : await debuggerModule.getDebugWeb3());
-=======
-    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : ( optWeb3 ? optWeb3 : await debuggerModule.getDebugWeb3())
->>>>>>> 48662e068 (sample implementation)
+    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : (optWeb3 || await debuggerModule.getDebugWeb3())
     try {
-      const networkId = await web3.eth.net.getId();
-      _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId]);
+      const networkId = await web3.eth.net.getId()
+      _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
       if (networkId === 42) {
         setState(prevState => {
           return {
             ...prevState,
             validationError:
               'Unfortunately, the Kovan network is not supported.'
-          };
-        });
-        return;
+          }
+        })
+        return
       }
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-    let currentReceipt;
-    let currentBlock;
-    let currentTransaction;
+    let currentReceipt
+    let currentBlock
+    let currentTransaction
     try {
-      currentReceipt = await web3.eth.getTransactionReceipt(txNumber);
-      currentBlock = await web3.eth.getBlock(currentReceipt.blockHash);
-      currentTransaction = await web3.eth.getTransaction(txNumber);
+      currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+      currentBlock = await web3.eth.getBlock(currentReceipt.blockHash)
+      currentTransaction = await web3.eth.getTransaction(txNumber)
     } catch (e) {
       setState(prevState => {
         return {
           ...prevState,
           validationError: e.message
-        };
-      });
-      console.log(e.message);
+        }
+      })
+      console.log(e.message)
     }
 
     const debuggerInstance = new Debugger({
@@ -260,20 +237,20 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           const ret = await debuggerModule.fetchContractAndCompile(
             address,
             currentReceipt
-          );
-          return ret;
+          )
+          return ret
         } catch (e) {
           // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
-          console.error(e);
+          console.error(e)
         }
-        return null;
+        return null
       },
       debugWithGeneratedSources: state.opt.debugWithGeneratedSources
-    });
+    })
 
     try {
       await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-        listenToEvents(debuggerInstance, currentReceipt);
+        listenToEvents(debuggerInstance, currentReceipt)
         setState(prevState => {
           return {
             ...prevState,
@@ -286,19 +263,19 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             debugger: debuggerInstance,
             toastMessage: `debugging ${txNumber}`,
             validationError: ''
-          };
-        });
-      });
+          }
+        })
+      })
     } catch (error) {
-      unLoad();
+      unLoad()
       setState(prevState => {
         return {
           ...prevState,
           validationError: error.message || error
-        };
-      });
+        }
+      })
     }
-  };
+  }
 
   const debug = (txHash, web3?) => {
     setState(prevState => {
@@ -306,17 +283,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         ...prevState,
         validationError: '',
         txNumber: txHash
-<<<<<<< HEAD
-      };
-    });
-    startDebugging(null, txHash, null, web3);
-  };
-=======
       }
     })
     startDebugging(null, txHash, null, web3)
   }
->>>>>>> 48662e068 (sample implementation)
 
   const stepManager = {
     jumpTo:
@@ -326,26 +296,26 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     stepOverBack:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.stepOverBack.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     stepIntoBack:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.stepIntoBack.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     stepIntoForward:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.stepIntoForward.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     stepOverForward:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.stepOverForward.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     jumpOut:
       state.debugger && state.debugger.step_manager
@@ -354,20 +324,20 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     jumpPreviousBreakpoint:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     jumpNextBreakpoint:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.jumpNextBreakpoint.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     jumpToException:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.jumpToException.bind(
-            state.debugger.step_manager
-          )
+          state.debugger.step_manager
+        )
         : null,
     traceLength:
       state.debugger && state.debugger.step_manager
@@ -376,24 +346,24 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     registerEvent:
       state.debugger && state.debugger.step_manager
         ? state.debugger.step_manager.event.register.bind(
-            state.debugger.step_manager.event
-          )
+          state.debugger.step_manager.event
+        )
         : null
-  };
+  }
   const vmDebugger = {
     registerEvent:
       state.debugger && state.debugger.vmDebuggerLogic
         ? state.debugger.vmDebuggerLogic.event.register.bind(
-            state.debugger.vmDebuggerLogic.event
-          )
+          state.debugger.vmDebuggerLogic.event
+        )
         : null,
     triggerEvent:
       state.debugger && state.debugger.vmDebuggerLogic
         ? state.debugger.vmDebuggerLogic.event.trigger.bind(
-            state.debugger.vmDebuggerLogic.event
-          )
+          state.debugger.vmDebuggerLogic.event
+        )
         : null
-  };
+  }
   return (
     <div>
       <Toaster message={state.toastMessage} />
@@ -412,8 +382,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                       ...prevState.opt,
                       debugWithGeneratedSources: checked
                     }
-                  };
-                });
+                  }
+                })
               }}
               type="checkbox"
               title="Debug with generated sources"
@@ -436,8 +406,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                     return {
                       ...prevState,
                       opt: { ...prevState.opt, debugWithLocalNode: checked }
-                    };
-                  });
+                    }
+                  })
                 }}
                 type="checkbox"
                 title="Force the debugger to use the current local node"
@@ -476,7 +446,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default DebuggerUI;
+export default DebuggerUI
