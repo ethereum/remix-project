@@ -39,7 +39,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     return unLoad()
   }, [])
 
-
   debuggerModule.onDebugRequested((hash) => {
     if (hash) debug(hash)
   })
@@ -68,7 +67,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     const providerChanged = () => {
       debuggerModule.onEnvChanged((provider) => {
         setState(prevState => {
-          const isLocalNodeUsed = provider !== 'vm' && provider != 'injected'
+          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected'
           return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
         })
       })
@@ -288,7 +287,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
     triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
   }
-  const isLocalNodeUsed = async () => { return await debuggerModule.isLocalNode()}
   return (
     <div>
       <Toaster message={state.toastMessage} />
