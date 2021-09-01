@@ -40,8 +40,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }, []);
 
   debuggerModule.onDebugRequested((hash, web3?) => {
+<<<<<<< HEAD
     if (hash) debug(hash, web3);
   });
+=======
+    if (hash) debug(hash, web3)
+  })
+>>>>>>> 48662e068 (sample implementation)
 
   debuggerModule.onRemoveHighlights(async () => {
     await debuggerModule.discardHighlight();
@@ -174,12 +179,21 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebuggerHead: false
         },
         debugging: false
+<<<<<<< HEAD
       };
     });
   };
   const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
     if (state.debugger) unLoad();
     if (!txNumber) return;
+=======
+      }
+    })
+  }
+  const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
+    if (state.debugger) unLoad()
+    if (!txNumber) return
+>>>>>>> 48662e068 (sample implementation)
     setState(prevState => {
       return {
         ...prevState,
@@ -196,11 +210,15 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return;
     }
 
+<<<<<<< HEAD
     const web3 =
       optWeb3 ||
       (state.opt.debugWithLocalNode
         ? await debuggerModule.web3()
         : await debuggerModule.getDebugWeb3());
+=======
+    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : ( optWeb3 ? optWeb3 : await debuggerModule.getDebugWeb3())
+>>>>>>> 48662e068 (sample implementation)
     try {
       const networkId = await web3.eth.net.getId();
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId]);
@@ -288,10 +306,17 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         ...prevState,
         validationError: '',
         txNumber: txHash
+<<<<<<< HEAD
       };
     });
     startDebugging(null, txHash, null, web3);
   };
+=======
+      }
+    })
+    startDebugging(null, txHash, null, web3)
+  }
+>>>>>>> 48662e068 (sample implementation)
 
   const stepManager = {
     jumpTo:

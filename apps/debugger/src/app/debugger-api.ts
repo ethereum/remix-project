@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Web3 from 'web3'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { CompilationOutput, Sources } from '@remix-ui/debugger-ui'
@@ -6,7 +7,7 @@ import type { CompilationResult } from '@remix-project/remix-solidity-ts'
 export const DebuggerApiMixin = (Base) => class extends Base {
   initDebuggerApi () {
     this.debugHash = null
-        
+
     const self = this
     this.web3Provider = {
       sendAsync (payload, callback) {
@@ -89,7 +90,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     let web3
     let network
     try {
-      network = await this.call('network', 'detectNetwork')    
+      network = await this.call('network', 'detectNetwork')
     } catch (e) {
       web3 = this.web3()
     }
@@ -130,7 +131,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   onActivation () {
     this.on('editor', 'breakpointCleared', (fileName, row) => { if (this.onBreakpointClearedListener) this.onBreakpointClearedListener(fileName, row) })
     this.on('editor', 'breakpointAdded', (fileName, row) => { if (this.onBreakpointAddedListener) this.onBreakpointAddedListener(fileName, row) })
-    this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })  
+    this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })
     this.on('network', 'providerChanged', (provider) => { if (this.onEnvChangedListener) this.onEnvChangedListener(provider) })
   }
 
@@ -164,6 +165,5 @@ export class CompilerAbstract implements CompilationOutput { // this is a subset
       return sourcesArray[0]
     }
     return null
-  }  
+  }
 }
-
