@@ -413,12 +413,12 @@ const fileRemoved = async (removePath: string) => {
   await dispatch(fileRemovedSuccess(removePath))
 }
 
-// const fileRenamed = async (oldPath: string) => {
-//   const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
-//   const data = await fetchDirectoryContent(provider, path)
+const fileRenamed = async (oldPath: string) => {
+  const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
+  const data = await fetchDirectoryContent(provider, path)
 
-//   await dispatch(fileRenamedSuccess(path, oldPath, data))
-// }
+  await dispatch(fileRenamedSuccess(path, oldPath, data))
+}
 
 const rootFolderChanged = async (path) => {
   await dispatch(rootFolderChangedSuccess(path))
@@ -460,15 +460,15 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       }
       break
 
-      // case 'fileRenamed':
-      //   await fileRenamed(path)
-      //   delete pendingEvents[eventName + path]
-      //   if (queuedEvents.length) {
-      //     const next = queuedEvents.pop()
+    case 'fileRenamed':
+      await fileRenamed(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
 
-      //     await executeEvent(next.eventName, next.path)
-      //   }
-      //   break
+        await executeEvent(next.eventName, next.path)
+      }
+      break
 
     case 'rootFolderChanged':
       await rootFolderChanged(path)
