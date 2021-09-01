@@ -240,6 +240,9 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
+      const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
+      this.call('menuicons', 'select', 'debugger')
+      this.call('debugger', 'debug', txHash, result.web3)
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
