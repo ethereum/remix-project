@@ -255,7 +255,7 @@ module.exports = class TestTab extends ViewPlugin {
           id="UTContext${result.context}"
           onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
         >
-          <div class="d-flex my-1 justify-content-between">
+          <div class="d-flex my-1 align-items-start justify-content-between">
             <span> ✘ ${result.value}</span>
             <div
               class="btn border btn btn-sm ml-1"
