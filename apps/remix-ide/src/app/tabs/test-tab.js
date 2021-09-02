@@ -210,11 +210,11 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  async startDebug (txHash, web3) {
-    this.isDebugging = true
+  async startDebug (result) {
+    const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
     if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
     this.call('menuicons', 'select', 'debugger')
-    this.call('debugger', 'debug', txHash, web3)
+    this.call('debugger', 'debug', txHash, result.web3)
   }
 
   printHHLogs (logsArr, testName) {
@@ -266,9 +266,6 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
-      const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
-      this.call('menuicons', 'select', 'debugger')
-      this.call('debugger', 'debug', txHash, result.web3)
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         let debugBtn = yo``
@@ -291,10 +288,14 @@ module.exports = class TestTab extends ViewPlugin {
           id="UTContext${result.context}"
           onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
         >
-          <div class="d-flex my-1 align-items-start justify-content-between">
-            <span> ✘ ${result.value}</span>
-            ${debugBtn}
-          </div>
+          <span> ✘ ${result.value}</span>
+          <button
+            class="btn btn-primary btn-sm"
+            title="Click to debug"
+            onclick=${() => this.startDebug(result)}
+          >
+            Debug
+          </button>
           <span class="text-dark">Error Message:</span>
           <span class="pb-2 text-break">"${result.errMsg}"</span>
         </div>
