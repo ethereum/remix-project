@@ -251,18 +251,20 @@ module.exports = class TestTab extends ViewPlugin {
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
         <div
-          class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
+          class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
           id="UTContext${result.context}"
           onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
         >
-          <span> ✘ ${result.value}</span>
-          <button
-            class="btn btn-primary btn-sm"
-            title="Click to debug"
-            onclick=${() => this.startDebug(result)}
-          >
-            Debug
-          </button>
+          <div class="d-flex my-1 justify-content-between">
+            <span> ✘ ${result.value}</span>
+            <div
+              class="btn border btn btn-sm ml-1"
+              title="Start debugging"
+              onclick=${() => this.startDebug(result)}
+            >
+            <i class="fas fa-bug"></i>
+          </div>
+          </div>
           <span class="text-dark">Error Message:</span>
           <span class="pb-2 text-break">"${result.errMsg}"</span>
         </div>
@@ -273,7 +275,7 @@ module.exports = class TestTab extends ViewPlugin {
         const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
         this.testsOutput.appendChild(yo`
           <div
-            class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
+            class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
             id="UTContext${result.context}"
             onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
           >
