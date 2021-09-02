@@ -38,6 +38,7 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
@@ -46,9 +47,11 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
+      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
