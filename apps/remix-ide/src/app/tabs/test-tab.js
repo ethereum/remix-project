@@ -192,6 +192,13 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  async startDebug (result) {
+    const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
+    if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
+    this.call('menuicons', 'select', 'debugger')
+    this.call('debugger', 'debug', txHash, result.web3)
+  }
+
   printHHLogs (logsArr, testName) {
     let finalLogs = `<b>${testName}:</b>\n`
     for (const log of logsArr) {
@@ -240,9 +247,6 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
-      const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
-      this.call('menuicons', 'select', 'debugger')
-      this.call('debugger', 'debug', txHash, result.web3)
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
@@ -252,6 +256,13 @@ module.exports = class TestTab extends ViewPlugin {
           onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
         >
           <span> ✘ ${result.value}</span>
+          <button
+            class="btn btn-primary btn-sm"
+            title="Click to debug"
+            onclick=${() => this.startDebug(result)}
+          >
+            Debug
+          </button>
           <span class="text-dark">Error Message:</span>
           <span class="pb-2 text-break">"${result.errMsg}"</span>
         </div>
