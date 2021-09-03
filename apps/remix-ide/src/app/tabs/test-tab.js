@@ -8,11 +8,8 @@ var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
 var { UnitTestRunner } = require('@remix-project/remix-tests')
-<<<<<<< HEAD
 
 const _paq = window._paq = window._paq || []
-=======
->>>>>>> 52b2e4686 (save compiler artifacts to show data on debugging)
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -105,14 +102,9 @@ module.exports = class TestTab extends ViewPlugin {
       this.setCurrentPath(this.defaultPath)
     })
 
-<<<<<<< HEAD
     this.testRunner.event.on('compilationFinished', (success, data, source) => {
       if (success) {
         this.allFilesInvolved = Object.keys(data.sources)
-=======
-    this.testRunner.event.register('compilationFinished', (success, data, source) => {
-      if (success) {
->>>>>>> 52b2e4686 (save compiler artifacts to show data on debugging)
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
         this.emit('compilationFinished', source.target, source, 'soljson', data)
