@@ -269,7 +269,7 @@ export function compileContractSources (
     function doCompilation (next) {
       // @ts-ignore
       compiler.event.register('compilationFinished', this, (success, data, source) => {
-        if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
+        if (opts && opts.event) opts.event.trigger('compilationFinished', [success, data, source])
         next(null, data)
       })
       compiler.compile(sources, filepath)

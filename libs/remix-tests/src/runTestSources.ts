@@ -5,7 +5,7 @@ import { deployAll } from './deployer'
 import { runTest } from './testRunner'
 
 import Web3 from 'web3'
-import { EventEmitter } from 'events'
+import EventManager from './lib/eventManager'
 import { Provider, extend } from '@remix-project/remix-simulator'
 import {
   FinalResult, SrcIfc, compilationInterface, ASTInterface, Options,
@@ -16,8 +16,8 @@ require('colors')
 export class UnitTestRunner {
   event
 
-  constructor () {
-    this.event = new EventEmitter()
+  constructor() {
+    this.event = new EventManager()
   }
 
   async createWeb3Provider () {
@@ -53,7 +53,7 @@ export class UnitTestRunner {
         })
       },
       (next) => {
-        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, event: this.event }, next)
+        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, event: this.event}, next)
       },
       function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
         for (const filename in asts) {
