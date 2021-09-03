@@ -101,6 +101,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     this.testRunner.event.register('compilationFinished', (success, data, source) => {
       if (success) {
+        this.allFilesInvolved = Object.keys(data.sources)
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
         this.emit('compilationFinished', source.target, source, 'soljson', data)
@@ -208,6 +209,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async startDebug (txHash, web3) {
+    this.isDebugging = true
     if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
     this.call('menuicons', 'select', 'debugger')
     this.call('debugger', 'debug', txHash, web3)
