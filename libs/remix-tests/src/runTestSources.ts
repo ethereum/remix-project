@@ -16,7 +16,7 @@ require('colors')
 export class UnitTestRunner {
   event
 
-  constructor() {
+  constructor () {
     this.event = new EventManager()
   }
 
@@ -53,7 +53,7 @@ export class UnitTestRunner {
         })
       },
       (next) => {
-        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, event: this.event}, next)
+        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, event: this.event }, next)
       },
       function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
         for (const filename in asts) {
