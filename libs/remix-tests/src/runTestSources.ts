@@ -22,8 +22,8 @@ require('colors');
 export class UnitTestRunner {
   event;
 
-  constructor() {
-    this.event = new EventManager();
+  constructor () {
+    this.event = new EventManager()
   }
 
   async createWeb3Provider() {
@@ -45,46 +45,64 @@ export class UnitTestRunner {
    * @param importFileCb Import file callback
    * @param opts Options
    */
-  async runTestSources(
-    contractSources: SrcIfc,
-    compilerConfig: CompilerConfiguration,
-    testCallback,
-    resultCallback,
-    finalCallback: any,
-    importFileCb,
-    opts: Options
-  ) {
-    opts = opts || {};
-    const sourceASTs: any = {};
-    const web3 = opts.web3 || (await this.createWeb3Provider());
-    let accounts: string[] | null = opts.accounts || null;
-    async.waterfall(
-      [
-        function getAccountList(next) {
-          if (accounts) return next();
-          web3.eth.getAccounts((_err, _accounts) => {
-            accounts = _accounts;
-            next();
-          });
-        },
-        next => {
-          compileContractSources(
-            contractSources,
-            compilerConfig,
-            importFileCb,
-            { accounts, event: this.event },
-            next
-          );
-        },
-        function deployAllContracts(
-          compilationResult: compilationInterface,
-          asts: ASTInterface,
-          next
-        ) {
-          for (const filename in asts) {
-            if (filename.endsWith('_test.sol')) {
-              sourceASTs[filename] = asts[filename].ast;
-            }
+  async runTestSources (contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, finalCallback: any, importFileCb, opts: Options) {
+    opts = opts || {}
+    const sourceASTs: any = {}
+    const web3 = opts.web3 || await this.createWeb3Provider()
+    let accounts: string[] | null = opts.accounts || null
+    async.waterfall([
+      function getAccountList (next) {
+        if (accounts) return next()
+        web3.eth.getAccounts((_err, _accounts) => {
+          accounts = _accounts
+          next()
+        })
+      },
+      (next) => {
+        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, event: this.event }, next)
+      },
+      function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
+        for (const filename in asts) {
+          if (filename.endsWith('_test.sol')) { sourceASTs[filename] = asts[filename].ast }
+        }
+        deployAll(compilationResult, web3, false, (err, contracts) => {
+          if (err) {
+            // If contract deployment fails because of 'Out of Gas' error, try again with double gas
+            // This is temporary, should be removed when remix-tests will have a dedicated UI to
+            // accept deployment params from UI
+            if (err.message.includes('The contract code couldn\'t be stored, please check your gas limit')) {
+              deployAll(compilationResult, web3, true, (error, contracts) => {
+                if (error) next([{ message: 'contract deployment failed after trying twice: ' + error.message, severity: 'error' }]) // IDE expects errors in array
+                else next(null, compilationResult, contracts)
+              })
+            } else { next([{ message: 'contract deployment failed: ' + err.message, severity: 'error' }]) } // IDE expects errors in array
+          } else { next(null, compilationResult, contracts) }
+        })
+      },
+      function determineTestContractsToRun (compilationResult: compilationInterface, contracts: any, next) {
+        const contractsToTest: string[] = []
+        const contractsToTestDetails: any[] = []
+
+        for (const filename in compilationResult) {
+          if (!filename.endsWith('_test.sol')) {
+            continue
+          }
+          Object.keys(compilationResult[filename]).forEach(contractName => {
+            contractsToTestDetails.push(compilationResult[filename][contractName])
+            contractsToTest.push(contractName)
+          })
+        }
+        next(null, contractsToTest, contractsToTestDetails, contracts)
+      },
+      function runTests (contractsToTest: string[], contractsToTestDetails: any[], contracts: any, next) {
+        let totalPassing = 0
+        let totalFailing = 0
+        let totalTime = 0
+        const errors: any[] = []
+        // eslint-disable-next-line handle-callback-err
+        const _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
+          if (result.type === 'testFailure') {
+            errors.push(result)
           }
           deployAll(compilationResult, web3, false, (err, contracts) => {
             if (err) {
