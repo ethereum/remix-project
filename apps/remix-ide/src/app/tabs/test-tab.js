@@ -40,6 +40,8 @@ module.exports = class TestTab extends ViewPlugin {
     this.areTestsRunning = false
     this.defaultPath = 'tests'
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
+    this.allFilesInvolved = []
+    this.isDebugging = false
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -98,6 +100,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     this.testRunner.event.register('compilationFinished', (success, data, source) => {
       if (success) {
+        this.allFilesInvolved = Object.keys(data.sources)
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
         this.emit('compilationFinished', source.target, source, 'soljson', data)
@@ -111,6 +114,9 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async updateForNewCurrent (file) {
+    // if current file is changed while debugging and one of the files imported in test file are opened
+    // do not clear the test results in SUT plugin
+    if (this.isDebugging && this.allFilesInvolved.includes(file)) return
     this.data.allTests = []
     this.updateTestFileList()
     this.clearResults()
@@ -202,6 +208,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async startDebug (txHash, web3) {
+    this.isDebugging = true
     if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
     this.call('menuicons', 'select', 'debugger')
     this.call('debugger', 'debug', txHash, web3)
@@ -488,6 +495,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTest (testFilePath, callback) {
+    this.isDebugging = false
     if (this.hasBeenStopped) {
       this.updateFinalResult()
       return
