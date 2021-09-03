@@ -207,11 +207,10 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  async startDebug (result) {
-    const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
+  async startDebug (txHash, web3) {
     if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
     this.call('menuicons', 'select', 'debugger')
-    this.call('debugger', 'debug', txHash, result.web3)
+    this.call('debugger', 'debug', txHash, web3)
   }
 
   printHHLogs (logsArr, testName) {
@@ -266,7 +265,7 @@ module.exports = class TestTab extends ViewPlugin {
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         let debugBtn = yo``
-        if (result.errMsg.includes('Transaction has been reverted by the EVM')) {
+        if(result.errMsg.includes('Transaction has been reverted by the EVM')) {
           const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
           const { web3 } = result
           debugBtn = yo`<div
@@ -287,13 +286,7 @@ module.exports = class TestTab extends ViewPlugin {
         >
           <div class="d-flex my-1 align-items-start justify-content-between">
             <span> ✘ ${result.value}</span>
-            <div
-              class="btn border btn btn-sm ml-1"
-              title="Start debugging"
-              onclick=${() => this.startDebug(result)}
-            >
-            <i class="fas fa-bug"></i>
-          </div>
+            ${debugBtn}
           </div>
           <span class="text-dark">Error Message:</span>
           <span class="pb-2 text-break">"${result.errMsg}"</span>
