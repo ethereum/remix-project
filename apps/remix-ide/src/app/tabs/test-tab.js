@@ -7,7 +7,7 @@ var async = require('async')
 var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
-var remixTests = require('@remix-project/remix-tests')
+var { UnitTestRunner } = require('@remix-project/remix-tests')
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -33,6 +33,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.data = {}
     this.appManager = appManager
     this.renderer = new Renderer(this)
+    this.testRunner = new UnitTestRunner()
     this.hasBeenStopped = false
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
@@ -93,6 +94,14 @@ module.exports = class TestTab extends ViewPlugin {
 
     this.on('filePanel', 'setWorkspace', async () => {
       this.setCurrentPath(this.defaultPath)
+    })
+
+    this.testRunner.event.register('compilationFinished', (success, data, source) => {
+      if (success) {
+        // forwarding the event to the appManager infra
+        // This is listened by compilerArtefacts to show data while debugging
+        this.emit('compilationFinished', source.target, source, 'soljson', data)
+      }
     })
 
     this.fileManager.events.on('noFileSelected', () => {
@@ -462,7 +471,7 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      remixTests.runTestSources(runningTest, compilerConfig, () => {}, () => {}, (error, result) => {
+      this.testRunner.runTestSources(runningTest, compilerConfig, () => {}, () => {}, (error, result) => {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {
@@ -489,7 +498,7 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      remixTests.runTestSources(
+      this.testRunner.runTestSources(
         runningTests,
         compilerConfig,
         (result) => this.testCallback(result, runningTests),
