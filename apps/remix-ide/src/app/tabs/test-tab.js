@@ -258,7 +258,7 @@ module.exports = class TestTab extends ViewPlugin {
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         let debugBtn = yo``
-        if(result.errMsg.includes('Transaction has been reverted by the EVM')) {
+        if (result.errMsg.includes('Transaction has been reverted by the EVM')) {
           const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
           const { web3 } = result
           debugBtn = yo`<div
