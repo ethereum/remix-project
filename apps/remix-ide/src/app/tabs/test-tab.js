@@ -9,8 +9,6 @@ var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
 var { UnitTestRunner } = require('@remix-project/remix-tests')
 
-const _paq = window._paq = window._paq || []
-
 const TestTabLogic = require('./testTab/testTab')
 
 const profile = {
@@ -101,9 +99,8 @@ module.exports = class TestTab extends ViewPlugin {
       this.setCurrentPath(this.defaultPath)
     })
 
-    this.testRunner.event.on('compilationFinished', (success, data, source) => {
+    this.testRunner.event.register('compilationFinished', (success, data, source) => {
       if (success) {
-        this.allFilesInvolved = Object.keys(data.sources)
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
         this.emit('compilationFinished', source.target, source, 'soljson', data)
