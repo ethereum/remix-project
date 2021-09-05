@@ -150,7 +150,7 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting')
       .waitForElementPresent('*[data-id="uiPathInput"]', 3000)
       .clearValue('*[data-id="uiPathInput"]')
-      .setValue('*[data-id="uiPathInput"]', 'tests1')
+      .setValue('*[data-id="uiPathInput"]', 'tests')
       .click('*[data-id="testTabGenerateTestFolder"]')
       .clickLaunchIcon('filePanel')
       // creating a new workspace
