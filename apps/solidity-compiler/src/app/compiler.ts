@@ -16,7 +16,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: '0.0.1',
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState']
 }
 
 const defaultAppParameters = {
@@ -33,7 +33,7 @@ const defaultCompilerParameters = {
   language: 'Solidity'
 }
 
-export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
+export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
   // interface matches libs/remix-ui/solidity-compiler/types/index.ts : ICompilerApi
   currentFile: string
   contractMap: {
