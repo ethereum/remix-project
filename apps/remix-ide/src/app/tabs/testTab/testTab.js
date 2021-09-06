@@ -68,7 +68,8 @@ class TestTabLogic {
       cb(e.message)
     }
     for (var file in files) {
-      if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
+      const filepath = provider && provider.type ? provider.type + '/' + file : file
+      if (/.(_test.sol)$/.exec(file)) tests.push(filepath)
     }
     cb(null, tests, this.currentPath)
   }
