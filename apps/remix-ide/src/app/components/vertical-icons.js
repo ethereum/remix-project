@@ -1,5 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import { basicLogo } from '../ui/svgLogo'
+import ReactDOM from 'react-dom'
+import React from 'react' // eslint-disable-line
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
@@ -23,6 +25,8 @@ export class VerticalIcons extends Plugin {
     super(profile)
     this.events = new EventEmitter()
     this.appManager = appManager
+    this.htmlElement = document.createElement('div')
+    this.htmlElement.setAttribute('id', 'icon-panel')
     this.icons = {}
     this.iconKind = {}
     this.iconStatus = {}
@@ -31,6 +35,14 @@ export class VerticalIcons extends Plugin {
     themeModule.events.on('themeChanged', (theme) => {
       this.onThemeChanged(theme.quality)
     })
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiVerticalIcons
+        vertialIconsPlugin={this}
+      />,
+      this.htmlElement)
   }
 
   linkContent (profile) {

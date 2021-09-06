@@ -1,0 +1,60 @@
+.homeIcon {
+  display: block;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.homeIcon svg path {
+  fill: var(--primary);
+}
+.homeIcon svg polygon {
+  fill: var(--primary);
+}
+.icons {
+}
+.icon {
+  cursor: pointer;
+  margin-bottom: 3px;
+  position: 12px;
+  width: 36px;
+  height: 36px;
+  padding: relative;
+  border-radius: 8px;
+}
+.icon img {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  filter: invert(0.5);
+}
+.image {
+}
+.icon svg {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+}
+.icon[title='Settings'] {
+  position: absolute;
+  bottom: 0;
+}
+.status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.statusCheck {
+  font-size: 1.2em;
+}
+.statusWithBG {
+  border-radius: 8px;
+  background-color: var(--danger);
+  color: var(--light);
+  font-size: 12px;
+  height: 15px;
+  text-align: center;
+  font-weight: bold;
+  padding-left: 5px;
+  padding-right: 5px;
+}
