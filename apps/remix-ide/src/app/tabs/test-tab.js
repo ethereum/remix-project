@@ -278,6 +278,8 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
         `)
       }
+    } else if (result.type === 'logOnly') {
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
     }
   }
 
