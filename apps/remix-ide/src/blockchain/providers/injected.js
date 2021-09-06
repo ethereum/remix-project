@@ -12,7 +12,7 @@ class InjectedProvider {
 
   newAccount (passwordPromptCb, cb) {
     passwordPromptCb((passphrase) => {
-      this.executionContext.web3().personal.newAccount(passphrase, cb)
+      this.executionContext.web3().eth.personal.newAccount(passphrase, cb)
     })
   }
 
