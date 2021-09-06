@@ -98,7 +98,7 @@
       "tags": []
     },
     "remix-ui-settings": {
-       "tags": []
+      "tags": []
     },
     "remix-ui-static-analyser": {
       "tags": []
@@ -120,6 +120,9 @@
     },
     "remix-ui-renderer": {
       "tags": []
+    },
+    "remix-ui-vertical-icons": {
+      "tags": []
     }
-}
+  }
 }
