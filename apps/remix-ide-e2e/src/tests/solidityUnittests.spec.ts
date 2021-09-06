@@ -4,7 +4,6 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
-
   before: function (browser: NightwatchBrowser, done) {
     init(browser, done)
   },
@@ -13,20 +12,29 @@ module.exports = {
     return sources
   },
 
-  'Should launch solidity unit test plugin': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+  'Should launch solidity unit test plugin': function (
+    browser: NightwatchBrowser
+  ) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('simple_storage.sol', sources[0]['simple_storage.sol'])
       .addFile('ks2a.sol', sources[0]['ks2a.sol'])
       .clickLaunchIcon('pluginManager')
-      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
+      .scrollAndClick(
+        '*[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]'
+      )
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SOLIDITY UNIT TESTING')
+      .assert.containsText(
+        '*[data-id="sidePanelSwapitTitle"]',
+        'SOLIDITY UNIT TESTING'
+      )
   },
 
   'Should generate test file': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('filePanel')
       .openFile('simple_storage.sol')
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
@@ -39,25 +47,62 @@ module.exports = {
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
 
-  'Should run simple unit test `simple_storage_test.sol` ': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .addFile('tests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
+  'Should run simple unit test `simple_storage_test.sol` ': function (
+    browser: NightwatchBrowser
+  ) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile(
+        'tests/simple_storage_test.sol',
+        sources[0]['tests/simple_storage_test.sol']
+      )
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (tests/simple_storage_test.sol)', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (tests/simple_storage_test.sol)', 120000)
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'MyTest (tests/simple_storage_test.sol)',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✓ Initial value should be100',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✓ Value is set200',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✘ Should fail for wrong value200',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'Passing: 2',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'Failing: 1',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'FAIL MyTest (tests/simple_storage_test.sol)',
+        120000
+      )
   },
 
-  'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+  'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (
+    browser: NightwatchBrowser
+  ) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('tests/ks2b_test.sol', sources[0]['tests/ks2b_test.sol'])
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
@@ -65,29 +110,82 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 2)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong project owner', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong sender', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong value', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project is fundable', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'owner is incorrect', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'wrong sender', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'wrong value', 120000)
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'tests/ks2b_test.sol',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✓ Check project exists',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✘ Check wrong project owner',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✘ Check wrong sender',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✘ Check wrong value',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        '✓ Check project is fundable',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'owner is incorrect',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'wrong sender',
+        120000
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'wrong value',
+        120000
+      )
   },
 
-  'Should stop unit tests during test execution` ': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+  'Should stop unit tests during test execution` ': function (
+    browser: NightwatchBrowser
+  ) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .pause(2000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol', 200000)
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/4_Ballot_test.sol')
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/simple_storage_test.sol')
-      .waitForElementContainsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped', 60000)
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'tests/ks2b_test.sol',
+        200000
+      )
+      .notContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'tests/4_Ballot_test.sol'
+      )
+      .notContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'tests/simple_storage_test.sol'
+      )
+      .waitForElementContainsText(
+        '*[data-id="testTabTestsExecutionStopped"]',
+        'The test execution has been stopped',
+        60000
+      )
   },
 
   'Should fail on compilation, open file on error click, not disappear error': function (browser: NightwatchBrowser) {
@@ -110,46 +208,72 @@ module.exports = {
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .addFile('tests/deployError_test.sol', sources[0]['tests/deployError_test.sol'])
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile(
+        'tests/deployError_test.sol',
+        sources[0]['tests/deployError_test.sol']
+      )
       .clickLaunchIcon('filePanel')
       .openFile('tests/deployError_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 4)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'contract deployment failed after trying twice', 120000)
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        'contract deployment failed after trying twice',
+        120000
+      )
   },
 
-  'Should fail when parameters are passed to method in test contract': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .addFile('tests/methodFailure_test.sol', sources[0]['tests/methodFailure_test.sol'])
+  'Should fail when parameters are passed to method in test contract': function (
+    browser: NightwatchBrowser
+  ) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile(
+        'tests/methodFailure_test.sol',
+        sources[0]['tests/methodFailure_test.sol']
+      )
       .clickLaunchIcon('filePanel')
       .openFile('tests/methodFailure_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 5)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Method \'add\' can not have parameters inside a test contract', 120000)
+      .waitForElementContainsText(
+        '*[data-id="testTabSolidityUnitTestsOutput"]',
+        "Method 'add' can not have parameters inside a test contract",
+        120000
+      )
   },
 
   'Changing current path': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .addFile('myTests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
+      .addFile(
+        'myTests/simple_storage_test.sol',
+        sources[0]['tests/simple_storage_test.sol']
+      )
       .clickLaunchIcon('solidityUnitTesting')
       .setValue('*[data-id="uiPathInput"]', 'myTests')
       .click('*[data-id="testTabGenerateTestFolder"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 60000)
+      .waitForElementPresent(
+        '*[data-id="testTabSolidityUnitTestsOutputheader"]',
+        60000
+      )
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
       .clearValue('*[data-id="uiPathInput"]')
       .setValue('*[data-id="uiPathInput"]', 'tests')
       .click('*[data-id="testTabGenerateTestFolder"]')
   },
 
-  'Changing current path when workspace changed': function (browser: NightwatchBrowser) {
+  'Changing current path when workspace changed': function (
+    browser: NightwatchBrowser
+  ) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('settings')
@@ -163,8 +287,14 @@ module.exports = {
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () {
+        document.querySelector(
+          '*[data-id="modalDialogCustomPromptTextCreate"]'
+        ).value = 'workspace_new'
+      })
+      .click(
+        '*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok'
+      )
       .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
@@ -182,17 +312,38 @@ module.exports = {
       .pause(2000)
       .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
       .scrollAndClick('#runTestsTabRunAction')
-      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
-      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+      .waitForElementVisible(
+        '*[data-id="testTabSolidityUnitTestsOutputheader"]',
+        120000
+      )
+      .waitForElementPresent(
+        '#solidityUnittestsOutput div[class^="testPass"]',
+        60000
+      )
+      .waitForElementContainsText(
+        '#solidityUnittestsOutput',
+        'tests/4_Ballot_test.sol',
+        60000
+      )
+      .waitForElementContainsText(
+        '#solidityUnittestsOutput',
+        '✓ Check winning proposal',
+        60000
+      )
+      .waitForElementContainsText(
+        '#solidityUnittestsOutput',
+        '✓ Check winnin proposal with return value',
+        60000
+      )
   },
 
-  'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+  'Debug failed test using debugger': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
+      .addFile(
+        'tests/ballotFailedDebug_test.sol',
+        sources[0]['tests/ballotFailedDebug_test.sol']
+      )
       .clickLaunchIcon('solidityUnitTesting')
       .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
       .click('*[id="singleTesttests/4_Ballot_test.sol"]')
@@ -242,39 +393,88 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
       .click('.fa-bug')
-      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText(
+        '*[data-id="sidePanelSwapitTitle"]',
+        'DEBUGGER',
+        60000
+      )
+      .waitForElementContainsText(
+        '*[id="FunctionPanel"]',
+        'checkWinningProposal()',
+        60000
+      )
       .click('*[data-id="dropdownPanelSolidityLocals"]')
-      .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
+      .waitForElementContainsText(
+        '*[data-id="solidityLocals"]',
+        'no locals',
+        60000
+      )
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '235' }) // It only moves slider to 235 but vm traces are not updated
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
+      .execute(function () {
+        document.getElementById('slider').value = '340'
+      }) // It only moves slider to 340 but vm traces are not updated
+      .setValue(
+        '*[data-id="slider"]',
+        new Array(1).fill(browser.Keys.RIGHT_ARROW)
+      )
+      .waitForElementContainsText(
+        '*[id="FunctionPanel"]',
+        'checkWinningProposal()',
+        60000
+      )
+      .waitForElementContainsText(
+        '*[id="FunctionPanel"]',
+        'vote(proposal)',
+        60000
+      )
       .pause(2000)
       .checkVariableDebug('soliditylocals', locals)
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')
-      .removeFile('tests/ballotFailedDebug_test.sol', 'workspace_new')
+      .removeFile('tests/ballotFailedDebug_test.sol', 'default_workspace')
   },
 
-  'Basic Solidity Unit tests with local compiler': function (browser: NightwatchBrowser) {
+  'Solidity Unit tests Basic Basic with local compiler': function (
+    browser: NightwatchBrowser
+  ) {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('builtin')
       .openFile('contracts/3_Ballot.sol')
       .clickLaunchIcon('pluginManager')
-      .scrollAndClick('[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]')
+      .scrollAndClick(
+        '[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]'
+      )
       .pause(2000)
-      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
+      .scrollAndClick(
+        '[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]'
+      )
       .clickLaunchIcon('solidityUnitTesting')
       .scrollAndClick('#runTestsTabRunAction')
-      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
-      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+      .waitForElementVisible(
+        '*[data-id="testTabSolidityUnitTestsOutputheader"]',
+        120000
+      )
+      .waitForElementPresent(
+        '#solidityUnittestsOutput div[class^="testPass"]',
+        60000
+      )
+      .waitForElementContainsText(
+        '#solidityUnittestsOutput',
+        'tests/4_Ballot_test.sol',
+        60000
+      )
+      .waitForElementContainsText(
+        '#solidityUnittestsOutput',
+        '✓ Check winning proposal',
+        60000
+      )
+      .waitForElementContainsText(
+        '#solidityUnittestsOutput',
+        '✓ Check winnin proposal with return value',
+        60000
+      )
       .end()
   }
 }
