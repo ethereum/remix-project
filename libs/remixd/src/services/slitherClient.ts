@@ -4,6 +4,7 @@ import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
 import { existsSync, readFileSync, readdirSync, unlink } from 'fs'
 import { OutputStandard } from '../types' // eslint-disable-line
+import * as utils from '../utils'
 const { spawn, execSync } = require('child_process')
 
 export class SlitherClient extends PluginClient {
@@ -25,8 +26,8 @@ export class SlitherClient extends PluginClient {
   }
 
   mapNpmDepsDir (list) {
-    const remixNpmDepsPath = `${this.currentSharedFolder}/.deps/npm`
-    const localNpmDepsPath = `${this.currentSharedFolder}/node_modules`
+    const remixNpmDepsPath = utils.absolutePath('.deps/npm', this.currentSharedFolder)
+    const localNpmDepsPath = utils.absolutePath('node_modules', this.currentSharedFolder)
     const npmDepsExists = existsSync(remixNpmDepsPath)
     const nodeModulesExists = existsSync(localNpmDepsPath)
     let isLocalDep = false
@@ -112,7 +113,7 @@ export class SlitherClient extends PluginClient {
         } else console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is same as installed solc version')
       }
       // Allow paths and set solc remapping for import URLs
-      const fileContent = readFileSync(`${this.currentSharedFolder}/${filePath}`, 'utf8')
+      const fileContent = readFileSync(utils.absolutePath(filePath, this.currentSharedFolder), 'utf8')
       const importsArr = fileContent.match(/import ['"][^.|..](.+?)['"];/g)
       let remaps = ''
       if (importsArr?.length) {
@@ -143,7 +144,7 @@ export class SlitherClient extends PluginClient {
 
       const response = {}
       child.on('close', () => {
-        const outputFileAbsPath: string = `${this.currentSharedFolder}/${outputFile}`
+        const outputFileAbsPath: string = utils.absolutePath(outputFile, this.currentSharedFolder)
         // Check if slither report file exists
         if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
