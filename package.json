@@ -86,6 +86,7 @@
     "nightwatch_local_runAndDeploy": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js --env=chrome-runAndDeploy",
     "nightwatch_local_url": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/url.spec.js --env=chrome",
     "nightwatch_local_verticalIconscontextmenu": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/verticalIconsPanel.spec.js --env=chrome",
+    "nightwatch_local_dgitprovider": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/dgitprovider.test.js --env=chrome",
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "remixd": "nx build remixd && nx serve remixd --folder=./apps/remix-ide/contracts --remixide=http://127.0.0.1:8080",
     "selenium": "selenium-standalone start",
