@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
 :root {
   --blue: #007aa6;
   --indigo: #6610f2;
@@ -7,7 +8,7 @@
   --red: #b84040;
   --orange: #c97539;
   --yellow: #ffc107;
-  --green: #32ba89;
+  --green: #1b8649;
   --teal: #20c997;
   --cyan: #355f7d;
   --white: #fff;
@@ -15,7 +16,7 @@
   --gray-dark: #343a40;
   --primary: #007aa6;
   --secondary: #50667b;
-  --success: #32ba89;
+  --success: #1b8649;
   --info: #086CB5;
   --warning: #c97539;
   --danger: #b84040;
@@ -75,6 +76,9 @@ body {
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
+  font-variant-ligatures: common-ligatures contextual discretionary-ligatures;
+  font-feature-settings: 'kern', 'liga', 'clig', 'calt', 'dlig';
+  font-kerning: normal;
   font-weight: 400;
   line-height: 1.5;
   color: #ccd9e6;
@@ -1785,7 +1789,7 @@ textarea.form-control {
   width: 100%;
   margin-top: 0.25rem;
   font-size: 80%;
-  color: #32ba89;
+  color: #1b8649;
 }
 .valid-tooltip {
   position: absolute;
@@ -1803,7 +1807,7 @@ textarea.form-control {
 }
 .form-control.is-valid,
 .was-validated .form-control:valid {
-  border-color: #32ba89;
+  border-color: #1b8649;
   padding-right: calc(1.25em + 1rem);
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2332BA89' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -1812,7 +1816,7 @@ textarea.form-control {
 }
 .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus {
-  border-color: #32ba89;
+  border-color: #1b8649;
   box-shadow: 0 0 0 0.2rem rgba(50, 186, 137, 0.25);
 }
 .form-control.is-valid ~ .valid-feedback,
@@ -1829,7 +1833,7 @@ textarea.form-control.is-valid {
 }
 .custom-select.is-valid,
 .was-validated .custom-select:valid {
-  border-color: #32ba89;
+  border-color: #1b8649;
   padding-right: calc((1em + 0.75rem) * 3 / 4 + 1.75rem);
   background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23333' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
       no-repeat right 0.75rem center/8px 10px,
@@ -1839,7 +1843,7 @@ textarea.form-control.is-valid {
 }
 .custom-select.is-valid:focus,
 .was-validated .custom-select:valid:focus {
-  border-color: #32ba89;
+  border-color: #1b8649;
   box-shadow: 0 0 0 0.2rem rgba(50, 186, 137, 0.25);
 }
 .custom-select.is-valid ~ .valid-feedback,
@@ -1856,7 +1860,7 @@ textarea.form-control.is-valid {
 }
 .form-check-input.is-valid ~ .form-check-label,
 .was-validated .form-check-input:valid ~ .form-check-label {
-  color: #32ba89;
+  color: #1b8649;
 }
 .form-check-input.is-valid ~ .valid-feedback,
 .form-check-input.is-valid ~ .valid-tooltip,
@@ -1866,11 +1870,11 @@ textarea.form-control.is-valid {
 }
 .custom-control-input.is-valid ~ .custom-control-label,
 .was-validated .custom-control-input:valid ~ .custom-control-label {
-  color: #32ba89;
+  color: #1b8649;
 }
 .custom-control-input.is-valid ~ .custom-control-label::before,
 .was-validated .custom-control-input:valid ~ .custom-control-label::before {
-  border-color: #32ba89;
+  border-color: #1b8649;
 }
 .custom-control-input.is-valid ~ .valid-feedback,
 .custom-control-input.is-valid ~ .valid-tooltip,
@@ -1896,11 +1900,11 @@ textarea.form-control.is-valid {
 .was-validated
   .custom-control-input:valid:focus:not(:checked)
   ~ .custom-control-label::before {
-  border-color: #32ba89;
+  border-color: #1b8649;
 }
 .custom-file-input.is-valid ~ .custom-file-label,
 .was-validated .custom-file-input:valid ~ .custom-file-label {
-  border-color: #32ba89;
+  border-color: #1b8649;
 }
 .custom-file-input.is-valid ~ .valid-feedback,
 .custom-file-input.is-valid ~ .valid-tooltip,
@@ -1910,7 +1914,7 @@ textarea.form-control.is-valid {
 }
 .custom-file-input.is-valid:focus ~ .custom-file-label,
 .was-validated .custom-file-input:valid:focus ~ .custom-file-label {
-  border-color: #32ba89;
+  border-color: #1b8649;
   box-shadow: 0 0 0 0.2rem rgba(50, 186, 137, 0.25);
 }
 .invalid-feedback {
@@ -2205,8 +2209,8 @@ fieldset:disabled a.btn {
 }
 .btn-success {
   color: #fff;
-  background-color: #32ba89;
-  border-color: #32ba89;
+  background-color: #1b8649;
+  border-color: #1b8649;
 }
 .btn-success:hover {
   color: #fff;
@@ -2220,8 +2224,8 @@ fieldset:disabled a.btn {
 .btn-success.disabled,
 .btn-success:disabled {
   color: #fff;
-  background-color: #32ba89;
-  border-color: #32ba89;
+  background-color: #1b8649;
+  border-color: #1b8649;
 }
 .btn-success:not(:disabled):not(.disabled).active,
 .btn-success:not(:disabled):not(.disabled):active,
@@ -2456,13 +2460,13 @@ fieldset:disabled a.btn {
   box-shadow: 0 0 0 0.2rem rgba(89, 92, 118, 0.5);
 }
 .btn-outline-success {
-  color: #32ba89;
-  border-color: #32ba89;
+  color: #1b8649;
+  border-color: #1b8649;
 }
 .btn-outline-success:hover {
   color: #fff;
-  background-color: #32ba89;
-  border-color: #32ba89;
+  background-color: #1b8649;
+  border-color: #1b8649;
 }
 .btn-outline-success.focus,
 .btn-outline-success:focus {
@@ -2470,15 +2474,15 @@ fieldset:disabled a.btn {
 }
 .btn-outline-success.disabled,
 .btn-outline-success:disabled {
-  color: #32ba89;
+  color: #1b8649;
   background-color: transparent;
 }
 .btn-outline-success:not(:disabled):not(.disabled).active,
 .btn-outline-success:not(:disabled):not(.disabled):active,
 .show > .btn-outline-success.dropdown-toggle {
   color: #fff;
-  background-color: #32ba89;
-  border-color: #32ba89;
+  background-color: #1b8649;
+  border-color: #1b8649;
 }
 .btn-outline-success:not(:disabled):not(.disabled).active:focus,
 .btn-outline-success:not(:disabled):not(.disabled):active:focus,
@@ -4360,7 +4364,7 @@ a.badge-secondary:focus {
 }
 .badge-success {
   color: #fff;
-  background-color: #32BA89;
+  background-color: #1b8649;
 }
 a.badge-success:focus,
 a.badge-success:hover {
@@ -5653,7 +5657,7 @@ button.bg-secondary:hover {
   background-color: #434559 !important;
 }
 .bg-success {
-  background-color: #32ba89 !important;
+  background-color: #1b8649 !important;
 }
 a.bg-success:focus,
 a.bg-success:hover,
@@ -5749,7 +5753,7 @@ button.bg-dark:hover {
   border-color: var(--secondary) !important;
 }
 .border-success {
-  border-color: #32ba89 !important;
+  border-color: #1b8649 !important;
 }
 .border-info {
   border-color: #355f7d !important;
@@ -8553,7 +8557,7 @@ a.text-secondary:hover {
   color: #383a4a !important;
 }
 .text-success {
-  color: #32ba89 !important;
+  color: #1b8649 !important;
 }
 a.text-success:focus,
 a.text-success:hover {
@@ -8743,6 +8747,8 @@ a.text-dark:hover {
 }
 .plugins-list-group-item {
   padding: 0.5rem 0.5rem 0 !important;
+  background: #0e2940b8;
+  border-radius: 1px !important;
 }
 .plugins-list-group-item:first-child {
   border-top-left-radius: 2px;
