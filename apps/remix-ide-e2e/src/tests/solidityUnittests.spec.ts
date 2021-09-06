@@ -174,7 +174,7 @@ module.exports = {
       .openFile('contracts/3_Ballot.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
-      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests1')
+      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
       .pause(2000)
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
