@@ -115,7 +115,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'contract deployment failed after trying twice', 120000)
   },
 
-  'Should fail when parameters are to method in test contract': function (browser: NightwatchBrowser) {
+  'Should fail when parameters are passed to method in test contract': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/methodFailure_test.sol', sources[0]['tests/methodFailure_test.sol'])
       .clickLaunchIcon('filePanel')
@@ -181,6 +181,36 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+  },
+
+  'Debug failed test using debugger': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
+      .click('*[id="singleTesttests/4_Ballot_test.sol"]')
+      .click('#runTestsTabRunAction')
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedDebug_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+      .click('.fa-bug')
+      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
+      .waitForElementContainsText('*[id="FunctionPanel"]', 'checkWinningProposal()', 60000)
+      .click('*[data-id="dropdownPanelSolidityLocals"]')
+      .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '340' }) // It only moves slider to 340 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .waitForElementContainsText('*[id="FunctionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[id="FunctionPanel"]', 'vote(proposal)', 60000)
+      .pause(2000)
+      .checkVariableDebug('soliditylocals', locals)
+      .clickLaunchIcon('filePanel')
+      .pause(2000)
+      .openFile('tests/ballotFailedDebug_test.sol')
+      .removeFile('tests/ballotFailedDebug_test.sol', 'default_workspace')
   },
 
   'Solidity Unit tests Basic Basic with local compiler': function (browser: NightwatchBrowser) {
@@ -401,6 +431,61 @@ const sources = [
         }
       } 
         `
+    },
+    'tests/ballotFailedDebug_test.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+      import "remix_tests.sol"; // this import is automatically injected by Remix.
+      import "../contracts/3_Ballot.sol";
+      
+      contract BallotTest {
+         
+          bytes32[] proposalNames;
+         
+          Ballot ballotToTest;
+          function beforeAll () public {
+              proposalNames.push(bytes32("candidate1"));
+              ballotToTest = new Ballot(proposalNames);
+          }
+          
+          function checkWinningProposal () public {
+              ballotToTest.vote(1); // This will revert the transaction
+              Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
+          }
+          
+          function checkWinninProposalWithReturnValue () public view returns (bool) {
+              return ballotToTest.winningProposal() == 0;
+          }
+      }`
     }
   }
 ]
+
+const locals = {
+	"sender": {
+		"value": {
+			"weight": {
+				"value": "1",
+				"type": "uint256"
+			},
+			"voted": {
+				"value": false,
+				"type": "bool"
+			},
+			"delegate": {
+				"value": "0x0000000000000000000000000000000000000000",
+				"type": "address"
+			},
+			"vote": {
+				"value": "0",
+				"type": "uint256"
+			}
+		},
+		"type": "struct Ballot.Voter"
+	},
+	"proposal": {
+		"value": "1",
+		"type": "uint256"
+	}
+}
