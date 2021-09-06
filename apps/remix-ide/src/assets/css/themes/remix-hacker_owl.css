@@ -14,25 +14,27 @@
   --gray: #868e96;
   --gray-dark: #343a40;
   --primary: #007aa6;
-  --secondary: #595c76;
+  --secondary: #50667b;
   --success: #32ba89;
   --info: #086CB5;
   --warning: #c97539;
   --danger: #b84040;
-  --light: #011627;
+  --light: #011C32;
   --dark: #051624;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --theme-divider-color: #0d2131;
+  --theme-divider-color: #04101ad4;
   --theme-foreground-gray: #4b6479;
   --theme-foreground-comment: #637777;
   --theme-foreground-alpha-1: #ffffffce;
   --theme-background-input: #234d708c;
   --theme-background: #011627;
   --theme-background-panels: #011628;
+  --theme-bg-btn-secondary: #011C32;
+  --theme-bg-btn-dark--hover: #033863;
   --theme-border-tab: 1px solid #7fdbca52;
   --theme-ace-identifier: #ffcb8bcc;
   --theme-ace-operator: #ffcb8b;
@@ -75,7 +77,7 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #A2A3BD;
+  color: #ccd9e6;
   text-align: left;
   background-color: var(--theme-background-panels);
 }
@@ -2171,13 +2173,13 @@ fieldset:disabled a.btn {
 }
 .btn-secondary {
   color: #fff;
-  background-color: #595c76;
-  border-color: #595c76;
+  background-color: var(--theme-bg-btn-secondary);
+  border-color: #284053;
 }
 .btn-secondary:hover {
   color: #fff;
-  background-color: #494b60;
-  border-color: #434559;
+  background-color: var(--theme-divider-color);
+  border-color: #203647;
 }
 .btn-secondary.focus,
 .btn-secondary:focus {
@@ -2186,8 +2188,8 @@ fieldset:disabled a.btn {
 .btn-secondary.disabled,
 .btn-secondary:disabled {
   color: #fff;
-  background-color: #595c76;
-  border-color: #595c76;
+  background-color: var(--secondary);
+  border-color: var(--secondary);
 }
 .btn-secondary:not(:disabled):not(.disabled).active,
 .btn-secondary:not(:disabled):not(.disabled):active,
@@ -2336,7 +2338,7 @@ fieldset:disabled a.btn {
 }
 .btn-light:hover {
   color: #fff;
-  background-color: #1b1c28;
+  background-color: var(--theme-bg-btn-dark--hover);
   border-color: #161720;
 }
 .btn-light.focus,
@@ -2368,8 +2370,8 @@ fieldset:disabled a.btn {
 }
 .btn-dark:hover {
   color: #fff;
-  background-color: #13141f;
-  border-color: #0e0f17;
+  background-color: var(--theme-bg-btn-dark--hover);
+  border-color: #093355b9;
 }
 .btn-dark.focus,
 .btn-dark:focus {
@@ -2424,13 +2426,13 @@ fieldset:disabled a.btn {
   box-shadow: 0 0 0 0.2rem rgba(0, 122, 166, 0.5);
 }
 .btn-outline-secondary {
-  color: #595c76;
-  border-color: #595c76;
+  color: var(--secondary);
+  border-color: var(--secondary);
 }
 .btn-outline-secondary:hover {
   color: #fff;
-  background-color: #595c76;
-  border-color: #595c76;
+  background-color: var(--secondary);
+  border-color: var(--secondary);
 }
 .btn-outline-secondary.focus,
 .btn-outline-secondary:focus {
@@ -2438,15 +2440,15 @@ fieldset:disabled a.btn {
 }
 .btn-outline-secondary.disabled,
 .btn-outline-secondary:disabled {
-  color: #595c76;
+  color: var(--secondary);
   background-color: transparent;
 }
 .btn-outline-secondary:not(:disabled):not(.disabled).active,
 .btn-outline-secondary:not(:disabled):not(.disabled):active,
 .show > .btn-outline-secondary.dropdown-toggle {
   color: #fff;
-  background-color: #595c76;
-  border-color: #595c76;
+  background-color: var(--secondary);
+  border-color: var(--secondary);
 }
 .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
 .btn-outline-secondary:not(:disabled):not(.disabled):active:focus,
@@ -3128,7 +3130,7 @@ input[type="submit"].btn-block {
   color: #dfe1ea;
   text-align: center;
   white-space: nowrap;
-  background-color: #595c76;
+  background-color: var(--secondary);
   border: 1px solid transparent;
   border-radius: 2px;
 }
@@ -3621,9 +3623,7 @@ input[type="submit"].btn-block {
   pointer-events: none;
   cursor: default;
 }
-.nav-tabs {
-  border-bottom: 1px solid var(--theme-divider-color);
-}
+
 .nav-tabs .nav-item {
   margin-bottom: -1px;
 }
@@ -4234,7 +4234,7 @@ input[type="submit"].btn-block {
   margin-left: 0;
   line-height: 1.25;
   color: #fff;
-  background-color: #595c76;
+  background-color: var(--secondary);
   border: 0 solid #ddd;
 }
 .page-link:hover {
@@ -4346,7 +4346,7 @@ a.badge-primary:focus {
 }
 .badge-secondary {
   color: #fff;
-  background-color: #595c76;
+  background-color: var(--secondary);
 }
 a.badge-secondary:focus,
 a.badge-secondary:hover {
@@ -5644,7 +5644,7 @@ button.bg-primary:hover {
   background-color: #005573 !important;
 }
 .bg-secondary {
-  background-color: #595c76 !important;
+  background-color: var(--secondary) !important;
 }
 a.bg-secondary:focus,
 a.bg-secondary:hover,
@@ -5689,7 +5689,7 @@ button.bg-danger:hover {
   background-color: #923333 !important;
 }
 .bg-light {
-  background-color: var(--theme-background) !important;
+  background-color: var(--light) !important;
 }
 a.bg-light:focus,
 a.bg-light:hover,
@@ -5719,7 +5719,7 @@ button.bg-dark:hover {
   border-top: 1px solid var(--theme-divider-color) !important;
 }
 .border-right {
-  border-right: 1px solid var(--theme-divider-color) !important;
+  border-right: 1.5px solid var(--theme-divider-color) !important;
 }
 .border-bottom {
   border-bottom: 1px solid var(--theme-divider-color) !important;
@@ -5746,7 +5746,7 @@ button.bg-dark:hover {
   border-color: #007aa6 !important;
 }
 .border-secondary {
-  border-color: #595c76 !important;
+  border-color: var(--secondary) !important;
 }
 .border-success {
   border-color: #32ba89 !important;
@@ -8819,6 +8819,20 @@ a.text-dark:hover {
 /* Theme Palette, Typography custom */
 #journal, .ace-content, .ace_editor {
     font-family: "JetBrains Mono", monospace!important;
+}
+
+#plugins {
+  border-bottom: 1px solid var(--theme-background-input)!important;
+}
+
+.theme-context-view {
+  border-top: 1px solid var(--theme-divider-color) !important;
+  border-bottom: 2.8px solid var(--theme-background-input) !important;
+  margin-bottom: -1px;
+}
+.mainview--tabs-proxy {
+  background-color: var(--light)!important;
+  border-bottom: 1.2px solid var(--theme-divider-color);
 }
 
 .ace-chaos {
