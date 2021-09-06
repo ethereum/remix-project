@@ -260,6 +260,13 @@ export class VerticalIcons extends Plugin {
     e.stopPropagation()
   }
 
+  async focusHome () {
+    await this.appManager.activatePlugin('home')
+    this.call('tabs', 'focus', 'home')
+  }
+
+  logoShow = () => basicLogo()
+
   render () {
     const home = yo`
       <div

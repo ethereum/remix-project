@@ -1,10 +1,11 @@
 import React from 'react'
+import { VerticalIcons } from '../../types/vertical-icons'
 
 import './remix-ui-vertical-icons.css'
 
 /* eslint-disable-next-line */
 export interface RemixUiVerticalIconsProps {
-  verticalIconsPlugin: any
+  verticalIconsPlugin: VerticalIcons
 }
 
 export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIconsProps) => {
