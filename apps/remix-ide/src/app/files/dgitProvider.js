@@ -21,7 +21,7 @@ const profile = {
   description: '',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['delay', 'init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -34,7 +34,7 @@ class DGitProvider extends Plugin {
       ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
-      host: 'ipfs2.io',
+      host: 'ipfs.io',
       port: 443,
       protocol: 'https',
       ipfsurl: 'https://ipfs.io/ipfs/'
@@ -70,6 +70,16 @@ class DGitProvider extends Plugin {
     }
   }
 
+  async delay (num) {
+    console.log('delay called', num)
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('delay resolved', num)
+        resolve(true)
+      }, 10000)
+    })
+  }
+
   async init (input) {
     await git.init({
       ...await this.getGitConfig(),
@@ -82,6 +92,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
+    console.log('dgitstatus', status)
     return status
   }
 
