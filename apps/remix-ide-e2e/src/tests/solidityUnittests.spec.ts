@@ -414,7 +414,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')
-      .removeFile('tests/ballotFailedDebug_test.sol', 'default_workspace')
+      .removeFile('tests/ballotFailedDebug_test.sol', 'workspace_new')
   },
 
   'Basic Solidity Unit tests with local compiler': function (
