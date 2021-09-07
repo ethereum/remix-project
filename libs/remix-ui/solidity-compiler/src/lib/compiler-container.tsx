@@ -56,7 +56,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector(selectedVersion)
       }
     })
-    const currentFileName = api.currentFile
+    const currentFileName = api.getAppParameter('currentFile') as string
 
     currentFile(currentFileName)
     listenToEvents(compileTabLogic, api)(dispatch)
@@ -72,11 +72,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
         return {
           ...prevState,
-          hideWarnings: api.getConfiguration('hideWarnings') || false,
-          autoCompile: typeof autoCompile === 'boolean' ? autoCompile : api.getConfiguration('autoCompile') || false,
-          includeNightlies: api.getConfiguration('includeNightlies') || false,
-          optimize: (optimize !== null) && (optimize !== undefined) ? optimize : false,
-          runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
+          hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
+          autoCompile: api.getAppParameter('autoCompile') as boolean || false,
+          includeNightlies: api.getAppParameter('includeNightlies') as boolean || false,
+          optimize: optimize,
+          runs: runs,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
       })
@@ -228,7 +228,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const isSolFileSelected = (currentFile: string = '') => {
-    if (!currentFile) currentFile = api.currentFile
+    if (!currentFile) currentFile = api.getAppParameter('currentFile') as string
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
@@ -297,7 +297,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
-    const currentFile = api.currentFile
+    const currentFile = api.getAppParameter('currentFile') as string
 
     if (!isSolFileSelected()) return
 
