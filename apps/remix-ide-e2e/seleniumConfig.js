@@ -4,7 +4,7 @@ module.exports = {
   baseURL: 'https://selenium-release.storage.googleapis.com',
   drivers: {
     chrome: {
-      version: '2.39',
+      version: '93.0.4577.15',
       arch: process.arch,
       baseURL: 'https://chromedriver.storage.googleapis.com'
     }
