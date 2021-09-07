@@ -56,10 +56,6 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.renderComponent()
   }
 
-  setSelectedVersion (version) {
-    this.selectedVersion = version
-  }
-
   onSetWorkspace () {
     this.renderComponent()
   }
