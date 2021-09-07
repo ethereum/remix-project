@@ -28,7 +28,6 @@ export interface ICompilerApi {
     onContentChanged: () => void
 
     resolveContentAndSave: (url: string) => Promise<string>
-
     fileExists: (file: string) => Promise<boolean>
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
