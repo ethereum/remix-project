@@ -348,7 +348,7 @@ module.exports = {
         60000
       )
       .waitForElementContainsText(
-        '*[id="FunctionPanel"]',
+        '*[data-id="functionPanel"]',
         'checkWinningProposal()',
         60000
       )
