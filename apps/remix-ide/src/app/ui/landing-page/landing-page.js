@@ -1,7 +1,6 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { migrateToWorkspace } from '../../../migrateFileSystem'
-import { CompilerImports } from '@remix-project/core-plugin'
 import JSZip from 'jszip'
 
 const yo = require('yo-yo')
@@ -119,11 +118,12 @@ const profile = {
 }
 
 export class LandingPage extends ViewPlugin {
-  constructor (appManager, verticalIcons, fileManager, filePanel) {
+  constructor (appManager, verticalIcons, fileManager, filePanel, contentImport) {
     super(profile)
     this.profile = profile
     this.fileManager = fileManager
     this.filePanel = filePanel
+    this.contentImport = contentImport
     this.appManager = appManager
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
@@ -240,7 +240,7 @@ export class LandingPage extends ViewPlugin {
 
   render () {
     const load = (service, item, examples, info) => {
-      const compilerImport = new CompilerImports()
+      const contentImport = this.contentImport
       const fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`
         <div class="p-2">
@@ -252,7 +252,7 @@ export class LandingPage extends ViewPlugin {
       const title = `Import from ${service}`
       modalDialogCustom.prompt(title, msg, null, (target) => {
         if (target !== '') {
-          compilerImport.import(
+          contentImport.import(
             target,
             (loadingMsg) => { tooltip(loadingMsg) },
             (error, content, cleanUrl, type, url) => {
@@ -538,7 +538,6 @@ export class LandingPage extends ViewPlugin {
                       <div class="btn-group">
                         <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}">GitHub</button>
-                        <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}">https</button>
                       </div><!-- end of btn-group -->

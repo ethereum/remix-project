@@ -6,8 +6,9 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
+    "tsconfig.base.json": "*",
     "tslint.json": "*",
+    ".eslintrc": "*",
     "nx.json": "*"
   },
   "tasksRunnerOptions": {
@@ -105,6 +106,9 @@
     "remix-ui-checkbox": {
       "tags": []
     },
+    "remix-ui-plugin-manager": {
+      "tags": []
+    },
     "remix-core-plugin": {
       "tags": []
     },
@@ -117,5 +121,5 @@
     "remix-ui-renderer": {
       "tags": []
     }
-  }
+}
 }

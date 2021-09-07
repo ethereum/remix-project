@@ -306,6 +306,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const contextualListener = new ContextualListener({ editor })
 
   engine.register([
+    blockchain,
     contentImport,
     themeModule,
     editor,
@@ -338,7 +339,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const hiddenPanel = new HiddenPanel()
   const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
   const filePanel = new FilePanel(appManager)
-  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel)
+  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel, contentImport)
   const settings = new SettingsTab(
     registry.get('config').api,
     editor,
@@ -356,8 +357,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     landingPage,
     hiddenPanel,
     sidePanel,
-    pluginManagerComponent,
     filePanel,
+    pluginManagerComponent,
     settings
   ])
 
@@ -481,8 +482,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['settings'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile', 'contentImport'])
-
+  await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+  await appManager.registerContextMenuItems()
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
     appManager.activatePlugin(workspace).then(async () => {
@@ -494,8 +495,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         console.log(e)
       }
 
-      // If plugins are loaded from the URL params, we focus on the last one.
-      if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+      if (params.code) {
+        // if code is given in url we focus on solidity plugin
+        menuicons.select('solidity')
+      } else {
+        // If plugins are loaded from the URL params, we focus on the last one.
+        if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+      }
 
       if (params.call) {
         const callDetails = params.call.split('//')

@@ -1,6 +1,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
+import { format } from 'util'
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
@@ -13,7 +14,7 @@ const TestTabLogic = require('./testTab/testTab')
 const profile = {
   name: 'solidityUnitTesting',
   displayName: 'Solidity unit testing',
-  methods: ['testFromPath', 'testFromSource'],
+  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath'],
   events: [],
   icon: 'assets/img/unitTesting.webp',
   description: 'Fast tool to generate unit tests for your contracts',
@@ -50,6 +51,21 @@ module.exports = class TestTab extends ViewPlugin {
   onActivationInternal () {
     this.testTabLogic = new TestTabLogic(this.fileManager)
     this.listenToEvents()
+    this.call('filePanel', 'registerContextMenuItem', {
+      id: 'solidityUnitTesting',
+      name: 'setTestFolderPath',
+      label: 'Set path for Unit Testing',
+      type: ['folder'],
+      extension: [],
+      path: [],
+      pattern: []
+    })
+  }
+
+  async setTestFolderPath (event) {
+    if (event.path.length > 0) {
+      await this.setCurrentPath(event.path[0])
+    }
   }
 
   onDeactivation () {
@@ -76,10 +92,7 @@ module.exports = class TestTab extends ViewPlugin {
     })
 
     this.on('filePanel', 'setWorkspace', async () => {
-      this.testTabLogic.setCurrentPath(this.defaultPath)
-      this.inputPath.value = this.defaultPath
-      this.updateDirList(this.defaultPath)
-      await this.updateForNewCurrent()
+      this.setCurrentPath(this.defaultPath)
     })
 
     this.fileManager.events.on('noFileSelected', () => {
@@ -179,6 +192,24 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  printHHLogs (logsArr, testName) {
+    let finalLogs = `<b>${testName}:</b>\n`
+    for (const log of logsArr) {
+      let formattedLog
+      // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+      // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+      // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+      // We check first arg to determine if 'util.format' is needed
+      if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+        formattedLog = format(log[0], ...log.slice(1))
+      } else {
+        formattedLog = log.join(' ')
+      }
+      finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
+    }
+    this.call('terminal', 'log', { type: 'info', value: finalLogs })
+  }
+
   testCallback (result, runningTests) {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
@@ -197,6 +228,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       this.testsOutput.appendChild(yo`
         <div
           id="${this.runningTestFileName}"
@@ -208,6 +240,7 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
         <div
@@ -245,6 +278,8 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
         `)
       }
+    } else if (result.type === 'logOnly') {
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
     }
   }
 
@@ -382,6 +417,17 @@ module.exports = class TestTab extends ViewPlugin {
   async testFromPath (path) {
     const fileContent = await this.fileManager.readFile(path)
     return this.testFromSource(fileContent, path)
+  }
+
+  /**
+   * Changes the current path of Unit Testing Plugin
+   * @param path - the path from where UT plugin takes _test.sol files to run
+   */
+  async setCurrentPath (path) {
+    this.testTabLogic.setCurrentPath(path)
+    this.inputPath.value = path
+    this.updateDirList(path)
+    await this.updateForNewCurrent()
   }
 
   /*

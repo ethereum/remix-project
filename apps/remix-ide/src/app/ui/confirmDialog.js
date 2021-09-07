@@ -4,6 +4,9 @@ const copyToClipboard = require('./copy-to-clipboard')
 const Web3 = require('web3')
 
 var css = csjs`
+  #confirmsetting {
+    z-index: 1;
+  }
   .txInfoBox {
   }
   .wrapword {
@@ -86,7 +89,7 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
           <div class="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
             <div class='d-flex'>
               <span class="text-dark mr-2 text-nowrap">Max Priority fee:</span>
-              <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' value="0" id='maxpriorityfee' />
+              <input class="form-control mr-1 text-right" style='height: 1.2rem; width: 6rem;' value="1" id='maxpriorityfee' />
               <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
             </div>            
           </div>
@@ -110,8 +113,8 @@ function confirmDialog (tx, network, amount, gasEstimation, newGasPriceCb, initi
         </div>
       </div>
       <div class="d-flex py-1 align-items-center custom-control custom-checkbox ${css.checkbox}">
-        <input class="form-check-input custom-control-input" id='confirmsetting' type="checkbox">
-        <label class="m-0 form-check-label custom-control-label">Do not show this warning again.</label>
+        <input class="form-check-input custom-control-input" id="confirmsetting" type="checkbox">
+        <label class="m-0 form-check-label custom-control-label" for="confirmsetting">Do not show this warning again.</label>
       </div>
     </div>
   `

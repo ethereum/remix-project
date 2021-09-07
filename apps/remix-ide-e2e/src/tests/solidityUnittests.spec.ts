@@ -166,27 +166,41 @@ module.exports = {
       .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
   },
 
-  'Solidity Unittests': function (browser: NightwatchBrowser) {
-    runTests(browser)
-  }
-}
+  'Solidity Unit tests Basic': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts/3_Ballot.sol')
+      .clickLaunchIcon('solidityUnitTesting')
+      .pause(2000)
+      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
+      .scrollAndClick('#runTestsTabRunAction')
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+  },
 
-function runTests (browser: NightwatchBrowser) {
-  browser
-    .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-    .clickLaunchIcon('filePanel')
-    .click('*[data-id="treeViewLitreeViewItemcontracts"]')
-    .openFile('contracts/3_Ballot.sol')
-    .clickLaunchIcon('solidityUnitTesting')
-    .pause(2000)
-    .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
-    .scrollAndClick('#runTestsTabRunAction')
-    .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
-    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
-    .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
-    .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
-    .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
-    .end()
+  'Solidity Unit tests Basic Basic with local compiler': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('builtin')
+      .openFile('contracts/3_Ballot.sol')
+      .clickLaunchIcon('pluginManager')
+      .scrollAndClick('[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]')
+      .pause(2000)
+      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
+      .clickLaunchIcon('solidityUnitTesting')
+      .scrollAndClick('#runTestsTabRunAction')
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+      .end()
+  }
 }
 
 const sources = [

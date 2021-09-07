@@ -16,6 +16,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       }
     }
     this._web3 = new Web3(this.web3Provider)
+    remixDebug.init.extendWeb3(this._web3)
 
     this.offsetToLineColumnConverter = {
       async offsetToLineColumn (rawLocation, file, sources, asts) {
@@ -59,6 +60,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   onEditorContentChanged (listener) {
     this.onEditorContentChangedListener = listener
+  }
+
+  onEnvChanged (listener) {
+    this.onEnvChangedListener = listener
   }
 
   onDebugRequested (listener) {
@@ -118,17 +123,18 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   debug (hash) {
     this.debugHash = hash
-    this.onDebugRequestedListener(hash)
+    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash)
   }
 
   onActivation () {
-    this.on('editor', 'breakpointCleared', (fileName, row) => this.onBreakpointClearedListener(fileName, row))
-    this.on('editor', 'breakpointAdded', (fileName, row) => this.onBreakpointAddedListener(fileName, row))
-    this.on('editor', 'contentChanged', () => this.onEditorContentChangedListener())  
+    this.on('editor', 'breakpointCleared', (fileName, row) => { if (this.onBreakpointClearedListener) this.onBreakpointClearedListener(fileName, row) })
+    this.on('editor', 'breakpointAdded', (fileName, row) => { if (this.onBreakpointAddedListener) this.onBreakpointAddedListener(fileName, row) })
+    this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })  
+    this.on('network', 'providerChanged', (provider) => { if (this.onEnvChangedListener) this.onEnvChangedListener(provider) })
   }
 
   onDeactivation () {
-    this.onRemoveHighlightsListener()
+    if (this.onRemoveHighlightsListener) this.onRemoveHighlightsListener()
     this.off('editor', 'breakpointCleared')
     this.off('editor', 'breakpointAdded')
     this.off('editor', 'contentChanged')
