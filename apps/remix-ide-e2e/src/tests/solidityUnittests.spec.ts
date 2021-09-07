@@ -197,14 +197,14 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
       .click('.fa-bug')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[id="FunctionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
       // eslint-disable-next-line dot-notation
       .execute(function () { document.getElementById('slider')['value'] = '340' }) // It only moves slider to 340 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-      .waitForElementContainsText('*[id="FunctionPanel"]', 'checkWinningProposal()', 60000)
-      .waitForElementContainsText('*[id="FunctionPanel"]', 'vote(proposal)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
       .pause(2000)
       .checkVariableDebug('soliditylocals', locals)
       .clickLaunchIcon('filePanel')
