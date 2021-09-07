@@ -99,7 +99,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.setCurrentPath(this.defaultPath)
     })
 
-    this.testRunner.event.register('compilationFinished', (success, data, source) => {
+    this.testRunner.event.on('compilationFinished', (success, data, source) => {
       if (success) {
         this.allFilesInvolved = Object.keys(data.sources)
         // forwarding the event to the appManager infra

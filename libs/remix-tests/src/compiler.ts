@@ -251,56 +251,34 @@ export function compileContractSources (
     }
   }
 
-  async.waterfall(
-    [
-      function loadCompiler (next) {
-        const {
-          currentCompilerUrl,
-          evmVersion,
-          optimize,
-          runs,
-          usingWorker
-        } = compilerConfig
-        compiler = new RemixCompiler(importFileCb)
-        compiler.set('evmVersion', evmVersion)
-        compiler.set('optimize', optimize)
-        compiler.set('runs', runs)
-        compiler.loadVersion(usingWorker, currentCompilerUrl)
-        // @ts-ignore
-        compiler.event.register('compilerLoaded', this, version => {
-          next()
-        })
-      },
-      function doCompilation (next) {
-        // @ts-ignore
-        compiler.event.register(
-          'compilationFinished',
-          this,
-          (success, data, source) => {
-            if (opts && opts.event) {
-              opts.event.trigger('compilationFinished', [
-                success,
-                data,
-                source
-              ])
-            }
-            next(null, data)
-          }
-        )
-        compiler.compile(sources, filepath)
-      }
-    ],
-    function (err: Error | null | undefined, result: any) {
-      const error: Error[] = []
-      if (result.error) error.push(result.error)
-      const errors = (result.errors || error).filter(
-        e => e.type === 'Error' || e.severity === 'error'
-      )
-      if (errors.length > 0) {
-        if (!isBrowser) require('signale').fatal(errors)
-        return cb(new CompilationErrors(errors))
-      }
-      cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
+  async.waterfall([
+    function loadCompiler (next) {
+      const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = compilerConfig
+      compiler = new RemixCompiler(importFileCb)
+      compiler.set('evmVersion', evmVersion)
+      compiler.set('optimize', optimize)
+      compiler.set('runs', runs)
+      compiler.loadVersion(usingWorker, currentCompilerUrl)
+      // @ts-ignore
+      compiler.event.register('compilerLoaded', this, (version) => {
+        next()
+      })
+    },
+    function doCompilation (next) {
+      // @ts-ignore
+      compiler.event.register('compilationFinished', this, (success, data, source) => {
+        if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
+        next(null, data)
+      })
+      compiler.compile(sources, filepath)
+    }
+  ], function (err: Error | null | undefined, result: any) {
+    const error: Error[] = []
+    if (result.error) error.push(result.error)
+    const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
+    if (errors.length > 0) {
+      if (!isBrowser) require('signale').fatal(errors)
+      return cb(new CompilationErrors(errors))
     }
   )
 }
