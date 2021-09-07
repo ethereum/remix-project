@@ -16,53 +16,38 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
-export interface ConfigurationSettings {
-  version: string,
-  evmVersion: string,
-  language: string,
-  optimize: boolean,
-  runs: string
-}
 
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
-  // interface matches libs/remix-ui/solidity-compiler/types/index.ts : ICompilerApi
-  currentFile: string
-  contractMap: {
-    file: string
-  } | Record<string, any>
-  compileErrors: any
-  compileTabLogic: any
-  contractsDetails: Record<string, any>
-  configurationSettings: ConfigurationSettings
-
-  setHardHatCompilation: (value: boolean) => void
-  getParameters: () => ConfigurationSettings
-  setParameters: (params: Partial<ConfigurationSettings>) => void
-  setCompilerConfig: (settings: ConfigurationSettings) => void
-  
-  getConfiguration: (value: string) => string
-  setConfiguration: (name: string, value: string) => void
-  getFileManagerMode: () => string
-  
-
-  getCompilationResult: () => any
-
-  onCurrentFileChanged: (fileName: string) => void
-  onResetResults: () => void
-  onSetWorkspace: (isLocalhost: boolean) => void
-  onNoFileSelected: () => void
-  onCompilationFinished: (contractsDetails: any, contractMap: any) => void
-  onSessionSwitched: () => void
-  onContentChanged: () => void
-
-  fileExists: (file: string) => Promise<boolean>
-  writeFile: (file: string, content: string) => Promise<void>
-  readFile: (file: string) => Promise<string>
-  open: (file: string) => void
-
   constructor () {
     super()
     createClient(this as any)
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
     this.initCompilerApi()
-  }  
+  }
+
+  getCompilerParameters () {
+    return {
+      runs: '200',
+      optimize: false,
+      version: '0.8.7+commit.e28d00a7',
+      evmVersion: null, // default
+      language: 'Solidity'
+    }
+  }
+
+  setCompilerParameters (params) {}
+
+  getAppParameter (name) {
+    const conf = {
+      'currentFile': () => this.currentFile,
+      'hideWarnings': () => false,
+      'autoCompile': () => false,
+      'includeNightlies': () => false
+    }
+    return conf[name]()
+  }
+
+  setAppParameter (name, value) {}  
 }
