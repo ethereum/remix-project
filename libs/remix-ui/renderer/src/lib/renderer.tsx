@@ -86,7 +86,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     setClose(true)
   }
 
-  const _errorClick = (errFile, errLine, errCol) => {
+  const _errorClick = async (errFile, errLine, errCol) => {
     if (errFile !== plugin.getAppParameter('currentFile')) {
       // TODO: refactor with this._components.contextView.jumpTo
       if (await plugin.fileExists(errFile)) {
