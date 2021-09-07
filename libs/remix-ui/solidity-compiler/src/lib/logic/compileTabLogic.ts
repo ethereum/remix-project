@@ -23,44 +23,40 @@ export class CompileTabLogic {
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
 
-  init() {
-    this.optimize = this.api.getCompilerParameters().optimize;
-    this.api.setCompilerParameters({ optimize: this.optimize });
-    this.compiler.set('optimize', this.optimize);
+  init () {
+    this.optimize = this.api.getCompilerParameters().optimize
+    this.api.setCompilerParameters({ optimize: this.optimize })
+    this.compiler.set('optimize', this.optimize)
 
-    this.runs = this.api.getCompilerParameters().runs;
-    this.runs = this.runs && this.runs !== 'undefined' ? this.runs : 200;
-    this.api.setCompilerParameters({ runs: this.runs });
-    this.compiler.set('runs', this.runs);
+    this.runs = this.api.getCompilerParameters().runs
+    this.runs = this.runs && this.runs !== 'undefined' ? this.runs : 200
+    this.api.setCompilerParameters({ runs: this.runs })
+    this.compiler.set('runs', this.runs)
 
-    this.evmVersion = this.api.getCompilerParameters().evmVersion;
-    if (
-      this.evmVersion === 'undefined' ||
-      this.evmVersion === 'null' ||
-      !this.evmVersion
-    ) {
-      this.evmVersion = null;
+    this.evmVersion = this.api.getCompilerParameters().evmVersion
+    if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
+      this.evmVersion = null
     }
-    this.api.setCompilerParameters({ evmVersion: this.evmVersion });
-    this.compiler.set('evmVersion', this.evmVersion);
+    this.api.setCompilerParameters({ evmVersion: this.evmVersion })
+    this.compiler.set('evmVersion', this.evmVersion)
   }
 
-  setOptimize(newOptimizeValue) {
-    this.optimize = newOptimizeValue;
-    this.api.setCompilerParameters({ optimize: this.optimize });
-    this.compiler.set('optimize', this.optimize);
+  setOptimize (newOptimizeValue) {
+    this.optimize = newOptimizeValue
+    this.api.setCompilerParameters({ optimize: this.optimize })
+    this.compiler.set('optimize', this.optimize)
   }
 
-  setRuns(runs) {
-    this.runs = runs;
-    this.api.setCompilerParameters({ runs: this.runs });
-    this.compiler.set('runs', this.runs);
+  setRuns (runs) {
+    this.runs = runs
+    this.api.setCompilerParameters({ runs: this.runs })
+    this.compiler.set('runs', this.runs)
   }
 
-  setEvmVersion(newEvmVersion) {
-    this.evmVersion = newEvmVersion;
-    this.api.setCompilerParameters({ evmVersion: this.evmVersion });
-    this.compiler.set('evmVersion', this.evmVersion);
+  setEvmVersion (newEvmVersion) {
+    this.evmVersion = newEvmVersion
+    this.api.setCompilerParameters({ evmVersion: this.evmVersion })
+    this.compiler.set('evmVersion', this.evmVersion)
   }
 
   getCompilerState() {
@@ -130,7 +126,7 @@ export class CompileTabLogic {
       // TODO readd saving current file
       // this.api.saveCurrentFile()
       this.event.emit('removeAnnotations')
-      var currentFile = this.api.getConfiguration('currentFile')
+      var currentFile = this.api.getAppParameter('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err);
