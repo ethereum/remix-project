@@ -315,6 +315,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const mousedown = (event: MouseEvent) => {
     setSeparatorYPosition(event.clientY)
+    const leftRef = document.getElementById('dragId')
+    leftRef.style.backgroundColor = '#007AA6'
+    leftRef.style.border = '2px solid #007AA6'
     setDragging(true)
   }
 
@@ -330,6 +333,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const onMouseUp = () => {
+    const leftRef = document.getElementById('dragId')
+    leftRef.style.backgroundColor = ''
+    leftRef.style.border = ''
     setDragging(false)
   }
 
