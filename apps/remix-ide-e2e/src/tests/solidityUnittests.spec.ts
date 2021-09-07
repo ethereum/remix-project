@@ -463,29 +463,29 @@ const sources = [
 ]
 
 const locals = {
-	"sender": {
-		"value": {
-			"weight": {
-				"value": "1",
-				"type": "uint256"
-			},
-			"voted": {
-				"value": false,
-				"type": "bool"
-			},
-			"delegate": {
-				"value": "0x0000000000000000000000000000000000000000",
-				"type": "address"
-			},
-			"vote": {
-				"value": "0",
-				"type": "uint256"
-			}
-		},
-		"type": "struct Ballot.Voter"
-	},
-	"proposal": {
-		"value": "1",
-		"type": "uint256"
-	}
+  sender: {
+    value: {
+      weight: {
+        value: '1',
+        type: 'uint256'
+      },
+      voted: {
+        value: false,
+        type: 'bool'
+      },
+      delegate: {
+        value: '0x0000000000000000000000000000000000000000',
+        type: 'address'
+      },
+      vote: {
+        value: '0',
+        type: 'uint256'
+      }
+    },
+    type: 'struct Ballot.Voter'
+  },
+  proposal: {
+    value: '1',
+    type: 'uint256'
+  }
 }
