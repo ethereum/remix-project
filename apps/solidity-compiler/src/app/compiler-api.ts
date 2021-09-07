@@ -41,7 +41,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.compileErrors = {}
     this.compiledFileName = ''
-    this.selectedVersion = ''
     this.currentFile = ''
   }
 
@@ -63,10 +62,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('terminal', 'log', content)
   }
   
-  setSelectedVersion (version) {
-    this.selectedVersion = version
-  }
-
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
@@ -99,18 +94,20 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
-    settings.version = settings.version || this.selectedVersion
+    const compilerState = this.getCompilerState()
+    settings.version = settings.version || compilerState.currentVersion
     const res = await compile(compilationTargets, settings, (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     return res
   }
 
   // This function is used for passing the compiler configuration to 'remix-tests'
   getCurrentCompilerConfig () {
+    const compilerState = this.getCompilerState()
     return {
-      currentVersion: this.selectedVersion,
-      evmVersion: this.compileTabLogic.evmVersion,
-      optimize: this.compileTabLogic.optimize,
-      runs: this.compileTabLogic.runs
+      currentVersion: compilerState.currentVersion,
+      evmVersion: compilerState.evmVersion,
+      optimize: compilerState.optimize,
+      runs: compilerState.runs
     }
   }
 
