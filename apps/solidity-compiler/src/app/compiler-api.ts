@@ -100,10 +100,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('terminal', 'log', content)
   }
   
-  setSelectedVersion (version) {
-    this.selectedVersion = version
-  }
-
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
