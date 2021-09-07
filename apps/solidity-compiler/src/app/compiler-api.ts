@@ -7,7 +7,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
   contractMap: {
     file: string
   } | Record<string, any>
-
   compileErrors: any
   compileTabLogic: CompileTabLogic
   contractsDetails: Record<string, any>

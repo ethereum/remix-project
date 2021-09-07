@@ -19,13 +19,6 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
-export interface ConfigurationSettings {
-  version: string,
-  evmVersion: string,
-  language: string,
-  optimize: boolean,
-  runs: string
-}
 
 const defaultAppParameters = {
   hideWarnings: false,
