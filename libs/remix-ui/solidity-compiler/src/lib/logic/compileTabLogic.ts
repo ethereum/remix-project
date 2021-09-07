@@ -1,3 +1,5 @@
+import { ICompilerApi } from '@remix-project/remix-lib-ts'
+
 const Compiler = require('@remix-project/remix-solidity').Compiler
 const EventEmitter = require('events')
 
@@ -8,7 +10,7 @@ declare global {
 }
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
-export class CompileTab {
+export class CompileTabLogic {
   public compiler
   public optimize
   public runs
@@ -16,7 +18,7 @@ export class CompileTab {
   public compilerImport
   public event
 
-  constructor (public api, public contentImport) {
+  constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
@@ -124,7 +126,7 @@ export class CompileTab {
       // TODO readd saving current file
       // this.api.saveCurrentFile()
       this.event.emit('removeAnnotations')
-      var currentFile = this.api.currentFile
+      var currentFile = this.api.getAppParameter('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err)

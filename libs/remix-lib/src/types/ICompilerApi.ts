@@ -8,11 +8,12 @@ export interface ICompilerApi {
     contractsDetails: Record<string, any>
     configurationSettings: ConfigurationSettings
 
-    setHardHatCompilation: (value: boolean) => void
-    getParameters: () => any
-    setParameters: (params) => void
-    getConfiguration: (value: string) => string
-    setConfiguration: (name: string, value: string) => void
+    getCompilerParameters: () => ConfigurationSettings
+    setCompilerParameters: (ConfigurationSettings?) => void
+
+    getAppParameter: (value: string) => string | boolean
+    setAppParameter: (name: string, value: string | boolean) => void
+
     getFileManagerMode: () => string
     setCompilerConfig: (settings: any) => void
 
@@ -26,11 +27,21 @@ export interface ICompilerApi {
     onSessionSwitched: () => void
     onContentChanged: () => void
 
+    resolveContentAndSave: (url: string) => Promise<string>
     fileExists: (file: string) => Promise<boolean>
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
-  }
+
+    logToTerminal: (log: terminalLog) => {}
+
+    compileWithHardhat: (configPath: string) => Promise<string>
+}
+
+export type terminalLog = {
+    type: 'info' | 'error' | 'warning'
+    value: string
+}
 
 export interface ConfigurationSettings {
     version: string,
