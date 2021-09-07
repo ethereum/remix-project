@@ -86,7 +86,11 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     setClose(true)
   }
 
+<<<<<<< HEAD
   const _errorClick = async (errFile, errLine, errCol) => {
+=======
+  const _errorClick = (errFile, errLine, errCol) => {
+>>>>>>> dd38f71d3 (refactor ICompilerAPI)
     if (errFile !== plugin.getAppParameter('currentFile')) {
       // TODO: refactor with this._components.contextView.jumpTo
       if (await plugin.fileExists(errFile)) {

@@ -152,6 +152,28 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   setAppParameter (name, value) {
     this.config.set(name, value)
   }
+
+  getCompilerParameters () {
+    const params = this.queryParams.get()
+    params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
+    params.optimize = params.optimize === 'true' ? true : params.optimize
+    return params
+  }
+
+  setCompilerParameters (params) {
+    this.queryParams.update(params)
+  }
+
+  getAppParameter (name) {
+    const param = this.config.get(name)
+    if (param === 'true') return true
+    if (param === 'false') return false
+    return param
+  }
+
+  setAppParameter (name, value) {
+    this.config.set(name, value)
+  }
 }
 
 module.exports = CompileTab

@@ -126,7 +126,11 @@ export class CompileTabLogic {
       // TODO readd saving current file
       this.api.saveCurrentFile()
       this.event.emit('removeAnnotations')
+<<<<<<< HEAD
       var currentFile = this.api.currentFile
+=======
+      var currentFile = this.api.getAppParameter('currentFile')
+>>>>>>> dd38f71d3 (refactor ICompilerAPI)
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err)

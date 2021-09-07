@@ -32,7 +32,10 @@ export interface ICompilerApi {
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
+<<<<<<< HEAD
     saveCurrentFile: () => void
+=======
+>>>>>>> dd38f71d3 (refactor ICompilerAPI)
 
     logToTerminal: (log: terminalLog) => {}
 
