@@ -18,15 +18,9 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
-export interface ConfigurationSettings {
-  version: string,
-  evmVersion: string,
-  language: string,
-  optimize: boolean,
-  runs: string
-}
 
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
+<<<<<<< HEAD
   // interface matches libs/remix-ui/solidity-compiler/types/index.ts : ICompilerApi
   currentFile: string
   contractMap: {
@@ -108,4 +102,38 @@ constructor () {
   createClient(this as any)
   this.initCompilerApi()
 }
+=======
+  constructor () {
+    super()
+    createClient(this as any)
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
+    this.initCompilerApi()
+  }
+
+  getCompilerParameters () {
+    return {
+      runs: '200',
+      optimize: false,
+      version: '0.8.7+commit.e28d00a7',
+      evmVersion: null, // default
+      language: 'Solidity'
+    }
+  }
+
+  setCompilerParameters (params) {}
+
+  getAppParameter (name) {
+    const conf = {
+      'currentFile': () => this.currentFile,
+      'hideWarnings': () => false,
+      'autoCompile': () => false,
+      'includeNightlies': () => false
+    }
+    return conf[name]()
+  }
+
+  setAppParameter (name, value) {}  
+>>>>>>> ece00bd39 (refactor ICompilerAPI)
 }

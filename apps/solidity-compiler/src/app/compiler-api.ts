@@ -1,7 +1,26 @@
 import { compile } from '@remix-project/remix-solidity'
-import { CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 
 export const CompilerApiMixin = (Base) => class extends Base {
+  currentFile: string
+  contractMap: {
+    file: string
+  } | Record<string, any>
+  compileErrors: any
+  compileTabLogic: CompileTabLogic
+  contractsDetails: Record<string, any>
+
+  configurationSettings: ConfigurationSettings
+
+  onCurrentFileChanged: (fileName: string) => void
+  onResetResults: () => void
+  onSetWorkspace: (workspace: any) => void
+  onNoFileSelected: () => void
+  onCompilationFinished: (contractsDetails: any, contractMap: any) => void
+  onSessionSwitched: () => void
+  onContentChanged: () => void
+
   initCompilerApi () {
     this.configurationSettings = null
 
@@ -15,9 +34,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
       eventHandlers: {},
       loading: false
     }
-    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
-    this.compiler = this.compileTabLogic.compiler
-    this.compileTabLogic.init()
 
     this.contractMap = {}
     this.contractsDetails = {}
@@ -81,11 +97,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   logToTerminal (content) {
     return this.call('terminal', 'log', content)
   }
-
-  setHardHatCompilation (value) {
-    this.hhCompilation = value
-  }
-
+  
   setSelectedVersion (version) {
     this.selectedVersion = version
   }
@@ -166,7 +178,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.currentFile = ''
     this.contractsDetails = {}
     this.emit('statusChanged', { key: 'none' })
-    if (this.onResetResults()) this.onResetResults()
+    if (this.onResetResults) this.onResetResults()
   }
 
   listenToEvents () {
@@ -272,7 +284,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
-        this.compileTabLogic.runCompiler(this.hhCompilation)
+        this.compileTabLogic.runCompiler(this.getAppParameter('hardhat-compilation'))
       }
     })
   }
