@@ -98,7 +98,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
   logToTerminal (content) {
     return this.call('terminal', 'log', content)
   }
-
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
