@@ -393,8 +393,8 @@ module.exports = {
       )
       // eslint-disable-next-line dot-notation
       .execute(function () {
-        document.getElementById('slider').value = '340'
-      }) // It only moves slider to 340 but vm traces are not updated
+        document.getElementById('slider').value = '235'
+      }) // It only moves slider to 235 but vm traces are not updated
       .setValue(
         '*[data-id="slider"]',
         new Array(1).fill(browser.Keys.RIGHT_ARROW)
@@ -417,7 +417,7 @@ module.exports = {
       .removeFile('tests/ballotFailedDebug_test.sol', 'default_workspace')
   },
 
-  'Solidity Unit tests Basic Basic with local compiler': function (
+  'Basic Solidity Unit tests with local compiler': function (
     browser: NightwatchBrowser
   ) {
     browser
