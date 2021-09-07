@@ -12,7 +12,7 @@ export const pathToURL = {}
  * @param version is the version of compiler with or without 'soljson-v' prefix and .js postfix
  */
 export function urlFromVersion (version) {
-  let url
+  let url  
   if (version === 'builtin') {
     let location: string | Location = window.document.location
     let path = location.pathname
@@ -22,6 +22,7 @@ export function urlFromVersion (version) {
     if (!location.endsWith('/')) location += '/'
     url = `${location}soljson.js`
   } else {
+    version = version.replace('.Emscripten.clang', '')
     if (!version.startsWith('soljson-v')) version = 'soljson-v' + version
     if (!version.endsWith('.js')) version = version + '.js'
     url = `${pathToURL[version]}/${version}`
