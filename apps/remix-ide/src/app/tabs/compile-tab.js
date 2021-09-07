@@ -5,7 +5,6 @@ import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
-
 import QueryParams from '../../lib/query-params'
 // import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'

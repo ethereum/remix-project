@@ -6,7 +6,7 @@ import { CompilerClientApi } from './compiler'
 
 const remix = new CompilerClientApi()
 
-export const App = () => {  
+export const App = () => {
   return (
     <div>
       <SolidityCompiler api={remix} />
