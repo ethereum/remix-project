@@ -18,13 +18,6 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
-export interface ConfigurationSettings {
-  version: string,
-  evmVersion: string,
-  language: string,
-  optimize: boolean,
-  runs: string
-}
 
 
 const defaultAppParameters = {
@@ -44,6 +37,33 @@ const defaultCompilerParameters = {
   constructor () {
     super()
     createClient(this as any)
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
     this.initCompilerApi()
-  }  
+  }
+
+  getCompilerParameters () {
+    return {
+      runs: '200',
+      optimize: false,
+      version: '0.8.7+commit.e28d00a7',
+      evmVersion: null, // default
+      language: 'Solidity'
+    }
+  }
+
+  setCompilerParameters (params) {}
+
+  getAppParameter (name) {
+    const conf = {
+      'currentFile': () => this.currentFile,
+      'hideWarnings': () => false,
+      'autoCompile': () => false,
+      'includeNightlies': () => false
+    }
+    return conf[name]()
+  }
+
+  setAppParameter (name, value) {}  
 }
