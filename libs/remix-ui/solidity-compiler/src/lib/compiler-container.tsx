@@ -19,11 +19,11 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings  } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
-    optimise: false,
+    optimize: false,
     compileTimeout: null,
     timeout: 300,
     allversions: [],
@@ -57,7 +57,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector(selectedVersion)
       }
     })
-    const currentFileName = api.getConfiguration('currentFile')
+    const currentFileName = api.getAppParameter('currentFile') as string
 
     currentFile(currentFileName)
     listenToEvents(compileTabLogic, api)(dispatch)
@@ -66,19 +66,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
       setState(prevState => {
-        const params = api.getParameters()
-        const optimize = params.optimize === 'false' ? false : params.optimize === 'true' ? true : null
-        const runs = params.runs
+        const params = api.getCompilerParameters()
+        const optimize = params.optimize
+        const runs = params.runs as string
         const evmVersion = params.evmVersion
         const autoCompile = params.autoCompile === 'false' ? false : params.autoCompile === 'true' ? true : null
 
         return {
           ...prevState,
-          hideWarnings: api.getConfiguration('hideWarnings') || false,
-          autoCompile: typeof autoCompile === 'boolean' ? autoCompile : api.getConfiguration('autoCompile') || false,
-          includeNightlies: api.getConfiguration('includeNightlies') || false,
-          optimize: (optimize !== null) && (optimize !== undefined) ? optimize : false,
-          runs: (runs !== null) && (runs !== 'null') && (runs !== undefined) && (runs !== 'undefined') ? runs : 200,
+          hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
+          autoCompile: api.getAppParameter('autoCompile') as boolean || false,
+          includeNightlies: api.getAppParameter('includeNightlies') as boolean || false,
+          optimize: optimize,
+          runs: runs,
           evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
         }
       })
@@ -154,7 +154,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
-      if (api.getParameters().version) selectedVersion = api.getParameters().version
+      if (api.getCompilerParameters().version) selectedVersion = api.getCompilerParameters().version
       // Check if version is a URL and corresponding filename starts with 'soljson'
       if (selectedVersion.startsWith('https://')) {
         const urlArr = selectedVersion.split('/')
@@ -229,8 +229,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const isSolFileSelected = (currentFile = '') => {
-    if (!currentFile) currentFile = api.getConfiguration('currentFile')
+  const isSolFileSelected = (currentFile: string = '') => {
+    if (!currentFile) currentFile = api.getAppParameter('currentFile') as string
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
@@ -299,7 +299,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
-    const currentFile = api.getConfiguration('currentFile')
+    const currentFile = api.getAppParameter('currentFile') as string
 
     if (!isSolFileSelected()) return
 
@@ -323,7 +323,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
     updateCurrentVersion(selectedVersion)
-    api.setParameters({ version: selectedVersion })
+    api.setCompilerParameters({ version: selectedVersion })
     let url
 
     if (customUrl !== '') {
@@ -333,7 +333,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      api.setParameters({ version: selectedVersion })
+      api.setCompilerParameters({ version: selectedVersion })
     } else {
       if (helper.checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
@@ -404,7 +404,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleAutoCompile = (e) => {
     const checked = e.target.checked
 
-    api.setConfiguration('autoCompile', checked)
+    api.setAppParameter('autoCompile', checked)
     checked && compile()
     setState(prevState => {
       return { ...prevState, autoCompile: checked }
@@ -414,7 +414,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleOptimizeChange = (value) => {
     const checked = !!value
 
-    api.setConfiguration('optimise', checked)
+    api.setAppParameter('optimize', checked)
     compileTabLogic.setOptimize(checked)
     if (compileTabLogic.optimize) {
       compileTabLogic.setRuns(parseInt(state.runs))
@@ -423,7 +423,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }
     state.autoCompile && compile()
     setState(prevState => {
-      return { ...prevState, optimise: checked }
+      return { ...prevState, optimize: checked }
     })
   }
 
@@ -440,7 +440,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const handleHideWarningsChange = (e) => {
     const checked = e.target.checked
 
-    api.setConfiguration('hideWarnings', checked)
+    api.setAppParameter('hideWarnings', checked)
     state.autoCompile && compile()
     setState(prevState => {
       return { ...prevState, hideWarnings: checked }
@@ -451,7 +451,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = e.target.checked
 
     if (!checked) handleLoadVersion(state.defaultVersion)
-    api.setConfiguration('includeNightlies', checked)
+    api.setAppParameter('includeNightlies', checked)
     setState(prevState => {
       return { ...prevState, includeNightlies: checked }
     })
@@ -482,7 +482,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = event.target.checked
 
     sethhCompilation(checked)
-    api.setHardHatCompilation(checked)
+    api.setAppParameter('hardhat-compilation', checked)
   }
 
   /*
@@ -553,7 +553,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <div className="justify-content-between align-items-center d-flex">
-                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} />
+                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
                 <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
                 <input
                   min="1"
@@ -564,7 +564,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   type="number"
                   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
                   onChange={(e) => onChangeRuns(e.target.value)}
-                  disabled={!state.optimise}
+                  disabled={!state.optimize}
                 />
               </div>
             </div>
@@ -574,7 +574,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           {
-            api.isHardHatProject &&
+            isHardhatProject &&
             <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
