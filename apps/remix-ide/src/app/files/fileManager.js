@@ -398,7 +398,7 @@ class FileManager extends Plugin {
   }
 
   fileChangedEvent (path) {
-    this.emit('currentFileChanged', path)
+    this.emit('fileChanged', path)
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
