@@ -399,7 +399,7 @@ module.exports = {
         60000
       )
       .waitForElementContainsText(
-        '*[id="FunctionPanel"]',
+        '*[data-id="functionPanel"]',
         'checkWinningProposal()',
         60000
       )
@@ -418,12 +418,12 @@ module.exports = {
         new Array(1).fill(browser.Keys.RIGHT_ARROW)
       )
       .waitForElementContainsText(
-        '*[id="FunctionPanel"]',
+        '*[data-id="functionPanel"]',
         'checkWinningProposal()',
         60000
       )
       .waitForElementContainsText(
-        '*[id="FunctionPanel"]',
+        '*[data-id="functionPanel"]',
         'vote(proposal)',
         60000
       )
