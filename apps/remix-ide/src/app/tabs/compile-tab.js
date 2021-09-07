@@ -1,9 +1,11 @@
 /* global */
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
-import { SolidityCompiler, CompileTab as CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
+import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin'
 import { ViewPlugin } from '@remixproject/engine-web'
+import QueryParams from '../../lib/query-params'
 // import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
 
@@ -30,14 +32,19 @@ const profile = {
 // - methods: ['getCompilationResult']
 
 class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerApi
-  constructor () {
+  constructor (config) {
     super(profile)
+    this.config = config
+    this.queryParams = new QueryParams()
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
     this.initCompilerApi()
   }
 
   renderComponent () {
     ReactDOM.render(
-      <SolidityCompiler plugin={this}/>
+      <SolidityCompiler api={this}/>
       , this.el)
   }
 
@@ -47,10 +54,6 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
 
   onResetResults () {
     this.renderComponent()
-  }
-
-  setHardHatCompilation (value) {
-    this.hhCompilation = value
   }
 
   setSelectedVersion (version) {
@@ -120,6 +123,28 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
       path: [],
       pattern: []
     })
+  }
+
+  getCompilerParameters () {
+    const params = this.queryParams.get()
+    params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
+    params.optimize = params.optimize === 'true' ? true : params.optimize
+    return params
+  }
+
+  setCompilerParameters (params) {
+    this.queryParams.update(params)
+  }
+
+  getAppParameter (name) {
+    const param = this.config.get(name)
+    if (param === 'true') return true
+    if (param === 'false') return false
+    return param
+  }
+
+  setAppParameter (name, value) {
+    this.config.set(name, value)
   }
 }
 
