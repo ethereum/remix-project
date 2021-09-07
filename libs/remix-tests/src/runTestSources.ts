@@ -5,7 +5,7 @@ import { deployAll } from './deployer'
 import { runTest } from './testRunner'
 
 import Web3 from 'web3'
-import EventManager from './lib/eventManager'
+import { EventEmitter } from 'events'
 import { Provider, extend } from '@remix-project/remix-simulator'
 import {
   FinalResult, SrcIfc, compilationInterface, ASTInterface, Options,
@@ -17,7 +17,7 @@ export class UnitTestRunner {
   event
 
   constructor () {
-    this.event = new EventManager()
+    this.event = new EventEmitter()
   }
 
   async createWeb3Provider () {
