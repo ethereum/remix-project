@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { VerticalIcons } from '../../types/vertical-icons'
 
@@ -10,8 +11,10 @@ export interface RemixUiVerticalIconsProps {
 
 export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIconsProps) => {
   return (
-    <div>
-      <h1>Welcome to remix-ui-vertical-icons!</h1>
+    <div className="h-100">
+      <div className="remixui_icons">
+        <h1>Remix!!</h1>
+      </div>
     </div>
   )
 }

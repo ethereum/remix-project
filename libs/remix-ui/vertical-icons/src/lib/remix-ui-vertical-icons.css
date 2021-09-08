@@ -1,19 +1,19 @@
-.homeIcon {
+.remixui_homeIcon {
   display: block;
   width: 42px;
   height: 42px;
   margin-bottom: 20px;
   cursor: pointer;
 }
-.homeIcon svg path {
+.remixui_homeIcon svg path {
   fill: var(--primary);
 }
-.homeIcon svg polygon {
+.remixui_homeIcon svg polygon {
   fill: var(--primary);
 }
-.icons {
+.remixui_icons {
 }
-.icon {
+.remixui_icon {
   cursor: pointer;
   margin-bottom: 3px;
   position: 12px;
@@ -22,32 +22,32 @@
   padding: relative;
   border-radius: 8px;
 }
-.icon img {
+.remixui_icon img {
   width: 28px;
   height: 28px;
   padding: 4px;
   filter: invert(0.5);
 }
-.image {
+.remixui_image {
 }
-.icon svg {
+.remixui_icon svg {
   width: 28px;
   height: 28px;
   padding: 4px;
 }
-.icon[title='Settings'] {
+.remixui_icon[title='Settings'] {
   position: absolute;
   bottom: 0;
 }
-.status {
+.remixui_status {
   position: absolute;
   bottom: 0;
   right: 0;
 }
-.statusCheck {
+.remixui_statusCheck {
   font-size: 1.2em;
 }
-.statusWithBG {
+.remixui_statusWithBG {
   border-radius: 8px;
   background-color: var(--danger);
   color: var(--light);

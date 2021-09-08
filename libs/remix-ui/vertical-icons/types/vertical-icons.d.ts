@@ -5,7 +5,10 @@ export class VerticalIcons extends Plugin<any, any> {
     appManager: any;
     htmlElement: HTMLDivElement;
     icons: {};
-    iconKind: {};
+  iconKind: {
+    kind:
+    'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
+    };
     iconStatus: {};
     renderComponent(): void;
     linkContent(profile: any): void;

@@ -265,23 +265,25 @@ export class VerticalIcons extends Plugin {
     this.call('tabs', 'focus', 'home')
   }
 
-  logoShow = () => basicLogo()
+  logoShow () {
+    basicLogo()
+  }
 
   render () {
-    const home = yo`
-      <div
-        class="m-1 mt-2 ${css.homeIcon}"
-        onclick="${async () => {
-          await this.appManager.activatePlugin('home')
-          this.call('tabs', 'focus', 'home')
-        }}"
-        plugin="home" title="Home"
-        data-id="verticalIconsHomeIcon"
-        id="verticalIconsHomeIcon"
-      >
-        ${basicLogo()}
-      </div>
-    `
+    // const home = yo`
+    //   <div
+    //     class="m-1 mt-2 ${css.homeIcon}"
+    //     onclick="${async () => {
+    //       await this.appManager.activatePlugin('home')
+    //       this.call('tabs', 'focus', 'home')
+    //     }}"
+    //     plugin="home" title="Home"
+    //     data-id="verticalIconsHomeIcon"
+    //     id="verticalIconsHomeIcon"
+    //   >
+    //     ${basicLogo()}
+    //   </div>
+    // `
     this.iconKind.fileexplorer = yo`<div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons"></div>`
     this.iconKind.compiler = yo`<div id='compileIcons'></div>`
     this.iconKind.udapp = yo`<div id='runIcons'></div>`
@@ -294,7 +296,6 @@ export class VerticalIcons extends Plugin {
     this.view = yo`
       <div class="h-100">
         <div class=${css.icons}>
-          ${home}
           ${this.iconKind.fileexplorer}
           ${this.iconKind.compiler}
           ${this.iconKind.udapp}
@@ -307,6 +308,7 @@ export class VerticalIcons extends Plugin {
       </div>
     `
     return this.view
+    // return this.htmlElement
   }
 }
 
