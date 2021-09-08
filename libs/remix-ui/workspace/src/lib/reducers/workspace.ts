@@ -1,4 +1,5 @@
 import { extractNameFromKey, File } from '@remix-ui/file-explorer'
+import { extractParentFromKey } from '@remix-ui/helper'
 import * as _ from 'lodash'
 interface Action {
     type: string
@@ -288,6 +289,22 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'FILE_RENAMED_SUCCESS': {
+      const payload = action.payload as { oldPath: string, newPath: string }
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: state.mode === 'browser' ? fileRenamed(state, payload) : state.browser.files
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? fileRenamed(state, payload) : state.localhost.files
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
@@ -309,6 +326,14 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
 const folderAdded = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
+  const _dir = splitPath(state, extractParentFromKey(path))
+  const prevFiles = _.get(files, _dir)
+
+  if (prevFiles.child) {
+
+  } else {
+    
+  }
 
   files = _.set(files, _path, {
     path: path,
@@ -324,6 +349,28 @@ const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<s
   const _path = splitPath(state, path)
 
   _.unset(files, _path)
+  return files
+}
+
+const fileRenamed = (state: BrowserState, payload: { oldPath: string, newPath: string }): { [x: string]: Record<string, File> } => {
+  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+  const _oldPath = splitPath(state, payload.oldPath)
+  const _newPath = splitPath(state, payload.newPath)
+  const prevFiles = _.get(files, _oldPath)
+  const nextFiles = {
+    ...prevFiles,
+    path: payload.newPath,
+    name: extractNameFromKey(payload.newPath)
+  }
+
+  if (nextFiles.child) {
+    nextFiles.child = sortFolderAndFiles(nextFiles.child)
+    files = _.set(files, _newPath, nextFiles)
+  } else {
+    files = _.set(files, _newPath, nextFiles)
+    files = state.mode === 'browser' ? { [state.browser.currentWorkspace]: sortFolderAndFiles(files[state.browser.currentWorkspace]) } : { [state.mode]: sortFolderAndFiles(files[state.mode]) }
+  }
+  _.unset(files, _oldPath)
   return files
 }
 
@@ -417,7 +464,7 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
 
 const splitPath = (state: BrowserState, path: string): string[] | string => {
   const root = state.mode === 'browser' ? state.browser.currentWorkspace : 'localhost'
-  const pathArr: string[] = path.split('/').filter(value => value)
+  const pathArr: string[] = (path || '').split('/').filter(value => value)
 
   if (pathArr[0] !== root) pathArr.unshift(root)
   const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
@@ -425,4 +472,19 @@ const splitPath = (state: BrowserState, path: string): string[] | string => {
   }, [])
 
   return _path
+}
+
+const sortFolderAndFiles = (filesList: Record<string, File>): Record<string, File> => {
+  const folders = {}
+  const files = {}
+
+  Object.keys(filesList || {}).forEach(key => {
+    if (filesList[key].isDirectory) {
+      folders[key] = filesList[key]
+    } else {
+      files[key] = filesList[key]
+    }
+  })
+
+  return Object.assign({}, folders, files)
 }
