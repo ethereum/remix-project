@@ -37,6 +37,7 @@ export interface TestResultInterface {
   expected?: string | number
   location?: string
   hhLogs?: []
+  web3?: any
 }
 export interface TestCbInterface {
   (error: Error | null | undefined, result: TestResultInterface) : void;
