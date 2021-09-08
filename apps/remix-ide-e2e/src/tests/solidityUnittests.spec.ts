@@ -190,6 +190,29 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
   },
 
+  'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
+      .click('*[id="singleTesttests/4_Ballot_test.sol"]')
+      .click('#runTestsTabRunAction')
+      .pause(2000)
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/hhLogs_test.sol', 60000)
+      .assert.containsText('#journal > div:nth-child(3) > span > div', 'Before all:')
+      .assert.containsText('#journal > div:nth-child(3) > span > div', 'Inside beforeAll')
+      .assert.containsText('#journal > div:nth-child(4) > span > div', 'Check sender:')
+      .assert.containsText('#journal > div:nth-child(4) > span > div', 'msg.sender is 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
+      .assert.containsText('#journal > div:nth-child(5) > span > div', 'Check int logs:')
+      .assert.containsText('#journal > div:nth-child(5) > span > div', '10 20')
+      .assert.containsText('#journal > div:nth-child(5) > span > div', 'Number is 25')
+      .openFile('tests/hhLogs_test.sol')
+      .removeFile('tests/hhLogs_test.sol', 'workspace_new')
+  },
+
   'Debug failed test using debugger': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
