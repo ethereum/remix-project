@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable dot-notation */
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "@remixproject/plugin-webview";
 import { CompilerApiMixin } from './compiler-api'
@@ -17,7 +19,7 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
-<<<<<<< HEAD
+
 const defaultAppParameters = {
   hideWarnings: false,
   autoCompile: false,
@@ -31,8 +33,6 @@ const defaultCompilerParameters = {
   evmVersion: null, // compiler default
   language: 'Solidity'
 }
-=======
->>>>>>> dd38f71d3 (refactor ICompilerAPI)
 
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
   constructor () {
@@ -45,7 +45,6 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   }
 
   getCompilerParameters () {
-<<<<<<< HEAD
     const params = {
       runs: localStorage.getItem('runs') || defaultCompilerParameters['runs'],
       optimize: localStorage.getItem('optimize') === 'true' ? true : false,
@@ -76,28 +75,4 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   getFileManagerMode () {
     return 'browser'
   }
-=======
-    return {
-      runs: '200',
-      optimize: false,
-      version: '0.8.7+commit.e28d00a7',
-      evmVersion: null, // default
-      language: 'Solidity'
-    }
-  }
-
-  setCompilerParameters (params) {}
-
-  getAppParameter (name) {
-    const conf = {
-      'currentFile': () => this.currentFile,
-      'hideWarnings': () => false,
-      'autoCompile': () => false,
-      'includeNightlies': () => false
-    }
-    return conf[name]()
-  }
-
-  setAppParameter (name, value) {}  
->>>>>>> dd38f71d3 (refactor ICompilerAPI)
 }
