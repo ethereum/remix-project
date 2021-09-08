@@ -81,7 +81,7 @@ module.exports = {
     browser
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
-      .waitForElementVisible('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+      .waitForElementVisible('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .end()
