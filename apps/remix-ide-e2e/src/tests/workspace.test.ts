@@ -51,6 +51,7 @@ module.exports = {
       .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .pause(5000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
@@ -62,7 +63,6 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
-      // span[data-id="workspacesModalDialog-modal-footer-ok-react"]
       .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
