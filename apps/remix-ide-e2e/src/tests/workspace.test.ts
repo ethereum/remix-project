@@ -45,8 +45,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .pause(1000)
-      .waitForElementPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
@@ -55,7 +54,7 @@ module.exports = {
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(2000)
-      .waitForElementNotVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      // .waitForElementNotVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
@@ -71,8 +70,8 @@ module.exports = {
       .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
-      .pause(1000)
-      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .pause(6000)
+      // .waitForElementNotVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
