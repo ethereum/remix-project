@@ -56,11 +56,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector(selectedVersion)
       }
     })
-<<<<<<< HEAD
+
     const currentFileName = api.currentFile
-=======
-    const currentFileName = api.getAppParameter('currentFile') as string
->>>>>>> dd38f71d3 (refactor ICompilerAPI)
 
     currentFile(currentFileName)
     listenToEvents(compileTabLogic, api)(dispatch)
@@ -232,11 +229,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const isSolFileSelected = (currentFile: string = '') => {
-<<<<<<< HEAD
     if (!currentFile) currentFile = api.currentFile
-=======
-    if (!currentFile) currentFile = api.getAppParameter('currentFile') as string
->>>>>>> dd38f71d3 (refactor ICompilerAPI)
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
@@ -305,11 +298,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
-<<<<<<< HEAD
     const currentFile = api.currentFile
-=======
-    const currentFile = api.getAppParameter('currentFile') as string
->>>>>>> dd38f71d3 (refactor ICompilerAPI)
 
     if (!isSolFileSelected()) return
 
