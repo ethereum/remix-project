@@ -24,5 +24,6 @@ export interface RemixUiTerminalProps {
     commands: any,
     txListener: any,
     eventsDecoder: any,
-    logHtml: any
+    logHtml: any,
+    logResponse: any
 }

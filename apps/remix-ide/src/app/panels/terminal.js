@@ -89,6 +89,7 @@ class Terminal extends Plugin {
       this.call('debugger', 'debug', hash)
     })
     this.logHtmlResponse = []
+    this.logResponse = []
   }
 
   onActivation () {
@@ -107,6 +108,12 @@ class Terminal extends Plugin {
     this.logHtmlResponse.push(html.innerText)
     this.renderComponent()
     this.logHtmlResponse = []
+  }
+
+  log (message) {
+    this.logResponse.push(message)
+    this.renderComponent()
+    this.logResponse = []
   }
 
   render () {
@@ -134,6 +141,7 @@ class Terminal extends Plugin {
         txListener = {this.txListener}
         eventsDecoder = {this.eventsDecoder}
         logHtml = {this.logHtmlResponse}
+        logResponse = {this.logResponse}
       />,
       this.element
     )
