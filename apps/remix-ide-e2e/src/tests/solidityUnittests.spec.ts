@@ -47,13 +47,13 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (/tests/simple_storage_test.sol)', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (tests/simple_storage_test.sol)', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1', 120000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (/tests/simple_storage_test.sol)', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (tests/simple_storage_test.sol)', 120000)
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser: NightwatchBrowser) {
@@ -65,7 +65,7 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 2)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong project owner', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong sender', 120000)
@@ -84,9 +84,9 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .pause(2000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol', 200000)
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/4_Ballot_test.sol')
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/simple_storage_test.sol')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol', 200000)
+      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/4_Ballot_test.sol')
+      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/simple_storage_test.sol')
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped', 60000)
   },
 
@@ -115,7 +115,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'contract deployment failed after trying twice', 120000)
   },
 
-  'Should fail when parameters are to method in test contract': function (browser: NightwatchBrowser) {
+  'Should fail when parameters are passed to method in test contract': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/methodFailure_test.sol', sources[0]['tests/methodFailure_test.sol'])
       .clickLaunchIcon('filePanel')
@@ -178,12 +178,65 @@ module.exports = {
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
   },
 
-  'Solidity Unit tests Basic Basic with local compiler': function (browser: NightwatchBrowser) {
+  'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
+      .click('*[id="singleTesttests/4_Ballot_test.sol"]')
+      .click('#runTestsTabRunAction')
+      .pause(2000)
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/hhLogs_test.sol', 60000)
+      .assert.containsText('#journal > div:nth-child(3) > span > div', 'Before all:')
+      .assert.containsText('#journal > div:nth-child(3) > span > div', 'Inside beforeAll')
+      .assert.containsText('#journal > div:nth-child(4) > span > div', 'Check sender:')
+      .assert.containsText('#journal > div:nth-child(4) > span > div', 'msg.sender is 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
+      .assert.containsText('#journal > div:nth-child(5) > span > div', 'Check int logs:')
+      .assert.containsText('#journal > div:nth-child(5) > span > div', '10 20')
+      .assert.containsText('#journal > div:nth-child(5) > span > div', 'Number is 25')
+      .openFile('tests/hhLogs_test.sol')
+      .removeFile('tests/hhLogs_test.sol', 'workspace_new')
+  },
+
+  'Debug failed test using debugger': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
+      .click('*[id="singleTesttests/4_Ballot_test.sol"]')
+      .click('#runTestsTabRunAction')
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedDebug_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+      .click('.fa-bug')
+      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .click('*[data-id="dropdownPanelSolidityLocals"]')
+      .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '235' }) // It only moves slider to 235 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
+      .pause(2000)
+      .checkVariableDebug('soliditylocals', locals)
+      .clickLaunchIcon('filePanel')
+      .pause(2000)
+      .openFile('tests/ballotFailedDebug_test.sol')
+      .removeFile('tests/ballotFailedDebug_test.sol', 'workspace_new')
+  },
+
+  'Basic Solidity Unit tests with local compiler': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('builtin')
@@ -196,7 +249,7 @@ module.exports = {
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
       .end()
@@ -401,6 +454,86 @@ const sources = [
         }
       } 
         `
+    },
+    'tests/ballotFailedDebug_test.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+      import "remix_tests.sol"; // this import is automatically injected by Remix.
+      import "../contracts/3_Ballot.sol";
+      
+      contract BallotTest {
+         
+          bytes32[] proposalNames;
+         
+          Ballot ballotToTest;
+          function beforeAll () public {
+              proposalNames.push(bytes32("candidate1"));
+              ballotToTest = new Ballot(proposalNames);
+          }
+          
+          function checkWinningProposal () public {
+              ballotToTest.vote(1); // This will revert the transaction
+              Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
+          }
+          
+          function checkWinninProposalWithReturnValue () public view returns (bool) {
+              return ballotToTest.winningProposal() == 0;
+          }
+      }`
+    },
+    'tests/hhLogs_test.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+      import "remix_tests.sol"; // this import is automatically injected by Remix.
+      import "hardhat/console.sol";
+      
+      contract hhLogs {
+        
+          function beforeAll () public {
+              console.log('Inside beforeAll');
+          }
+          
+          function checkSender () public {
+              console.log('msg.sender is %s', msg.sender);
+              Assert.ok(true, "should be true");
+          }
+
+          function checkIntLogs () public {
+            console.log(10,20);
+            console.log('Number is %d', 25);
+            Assert.ok(true, "should be true");
+        }
+      }`
     }
   }
 ]
+
+const locals = {
+  sender: {
+    value: {
+      weight: {
+        value: '1',
+        type: 'uint256'
+      },
+      voted: {
+        value: false,
+        type: 'bool'
+      },
+      delegate: {
+        value: '0x0000000000000000000000000000000000000000',
+        type: 'address'
+      },
+      vote: {
+        value: '0',
+        type: 'uint256'
+      }
+    },
+    type: 'struct Ballot.Voter'
+  },
+  proposal: {
+    value: '1',
+    type: 'uint256'
+  }
+}
