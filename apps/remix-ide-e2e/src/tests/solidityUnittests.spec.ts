@@ -166,26 +166,25 @@ module.exports = {
       .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
   },
 
-  'Solidity Unit tests Basic Basic with local compiler': function (browser: NightwatchBrowser) {
+  'Solidity Unit tests Basic': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('builtin')
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
-      .clickLaunchIcon('pluginManager')
-      .scrollAndClick('[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]')
-      .pause(2000)
-      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
-      .pause(5000)
       .clickLaunchIcon('solidityUnitTesting')
+      .pause(2000)
+      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
+      .pause(2000)
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
-      .end()
   },
 
+<<<<<<< HEAD
   'Debug failed test using debugger': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
@@ -217,21 +216,26 @@ module.exports = {
   },
 
   'Basic Solidity Unit tests with local compiler': function (browser: NightwatchBrowser) {
+=======
+  'Solidity Unit tests Basic Basic with local compiler': function (browser: NightwatchBrowser) {
+>>>>>>> 8da004312 (reset solidityUnitTest.spec)
     browser
-      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('builtin')
       .openFile('contracts/3_Ballot.sol')
+      .clickLaunchIcon('pluginManager')
+      .scrollAndClick('[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]')
+      .pause(2000)
+      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
+      .pause(5000)
       .clickLaunchIcon('solidityUnitTesting')
-      .pause(2000)
-      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
-      .pause(2000)
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+      .end()
   }
 }
 
