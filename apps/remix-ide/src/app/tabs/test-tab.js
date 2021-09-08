@@ -9,6 +9,8 @@ var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
 var { UnitTestRunner } = require('@remix-project/remix-tests')
 
+const _paq = window._paq = window._paq || []
+
 const TestTabLogic = require('./testTab/testTab')
 
 const profile = {
