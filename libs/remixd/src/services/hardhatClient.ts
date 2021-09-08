@@ -40,7 +40,7 @@ export class HardhatClient extends PluginClient {
         error += `[Hardhat Compilation]: ${err.toString()} \n`
       })
       child.on('close', () => {
-        if (error && result) resolve(error + result) 
+        if (error && result) resolve(error + result)
         else if (error) reject(error)
         else resolve(result)
       })
