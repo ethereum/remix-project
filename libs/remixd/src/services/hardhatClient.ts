@@ -32,12 +32,12 @@ export class HardhatClient extends PluginClient {
       const child = spawn(cmd, options)
       let result = ''
       let error = ''
-      child.stdout.on('data', (data) => {
+      child.stdout.on('data', data => {
         const msg = `[Hardhat Compilation]: ${data.toString()}`
         console.log('\x1b[32m%s\x1b[0m', msg)
         result += msg + '\n'
       })
-      child.stderr.on('data', (err) => {
+      child.stderr.on('data', err => {
         error += `[Hardhat Compilation]: ${err.toString()} \n`
       })
       child.on('close', () => {
