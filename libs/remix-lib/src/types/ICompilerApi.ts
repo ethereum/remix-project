@@ -32,6 +32,7 @@ export interface ICompilerApi {
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
+    saveCurrentFile: () => void
 
     logToTerminal: (log: terminalLog) => {}
 
