@@ -74,7 +74,8 @@ module.exports = class TestTab extends ViewPlugin {
   onDeactivation () {
     this.off('filePanel', 'newTestFileCreated')
     this.off('filePanel', 'setWorkspace')
-    this.fileManager.events.removeListener('currentFileChanged', this.updateForNewCurrent)
+    // 'currentFileChanged' event is added more than once
+    this.fileManager.events.removeAllListeners('currentFileChanged')
   }
 
   listenToEvents () {
