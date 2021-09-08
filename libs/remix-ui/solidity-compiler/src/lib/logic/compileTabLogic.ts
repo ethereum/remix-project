@@ -124,7 +124,7 @@ export class CompileTabLogic {
         }
       }
       // TODO readd saving current file
-      // this.api.saveCurrentFile()
+      this.api.saveCurrentFile()
       this.event.emit('removeAnnotations')
       var currentFile = this.api.getAppParameter('currentFile')
       return this.compileFile(currentFile)
