@@ -121,9 +121,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     return await debug.debugger.traceManager.getTrace(hash)
   }
 
-  debug (hash) {
+  debug (hash, web3?) {
     this.debugHash = hash
-    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash)
+    if (web3) remixDebug.init.extendWeb3(web3)
+    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash, web3)
   }
 
   onActivation () {
