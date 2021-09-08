@@ -19,6 +19,25 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
+const defaultAppParameters = {
+  'hideWarnings': () => false,
+  'autoCompile': () => false,
+  'includeNightlies': () => false
+}
+
+const defaultCompilerParameters = {
+  runs: '200',
+  optimize: false,
+  version: 'soljson-v0.8.7+commit.e28d00a7',
+  evmVersion: null, // default
+  language: 'Solidity'
+}
+
+const getOptimize = () => {
+  let value = localStorage.getItem('optimize') || defaultCompilerParameters['optimize']
+  value = (value === 'false' || value === null || value === undefined) ? false : value
+  value = value === 'true' ? true : false
+}
 
 const defaultAppParameters = {
   hideWarnings: false,
