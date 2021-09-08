@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+var vm = require('vm')
 var EventManager = require('../../lib/events')
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
@@ -47,7 +48,18 @@ class Terminal extends Plugin {
       compilersArtefacts: this.registry.get('compilersartefacts').api,
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api
     }
+    this.commandHelp = {
+      'remix.loadgist(id)': 'Load a gist in the file explorer.',
+      'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm, ipfs or raw http',
+      'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.',
+      'remix.exeCurrent()': 'Run the script currently displayed in the editor',
+      'remix.help()': 'Display this help message'
+    }
     this.blockchain = opts.blockchain
+    this.vm = vm
+    this._api = api
+    this._opts = opts
+    this.config = config
     this.version = packageJson.version
     this.data = {
       lineLength: opts.lineLength || 80, // ????
@@ -103,7 +115,11 @@ class Terminal extends Plugin {
   renderComponent () {
     ReactDOM.render(
       <RemixUiTerminal
+        event = {this.event}
         blockchain = {this.blockchain}
+        api = {this._api}
+        options = {this._opts}
+        registerCommand = {this.registerCommand}
         version = {this.version}
         config = {this.config}
         thisState = {this}
