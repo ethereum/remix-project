@@ -3,7 +3,7 @@ import { useKeyPress } from './custom-hooks/useKeyPress' // eslint-disable-line
 import { useWindowResize } from 'beautiful-react-hooks'
 import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
-import { remixWelcome } from './reducers/remixWelcom' // eslint-disable-line
+import { remixWelcome } from './reducers/remixWelcome' // eslint-disable-line
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
 import {allCommands, allPrograms} from './commands' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
