@@ -1077,8 +1077,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }
         <div data-id="terminalContainerDisplay" style = {{
           position: 'absolute',
-          height: '100',
-          width: '100',
+          height: '100%',
+          width: '100%',
           opacity: '0.1',
           zIndex: -1
         }}></div>
