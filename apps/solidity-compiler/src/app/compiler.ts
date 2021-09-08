@@ -17,6 +17,25 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
 }
 
+const defaultAppParameters = {
+  'hideWarnings': () => false,
+  'autoCompile': () => false,
+  'includeNightlies': () => false
+}
+
+const defaultCompilerParameters = {
+  runs: '200',
+  optimize: false,
+  version: 'soljson-v0.8.7+commit.e28d00a7',
+  evmVersion: null, // default
+  language: 'Solidity'
+}
+
+const getOptimize = () => {
+  let value = localStorage.getItem('optimize') || defaultCompilerParameters['optimize']
+  value = (value === 'false' || value === null || value === undefined) ? false : value
+  value = value === 'true' ? true : false
+}
 
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
   constructor () {
@@ -29,26 +48,30 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   }
 
   getCompilerParameters () {
-    return {
-      runs: '200',
-      optimize: false,
-      version: '0.8.7+commit.e28d00a7',
-      evmVersion: null, // default
-      language: 'Solidity'
+    const params = {
+      runs: localStorage.getItem('runs') || defaultCompilerParameters['runs'],
+      optimize: localStorage.getItem('optimize') === 'true' ? true : false,
+      version: localStorage.getItem('version') || defaultCompilerParameters['version'],
+      evmVersion: localStorage.getItem('evmVersion') || defaultCompilerParameters['evmVersion'], // default
+      language: localStorage.getItem('language') || defaultCompilerParameters['language']
     }
+    return params
   }
 
-  setCompilerParameters (params) {}
+  setCompilerParameters (params) {
+    for (const key in Object.keys(params)) {
+      localStorage.setItem(key, params[key])
+    }
+  }
 
   getAppParameter (name) {
-    const conf = {
-      'currentFile': () => this.currentFile,
-      'hideWarnings': () => false,
-      'autoCompile': () => false,
-      'includeNightlies': () => false
-    }
-    return conf[name]()
+    const param = localStorage.getItem(name) || defaultAppParameters[name]
+    if (param === 'true') return true
+    if (param === 'false') return false
+    return param
   }
 
-  setAppParameter (name, value) {}  
+  setAppParameter (name, value) {
+    localStorage.setItem(name, value)
+  }
 }
