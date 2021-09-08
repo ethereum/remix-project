@@ -11,7 +11,6 @@ import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import TerminalWelcomeMessage from './terminalWelcome' // eslint-disable-line
 
 import './remix-ui-terminal.css'
-// const TxLogger from '../../../apps/'
 import vm from 'vm'
 import javascriptserialize from 'javascript-serialize'
 import jsbeautify from 'js-beautify'
@@ -54,7 +53,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-  // const [_cmdHistory, setCmdHistory] = useState([])
   const [, setWindowHeight] = useState(window.innerHeight)
   // dragable state
   const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
@@ -86,7 +84,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   })
 
   const [searchInput, setSearchInput] = useState('')
-  // const [showTableDetails, setShowTableDetails] = useState([])
   const [showTableHash, setShowTableHash] = useState([])
 
   useWindowResize(() => {
@@ -235,13 +232,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
     }
     try {
-      let result: any
+      let result: any // eslint-disable-line
       if (script.trim().startsWith('git')) {
         // result = await this.call('git', 'execute', script)
       } else {
         result = await props.thisState.call('scriptRunner', 'execute', script)
       }
-      console.log({ result })
       done()
     } catch (error) {
       done(error.message || error)
@@ -320,23 +316,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     inputEl.current.focus()
   }
 
-  const wrapScript = (script) => {
-    const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
-    if (isKnownScript) return script
-    return `
-        try {
-          const ret = ${script};
-          if (ret instanceof Promise) {
-            ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
-          } else {
-            console.log(ret)
-          }   
-        } catch (e) {
-          console.log(e.message)
-        }
-        `
-  }
-
   const handleKeyDown = (event) => {
     const suggestionCount = autoCompletState.activeSuggestion
     if (autoCompletState.userInput !== '' && (event.which === 27 || event.which === 8 || event.which === 46)) {
@@ -345,13 +324,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
       if (autoCompletState.userInput.length === 1) {
-        console.log('enter with single autoComplete')
         setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: Object.keys(autoCompletState.data._options[0]).toString() }))
       } else {
         if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
           setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: autoCompletState.data._options[autoCompletState.activeSuggestion] ? Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() : inputEl.current.value }))
         } else {
-          console.log('enter with muti autoCOmplete', { autoCompletState })
           setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false, userInput: autoCompletState.data._options.length === 1 ? Object.keys(autoCompletState.data._options[0]).toString() : inputEl.current.value }))
         }
       }
@@ -558,74 +535,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     // props.thisState.event.trigger('handleSelect', [text])
   }
 
-  const checkTxStatus = (tx, type) => {
-    if (tx.status === '0x1' || tx.status === true) {
-      return (<i className='txStatus succeeded fas fa-check-circle'></i>)
-    }
-    if (type === 'call' || type === 'unknownCall' || type === 'unknown') {
-      return (<i className='txStatus call'>call</i>)
-    } else if (tx.status === '0x0' || tx.status === false) {
-      return (<i className='txStatus failed fas fa-times-circle'></i>)
-    } else {
-      return (<i className='txStatus notavailable fas fa-circle-thin' title='Status not available' ></i>)
-    }
-  }
-
-  const context = (opts, blockchain) => {
-    const data = opts.tx || ''
-    const from = opts.from ? helper.shortenHexData(opts.from) : ''
-    let to = opts.to
-    if (data.to) to = to + ' ' + helper.shortenHexData(data.to)
-    const val = data.value
-    let hash = data.hash ? helper.shortenHexData(data.hash) : ''
-    const input = data.input ? helper.shortenHexData(data.input) : ''
-    const logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
-    const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
-    const i = data.receipt ? data.transactionIndex : data.transactionIndex
-    const value = val ? typeConversion.toInt(val) : 0
-    if (blockchain.getProvider() === 'vm') {
-      return (
-        <div>
-          <span className='txLog_7Xiho'>
-            <span className='tx'>[vm]</span>
-            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
-            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
-          </span>
-        </div>)
-    } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
-      return (
-        <div>
-          <span className='txLog_7Xiho'>
-            <span className='tx'>[block:{block} txIndex:{i}]</span>
-            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
-            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
-          </span>
-        </div>)
-    } else {
-      hash = helper.shortenHexData(data.blockHash)
-      return (
-        <div>
-          <span className='txLog'>
-            <span className='tx'>[block:{block} txIndex:{i}]</span>
-            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-            <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
-            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-            <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-            <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
-          </span>
-        </div>)
-    }
-  }
-
   const txDetails = (event, tx) => {
     if (showTableHash.includes(tx.hash)) {
       const index = showTableHash.indexOf(tx.hash)
@@ -635,286 +544,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     } else {
       setShowTableHash((prevState) => ([...prevState, tx.hash]))
     }
-  }
-
-  const showTable = (opts) => {
-    let msg = ''
-    let toHash
-    const data = opts.data // opts.data = data.tx
-    if (data.to) {
-      toHash = opts.to + ' ' + data.to
-    } else {
-      toHash = opts.to
-    }
-    let callWarning = ''
-    if (opts.isCall) {
-      callWarning = '(Cost only applies when called by a contract)'
-    }
-    if (!opts.isCall) {
-      if (opts.status !== undefined && opts.status !== null) {
-        if (opts.status === '0x0' || opts.status === false) {
-          msg = 'Transaction mined but execution failed'
-        } else if (opts.status === '0x1' || opts.status === true) {
-          msg = 'Transaction mined and execution succeed'
-        }
-      } else {
-        msg = 'Status not available at the moment'
-      }
-    }
-
-    let stringified = ' - '
-    if (opts.logs && opts.logs.decoded) {
-      stringified = typeConversion.stringify(opts.logs.decoded)
-    }
-    const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
-    return (
-      <table className={`txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`} id='txTable' data-id={`txLoggerTable${opts.hash}`}>
-        <tr className='tr'>
-          <td className='td' data-shared={`key_${opts.hash}`}> status </td>
-          <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
-        </tr>)
-        {opts.hash && (<tr className='tr'>
-          <td className='td' data-shared={`key_${opts.hash}`}> transaction hash </td>
-          <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
-            <CopyToClipboard content={opts.hash}/>
-          </td>
-        </tr>) }
-        {
-          opts.contractAddress && (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}> contract address </td>
-              <td className='td' data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.contractAddress}
-                <CopyToClipboard content={opts.contractAddress}/>
-              </td>
-            </tr>
-          )
-        }
-        {
-          opts.from && (
-            <tr className='tr'>
-              <td className='td tableTitle' data-shared={`key_${opts.hash}`}> from </td>
-              <td className='td' data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.from}
-                <CopyToClipboard content={opts.from}/>
-              </td>
-            </tr>
-          )
-        }
-        {
-          opts.to && (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}> to </td>
-              <td className='td' data-id={`txLoggerTableTo${opts.hash}`} data-shared={`pair_${opts.hash}`}>{toHash}
-                <CopyToClipboard content={data.to ? data.to : toHash}/>
-              </td>
-            </tr>
-          )
-        }
-        {
-          opts.gas && (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}> gas </td>
-              <td className='td' data-id={`txLoggerTableGas${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.gas} gas
-                <CopyToClipboard content={opts.gas}/>
-              </td>
-            </tr>
-          )
-        }
-        {
-          opts.transactionCost && (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}> transaction cost </td>
-              <td className='td' data-id={`txLoggerTableTransactionCost${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.transactionCost} gas {callWarning}
-                <CopyToClipboard content={opts.transactionCost}/>
-              </td>
-            </tr>
-          )
-        }
-        {
-          opts.executionCost && (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}> execution cost </td>
-              <td className='td' data-id={`txLoggerTableExecutionHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.executionCost} gas {callWarning}
-                <CopyToClipboard content={opts.executionCost}/>
-              </td>
-            </tr>
-          )
-        }
-        {opts.hash && (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> hash </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
-              <CopyToClipboard content={opts.hash}/>
-            </td>
-          </tr>
-        )}
-        {opts.input && (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> input </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{helper.shortenHexData(opts.input)}
-              <CopyToClipboard content={opts.input}/>
-            </td>
-          </tr>
-        )}
-        {opts['decoded input'] && (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> decoded input </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input'].trim()}
-              <CopyToClipboard content={opts['decoded input']}/>
-            </td>
-          </tr>
-        )}
-        {opts['decoded output'] && (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> decoded output </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded output']}
-              <CopyToClipboard content={opts['decoded output']}/>
-            </td>
-          </tr>
-        )}
-        {opts.logs && (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> logs </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
-              {JSON.stringify(stringified, null, '\t')}
-              <CopyToClipboard content={JSON.stringify(stringified, null, '\t')}/>
-              <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')}/>
-            </td>
-          </tr>
-        )}
-        {opts.val && (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}> val </td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{val} wei
-              <CopyToClipboard content={`${val} wei`}/>
-            </td>
-          </tr>
-        )}
-      </table>
-    )
-  }
-
-  const debug = (event, tx) => {
-    event.stopPropagation()
-    if (tx.isCall && tx.envMode !== 'vm') {
-      return (<ModalDialog
-        hide={false}
-        handleHide={() => {} }
-        message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
-      />)
-    } else {
-      props.event.trigger('debuggingRequested', [tx.hash])
-    }
-  }
-
-  const renderUnKnownTransactions = (tx, receipt, index) => {
-    const from = tx.from
-    const to = tx.to
-    // const obj = { from, to }
-    const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
-    return (
-      <span id={`tx${tx.hash}`} key={index}>
-        <div className="log" onClick={(event) => txDetails(event, tx)}>
-          {checkTxStatus(receipt || tx, txType)}
-          {context({ from, to, tx }, props.blockchain)}
-          <div className='buttons'>
-            <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
-          </div>
-          <i className = {`arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
-        </div>
-        {showTableHash.includes(tx.hash) ? showTable({
-          hash: tx.hash,
-          status: receipt !== null ? receipt.status : null,
-          isCall: tx.isCall,
-          contractAddress: tx.contractAddress,
-          data: tx,
-          from,
-          to,
-          gas: tx.gas,
-          input: tx.input,
-          'decoded output': ' - ',
-          val: tx.value,
-          transactionCost: tx.transactionCost,
-          executionCost: tx.executionCost
-        }) : null}
-      </span>
-    )
-  }
-
-  const renderKnownTransactions = (tx, receipt, resolvedData, logs, index) => {
-    const from = tx.from
-    const to = resolvedData.contractName + '.' + resolvedData.fn
-    // const obj = { from, to }
-    const txType = 'knownTx'
-    return (
-      <span id={`tx${tx.hash}`} key={index}>
-        <div className="log" onClick={(event) => txDetails(event, tx)}>
-          {checkTxStatus(receipt, txType)}
-          {context({ from, to, tx }, props.blockchain)}
-          <div className='buttons'>
-            <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
-          </div>
-          <i className = {`arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
-        </div>
-        {showTableHash.includes(tx.hash) ? showTable({
-          hash: tx.hash,
-          status: receipt !== null ? receipt.status : null,
-          isCall: tx.isCall,
-          contractAddress: tx.contractAddress,
-          data: tx,
-          from,
-          to,
-          gas: tx.gas,
-          input: tx.input,
-          'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
-          'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
-          logs: logs,
-          val: tx.value,
-          transactionCost: tx.transactionCost,
-          executionCost: tx.executionCost
-        }) : null}
-      </span>
-    )
-  }
-
-  const renderCall = (tx, resolvedData, logs, index) => {
-    const to = resolvedData.contractName + '.' + resolvedData.fn
-    const from = tx.from ? tx.from : ' - '
-    const input = tx.input ? helper.shortenHexData(tx.input) : ''
-    const txType = 'call'
-
-    return (
-      <span id={`tx${tx.hash}`} key={index}>
-        <div className="log" onClick={(event) => txDetails(event, tx)}>
-          {checkTxStatus(tx, txType)}
-          <span className="txLog">
-            <span className="tx">[call]</span>
-            <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-            <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-            <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-          </span>
-          <div className='buttons'>
-            <div className="debug btn btn-primary btn-sm" onClick={(event) => debug(event, tx)}>Debug</div>
-          </div>
-          <i className="arrow fas fa-angle-down"></i>
-        </div>
-        {showTableHash.includes(tx.hash) ? showTable({
-          hash: tx.hash,
-          isCall: tx.isCall,
-          contractAddress: tx.contractAddress,
-          data: tx,
-          from,
-          to,
-          gas: tx.gas,
-          input: tx.input,
-          'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
-          'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
-          val: tx.value,
-          logs: logs,
-          transactionCost: tx.transactionCost,
-          executionCost: tx.executionCost
-        }) : null}
-      </span>
-    )
   }
 
   const handleAutoComplete = () => (
@@ -1398,7 +1027,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
-      { console.log({ newstate })}
       <div className="bar">
         {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
@@ -1467,11 +1095,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 )
               } else if (x.name === 'unknownTransaction') {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderUnKnownTransactions(trans.tx, trans.receipt, index)} </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderUnKnownTransactions(trans.tx, trans.receipt, index, props, showTableHash, txDetails)} </div>)
                 })
               } else if (x.name === 'knownTransaction') {
                 return x.message.map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index)} </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index, props, showTableHash, txDetails) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index, props, showTableHash, txDetails)} </div>)
                 })
               } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
