@@ -67,6 +67,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
+      .waitForElementPresent('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .pause(1000)
