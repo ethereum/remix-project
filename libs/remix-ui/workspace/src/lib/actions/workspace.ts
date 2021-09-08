@@ -86,6 +86,13 @@ const fileRemovedSuccess = (removePath: string) => {
   }
 }
 
+const fileRenamedSuccess = (oldPath: string, newPath: string) => {
+  return {
+    type: 'FILE_RENAMED_SUCCESS',
+    payload: { oldPath, newPath }
+  }
+}
+
 const rootFolderChangedSuccess = (path: string) => {
   return {
     type: 'ROOT_FOLDER_CHANGED',
@@ -232,19 +239,23 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
 }
 
 const listenOnEvents = (provider) => {
-  provider.event.on('fileAdded', async (filePath) => {
+  provider.event.on('fileAdded', async (filePath: string) => {
     await executeEvent('fileAdded', filePath)
   })
 
-  provider.event.on('folderAdded', async (folderPath) => {
+  provider.event.on('folderAdded', async (folderPath: string) => {
     await executeEvent('folderAdded', folderPath)
   })
 
-  provider.event.on('fileRemoved', async (removePath) => {
+  provider.event.on('fileRemoved', async (removePath: string) => {
     await executeEvent('fileRemoved', removePath)
   })
 
-  plugin.on('remixd', 'rootFolderChanged', async (path) => {
+  provider.event.on('fileRenamed', async (oldPath: string, newPath: string) => {
+    await executeEvent('fileRenamed', oldPath, newPath)
+  })
+
+  plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
     await executeEvent('rootFolderChanged', path)
   })
 
@@ -331,10 +342,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
 
     listenOnEvents(workspaceProvider)
     listenOnEvents(localhostProvider)
-    // provider.event.on('fileRenamed', async (oldPath) => {
-    //   await executeEvent('fileRenamed', oldPath)
-    // })
-
     // provider.event.on('createWorkspace', (name) => {
     //   createNewWorkspace(name)
     // })
@@ -413,26 +420,23 @@ const fileRemoved = async (removePath: string) => {
   await dispatch(fileRemovedSuccess(removePath))
 }
 
-const fileRenamed = async (oldPath: string) => {
-  const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
-  const data = await fetchDirectoryContent(provider, path)
-
-  await dispatch(fileRenamedSuccess(path, oldPath, data))
+const fileRenamed = async (oldPath: string, newPath: string) => {
+  await dispatch(fileRenamedSuccess(oldPath, newPath))
 }
 
 const rootFolderChanged = async (path) => {
   await dispatch(rootFolderChangedSuccess(path))
 }
 
-const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', path?: string) => {
+const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', ...args) => {
   if (Object.keys(pendingEvents).length) {
-    return queuedEvents.push({ eventName, path })
+    return queuedEvents.push({ eventName, path: args[0] })
   }
-  pendingEvents[eventName + path] = { eventName, path }
+  pendingEvents[eventName + args[0]] = { eventName, path: args[0] }
   switch (eventName) {
     case 'fileAdded':
-      await fileAdded(path)
-      delete pendingEvents[eventName + path]
+      await fileAdded(args[0])
+      delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
 
@@ -441,8 +445,8 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'folderAdded':
-      await folderAdded(path)
-      delete pendingEvents[eventName + path]
+      await folderAdded(args[0])
+      delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
 
@@ -451,8 +455,8 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'fileRemoved':
-      await fileRemoved(path)
-      delete pendingEvents[eventName + path]
+      await fileRemoved(args[0])
+      delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
 
@@ -461,8 +465,8 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'fileRenamed':
-      await fileRenamed(path)
-      delete pendingEvents[eventName + path]
+      await fileRenamed(args[0], args[1])
+      delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
 
@@ -471,8 +475,8 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'rootFolderChanged':
-      await rootFolderChanged(path)
-      delete pendingEvents[eventName + path]
+      await rootFolderChanged(args[0])
+      delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
 
