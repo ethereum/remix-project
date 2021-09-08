@@ -70,7 +70,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const optimize = params.optimize
         const runs = params.runs as string
         const evmVersion = params.evmVersion
-        const autoCompile = params.autoCompile === 'false' ? false : params.autoCompile === 'true' ? true : null
 
         return {
           ...prevState,
