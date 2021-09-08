@@ -17,6 +17,7 @@ import jsbeautify from 'js-beautify'
 import renderUnKnownTransactions from './components/RenderUnknownTransactions'
 import renderCall from './components/RenderCall'
 import renderKnownTransactions from './components/RenderKnownTransactions'
+import parse from 'html-react-parser'
 import { RemixUiTerminalProps } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
 
@@ -78,6 +79,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   useEffect(() => {
     scriptRunnerDispatch({ type: 'html', payload: { message: props.logHtml } })
   }, [props.logHtml])
+
+  useEffect(() => {
+    scriptRunnerDispatch({ type: 'log', payload: { message: props.logResponse } })
+  }, [props.logResponse])
 
   // events
   useEffect(() => {
@@ -526,7 +531,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 return x.message.map((msg, i) => {
                   if (typeof msg === 'object') {
                     return (
-                      <div className="px-4 block" data-id="block_null" key={i}><span className={x.style}>{ JSON.stringify(msg) } </span></div>
+                      <div className="px-4 block" data-id="block_null" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
                     )
                   } else {
                     return (
