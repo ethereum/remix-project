@@ -20,19 +20,6 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
     data.filterFns[commandName] = filterFn
   }
 
-  // const _appendItem = (item) => {
-  //   var { el, gidx } = item
-  //   _JOURNAL[gidx] = item
-  //   if (!_jobs.length) {
-  //     requestAnimationFrame(function updateTerminal () {
-  //       _jobs.forEach(el => _view.journal.appendChild(el))
-  //       .scroll2bottom()
-  //       ._jobs = []
-  //     })
-  //   }
-  //   if (data.activeFilters.commands[item.cmd]) _jobs.push(el)
-  // }
-
   commands[name] = function () {
     const args = [...arguments]
     const steps = []
