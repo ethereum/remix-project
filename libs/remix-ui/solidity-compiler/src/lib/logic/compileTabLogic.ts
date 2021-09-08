@@ -8,9 +8,15 @@ declare global {
     _paq: any;
   }
 }
-const _paq = (window._paq = window._paq || []); //eslint-disable-line
 
-export class CompileTabLogic {
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
+export class CompileTab extends Plugin {
   public compiler
   public optimize
   public runs
@@ -59,16 +65,16 @@ export class CompileTabLogic {
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
-  getCompilerState() {
-    return this.compiler.state;
+  getCompilerState () {
+    return this.compiler.state
   }
 
   /**
    * Set the compiler to using Solidity or Yul (default to Solidity)
    * @params lang {'Solidity' | 'Yul'} ...
    */
-  setLanguage(lang) {
-    this.compiler.set('language', lang);
+  setLanguage (lang) {
+    this.compiler.set('language', lang)
   }
 
   /**
@@ -89,16 +95,16 @@ export class CompileTabLogic {
     })
   }
 
-  async isHardhatProject() {
+  async isHardhatProject () {
     if (this.api.getFileManagerMode() === 'localhost') {
-      return await this.api.fileExists('hardhat.config.js');
-    } else return false;
+      return await this.api.fileExists('hardhat.config.js')
+    } else return false
   }
 
-  runCompiler(hhCompilation) {
+  runCompiler (hhCompilation) {
     try {
       if (this.api.getFileManagerMode() === 'localhost' && hhCompilation) {
-        const { currentVersion, optimize, runs } = this.compiler.state;
+        const { currentVersion, optimize, runs } = this.compiler.state
         if (currentVersion) {
           const fileContent = `module.exports = {
             solidity: '${currentVersion.substring(
@@ -116,8 +122,8 @@ export class CompileTabLogic {
           const configFilePath = 'remix-compiler.config.js'
           this.api.writeFile(configFilePath, fileContent)
           _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
-          this.api.compileWithHardhat(configFilePath).then((result) => {
-            this.api.logToTerminal({ type: 'info', value: result })
+          this.call('hardhat', 'compile', configFilePath).then((result) => {
+            this.call('terminal', 'log', { type: 'info', value: result })
           }).catch((error) => {
             this.api.logToTerminal({ type: 'error', value: error })
           })
@@ -129,7 +135,7 @@ export class CompileTabLogic {
       var currentFile = this.api.currentFile
       return this.compileFile(currentFile)
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
   }
 }
