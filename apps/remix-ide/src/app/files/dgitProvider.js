@@ -443,17 +443,10 @@ class DGitProvider extends Plugin {
         const dir = path.dirname(file.path)
         try {
           this.createDirectories(`${workspace.absolutePath}/${dir}`)
-<<<<<<< HEAD
         } catch (e) { throw new Error(e) }
         try {
           window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
         } catch (e) { throw new Error(e) }
-=======
-        } catch (e) { console.log(e) }
-        try {
-          window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
-        } catch (e) { console.log(e) }
->>>>>>> 02d978945 (icons)
       }
     } catch (e) {
       throw new Error(e)
