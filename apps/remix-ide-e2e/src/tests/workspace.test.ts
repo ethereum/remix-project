@@ -41,6 +41,7 @@ module.exports = {
       .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"]')
       .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .pause(1000)
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
