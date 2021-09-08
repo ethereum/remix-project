@@ -201,18 +201,18 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'FOLDER_ADDED_SUCCESS': {
-      const payload = action.payload as string
+      const payload = action.payload as { path: string, fileTree }
 
       return {
         ...state,
         browser: {
           ...state.browser,
-          files: state.mode === 'browser' ? folderAdded(state, payload) : state.browser.files,
+          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
           expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
         },
         localhost: {
           ...state.localhost,
-          files: state.mode === 'localhost' ? folderAdded(state, payload) : state.localhost.files,
+          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
           expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
         }
       }
@@ -290,17 +290,17 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'FILE_RENAMED_SUCCESS': {
-      const payload = action.payload as { oldPath: string, newPath: string }
+      const payload = action.payload as { path: string, oldPath: string, fileTree }
 
       return {
         ...state,
         browser: {
           ...state.browser,
-          files: state.mode === 'browser' ? fileRenamed(state, payload) : state.browser.files
+          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.browser.files
         },
         localhost: {
           ...state.localhost,
-          files: state.mode === 'localhost' ? fileRenamed(state, payload) : state.localhost.files
+          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.localhost.files
         }
       }
     }
@@ -323,54 +323,11 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
   return files
 }
 
-const folderAdded = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
-  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
-  const _path = splitPath(state, path)
-  const _dir = splitPath(state, extractParentFromKey(path))
-  const prevFiles = _.get(files, _dir)
-
-  if (prevFiles.child) {
-
-  } else {
-    
-  }
-
-  files = _.set(files, _path, {
-    path: path,
-    name: extractNameFromKey(path),
-    isDirectory: true,
-    type: 'folder'
-  })
-  return files
-}
-
 const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
   const files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
   _.unset(files, _path)
-  return files
-}
-
-const fileRenamed = (state: BrowserState, payload: { oldPath: string, newPath: string }): { [x: string]: Record<string, File> } => {
-  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
-  const _oldPath = splitPath(state, payload.oldPath)
-  const _newPath = splitPath(state, payload.newPath)
-  const prevFiles = _.get(files, _oldPath)
-  const nextFiles = {
-    ...prevFiles,
-    path: payload.newPath,
-    name: extractNameFromKey(payload.newPath)
-  }
-
-  if (nextFiles.child) {
-    nextFiles.child = sortFolderAndFiles(nextFiles.child)
-    files = _.set(files, _newPath, nextFiles)
-  } else {
-    files = _.set(files, _newPath, nextFiles)
-    files = state.mode === 'browser' ? { [state.browser.currentWorkspace]: sortFolderAndFiles(files[state.browser.currentWorkspace]) } : { [state.mode]: sortFolderAndFiles(files[state.mode]) }
-  }
-  _.unset(files, _oldPath)
   return files
 }
 
@@ -472,19 +429,4 @@ const splitPath = (state: BrowserState, path: string): string[] | string => {
   }, [])
 
   return _path
-}
-
-const sortFolderAndFiles = (filesList: Record<string, File>): Record<string, File> => {
-  const folders = {}
-  const files = {}
-
-  Object.keys(filesList || {}).forEach(key => {
-    if (filesList[key].isDirectory) {
-      folders[key] = filesList[key]
-    } else {
-      files[key] = filesList[key]
-    }
-  })
-
-  return Object.assign({}, folders, files)
 }
