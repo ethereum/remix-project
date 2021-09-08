@@ -13,6 +13,8 @@ const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner,
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
 
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
 const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
@@ -515,6 +517,7 @@ class Blockchain extends Plugin {
             }
             finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
           }
+          _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'log', { type: 'info', value: finalLogs })
         }
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
