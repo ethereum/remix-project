@@ -51,7 +51,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   resolveDirectory (path, callback) {
-    if (!this.workspace) this.createWorkspace()
+    // if (!this.workspace) this.createWorkspace()
     super.resolveDirectory(path, (error, files) => {
       if (error) return callback(error)
       const unscoped = {}
