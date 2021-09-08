@@ -56,7 +56,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         _updateVersionSelector(selectedVersion)
       }
     })
-
     const currentFileName = api.currentFile
 
     currentFile(currentFileName)
@@ -229,7 +228,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const isSolFileSelected = (currentFile: string = '') => {
-    if (!currentFile) currentFile = api.getAppParameter('currentFile') as string
+    if (!currentFile) currentFile = api.currentFile
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
@@ -298,7 +297,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
-    const currentFile = api.getAppParameter('currentFile') as string
+    const currentFile = api.currentFile
 
     if (!isSolFileSelected()) return
 
