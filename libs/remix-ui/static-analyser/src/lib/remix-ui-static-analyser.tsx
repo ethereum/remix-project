@@ -11,6 +11,13 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
 const utils = remixLib.util
 
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
 /* eslint-disable-next-line */
 export interface RemixUiStaticAnalyserProps {
   registry: any,
@@ -154,6 +161,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const warningErrors = []
 
         // Remix Analysis
+        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithRemixAnalyzer'])
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
             let moduleName
@@ -212,6 +220,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             props.analysisModule.call('solidity-logic', 'getCompilerState').then(async (compilerState) => {
               const { currentVersion, optimize, evmVersion } = compilerState
               props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
+              _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
               props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(async (result) => {
                 if (result.status) {
                   props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })

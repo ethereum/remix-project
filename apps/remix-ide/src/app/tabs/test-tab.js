@@ -9,6 +9,8 @@ var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
 var { UnitTestRunner } = require('@remix-project/remix-tests')
 
+const _paq = window._paq = window._paq || []
+
 const TestTabLogic = require('./testTab/testTab')
 
 const profile = {
@@ -230,6 +232,7 @@ module.exports = class TestTab extends ViewPlugin {
       }
       finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
     this.call('terminal', 'log', { type: 'info', value: finalLogs })
   }
 
@@ -569,6 +572,7 @@ module.exports = class TestTab extends ViewPlugin {
     const tests = this.data.selectedTests
     if (!tests) return
     this.resultStatistics.hidden = tests.length === 0
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
     async.eachOfSeries(tests, (value, key, callback) => {
       if (this.hasBeenStopped) return
       this.runTest(value, callback)
