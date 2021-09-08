@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { checkSpecialChars, checkSlash } from '@remix-ui/helper'
+import { checkSpecialChars, checkSlash, extractParentFromKey } from '@remix-ui/helper'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
@@ -72,10 +72,10 @@ const fileAddedSuccess = (filePath: string) => {
   }
 }
 
-const folderAddedSuccess = (folderPath: string) => {
+const folderAddedSuccess = (folderPath: string, fileTree) => {
   return {
     type: 'FOLDER_ADDED_SUCCESS',
-    payload: folderPath
+    payload: { path: folderPath, fileTree }
   }
 }
 
@@ -86,10 +86,10 @@ const fileRemovedSuccess = (removePath: string) => {
   }
 }
 
-const fileRenamedSuccess = (oldPath: string, newPath: string) => {
+const fileRenamedSuccess = (path: string, oldPath: string, fileTree) => {
   return {
     type: 'FILE_RENAMED_SUCCESS',
-    payload: { oldPath, newPath }
+    payload: { path, oldPath, fileTree }
   }
 }
 
@@ -413,15 +413,45 @@ const fileAdded = async (filePath: string) => {
 }
 
 const folderAdded = async (folderPath: string) => {
-  await dispatch(folderAddedSuccess(folderPath))
+  const provider = plugin.fileManager.currentFileProvider()
+  const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
+
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+
+      resolve(fileTree)
+    })
+  })
+
+  promise.then((files) => {
+    dispatch(folderAddedSuccess(path, files))
+  }).catch((error) => {
+    console.error(error)
+  })
+  return promise
 }
 
 const fileRemoved = async (removePath: string) => {
   await dispatch(fileRemovedSuccess(removePath))
 }
 
-const fileRenamed = async (oldPath: string, newPath: string) => {
-  await dispatch(fileRenamedSuccess(oldPath, newPath))
+const fileRenamed = async (oldPath: string) => {
+  const provider = plugin.fileManager.currentFileProvider()
+  const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+
+      resolve(fileTree)
+    })
+  })
+
+  promise.then((files) => {
+    dispatch(fileRenamedSuccess(path, oldPath, files))
+  }).catch((error) => {
+    console.error(error)
+  })
 }
 
 const rootFolderChanged = async (path) => {
@@ -465,7 +495,7 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'fileRenamed':
-      await fileRenamed(args[0], args[1])
+      await fileRenamed(args[0])
       delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
