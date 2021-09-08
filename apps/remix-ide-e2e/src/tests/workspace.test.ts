@@ -55,7 +55,7 @@ module.exports = {
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(2000)
-      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .waitForElementNotVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
