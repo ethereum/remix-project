@@ -140,6 +140,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('fileManager', 'open', fileName)
   }
 
+  saveCurrentFile () {
+    return this.call('fileManager', 'saveCurrentFile')
+  }
+
   resetResults () {
     this.currentFile = ''
     this.contractsDetails = {}
