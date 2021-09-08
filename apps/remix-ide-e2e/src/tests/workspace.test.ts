@@ -45,11 +45,13 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .pause(1000)
+      .waitForElementPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
+      .waitForElementPresent('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(1000)
