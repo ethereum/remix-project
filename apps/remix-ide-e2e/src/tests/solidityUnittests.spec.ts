@@ -166,24 +166,6 @@ module.exports = {
       .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
   },
 
-  'Solidity Unit tests Basic': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-      .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .openFile('contracts/3_Ballot.sol')
-      .clickLaunchIcon('solidityUnitTesting')
-      .pause(2000)
-      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
-      .pause(2000)
-      .scrollAndClick('#runTestsTabRunAction')
-      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
-      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
-  },
-
   'Solidity Unit tests Basic Basic with local compiler': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
@@ -202,6 +184,24 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
       .end()
+  },
+
+  'Solidity Unit tests Basic': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts/3_Ballot.sol')
+      .clickLaunchIcon('solidityUnitTesting')
+      .pause(2000)
+      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
+      .pause(2000)
+      .scrollAndClick('#runTestsTabRunAction')
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
   }
 }
 
