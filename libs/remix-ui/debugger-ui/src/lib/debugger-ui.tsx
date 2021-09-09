@@ -31,15 +31,16 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     },
     toastMessage: '',
     validationError: '',
-    txNumberIsEmpty: true
+    txNumberIsEmpty: true,
+    isLocalNodeUsed: false
   })
 
   useEffect(() => {
     return unLoad()
   }, [])
 
-  debuggerModule.onDebugRequested((hash) => {
-    if (hash) debug(hash)
+  debuggerModule.onDebugRequested((hash, web3?) => {
+    if (hash) debug(hash, web3)
   })
 
   debuggerModule.onRemoveHighlights(async () => {
@@ -62,6 +63,17 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
 
     setEditor()
+
+    const providerChanged = () => {
+      debuggerModule.onEnvChanged((provider) => {
+        setState(prevState => {
+          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected'
+          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
+        })
+      })
+    }
+
+    providerChanged()
   }, [state.debugger])
 
   const listenToEvents = (debuggerInstance, currentReceipt) => {
@@ -150,7 +162,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       }
     })
   }
-  const startDebugging = async (blockNumber, txNumber, tx) => {
+  const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
     setState(prevState => {
@@ -169,7 +181,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return
     }
 
-    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3()
+    const web3 = optWeb3 || (state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3())
     try {
       const networkId = await web3.eth.net.getId()
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
@@ -247,7 +259,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
   }
 
-  const debug = (txHash) => {
+  const debug = (txHash, web3?) => {
     setState(prevState => {
       return {
         ...prevState,
@@ -255,7 +267,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         txNumber: txHash
       }
     })
-    startDebugging(null, txHash, null)
+    startDebugging(null, txHash, null, web3)
   }
 
   const stepManager = {
@@ -289,7 +301,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
           </div>
-          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+          { state.isLocalNodeUsed && <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
@@ -297,6 +309,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Force the debugger to use the current local node" />
             <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>
           </div>
+          }
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />

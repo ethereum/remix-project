@@ -45,7 +45,8 @@ export interface TransactionReceipt {
 export type onBreakpointClearedListener = (params: string, row: number) => void
 export type onBreakpointAddedListener = (params: string, row: number) => void
 export type onEditorContentChanged = () => void
-export type onDebugRequested = (hash: string) => void
+export type onDebugRequested = (hash: string, web3?: any) => void
+export type onEnvChangedListener = (provider: string) => void
 
 export interface IDebuggerApi {
     offsetToLineColumnConverter: { offsetToLineColumn: (sourceLocation: RawLocation, file: number, contents: Sources, asts: Asts) => Promise<LineColumnLocation> }
@@ -57,6 +58,7 @@ export interface IDebuggerApi {
     onBreakpointCleared: (listener: onBreakpointClearedListener) => void
     onBreakpointAdded: (listener: onBreakpointAddedListener) => void
     onEditorContentChanged: (listener: onEditorContentChanged) => void
+    onEnvChanged: (listener: onEnvChangedListener) => void
     discardHighlight: () => Promise<void>
     highlight: (lineColumnPos: LineColumnLocation, path: string) => Promise<void>
     fetchContractAndCompile: (address: string, currentReceipt: TransactionReceipt) => Promise<CompilationOutput>

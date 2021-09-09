@@ -62,6 +62,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     this.onEditorContentChangedListener = listener
   }
 
+  onEnvChanged (listener) {
+    this.onEnvChangedListener = listener
+  }
+
   onDebugRequested (listener) {
     this.onDebugRequestedListener = listener
   }
@@ -117,15 +121,17 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     return await debug.debugger.traceManager.getTrace(hash)
   }
 
-  debug (hash) {
+  debug (hash, web3?) {
     this.debugHash = hash
-    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash)
+    if (web3) remixDebug.init.extendWeb3(web3)
+    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash, web3)
   }
 
   onActivation () {
     this.on('editor', 'breakpointCleared', (fileName, row) => { if (this.onBreakpointClearedListener) this.onBreakpointClearedListener(fileName, row) })
     this.on('editor', 'breakpointAdded', (fileName, row) => { if (this.onBreakpointAddedListener) this.onBreakpointAddedListener(fileName, row) })
     this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })  
+    this.on('network', 'providerChanged', (provider) => { if (this.onEnvChangedListener) this.onEnvChangedListener(provider) })
   }
 
   onDeactivation () {
