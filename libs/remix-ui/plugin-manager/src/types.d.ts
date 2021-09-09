@@ -180,7 +180,11 @@ export interface FormStateProps {
   hash: string
   methods: any
   location: string
+<<<<<<< HEAD
   canActivate?: any
+=======
+  canActivate: any
+>>>>>>> ceb5496f4 (fix whitespaces and canactivate)
 }
 
 export type PluginManagerProfile = Profile & {
