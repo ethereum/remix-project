@@ -117,47 +117,7 @@ export class RemixAppManager extends PluginManager {
         }
         return true
       })
-      // temp dgit hack
-      for (const profile of plugins) {
-        if (profile.name === 'dgit') {
-          profile.url = 'https://dgit3remix.web.app/?compact'
-          profile.canActivate = [
-            'dGitProvider', 'gitdiff'
-          ]
-          profile.location = 'sidePanel'
-          profile.icon = 'https://raw.githubusercontent.com/microsoft/vscode-icons/main/icons/light/source-control.svg'
-        }
-      }
-      const diff = {
-        name: 'gitdiff',
-        displayName: 'dGit diff viewer',
-        methods: ['diff'],
-        version: '0.0.1',
-        documentation: 'https://github.com/bunsenstraat/remix-storage-plugin',
-        url: 'https://dgit3remix.web.app/?diff',
-        description: 'Manage workspaces in a git repository.',
-        icon: 'https://raw.githubusercontent.com/microsoft/vscode-icons/main/icons/light/source-control.svg',
-        location: 'mainPanel',
-        canActivate: [
-          'dGitProvider'
-        ]
-      }
 
-      const tester = {
-        name: '11111',
-        displayName: '1111',
-        methods: ['diff'],
-        version: '0.0.1',
-        documentation: 'https://github.com/bunsenstraat/remix-storage-plugin',
-        url: 'http://localhost:3000',
-        description: 'Manage workspaces in a git repository.',
-        icon: 'https://raw.githubusercontent.com/microsoft/vscode-icons/main/icons/light/source-control.svg',
-        location: 'sidePanel',
-        canActivate: [
-          'dGitProvider'
-        ]
-      }
-      plugins.push(diff, tester)
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {
       console.log('getting plugins list from localstorage...')
