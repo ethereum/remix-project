@@ -51,14 +51,24 @@ function LocalPluginForm ({
   const [canactivate, setCanactivate] = useState<string>('')
 
   useEffect(() => {
-    const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
+    const storagePlugin: FormStateProps = localStorage.getItem('plugins/local')
+      ? JSON.parse(localStorage.getItem('plugins/local'))
+      : defaultProfile
     setName(storagePlugin.name)
     setUrl(storagePlugin.url)
     setLocation(storagePlugin.location as 'sidePanel' | 'mainPanel' | 'none')
-    setMethods(Array.isArray(storagePlugin.methods) ? storagePlugin.methods.join(',') : storagePlugin.methods)
+    setMethods(
+      Array.isArray(storagePlugin.methods)
+        ? storagePlugin.methods.join(',')
+        : storagePlugin.methods
+    )
     setType(storagePlugin.type)
     setDisplayName(storagePlugin.displayName)
-    setCanactivate(Array.isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate)
+    setCanactivate(
+      Array.isArray(storagePlugin.canActivate)
+        ? storagePlugin.canActivate.join(',')
+        : storagePlugin.canActivate
+    )
   }, [])
 
   const handleModalOkClick = async () => {
@@ -69,7 +79,15 @@ function LocalPluginForm ({
       }
       if (!location) throw new Error('Plugin should have a location')
       if (!url) throw new Error('Plugin should have an URL')
-      const newMethods = typeof methods === 'string' ? methods.split(',').filter(val => val).map(val => { return val.trim() }) : []
+      const newMethods =
+        typeof methods === 'string'
+          ? methods
+            .split(',')
+            .filter(val => val)
+            .map(val => {
+              return val.trim()
+            })
+          : []
       const targetPlugin = {
         name: name,
         displayName: displayName,
@@ -83,13 +101,26 @@ function LocalPluginForm ({
         type: type,
         location: location,
         icon: 'assets/img/localPlugin.webp',
-        canActivate: typeof canactivate === 'string' ? canactivate.split(',').filter(val => val).map(val => { return val.trim() }) : []
+        canActivate:
+          typeof canactivate === 'string'
+            ? canactivate.split(',').filter(val => val)
+            : []
       }
-      const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
+      const localPlugin =
+        type === 'iframe'
+          ? new IframePlugin(initialState)
+          : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
-      targetPlugin.description = localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''
-      targetPlugin.events = localPlugin.profile.events !== undefined ? localPlugin.profile.events : []
-      targetPlugin.kind = localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
+      targetPlugin.description =
+        localPlugin.profile.description !== undefined
+          ? localPlugin.profile.description
+          : ''
+      targetPlugin.events =
+        localPlugin.profile.events !== undefined
+          ? localPlugin.profile.events
+          : []
+      targetPlugin.kind =
+        localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
       localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
       pluginManager.activateAndRegisterLocalPlugin(localPlugin)
     } catch (error) {
