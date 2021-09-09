@@ -29,7 +29,7 @@ const initialState: FormStateProps = {
   methods: [],
   location: 'sidePanel',
   canActivate: []
-};
+}
 
 const defaultProfile = {
   methods: [],
