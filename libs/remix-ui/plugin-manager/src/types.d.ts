@@ -181,6 +181,7 @@ export interface FormStateProps {
   methods: string[];
   location: string;
   canActivate: string[];
+  canActivate: string[]
 }
 
 export type PluginManagerProfile = Profile & {
