@@ -7,6 +7,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   contractMap: {
     file: string
   } | Record<string, any>
+
   compileErrors: any
   compileTabLogic: CompileTabLogic
   contractsDetails: Record<string, any>
@@ -97,7 +98,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   logToTerminal (content) {
     return this.call('terminal', 'log', content)
   }
-  
+
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
