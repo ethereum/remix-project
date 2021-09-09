@@ -44,7 +44,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   onActivation () {
-    this.listenToEvents()    
+    this.listenToEvents()
   }
 
   onDeactivation () {
@@ -284,12 +284,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('themeModule', 'themeChanged', this.data.eventHandlers.onThemeChanged)
 
     // Run the compiler instead of trying to save the website
-    window.document.addEventListener('keydown', (e) => {
+    this.data.eventHandlers.onKeyDown = (e) => {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
         this.compileTabLogic.runCompiler(this.getAppParameter('hardhat-compilation'))
       }
-    })
+    }
+    window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
   }
 }
