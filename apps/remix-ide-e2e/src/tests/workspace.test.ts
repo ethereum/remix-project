@@ -61,22 +61,22 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
-  'Should rename a workspace': function (browser: NightwatchBrowser) {
-    browser
-      .click('*[data-id="workspaceRename"]') // rename workspace_name
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
-      .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
-      .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
-      .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
-      .pause(2000)
-      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .pause(20000)
-      .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
-  },
+  // 'Should rename a workspace': function (browser: NightwatchBrowser) {
+  //   browser
+  //     .click('*[data-id="workspaceRename"]') // rename workspace_name
+  //     .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+  //     .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
+  //     // eslint-disable-next-line dot-notation
+  //     .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
+  //     .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+  //     .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+  //     .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
+  //     .pause(2000)
+  //     .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+  //     .pause(20000)
+  //     .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
+  //     .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+  // },
 
   'Should delete a workspace': function (browser: NightwatchBrowser) {
     browser
