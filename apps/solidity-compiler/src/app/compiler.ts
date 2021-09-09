@@ -109,9 +109,53 @@ const defaultCompilerParameters = {
   language: 'Solidity'
 }
 
+<<<<<<< HEAD
 constructor () {
   super()
   createClient(this as any)
   this.initCompilerApi()
 }
+=======
+export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
+  constructor () {
+    super()
+    createClient(this as any)
+    this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
+    this.initCompilerApi()
+  }
+
+  getCompilerParameters () {
+    const params = {
+      runs: localStorage.getItem('runs') || defaultCompilerParameters['runs'],
+      optimize: localStorage.getItem('optimize') === 'true' ? true : false,
+      version: localStorage.getItem('version') || defaultCompilerParameters['version'],
+      evmVersion: localStorage.getItem('evmVersion') || defaultCompilerParameters['evmVersion'], // default
+      language: localStorage.getItem('language') || defaultCompilerParameters['language']
+    }
+    return params
+  }
+
+  setCompilerParameters (params) {
+    for (const key of Object.keys(params)) {
+      localStorage.setItem(key, params[key])
+    }
+  }
+
+  getAppParameter (name) {
+    const param = localStorage.getItem(name) || defaultAppParameters[name]
+    if (param === 'true') return true
+    if (param === 'false') return false
+    return param
+  }
+
+  setAppParameter (name, value) {
+    localStorage.setItem(name, value)
+  }
+
+  getFileManagerMode () {
+    return 'browser'
+  }
+>>>>>>> ef6c49636 (fix saving compiler parameters)
 }
