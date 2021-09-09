@@ -37,7 +37,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
-      .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(1000)
@@ -49,6 +49,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
       .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .pause(5000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .pause(5000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
