@@ -20,7 +20,8 @@ const initialState: FormStateProps = {
   type: 'iframe',
   hash: '',
   methods: [],
-  location: 'sidePanel'
+  location: 'sidePanel',
+  canActivate: []
 }
 
 const defaultProfile = {
