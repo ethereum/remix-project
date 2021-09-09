@@ -41,6 +41,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
   const [type, setType] = useState<'iframe' | 'ws'>('iframe')
   const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
   const [methods, setMethods] = useState<string>('')
+  const [canactivate, setCanactivate] = useState<string>('')
 
   useEffect(() => {
     const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
@@ -73,7 +74,8 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
         url: url,
         type: type,
         location: location,
-        icon: 'assets/img/localPlugin.webp'
+        icon: 'assets/img/localPlugin.webp',
+        canActivate: typeof canactivate === 'string' ? canactivate.split(',').filter(val => val) : []
       }
       const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
@@ -122,14 +124,24 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             placeholder="Name in the header" />
         </div>
         <div className="form-group">
-          <label htmlFor="plugin-methods">Api (comma separated list of methods name)</label>
+          <label htmlFor="plugin-methods">Api (comma separated list of method names)</label>
           <input
             className="form-control"
             onChange={e => setMethods(e.target.value)}
             value={ methods }
             id="plugin-methods"
             data-id="localPluginMethods"
-            placeholder="Name in the header" />
+            placeholder="Methods" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="plugin-methods">Plugins it can activate (comma separated list of plugin names)</label>
+          <input
+            className="form-control"
+            onChange={e => setCanactivate(e.target.value)}
+            value={ canactivate }
+            id="plugin-canactivate"
+            data-id="localPluginCanActivate"
+            placeholder="Plugin names" />
         </div>
 
         <div className="form-group">
