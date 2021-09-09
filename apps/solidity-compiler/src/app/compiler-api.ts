@@ -54,7 +54,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onLoadingCompiler) {
       this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
     }
-
     if (this.data.eventHandlers.onCompilerLoaded) {
       this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
     }
@@ -62,7 +61,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onCompilationFinished) {
       this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     }
-
     this.off('filePanel', 'setWorkspace')
 
     this.off('remixd', 'rootFolderChanged')
