@@ -30,11 +30,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     customVersions: [],
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.7+commit.e28d00a7.js', // this default version is defined: in makeMockCompiler (for browser test)
-    selectedLanguage: '',
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
-    language: '',
+    language: 'Solidity',
     evmVersion: ''
   })
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
