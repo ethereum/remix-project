@@ -8,7 +8,7 @@ const remix = new CompilerClientApi()
 
 export const App = () => {  
   return (
-    <div className="debugger">
+    <div>
       <SolidityCompiler api={remix} />
     </div>
   );
