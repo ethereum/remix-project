@@ -363,7 +363,7 @@ class DGitProvider extends Plugin {
     data.append('pinataMetadata', metadata)
     const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS'
     try {
-      await axios
+      const result = await axios
         .post(url, data, {
           maxBodyLength: 'Infinity',
           headers: {
