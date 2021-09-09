@@ -82,7 +82,6 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('dgitstatus', status)
     return status
   }
 
@@ -236,7 +235,6 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
-    console.log(cmd)
 
     const result = await git.clone(cmd)
     await this.call('fileManager', 'refresh')
@@ -244,7 +242,6 @@ class DGitProvider extends Plugin {
   }
 
   async push (input) {
-    console.log('push')
     const cmd = {
       force: input.force,
       ref: input.ref,
@@ -257,7 +254,6 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
-    console.log(cmd)
     return await git.push(cmd)
   }
 
@@ -273,7 +269,6 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
-    console.log(cmd)
     const result = await git.pull(cmd)
     await this.call('fileManager', 'refresh')
     return result
@@ -291,7 +286,6 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
-    console.log(cmd)
     const result = await git.fetch(cmd)
     await this.call('fileManager', 'refresh')
     return result
@@ -423,7 +417,6 @@ class DGitProvider extends Plugin {
       console.log(config, cid, workspace, data)
       for await (const file of data) {
         if (file.path) result = true
-        console.log(file.path)
         file.path = file.path.replace(cid, '')
         if (!file.content) {
           continue
