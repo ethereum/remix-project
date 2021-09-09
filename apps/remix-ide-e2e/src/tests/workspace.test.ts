@@ -71,7 +71,9 @@ module.exports = {
       .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
+      .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .pause(20000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
@@ -81,7 +83,9 @@ module.exports = {
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
       .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
+      .pause(2000)
       .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
+      .pause(20000)
       .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .end()
   },
