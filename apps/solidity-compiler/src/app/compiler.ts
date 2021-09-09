@@ -49,11 +49,10 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   getParameters: () => ConfigurationSettings
   setParameters: (params: Partial<ConfigurationSettings>) => void
   setCompilerConfig: (settings: ConfigurationSettings) => void
-  
+
   getConfiguration: (value: string) => string
   setConfiguration: (name: string, value: string) => void
   getFileManagerMode: () => string
-  
 
   getCompilationResult: () => any
 
