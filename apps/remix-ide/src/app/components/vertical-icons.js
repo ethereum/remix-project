@@ -1,4 +1,5 @@
 import * as packageJson from '../../../../../package.json'
+// eslint-disable-next-line no-unused-vars
 import { basicLogo } from '../ui/svgLogo'
 import ReactDOM from 'react-dom'
 import React from 'react' // eslint-disable-line
@@ -45,6 +46,10 @@ export class VerticalIcons extends Plugin {
       this.htmlElement)
   }
 
+  // onActivation () {
+  //   this.renderComponent()
+  // }
+
   linkContent (profile) {
     if (!profile.icon) return
     this.addIcon(profile)
@@ -77,6 +82,8 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({ kind, name, icon, displayName, tooltip, documentation }) {
+    // eslint-disable-next-line no-debugger
+    debugger
     let title = (tooltip || displayName || name)
     title = title.replace(/^\w/, c => c.toUpperCase())
     this.icons[name] = yo`
@@ -92,33 +99,6 @@ export class VerticalIcons extends Plugin {
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'none'].appendChild(this.icons[name])
-  }
-
-  /**
-   * resolve a classes list for @arg key
-   * @param {Object} key
-   * @param {Object} type
-   */
-  resolveClasses (key, type) {
-    let classes = css.status
-    switch (key) {
-      case 'succeed':
-        classes += ' fas fa-check-circle text-' + type + ' ' + css.statusCheck
-        break
-      case 'edited':
-        classes += ' fas fa-sync text-' + type + ' ' + css.statusCheck
-        break
-      case 'loading':
-        classes += ' fas fa-spinner text-' + type + ' ' + css.statusCheck
-        break
-      case 'failed':
-        classes += ' fas fa-exclamation-triangle text-' + type + ' ' + css.statusCheck
-        break
-      default: {
-        classes += ' badge badge-pill badge-' + type
-      }
-    }
-    return classes
   }
 
   /**
@@ -260,30 +240,26 @@ export class VerticalIcons extends Plugin {
     e.stopPropagation()
   }
 
-  async focusHome () {
+  async activateHome () {
     await this.appManager.activatePlugin('home')
     this.call('tabs', 'focus', 'home')
   }
 
-  logoShow () {
-    basicLogo()
-  }
-
   render () {
-    // const home = yo`
-    //   <div
-    //     class="m-1 mt-2 ${css.homeIcon}"
-    //     onclick="${async () => {
-    //       await this.appManager.activatePlugin('home')
-    //       this.call('tabs', 'focus', 'home')
-    //     }}"
-    //     plugin="home" title="Home"
-    //     data-id="verticalIconsHomeIcon"
-    //     id="verticalIconsHomeIcon"
-    //   >
-    //     ${basicLogo()}
-    //   </div>
-    // `
+    const home = yo`
+      <div
+        class="m-1 mt-2 ${css.homeIcon}"
+        onclick="${async () => {
+          await this.appManager.activatePlugin('home')
+          this.call('tabs', 'focus', 'home')
+        }}"
+        plugin="home" title="Home"
+        data-id="verticalIconsHomeIcon"
+        id="verticalIconsHomeIcon"
+      >
+        ${basicLogo()}
+      </div>
+    `
     this.iconKind.fileexplorer = yo`<div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons"></div>`
     this.iconKind.compiler = yo`<div id='compileIcons'></div>`
     this.iconKind.udapp = yo`<div id='runIcons'></div>`
@@ -296,6 +272,7 @@ export class VerticalIcons extends Plugin {
     this.view = yo`
       <div class="h-100">
         <div class=${css.icons}>
+          ${home}
           ${this.iconKind.fileexplorer}
           ${this.iconKind.compiler}
           ${this.iconKind.udapp}
@@ -308,6 +285,21 @@ export class VerticalIcons extends Plugin {
       </div>
     `
     return this.view
+    // this.htmlElement = yo`
+    // <div clas="h-100">
+    //   <div class=${css.icons}>
+    //     ${home}
+    //     ${this.iconKind.fileexplorer}
+    //     ${this.iconKind.compiler}
+    //     ${this.iconKind.udapp}
+    //     ${this.iconKind.testing}
+    //     ${this.iconKind.analysis}
+    //     ${this.iconKind.debugging}
+    //     ${this.iconKind.none}
+    //     ${this.iconKind.settings}
+    //   </div>
+    // </div>
+    // `
     // return this.htmlElement
   }
 }

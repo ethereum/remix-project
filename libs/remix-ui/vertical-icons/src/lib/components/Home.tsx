@@ -1,21 +1,22 @@
-import React from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { VerticalIcons } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
+import React, { ReactNode } from 'react'
+import BasicLogo from './BasicLogo'
+import IconKind from './IconKind'
 interface HomeProps {
-  verticalIconPlugin: any
+  verticalIconPlugin: VerticalIcons
 }
 
 function Home ({ verticalIconPlugin }: HomeProps) {
   return (
     <div
       className="m-1 mt-2 homeIcon"
-      onClick={async () => {
-        await verticalIconPlugin.appManager.activatePlugin('home')
-        this.call('tabs', 'focus', 'home')
-      }}
+      onClick={async () => verticalIconPlugin.activateHome()}
       title="Home"
       data-id="verticalIconsHomeIcon"
       id="verticalIconsHomeIcon"
     >
-      { verticalIconPlugin.logoShow() }
+      <BasicLogo />
     </div>
   )
 }

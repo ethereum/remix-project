@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react'
+import React, { Fragment } from 'react'
 import { VerticalIcons } from '../../types/vertical-icons'
-
+import Home from './components/Home'
+import IconKind from './components/IconKind'
 import './remix-ui-vertical-icons.css'
-
-/* eslint-disable-next-line */
 export interface RemixUiVerticalIconsProps {
   verticalIconsPlugin: VerticalIcons
 }
@@ -13,7 +12,19 @@ export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIco
   return (
     <div className="h-100">
       <div className="remixui_icons">
-        <h1>Remix!!</h1>
+        <Home
+          verticalIconPlugin={verticalIconsPlugin}
+        />
+        <Fragment>
+          {Object.keys(verticalIconsPlugin.iconKind.kind).map(
+            (kind: 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none') => {
+              return (
+                <IconKind
+                  idName={kind}
+                />
+              )
+            })}
+        </Fragment>
       </div>
     </div>
   )

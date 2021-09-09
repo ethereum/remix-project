@@ -4,7 +4,9 @@ export class VerticalIcons extends Plugin<any, any> {
     events: EventEmitter;
     appManager: any;
     htmlElement: HTMLDivElement;
-    icons: {};
+  icons: {
+      name: JSX.Element
+    };
   iconKind: {
     kind:
     'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
@@ -14,7 +16,7 @@ export class VerticalIcons extends Plugin<any, any> {
     linkContent(profile: any): void;
     unlinkContent(profile: any): void;
     listenOnStatus(profile: any): void;
-    logoShow(): void;
+    activateHome(): void;
     /**
      * Add an icon to the map
      * @param {ModuleProfile} profile The profile of the module
