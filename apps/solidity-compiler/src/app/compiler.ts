@@ -27,7 +27,7 @@ const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
   version: 'soljson-v0.8.7+commit.e28d00a7',
-  evmVersion: null, // default
+  evmVersion: null, // compiler default
   language: 'Solidity'
 }
 
