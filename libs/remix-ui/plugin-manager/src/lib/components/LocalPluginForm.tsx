@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster';
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web';
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
-import { FormStateProps, PluginManagerComponent } from '../../types'
+import { canActivate, FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
   closeModal: () => void;
@@ -34,21 +34,15 @@ const defaultProfile = {
   hash: ''
 };
 
-function LocalPluginForm({
-  closeModal,
-  visible,
-  pluginManager
-}: LocalPluginFormProps) {
-  const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '');
-  const [name, setName] = useState<string>('');
-  const [displayName, setDisplayName] = useState<string>('');
-  const [url, setUrl] = useState<string>('');
-  const [type, setType] = useState<'iframe' | 'ws'>('iframe');
-  const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>(
-    'sidePanel'
-  );
-  const [methods, setMethods] = useState<string>('');
-  const [canactivate, setCanactivate] = useState<string>('');
+function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFormProps) {
+  const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
+  const [name, setName] = useState<string>('')
+  const [displayName, setDisplayName] = useState<string>('')
+  const [url, setUrl] = useState<string>('')
+  const [type, setType] = useState<'iframe' | 'ws'>('iframe')
+  const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
+  const [methods, setMethods] = useState<string>('')
+  const [canactivate, setCanactivate] = useState<string>('')
 
   useEffect(() => {
     const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
@@ -83,7 +77,7 @@ function LocalPluginForm({
         type: type,
         location: location,
         icon: 'assets/img/localPlugin.webp',
-        canActivate: typeof canactivate === 'string' ? canactivate.split(',').filter(val => val).map(val => { return val.trim() }) : []
+        canActivate: typeof canactivate === 'string' ? canactivate.split(',').filter(val => val) : []
       }
       const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
@@ -103,22 +97,71 @@ function LocalPluginForm({
   };
 
   return (
-    <>
-      <ModalDialog
-        handleHide={closeModal}
-        id="pluginManagerLocalPluginModalDialog"
-        hide={visible}
-        title="Local Plugin"
-        okLabel="OK"
-        okFn={handleModalOkClick}
-        cancelLabel="Cancel"
-        cancelFn={closeModal}
-      >
-        <form id="local-plugin-form">
-          <div className="form-group">
-            <label htmlFor="plugin-name">
-              Plugin Name <small>(required)</small>
-            </label>
+    <><ModalDialog
+      handleHide={closeModal}
+      id="pluginManagerLocalPluginModalDialog"
+      hide={visible}
+      title="Local Plugin"
+      okLabel="OK"
+      okFn={ handleModalOkClick }
+      cancelLabel="Cancel"
+      cancelFn={closeModal}
+    >
+      <form id="local-plugin-form">
+        <div className="form-group">
+          <label htmlFor="plugin-name">Plugin Name <small>(required)</small></label>
+          <input
+            className="form-control"
+            onChange={e => setName(e.target.value)}
+            value={ name}
+            id="plugin-name"
+            data-id="localPluginName"
+            placeholder="Should be camelCase" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="plugin-displayname">Display Name</label>
+          <input
+            className="form-control"
+            onChange={e => setDisplayName(e.target.value)}
+            value={ displayName }
+            id="plugin-displayname"
+            data-id="localPluginDisplayName"
+            placeholder="Name in the header" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="plugin-methods">Api (comma separated list of method names)</label>
+          <input
+            className="form-control"
+            onChange={e => setMethods(e.target.value)}
+            value={ methods }
+            id="plugin-methods"
+            data-id="localPluginMethods"
+            placeholder="Methods" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="plugin-methods">Plugins it can activate (comma separated list of plugin names)</label>
+          <input
+            className="form-control"
+            onChange={e => setCanactivate(e.target.value)}
+            value={ canactivate }
+            id="plugin-canactivate"
+            data-id="localPluginCanActivate"
+            placeholder="Plugin names" />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="plugin-url">Url <small>(required)</small></label>
+          <input
+            className="form-control"
+            onChange={e => setUrl(e.target.value)}
+            value={ url }
+            id="plugin-url"
+            data-id="localPluginUrl"
+            placeholder="ex: https://localhost:8000" />
+        </div>
+        <h6>Type of connection <small>(required)</small></h6>
+        <div className="form-check form-group">
+          <div className="radio">
             <input
               className="form-control"
               onChange={e => setName(e.target.value)}
