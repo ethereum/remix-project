@@ -53,7 +53,7 @@ module.exports = {
       .execute(function () { document.querySelector('span[data-id="workspacesModalDialog-modal-footer-ok-react"]') })
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .pause(5000)
+      .pause(1000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .pause(20000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
