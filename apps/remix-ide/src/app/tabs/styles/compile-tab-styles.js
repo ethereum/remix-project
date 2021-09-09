@@ -1,11 +1,8 @@
-var csjs = require('csjs-inject')
+const csjs = require('csjs-inject')
 
 const css = csjs`
   .compilerTabView {
     padding: 2%;
-  }
-  .compiler {
-    margin-bottom: 1%;
   }
 `
 
