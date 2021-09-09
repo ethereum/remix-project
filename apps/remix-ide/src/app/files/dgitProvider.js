@@ -363,7 +363,7 @@ class DGitProvider extends Plugin {
     data.append('pinataMetadata', metadata)
     const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS'
     try {
-      await axios
+      const result = await axios
         .post(url, data, {
           maxBodyLength: 'Infinity',
           headers: {
@@ -373,7 +373,7 @@ class DGitProvider extends Plugin {
           }
         })
       // also commit to remix IPFS for availability after pinning to Pinata
-      return await this.export(this.remixIPFS)
+      return await this.export(this.remixIPFS) || result.data.IpfsHash
     } catch (error) {
       throw new Error(error)
     }
