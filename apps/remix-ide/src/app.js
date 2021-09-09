@@ -425,7 +425,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
-  const compileTab = new CompileTab(registry.get('config').api)
+  const compileTab = new CompileTab(registry.get('config').api, registry.get('filemanager').api)
   const run = new RunTab(
     blockchain,
     registry.get('config').api,
