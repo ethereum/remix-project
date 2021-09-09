@@ -10,6 +10,14 @@ const profile = {
   methods: ['getCompilerState'],
   version: packageJson.version
 }
+
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
 export class CompileTab extends Plugin {
   public compiler
   public optimize
@@ -115,6 +123,7 @@ export class CompileTab extends Plugin {
           `
           const configFilePath = 'remix-compiler.config.js'
           this.api.writeFile(configFilePath, fileContent)
+          _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
           this.call('hardhat', 'compile', configFilePath).then((result) => {
             this.call('terminal', 'log', { type: 'info', value: result })
           }).catch((error) => {
