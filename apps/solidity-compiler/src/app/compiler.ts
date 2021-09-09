@@ -90,4 +90,8 @@ const defaultCompilerParameters = {
   setAppParameter (name, value) {
     localStorage.setItem(name, value)
   }
+
+  getFileManagerMode () {
+    return 'browser'
+  }
 }
