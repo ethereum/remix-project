@@ -122,6 +122,7 @@ class DGitProvider extends Plugin {
     try {
       remotes = await git.listRemotes({ ...await this.getGitConfig() })
     } catch (e) {
+      console.log(e)
     }
     return remotes
   }
@@ -142,7 +143,7 @@ class DGitProvider extends Plugin {
     return name
   }
 
-  async branches (input) {
+  async branches () {
     const cmd = {
       ...await this.getGitConfig()
     }
@@ -165,7 +166,9 @@ class DGitProvider extends Plugin {
         ...cmd
       })
       return sha
-    } catch (e) { }
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   async lsfiles (cmd) {
@@ -291,8 +294,8 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async export () {
-    if (!this.checkIpfsConfig()) return false
+  async export (config) {
+    if (!this.checkIpfsConfig(config)) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
@@ -360,7 +363,7 @@ class DGitProvider extends Plugin {
     data.append('pinataMetadata', metadata)
     const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS'
     try {
-      const result = await axios
+      await axios
         .post(url, data, {
           maxBodyLength: 'Infinity',
           headers: {
@@ -369,7 +372,8 @@ class DGitProvider extends Plugin {
             pinata_secret_api_key: pinataSecretApiKey
           }
         })
-      return result.data.IpfsHash
+      // also commit to remix IPFS for availability after pinning to Pinata
+      return await this.export(this.remixIPFS)
     } catch (error) {
       throw new Error(error)
     }
@@ -458,7 +462,12 @@ class DGitProvider extends Plugin {
     const cid = cmd.cid
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, false)
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
-    const result = await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.remixIPFS, cid, workspace)
+    let result
+    if (cmd.local) {
+      result = await this.importIPFSFiles(this.ipfsconfig, cid, workspace)
+    } else {
+      result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
+    }
     await this.call('fileManager', 'refresh')
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
