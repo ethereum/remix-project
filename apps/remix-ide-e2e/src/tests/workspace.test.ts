@@ -69,10 +69,12 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
       .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+      .pause(2000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .pause(1000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
+      .pause(20000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
