@@ -117,7 +117,6 @@ export class RemixAppManager extends PluginManager {
         }
         return true
       })
-
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {
       console.log('getting plugins list from localstorage...')
