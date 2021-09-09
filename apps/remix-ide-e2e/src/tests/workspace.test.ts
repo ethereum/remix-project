@@ -70,11 +70,8 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
       .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
-      .pause(2000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
-      .pause(5000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .pause(20000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
@@ -83,7 +80,6 @@ module.exports = {
     browser
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
-      .pause(5000)
       .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
