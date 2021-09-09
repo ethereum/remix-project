@@ -34,7 +34,11 @@ const profile = {
 class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerApi
   constructor (config, fileManager) {
     super(profile)
+<<<<<<< HEAD
     this.fileManager = fileManager
+=======
+    this.fileManager
+>>>>>>> cbea44dcc (fix fileManager mode)
     this.config = config
     this.queryParams = new QueryParams()
     this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
