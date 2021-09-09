@@ -45,10 +45,48 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   onActivation () {
-    this.listenToEvents()    
+    this.listenToEvents()
   }
 
-  onDeactivation () {}
+  onDeactivation () {
+    this.off('editor', 'contentChanged')
+
+    if (this.data.eventHandlers.onLoadingCompiler) {
+      this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
+    }
+    
+    if (this.data.eventHandlers.onCompilerLoaded) {
+      this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
+    }
+
+    if (this.data.eventHandlers.onCompilationFinished) {
+      this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
+    }
+    
+    this.off('filePanel', 'setWorkspace')
+
+    this.off('remixd', 'rootFolderChanged')
+
+    this.off('editor', 'sessionSwitched')
+
+    if (this.data.eventHandlers.onStartingCompilation) {
+      this.compileTabLogic.event.off('startingCompilation', this.data.eventHandlers.onStartingCompilation)
+    }
+    
+    if (this.data.eventHandlers.onRemoveAnnotations) {
+      this.compileTabLogic.event.off('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
+    }    
+
+    this.off('fileManager', 'currentFileChanged')
+    
+    this.off('fileManager', 'noFileSelected')    
+    
+    this.off('themeModule', 'themeChanged')
+    
+    if (this.data.eventHandlers.onKeyDown) {
+      window.document.removeEventListener('keydown', this.data.eventHandlers.onKeyDown)  
+    }
+  }
 
   resolveContentAndSave (url) {
     return this.call('contentImport', 'resolveAndSave', url)
@@ -248,12 +286,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('themeModule', 'themeChanged', this.data.eventHandlers.onThemeChanged)
     
     // Run the compiler instead of trying to save the website
-    window.document.addEventListener('keydown', (e) => {
+    this.data.eventHandlers.onKeyDown = (e) => {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
         this.compileTabLogic.runCompiler(this.getAppParameter('hardhat-compilation'))
       }
-    })
+    }
+    window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
   }
 }
