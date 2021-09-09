@@ -35,9 +35,10 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
-      .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
+      .pause(1000)
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(1000)
