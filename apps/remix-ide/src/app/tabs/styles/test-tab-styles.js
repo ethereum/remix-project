@@ -31,8 +31,6 @@ var css = csjs`
     border-radius: 4px;
     padding: 1% 1% 1% 5%;
   }
-  .testFailure {
-  }
   .testFailureSummary {
   }
   .title {
