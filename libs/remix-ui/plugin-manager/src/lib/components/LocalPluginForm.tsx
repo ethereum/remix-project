@@ -4,15 +4,8 @@ import { ModalDialog } from '@remix-ui/modal-dialog';
 import { Toaster } from '@remix-ui/toaster';
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web';
 
-import {
-  localPluginReducerActionType,
-  localPluginToastReducer
-} from '../reducers/pluginManagerReducer';
-import {
-  canActivate,
-  FormStateProps,
-  PluginManagerComponent
-} from '../../types';
+import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
+import { FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
   closeModal: () => void;
