@@ -20,9 +20,9 @@ const profile = {
 }
 
 const defaultAppParameters = {
-  'hideWarnings': () => false,
-  'autoCompile': () => false,
-  'includeNightlies': () => false
+  hideWarnings: false,
+  autoCompile: false,
+  includeNightlies: false
 }
 
 const defaultCompilerParameters = {
