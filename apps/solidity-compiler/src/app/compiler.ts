@@ -75,7 +75,7 @@ const defaultCompilerParameters = {
   }
 
   setCompilerParameters (params) {
-    for (const key in Object.keys(params)) {
+    for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }
   }
