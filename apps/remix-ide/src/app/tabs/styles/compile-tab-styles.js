@@ -1,4 +1,4 @@
-var csjs = require('csjs-inject')
+const csjs = require('csjs-inject')
 
 const css = csjs`
   .compilerTabView {
