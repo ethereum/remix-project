@@ -68,4 +68,8 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   setAppParameter (name, value) {
     localStorage.setItem(name, value)
   }
+
+  getFileManagerMode () {
+    return 'browser'
+  }
 }
