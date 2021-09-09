@@ -1,6 +1,6 @@
 import { compile } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -157,10 +157,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
   setCompilerConfig (settings) {
     this.configurationSettings = settings    
   }  
-
-  getFileManagerMode () {
-    return 'browser'
-  }
 
   fileExists (fileName) {
     return this.call('fileManager', 'exists', fileName)
