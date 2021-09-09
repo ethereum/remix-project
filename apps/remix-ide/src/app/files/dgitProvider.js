@@ -82,7 +82,6 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('dgitstatus', status)
     return status
   }
 
@@ -421,7 +420,6 @@ class DGitProvider extends Plugin {
       console.log(config, cid, workspace, data)
       for await (const file of data) {
         if (file.path) result = true
-        console.log(file.path)
         file.path = file.path.replace(cid, '')
         if (!file.content) {
           continue
