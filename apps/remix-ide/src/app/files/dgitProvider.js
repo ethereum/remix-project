@@ -432,12 +432,13 @@ class DGitProvider extends Plugin {
         const dir = path.dirname(file.path)
         try {
           this.createDirectories(`${workspace.absolutePath}/${dir}`)
-        } catch (e) { }
+        } catch (e) { throw new Error(e) }
         try {
           window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
-        } catch (e) { }
+        } catch (e) { throw new Error(e) }
       }
     } catch (e) {
+      throw new Error(e)
     }
     return result
   }
@@ -517,8 +518,11 @@ class DGitProvider extends Plugin {
       if (i > 0) previouspath = '/' + directories.slice(0, i).join('/')
       const finalPath = previouspath + '/' + directories[i]
       try {
-        window.remixFileSystem.mkdirSync(finalPath)
+        if (!window.remixFileSystem.existsSync(finalPath)) {
+          window.remixFileSystem.mkdirSync(finalPath)
+        }
       } catch (e) {
+        console.log(e)
       }
     }
   }
