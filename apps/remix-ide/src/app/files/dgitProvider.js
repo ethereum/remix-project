@@ -21,7 +21,7 @@ const profile = {
   description: '',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['delay', 'init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -68,16 +68,6 @@ class DGitProvider extends Plugin {
         return auth
       }
     }
-  }
-
-  async delay (num) {
-    console.log('delay called', num)
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log('delay resolved', num)
-        resolve(true)
-      }, 10000)
-    })
   }
 
   async init (input) {
