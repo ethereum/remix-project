@@ -49,6 +49,8 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
       .waitForElementVisible('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+    // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('span[data-id="workspacesModalDialog-modal-footer-ok-react"]') })
       .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(5000)
