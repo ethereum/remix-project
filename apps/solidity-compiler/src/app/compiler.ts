@@ -31,12 +31,6 @@ const defaultCompilerParameters = {
   language: 'Solidity'
 }
 
-const getOptimize = () => {
-  let value = localStorage.getItem('optimize') || defaultCompilerParameters['optimize']
-  value = (value === 'false' || value === null || value === undefined) ? false : value
-  value = value === 'true' ? true : false
-}
-
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
   constructor () {
     super()
