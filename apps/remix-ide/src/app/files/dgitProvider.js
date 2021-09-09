@@ -122,6 +122,7 @@ class DGitProvider extends Plugin {
     try {
       remotes = await git.listRemotes({ ...await this.getGitConfig() })
     } catch (e) {
+      console.log(e)
     }
     return remotes
   }
@@ -362,7 +363,7 @@ class DGitProvider extends Plugin {
     data.append('pinataMetadata', metadata)
     const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS'
     try {
-      const result = await axios
+      await axios
         .post(url, data, {
           maxBodyLength: 'Infinity',
           headers: {
