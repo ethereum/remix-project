@@ -173,7 +173,6 @@ export interface DefaultLocalPlugin extends Profile {
 }
 
 export interface FormStateProps {
-<<<<<<< HEAD
   name: string;
   displayName: string;
   url: string;
@@ -181,18 +180,7 @@ export interface FormStateProps {
   hash: string;
   methods: string[];
   location: string;
-  canActivate: string[];
   canActivate: string[]
-=======
-  name: string
-  displayName: string
-  url: string
-  type: 'iframe' | 'ws'
-  hash: string
-  methods: any
-  location: string
-  canActivate?: any
->>>>>>> 046faea79 (rm whitespace and store canactivate)
 }
 
 export type PluginManagerProfile = Profile & {
