@@ -29,13 +29,10 @@ export function Workspace (props: WorkspaceProps) {
       setCurrentWorkspace(global.fs.browser.currentWorkspace)
       global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
     } else if (global.fs.mode === 'localhost') {
-      global.dispatchFetchWorkspaceDirectory('localhost')
+      // global.dispatchFetchWorkspaceDirectory('/')
+      setCurrentWorkspace(LOCALHOST)
     }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
-
-  useEffect(() => {
-    if (global.fs.mode === 'localhost') setCurrentWorkspace(LOCALHOST)
-  }, [global.fs.mode])
 
   props.plugin.resetNewFile = () => {
     setState(prevState => {
@@ -217,7 +214,7 @@ export function Workspace (props: WorkspaceProps) {
         <div className='remixui_fileExplorerTree'>
           <div>
             <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-              { state.hideRemixdExplorer && currentWorkspace && currentWorkspace !== NO_WORKSPACE && currentWorkspace !== LOCALHOST &&
+              { global.fs.mode === 'browser' &&
                   <FileExplorer
                     name={currentWorkspace}
                     registry={props.plugin.registry}
@@ -237,7 +234,7 @@ export function Workspace (props: WorkspaceProps) {
             {
               state.loadingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
                 : <div className='pl-2 filesystemexplorer remixui_treeview'>
-                  { !state.hideRemixdExplorer &&
+                  { global.fs.mode === 'localhost' &&
                       <FileExplorer
                         name='localhost'
                         registry={props.plugin.registry}
