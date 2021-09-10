@@ -304,37 +304,29 @@ const listenOnEvents = (provider) => {
     await executeEvent('rootFolderChanged', path)
   })
 
-  provider.event.on('disconnected', () => {
-    dispatch(setMode('browser'))
-  })
-  // provider.event.on('connected', () => {
-  //         props.plugin.fileManager.setMode('localhost')
-  // setState(prevState => {
-  //   return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
-  // })
-  // })
-
   // provider.event.on('disconnected', () => {
-  //         // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
-  // if (props.fileManager.mode === 'localhost') {
-  // await setWorkspace(NO_WORKSPACE)
-  // props.plugin.fileManager.setMode('browser')
-  // setState(prevState => {
-  //   return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-  // })
-  // } else {
-  //   // Hide spinner in file explorer
-  //   setState(prevState => {
-  //     return { ...prevState, loadingLocalhost: false }
-  //   })
-  // }
+  //   dispatch(setMode('browser'))
   // })
 
-  // provider.event.on('loading', () => {
-  //         setState(prevState => {
-  //   return { ...prevState, loadingLocalhost: true }
-  // })
-  // })
+  provider.event.on('connected', async () => {
+    fetchWorkspaceDirectory('/')(dispatch)
+    // setState(prevState => {
+    //   return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
+    // })
+  })
+
+  provider.event.on('disconnected', async () => {
+    const workspaceProvider = plugin.fileProviders.workspace
+
+    await switchToWorkspace(workspaceProvider.workspace)(dispatch)
+  })
+
+  provider.event.on('loadingLocalhost', async () => {
+    await switchToWorkspace(LOCALHOST)(dispatch)
+    // setState(prevState => {
+    //   return { ...prevState, loadingLocalhost: true }
+    // })
+  })
 
   provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
     const config = plugin.registry.get('config').api
@@ -458,6 +450,7 @@ export const createWorkspace = (workspaceName: string) => (dispatch: React.Dispa
   promise.then(async () => {
     await plugin.fileManager.closeAllFiles()
     dispatch(createWorkspaceSuccess(workspaceName))
+    switchToWorkspace(workspaceName)(dispatch)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
   })
@@ -486,21 +479,21 @@ export const fetchWorkspaceDirectory = (path: string) => (dispatch: React.Dispat
 export const switchToWorkspace = (name: string) => async (dispatch: React.Dispatch<any>) => {
   await plugin.fileManager.closeAllFiles()
   if (name === LOCALHOST) {
-    plugin.fileProviders.workspace.clearWorkspace()
+    plugin.fileManager.setMode('localhost')
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
-    if (!isActive) plugin.call('manager', 'activatePlugin', 'remixd')
-    plugin.fileManager.setMode('localhost')
+    if (!isActive) await plugin.call('manager', 'activatePlugin', 'remixd')
     dispatch(setMode('localhost'))
     plugin.emit('setWorkspace', { name: LOCALHOST, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
     plugin.fileProviders.workspace.clearWorkspace()
   } else {
+    plugin.fileManager.setMode('browser')
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
     if (isActive) plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
-    plugin.fileManager.setMode('browser')
+
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace(name))
     plugin.emit('setWorkspace', { name, isLocalhost: false })

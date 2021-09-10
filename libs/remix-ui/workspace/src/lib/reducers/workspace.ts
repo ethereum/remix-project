@@ -187,6 +187,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           isRequesting: false,
           isSuccessful: true,
           error: null
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? fetchWorkspaceDirectoryContent(state, payload) : state.localhost.files,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
         }
       }
     }
@@ -422,7 +429,7 @@ const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<s
 }
 
 // IDEA: Modify function to remove blank input field without fetching content
-const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }, deletePath?: string) => {
+const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }, deletePath?: string): { [x: string]: Record<string, File> } => {
   if (!payload.fileTree) return state.mode === 'browser' ? state.browser.files : state[state.mode].files
   if (state.mode === 'browser') {
     if (payload.path === state.browser.currentWorkspace) {
@@ -446,7 +453,7 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       return files
     }
   } else {
-    if (payload.path === state.mode) {
+    if (payload.path === state.mode || payload.path === '/') {
       let files = normalize(payload.fileTree, payload.path, payload.type)
 
       files = _.merge(files, state[state.mode].files[state.mode])
