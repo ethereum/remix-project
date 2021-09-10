@@ -34,7 +34,6 @@ export interface WorkspaceState {
   externalUploads: EventTarget & HTMLInputElement
   uploadFileEvent: EventTarget & HTMLInputElement
   loadingLocalhost: boolean
-  toasterMsg: string
 }
 
 export interface Modal {
