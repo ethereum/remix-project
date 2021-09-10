@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment, useReducer } from 'react'
+import React, { Fragment, useEffect, useReducer } from 'react'
 import { VerticalIcons } from '../../types/vertical-icons'
 import Home from './components/Home'
 import Icon from './components/Icon'
@@ -25,10 +25,15 @@ export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIco
       />
     )
   }
+  useEffect(() => {
+    // verticalIconsPlugin.emit('showContent', 'filePanel')
+    // verticalIconsPlugin.events.emit('showContent', 'filePanel')
+    console.log('Testing from remixUIVertical!')
+  }, [])
   return (
     <div className="h-100">
       <div className="remixui_icons">
-        <Home
+        {/* <Home
           verticalIconPlugin={verticalIconsPlugin}
         />
         <Fragment>
@@ -40,7 +45,8 @@ export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIco
                 />
               )
             })}
-        </Fragment>
+        </Fragment> */}
+        <b>Test!</b>
       </div>
     </div>
   )
