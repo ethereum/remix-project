@@ -1,10 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useReducer, useState, useEffect } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -22,6 +23,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     cancelFn: () => {}
   })
   const [modals, setModals] = useState<Modal[]>([])
+  const [focusToaster, setFocusToaster] = useState<string>('')
+  const [toasters, setToasters] = useState<string[]>([])
 
   const dispatchInitWorkspace = async () => {
     await initWorkspace(plugin)(fsDispatch)
@@ -37,6 +40,18 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchRemoveInputField = async (path: string) => {
     await removeInputField(path)(fsDispatch)
+  }
+
+  const dispatchCreateWorkspace = async (workspaceName: string) => {
+    await createWorkspace(workspaceName)(fsDispatch)
+  }
+
+  const dispatchFetchWorkspaceDirectory = async (path: string) => {
+    await fetchWorkspaceDirectory(path)(fsDispatch)
+  }
+
+  const dispatchSwitchToWorkspace = async (name: string) => {
+    await switchToWorkspace(name)(fsDispatch)
   }
 
   useEffect(() => {
@@ -61,6 +76,18 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }, [modals])
 
   useEffect(() => {
+    if (toasters.length > 0) {
+      setFocusToaster(() => {
+        return toasters[0]
+      })
+      const toasterList = toasters.slice()
+
+      toasterList.shift()
+      setToasters(toasterList)
+    }
+  }, [toasters])
+
+  useEffect(() => {
     if (fs.notification.title) {
       modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
     }
@@ -79,18 +106,34 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     })
   }
 
+  const handleToaster = () => {
+    setFocusToaster('')
+  }
+
+  const toast = (toasterMsg: string) => {
+    setToasters(messages => {
+      messages.push(toasterMsg)
+      return [...messages]
+    })
+  }
+
   const value = {
     fs,
     modal,
+    toast,
     dispatchInitWorkspace,
     dispatchFetchDirectory,
     dispatchAddInputField,
-    dispatchRemoveInputField
+    dispatchRemoveInputField,
+    dispatchCreateWorkspace,
+    dispatchFetchWorkspaceDirectory,
+    dispatchSwitchToWorkspace
   }
   return (
     <FileSystemContext.Provider value={value}>
       <Workspace plugin={plugin} />
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
+      <Toaster message={focusToaster} handleHide={handleToaster} />
     </FileSystemContext.Provider>
   )
 }

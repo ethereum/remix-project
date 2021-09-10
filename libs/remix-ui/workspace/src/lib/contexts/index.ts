@@ -7,5 +7,9 @@ export const FileSystemContext = createContext<{
   dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,
   dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
-  dispatchRemoveInputField:(path: string) => Promise<void>
+  dispatchRemoveInputField:(path: string) => Promise<void>,
+  dispatchCreateWorkspace: (workspaceName: string) => Promise<void>,
+  toast: (toasterMsg: string) => void,
+  dispatchFetchWorkspaceDirectory: (path: string) => void,
+  dispatchSwitchToWorkspace: (name: string) => void
     }>(null)
