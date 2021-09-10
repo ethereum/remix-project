@@ -1,4 +1,6 @@
 import { Plugin } from '@remixproject/engine/lib/abstract'
+
+type Kind = 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
 export class VerticalIcons extends Plugin<any, any> {
   constructor(appManager: any);
     events: EventEmitter;
@@ -8,8 +10,7 @@ export class VerticalIcons extends Plugin<any, any> {
       name: JSX.Element
     };
   iconKind: {
-    kind:
-    'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
+    kind: Kind
     };
     iconStatus: {};
     renderComponent(): void;

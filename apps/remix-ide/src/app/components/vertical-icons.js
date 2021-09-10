@@ -82,8 +82,6 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({ kind, name, icon, displayName, tooltip, documentation }) {
-    // eslint-disable-next-line no-debugger
-    debugger
     let title = (tooltip || displayName || name)
     title = title.replace(/^\w/, c => c.toUpperCase())
     this.icons[name] = yo`
