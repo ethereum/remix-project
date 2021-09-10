@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
-import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { WorkspaceProps, WorkspaceState } from './types'
 import { FileSystemContext } from './contexts'
 
@@ -16,8 +15,7 @@ export function Workspace (props: WorkspaceProps) {
     displayNewFile: false,
     externalUploads: null,
     uploadFileEvent: null,
-    loadingLocalhost: false,
-    toasterMsg: ''
+    loadingLocalhost: false
   })
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const global = useContext(FileSystemContext)
@@ -29,11 +27,11 @@ export function Workspace (props: WorkspaceProps) {
   useEffect(() => {
     if (global.fs.mode === 'browser') {
       setCurrentWorkspace(global.fs.browser.currentWorkspace)
-      global.dispatchFetchDirectory(global.fs.browser.currentWorkspace)
+      global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
     } else if (global.fs.mode === 'localhost') {
-      global.dispatchFetchDirectory('localhost')
+      global.dispatchFetchWorkspaceDirectory('localhost')
     }
-  }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder])
+  }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
 
   useEffect(() => {
     if (global.fs.mode === 'localhost') setCurrentWorkspace(LOCALHOST)
@@ -48,10 +46,6 @@ export function Workspace (props: WorkspaceProps) {
   /* implement an external API, consumed by the parent */
   props.plugin.request.createWorkspace = () => {
     return createWorkspace()
-  }
-
-  props.plugin.request.setWorkspace = (workspaceName) => {
-    return setWorkspace(workspaceName)
   }
 
   // props.plugin.request.createNewFile = async () => {
@@ -76,17 +70,11 @@ export function Workspace (props: WorkspaceProps) {
       await props.plugin.fileManager.closeAllFiles()
       await props.plugin.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
-      toast('New default workspace has been created.')
+      global.toast('New default workspace has been created.')
     } catch (e) {
       global.modal('Create Default Workspace', e.message, 'OK', onFinishRenameWorkspace, '')
       console.error(e)
     }
-  }
-
-  const toast = (message: string) => {
-    setState(prevState => {
-      return { ...prevState, toasterMsg: message }
-    })
   }
 
   /* workspace creation, renaming and deletion */
@@ -127,9 +115,7 @@ export function Workspace (props: WorkspaceProps) {
     const workspaceName = workspaceCreateInput.current.value
 
     try {
-      await props.plugin.fileManager.closeAllFiles()
-      await props.plugin.createWorkspace(workspaceName)
-      await setWorkspace(workspaceName)
+      await global.dispatchCreateWorkspace(workspaceName)
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -152,20 +138,8 @@ export function Workspace (props: WorkspaceProps) {
     })
   }
 
-  const setWorkspace = async (name) => {
-    await props.plugin.fileManager.closeAllFiles()
-    if (name === LOCALHOST) {
-      props.plugin.workspace.clearWorkspace()
-    } else if (name === NO_WORKSPACE) {
-      props.plugin.workspace.clearWorkspace()
-    } else {
-      await props.plugin.workspace.setWorkspace(name)
-    }
-    await props.plugin.setWorkspace({ name, isLocalhost: name === LOCALHOST }, !(name === LOCALHOST || name === NO_WORKSPACE))
-    props.plugin.getWorkspaces()
-    setState(prevState => {
-      return { ...prevState, currentWorkspace: name }
-    })
+  const switchWorkspace = async (name: string) => {
+    global.dispatchSwitchToWorkspace(name)
   }
 
   const createModalMessage = () => {
@@ -186,7 +160,6 @@ export function Workspace (props: WorkspaceProps) {
 
   return (
     <div className='remixui_container'>
-      <Toaster message={state.toasterMsg} />
       <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
         <div>
           <header>
@@ -228,7 +201,7 @@ export function Workspace (props: WorkspaceProps) {
                   title='Delete'>
                 </span>
               </span>
-              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {
                   global.fs.browser.workspaces
                     .map((folder, index) => {

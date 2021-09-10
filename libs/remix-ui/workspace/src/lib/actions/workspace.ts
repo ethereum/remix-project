@@ -7,6 +7,8 @@ const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-para
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
 const queuedEvents = []
 const pendingEvents = {}
+const LOCALHOST = ' - connect to localhost - '
+const NO_WORKSPACE = ' - none - '
 
 let plugin, dispatch: React.Dispatch<any>
 
@@ -118,6 +120,48 @@ const setReadOnlyMode = (mode: boolean) => {
   return {
     type: 'SET_READ_ONLY_MODE',
     payload: mode
+  }
+}
+
+const createWorkspaceError = (error: any) => {
+  return {
+    type: 'CREATE_WORKSPACE_ERROR',
+    payload: error
+  }
+}
+
+const createWorkspaceRequest = (promise: Promise<any>) => {
+  return {
+    type: 'CREATE_WORKSPACE_REQUEST',
+    payload: promise
+  }
+}
+
+const createWorkspaceSuccess = (workspaceName: string) => {
+  return {
+    type: 'CREATE_WORKSPACE_SUCCESS',
+    payload: workspaceName
+  }
+}
+
+const fetchWorkspaceDirectoryError = (error: any) => {
+  return {
+    type: 'FETCH_WORKSPACE_DIRECTORY_ERROR',
+    payload: error
+  }
+}
+
+const fetchWorkspaceDirectoryRequest = (promise: Promise<any>) => {
+  return {
+    type: 'FETCH_WORKSPACE_DIRECTORY_REQUEST',
+    payload: promise
+  }
+}
+
+const fetchWorkspaceDirectorySuccess = (path: string, fileTree) => {
+  return {
+    type: 'FETCH_WORKSPACE_DIRECTORY_SUCCESS',
+    payload: { path, fileTree }
   }
 }
 
@@ -244,6 +288,7 @@ const listenOnEvents = (provider) => {
   })
 
   provider.event.on('folderAdded', async (folderPath: string) => {
+    if (folderPath.indexOf('/.workspaces') === 0) return
     await executeEvent('folderAdded', folderPath)
   })
 
@@ -322,6 +367,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const params = queryParams.get()
     const workspaces = await getWorkspaces() || []
 
+    dispatch(setWorkspaces(workspaces))
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', true, 'gist-template')
       dispatch(setCurrentWorkspace('gist-sample'))
@@ -403,6 +449,62 @@ export const removeInputField = (path: string) => (dispatch: React.Dispatch<any>
     console.error(error)
   })
   return promise
+}
+
+export const createWorkspace = (workspaceName: string) => (dispatch: React.Dispatch<any>) => {
+  const promise = createWorkspaceTemplate(workspaceName, true, 'default-template')
+
+  dispatch(createWorkspaceRequest(promise))
+  promise.then(async () => {
+    await plugin.fileManager.closeAllFiles()
+    dispatch(createWorkspaceSuccess(workspaceName))
+  }).catch((error) => {
+    dispatch(createWorkspaceError({ error }))
+  })
+  return promise
+}
+
+export const fetchWorkspaceDirectory = (path: string) => (dispatch: React.Dispatch<any>) => {
+  const provider = plugin.fileManager.currentFileProvider()
+  const promise = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+
+      resolve(fileTree)
+    })
+  })
+
+  dispatch(fetchWorkspaceDirectoryRequest(promise))
+  promise.then((fileTree) => {
+    dispatch(fetchWorkspaceDirectorySuccess(path, fileTree))
+  }).catch((error) => {
+    dispatch(fetchWorkspaceDirectoryError({ error }))
+  })
+  return promise
+}
+
+export const switchToWorkspace = (name: string) => async (dispatch: React.Dispatch<any>) => {
+  await plugin.fileManager.closeAllFiles()
+  if (name === LOCALHOST) {
+    plugin.fileProviders.workspace.clearWorkspace()
+    const isActive = await plugin.call('manager', 'isActive', 'remixd')
+
+    if (!isActive) plugin.call('manager', 'activatePlugin', 'remixd')
+    plugin.fileManager.setMode('localhost')
+    dispatch(setMode('localhost'))
+    plugin.emit('setWorkspace', { name: LOCALHOST, isLocalhost: true })
+  } else if (name === NO_WORKSPACE) {
+    plugin.fileProviders.workspace.clearWorkspace()
+  } else {
+    const isActive = await plugin.call('manager', 'isActive', 'remixd')
+
+    if (isActive) plugin.call('manager', 'deactivatePlugin', 'remixd')
+    await plugin.fileProviders.workspace.setWorkspace(name)
+    plugin.fileManager.setMode('browser')
+    dispatch(setMode('browser'))
+    dispatch(setCurrentWorkspace(name))
+    plugin.emit('setWorkspace', { name, isLocalhost: false })
+  }
 }
 
 const fileAdded = async (filePath: string) => {

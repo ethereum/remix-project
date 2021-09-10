@@ -6,7 +6,8 @@ import './toaster.css'
 /* eslint-disable-next-line */
 export interface ToasterProps {
   message: string
-  timeOut?: number
+  timeOut?: number,
+  handleHide?: () => void
 }
 
 export const Toaster = (props: ToasterProps) => {
@@ -59,6 +60,7 @@ export const Toaster = (props: ToasterProps) => {
     if (state.timeOutId) {
       clearTimeout(state.timeOutId)
     }
+    props.handleHide && props.handleHide()
     setState(prevState => {
       return { ...prevState, message: '', hide: true, hiding: false, timeOutId: null, showModal: false }
     })
