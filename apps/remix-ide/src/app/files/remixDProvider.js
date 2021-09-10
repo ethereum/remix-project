@@ -57,7 +57,7 @@ module.exports = class RemixDProvider extends FileProvider {
   }
 
   preInit () {
-    this.event.emit('loading')
+    this.event.emit('loadingLocalhost')
   }
 
   init (cb) {
@@ -177,9 +177,7 @@ module.exports = class RemixDProvider extends FileProvider {
   }
 
   resolveDirectory (path, callback) {
-    var self = this
     if (path[0] === '/') path = path.substring(1)
-    if (!path) return callback(null, { [self.type]: { } })
     const unprefixedpath = this.removePrefix(path)
 
     if (!this._isReady) return callback && callback('provider not ready')
