@@ -33,6 +33,7 @@ export class VerticalIcons extends Plugin {
     this.icons = {}
     this.iconKind = {}
     this.iconStatus = {}
+    this.defaultProfile = profile
 
     const themeModule = globalRegistry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Profile } from '@remixproject/plugin-utils'
 import React, { Fragment, useEffect, useReducer } from 'react'
-import { IconKindType, VerticalIcons } from '../../types/vertical-icons'
+import { defaultModuleProfile, IconKindType, VerticalIcons } from '../../types/vertical-icons'
+import * as packageJson from '../../../../../package.json'
 import Home from './components/Home'
 import Icon from './components/Icon'
 import IconKind from './components/IconKind'
@@ -11,9 +13,17 @@ export interface RemixUiVerticalIconsProps {
   verticalIconsPlugin: VerticalIcons
 }
 
+const profile = {
+  name: 'menuicons',
+  displayName: 'Vertical Icons',
+  description: '',
+  version: packageJson.version,
+  methods: ['select']
+}
+
 export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIconsProps) => {
   const [classes, dispatchResolveClasses] = useReducer(resolveClassesReducer, '')
-  const AddIcon = ({ kind, name, icon, displayName, tooltip, documentation }) => {
+  const AddIcon = ({ kind, name, icon, displayName, tooltip, documentation }: Profile & { icon: string, tooltip: string }) => {
     return (
       <Icon
         displayName={displayName}
@@ -26,6 +36,16 @@ export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIco
       />
     )
   }
+  const linkIconVisuals = (loadedProfile?: defaultModuleProfile) => {
+    if (loadedProfile && Object.keys(loadedProfile).length > 0) {
+      verticalIconsPlugin.linkContent(loadedProfile)
+    } else {
+      verticalIconsPlugin.linkContent(profile)
+    }
+  }
+  useEffect(() => {
+    linkIconVisuals()
+  }, [linkIconVisuals])
 
   function checkIconKind (iconKind: IconKindType) {
     if (iconKind && Object.keys(iconKind.kind).length > 0) {

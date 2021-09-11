@@ -1,4 +1,5 @@
 import { Plugin } from '@remixproject/engine/lib/abstract'
+import * as packageJson from '../../../../package.json'
 
 type Kind = {
   fileexplorer: 'fileexplorer',
@@ -13,6 +14,14 @@ type Kind = {
 type IconKindType = {
   kind: Kind
 }
+
+interface defaultModuleProfile {
+  name: string
+  displayName: string
+  description: string
+  version: packageJson.version
+  methods: string[]
+}
 export class VerticalIcons extends Plugin<any, any> {
   constructor(appManager: any);
     events: EventEmitter;
@@ -23,6 +32,7 @@ export class VerticalIcons extends Plugin<any, any> {
     };
     iconKind: IconKind
     iconStatus: {};
+    defaultProfile: defaultModuleProfile
     renderComponent(): void;
     linkContent(profile: any): void;
     unlinkContent(profile: any): void;
