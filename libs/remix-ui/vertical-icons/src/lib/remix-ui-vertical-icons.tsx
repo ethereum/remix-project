@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, useEffect, useReducer } from 'react'
-import { VerticalIcons } from '../../types/vertical-icons'
+import { IconKindType, VerticalIcons } from '../../types/vertical-icons'
 import Home from './components/Home'
 import Icon from './components/Icon'
 import IconKind from './components/IconKind'
+import ShowIcons from './components/ShowIcons'
 import { resolveClassesReducer } from './reducers/verticalIconsPanelReducers'
 import './remix-ui-vertical-icons.css'
 export interface RemixUiVerticalIconsProps {
@@ -25,28 +26,30 @@ export const RemixUiVerticalIcons = ({ verticalIconsPlugin }: RemixUiVerticalIco
       />
     )
   }
-  useEffect(() => {
-    // verticalIconsPlugin.emit('showContent', 'filePanel')
-    // verticalIconsPlugin.events.emit('showContent', 'filePanel')
-    console.log('Testing from remixUIVertical!')
-  }, [])
+
+  function checkIconKind (iconKind: IconKindType) {
+    if (iconKind && Object.keys(iconKind.kind).length > 0) {
+      return iconKind
+    }
+    iconKind.kind = {
+      fileexplorer: 'fileexplorer',
+      complier: 'compiler',
+      udapp: 'udapp',
+      testing: 'testing',
+      analysis: 'analysis',
+      debugging: 'debugging',
+      settings: 'settings',
+      none: 'none'
+    }
+    return iconKind
+  }
   return (
     <div className="h-100">
       <div className="remixui_icons">
-        {/* <Home
+        <Home
           verticalIconPlugin={verticalIconsPlugin}
         />
-        <Fragment>
-          {Object.keys(verticalIconsPlugin.iconKind.kind).map(
-            (kind: 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none') => {
-              return (
-                <IconKind
-                  idName={kind}
-                />
-              )
-            })}
-        </Fragment> */}
-        <b>Test!</b>
+        <ShowIcons />
       </div>
     </div>
   )

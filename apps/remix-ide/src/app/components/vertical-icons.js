@@ -33,11 +33,6 @@ export class VerticalIcons extends Plugin {
     this.icons = {}
     this.iconKind = {}
     this.iconStatus = {}
-    // this.themeModule = globalRegistry.get('themeModule').api
-
-    // this.themeModule.events.on('themeChanged', (theme) => {
-    //   this.onThemeChanged(theme.quality)
-    // })
 
     const themeModule = globalRegistry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {
@@ -46,30 +41,30 @@ export class VerticalIcons extends Plugin {
   }
 
   linkContent (profile) {
-    // if (!profile.icon) return
-    // this.addIcon(profile)
-    // this.listenOnStatus(profile)
+    if (!profile.icon) return
+    this.addIcon(profile)
+    this.listenOnStatus(profile)
   }
 
   unlinkContent (profile) {
-    // this.removeIcon(profile)
+    this.removeIcon(profile)
   }
 
   listenOnStatus (profile) {
     // the list of supported keys. 'none' will remove the status
-    // const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
-    // const types = ['error', 'warning', 'success', 'info', '']
-    // const fn = (status) => {
-    //   if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
-    //   if (status.key === undefined) throw new Error('status key should be defined')
+    const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
+    const types = ['error', 'warning', 'success', 'info', '']
+    const fn = (status) => {
+      if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
+      if (status.key === undefined) throw new Error('status key should be defined')
 
-    //   if (typeof status.key === 'string' && (!keys.includes(status.key))) {
-    //     throw new Error('key should contain either number or ' + keys.join())
-    //   }
-    //   this.setIconStatus(profile.name, status)
-    // }
-    // this.iconStatus[profile.name] = fn
-    // this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
+      if (typeof status.key === 'string' && (!keys.includes(status.key))) {
+        throw new Error('key should contain either number or ' + keys.join())
+      }
+      this.setIconStatus(profile.name, status)
+    }
+    this.iconStatus[profile.name] = fn
+    this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
   }
 
   /**
@@ -77,21 +72,21 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({ kind, name, icon, displayName, tooltip, documentation }) {
-    // let title = (tooltip || displayName || name)
-    // title = title.replace(/^\w/, c => c.toUpperCase())
-    // this.icons[name] = yo`
-    //   <div
-    //     class="${css.icon} m-2"
-    //     onclick="${() => { this.toggle(name) }}"
-    //     plugin="${name}"
-    //     title="${title}"
-    //     oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
-    //     data-id="verticalIconsKind${name}"
-    //     id="verticalIconsKind${name}"
-    //   >
-    //     <img class="image" src="${icon}" alt="${name}" />
-    //     </div>`
-    // this.iconKind[kind || 'none'].appendChild(this.icons[name])
+    let title = (tooltip || displayName || name)
+    title = title.replace(/^\w/, c => c.toUpperCase())
+    this.icons[name] = yo`
+      <div
+        class="${css.icon} m-2"
+        onclick="${() => { this.toggle(name) }}"
+        plugin="${name}"
+        title="${title}"
+        oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
+        data-id="verticalIconsKind${name}"
+        id="verticalIconsKind${name}"
+      >
+        <img class="image" src="${icon}" alt="${name}" />
+        </div>`
+    this.iconKind[kind || 'none'].appendChild(this.icons[name])
   }
 
   /**
@@ -100,36 +95,36 @@ export class VerticalIcons extends Plugin {
    * @param {Object} status
    */
   setIconStatus (name, status) {
-    // const el = this.icons[name]
-    // if (!el) return
-    // const statusEl = el.querySelector('i')
-    // if (statusEl) {
-    //   el.removeChild(statusEl)
-    // }
-    // if (status.key === 'none') return // remove status
+    const el = this.icons[name]
+    if (!el) return
+    const statusEl = el.querySelector('i')
+    if (statusEl) {
+      el.removeChild(statusEl)
+    }
+    if (status.key === 'none') return // remove status
 
-    // let text = ''
-    // let key = ''
-    // if (typeof status.key === 'number') {
-    //   key = status.key.toString()
-    //   text = key
-    // } else key = helper.checkSpecialChars(status.key) ? '' : status.key
+    let text = ''
+    let key = ''
+    if (typeof status.key === 'number') {
+      key = status.key.toString()
+      text = key
+    } else key = helper.checkSpecialChars(status.key) ? '' : status.key
 
-    // let type = ''
-    // if (status.type === 'error') {
-    //   type = 'danger' // to use with bootstrap
-    // } else type = helper.checkSpecialChars(status.type) ? '' : status.type
-    // const title = helper.checkSpecialChars(status.title) ? '' : status.title
+    let type = ''
+    if (status.type === 'error') {
+      type = 'danger' // to use with bootstrap
+    } else type = helper.checkSpecialChars(status.type) ? '' : status.type
+    const title = helper.checkSpecialChars(status.title) ? '' : status.title
 
-    // el.appendChild(yo`<i
-    // title="${title}"
-    //   class="${this.resolveClasses(key, type)}"
-    //   aria-hidden="true"
-    // >
-    // ${text}
-    // </i>`)
+    el.appendChild(yo`<i
+    title="${title}"
+      class="${this.resolveClasses(key, type)}"
+      aria-hidden="true"
+    >
+    ${text}
+    </i>`)
 
-    // el.classList.add(`${css.icon}`)
+    el.classList.add(`${css.icon}`)
   }
 
   /**
@@ -137,7 +132,7 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   removeIcon ({ kind, name }) {
-    // if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
+    if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
   }
 
   /**
@@ -145,16 +140,16 @@ export class VerticalIcons extends Plugin {
    */
   removeActive () {
     // reset filters
-    // const images = this.view.querySelectorAll('.image')
-    // images.forEach(function (im) {
-    //   im.style.setProperty('filter', 'invert(0.5)')
-    // })
+    const images = this.view.querySelectorAll('.image')
+    images.forEach(function (im) {
+      im.style.setProperty('filter', 'invert(0.5)')
+    })
 
-    // // remove active
-    // const currentActive = this.view.querySelector('.active')
-    // if (currentActive) {
-    //   currentActive.classList.remove('active')
-    // }
+    // remove active
+    const currentActive = this.view.querySelector('.active')
+    if (currentActive) {
+      currentActive.classList.remove('active')
+    }
   }
 
   /**
@@ -162,16 +157,16 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   addActive (name) {
-    // if (name === 'home') return
-    // const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
-    // const invert = themeType === 'dark' ? 1 : 0
-    // const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
-    // const nextActive = this.view.querySelector(`[plugin="${name}"]`)
-    // if (nextActive) {
-    //   const image = nextActive.querySelector('.image')
-    //   nextActive.classList.add('active')
-    //   image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
-    // }
+    if (name === 'home') return
+    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
+    const invert = themeType === 'dark' ? 1 : 0
+    const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
+    const nextActive = this.view.querySelector(`[plugin="${name}"]`)
+    if (nextActive) {
+      const image = nextActive.querySelector('.image')
+      nextActive.classList.add('active')
+      image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
+    }
   }
 
   /**
@@ -179,7 +174,7 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   select (name) {
-    // this.updateActivations(name)
+    this.updateActivations(name)
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('showContent', name)
     this.events.emit('showContent', name)
@@ -190,53 +185,53 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   toggle (name) {
-    // this.updateActivations(name)
+    this.updateActivations(name)
     // // TODO: Only keep `this.emit` (issue#2210)
-    // this.emit('toggleContent', name)
-    // this.events.emit('toggleContent', name)
+    this.emit('toggleContent', name)
+    this.events.emit('toggleContent', name)
   }
 
   updateActivations (name) {
-    // this.removeActive()
-    // this.addActive(name)
+    this.removeActive()
+    this.addActive(name)
   }
 
   onThemeChanged (themeType) {
-    // const invert = themeType === 'dark' ? 1 : 0
-    // const active = this.view.querySelector('.active')
-    // if (active) {
-    //   const image = active.querySelector('.image')
-    //   image.style.setProperty('filter', `invert(${invert})`)
-    // }
+    const invert = themeType === 'dark' ? 1 : 0
+    const active = this.view.querySelector('.active')
+    if (active) {
+      const image = active.querySelector('.image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
   }
 
   async itemContextMenu (e, name, documentation) {
-    // const actions = {}
-    // if (await this.appManager.canDeactivatePlugin(profile, { name })) {
-    //   actions.Deactivate = () => {
-    //     // this.call('manager', 'deactivatePlugin', name)
-    //     this.appManager.deactivatePlugin(name)
-    //     if (e.target.parentElement.classList.contains('active')) {
-    //       this.select('filePanel')
-    //     }
-    //   }
-    // }
-    // const links = {}
-    // if (documentation) {
-    //   links.Documentation = documentation
-    // }
-    // if (Object.keys(actions).length || Object.keys(links).length) {
-    //   VERTICALMENU_HANDLE && VERTICALMENU_HANDLE.hide(null, true)
-    //   VERTICALMENU_HANDLE = contextMenu(e, actions, links)
-    // }
-    // e.preventDefault()
-    // e.stopPropagation()
+    const actions = {}
+    if (await this.appManager.canDeactivatePlugin(profile, { name })) {
+      actions.Deactivate = () => {
+        // this.call('manager', 'deactivatePlugin', name)
+        this.appManager.deactivatePlugin(name)
+        if (e.target.parentElement.classList.contains('active')) {
+          this.select('filePanel')
+        }
+      }
+    }
+    const links = {}
+    if (documentation) {
+      links.Documentation = documentation
+    }
+    if (Object.keys(actions).length || Object.keys(links).length) {
+      VERTICALMENU_HANDLE && VERTICALMENU_HANDLE.hide(null, true)
+      VERTICALMENU_HANDLE = contextMenu(e, actions, links)
+    }
+    e.preventDefault()
+    e.stopPropagation()
   }
 
-  // async activateHome () {
-  //   await this.appManager.activatePlugin('home')
-  //   this.call('tabs', 'focus', 'home')
-  // }
+  async activateHome () {
+    await this.appManager.activatePlugin('home')
+    this.call('tabs', 'focus', 'home')
+  }
 
   render () {
     const home = yo`

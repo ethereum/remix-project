@@ -1,17 +1,27 @@
 import { Plugin } from '@remixproject/engine/lib/abstract'
 
-type Kind = 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
+type Kind = {
+  fileexplorer: 'fileexplorer',
+  complier: 'compiler',
+  udapp: 'udapp',
+  testing: 'testing',
+  analysis: 'analysis',
+  debugging: 'debugging',
+  settings: 'settings',
+  none: 'none'
+}
+type IconKindType = {
+  kind: Kind
+}
 export class VerticalIcons extends Plugin<any, any> {
   constructor(appManager: any);
     events: EventEmitter;
     appManager: any;
     htmlElement: HTMLDivElement;
-  icons: {
+    icons: {
       name: JSX.Element
     };
-  iconKind: {
-    kind: Kind
-    };
+    iconKind: IconKind
     iconStatus: {};
     renderComponent(): void;
     linkContent(profile: any): void;
