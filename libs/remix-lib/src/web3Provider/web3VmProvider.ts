@@ -144,8 +144,9 @@ export class Web3VmProvider {
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'DESTRUCT'
     }
-    this.vmTraces[this.processingHash].gas = '0x' + data.gasUsed.toString(16)
-
+    const gasUsed = '0x' + data.gasUsed.toString(16)
+    this.vmTraces[this.processingHash].gas = gasUsed
+    this.txsReceipt[this.processingHash].gasUsed = gasUsed
     const logs = []
     for (const l in data.execResult.logs) {
       const log = data.execResult.logs[l]
