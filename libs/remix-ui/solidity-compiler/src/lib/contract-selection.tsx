@@ -115,7 +115,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     let node
     if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = <pre>{ details[propertyName] }</pre>
-    } else if (propertyName === 'abi' || propertyName === 'metadata') {
+    } else if (details[propertyName] && (propertyName === 'abi' || propertyName === 'metadata')) {
       if (details[propertyName] !== '') {
         try {
           node = <div>
