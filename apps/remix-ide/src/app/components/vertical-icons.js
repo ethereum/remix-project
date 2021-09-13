@@ -62,8 +62,9 @@ export class VerticalIcons extends Plugin {
   linkContent (profile) {
     if (!profile.icon) return
     // this.addIcon(profile)
-    newProfiles.push(profile)
+    this.targetProfileForChange.push(profile)
     this.listenOnStatus(profile)
+    this.renderComponent()
   }
 
   unlinkContent (profile) {

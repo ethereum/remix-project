@@ -29,13 +29,6 @@ interface AddIconProps {
 
 export function RemixUiVerticalIcons ({ verticalIconsPlugin, targetProfilesToShow }: RemixUiVerticalIconsProps) {
   const [classes, dispatchResolveClasses] = useReducer(resolveClassesReducer, '')
-  // const [defaultProfiles, dispatchLinkContent] = useState<PassedProfile[]>(() => {
-  //   // let payload = []
-  //   setTimeout(() => {
-  //     if (verticalIconsPlugin.targetProfileForChange.length > 0) console.log(verticalIconsPlugin.targetProfileForChange)
-  //   }, 5000)
-  //   return payload
-  // })
   const [icon, setIcon] = useState({})
   const [iconKind, setIconKind] = useState({})
   const [iconStatus, setIconStatus] = useState({})
@@ -54,15 +47,9 @@ export function RemixUiVerticalIcons ({ verticalIconsPlugin, targetProfilesToSho
     )
   }
   useEffect(() => {
-    // setTimeout(() => {
-    //   console.log('defaultProfiles length to show', defaultProfiles)
-    // }, 5000)
-    setTimeout(() => {
-      if (verticalIconsPlugin.targetProfileForChange.length > 0) console.log(verticalIconsPlugin.targetProfileForChange)
-    }, 100)
     console.log('length of array', verticalIconsPlugin.targetProfileForChange)
   // @ts-ignore
-  }, [verticalIconsPlugin.targetProfileForChange])
+  }, [verticalIconsPlugin.targetProfileForChange.length])
 
   return (
     <div className="h-100">
@@ -71,11 +58,10 @@ export function RemixUiVerticalIcons ({ verticalIconsPlugin, targetProfilesToSho
           verticalIconPlugin={verticalIconsPlugin}
         />
         <Fragment>
-          {/* {verticalIconsPlugin.targetProfileForChange && verticalIconsPlugin.targetProfileForChange.length
+          {verticalIconsPlugin.targetProfileForChange && verticalIconsPlugin.targetProfileForChange.length
             ? verticalIconsPlugin.targetProfileForChange.map(p => (
-              // <IconKind profile={p} children={<AddIcon pProfile={p} verticalIcons={verticalIconsPlugin} /> }/>
-              <b>{ console.log(verticalIconsPlugin.targetProfileForChange.length) }</b>
-            )) : null} */}
+              <IconKind key={p.displayName} profile={p} children={<AddIcon pProfile={p} verticalIcons={verticalIconsPlugin} /> }/>
+            )) : null}
         </Fragment>
       </div>
     </div>

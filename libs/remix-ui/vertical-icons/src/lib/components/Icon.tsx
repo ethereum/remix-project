@@ -30,15 +30,15 @@ function Icon ({ kind, name, icon, displayName, tooltip, documentation, vertical
         data-id={`verticalIconsKind${name}`}
         id={`verticalIconsKind${name}`}
       >
-        <b color="white">{ name }</b>
+        <img className="remixui_image" src={icon} alt={name} />
       </div>
-      {
-        kind && kind === verticalIconPlugin.iconKind.kind ? verticalIconPlugin.iconKind[kind]
-          // eslint-disable-next-line dot-notation
-          : verticalIconPlugin.iconKind['none'].appendChild(verticalIconPlugin.icons[name])
-      }
     </Fragment>
   )
 }
+// {
+//   kind && kind === verticalIconPlugin.iconKind.kind ? verticalIconPlugin.iconKind[kind]
+//     // eslint-disable-next-line dot-notation
+//     : verticalIconPlugin.iconKind['none'].appendChild(verticalIconPlugin.icons[name])
+// }
 
 export default Icon
