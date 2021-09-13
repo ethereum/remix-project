@@ -6,6 +6,7 @@ import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 import { FormStateProps, PluginManagerComponent } from '../../types'
+import { isArray } from 'util'
 
 interface LocalPluginFormProps {
   closeModal: () => void
@@ -49,10 +50,10 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
     setName(storagePlugin.name)
     setUrl(storagePlugin.url)
     setLocation(storagePlugin.location as 'sidePanel' | 'mainPanel' | 'none')
-    setMethods(storagePlugin.methods)
+    setMethods(isArray(storagePlugin.methods) ? storagePlugin.methods.join(',') : storagePlugin.methods)
     setType(storagePlugin.type)
     setDisplayName(storagePlugin.displayName)
-    setCanactivate(storagePlugin.canActivate)
+    setCanactivate(isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate)
   }, [])
 
   const handleModalOkClick = async () => {
