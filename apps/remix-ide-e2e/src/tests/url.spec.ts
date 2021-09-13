@@ -19,7 +19,6 @@ module.exports = {
 
   'Should load the code from URL params (code param)': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]') // we set it too false in the local storage
       .pause(5000)
