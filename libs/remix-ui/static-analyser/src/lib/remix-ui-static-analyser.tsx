@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useReducer } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
-import remixLib from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
@@ -9,7 +9,6 @@ import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
-const utils = remixLib.util
 
 declare global {
   interface Window {
@@ -38,7 +37,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     })
   }
 
-  const groupedModules = utils.groupBy(
+  const groupedModules = util.groupBy(
     preProcessModules(runner.modules()),
     'categoryId'
   )
@@ -217,7 +216,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           })
           // Slither Analysis
           if (slitherEnabled) {
-            props.analysisModule.call('solidity-logic', 'getCompilerState').then(async (compilerState) => {
+            props.analysisModule.call('solidity', 'getCompilerState').then((compilerState) => {
               const { currentVersion, optimize, evmVersion } = compilerState
               props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
               _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
