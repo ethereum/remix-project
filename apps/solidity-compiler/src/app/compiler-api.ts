@@ -115,11 +115,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {string} fileName to compile
    */
   compile (fileName) {
+    this.currentFile = fileName
     return this.compileTabLogic.compileFile(fileName)
   }
 
   compileFile (event) {
     if (event.path.length > 0) {
+      this.currentFile = event.path[0]
       this.compileTabLogic.compileFile(event.path[0])
     }
   }
