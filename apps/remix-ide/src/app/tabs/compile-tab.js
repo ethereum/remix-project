@@ -113,8 +113,9 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     return super.compileFile(event)
   }
 
-  onActivation () {
-    super.onActivation()
+  async onActivation () {
+    this.currentFile = await this.call('fileManager', 'file')
+    super.onActivation()    
     this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidity',
       name: 'compileFile',
