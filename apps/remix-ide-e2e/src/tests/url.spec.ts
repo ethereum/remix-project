@@ -28,7 +28,7 @@ module.exports = {
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
       .click('[for="autoCompile"]') // we set it too false again
       .click('[for="autoCompile"]') // back to True in the local storage
-      .assert.containsText('h6[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
+      .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(
