@@ -22,11 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-<<<<<<< HEAD
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath'],
-=======
   methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile'],
->>>>>>> 8e73be411 (readd saveCurrentFile)
   kind: 'file-system'
 }
 const errorMsg = {
@@ -63,10 +59,6 @@ class FileManager extends Plugin {
 
   limitPluginScope (path) {
     return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
-  }
-
-  normalize (path) {
-    return path.replace(/^\/+/, '')
   }
 
   /**
@@ -127,7 +119,6 @@ class FileManager extends Plugin {
    */
   exists (path) {
     try {
-      path = this.normalize(path)
       path = this.limitPluginScope(path)
       const provider = this.fileProviderOf(path)
       const result = provider.exists(path)
@@ -177,7 +168,6 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
-    path = this.normalize(path)
     path = this.limitPluginScope(path)
     path = this.getPathFromUrl(path).file
     await this._handleExists(path, `Cannot open file ${path}`)
@@ -193,7 +183,6 @@ class FileManager extends Plugin {
    */
   async writeFile (path, data) {
     try {
-      path = this.normalize(path)
       path = this.limitPluginScope(path)
       if (await this.exists(path)) {
         await this._handleIsFile(path, `Cannot write file ${path}`)
@@ -215,7 +204,6 @@ class FileManager extends Plugin {
    */
   async readFile (path) {
     try {
-      path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot read file ${path}`)
       await this._handleIsFile(path, `Cannot read file ${path}`)
@@ -233,8 +221,6 @@ class FileManager extends Plugin {
    */
   async copyFile (src, dest, customName) {
     try {
-      src = this.normalize(src)
-      dest = this.normalize(dest)
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
       await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
@@ -259,8 +245,6 @@ class FileManager extends Plugin {
    */
   async copyDir (src, dest) {
     try {
-      src = this.normalize(src)
-      dest = this.normalize(dest)
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
       await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
@@ -297,8 +281,6 @@ class FileManager extends Plugin {
    */
   async rename (oldPath, newPath) {
     try {
-      oldPath = this.normalize(oldPath)
-      newPath = this.normalize(newPath)
       oldPath = this.limitPluginScope(oldPath)
       newPath = this.limitPluginScope(newPath)
       await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
@@ -331,7 +313,6 @@ class FileManager extends Plugin {
    */
   async mkdir (path) {
     try {
-      path = this.normalize(path)
       path = this.limitPluginScope(path)
       if (await this.exists(path)) {
         throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
@@ -351,7 +332,6 @@ class FileManager extends Plugin {
    */
   async readdir (path) {
     try {
-      path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path)
       await this._handleIsDir(path)
@@ -376,7 +356,6 @@ class FileManager extends Plugin {
    */
   async remove (path) {
     try {
-      path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
@@ -529,6 +508,7 @@ class FileManager extends Plugin {
   }
 
   _setFileInternal (path, content) {
+    console.log(path, content)
     const provider = this.fileProviderOf(path)
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO : Add permission
@@ -729,8 +709,11 @@ class FileManager extends Plugin {
   }
 
   syncEditor (path) {
+    console.log(path)
     var currentFile = this._deps.config.get('currentFile')
+    console.log(currentFile, path)
     if (path !== currentFile) return
+
     var provider = this.fileProviderOf(currentFile)
     if (provider) {
       provider.get(currentFile, (error, content) => {
