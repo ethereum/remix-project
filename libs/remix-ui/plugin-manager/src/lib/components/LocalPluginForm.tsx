@@ -6,6 +6,7 @@ import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 import { FormStateProps, PluginManagerComponent } from '../../types'
+import { isArray } from 'util'
 
 interface LocalPluginFormProps {
   closeModal: () => void
