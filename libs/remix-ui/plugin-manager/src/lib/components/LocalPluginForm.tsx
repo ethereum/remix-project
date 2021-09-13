@@ -20,7 +20,8 @@ const initialState: FormStateProps = {
   type: 'iframe',
   hash: '',
   methods: [],
-  location: 'sidePanel'
+  location: 'sidePanel',
+  canActivate: []
 }
 
 const defaultProfile = {
@@ -48,10 +49,10 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
     setName(storagePlugin.name)
     setUrl(storagePlugin.url)
     setLocation(storagePlugin.location as 'sidePanel' | 'mainPanel' | 'none')
-    setMethods(storagePlugin.methods)
+    setMethods(Array.isArray(storagePlugin.methods) ? storagePlugin.methods.join(',') : storagePlugin.methods)
     setType(storagePlugin.type)
     setDisplayName(storagePlugin.displayName)
-    setCanactivate(storagePlugin.canActivate)
+    setCanactivate(Array.isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate)
   }, [])
 
   const handleModalOkClick = async () => {
