@@ -290,7 +290,6 @@ const deleteWorkspaceFromProvider = async (workspaceName: string) => {
 
   await plugin.fileManager.closeAllFiles()
   plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
-  // switchToWorkspace(NO_WORKSPACE)
   plugin.emit('deleteWorkspace', { name: workspaceName })
 }
 
@@ -523,6 +522,7 @@ export const switchToWorkspace = (name: string) => async (dispatch: React.Dispat
     plugin.emit('setWorkspace', { name: LOCALHOST, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
     plugin.fileProviders.workspace.clearWorkspace()
+    dispatch(setCurrentWorkspace(null))
   } else {
     plugin.fileManager.setMode('browser')
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
