@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -508,6 +508,7 @@ class FileManager extends Plugin {
   }
 
   _setFileInternal (path, content) {
+    console.log(path, content)
     const provider = this.fileProviderOf(path)
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO : Add permission
@@ -708,7 +709,9 @@ class FileManager extends Plugin {
   }
 
   syncEditor (path) {
+    console.log(path)
     var currentFile = this._deps.config.get('currentFile')
+    console.log(currentFile, path)
     if (path !== currentFile) return
 
     var provider = this.fileProviderOf(currentFile)
