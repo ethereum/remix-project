@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -52,6 +52,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchSwitchToWorkspace = async (name: string) => {
     await switchToWorkspace(name)(fsDispatch)
+  }
+
+  const dispatchRenameWorkspace = async (oldName: string, workspaceName: string) => {
+    await renameWorkspace(oldName, workspaceName)(fsDispatch)
+  }
+
+  const dispatchDeleteWorkspace = async (workspaceName: string) => {
+    await deleteWorkspace(workspaceName)(fsDispatch)
   }
 
   useEffect(() => {
@@ -127,7 +135,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchRemoveInputField,
     dispatchCreateWorkspace,
     dispatchFetchWorkspaceDirectory,
-    dispatchSwitchToWorkspace
+    dispatchSwitchToWorkspace,
+    dispatchRenameWorkspace,
+    dispatchDeleteWorkspace
   }
   return (
     <FileSystemContext.Provider value={value}>
