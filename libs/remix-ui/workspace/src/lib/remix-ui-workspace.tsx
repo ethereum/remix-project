@@ -97,9 +97,7 @@ export function Workspace (props: WorkspaceProps) {
     const workspaceName = workspaceRenameInput.current.value
 
     try {
-      await props.plugin.renameWorkspace(currentWorkspace, workspaceName)
-      setWorkspace(workspaceName)
-      props.plugin.workspaceRenamed({ name: workspaceName })
+      await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
       global.modal('Rename Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -120,12 +118,12 @@ export function Workspace (props: WorkspaceProps) {
   }
 
   const onFinishDeleteWorkspace = async () => {
-    await props.plugin.fileManager.closeAllFiles()
-    const workspacesPath = props.plugin.workspace.workspacesPath
-    props.plugin.browser.remove(workspacesPath + '/' + currentWorkspace)
-    const name = currentWorkspace
-    setWorkspace(NO_WORKSPACE)
-    props.plugin.workspaceDeleted({ name })
+    try {
+      await global.dispatchDeleteWorkspace(global.fs.browser.currentWorkspace)
+    } catch (e) {
+      global.modal('Delete Workspace', e.message, 'OK', () => {}, '')
+      console.error(e)
+    }
   }
   /** ** ****/
 
