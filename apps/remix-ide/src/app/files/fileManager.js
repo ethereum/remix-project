@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -398,7 +398,7 @@ class FileManager extends Plugin {
   }
 
   fileChangedEvent (path) {
-    this.emit('currentFileChanged', path)
+    this.emit('fileChanged', path)
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
