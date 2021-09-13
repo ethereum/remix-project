@@ -201,10 +201,6 @@ module.exports = class Filepanel extends ViewPlugin {
     }
   }
 
-  workspaceRenamed (workspace) {
-    this.emit('renameWorkspace', workspace)
-  }
-
   workspaceDeleted (workspace) {
     this.emit('deleteWorkspace', workspace)
   }

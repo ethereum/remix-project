@@ -165,6 +165,20 @@ const fetchWorkspaceDirectorySuccess = (path: string, fileTree) => {
   }
 }
 
+const setRenameWorkspace = (oldName: string, workspaceName: string) => {
+  return {
+    type: 'RENAME_WORKSPACE',
+    payload: { oldName, workspaceName }
+  }
+}
+
+const setDeleteWorkspace = (workspaceName: string) => {
+  return {
+    type: 'DELETE_WORKSPACE',
+    payload: workspaceName
+  }
+}
+
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
@@ -259,6 +273,27 @@ const workspaceExists = async (name: string) => {
   return browserProvider.exists(workspacePath)
 }
 
+const renameWorkspaceFromProvider = async (oldName: string, workspaceName: string) => {
+  if (!workspaceName) throw new Error('name cannot be empty')
+  if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
+  if (await workspaceExists(workspaceName)) throw new Error('workspace already exists')
+  const browserProvider = plugin.fileProviders.browser
+  const workspaceProvider = plugin.fileProviders.workspace
+  const workspacesPath = workspaceProvider.workspacesPath
+  browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
+  workspaceProvider.setWorkspace(workspaceName)
+  plugin.emit('renameWorkspace', { name: workspaceName })
+}
+
+const deleteWorkspaceFromProvider = async (workspaceName: string) => {
+  const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+
+  await plugin.fileManager.closeAllFiles()
+  plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
+  // switchToWorkspace(NO_WORKSPACE)
+  plugin.emit('deleteWorkspace', { name: workspaceName })
+}
+
 const getWorkspaces = async (): Promise<string[]> | undefined => {
   try {
     const workspaces: string[] = await new Promise((resolve, reject) => {
@@ -297,6 +332,7 @@ const listenOnEvents = (provider) => {
   })
 
   provider.event.on('fileRenamed', async (oldPath: string, newPath: string) => {
+    console.log('oldPath: ', oldPath, 'newPath: ', newPath)
     await executeEvent('fileRenamed', oldPath, newPath)
   })
 
@@ -498,6 +534,16 @@ export const switchToWorkspace = (name: string) => async (dispatch: React.Dispat
     dispatch(setCurrentWorkspace(name))
     plugin.emit('setWorkspace', { name, isLocalhost: false })
   }
+}
+
+export const renameWorkspace = (oldName: string, workspaceName: string) => async (dispatch: React.Dispatch<any>) => {
+  await renameWorkspaceFromProvider(oldName, workspaceName)
+  await dispatch(setRenameWorkspace(oldName, workspaceName))
+}
+
+export const deleteWorkspace = (workspaceName: string) => async (dispatch: React.Dispatch<any>) => {
+  await deleteWorkspaceFromProvider(workspaceName)
+  await dispatch(setDeleteWorkspace(workspaceName))
 }
 
 const fileAdded = async (filePath: string) => {
