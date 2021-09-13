@@ -10,8 +10,8 @@ export const FileSystemContext = createContext<{
   dispatchRemoveInputField:(path: string) => Promise<void>,
   dispatchCreateWorkspace: (workspaceName: string) => Promise<void>,
   toast: (toasterMsg: string) => void,
-  dispatchFetchWorkspaceDirectory: (path: string) => void,
-  dispatchSwitchToWorkspace: (name: string) => void,
-  dispatchRenameWorkspace: (oldName: string, workspaceName: string) => void,
-  dispatchDeleteWorkspace: (workspaceName: string) => void
+  dispatchFetchWorkspaceDirectory: (path: string) => Promise<void>,
+  dispatchSwitchToWorkspace: (name: string) => Promise<void>,
+  dispatchRenameWorkspace: (oldName: string, workspaceName: string) => Promise<void>,
+  dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>
     }>(null)

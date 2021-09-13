@@ -68,13 +68,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   switch (action.type) {
     case 'SET_CURRENT_WORKSPACE': {
       const payload = action.payload as string
+      const workspaces = state.browser.workspaces.includes(payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
       return {
         ...state,
         browser: {
           ...state.browser,
           currentWorkspace: payload,
-          workspaces: state.browser.workspaces.includes(payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+          workspaces: workspaces.filter(workspace => workspace)
         }
       }
     }
@@ -86,7 +87,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          workspaces: payload
+          workspaces: payload.filter(workspace => workspace)
         }
       }
     }
@@ -376,13 +377,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'CREATE_WORKSPACE_SUCCESS': {
       const payload = action.payload as string
+      const workspaces = state.browser.workspaces.includes(payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
       return {
         ...state,
         browser: {
           ...state.browser,
           currentWorkspace: payload,
-          workspaces: state.browser.workspaces.includes(payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload],
+          workspaces: workspaces.filter(workspace => workspace),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -404,7 +406,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'RENAME_WORKSPACE': {
       const payload = action.payload as { oldName: string, workspaceName: string }
-      const workspaces = state.browser.workspaces.filter(name => name !== payload.oldName)
+      const workspaces = state.browser.workspaces.filter(name => name && (name !== payload.oldName))
 
       return {
         ...state,
@@ -418,14 +420,12 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'DELETE_WORKSPACE': {
       const payload = action.payload as string
-      const workspaces = state.browser.workspaces.filter(name => name !== payload)
-      const currentWorkspace = state.browser.currentWorkspace === payload ? workspaces.length > 0 ? workspaces[0] : '' : state.browser.currentWorkspace
+      const workspaces = state.browser.workspaces.filter(name => name && (name !== payload))
 
       return {
         ...state,
         browser: {
           ...state.browser,
-          currentWorkspace: currentWorkspace,
           workspaces: workspaces
         }
       }

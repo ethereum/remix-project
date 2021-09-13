@@ -26,13 +26,24 @@ export function Workspace (props: WorkspaceProps) {
 
   useEffect(() => {
     if (global.fs.mode === 'browser') {
-      setCurrentWorkspace(global.fs.browser.currentWorkspace)
+      if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
+      else setCurrentWorkspace(NO_WORKSPACE)
       global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
     } else if (global.fs.mode === 'localhost') {
       // global.dispatchFetchWorkspaceDirectory('/')
       setCurrentWorkspace(LOCALHOST)
     }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
+
+  useEffect(() => {
+    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.includes(global.fs.browser.currentWorkspace)) {
+      if (global.fs.browser.workspaces.length > 0) {
+        switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1])
+      } else {
+        switchWorkspace(NO_WORKSPACE)
+      }
+    }
+  }, [global.fs.browser.workspaces])
 
   props.plugin.resetNewFile = () => {
     setState(prevState => {
@@ -134,7 +145,12 @@ export function Workspace (props: WorkspaceProps) {
   }
 
   const switchWorkspace = async (name: string) => {
-    global.dispatchSwitchToWorkspace(name)
+    try {
+      await global.dispatchSwitchToWorkspace(name)
+    } catch (e) {
+      global.modal('Switch To Workspace', e.message, 'OK', () => {}, '')
+      console.error(e)
+    }
   }
 
   const createModalMessage = () => {
@@ -212,7 +228,7 @@ export function Workspace (props: WorkspaceProps) {
         <div className='remixui_fileExplorerTree'>
           <div>
             <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-              { global.fs.mode === 'browser' &&
+              { (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
                   <FileExplorer
                     name={currentWorkspace}
                     registry={props.plugin.registry}

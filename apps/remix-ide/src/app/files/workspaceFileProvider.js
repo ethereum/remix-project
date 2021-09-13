@@ -13,6 +13,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   setWorkspace (workspace) {
+    if (!workspace) return
     workspace = workspace.replace(/^\/|\/$/g, '') // remove first and last slash
     this.workspace = workspace
   }
@@ -30,7 +31,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   removePrefix (path) {
-    if (!this.workspace) this.createWorkspace()
+    // if (!this.workspace) this.createWorkspace()
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     if (path.startsWith(this.workspace)) return path.replace(this.workspace, this.workspacesPath + '/' + this.workspace)
@@ -76,7 +77,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   _normalizePath (path) {
-    if (!this.workspace) this.createWorkspace()
+    // if (!this.workspace) this.createWorkspace()
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
   }
 
