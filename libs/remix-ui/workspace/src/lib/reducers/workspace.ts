@@ -402,6 +402,35 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'RENAME_WORKSPACE': {
+      const payload = action.payload as { oldName: string, workspaceName: string }
+      const workspaces = state.browser.workspaces.filter(name => name !== payload.oldName)
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          currentWorkspace: payload.workspaceName,
+          workspaces: [...workspaces, payload.workspaceName]
+        }
+      }
+    }
+
+    case 'DELETE_WORKSPACE': {
+      const payload = action.payload as string
+      const workspaces = state.browser.workspaces.filter(name => name !== payload)
+      const currentWorkspace = state.browser.currentWorkspace === payload ? workspaces.length > 0 ? workspaces[0] : '' : state.browser.currentWorkspace
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          currentWorkspace: currentWorkspace,
+          workspaces: workspaces
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
