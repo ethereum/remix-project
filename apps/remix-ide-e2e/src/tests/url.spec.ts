@@ -19,6 +19,7 @@ module.exports = {
 
   'Should load the code from URL params (code param)': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]') // we set it too false in the local storage
       .pause(5000)
@@ -28,7 +29,7 @@ module.exports = {
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
       .click('[for="autoCompile"]') // we set it too false again
       .click('[for="autoCompile"]') // back to True in the local storage
-      .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
+      .assert.containsText('h6[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(
