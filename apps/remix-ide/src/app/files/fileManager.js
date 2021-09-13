@@ -525,7 +525,6 @@ class FileManager extends Plugin {
   }
 
   _setFileInternal (path, content) {
-    console.log(path, content)
     const provider = this.fileProviderOf(path)
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO : Add permission
@@ -726,7 +725,6 @@ class FileManager extends Plugin {
   }
 
   syncEditor (path) {
-    console.log(path)
     var currentFile = this._deps.config.get('currentFile')
     console.log(currentFile, path)
     if (path !== currentFile) return
