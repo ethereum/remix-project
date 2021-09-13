@@ -1,4 +1,6 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { profile } from '@remix-ui/vertical-icons'
+import { defaultModuleProfile, PassedProfile } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
 // const types = []
 export type ResolveClassesActionKey = {
     key: 'edited' | 'succeed' | 'none' | 'loading' | 'failed'
@@ -25,4 +27,18 @@ export function resolveClassesReducer (currentState: string, resolveActionKind: 
     }
   }
   return newState
+}
+
+export type LinkContentActions = {
+  type: ''
+  payload?: any
+}
+
+export function linkContentReducer (currentProfile: PassedProfile[], linkContentActions: LinkContentActions) {
+  const mutableProfile = currentProfile
+  if (mutableProfile && mutableProfile.length > 0) {
+    console.log('there was a change in length!')
+    return mutableProfile
+  }
+  return currentProfile
 }

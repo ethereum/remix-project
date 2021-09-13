@@ -1,36 +1,39 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment } from 'react'
+import { PassedProfile } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
+import React, { Fragment, ReactNode } from 'react'
 
+// idName: 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
 interface IconKindProps {
-  idName: 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
+  children: ReactNode
+  profile: PassedProfile
 }
 
-function IconKind ({ idName }: IconKindProps) {
+function IconKind ({ profile, children }: IconKindProps) {
   return (
     <Fragment>
       {
-        idName === 'fileexplorer' ? <div id="fileExplorerIcons" data-id="verticalIconsFileExplorerIcons" /> : null
+        profile.kind === 'fileexplorer' ? <div id="fileExplorerIcons" data-id="verticalIconsFileExplorerIcons">{ children }</div> : null
       }
       {
-        idName === 'compiler' ? <div id="compileIcons" /> : null
+        profile.kind === 'compiler' ? <div id="compileIcons">{ children }</div> : null
       }
       {
-        idName === 'udapp' ? <div id="runIcons" /> : null
+        profile.kind === 'udapp' ? <div id="runIcons">{ children }</div> : null
       }
       {
-        idName === 'testing' ? <div id="testingIcons" /> : null
+        profile.kind === 'testing' ? <div id="testingIcons">{ children }</div> : null
       }
       {
-        idName === 'analysis' ? <div id="analysisIcons" /> : null
+        profile.kind === 'analysis' ? <div id="analysisIcons">{ children }</div> : null
       }
       {
-        idName === 'debugging' ? <div id="debuggingIcons" data-id="verticalIconsDebuggingIcons" /> : null
+        profile.kind === 'debugging' ? <div id="debuggingIcons" data-id="verticalIconsDebuggingIcons">{ children }</div> : null
       }
       {
-        idName === 'none' ? <div id="otherIcons" /> : null
+        profile.kind === 'undefined' || profile.kind === 'none' ? <div id="otherIcons">{ children }</div> : null
       }
       {
-        idName === 'settings' ? <div id="settingsIcons" data-id="vertialIconsSettingsIcons" /> : null
+        profile.kind === 'settings' ? <div id="settingsIcons" data-id="vertialIconsSettingsIcons">{ children }</div> : null
       }
     </Fragment>
   )

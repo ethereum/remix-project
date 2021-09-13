@@ -1,4 +1,4 @@
-import { Kind, VerticalIcons } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
+import { VerticalIcons } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, SyntheticEvent, useState } from 'react'
 
@@ -12,6 +12,7 @@ interface IconProps {
     documentation: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Icon ({ kind, name, icon, displayName, tooltip, documentation, verticalIconPlugin }: IconProps) {
   const [title] = useState(() => {
     const temp = tooltip || displayName || name
@@ -25,14 +26,14 @@ function Icon ({ kind, name, icon, displayName, tooltip, documentation, vertical
         // @ts-ignore
         plugin={name}
         title={title}
-        onContextMenu={(e: SyntheticEvent) => verticalIconPlugin.itemContextMenu(e, name, documentation)}
+        onContextMenu={(e: any) => verticalIconPlugin.itemContextMenu(e, name, documentation)}
         data-id={`verticalIconsKind${name}`}
         id={`verticalIconsKind${name}`}
       >
-        <img className="remixui_image" src={icon} alt={name} />
+        <b color="white">{ name }</b>
       </div>
       {
-        kind && kind === verticalIconPlugin.iconKind.kind ? verticalIconPlugin.iconKind[kind as Kind]
+        kind && kind === verticalIconPlugin.iconKind.kind ? verticalIconPlugin.iconKind[kind]
           // eslint-disable-next-line dot-notation
           : verticalIconPlugin.iconKind['none'].appendChild(verticalIconPlugin.icons[name])
       }

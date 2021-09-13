@@ -22,17 +22,31 @@ interface defaultModuleProfile {
   version: packageJson.version
   methods: string[]
 }
+
+interface PassedProfile {
+  name: string
+  displayName: string
+  description: string
+  version: packageJson.version
+  methods: string[]
+  icon?: string
+  tooltip?: string
+  kind?: string
+  documentation?: string
+}
 export class VerticalIcons extends Plugin<any, any> {
   constructor(appManager: any);
     events: EventEmitter;
     appManager: any;
     htmlElement: HTMLDivElement;
     icons: {
-      name: JSX.Element
+      name: any
     };
     iconKind: IconKind
     iconStatus: {};
     defaultProfile: defaultModuleProfile
+    targetProfileForChange: PassedProfile[]
+    targetProfileForRemoval: {}
     renderComponent(): void;
     linkContent(profile: any): void;
     unlinkContent(profile: any): void;

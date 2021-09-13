@@ -22,6 +22,8 @@ const profile = {
   methods: ['select']
 }
 
+export const newProfiles = []
+
 // TODO merge with side-panel.js. VerticalIcons should not be a plugin
 export class VerticalIcons extends Plugin {
   constructor (appManager) {
@@ -34,20 +36,38 @@ export class VerticalIcons extends Plugin {
     this.iconKind = {}
     this.iconStatus = {}
     this.defaultProfile = profile
+    this.targetProfileForChange = []
+    this.targetProfileForRemoval = {}
 
     const themeModule = globalRegistry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {
       this.onThemeChanged(theme.quality)
     })
+    console.log('in verticalIcons constructor!')
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiVerticalIcons
+        verticalIconsPlugin={this}
+        targetProfilesToShow={this.targetProfileForChange}
+      />,
+      this.htmlElement)
+  }
+
+  onActivation () {
+    this.renderComponent()
   }
 
   linkContent (profile) {
     if (!profile.icon) return
-    this.addIcon(profile)
+    // this.addIcon(profile)
+    newProfiles.push(profile)
     this.listenOnStatus(profile)
   }
 
   unlinkContent (profile) {
+    this.targetProfileForRemoval = profile
     this.removeIcon(profile)
   }
 
@@ -73,21 +93,24 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({ kind, name, icon, displayName, tooltip, documentation }) {
-    let title = (tooltip || displayName || name)
-    title = title.replace(/^\w/, c => c.toUpperCase())
-    this.icons[name] = yo`
-      <div
-        class="${css.icon} m-2"
-        onclick="${() => { this.toggle(name) }}"
-        plugin="${name}"
-        title="${title}"
-        oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
-        data-id="verticalIconsKind${name}"
-        id="verticalIconsKind${name}"
-      >
-        <img class="image" src="${icon}" alt="${name}" />
-        </div>`
-    this.iconKind[kind || 'none'].appendChild(this.icons[name])
+    if (newProfiles.length > 0) {
+      this.targetProfileForChange = newProfiles
+    }
+    // let title = (tooltip || displayName || name)
+    // title = title.replace(/^\w/, c => c.toUpperCase())
+    // this.icons[name] = yo`
+    //   <div
+    //     class="${css.icon} m-2"
+    //     onclick="${() => { this.toggle(name) }}"
+    //     plugin="${name}"
+    //     title="${title}"
+    //     oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
+    //     data-id="verticalIconsKind${name}"
+    //     id="verticalIconsKind${name}"
+    //   >
+    //     <img class="image" src="${icon}" alt="${name}" />
+    //     </div>`
+    // this.iconKind[kind || 'none'].appendChild(this.icons[name])
   }
 
   /**
@@ -275,23 +298,6 @@ export class VerticalIcons extends Plugin {
     `
     // return this.view
     return this.htmlElement
-    // return yo`<h4>Test</h4>`
-  }
-
-  renderComponent () {
-    ReactDOM.render(
-      <RemixUiVerticalIcons
-        vertialIconsPlugin={this}
-      />,
-      this.htmlElement)
-  }
-
-  onActivation () {
-    this.renderComponent()
-  }
-
-  onDeactivation () {
-    console.log('Deactivating in Vertical Plugin')
   }
 }
 
