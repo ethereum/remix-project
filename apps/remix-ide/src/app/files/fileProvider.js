@@ -276,7 +276,6 @@ class FileProvider {
   }
 
   resolveDirectory (path, callback) {
-    if (!path) return callback(null, { [this.type]: {} })
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
 
