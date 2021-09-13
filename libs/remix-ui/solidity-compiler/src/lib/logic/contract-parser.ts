@@ -1,8 +1,8 @@
 'use strict'
 import * as solcTranslate from 'solc/translate'
-import * as remixLib from '@remix-project/remix-lib'
+import { execution } from '@remix-project/remix-lib'
 
-const txHelper = remixLib.execution.txHelper
+const txHelper = execution.txHelper
 
 export function parseContracts (contractName, contract, source) {
   const detail: Record<string, any> = {}
