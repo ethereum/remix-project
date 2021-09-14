@@ -13,5 +13,6 @@ export const FileSystemContext = createContext<{
   dispatchFetchWorkspaceDirectory: (path: string) => Promise<void>,
   dispatchSwitchToWorkspace: (name: string) => Promise<void>,
   dispatchRenameWorkspace: (oldName: string, workspaceName: string) => Promise<void>,
-  dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>
+  dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>,
+  dispatchPublishToGist: (path?: string, type?: string) => Promise<void>
     }>(null)
