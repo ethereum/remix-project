@@ -461,7 +461,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
           {/* ${self._view.pendingTxCount} */}
           <div className="mx-2" title='Pending Transactions'>0</div>
-          <div className="verticalLine"></div>
           <div className="pt-1 h-80 mx-3 align-items-center listenOnNetwork custom-control custom-checkbox">
             <input
               className="custom-control-input"
@@ -498,7 +497,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           handleAutoComplete()
         }
         <div data-id='terminalContainerDisplay' style = {{
-          position: 'absolute',
+          position: 'relative',
           height: '100%',
           width: '100%',
           opacity: '0.1',
