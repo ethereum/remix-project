@@ -31,7 +31,8 @@ export interface BrowserState {
     labelOk: string,
     labelCancel: string
   },
-  readonly: boolean
+  readonly: boolean,
+  popup: string
 }
 
 export const browserInitialState: BrowserState = {
@@ -61,7 +62,8 @@ export const browserInitialState: BrowserState = {
     labelOk: '',
     labelCancel: ''
   },
-  readonly: false
+  readonly: false,
+  popup: ''
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -428,6 +430,22 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           ...state.browser,
           workspaces: workspaces
         }
+      }
+    }
+
+    case 'DISPLAY_POPUP_MESSAGE': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        popup: payload
+      }
+    }
+
+    case 'HIDE_POPUP_MESSAGE': {
+      return {
+        ...state,
+        popup: ''
       }
     }
 
