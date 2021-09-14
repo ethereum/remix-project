@@ -94,24 +94,21 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({ kind, name, icon, displayName, tooltip, documentation }) {
-    if (newProfiles.length > 0) {
-      this.targetProfileForChange = newProfiles
-    }
-    // let title = (tooltip || displayName || name)
-    // title = title.replace(/^\w/, c => c.toUpperCase())
-    // this.icons[name] = yo`
-    //   <div
-    //     class="${css.icon} m-2"
-    //     onclick="${() => { this.toggle(name) }}"
-    //     plugin="${name}"
-    //     title="${title}"
-    //     oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
-    //     data-id="verticalIconsKind${name}"
-    //     id="verticalIconsKind${name}"
-    //   >
-    //     <img class="image" src="${icon}" alt="${name}" />
-    //     </div>`
-    // this.iconKind[kind || 'none'].appendChild(this.icons[name])
+    let title = (tooltip || displayName || name)
+    title = title.replace(/^\w/, c => c.toUpperCase())
+    this.icons[name] = yo`
+      <div
+        class="${css.icon} m-2"
+        onclick="${() => { this.toggle(name) }}"
+        plugin="${name}"
+        title="${title}"
+        oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
+        data-id="verticalIconsKind${name}"
+        id="verticalIconsKind${name}"
+      >
+        <img class="image" src="${icon}" alt="${name}" />
+        </div>`
+    this.iconKind[kind || 'none'].appendChild(this.icons[name])
   }
 
   /**

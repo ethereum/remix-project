@@ -29,9 +29,6 @@ interface AddIconProps {
 
 export function RemixUiVerticalIcons ({ verticalIconsPlugin, targetProfilesToShow }: RemixUiVerticalIconsProps) {
   const [classes, dispatchResolveClasses] = useReducer(resolveClassesReducer, '')
-  const [icon, setIcon] = useState({})
-  const [iconKind, setIconKind] = useState({})
-  const [iconStatus, setIconStatus] = useState({})
   const AddIcon = ({ pProfile, verticalIcons }: AddIconProps) => {
     const { kind, name, icon, displayName, tooltip, documentation } = pProfile
     return (

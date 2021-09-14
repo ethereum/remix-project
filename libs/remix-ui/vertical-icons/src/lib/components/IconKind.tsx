@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PassedProfile } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
-import React, { Fragment, ReactNode } from 'react'
+import React, { Fragment, ReactNode, useState } from 'react'
+import OtherIcons from './OtherIcon'
+import Settings from './Settings'
 
 // idName: 'fileexplorer' | 'compiler' | 'udapp' | 'testing' | 'analysis' | 'debugging' | 'settings' | 'none'
 interface IconKindProps {
@@ -9,6 +11,7 @@ interface IconKindProps {
 }
 
 function IconKind ({ profile, children }: IconKindProps) {
+  const [iconKindNames] = useState<string[]>(['fileexplorer', 'compiler', 'udapp', 'testing', 'analysis', 'debugging', 'settings', 'none'])
   return (
     <Fragment>
       {
@@ -30,10 +33,12 @@ function IconKind ({ profile, children }: IconKindProps) {
         profile.kind === 'debugging' ? <div id="debuggingIcons" data-id="verticalIconsDebuggingIcons">{ children }</div> : null
       }
       {
-        profile.kind === 'undefined' || profile.kind === 'none' ? <div id="otherIcons">{ children }</div> : null
+        (profile.kind === undefined || profile.kind === 'none') || !iconKindNames.includes(profile.kind) ? <OtherIcons>
+          {children}
+        </OtherIcons> : null
       }
       {
-        profile.kind === 'settings' ? <div id="settingsIcons" data-id="vertialIconsSettingsIcons">{ children }</div> : null
+        profile.kind === 'settings' ? <Settings>{children}</Settings> : null
       }
     </Fragment>
   )
