@@ -709,7 +709,6 @@ class FileManager extends Plugin {
 
   syncEditor (path) {
     var currentFile = this._deps.config.get('currentFile')
-    console.log(currentFile, path)
     if (path !== currentFile) return
 
     var provider = this.fileProviderOf(currentFile)
