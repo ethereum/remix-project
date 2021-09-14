@@ -1035,6 +1035,22 @@
           }
         }
       }
+    },
+    "remix-ui-editor": {
+      "root": "libs/remix-ui/editor",
+      "sourceRoot": "libs/remix-ui/editor/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/editor/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor/**/*"]
+          }
+        }
+      }
     }
   },
   "cli": {
