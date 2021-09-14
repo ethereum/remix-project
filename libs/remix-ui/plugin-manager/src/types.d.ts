@@ -178,17 +178,9 @@ export interface FormStateProps {
   url: string
   type: 'iframe' | 'ws'
   hash: string
-  methods: string[]
+  methods: any
   location: string
-<<<<<<< HEAD
-<<<<<<< HEAD
-  canActivate?: any
-=======
   canActivate: any
->>>>>>> ceb5496f4 (fix whitespaces and canactivate)
-=======
-  canActivate: string[]
->>>>>>> cb86d9b5a (Update types.d.ts)
 }
 
 export type PluginManagerProfile = Profile & {
