@@ -27,6 +27,7 @@
 .remixui_sol.success .close,
 .remixui_sol.error .close,
 .remixui_sol.warning .close {
+    visibility: hidden;
     white-space: pre-line;
     font-weight: bold;
     position: absolute;

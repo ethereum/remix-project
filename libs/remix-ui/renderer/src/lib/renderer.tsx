@@ -102,7 +102,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     <>
       {
         messageText && !close && (
-          <div className={`sol ${editorOptions.type} ${classList}`} data-id={editorOptions.errFile} onClick={() => handleErrorClick(editorOptions)}>
+          <div className={`remixui_sol ${editorOptions.type} ${classList}`} data-id={editorOptions.errFile} onClick={() => handleErrorClick(editorOptions)}>
             { editorOptions.useSpan ? <span> { messageText } </span> : <pre><span>{ messageText }</span></pre> }
             <div className="close" data-id="renderer" onClick={handleClose}>
               <i className="fas fa-times"></i>
