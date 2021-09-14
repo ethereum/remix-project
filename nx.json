@@ -129,6 +129,9 @@
     },
     "remix-ide-e2e-src-local-plugin": {
       "tags": []
+    },
+    "remix-ui-editor": {
+      "tags": []
     }
   },
   "targetDependencies": {
