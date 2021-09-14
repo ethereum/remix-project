@@ -20,9 +20,6 @@ element.style {
 .border-primary {
   border-color: #007aa6!important;
 }
-.border {
-  border: 1px solid #3f4455!important;
-}
 
 /* seleted option should reflect the theme color */
 .selectedOptions {
