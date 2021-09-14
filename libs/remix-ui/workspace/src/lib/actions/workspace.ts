@@ -1,7 +1,8 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { checkSpecialChars, checkSlash, extractParentFromKey } from '@remix-ui/helper'
+import { checkSpecialChars, checkSlash, extractParentFromKey, extractNameFromKey } from '@remix-ui/helper'
+import Gists from 'gists'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
@@ -9,6 +10,7 @@ const queuedEvents = []
 const pendingEvents = {}
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
+const queryParams = new QueryParams()
 
 let plugin, dispatch: React.Dispatch<any>
 
@@ -179,6 +181,19 @@ const setDeleteWorkspace = (workspaceName: string) => {
   }
 }
 
+const displayPopUp = (message: string) => {
+  return {
+    type: 'DISPLAY_POPUP_MESSAGE',
+    payload: message
+  }
+}
+
+const hidePopUp = () => {
+  return {
+    type: 'HIDE_POPUP_MESSAGE'
+  }
+}
+
 const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
@@ -188,7 +203,6 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
 
     await workspaceProvider.createWorkspace(workspaceName)
     if (setDefaults) {
-      const queryParams = new QueryParams()
       const params = queryParams.get()
 
       switch (template) {
@@ -316,6 +330,82 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
   }
 }
 
+const packageGistFiles = async (directory) => {
+  return new Promise((resolve, reject) => {
+    const workspaceProvider = plugin.fileProviders.workspace
+    const isFile = workspaceProvider.isFile(directory)
+    const ret = {}
+
+    if (isFile) {
+      try {
+        workspaceProvider.get(directory, (error, content) => {
+          if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+          if (/^\s+$/.test(content) || !content.length) {
+            content = '// this line is added to create a gist. Empty file is not allowed.'
+          }
+          directory = directory.replace(/\//g, '...')
+          ret[directory] = { content }
+          return resolve(ret)
+        })
+      } catch (e) {
+        return reject(e)
+      }
+    } else {
+      try {
+        (async () => {
+          await workspaceProvider.copyFolderToJson(directory, ({ path, content }) => {
+            if (/^\s+$/.test(content) || !content.length) {
+              content = '// this line is added to create a gist. Empty file is not allowed.'
+            }
+            if (path.indexOf('gist-') === 0) {
+              path = path.split('/')
+              path.shift()
+              path = path.join('/')
+            }
+            path = path.replace(/\//g, '...')
+            ret[path] = { content }
+          })
+          resolve(ret)
+        })()
+      } catch (e) {
+        return reject(e)
+      }
+    }
+  })
+}
+
+const handleGistResponse = (error, data) => {
+  if (error) {
+    dispatch(displayNotification('Publish to gist Failed', 'Failed to manage gist: ' + error, 'Close', null))
+  } else {
+    if (data.html_url) {
+      dispatch(displayNotification('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, 'OK', 'Cancel', () => {
+        window.open(data.html_url, '_blank')
+      }, () => {}))
+    } else {
+      const error = JSON.stringify(data.errors, null, '\t') || ''
+      const message = data.message === 'Not Found' ? data.message + '. Please make sure the API token has right to create a gist.' : data.message
+
+      dispatch(displayNotification('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, 'Close', null))
+    }
+  }
+}
+
+/**
+   * This function is to get the original content of given gist
+   * @params id is the gist id to fetch
+   */
+const getOriginalFiles = async (id) => {
+  if (!id) {
+    return []
+  }
+
+  const url = `https://api.github.com/gists/${id}`
+  const res = await fetch(url)
+  const data = await res.json()
+  return data.files || []
+}
+
 const listenOnEvents = (provider) => {
   provider.event.on('fileAdded', async (filePath: string) => {
     await executeEvent('fileAdded', filePath)
@@ -390,7 +480,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     dispatch = reducerDispatch
     const workspaceProvider = filePanelPlugin.fileProviders.workspace
     const localhostProvider = filePanelPlugin.fileProviders.localhost
-    const queryParams = new QueryParams()
     const params = queryParams.get()
     const workspaces = await getWorkspaces() || []
 
@@ -544,6 +633,76 @@ export const renameWorkspace = (oldName: string, workspaceName: string) => async
 export const deleteWorkspace = (workspaceName: string) => async (dispatch: React.Dispatch<any>) => {
   await deleteWorkspaceFromProvider(workspaceName)
   await dispatch(setDeleteWorkspace(workspaceName))
+}
+
+export const publishToGist = (path?: string, type?: string) => async (dispatch: React.Dispatch<any>) => {
+  // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
+  const folder = path || '/'
+  const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
+  try {
+    const packaged = await packageGistFiles(folder)
+    // check for token
+    const config = plugin.registry.get('config').api
+    const accessToken = config.get('settings/gist-access-token')
+
+    if (!accessToken) {
+      dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => {}))
+    } else {
+      const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
+        queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
+      const gists = new Gists({ token: accessToken })
+
+      if (id) {
+        const originalFileList = await getOriginalFiles(id)
+        // Telling the GIST API to remove files
+        const updatedFileList = Object.keys(packaged)
+        const allItems = Object.keys(originalFileList)
+          .filter(fileName => updatedFileList.indexOf(fileName) === -1)
+          .reduce((acc, deleteFileName) => ({
+            ...acc,
+            [deleteFileName]: null
+          }), originalFileList)
+        // adding new files
+        updatedFileList.forEach((file) => {
+          const _items = file.split('/')
+          const _fileName = _items[_items.length - 1]
+          allItems[_fileName] = packaged[file]
+        })
+
+        dispatch(displayPopUp('Saving gist (' + id + ') ...'))
+        gists.edit({
+          description: description,
+          public: true,
+          files: allItems,
+          id: id
+        }, (error, result) => {
+          handleGistResponse(error, result)
+          if (!error) {
+            for (const key in allItems) {
+              if (allItems[key] === null) delete allItems[key]
+            }
+          }
+        })
+      } else {
+        // id is not existing, need to create a new gist
+        dispatch(displayPopUp('Creating a new gist ...'))
+        gists.create({
+          description: description,
+          public: true,
+          files: packaged
+        }, (error, result) => {
+          handleGistResponse(error, result)
+        })
+      }
+    }
+  } catch (error) {
+    console.log(error)
+    displayNotification('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', null, async () => {})
+  }
+}
+
+export const clearPopUp = () => async (dispatch: React.Dispatch<any>) => {
+  dispatch(hidePopUp())
 }
 
 const fileAdded = async (filePath: string) => {
