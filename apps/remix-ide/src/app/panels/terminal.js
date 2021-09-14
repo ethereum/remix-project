@@ -39,6 +39,7 @@ class Terminal extends Plugin {
     this.element = document.createElement('div')
     this.element.setAttribute('class', 'panel')
     this.element.setAttribute('id', 'terminal-view')
+    this.element.setAttribute('data-id', 'terminalContainer-view')
     this.eventsDecoder = this.globalRegistry.get('eventsDecoder').api
     this.txListener = this.globalRegistry.get('txlistener').api
     this.sourceHighlighter = new SourceHighlighter()
