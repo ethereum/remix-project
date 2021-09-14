@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -62,6 +62,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await deleteWorkspace(workspaceName)(fsDispatch)
   }
 
+  const dispatchPublishToGist = async (path?: string, type?: string) => {
+    await publishToGist(path, type)(fsDispatch)
+  }
+
   useEffect(() => {
     if (modals.length > 0) {
       setFocusModal(() => {
@@ -101,6 +105,12 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     }
   }, [fs.notification])
 
+  useEffect(() => {
+    if (fs.popup) {
+      toast(fs.popup)
+    }
+  }, [fs.popup])
+
   const handleHideModal = () => {
     setFocusModal(modal => {
       return { ...modal, hide: true, message: null }
@@ -116,6 +126,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const handleToaster = () => {
     setFocusToaster('')
+    clearPopUp()(fsDispatch)
   }
 
   const toast = (toasterMsg: string) => {
@@ -137,7 +148,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchFetchWorkspaceDirectory,
     dispatchSwitchToWorkspace,
     dispatchRenameWorkspace,
-    dispatchDeleteWorkspace
+    dispatchDeleteWorkspace,
+    dispatchPublishToGist
   }
   return (
     <FileSystemContext.Provider value={value}>

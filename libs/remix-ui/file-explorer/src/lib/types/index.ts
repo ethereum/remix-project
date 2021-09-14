@@ -4,8 +4,6 @@ export type MenuItems = action[] // eslint-disable-line no-use-before-define
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
-    registry: any,
-    filesProvider: any,
     menuItems?: string[],
     plugin: any,
     focusRoot: boolean,

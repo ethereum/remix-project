@@ -231,8 +231,6 @@ export function Workspace (props: WorkspaceProps) {
               { (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
                   <FileExplorer
                     name={currentWorkspace}
-                    registry={props.plugin.registry}
-                    filesProvider={props.plugin.workspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
                     plugin={props.plugin}
                     focusRoot={state.reset}
@@ -251,8 +249,6 @@ export function Workspace (props: WorkspaceProps) {
                   { global.fs.mode === 'localhost' &&
                       <FileExplorer
                         name='localhost'
-                        registry={props.plugin.registry}
-                        filesProvider={props.plugin.localhost}
                         menuItems={['createNewFile', 'createNewFolder']}
                         plugin={props.plugin}
                         focusRoot={state.reset}
