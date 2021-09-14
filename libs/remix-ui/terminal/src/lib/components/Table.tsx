@@ -41,7 +41,7 @@ const showTable = (opts, showTableHash) => {
         <tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}>status</td>
           <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
-        </tr>)
+        </tr>
         {opts.hash ? (<tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}>transaction hash</td>
           <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
