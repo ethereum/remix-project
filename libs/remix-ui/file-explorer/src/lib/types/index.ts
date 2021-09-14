@@ -3,8 +3,6 @@ import { customAction } from '@remixproject/plugin-api/lib/file-system/file-pane
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
-    registry: any,
-    filesProvider: any,
     menuItems?: string[],
     plugin: any,
     focusRoot: boolean,
