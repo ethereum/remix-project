@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useReducer, useState, useEffect } from 'react'
+import React, { useReducer, useState, useEffect, SyntheticEvent } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -64,6 +64,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchPublishToGist = async (path?: string, type?: string) => {
     await publishToGist(path, type)(fsDispatch)
+  }
+
+  const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
+    await uploadFile(target, targetFolder)(fsDispatch)
   }
 
   useEffect(() => {
@@ -149,7 +153,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchSwitchToWorkspace,
     dispatchRenameWorkspace,
     dispatchDeleteWorkspace,
-    dispatchPublishToGist
+    dispatchPublishToGist,
+    dispatchUploadFile
   }
   return (
     <FileSystemContext.Provider value={value}>
