@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
@@ -14,5 +14,6 @@ export const FileSystemContext = createContext<{
   dispatchSwitchToWorkspace: (name: string) => Promise<void>,
   dispatchRenameWorkspace: (oldName: string, workspaceName: string) => Promise<void>,
   dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>,
-  dispatchPublishToGist: (path?: string, type?: string) => Promise<void>
+  dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
+  dispatchUploadFile: (target?: SyntheticEvent, targetFolder?: string) => Promise<void>
     }>(null)
