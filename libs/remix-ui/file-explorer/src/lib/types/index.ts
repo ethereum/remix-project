@@ -5,7 +5,6 @@ export type MenuItems = action[] // eslint-disable-line no-use-before-define
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
-    plugin: any,
     focusRoot: boolean,
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
@@ -63,7 +62,6 @@ export interface FileExplorerState {
       key: string
       type: 'folder' | 'file' | 'gist'
     }[]
-    fileManager: any
     ctrlKey: boolean
     newFileName: string
     actions: {
@@ -89,7 +87,6 @@ export interface FileExplorerState {
       lastEdit: string
     }
     expandPath: string[]
-    toasterMsg: string
     mouseOverElement: string
     showContextMenu: boolean
     reservedKeywords: string[]
