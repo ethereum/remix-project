@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Profile } from '@remixproject/plugin-utils'
-import React, { Fragment, useEffect, useReducer, useState } from 'react'
-import { defaultModuleProfile, IconKindType, PassedProfile, VerticalIcons } from '../../types/vertical-icons'
+import React, { Fragment, useEffect, useReducer } from 'react'
+import { PassedProfile, VerticalIcons } from '../../types/vertical-icons'
 import * as packageJson from '../../../../../package.json'
 import Home from './components/Home'
 import Icon from './components/Icon'
 import IconKind from './components/IconKind'
-import { newProfiles } from '../../../../../apps/remix-ide/src/app/components/vertical-icons'
-import { linkContentReducer, resolveClassesReducer } from './reducers/verticalIconsPanelReducers'
+import { resolveClassesReducer } from './reducers/verticalIconsPanelReducers'
 import './remix-ui-vertical-icons.css'
 export interface RemixUiVerticalIconsProps {
   verticalIconsPlugin: VerticalIcons
