@@ -254,7 +254,7 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
 
                 provider.lastLoadedGistId = gistId
               } else {
-                displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null)
+                dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
               }
             })
           } catch (e) {
@@ -697,12 +697,57 @@ export const publishToGist = (path?: string, type?: string) => async (dispatch: 
     }
   } catch (error) {
     console.log(error)
-    displayNotification('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', null, async () => {})
+    dispatch(displayNotification('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', null, async () => {}))
   }
 }
 
 export const clearPopUp = () => async (dispatch: React.Dispatch<any>) => {
   dispatch(hidePopUp())
+}
+
+export const uploadFile = (target, targetFolder: string) => async (dispatch: React.Dispatch<any>) => {
+  // TODO The file explorer is merely a view on the current state of
+  // the files module. Please ask the user here if they want to overwrite
+  // a file and then just use `files.add`. The file explorer will
+  // pick that up via the 'fileAdded' event from the files module.
+  [...target.files].forEach((file) => {
+    const workspaceProvider = plugin.fileProviders.workspace
+    const loadFile = (name: string): void => {
+      const fileReader = new FileReader()
+
+      fileReader.onload = async function (event) {
+        if (checkSpecialChars(file.name)) {
+          dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => {}))
+          return
+        }
+        const success = await workspaceProvider.set(name, event.target.result)
+
+        if (!success) {
+          return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => {}))
+        }
+        const config = plugin.registry.get('config').api
+        const editor = plugin.registry.get('editor').api
+
+        if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
+          editor.setText(event.target.result)
+        }
+      }
+      fileReader.readAsText(file)
+    }
+    const name = `${targetFolder}/${file.name}`
+
+    workspaceProvider.exists(name).then(exist => {
+      if (!exist) {
+        loadFile(name)
+      } else {
+        dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
+          loadFile(name)
+        }, () => {}))
+      }
+    }).catch(error => {
+      if (error) console.log(error)
+    })
+  })
 }
 
 const fileAdded = async (filePath: string) => {

@@ -13,13 +13,12 @@ import { contextMenuActions } from './utils'
 import './css/file-explorer.css'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, plugin, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems, resetFocus, files } = props
+  const { name, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems, resetFocus, files } = props
   const [state, setState] = useState<FileExplorerState>({
     focusElement: [{
       key: '',
       type: 'folder'
     }],
-    fileManager: null,
     ctrlKey: false,
     newFileName: '',
     actions: contextMenuActions,
@@ -36,7 +35,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       lastEdit: ''
     },
     expandPath: [name],
-    toasterMsg: '',
     mouseOverElement: null,
     showContextMenu: false,
     reservedKeywords: [name, 'gist-'],
@@ -205,7 +203,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const createFile = await fileManager.writeFile(newName, '')
 
       if (!createFile) {
-        return toast('Failed to create file ' + newName)
+        return global.toast('Failed to create file ' + newName)
       } else {
         const path = newName.indexOf(props.name + '/') === 0 ? newName.replace(props.name + '/', '') : newName
 
@@ -239,7 +237,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const deletePath = async (path: string | string[]) => {
-    if (global.fs.readonly) return toast('cannot delete file. ' + name + ' is a read only explorer')
+    if (global.fs.readonly) return global.toast('cannot delete file. ' + name + ' is a read only explorer')
     if (!Array.isArray(path)) path = [path]
 
     global.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', async () => {
@@ -251,7 +249,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         } catch (e) {
           const isDir = await state.fileManager.isDirectory(p)
 
-          toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
+          global.toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
         }
       }
     }, 'Cancel', () => {})
@@ -273,55 +271,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const uploadFile = (target) => {
-    const filesProvider = fileSystem.provider.provider
-    // TODO The file explorer is merely a view on the current state of
-    // the files module. Please ask the user here if they want to overwrite
-    // a file and then just use `files.add`. The file explorer will
-    // pick that up via the 'fileAdded' event from the files module.
     const parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     setState(prevState => {
       return { ...prevState, expandPath }
-    });
-
-    [...target.files].forEach((file) => {
-      const loadFile = (name: string): void => {
-        const fileReader = new FileReader()
-
-        fileReader.onload = async function (event) {
-          if (helper.checkSpecialChars(file.name)) {
-            global.modal('File Upload Failed', 'Special characters are not allowed', 'Close', async () => {})
-            return
-          }
-          const success = await filesProvider.set(name, event.target.result)
-
-          if (!success) {
-            return global.modal('File Upload Failed', 'Failed to create file ' + name, 'Close', async () => {})
-          }
-          const config = registry.get('config').api
-          const editor = registry.get('editor').api
-
-          if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-            editor.setText(event.target.result)
-          }
-        }
-        fileReader.readAsText(file)
-      }
-      const name = `${parentFolder}/${file.name}`
-
-      filesProvider.exists(name).then(exist => {
-        if (!exist) {
-          loadFile(name)
-        } else {
-          global.modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', () => {
-            loadFile(name)
-          }, 'Cancel', () => {})
-        }
-      }).catch(error => {
-        if (error) console.log(error)
-      })
     })
+    global.dispatchUploadFile(target, parentFolder)
   }
 
   const copyFile = (src: string, dest: string) => {
@@ -375,12 +331,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const emitContextMenuEvent = (cmd: customAction) => {
     plugin.call(cmd.id, cmd.name, cmd)
-  }
-
-  const toast = (message: string) => {
-    setState(prevState => {
-      return { ...prevState, toasterMsg: message }
-    })
   }
 
   const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
@@ -564,7 +514,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return { ...prevState, copyElement: [{ key: path, type }] }
     })
     setCanPaste(true)
-    toast(`Copied to clipboard ${path}`)
+    global.toast(`Copied to clipboard ${path}`)
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
@@ -735,7 +685,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           </div>
         </TreeViewItem>
       </TreeView>
-      <Toaster message={state.toasterMsg} />
       { state.showContextMenu &&
         <FileExplorerContextMenu
           actions={state.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
