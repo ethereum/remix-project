@@ -182,7 +182,10 @@ module.exports = {
   },
 
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+    browser
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .click('*[plugin="pluginManager"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .getInstalledPlugins((plugins) => {
         browser.refresh()
           .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
@@ -190,7 +193,7 @@ module.exports = {
           .perform((done) => {
             // const filtered = plugins.filter(plugin => plugin !== 'testremixIde') // remove this when localplugin bug is resolved
             plugins.forEach(plugin => {
-              if (plugin !== testData.pluginName && plugin !== 'testremixIde') {
+              if ((plugin !== testData.pluginName) && plugin !== localPluginData.pluginName) {
                 browser.waitForElementVisible(`[plugin="${plugin}"`)
               }
             })
