@@ -158,6 +158,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
+      .pause(5000)
+      .waitForElementPresent('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
@@ -182,6 +184,29 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/4_Ballot_test.sol', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
+  },
+
+  'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
+      .click('*[id="singleTesttests/4_Ballot_test.sol"]')
+      .click('#runTestsTabRunAction')
+      .pause(2000)
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/hhLogs_test.sol', 60000)
+      .assert.containsText('#journal > div:nth-child(2) > span ', 'Before all:')
+      .assert.containsText('#journal > div:nth-child(2) > span', 'Inside beforeAll')
+      .assert.containsText('#journal > div:nth-child(3) > span', 'Check sender:')
+      .assert.containsText('#journal > div:nth-child(3) > span', 'msg.sender is 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
+      .assert.containsText('#journal > div:nth-child(4) > span', 'Check int logs:')
+      .assert.containsText('#journal > div:nth-child(4) > span', '10 20')
+      .assert.containsText('#journal > div:nth-child(4) > span', 'Number is 25')
+      .openFile('tests/hhLogs_test.sol')
+      .removeFile('tests/hhLogs_test.sol', 'workspace_new')
   },
 
   'Debug failed test using debugger': function (browser: NightwatchBrowser) {
@@ -459,6 +484,31 @@ const sources = [
           function checkWinninProposalWithReturnValue () public view returns (bool) {
               return ballotToTest.winningProposal() == 0;
           }
+      }`
+    },
+    'tests/hhLogs_test.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+      import "remix_tests.sol"; // this import is automatically injected by Remix.
+      import "hardhat/console.sol";
+      
+      contract hhLogs {
+        
+          function beforeAll () public {
+              console.log('Inside beforeAll');
+          }
+          
+          function checkSender () public {
+              console.log('msg.sender is %s', msg.sender);
+              Assert.ok(true, "should be true");
+          }
+
+          function checkIntLogs () public {
+            console.log(10,20);
+            console.log('Number is %d', 25);
+            Assert.ok(true, "should be true");
+        }
       }`
     }
   }
