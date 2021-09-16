@@ -32,7 +32,8 @@ export interface BrowserState {
     labelCancel: string
   },
   readonly: boolean,
-  popup: string
+  popup: string,
+  focusEdit: string
 }
 
 export const browserInitialState: BrowserState = {
@@ -63,7 +64,8 @@ export const browserInitialState: BrowserState = {
     labelCancel: ''
   },
   readonly: false,
-  popup: ''
+  popup: '',
+  focusEdit: ''
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -320,7 +322,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         localhost: {
           ...state.localhost,
           files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files
-        }
+        },
+        focusEdit: payload.path + '/' + 'blank'
       }
     }
 
@@ -336,7 +339,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         localhost: {
           ...state.localhost,
           files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, payload.path + '/' + 'blank') : state.localhost.files
-        }
+        },
+        focusEdit: null
       }
     }
 
