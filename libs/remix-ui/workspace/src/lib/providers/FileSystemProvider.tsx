@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile, createNewFile } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -68,6 +68,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
     await uploadFile(target, targetFolder)(fsDispatch)
+  }
+
+  const dispatchCreateNewFile = async (path: string, rootDir: string) => {
+    await createNewFile(path, rootDir)(fsDispatch)
   }
 
   useEffect(() => {
@@ -154,7 +158,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchRenameWorkspace,
     dispatchDeleteWorkspace,
     dispatchPublishToGist,
-    dispatchUploadFile
+    dispatchUploadFile,
+    dispatchCreateNewFile
   }
   return (
     <FileSystemContext.Provider value={value}>
