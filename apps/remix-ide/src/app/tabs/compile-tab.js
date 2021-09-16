@@ -139,7 +139,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   getAppParameter (name) {
-    // first look in the URL params then in the local storPage
+    // first look in the URL params then in the local storage
     const params = this.queryParams.get()
     const param = params[name] ? params[name] : this.config.get(name)
     if (param === 'true') return true
