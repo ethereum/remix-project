@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { checkSpecialChars, checkSlash, extractParentFromKey, extractNameFromKey } from '@remix-ui/helper'
+import { checkSpecialChars, checkSlash, extractParentFromKey, extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
@@ -421,7 +421,6 @@ const listenOnEvents = (provider) => {
   })
 
   provider.event.on('fileRenamed', async (oldPath: string, newPath: string) => {
-    console.log('oldPath: ', oldPath, 'newPath: ', newPath)
     await executeEvent('fileRenamed', oldPath, newPath)
   })
 
@@ -469,8 +468,13 @@ const listenOnEvents = (provider) => {
       ))
     }
   })
+
   provider.event.on('fileRenamedError', async () => {
     dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
+  })
+
+  plugin.on('filePanel', 'displayNewFileInput', (path) => {
+    addInputField('file', path)(dispatch)
   })
 }
 
@@ -748,6 +752,20 @@ export const uploadFile = (target, targetFolder: string) => async (dispatch: Rea
       if (error) console.log(error)
     })
   })
+}
+
+export const createNewFile = (path: string, rootDir: string) => async (dispatch: React.Dispatch<any>) => {
+  const fileManager = plugin.fileManager
+  const newName = await createNonClashingNameAsync(path, fileManager)
+  const createFile = await fileManager.writeFile(newName, '')
+
+  if (!createFile) {
+    return dispatch(displayPopUp('Failed to create file ' + newName))
+  } else {
+    const path = newName.indexOf(rootDir + '/') === 0 ? newName.replace(rootDir + '/', '') : newName
+
+    await fileManager.open(path)
+  }
 }
 
 const fileAdded = async (filePath: string) => {
