@@ -50,5 +50,8 @@ export interface ConfigurationSettings {
     language: string,
     optimize: boolean,
     runs: string
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0e36c001f098047cf4fec47ae9611d1e4e4a8355
 }

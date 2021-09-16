@@ -139,9 +139,12 @@ export const remixWelcomeTextReducer = (state, action) => {
 }
 
 export const registerScriptRunnerReducer = (state, action) => {
-  const result = Object.assign([], action.payload.message)
-  console.log({ result })
   switch (action.type) {
+    case 'html':
+      return {
+        ...state,
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
+      }
     case 'log':
       return {
         ...state,

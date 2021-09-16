@@ -23,5 +23,4 @@ export interface ContractSelectionProps {
   } | Record<string, any>,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
-
 }
