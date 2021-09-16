@@ -84,7 +84,6 @@ module.exports = {
       .click('option[value="web3"]')
       .pause(5000)
       .modalFooterOKClick()
-      .pause(5000)
       .execute(function () {
         const env: any = document.getElementById('selectExEnvOptions')
         return env.value
