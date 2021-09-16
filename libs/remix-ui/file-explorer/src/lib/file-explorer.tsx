@@ -11,9 +11,10 @@ import { customAction } from '@remixproject/plugin-api/lib/file-system/file-pane
 import { contextMenuActions } from './utils'
 
 import './css/file-explorer.css'
+import { extractParentFromKey } from '@remix-ui/helper'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, focusRoot, contextMenuItems, displayInput, externalUploads, removedContextMenuItems, resetFocus, files } = props
+  const { name, focusRoot, contextMenuItems, externalUploads, removedContextMenuItems, resetFocus, files } = props
   const [state, setState] = useState<FileExplorerState>({
     focusElement: [{
       key: '',
@@ -62,7 +63,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         if (editRef && editRef.current) {
           editRef.current.focus()
         }
-      }, 150)
+      }, 0)
     }
   }, [state.focusEdit.element])
 
@@ -88,11 +89,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [contextMenuItems])
 
   useEffect(() => {
-    if (displayInput) {
-      handleNewFileInput()
-      plugin.resetNewFile()
+    if (global.fs.focusEdit) {
+      setState(prevState => {
+        return { ...prevState, focusEdit: { element: global.fs.focusEdit, type: 'file', isNew: true, lastEdit: null } }
+      })
     }
-  }, [displayInput])
+  }, [global.fs.focusEdit])
 
   useEffect(() => {
     if (externalUploads) {
@@ -173,14 +175,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath[keyPath.length - 1]
   }
 
-  const extractParentFromKey = (key: string):string => {
-    if (!key) return
-    const keyPath = key.split('/')
-    keyPath.pop()
-
-    return keyPath.join('/')
-  }
-
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
     else return false
@@ -196,22 +190,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFile = async (newFilePath: string) => {
-    const fileManager = state.fileManager
-
     try {
-      const newName = await helper.createNonClashingNameAsync(newFilePath, fileManager)
-      const createFile = await fileManager.writeFile(newName, '')
-
-      if (!createFile) {
-        return global.toast('Failed to create file ' + newName)
-      } else {
-        const path = newName.indexOf(props.name + '/') === 0 ? newName.replace(props.name + '/', '') : newName
-
-        await fileManager.open(path)
-        setState(prevState => {
-          return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-        })
-      }
+      global.dispatchCreateNewFile(newFilePath, props.name)
+      // setState(prevState => {
+      //   return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+      // })
     } catch (error) {
       return global.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
@@ -536,12 +519,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const label = (file: File) => {
+    const isEditable = (state.focusEdit.element === file.path) || (global.fs.focusEdit === file.path)
+
     return (
       <div
         className='remixui_items d-inline-block w-100'
-        ref={state.focusEdit.element === file.path ? editRef : null}
+        ref={ isEditable ? editRef : null}
         suppressContentEditableWarning={true}
-        contentEditable={state.focusEdit.element === file.path}
+        contentEditable={isEditable}
         onKeyDown={handleEditInput}
         onBlur={(e) => {
           e.stopPropagation()
