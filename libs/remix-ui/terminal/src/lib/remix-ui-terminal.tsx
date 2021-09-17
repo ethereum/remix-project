@@ -24,7 +24,7 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
-  const { call, _deps, on, config, event, gistHandler, logHtml, logResponse, version } = props.plugin
+  const { call, _deps, on, config, event, gistHandler, logHtmlResponse, logResponse, version } = props.plugin
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
@@ -74,8 +74,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    scriptRunnerDispatch({ type: 'html', payload: { message: logHtml } })
-  }, [logHtml])
+    scriptRunnerDispatch({ type: 'html', payload: { message: logHtmlResponse } })
+  }, [logHtmlResponse])
 
   useEffect(() => {
     scriptRunnerDispatch({ type: 'log', payload: { message: logResponse } })
@@ -105,7 +105,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [newstate.journalBlocks.length, logHtml.length])
+  }, [newstate.journalBlocks.length, logHtmlResponse.length])
 
   function execute (file, cb) {
     function _execute (content, cb) {
