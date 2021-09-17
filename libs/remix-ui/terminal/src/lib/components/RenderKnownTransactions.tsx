@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import checkTxStatus from './ChechTxStatus'
-import context from './Context'
+import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
+import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
 const remixLib = require('@remix-project/remix-lib')
 const typeConversion = remixLib.execution.typeConversion
 
-const renderKnownTransactions = (tx, receipt, resolvedData, logs, index, props, showTableHash, txDetails) => {
+const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
@@ -18,7 +18,7 @@ const renderKnownTransactions = (tx, receipt, resolvedData, logs, index, props, 
         message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
       />)
     } else {
-      props.event.trigger('debuggingRequested', [tx.hash])
+      plugin.event.trigger('debuggingRequested', [tx.hash])
     }
   }
 
@@ -26,11 +26,12 @@ const renderKnownTransactions = (tx, receipt, resolvedData, logs, index, props, 
   const to = resolvedData.contractName + '.' + resolvedData.fn
   // const obj = { from, to }
   const txType = 'knownTx'
+  const options = { from, to, tx }
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="log" onClick={(event) => txDetails(event, tx)}>
-        {checkTxStatus(receipt, txType)}
-        {context({ from, to, tx }, props.blockchain)}
+        <CheckTxStatus tx={tx} type={txType} />
+        <Context opts = { options } blockchain={plugin.blockchain} />
         <div className='buttons'>
           <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
@@ -58,4 +59,4 @@ const renderKnownTransactions = (tx, receipt, resolvedData, logs, index, props, 
   )
 }
 
-export default renderKnownTransactions
+export default RenderKnownTransactions

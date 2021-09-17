@@ -4,7 +4,7 @@ import helper from 'apps/remix-ide/src/lib/helper'
 const remixLib = require('@remix-project/remix-lib')
 var typeConversion = remixLib.execution.typeConversion
 
-const context = (opts, blockchain) => {
+const Context = ({ opts, blockchain }) => {
   const data = opts.tx || ''
   const from = opts.from ? helper.shortenHexData(opts.from) : ''
   let to = opts.to
@@ -59,4 +59,4 @@ const context = (opts, blockchain) => {
   }
 }
 
-export default context
+export default Context

@@ -1,9 +1,10 @@
+import { EmptyBlock, KnownTransaction, NewBlock, NewCall, NewTransaction, UnknownTransaction } from '../types/terminalTypes'
+
 export const registerCommandAction = (name, command, activate, dispatch) => {
   const commands: any = {}
   const _commands: any = {}
   _commands[name] = command
   const data: any = {
-    // lineLength: props.options.lineLength || 80,
     session: [],
     activeFilters: { commands: {}, input: '' },
     filterFns: {}
@@ -25,7 +26,6 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
     const root = { steps, cmd: name, gidx: 0, idx: 0 }
     const ITEM = { root, cmd: name }
     root.gidx = _INDEX.allMain.push(ITEM) - 1
-    // root.idx = _INDEX.commandsMain[name].push(ITEM) - 1
     let item
     function append (cmd, params, el) {
       if (cmd) { // subcommand
@@ -39,11 +39,9 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
       item.idx = _INDEX.commands[cmd].push(item) - 1
       item.step = steps.push(item) - 1
       item.args = params
-      // _appendItem(item)
-      // self._appendItem(item)
     }
-    var scopedCommands = _scopeCommands(append)
-    command(args, scopedCommands, el => append(null, args, blockify(el)))
+    const scopedCommands = _scopeCommands(append)
+    command(args, scopedCommands, el => append(null, args, el))
   }
   const help = typeof command.help === 'string' ? command.help : [
     '// no help available for:', `terminal.command.${name}`
@@ -54,20 +52,17 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
   if (activate.filterFn) {
     registerFilter(name, activate.filterFn)
   }
-  if (name !== ('knownTransaction' || 'unkownTransaction' || 'emptyBlock')) {
+  if (name !== (KnownTransaction || UnknownTransaction || EmptyBlock)) {
     dispatch({ type: name, payload: { commands: commands, _commands: _commands, data: data } })
-  }
-  const blockify = (el) => {
-    return `<div class="px-4 block_2A0YE0" data-id="block_null">${el}</div>`
   }
 
   const _scopeCommands = (append) => {
     const scopedCommands = {}
     Object.keys(commands).forEach(function makeScopedCommand (cmd) {
-      var command = _commands[cmd]
+      const command = _commands[cmd]
       scopedCommands[cmd] = function _command () {
-        var args = [...arguments]
-        command(args, scopedCommands, el => append(cmd, args, blockify(el)))
+        const args = [...arguments]
+        command(args, scopedCommands, el => append(cmd, args, el))
       }
     })
     return scopedCommands
@@ -76,89 +71,85 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
 
 export const filterFnAction = (name, filterFn, dispatch) => {
   const data: any = {
-    // session: [],
-    // activeFilters: { commands: {}, input: '' },
     filterFns: {}
   }
   data.filterFns[name] = filterFn
   dispatch({ type: name, payload: { data: data } })
 }
 
-export const registerLogScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
-  event.on('scriptRunner', commandName, (msg) => {
+export const registerLogScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+  on('scriptRunner', commandName, (msg) => {
     commandFn.log.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerInfoScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
-  event.on('scriptRunner', commandName, (msg) => {
+export const registerInfoScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+  on('scriptRunner', commandName, (msg) => {
     commandFn.info.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerWarnScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
-  event.on('scriptRunner', commandName, (msg) => {
+export const registerWarnScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+  on('scriptRunner', commandName, (msg) => {
     commandFn.warn.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerErrorScriptRunnerAction = (event, commandName, commandFn, dispatch) => {
-  event.on('scriptRunner', commandName, (msg) => {
+export const registerErrorScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+  on('scriptRunner', commandName, (msg) => {
     commandFn.error.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerRemixWelcomeTextAction = (welcomeText, dispatch) => {
-  dispatch({ type: 'welcomeText', payload: { welcomeText } })
-}
+// export const registerRemixWelcomeTextAction = (welcomeText, dispatch) => {
+//   dispatch({ type: 'welcomeText', payload: { welcomeText } })
+// }
 
-export const listenOnNetworkAction = async (props, isListening) => {
-  props.event.trigger('listenOnNetWork', [isListening])
+export const listenOnNetworkAction = async (event, isListening) => {
+  event.trigger('listenOnNetWork', [isListening])
 }
 
 export const initListeningOnNetwork = (props, dispatch) => {
-  props.txListener.event.register('newBlock', (block) => {
+  props.txListener.event.register(NewBlock, (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
-      dispatch({ type: 'emptyBlock', payload: { message: 0 } })
+      dispatch({ type: EmptyBlock, payload: { message: 0 } })
     }
   })
-  props.txListener.event.register('knownTransaction', () => {
+  props.txListener.event.register(KnownTransaction, () => {
   })
-  props.txListener.event.register('newCall', (tx, receipt) => {
+  props.txListener.event.register(NewCall, (tx, receipt) => {
     log(props, tx, receipt, dispatch)
     // log(this, tx, null)
   })
-  props.txListener.event.register('newTransaction', (tx, receipt) => {
+  props.txListener.event.register(NewTransaction, (tx, receipt) => {
     log(props, tx, receipt, dispatch)
   })
 
   const log = async (props, tx, receipt, dispatch) => {
     const resolvedTransaction = await props.txListener.resolvedTransaction(tx.hash)
     if (resolvedTransaction) {
-      var compiledContracts = null
+      let compiledContracts = null
       if (props._deps.compilersArtefacts.__last) {
         compiledContracts = await props._deps.compilersArtefacts.__last.getContracts()
       }
       await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, async (error, logs) => {
         if (!error) {
-          await dispatch({ type: 'knownTransaction', payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
+          await dispatch({ type: KnownTransaction, payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
         }
       })
     } else {
-      // contract unknown - just displaying raw tx.
-      // logUnknownTX({ tx: tx, receipt: receipt })
-      await dispatch({ type: 'unknownTransaction', payload: { message: [{ tx: tx, receipt: receipt }] } })
+      await dispatch({ type: UnknownTransaction, payload: { message: [{ tx: tx, receipt: receipt }] } })
     }
   }
 
   props.txListener.event.register('debuggingRequested', async (hash) => {
     // TODO should probably be in the run module
     if (!await props.options.appManager.isActive('debugger')) await props.options.appManager.activatePlugin('debugger')
-    props.thisState.call('menuicons', 'select', 'debugger')
-    props.thisState.call('debugger', 'debug', hash)
+    props.call('menuicons', 'select', 'debugger')
+    props.call('debugger', 'debug', hash)
   })
 }
