@@ -1,10 +1,10 @@
 import React, { useState } from 'react' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog'// eslint-disable-line
-import checkTxStatus from './ChechTxStatus'
-import context from './Context'
+import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
+import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
-const renderUnKnownTransactions = (tx, receipt, index, props, showTableHash, txDetails) => {
+const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
@@ -14,7 +14,7 @@ const renderUnKnownTransactions = (tx, receipt, index, props, showTableHash, txD
         message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
       />)
     } else {
-      props.event.trigger('debuggingRequested', [tx.hash])
+      plugin.event.trigger('debuggingRequested', [tx.hash])
     }
   }
 
@@ -22,11 +22,12 @@ const renderUnKnownTransactions = (tx, receipt, index, props, showTableHash, txD
   const to = tx.to
   // const obj = { from, to }
   const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
+  const options = { from, to, tx }
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="log" onClick={(event) => txDetails(event, tx)}>
-        {checkTxStatus(receipt || tx, txType)}
-        {context({ from, to, tx }, props.blockchain)}
+        <CheckTxStatus tx={tx} type={txType} />
+        <Context opts = { options } blockchain={plugin.blockchain} />
         <div className='buttons'>
           <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
@@ -51,4 +52,4 @@ const renderUnKnownTransactions = (tx, receipt, index, props, showTableHash, txD
   )
 }
 
-export default renderUnKnownTransactions
+export default RenderUnKnownTransactions

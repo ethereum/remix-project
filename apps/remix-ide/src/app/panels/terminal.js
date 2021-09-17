@@ -108,12 +108,20 @@ class Terminal extends Plugin {
     // console.log({ html: html.innerText })
     this.logHtmlResponse.push(html.innerText)
     this.renderComponent()
+    this.resetLogHtml()
+  }
+
+  resetLogHtml () {
     this.logHtmlResponse = []
   }
 
   log (message) {
     this.logResponse.push(message)
     this.renderComponent()
+    this.resetLog()
+  }
+
+  resetLog () {
     this.logResponse = []
   }
 
@@ -124,25 +132,7 @@ class Terminal extends Plugin {
   renderComponent () {
     ReactDOM.render(
       <RemixUiTerminal
-        event = {this.event}
-        blockchain = {this.blockchain}
-        api = {this._api}
-        options = {this._opts}
-        registerCommand = {this.registerCommand}
-        version = {this.version}
-        config = {this.config}
-        thisState = {this}
-        blockchain = {this.blockchain}
-        event = {this.event}
-        _deps = {this._deps}
-        fileImport = {this.fileImport}
-        sourceHighlighter = {this.sourceHighlighter}
-        gistHandler ={this.gistHandler}
-        registry = {this.registry}
-        txListener = {this.txListener}
-        eventsDecoder = {this.eventsDecoder}
-        logHtml = {this.logHtmlResponse}
-        logResponse = {this.logResponse}
+        plugin = {this}
       />,
       this.element
     )

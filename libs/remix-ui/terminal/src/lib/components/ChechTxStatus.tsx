@@ -1,6 +1,6 @@
 import React from 'react' // eslint-disable-line
 
-const checkTxStatus = (tx, type) => {
+const CheckTxStatus = ({ tx, type }) => {
   if (tx.status === '0x1' || tx.status === true) {
     return (<i className='txStatus succeeded fas fa-check-circle'></i>)
   }
@@ -13,4 +13,4 @@ const checkTxStatus = (tx, type) => {
   }
 }
 
-export default checkTxStatus
+export default CheckTxStatus

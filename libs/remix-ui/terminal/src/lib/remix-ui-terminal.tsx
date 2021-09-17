@@ -10,9 +10,9 @@ import './remix-ui-terminal.css'
 import vm from 'vm'
 import javascriptserialize from 'javascript-serialize'
 import jsbeautify from 'js-beautify'
-import renderUnKnownTransactions from './components/RenderUnknownTransactions'
-import renderCall from './components/RenderCall'
-import renderKnownTransactions from './components/RenderKnownTransactions'
+import RenderUnKnownTransactions from './components/RenderUnknownTransactions' // eslint-disable-line
+import RenderCall from './components/RenderCall' // eslint-disable-line
+import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
 import { RemixUiTerminalProps } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
@@ -24,6 +24,7 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
+  const { call, _deps, on, config, event, gistHandler, logHtml, logResponse, version } = props.plugin
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
@@ -73,20 +74,20 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    scriptRunnerDispatch({ type: 'html', payload: { message: props.logHtml } })
-  }, [props.logHtml])
+    scriptRunnerDispatch({ type: 'html', payload: { message: logHtml } })
+  }, [logHtml])
 
   useEffect(() => {
-    scriptRunnerDispatch({ type: 'log', payload: { message: props.logResponse } })
-  }, [props.logResponse])
+    scriptRunnerDispatch({ type: 'log', payload: { message: logResponse } })
+  }, [logResponse])
 
   // events
   useEffect(() => {
-    initListeningOnNetwork(props, scriptRunnerDispatch)
-    registerLogScriptRunnerAction(props.thisState, 'log', newstate.commands, scriptRunnerDispatch)
-    registerInfoScriptRunnerAction(props.thisState, 'info', newstate.commands, scriptRunnerDispatch)
-    registerWarnScriptRunnerAction(props.thisState, 'warn', newstate.commands, scriptRunnerDispatch)
-    registerErrorScriptRunnerAction(props.thisState, 'error', newstate.commands, scriptRunnerDispatch)
+    initListeningOnNetwork(props.plugin, scriptRunnerDispatch)
+    registerLogScriptRunnerAction(on, 'log', newstate.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(on, 'info', newstate.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(on, 'warn', newstate.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(on, 'error', newstate.commands, scriptRunnerDispatch)
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -100,11 +101,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
       })
     }, { activate: true }, dispatch)
-  }, [props.thisState.autoCompletePopup, autoCompletState.text])
+  }, [autoCompletState.text])
 
   useEffect(() => {
     scrollToBottom()
-  }, [newstate.journalBlocks.length, props.logHtml.length])
+  }, [newstate.journalBlocks.length, logHtml.length])
 
   function execute (file, cb) {
     function _execute (content, cb) {
@@ -117,12 +118,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
 
     if (typeof file === 'undefined') {
-      var content = props._deps.editor.currentContent()
+      var content = _deps.editor.currentContent()
       _execute(content, cb)
       return
     }
 
-    var provider = props._deps.fileManager.fileProviderOf(file)
+    var provider = _deps.fileManager.fileProviderOf(file)
 
     if (!provider) {
       // toolTip(`provider for path ${file} not found`)
@@ -144,7 +145,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   function loadgist (id, cb) {
-    props.gistHandler.loadFromGist({ gist: id }, props._deps.fileManager)
+    gistHandler.loadFromGist({ gist: id }, _deps.fileManager)
     if (cb) cb()
   }
 
@@ -167,9 +168,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     try {
       let result: any // eslint-disable-line
       if (script.trim().startsWith('git')) {
-        // result = await this.call('git', 'execute', script)
+        // result = await this.call('git', 'execute', script) code might be used in the future
       } else {
-        result = await props.thisState.call('scriptRunner', 'execute', script)
+        result = await call('scriptRunner', 'execute', script)
       }
       done()
     } catch (error) {
@@ -182,10 +183,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     event.stopPropagation()
     if (toggleDownUp === 'fa-angle-double-down') {
       setToggleDownUp('fa-angle-double-up')
-      props.event.trigger('resize', [])
+      event.trigger('resize', [])
     } else {
-      const terminalTopOffset = props.config.config.get('terminal-top-offset')
-      props.event.trigger('resize', [terminalTopOffset])
+      const terminalTopOffset = config.get('terminal-top-offset')
+      event.trigger('resize', [terminalTopOffset])
       setToggleDownUp('fa-angle-double-down')
     }
   }
@@ -230,7 +231,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false }))
       }
     } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && (autoCompletState.userInput === '')) {
-      // if (autoCompletState.commandHistoryIndex < 1) {
       event.preventDefault()
       setAutoCompleteState(prevState => ({ ...prevState, userInput: newstate._commandHistory[0] }))
     } else if (event.which === 38 && autoCompletState.showSuggestions) {
@@ -240,8 +240,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount - 1, userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString() }))
     } else if (event.which === 38 && !autoCompletState.showSuggestions) { // <arrowUp>
-      // const len = _cmdHistory.length
-      // if (len === 0) event.preventDefault()
       if (cmdHistory.length - 1 > _cmdIndex) {
         setCmdIndex(prevState => prevState++)
       }
@@ -277,11 +275,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const onMouseMove: any = (e: MouseEvent) => {
     e.preventDefault()
     if (dragging && leftHeight && separatorYPosition) {
-      // const newEditorHeight = leftHeight - e.clientY + separatorYPosition
       const newLeftHeight = leftHeight + separatorYPosition - e.clientY
       setSeparatorYPosition(e.clientY)
       setLeftHeight(newLeftHeight)
-      props.event.trigger('resize', [newLeftHeight + 32])
+      event.trigger('resize', [newLeftHeight + 32])
     }
   }
 
@@ -306,7 +303,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   React.useEffect(() => {
     const leftRef = document.getElementById('terminal-view')
-    // const editorRef = document.getElementById('mainPanelPluginsContainer-id')
     if (leftRef) {
       if (!leftHeight) {
         setLeftHeight(leftRef.offsetHeight)
@@ -364,10 +360,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
   /* start of autoComplete */
 
-  const listenOnNetwork = (event: any) => {
-    const isListening = event.target.checked
+  const listenOnNetwork = (e: any) => {
+    const isListening = e.target.checked
     setIsListeningOnNetwork(isListening)
-    listenOnNetworkAction(props, isListening)
+    listenOnNetworkAction(event, isListening)
   }
 
   const onChange = (event: any) => {
@@ -408,7 +404,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: suggestionCount + 1 }))
     }
-    // props.thisState.event.trigger('handleSelect', [text])
   }
 
   const txDetails = (event, tx) => {
@@ -450,7 +445,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
       <div className="bar">
-        {/* ${self._view.dragbar} */}
         <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
         <div className="menu border-top border-dark bg-light" data-id="terminalToggleMenu">
           {/* ${self._view.icon} */}
@@ -505,7 +499,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }}></div>
         <div className="terminal">
           <div id='journal' className='journal' data-id='terminalJournal'>
-            {!clearConsole && <TerminalWelcomeMessage packageJson={props.version}/>}
+            {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === 'emptyBlock') {
                 return (
@@ -516,11 +510,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 )
               } else if (x.name === 'unknownTransaction') {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> {renderUnKnownTransactions(trans.tx, trans.receipt, index, props, showTableHash, txDetails)} </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { <RenderUnKnownTransactions tx={trans.tx} receipt={trans.receipt} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} />} </div>)
                 })
               } else if (x.name === 'knownTransaction') {
                 return x.message.map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? renderCall(trans.tx, trans.resolvedData, trans.logs, index, props, showTableHash, txDetails) : renderKnownTransactions(trans.tx, trans.receipt, trans.resolvedData, trans.logs, index, props, showTableHash, txDetails)} </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? <RenderCall tx={trans.tx} resolvedData={trans.resolvedData} logs={trans.logs} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} /> : (<RenderKnownTransactions tx = { trans.tx } receipt = { trans.receipt } resolvedData = { trans.resolvedData } logs = {trans.logs } index = { index } plugin = { props.plugin } showTableHash = { showTableHash } txDetails = { txDetails } />) } </div>)
                 })
               } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
@@ -536,7 +530,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 })
               } else {
                 return (
-                  <div className="px-4 block" data-id="block_null" key={index}> <span className={`${x.style}`}> {x.message}</span></div>
+                  <div className="px-4 block" data-id="block_null" key={index}> <span className={x.style}> {x.message}</span></div>
                 )
               }
             })}
