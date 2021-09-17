@@ -503,7 +503,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === 'emptyBlock') {
                 return (
-                  <div className="px-4 block" data-id='block_null' key={index}>
+                  <div className="px-4 block" data-id='block' key={index}>
                     <span className='txLog'>
                       <span className='tx'><div className='txItem'>[<span className='txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ] </div></span></span>
                   </div>
@@ -520,18 +520,20 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 return x.message.map((msg, i) => {
                   if (typeof msg === 'object') {
                     return (
-                      <div className="px-4 block" data-id="block_null" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
+                      <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
                     )
                   } else {
                     return (
-                      <div className="px-4 block" data-id="block_null" key={i}>{ msg ? msg.toString().replace(/,/g, '') : msg }</div>
+                      <div className="px-4 block" data-id="block" key={i}>{ msg ? msg.toString().replace(/,/g, '') : msg }</div>
                     )
                   }
                 })
               } else {
-                return (
-                  <div className="px-4 block" data-id="block_null" key={index}> <span className={x.style}> {x.message}</span></div>
-                )
+                if (typeof x.message !== 'function') {
+                  return (
+                    <div className="px-4 block" data-id="block" key={index}> <span className={x.style}> {x.message}</span></div>
+                  )
+                }
               }
             })}
             <div ref={messagesEndRef} />
