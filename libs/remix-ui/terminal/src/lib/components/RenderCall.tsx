@@ -1,14 +1,14 @@
 import React, { useState } from 'react'  // eslint-disable-line
 
 import helper from 'apps/remix-ide/src/lib/helper'
-import checkTxStatus from './ChechTxStatus'
+import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import showTable from './Table'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 const remixLib = require('@remix-project/remix-lib')
 var typeConversion = remixLib.execution.typeConversion
 
-const renderCall = (tx, resolvedData, logs, index, props, showTableHash, txDetails) => {
+const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDetails }) => {
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const from = tx.from ? tx.from : ' - '
   const input = tx.input ? helper.shortenHexData(tx.input) : ''
@@ -23,14 +23,14 @@ const renderCall = (tx, resolvedData, logs, index, props, showTableHash, txDetai
         message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
       />)
     } else {
-      props.event.trigger('debuggingRequested', [tx.hash])
+      plugin.event.trigger('debuggingRequested', [tx.hash])
     }
   }
 
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="log" onClick={(event) => txDetails(event, tx)}>
-        {checkTxStatus(tx, txType)}
+        <CheckTxStatus tx={tx} type={txType} />
         <span className="txLog">
           <span className="tx">[call]</span>
           <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
@@ -62,4 +62,4 @@ const renderCall = (tx, resolvedData, logs, index, props, showTableHash, txDetai
   )
 }
 
-export default renderCall
+export default RenderCall

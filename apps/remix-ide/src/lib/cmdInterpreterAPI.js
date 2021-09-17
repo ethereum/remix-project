@@ -93,7 +93,6 @@ class CmdInterpreterAPI {
         if (cb) cb()
         return
       }
-      console.log({ content }, ' contents')
       self._components.terminal.commands.script(content)
     }
 
