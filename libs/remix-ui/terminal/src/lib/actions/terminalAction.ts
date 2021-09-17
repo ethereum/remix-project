@@ -1,6 +1,7 @@
+import React from 'react'
 import { EmptyBlock, KnownTransaction, NewBlock, NewCall, NewTransaction, UnknownTransaction } from '../types/terminalTypes'
 
-export const registerCommandAction = (name, command, activate, dispatch) => {
+export const registerCommandAction = (name: string, command, activate, dispatch: React.Dispatch<any>) => {
   const commands: any = {}
   const _commands: any = {}
   _commands[name] = command
@@ -69,7 +70,7 @@ export const registerCommandAction = (name, command, activate, dispatch) => {
   }
 }
 
-export const filterFnAction = (name, filterFn, dispatch) => {
+export const filterFnAction = (name: string, filterFn, dispatch: React.Dispatch<any>) => {
   const data: any = {
     filterFns: {}
   }
@@ -77,43 +78,39 @@ export const filterFnAction = (name, filterFn, dispatch) => {
   dispatch({ type: name, payload: { data: data } })
 }
 
-export const registerLogScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+export const registerLogScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
   on('scriptRunner', commandName, (msg) => {
     commandFn.log.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerInfoScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+export const registerInfoScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
   on('scriptRunner', commandName, (msg) => {
     commandFn.info.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerWarnScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+export const registerWarnScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
   on('scriptRunner', commandName, (msg) => {
     commandFn.warn.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-export const registerErrorScriptRunnerAction = (on, commandName, commandFn, dispatch) => {
+export const registerErrorScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
   on('scriptRunner', commandName, (msg) => {
     commandFn.error.apply(commandFn, msg.data)
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
-// export const registerRemixWelcomeTextAction = (welcomeText, dispatch) => {
-//   dispatch({ type: 'welcomeText', payload: { welcomeText } })
-// }
-
 export const listenOnNetworkAction = async (event, isListening) => {
   event.trigger('listenOnNetWork', [isListening])
 }
 
-export const initListeningOnNetwork = (props, dispatch) => {
+export const initListeningOnNetwork = (props, dispatch: React.Dispatch<any>) => {
   props.txListener.event.register(NewBlock, (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
       dispatch({ type: EmptyBlock, payload: { message: 0 } })
@@ -129,7 +126,7 @@ export const initListeningOnNetwork = (props, dispatch) => {
     log(props, tx, receipt, dispatch)
   })
 
-  const log = async (props, tx, receipt, dispatch) => {
+  const log = async (props, tx, receipt, dispatch: React.Dispatch<any>) => {
     const resolvedTransaction = await props.txListener.resolvedTransaction(tx.hash)
     if (resolvedTransaction) {
       let compiledContracts = null
