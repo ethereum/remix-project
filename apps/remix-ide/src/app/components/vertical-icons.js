@@ -36,7 +36,7 @@ export class VerticalIcons extends Plugin {
     this.iconKind = {}
     this.iconStatus = {}
     this.defaultProfile = profile
-    this.targetProfileForChange = []
+    this.targetProfileForChange = {}
     this.targetProfileForRemoval = {}
 
     const themeModule = globalRegistry.get('themeModule').api
@@ -50,7 +50,6 @@ export class VerticalIcons extends Plugin {
     ReactDOM.render(
       <RemixUiVerticalIcons
         verticalIconsPlugin={this}
-        targetProfilesToShow={this.targetProfileForChange}
       />,
       this.htmlElement)
   }
@@ -62,7 +61,7 @@ export class VerticalIcons extends Plugin {
   linkContent (profile) {
     if (!profile.icon) return
     // this.addIcon(profile)
-    this.targetProfileForChange.push(profile)
+    this.targetProfileForChange[profile.name] = profile
     this.listenOnStatus(profile)
     this.renderComponent()
   }
@@ -154,7 +153,9 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   removeIcon ({ kind, name }) {
-    if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
+    // if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
+    if (this.targetProfileForChange[name]) delete this.targetProfileForChange[name]
+    this.renderComponent()
   }
 
   /**
