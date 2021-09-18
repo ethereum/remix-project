@@ -1,25 +1,19 @@
-import React, { useEffect, useState, useRef, useReducer, useContext } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, useContext } from 'react' // eslint-disable-line
 // import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File, MenuItems, FileExplorerState } from './types'
-import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { FileSystemContext } from '@remix-ui/workspace'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from './utils'
 
 import './css/file-explorer.css'
-import { extractParentFromKey } from '@remix-ui/helper'
+import { checkSpecialChars, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, focusRoot, contextMenuItems, externalUploads, removedContextMenuItems, resetFocus, files } = props
   const [state, setState] = useState<FileExplorerState>({
-    focusElement: [{
-      key: '',
-      type: 'folder'
-    }],
     ctrlKey: false,
     newFileName: '',
     actions: contextMenuActions,
@@ -69,9 +63,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (focusRoot) {
-      setState(prevState => {
-        return { ...prevState, focusElement: [{ key: '', type: 'folder' }] }
-      })
+      global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
       resetFocus(false)
     }
   }, [focusRoot])
@@ -181,10 +173,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const getFocusedFolder = () => {
-    if (state.focusElement[0]) {
-      if (state.focusElement[0].type === 'folder' && state.focusElement[0].key) return state.focusElement[0].key
-      else if (state.focusElement[0].type === 'gist' && state.focusElement[0].key) return state.focusElement[0].key
-      else if (state.focusElement[0].type === 'file' && state.focusElement[0].key) return extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name
+    if (global.fs.focusElement[0]) {
+      if (global.fs.focusElement[0].type === 'folder' && global.fs.focusElement[0].key) return global.fs.focusElement[0].key
+      else if (global.fs.focusElement[0].type === 'gist' && global.fs.focusElement[0].key) return global.fs.focusElement[0].key
+      else if (global.fs.focusElement[0].type === 'file' && global.fs.focusElement[0].key) return extractParentFromKey(global.fs.focusElement[0].key) ? extractParentFromKey(global.fs.focusElement[0].key) : name
       else return name
     }
   }
@@ -192,62 +184,29 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const createNewFile = async (newFilePath: string) => {
     try {
       global.dispatchCreateNewFile(newFilePath, props.name)
-      // setState(prevState => {
-      //   return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-      // })
     } catch (error) {
       return global.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
   const createNewFolder = async (newFolderPath: string) => {
-    const fileManager = state.fileManager
-    const dirName = newFolderPath + '/'
-
     try {
-      const exists = await fileManager.exists(dirName)
-
-      if (exists) {
-        return global.modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, 'Close', () => {})
-      }
-      await fileManager.mkdir(dirName)
-      setState(prevState => {
-        return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
-      })
+      global.dispatchCreateNewFolder(newFolderPath, props.name)
     } catch (e) {
       return global.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
     }
   }
 
-  const deletePath = async (path: string | string[]) => {
+  const deletePath = async (path: string[]) => {
     if (global.fs.readonly) return global.toast('cannot delete file. ' + name + ' is a read only explorer')
     if (!Array.isArray(path)) path = [path]
 
-    global.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', async () => {
-      const fileManager = state.fileManager
-
-      for (const p of path) {
-        try {
-          await fileManager.remove(p)
-        } catch (e) {
-          const isDir = await state.fileManager.isDirectory(p)
-
-          global.toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
-        }
-      }
-    }, 'Cancel', () => {})
+    global.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', () => { global.dispatchDeletePath(path) }, 'Cancel', () => {})
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
-      const fileManager = state.fileManager
-      const exists = await fileManager.exists(newPath)
-
-      if (exists) {
-        global.modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, 'Close', () => {})
-      } else {
-        await fileManager.rename(oldPath, newPath)
-      }
+      global.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
       global.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
@@ -264,22 +223,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const copyFile = (src: string, dest: string) => {
-    const fileManager = state.fileManager
-
     try {
-      fileManager.copyFile(src, dest)
+      global.dispatchCopyFile(src, dest)
     } catch (error) {
-      console.log('Oops! An error ocurred while performing copyFile operation.' + error)
+      global.modal('Copy File Failed', 'Unexpected error while copying file: ' + src, 'Close', async () => {})
     }
   }
 
   const copyFolder = (src: string, dest: string) => {
-    const fileManager = state.fileManager
-
     try {
-      fileManager.copyDir(src, dest)
+      global.dispatchCopyFolder(src, dest)
     } catch (error) {
-      console.log('Oops! An error ocurred while performing copyDir operation.' + error)
+      global.modal('Copy Folder Failed', 'Unexpected error while copying folder: ' + src, 'Close', async () => {})
     }
   }
 
@@ -304,54 +259,50 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const runScript = async (path: string) => {
-    const filesProvider = fileSystem.provider.provider
-
-    filesProvider.get(path, (error, content: string) => {
-      if (error) return console.log(error)
-      plugin.call('scriptRunner', 'execute', content)
-    })
+    try {
+      global.dispatchRunScript(path)
+    } catch (error) {
+      global.toast('Run script failed')
+    }
   }
 
   const emitContextMenuEvent = (cmd: customAction) => {
-    plugin.call(cmd.id, cmd.name, cmd)
+    try {
+      global.dispatchEmitContextMenuEvent(cmd)
+    } catch (error) {
+      global.toast(error)
+    }
   }
 
   const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
     path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
     if (!state.ctrlKey) {
-      state.fileManager.open(path)
-      setState(prevState => {
-        return { ...prevState, focusElement: [{ key: path, type }] }
-      })
+      global.dispatchHandleClickFile(path, type)
     } else {
-      if (state.focusElement.findIndex(item => item.key === path) !== -1) {
-        setState(prevState => {
-          return { ...prevState, focusElement: prevState.focusElement.filter(item => item.key !== path) }
-        })
-      } else {
-        setState(prevState => {
-          const nonRootFocus = prevState.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+      if (global.fs.focusElement.findIndex(item => item.key === path) !== -1) {
+        const focusElement = global.fs.focusElement.filter(item => item.key !== path)
 
-          nonRootFocus.push({ key: path, type })
-          return { ...prevState, focusElement: nonRootFocus }
-        })
+        global.dispatchSetFocusElement(focusElement)
+      } else {
+        const nonRootFocus = global.fs.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+
+        nonRootFocus.push({ key: path, type })
+        global.dispatchSetFocusElement(nonRootFocus)
       }
     }
   }
 
   const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
     if (state.ctrlKey) {
-      if (state.focusElement.findIndex(item => item.key === path) !== -1) {
-        setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement.filter(item => item.key !== path)] }
-        })
-      } else {
-        setState(prevState => {
-          const nonRootFocus = prevState.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+      if (global.fs.focusElement.findIndex(item => item.key === path) !== -1) {
+        const focusElement = global.fs.focusElement.filter(item => item.key !== path)
 
-          nonRootFocus.push({ key: path, type })
-          return { ...prevState, focusElement: nonRootFocus }
-        })
+        global.dispatchSetFocusElement(focusElement)
+      } else {
+        const nonRootFocus = global.fs.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+
+        nonRootFocus.push({ key: path, type })
+        global.dispatchSetFocusElement(nonRootFocus)
       }
     } else {
       let expandPath = []
@@ -363,8 +314,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
         expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
       }
 
+      global.dispatchSetFocusElement([{ key: path, type }])
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: path, type }], expandPath }
+        return { ...prevState, expandPath }
       })
     }
   }
@@ -419,7 +371,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       }
-      if (helper.checkSpecialChars(content)) {
+      if (checkSpecialChars(content)) {
         global.modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
@@ -547,11 +499,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renderFiles = (file: File, index: number) => {
     if (!file || !file.path || typeof file === 'string' || typeof file === 'number' || typeof file === 'boolean') return
     const labelClass = state.focusEdit.element === file.path
-      ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1
+      ? 'bg-light' : global.fs.focusElement.findIndex(item => item.key === file.path) !== -1
         ? 'bg-secondary' : state.mouseOverElement === file.path
           ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
             ? 'bg-light border' : ''
-    const icon = helper.getPathIcon(file.path)
+    const icon = getPathIcon(file.path)
     const spreadProps = {
       onClick: (e) => e.stopPropagation()
     }
@@ -654,7 +606,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 createNewFolder={handleNewFolderInput}
                 publishToGist={publishToGist}
                 uploadFile={uploadFile}
-                fileManager={state.fileManager}
               />
             </div>
           }
@@ -672,7 +623,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       </TreeView>
       { state.showContextMenu &&
         <FileExplorerContextMenu
-          actions={state.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
+          actions={global.fs.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
@@ -686,7 +637,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           pageY={state.focusContext.y}
           path={state.focusContext.element}
           type={state.focusContext.type}
-          focus={state.focusElement}
+          focus={global.fs.focusElement}
           onMouseOver={(e) => {
             e.stopPropagation()
             handleMouseOver(state.focusContext.element)
@@ -701,9 +652,3 @@ export const FileExplorer = (props: FileExplorerProps) => {
 }
 
 export default FileExplorer
-
-function joinPath (...paths) {
-  paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
-  if (paths.length === 1) return paths[0]
-  return paths.join('/')
-}
