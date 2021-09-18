@@ -1,3 +1,4 @@
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
 
@@ -16,5 +17,14 @@ export const FileSystemContext = createContext<{
   dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>,
   dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
   dispatchUploadFile: (target?: SyntheticEvent, targetFolder?: string) => Promise<void>,
-  dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>
+  dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
+  dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
+  dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>,
+  dispatchDeletePath: (path: string[]) => Promise<void>,
+  dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
+  dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+  dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
+  dispatchRunScript: (path: string) => Promise<void>,
+  dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
+  dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>
     }>(null)
