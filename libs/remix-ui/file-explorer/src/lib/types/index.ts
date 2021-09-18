@@ -25,7 +25,6 @@ export interface File {
 export interface FileExplorerMenuProps {
     title: string,
     menuItems: string[],
-    fileManager: any,
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
     publishToGist: (path?: string) => void,
@@ -58,10 +57,6 @@ export interface FileExplorerContextMenuProps {
 }
 
 export interface FileExplorerState {
-    focusElement: {
-      key: string
-      type: 'folder' | 'file' | 'gist'
-    }[]
     ctrlKey: boolean
     newFileName: string
     actions: {

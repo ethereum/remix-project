@@ -3,6 +3,7 @@ import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
 import { checkSpecialChars, checkSlash, extractParentFromKey, extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
@@ -191,6 +192,13 @@ const displayPopUp = (message: string) => {
 const hidePopUp = () => {
   return {
     type: 'HIDE_POPUP_MESSAGE'
+  }
+}
+
+const focusElement = (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
+  return {
+    type: 'SET_FOCUS_ELEMENT',
+    payload: elements
   }
 }
 
@@ -765,7 +773,93 @@ export const createNewFile = (path: string, rootDir: string) => async (dispatch:
     const path = newName.indexOf(rootDir + '/') === 0 ? newName.replace(rootDir + '/', '') : newName
 
     await fileManager.open(path)
+    setFocusElement([{ key: path, type: 'file' }])(dispatch)
   }
+}
+
+export const setFocusElement = (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => async (dispatch: React.Dispatch<any>) => {
+  dispatch(focusElement(elements))
+}
+
+export const createNewFolder = (path: string, rootDir: string) => async (dispatch: React.Dispatch<any>) => {
+  const fileManager = plugin.fileManager
+  const dirName = path + '/'
+  const exists = await fileManager.exists(dirName)
+
+  if (exists) {
+    return dispatch(displayNotification('Rename File Failed', `A file or folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
+  }
+  await fileManager.mkdir(dirName)
+  path = path.indexOf(rootDir + '/') === 0 ? path.replace(rootDir + '/', '') : path
+  dispatch(focusElement([{ key: path, type: 'folder' }]))
+}
+
+export const deletePath = (path: string[]) => async (dispatch: React.Dispatch<any>) => {
+  const fileManager = plugin.fileManager
+
+  for (const p of path) {
+    try {
+      await fileManager.remove(p)
+    } catch (e) {
+      const isDir = await fileManager.isDirectory(p)
+
+      dispatch(displayPopUp(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`))
+    }
+  }
+}
+
+export const renamePath = (oldPath: string, newPath: string) => async (dispatch: React.Dispatch<any>) => {
+  const fileManager = plugin.fileManager
+  const exists = await fileManager.exists(newPath)
+
+  if (exists) {
+    dispatch(displayNotification('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
+  } else {
+    await fileManager.rename(oldPath, newPath)
+  }
+}
+
+export const copyFile = (src: string, dest: string) => async (dispatch: React.Dispatch<any>) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    fileManager.copyFile(src, dest)
+  } catch (error) {
+    console.log('Oops! An error ocurred while performing copyFile operation.' + error)
+    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+  }
+}
+
+export const copyFolder = (src: string, dest: string) => async (dispatch: React.Dispatch<any>) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    fileManager.copyDir(src, dest)
+  } catch (error) {
+    console.log('Oops! An error ocurred while performing copyDir operation.' + error)
+    dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
+  }
+}
+
+export const runScript = (path: string) => async (dispatch: React.Dispatch<any>) => {
+  const provider = plugin.fileManager.currentFileProvider()
+
+  provider.get(path, (error, content: string) => {
+    if (error) {
+      dispatch(displayPopUp(error))
+      return console.log(error)
+    }
+    plugin.call('scriptRunner', 'execute', content)
+  })
+}
+
+export const emitContextMenuEvent = (cmd: customAction) => async () => {
+  plugin.call(cmd.id, cmd.name, cmd)
+}
+
+export const handleClickFile = (path: string, type: 'file' | 'folder' | 'gist') => async (dispatch: React.Dispatch<any>) => {
+  plugin.fileManager.open(path)
+  dispatch(focusElement([{ key: path, type }]))
 }
 
 const fileAdded = async (filePath: string) => {
