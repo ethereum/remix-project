@@ -5,10 +5,11 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile, createNewFile } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile, createNewFile, setFocusElement, createNewFolder, deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 
 export const FileSystemProvider = (props: WorkspaceProps) => {
   const { plugin } = props
@@ -72,6 +73,42 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchCreateNewFile = async (path: string, rootDir: string) => {
     await createNewFile(path, rootDir)(fsDispatch)
+  }
+
+  const dispatchSetFocusElement = async (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
+    await setFocusElement(elements)(fsDispatch)
+  }
+
+  const dispatchCreateNewFolder = async (path: string, rootDir: string) => {
+    await createNewFolder(path, rootDir)(fsDispatch)
+  }
+
+  const dispatchDeletePath = async (path: string[]) => {
+    await deletePath(path)(fsDispatch)
+  }
+
+  const dispatchRenamePath = async (oldPath: string, newPath: string) => {
+    await renamePath(oldPath, newPath)(fsDispatch)
+  }
+
+  const dispatchCopyFile = async (src: string, dest: string) => {
+    await copyFile(src, dest)(fsDispatch)
+  }
+
+  const dispatchCopyFolder = async (src: string, dest: string) => {
+    await copyFolder(src, dest)(fsDispatch)
+  }
+
+  const dispatchRunScript = async (path: string) => {
+    await runScript(path)(fsDispatch)
+  }
+
+  const dispatchEmitContextMenuEvent = async (cmd: customAction) => {
+    await emitContextMenuEvent(cmd)
+  }
+
+  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+    await handleClickFile(path, type)
   }
 
   useEffect(() => {
@@ -159,7 +196,16 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchDeleteWorkspace,
     dispatchPublishToGist,
     dispatchUploadFile,
-    dispatchCreateNewFile
+    dispatchCreateNewFile,
+    dispatchSetFocusElement,
+    dispatchCreateNewFolder,
+    dispatchDeletePath,
+    dispatchRenamePath,
+    dispatchCopyFile,
+    dispatchCopyFolder,
+    dispatchRunScript,
+    dispatchEmitContextMenuEvent,
+    dispatchHandleClickFile
   }
   return (
     <FileSystemContext.Provider value={value}>
