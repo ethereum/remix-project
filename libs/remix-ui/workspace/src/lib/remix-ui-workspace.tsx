@@ -45,12 +45,6 @@ export function Workspace (props: WorkspaceProps) {
     }
   }, [global.fs.browser.workspaces])
 
-  props.plugin.resetNewFile = () => {
-    setState(prevState => {
-      return { ...prevState, displayNewFile: !state.displayNewFile }
-    })
-  }
-
   /* implement an external API, consumed by the parent */
   props.plugin.request.createWorkspace = () => {
     return createWorkspace()
@@ -71,18 +65,6 @@ export function Workspace (props: WorkspaceProps) {
 
   props.plugin.request.getCurrentWorkspace = () => {
     return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.plugin.workspace.workspacesPath}/${currentWorkspace}` }
-  }
-
-  const createNewWorkspace = async (workspaceName) => {
-    try {
-      await props.plugin.fileManager.closeAllFiles()
-      await props.plugin.createWorkspace(workspaceName)
-      await setWorkspace(workspaceName)
-      global.toast('New default workspace has been created.')
-    } catch (e) {
-      global.modal('Create Default Workspace', e.message, 'OK', onFinishRenameWorkspace, '')
-      console.error(e)
-    }
   }
 
   /* workspace creation, renaming and deletion */

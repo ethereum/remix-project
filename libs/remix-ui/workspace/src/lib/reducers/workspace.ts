@@ -33,7 +33,8 @@ export interface BrowserState {
   },
   readonly: boolean,
   popup: string,
-  focusEdit: string
+  focusEdit: string,
+  focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[]
 }
 
 export const browserInitialState: BrowserState = {
@@ -65,7 +66,8 @@ export const browserInitialState: BrowserState = {
   },
   readonly: false,
   popup: '',
-  focusEdit: ''
+  focusEdit: '',
+  focusElement: []
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -450,6 +452,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       return {
         ...state,
         popup: ''
+      }
+    }
+
+    case 'SET_FOCUS_ELEMENT': {
+      const payload = action.payload as { key: string, type: 'file' | 'folder' | 'gist' }[]
+
+      return {
+        ...state,
+        focusElement: payload
       }
     }
 
