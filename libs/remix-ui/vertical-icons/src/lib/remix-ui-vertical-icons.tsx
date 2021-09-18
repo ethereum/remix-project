@@ -91,10 +91,10 @@ export function RemixUiVerticalIcons ({ verticalIconsPlugin }: RemixUiVerticalIc
           verticalIconPlugin={verticalIconsPlugin}
         />
         <Fragment>
-          <div style={{ borderBottom: '3px solid #333'}} id="topSection">
+          <div style={{ borderBottom: '3px solid #333', overflowY: 'scroll', scrollbarWidth: 'none', overflowX: 'hidden'}} id="topSection">
             <Fragment>
             {verticalIconsPlugin.targetProfileForChange && Object.keys(verticalIconsPlugin.targetProfileForChange).length
-              ? Object.keys(verticalIconsPlugin.targetProfileForChange).filter(p => p !== 'settings').map(p => (
+              ? Object.keys(verticalIconsPlugin.targetProfileForChange).filter(p => p !== 'settings').filter(p => p !== 'pluginManager').map(p => (
                   <Icon
                     kind={verticalIconsPlugin.targetProfileForChange[p].kind}
                     displayName={verticalIconsPlugin.targetProfileForChange[p].displayName}
@@ -128,22 +128,44 @@ export function RemixUiVerticalIcons ({ verticalIconsPlugin }: RemixUiVerticalIc
           </div>
           <div id="bottomSection">
             {verticalIconsPlugin.targetProfileForChange && Object.keys(verticalIconsPlugin.targetProfileForChange).length
-                ? <Settings>
+                ? <Fragment>
+                <Settings>
+                <>
                   {
-                    Object.keys(verticalIconsPlugin.targetProfileForChange).filter(p => p === 'settings').map(p => (
-                      <Icon
-                        kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                        displayName={verticalIconsPlugin.targetProfileForChange[p].displayName}
-                        documentation={verticalIconsPlugin.targetProfileForChange[p].documentation}
-                        icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                        name={verticalIconsPlugin.targetProfileForChange[p].name}
-                        tooltip={verticalIconsPlugin.targetProfileForChange[p].tooltip}
-                        verticalIconPlugin={verticalIconsPlugin}
-                        key={verticalIconsPlugin.targetProfileForChange[p].displayName}
-                      />
+                    Object.keys(verticalIconsPlugin.targetProfileForChange)
+                      .filter(p => p === 'pluginManager')
+                      .map(p => (
+                        <Icon
+                          kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                          displayName={verticalIconsPlugin.targetProfileForChange[p].displayName}
+                          documentation={verticalIconsPlugin.targetProfileForChange[p].documentation}
+                          icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                          name={verticalIconsPlugin.targetProfileForChange[p].name}
+                          tooltip={verticalIconsPlugin.targetProfileForChange[p].tooltip}
+                          verticalIconPlugin={verticalIconsPlugin}
+                          key={verticalIconsPlugin.targetProfileForChange[p].displayName}
+                        />
                     ))
                   }
+                  {
+                    Object.keys(verticalIconsPlugin.targetProfileForChange)
+                      .filter(p => p === 'settings')
+                      .map(p => (
+                        <Icon
+                          kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                          displayName={verticalIconsPlugin.targetProfileForChange[p].displayName}
+                          documentation={verticalIconsPlugin.targetProfileForChange[p].documentation}
+                          icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                          name={verticalIconsPlugin.targetProfileForChange[p].name}
+                          tooltip={verticalIconsPlugin.targetProfileForChange[p].tooltip}
+                          verticalIconPlugin={verticalIconsPlugin}
+                          key={verticalIconsPlugin.targetProfileForChange[p].displayName}
+                        />
+                    ))
+                  }
+                </>
                 </Settings>
+                </Fragment>
               : null
             }
           </div>
