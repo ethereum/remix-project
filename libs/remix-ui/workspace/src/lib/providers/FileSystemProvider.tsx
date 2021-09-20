@@ -104,11 +104,11 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchEmitContextMenuEvent = async (cmd: customAction) => {
-    await emitContextMenuEvent(cmd)
+    await emitContextMenuEvent(cmd)()
   }
 
   const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
-    await handleClickFile(path, type)
+    await handleClickFile(path, type)(fsDispatch)
   }
 
   useEffect(() => {
