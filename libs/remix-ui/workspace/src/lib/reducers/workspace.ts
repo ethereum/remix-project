@@ -1,4 +1,4 @@
-import { extractNameFromKey, File } from '@remix-ui/file-explorer'
+import { extractNameFromKey } from '@remix-ui/helper'
 import * as _ from 'lodash'
 interface Action {
     type: string
