@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
-import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
+import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { WorkspaceProps, WorkspaceState } from './types'
 import { FileSystemContext } from './contexts'
