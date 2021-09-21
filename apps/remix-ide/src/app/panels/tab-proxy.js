@@ -297,7 +297,7 @@ export class TabProxy extends Plugin {
     this._view.filetabs.canAdd = false
 
     const zoomBtns = yo`
-      <div class="d-flex flex-row justify-content-center align-items-center">
+      <div class="d-flex flex-row justify-content-center align-items-center" title="Zoom in/out">
         <span data-id="tabProxyZoomOut" class="btn btn-sm px-1 fas fa-search-minus text-dark" onclick=${() => this.onZoomOut()}></span>
         <span data-id="tabProxyZoomIn" class="btn btn-sm px-1 fas fa-search-plus text-dark" onclick=${() => this.onZoomIn()}></span>
       </div>
@@ -307,6 +307,7 @@ export class TabProxy extends Plugin {
     this._view.tabs = yo`
       <div  style="display: -webkit-box; max-height: 32px">
         ${zoomBtns}
+        <i class="d-flex flex-row justify-content-center align-items-center far fa-sliders-v px-1" title="press F1 when focusing the editor to show advanced configuration settings"></i>
         ${this._view.filetabs}
       </div>
     `

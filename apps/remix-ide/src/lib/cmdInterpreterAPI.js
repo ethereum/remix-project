@@ -6,7 +6,6 @@ var EventManager = require('../lib/events')
 
 var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
-var SourceHighlighter = require('../app/editor/sourceHighlighter')
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
@@ -17,7 +16,6 @@ class CmdInterpreterAPI {
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.terminal = terminal
-    self._components.sourceHighlighter = new SourceHighlighter()
     self._components.fileImport = new CompilerImports()
     self._components.gistHandler = new GistHandler()
     self._deps = {
