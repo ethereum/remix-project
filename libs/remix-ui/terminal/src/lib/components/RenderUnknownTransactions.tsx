@@ -26,7 +26,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="log" onClick={(event) => txDetails(event, tx)}>
-        <CheckTxStatus tx={tx} type={txType} />
+        <CheckTxStatus tx={receipt || tx} type={txType} />
         <Context opts = { options } blockchain={plugin.blockchain} />
         <div className='buttons'>
           <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
