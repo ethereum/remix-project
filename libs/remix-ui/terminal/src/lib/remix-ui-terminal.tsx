@@ -14,7 +14,7 @@ import RenderUnKnownTransactions from './components/RenderUnknownTransactions' /
 import RenderCall from './components/RenderCall' // eslint-disable-line
 import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
-import { RemixUiTerminalProps } from './types/terminalTypes'
+import { EmptyBlock, KnownTransaction, RemixUiTerminalProps, UnknownTransaction } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
 
 /* eslint-disable-next-line */
@@ -501,18 +501,18 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           <div id='journal' className='journal' data-id='terminalJournal'>
             {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
-              if (x.name === 'emptyBlock') {
+              if (x.name === EmptyBlock) {
                 return (
                   <div className="px-4 block" data-id='block' key={index}>
                     <span className='txLog'>
                       <span className='tx'><div className='txItem'>[<span className='txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ] </div></span></span>
                   </div>
                 )
-              } else if (x.name === 'unknownTransaction') {
+              } else if (x.name === UnknownTransaction) {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { <RenderUnKnownTransactions tx={trans.tx} receipt={trans.receipt} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} />} </div>)
                 })
-              } else if (x.name === 'knownTransaction') {
+              } else if (x.name === KnownTransaction) {
                 return x.message.map((trans) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? <RenderCall tx={trans.tx} resolvedData={trans.resolvedData} logs={trans.logs} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} /> : (<RenderKnownTransactions tx = { trans.tx } receipt = { trans.receipt } resolvedData = { trans.resolvedData } logs = {trans.logs } index = { index } plugin = { props.plugin } showTableHash = { showTableHash } txDetails = { txDetails } />) } </div>)
                 })
@@ -524,7 +524,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     )
                   } else {
                     return (
-                      <div className="px-4 block" data-id="block" key={i}>{ msg ? msg.toString().replace(/,/g, '') : msg }</div>
+                      <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg ? msg.toString().replace(/,/g, '') : msg }</span></div>
                     )
                   }
                 })
