@@ -876,9 +876,8 @@
         }
       }
     },
-
     "remix-ui-vertical-icons": {
-          "root": "libs/remix-ui/vertical-icons",
+      "root": "libs/remix-ui/vertical-icons",
           "sourceRoot": "libs/remix-ui/vertical-icons/src",
           "projectType": "library",
           "schematics": {},
@@ -900,12 +899,6 @@
       "root": "apps/solidity-compiler",
       "sourceRoot": "apps/solidity-compiler/src",
       "projectType": "application",
-      "architect": {
-    "solidity-compiler": {
-      "root": "apps/solidity-compiler",
-      "sourceRoot": "apps/solidity-compiler/src",
-      "projectType": "application",
-      "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/web:build",
