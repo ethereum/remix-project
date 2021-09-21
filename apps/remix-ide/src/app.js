@@ -162,8 +162,7 @@ class App {
   }
 
   init () {
-    var self = this
-    run.apply(self)
+    this.run().catch(console.error)
   }
 
   render () {
@@ -202,317 +201,319 @@ class App {
     `
     return self._view.el
   }
+
+  async run () {
+    var self = this
+
+    // check the origin and warn message
+    if (window.location.hostname === 'yann300.github.io') {
+      modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
+    } else if (window.location.hostname === 'remix-alpha.ethereum.org' ||
+    (window.location.hostname === 'ethereum.github.io' && window.location.pathname.indexOf('/remix-live-alpha') === 0)) {
+      modalDialogCustom.alert('Welcome to the Remix alpha instance. Please use it to try out latest features. But use preferably https://remix.ethereum.org for any production work.')
+    } else if (window.location.protocol.indexOf('http') === 0 &&
+    window.location.hostname !== 'remix.ethereum.org' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1') {
+      modalDialogCustom.alert(`The Remix IDE has moved to http://remix.ethereum.org.\n
+  This instance of Remix you are visiting WILL NOT BE UPDATED.\n
+  Please make a backup of your contracts and start using http://remix.ethereum.org`)
+    }
+    if (window.location.protocol.indexOf('https') === 0) {
+      toolTip('You are using an `https` connection. Please switch to `http` if you are using Remix against an `http Web3 provider` or allow Mixed Content in your browser.')
+    }
+
+    const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
+    // workaround for Electron support
+    if (!isElectron() && !hosts.includes(window.location.host)) {
+      // Oops! Accidentally trigger refresh or bookmark.
+      window.onbeforeunload = function () {
+        return 'Are you sure you want to leave?'
+      }
+    }
+
+    // APP_MANAGER
+    const appManager = self.appManager
+    const pluginLoader = appManager.pluginLoader
+    const workspace = pluginLoader.get()
+    const engine = new RemixEngine()
+    engine.register(appManager)
+
+    // SERVICES
+    // ----------------- theme service ---------------------------------
+    const themeModule = new ThemeModule(registry)
+    registry.put({ api: themeModule, name: 'themeModule' })
+    themeModule.initTheme(() => {
+      setTimeout(() => {
+        document.body.removeChild(self._view.splashScreen)
+        self._view.el.style.visibility = 'visible'
+      }, 1500)
+    })
+    // ----------------- editor service ----------------------------
+    const editor = new Editor() // wrapper around ace editor
+    registry.put({ api: editor, name: 'editor' })
+    editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
+
+    // ----------------- fileManager service ----------------------------
+    const fileManager = new FileManager(editor, appManager)
+    registry.put({ api: fileManager, name: 'filemanager' })
+    // ----------------- dGit provider ---------------------------------
+    const dGitProvider = new DGitProvider()
+
+    // ----------------- import content service ------------------------
+    const contentImport = new CompilerImports()
+
+    const blockchain = new Blockchain(registry.get('config').api)
+
+    // ----------------- compilation metadata generation service ---------
+    const compilerMetadataGenerator = new CompilerMetadata()
+    // ----------------- compilation result service (can keep track of compilation results) ----------------------------
+    const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
+    registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
+
+    // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
+    const fetchAndCompile = new FetchAndCompile()
+    // ----------------- network service (resolve network id / name) -----
+    const networkModule = new NetworkModule(blockchain)
+    // ----------------- represent the current selected web3 provider ----
+    const web3Provider = new Web3ProviderModule(blockchain)
+    const hardhatProvider = new HardhatProvider(blockchain)
+    // ----------------- convert offset to line/column service -----------
+    const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
+    registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
+
+    // -------------------Terminal----------------------------------------
+
+    const terminal = new Terminal(
+      { appManager, blockchain },
+      {
+        getPosition: (event) => {
+          var limitUp = 36
+          var limitDown = 20
+          var height = window.innerHeight
+          var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
+          newpos = (newpos < height - limitDown) ? newpos : height - limitDown
+          return height - newpos
+        }
+      }
+    )
+    makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
+
+    const contextualListener = new ContextualListener({ editor })
+
+    engine.register([
+      blockchain,
+      contentImport,
+      themeModule,
+      editor,
+      fileManager,
+      compilerMetadataGenerator,
+      compilersArtefacts,
+      networkModule,
+      offsetToLineColumnConverter,
+      contextualListener,
+      terminal,
+      web3Provider,
+      fetchAndCompile,
+      dGitProvider,
+      hardhatProvider
+    ])
+
+    // LAYOUT & SYSTEM VIEWS
+    const appPanel = new MainPanel()
+    const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
+    registry.put({ api: mainview, name: 'mainview' })
+
+    engine.register([
+      appPanel,
+      mainview.tabProxy
+    ])
+
+    // those views depend on app_manager
+    const menuicons = new VerticalIcons(appManager)
+    const sidePanel = new SidePanel(appManager, menuicons)
+    const hiddenPanel = new HiddenPanel()
+    const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
+    const filePanel = new FilePanel(appManager)
+    const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel, contentImport)
+    const settings = new SettingsTab(
+      registry.get('config').api,
+      editor,
+      appManager
+    )
+
+    // adding Views to the DOM
+    self._view.mainpanel.appendChild(mainview.render())
+    self._view.iconpanel.appendChild(menuicons.render())
+    self._view.sidepanel.appendChild(sidePanel.render())
+    document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
+
+    engine.register([
+      menuicons,
+      landingPage,
+      hiddenPanel,
+      sidePanel,
+      filePanel,
+      pluginManagerComponent,
+      settings
+    ])
+
+    const queryParams = new QueryParams()
+    const params = queryParams.get()
+
+    const onAcceptMatomo = () => {
+      _paq.push(['forgetUserOptOut'])
+      // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
+      document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+      settings.updateMatomoAnalyticsChoice(true)
+      const el = document.getElementById('modal-dialog')
+      el.parentElement.removeChild(el)
+      startWalkthroughService()
+    }
+    const onDeclineMatomo = () => {
+      settings.updateMatomoAnalyticsChoice(false)
+      _paq.push(['optUserOut'])
+      const el = document.getElementById('modal-dialog')
+      el.parentElement.removeChild(el)
+      startWalkthroughService()
+    }
+
+    const startWalkthroughService = () => {
+      const walkthroughService = new WalkthroughService(localStorage)
+      if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
+        walkthroughService.start()
+      }
+    }
+
+    // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
+    const matomoDomains = {
+      'remix-alpha.ethereum.org': 27,
+      'remix-beta.ethereum.org': 25,
+      'remix.ethereum.org': 23
+    }
+    if (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics')) {
+      modalDialog(
+        'Help us to improve Remix IDE',
+        yo`
+        <div>
+          <p>An Opt-in version of <a href="https://matomo.org" target="_blank">Matomo</a>, an open source data analytics platform is being used to improve Remix IDE.</p>
+          <p>We realize that our users have sensitive information in their code and that their privacy - your privacy - must be protected.</p>
+          <p>All data collected through Matomo is stored on our own server - no data is ever given to third parties.  Our analytics reports are public: <a href="https://matomo.ethereum.org/index.php?module=MultiSites&action=index&idSite=23&period=day&date=yesterday" target="_blank">take a look</a>.</p>
+          <p>We do not collect nor store any personally identifiable information (PII).</p>
+          <p>For more info, see: <a href="https://medium.com/p/66ef69e14931/" target="_blank">Matomo Analyitcs on Remix iDE</a>.</p>
+          <p>You can change your choice in the Settings panel anytime.</p>
+          <div class="d-flex justify-content-around pt-3 border-top">
+            <button class="btn btn-primary ${css.matomoBtn}" onclick=${() => onAcceptMatomo()}>Sure</button>
+            <button class="btn btn-secondary ${css.matomoBtn}" onclick=${() => onDeclineMatomo()}>Decline</button>
+          </div>
+        </div>`,
+        {
+          label: '',
+          fn: null
+        },
+        {
+          label: '',
+          fn: null
+        }
+      )
+    } else {
+      startWalkthroughService()
+    }
+
+    // CONTENT VIEWS & DEFAULT PLUGINS
+    const compileTab = new CompileTab(registry.get('config').api, registry.get('filemanager').api)
+    const run = new RunTab(
+      blockchain,
+      registry.get('config').api,
+      registry.get('filemanager').api,
+      registry.get('editor').api,
+      filePanel,
+      registry.get('compilersartefacts').api,
+      networkModule,
+      mainview,
+      registry.get('fileproviders/browser').api
+    )
+    const analysis = new AnalysisTab(registry)
+    const debug = new DebuggerTab()
+    const test = new TestTab(
+      registry.get('filemanager').api,
+      registry.get('offsettolinecolumnconverter').api,
+      filePanel,
+      compileTab,
+      appManager,
+      contentImport
+    )
+
+    engine.register([
+      compileTab,
+      run,
+      debug,
+      analysis,
+      test,
+      filePanel.remixdHandle,
+      filePanel.gitHandle,
+      filePanel.hardhatHandle,
+      filePanel.slitherHandle
+    ])
+
+    if (isElectron()) {
+      appManager.activatePlugin('remixd')
+    }
+
+    try {
+      engine.register(await appManager.registeredPlugins())
+    } catch (e) {
+      console.log('couldn\'t register iframe plugins', e.message)
+    }
+
+    await appManager.activatePlugin(['theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
+    await appManager.activatePlugin(['home'])
+    await appManager.activatePlugin(['settings'])
+    await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+    await appManager.registerContextMenuItems()
+    // Set workspace after initial activation
+    appManager.on('editor', 'editorMounted', () => {
+      if (Array.isArray(workspace)) {
+        appManager.activatePlugin(workspace).then(async () => {
+          try {
+            if (params.deactivate) {
+              await appManager.deactivatePlugin(params.deactivate.split(','))
+            }
+          } catch (e) {
+            console.log(e)
+          }
+
+          if (params.code) {
+            // if code is given in url we focus on solidity plugin
+            menuicons.select('solidity')
+          } else {
+            // If plugins are loaded from the URL params, we focus on the last one.
+            if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+          }
+
+          if (params.call) {
+            const callDetails = params.call.split('//')
+            if (callDetails.length > 1) {
+              toolTip(`initiating ${callDetails[0]} ...`)
+              // @todo(remove the timeout when activatePlugin is on 0.3.0)
+              appManager.call(...callDetails).catch(console.error)
+            }
+          }
+        }).catch(console.error)
+      } else {
+        // activate solidity plugin
+        appManager.activatePlugin(['solidity', 'udapp'])
+      }
+    })
+
+    // Load and start the service who manager layout and frame
+    const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
+
+    if (params.embed) framingService.embed()
+    framingService.start(params)
+  }
 }
 
 module.exports = App
-
-async function run () {
-  var self = this
-
-  // check the origin and warn message
-  if (window.location.hostname === 'yann300.github.io') {
-    modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
-  } else if (window.location.hostname === 'remix-alpha.ethereum.org' ||
-  (window.location.hostname === 'ethereum.github.io' && window.location.pathname.indexOf('/remix-live-alpha') === 0)) {
-    modalDialogCustom.alert('Welcome to the Remix alpha instance. Please use it to try out latest features. But use preferably https://remix.ethereum.org for any production work.')
-  } else if (window.location.protocol.indexOf('http') === 0 &&
-  window.location.hostname !== 'remix.ethereum.org' &&
-  window.location.hostname !== 'localhost' &&
-  window.location.hostname !== '127.0.0.1') {
-    modalDialogCustom.alert(`The Remix IDE has moved to http://remix.ethereum.org.\n
-This instance of Remix you are visiting WILL NOT BE UPDATED.\n
-Please make a backup of your contracts and start using http://remix.ethereum.org`)
-  }
-  if (window.location.protocol.indexOf('https') === 0) {
-    toolTip('You are using an `https` connection. Please switch to `http` if you are using Remix against an `http Web3 provider` or allow Mixed Content in your browser.')
-  }
-
-  const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
-  // workaround for Electron support
-  if (!isElectron() && !hosts.includes(window.location.host)) {
-    // Oops! Accidentally trigger refresh or bookmark.
-    window.onbeforeunload = function () {
-      return 'Are you sure you want to leave?'
-    }
-  }
-
-  // APP_MANAGER
-  const appManager = self.appManager
-  const pluginLoader = appManager.pluginLoader
-  const workspace = pluginLoader.get()
-  const engine = new RemixEngine()
-  engine.register(appManager)
-
-  // SERVICES
-  // ----------------- theme service ---------------------------------
-  const themeModule = new ThemeModule(registry)
-  registry.put({ api: themeModule, name: 'themeModule' })
-  themeModule.initTheme(() => {
-    setTimeout(() => {
-      document.body.removeChild(self._view.splashScreen)
-      self._view.el.style.visibility = 'visible'
-    }, 1500)
-  })
-  // ----------------- editor service ----------------------------
-  const editor = new Editor({}, themeModule) // wrapper around ace editor
-  registry.put({ api: editor, name: 'editor' })
-  editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
-
-  // ----------------- fileManager service ----------------------------
-  const fileManager = new FileManager(editor, appManager)
-  registry.put({ api: fileManager, name: 'filemanager' })
-  // ----------------- dGit provider ---------------------------------
-  const dGitProvider = new DGitProvider()
-
-  // ----------------- import content service ------------------------
-  const contentImport = new CompilerImports()
-
-  const blockchain = new Blockchain(registry.get('config').api)
-
-  // ----------------- compilation metadata generation service ---------
-  const compilerMetadataGenerator = new CompilerMetadata()
-  // ----------------- compilation result service (can keep track of compilation results) ----------------------------
-  const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
-  registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
-
-  // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
-  const fetchAndCompile = new FetchAndCompile()
-  // ----------------- network service (resolve network id / name) -----
-  const networkModule = new NetworkModule(blockchain)
-  // ----------------- represent the current selected web3 provider ----
-  const web3Provider = new Web3ProviderModule(blockchain)
-  const hardhatProvider = new HardhatProvider(blockchain)
-  // ----------------- convert offset to line/column service -----------
-  const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
-  registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
-
-  // -------------------Terminal----------------------------------------
-  makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
-  const terminal = new Terminal(
-    { appManager, blockchain },
-    {
-      getPosition: (event) => {
-        var limitUp = 36
-        var limitDown = 20
-        var height = window.innerHeight
-        var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
-        newpos = (newpos < height - limitDown) ? newpos : height - limitDown
-        return height - newpos
-      }
-    },
-    registry
-  )
-
-  const contextualListener = new ContextualListener({ editor })
-
-  engine.register([
-    blockchain,
-    contentImport,
-    themeModule,
-    editor,
-    fileManager,
-    compilerMetadataGenerator,
-    compilersArtefacts,
-    networkModule,
-    offsetToLineColumnConverter,
-    contextualListener,
-    terminal,
-    web3Provider,
-    fetchAndCompile,
-    dGitProvider,
-    hardhatProvider
-  ])
-
-  // LAYOUT & SYSTEM VIEWS
-  const appPanel = new MainPanel()
-  const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
-  registry.put({ api: mainview, name: 'mainview' })
-
-  engine.register([
-    appPanel,
-    mainview.tabProxy
-  ])
-
-  // those views depend on app_manager
-  const menuicons = new VerticalIcons(appManager)
-  const sidePanel = new SidePanel(appManager, menuicons)
-  const hiddenPanel = new HiddenPanel()
-  const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
-  const filePanel = new FilePanel(appManager)
-  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel, contentImport)
-  const settings = new SettingsTab(
-    registry.get('config').api,
-    editor,
-    appManager
-  )
-
-  // adding Views to the DOM
-  self._view.mainpanel.appendChild(mainview.render())
-  self._view.iconpanel.appendChild(menuicons.render())
-  self._view.sidepanel.appendChild(sidePanel.render())
-  document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
-
-  engine.register([
-    menuicons,
-    landingPage,
-    hiddenPanel,
-    sidePanel,
-    filePanel,
-    pluginManagerComponent,
-    settings
-  ])
-
-  const queryParams = new QueryParams()
-  const params = queryParams.get()
-
-  const onAcceptMatomo = () => {
-    _paq.push(['forgetUserOptOut'])
-    // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
-    document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-    settings.updateMatomoAnalyticsChoice(true)
-    const el = document.getElementById('modal-dialog')
-    el.parentElement.removeChild(el)
-    startWalkthroughService()
-  }
-  const onDeclineMatomo = () => {
-    settings.updateMatomoAnalyticsChoice(false)
-    _paq.push(['optUserOut'])
-    const el = document.getElementById('modal-dialog')
-    el.parentElement.removeChild(el)
-    startWalkthroughService()
-  }
-
-  const startWalkthroughService = () => {
-    const walkthroughService = new WalkthroughService(localStorage)
-    if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
-      walkthroughService.start()
-    }
-  }
-
-  // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
-  const matomoDomains = {
-    'remix-alpha.ethereum.org': 27,
-    'remix-beta.ethereum.org': 25,
-    'remix.ethereum.org': 23
-  }
-  if (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics')) {
-    modalDialog(
-      'Help us to improve Remix IDE',
-      yo`
-      <div>
-        <p>An Opt-in version of <a href="https://matomo.org" target="_blank">Matomo</a>, an open source data analytics platform is being used to improve Remix IDE.</p>
-        <p>We realize that our users have sensitive information in their code and that their privacy - your privacy - must be protected.</p>
-        <p>All data collected through Matomo is stored on our own server - no data is ever given to third parties.  Our analytics reports are public: <a href="https://matomo.ethereum.org/index.php?module=MultiSites&action=index&idSite=23&period=day&date=yesterday" target="_blank">take a look</a>.</p>
-        <p>We do not collect nor store any personally identifiable information (PII).</p>
-        <p>For more info, see: <a href="https://medium.com/p/66ef69e14931/" target="_blank">Matomo Analyitcs on Remix iDE</a>.</p>
-        <p>You can change your choice in the Settings panel anytime.</p>
-        <div class="d-flex justify-content-around pt-3 border-top">
-          <button class="btn btn-primary ${css.matomoBtn}" onclick=${() => onAcceptMatomo()}>Sure</button>
-          <button class="btn btn-secondary ${css.matomoBtn}" onclick=${() => onDeclineMatomo()}>Decline</button>
-        </div>
-      </div>`,
-      {
-        label: '',
-        fn: null
-      },
-      {
-        label: '',
-        fn: null
-      }
-    )
-  } else {
-    startWalkthroughService()
-  }
-
-  // CONTENT VIEWS & DEFAULT PLUGINS
-  const compileTab = new CompileTab(registry.get('config').api, registry.get('filemanager').api)
-  const run = new RunTab(
-    blockchain,
-    registry.get('config').api,
-    registry.get('filemanager').api,
-    registry.get('editor').api,
-    filePanel,
-    registry.get('compilersartefacts').api,
-    networkModule,
-    mainview,
-    registry.get('fileproviders/browser').api
-  )
-  const analysis = new AnalysisTab(registry)
-  const debug = new DebuggerTab()
-  const test = new TestTab(
-    registry.get('filemanager').api,
-    registry.get('offsettolinecolumnconverter').api,
-    filePanel,
-    compileTab,
-    appManager,
-    contentImport
-  )
-
-  engine.register([
-    compileTab,
-    run,
-    debug,
-    analysis,
-    test,
-    filePanel.remixdHandle,
-    filePanel.gitHandle,
-    filePanel.hardhatHandle,
-    filePanel.slitherHandle
-  ])
-
-  if (isElectron()) {
-    appManager.activatePlugin('remixd')
-  }
-
-  try {
-    engine.register(await appManager.registeredPlugins())
-  } catch (e) {
-    console.log('couldn\'t register iframe plugins', e.message)
-  }
-
-  await appManager.activatePlugin(['theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
-  await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
-  await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
-  await appManager.activatePlugin(['home'])
-  await appManager.activatePlugin(['settings'])
-  await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
-  await appManager.registerContextMenuItems()
-  // Set workspace after initial activation
-  if (Array.isArray(workspace)) {
-    appManager.activatePlugin(workspace).then(async () => {
-      try {
-        if (params.deactivate) {
-          await appManager.deactivatePlugin(params.deactivate.split(','))
-        }
-      } catch (e) {
-        console.log(e)
-      }
-
-      if (params.code) {
-        // if code is given in url we focus on solidity plugin
-        menuicons.select('solidity')
-      } else {
-        // If plugins are loaded from the URL params, we focus on the last one.
-        if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
-      }
-
-      if (params.call) {
-        const callDetails = params.call.split('//')
-        if (callDetails.length > 1) {
-          toolTip(`initiating ${callDetails[0]} ...`)
-          // @todo(remove the timeout when activatePlugin is on 0.3.0)
-          appManager.call(...callDetails).catch(console.error)
-        }
-      }
-    }).catch(console.error)
-  } else {
-    // activate solidity plugin
-    appManager.activatePlugin(['solidity', 'udapp'])
-  }
-
-  // Load and start the service who manager layout and frame
-  const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
-
-  if (params.embed) framingService.embed()
-  framingService.start(params)
-}
