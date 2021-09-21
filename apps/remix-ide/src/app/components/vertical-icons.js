@@ -9,10 +9,10 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
 const globalRegistry = require('../../global/registry')
-const contextMenu = require('../ui/contextMenu')
+// const contextMenu = require('../ui/contextMenu')
 const { Plugin } = require('@remixproject/engine')
 const EventEmitter = require('events')
-let VERTICALMENU_HANDLE
+// let VERTICALMENU_HANDLE
 
 const profile = {
   name: 'menuicons',
@@ -21,8 +21,6 @@ const profile = {
   version: packageJson.version,
   methods: ['select']
 }
-
-export const newProfiles = []
 
 // TODO merge with side-panel.js. VerticalIcons should not be a plugin
 export class VerticalIcons extends Plugin {
@@ -231,6 +229,9 @@ export class VerticalIcons extends Plugin {
   async itemContextMenu (e, name, documentation) {
     const actions = {}
     if (await this.appManager.canDeactivatePlugin(profile, { name })) {
+      console.log('name passed into canDeactivate ', name)
+      console.log('e in itemContextMenu is ', e)
+      console.log('profile is ', profile)
       actions.Deactivate = () => {
         // this.call('manager', 'deactivatePlugin', name)
         this.appManager.deactivatePlugin(name)
@@ -239,16 +240,6 @@ export class VerticalIcons extends Plugin {
         }
       }
     }
-    const links = {}
-    if (documentation) {
-      links.Documentation = documentation
-    }
-    if (Object.keys(actions).length || Object.keys(links).length) {
-      VERTICALMENU_HANDLE && VERTICALMENU_HANDLE.hide(null, true)
-      VERTICALMENU_HANDLE = contextMenu(e, actions, links)
-    }
-    e.preventDefault()
-    e.stopPropagation()
   }
 
   async activateHome () {

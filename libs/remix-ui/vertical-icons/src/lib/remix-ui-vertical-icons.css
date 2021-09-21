@@ -59,8 +59,8 @@
   padding-right: 5px;
 }
 
-.remixui_container {
-  display: none;
+.remixui_verticalIconContextcontainer {
+  display: block;
   position: fixed;
   border-radius: 2px;
   z-index: 1000;
