@@ -37,7 +37,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
-  const [, setIsListeningOnNetwork] = useState(false)
+  const [isListeningOnNetwork, setIsListeningOnNetwork] = useState(false)
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
   const [autoCompletState, setAutoCompleteState] = useState({
@@ -101,7 +101,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
       })
     }, { activate: true }, dispatch)
-  }, [autoCompletState.text])
+  }, [isListeningOnNetwork, autoCompletState.text])
 
   useEffect(() => {
     scrollToBottom()
@@ -178,14 +178,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const handleMinimizeTerminal = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
+  const handleMinimizeTerminal = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
     if (toggleDownUp === 'fa-angle-double-down') {
       setToggleDownUp('fa-angle-double-up')
       event.trigger('resize', [])
     } else {
-      const terminalTopOffset = config.get('terminal-top-offset')
+      const terminalTopOffset = config.config.get('terminal-top-offset')
       event.trigger('resize', [terminalTopOffset])
       setToggleDownUp('fa-angle-double-down')
     }
