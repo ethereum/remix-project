@@ -3,11 +3,12 @@ import EventEmitter from 'events'
 
 class SetEditorValue extends EventEmitter {
   command (this: NightwatchBrowser, value: string, callback?: VoidFunction): NightwatchBrowser {
+    console.log('set editor', value)
     this.api.perform((client, done) => {
       this.api.execute(function (value) {
-        const elem: any = document.getElementById('input')
+        const elem: any = document.getElementById('editorView')
 
-        elem.editor.session.setValue(value)
+        elem.setCurrentContent(value)
       }, [value], () => {
         done()
         if (callback) {

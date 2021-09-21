@@ -17,16 +17,26 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
   browser.clickLaunchIcon('udapp')
     .clickLaunchIcon('filePanel')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
-    .click('[data-id="fileExplorerNewFilecreateNewFile"]')
-    .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-    .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-    .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-    .pause(2000)
-    .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
-    .setEditorValue(content.content)
-    .pause(1000)
-    .perform(function () {
-      done()
+    .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
+      console.log(res)
+      if (res.value && (res.value as any).length > 0) {
+        browser.openFile(name)
+          .perform(function () {
+            done()
+          })
+      } else {
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+          .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+          .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+          .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+          .pause(2000)
+          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+          .setEditorValue(content.content)
+          .pause(1000)
+          .perform(function () {
+            done()
+          })
+      }
     })
 }
 

@@ -46,7 +46,7 @@ module.exports = {
 
     'chrome-runAndDeploy': {
       desiredCapabilities: {
-        browserName: 'chrome',
+        browserName: 'firefox',
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
