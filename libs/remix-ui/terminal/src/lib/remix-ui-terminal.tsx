@@ -37,7 +37,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
-  const [isListeningOnNetwork, setIsListeningOnNetwork] = useState(false)
+  const [, setIsListeningOnNetwork] = useState(false)
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
   const [autoCompletState, setAutoCompleteState] = useState({
@@ -101,7 +101,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
       })
     }, { activate: true }, dispatch)
-  }, [isListeningOnNetwork, autoCompletState.text])
+  }, [autoCompletState.text])
 
   useEffect(() => {
     scrollToBottom()
