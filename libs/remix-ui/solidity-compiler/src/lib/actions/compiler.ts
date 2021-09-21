@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { CompileTabLogic } from '../logic/compileTabLogic'
 export const setEditorMode = (mode: string) => {
   return {
     type: 'SET_EDITOR_MODE',
@@ -26,10 +26,10 @@ export const resetCompilerMode = () => (dispatch: React.Dispatch<any>) => {
   })
 }
 
-export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
-  api.on('editor', 'sessionSwitched', () => {
+export const listenToEvents = (compileTabLogic: CompileTabLogic, api) => (dispatch: React.Dispatch<any>) => {
+  api.onSessionSwitched = () => {
     dispatch(setEditorMode('sessionSwitched'))
-  })
+  }
 
   compileTabLogic.event.on('startingCompilation', () => {
     dispatch(setCompilerMode('startingCompilation'))
@@ -39,9 +39,9 @@ export const listenToEvents = (compileTabLogic, api) => (dispatch: React.Dispatc
     dispatch(setCompilerMode('compilationDuration', speed))
   })
 
-  api.on('editor', 'contentChanged', () => {
+  api.onContentChanged = () => {
     dispatch(setEditorMode('contentChanged'))
-  })
+  }
 
   compileTabLogic.compiler.event.register('loadingCompiler', () => {
     dispatch(setCompilerMode('loadingCompiler'))

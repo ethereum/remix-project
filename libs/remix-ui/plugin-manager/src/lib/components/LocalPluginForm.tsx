@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
-import { FormStateProps, PluginManagerComponent } from '../../types'
+import { canActivate, FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
   closeModal: () => void
@@ -20,7 +20,8 @@ const initialState: FormStateProps = {
   type: 'iframe',
   hash: '',
   methods: [],
-  location: 'sidePanel'
+  location: 'sidePanel',
+  canActivate: []
 }
 
 const defaultProfile = {
@@ -41,15 +42,17 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
   const [type, setType] = useState<'iframe' | 'ws'>('iframe')
   const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
   const [methods, setMethods] = useState<string>('')
+  const [canactivate, setCanactivate] = useState<string>('')
 
   useEffect(() => {
     const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
     setName(storagePlugin.name)
     setUrl(storagePlugin.url)
     setLocation(storagePlugin.location as 'sidePanel' | 'mainPanel' | 'none')
-    setMethods(storagePlugin.methods)
+    setMethods(Array.isArray(storagePlugin.methods) ? storagePlugin.methods.join(',') : storagePlugin.methods)
     setType(storagePlugin.type)
     setDisplayName(storagePlugin.displayName)
+    setCanactivate(Array.isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate)
   }, [])
 
   const handleModalOkClick = async () => {
@@ -60,7 +63,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
       }
       if (!location) throw new Error('Plugin should have a location')
       if (!url) throw new Error('Plugin should have an URL')
-      const newMethods = typeof methods === 'string' ? methods.split(',').filter(val => val) : []
+      const newMethods = typeof methods === 'string' ? methods.split(',').filter(val => val).map(val => { return val.trim() }) : []
       const targetPlugin = {
         name: name,
         displayName: displayName,
@@ -73,7 +76,8 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
         url: url,
         type: type,
         location: location,
-        icon: 'assets/img/localPlugin.webp'
+        icon: 'assets/img/localPlugin.webp',
+        canActivate: typeof canactivate === 'string' ? canactivate.split(',').filter(val => val).map(val => { return val.trim() }) : []
       }
       const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
@@ -122,14 +126,24 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             placeholder="Name in the header" />
         </div>
         <div className="form-group">
-          <label htmlFor="plugin-methods">Api (comma separated list of methods name)</label>
+          <label htmlFor="plugin-methods">Api (comma separated list of method names)</label>
           <input
             className="form-control"
             onChange={e => setMethods(e.target.value)}
             value={ methods }
             id="plugin-methods"
             data-id="localPluginMethods"
-            placeholder="Name in the header" />
+            placeholder="Methods" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="plugin-methods">Plugins it can activate (comma separated list of plugin names)</label>
+          <input
+            className="form-control"
+            onChange={e => setCanactivate(e.target.value)}
+            value={ canactivate }
+            id="plugin-canactivate"
+            data-id="localPluginCanActivate"
+            placeholder="Plugin names" />
         </div>
 
         <div className="form-group">

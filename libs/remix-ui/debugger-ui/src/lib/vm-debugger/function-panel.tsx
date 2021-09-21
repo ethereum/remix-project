@@ -10,7 +10,7 @@ export const FunctionPanel = ({ data }) => {
   }, [data])
 
   return (
-    <div id='FunctionPanel'>
+    <div id='FunctionPanel' data-id='functionPanel'>
       <DropdownPanel dropdownName='Function Stack' calldata={calldata || {}} />
     </div>
   )

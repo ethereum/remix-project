@@ -39,8 +39,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     return unLoad()
   }, [])
 
-  debuggerModule.onDebugRequested((hash) => {
-    if (hash) debug(hash)
+  debuggerModule.onDebugRequested((hash, web3?) => {
+    if (hash) debug(hash, web3)
   })
 
   debuggerModule.onRemoveHighlights(async () => {
@@ -162,7 +162,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       }
     })
   }
-  const startDebugging = async (blockNumber, txNumber, tx) => {
+  const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
     setState(prevState => {
@@ -181,7 +181,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return
     }
 
-    const web3 = state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3()
+    const web3 = optWeb3 || (state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3())
     try {
       const networkId = await web3.eth.net.getId()
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
@@ -259,7 +259,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
   }
 
-  const debug = (txHash) => {
+  const debug = (txHash, web3?) => {
     setState(prevState => {
       return {
         ...prevState,
@@ -267,7 +267,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         txNumber: txHash
       }
     })
-    startDebugging(null, txHash, null)
+    startDebugging(null, txHash, null, web3)
   }
 
   const stepManager = {

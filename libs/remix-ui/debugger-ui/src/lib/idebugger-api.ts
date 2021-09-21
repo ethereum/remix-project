@@ -45,7 +45,7 @@ export interface TransactionReceipt {
 export type onBreakpointClearedListener = (params: string, row: number) => void
 export type onBreakpointAddedListener = (params: string, row: number) => void
 export type onEditorContentChanged = () => void
-export type onDebugRequested = (hash: string) => void
+export type onDebugRequested = (hash: string, web3?: any) => void
 export type onEnvChangedListener = (provider: string) => void
 
 export interface IDebuggerApi {

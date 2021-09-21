@@ -22,6 +22,7 @@ export function urlFromVersion (version) {
     if (!location.endsWith('/')) location += '/'
     url = `${location}soljson.js`
   } else {
+    version = version.replace('.Emscripten.clang', '')
     if (!version.startsWith('soljson-v')) version = 'soljson-v' + version
     if (!version.endsWith('.js')) version = version + '.js'
     url = `${pathToURL[version]}/${version}`

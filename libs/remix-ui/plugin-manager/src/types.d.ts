@@ -178,8 +178,9 @@ export interface FormStateProps {
   url: string
   type: 'iframe' | 'ws'
   hash: string
-  methods: any
+  methods: string[]
   location: string
+  canActivate: string[]
 }
 
 export type PluginManagerProfile = Profile & {
