@@ -75,7 +75,9 @@ module.exports = {
       .waitForElementVisible('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]', 120000)
       .scrollAndClick('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]') // click on error which point to ERC20 code
       .pause(5000)
-      .waitForElementContainsText('#input', 'contract ERC20 is Context, IERC20', 60000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('contract ERC20 is Context, IERC20') !== -1, 'content does not contain "contract ERC20 is Context, IERC20"')
+      })
   },
 
   'Test NPM Import (with unpkg.com)': function (browser: NightwatchBrowser) {

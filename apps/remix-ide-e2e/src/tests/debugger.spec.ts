@@ -62,9 +62,13 @@ module.exports = {
   },
 
   'Should jump through breakpoints': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
-      .click('.ace_gutter-cell:nth-of-type(10)')
-      .click('.ace_gutter-cell:nth-of-type(20)')
+    browser.waitForElementVisible('#editorView')
+      .execute(() => {
+        (window as any).addRemixBreakpoint(11)
+      }, [], () => {})
+      .execute(() => {
+        (window as any).addRemixBreakpoint(21)
+      }, [], () => {})
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
@@ -127,7 +131,7 @@ module.exports = {
       But the debugger uses now validSourcelocation, which means file is not -1.
       In that case the source highlight at 261 should be the same as for step 262
     */
-      .waitForElementPresent('.highlightLine7')
+      .waitForElementPresent('.highlightLine8')
       .goToVMTraceStep(266)
       .pause(1000)
       .checkVariableDebug('soliditylocals', localVariable_step266_ABIEncoder) // locals should not be initiated at this point, only idAsk should
