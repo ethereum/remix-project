@@ -96,6 +96,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .openFile('tests/compilationError_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
+      .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 3)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
