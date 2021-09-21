@@ -7,7 +7,7 @@ export interface ROOTS {
 }
 
 export const KnownTransaction = 'knownTransaction'
-export const UnknownTransaction = 'unkownTransaction'
+export const UnknownTransaction = 'unknownTransaction'
 export const EmptyBlock = 'emptyBlock'
 export const NewTransaction = 'newTransaction'
 export const NewBlock = 'newBlock'
