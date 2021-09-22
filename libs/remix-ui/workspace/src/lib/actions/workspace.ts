@@ -484,6 +484,10 @@ const listenOnEvents = (provider) => {
   plugin.on('filePanel', 'displayNewFileInput', (path) => {
     addInputField('file', path)(dispatch)
   })
+
+  plugin.on('filePanel', 'uploadFileEvent', (dir: string, target) => {
+    uploadFile(target, dir)(dispatch)
+  })
 }
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
