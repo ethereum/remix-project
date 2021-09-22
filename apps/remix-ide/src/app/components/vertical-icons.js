@@ -192,6 +192,23 @@ export class VerticalIcons extends Plugin {
     this.addActive(name)
   }
 
+  onThemeChanged (themeType) {
+    const invert = themeType === 'dark' ? 1 : 0
+    const active = this.view.querySelector('.active')
+    if (active) {
+      const image = active.querySelector('.image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
+  }
+
+  async itemContextMenu (e, name, documentation) {
+    this.appManager.deactivatePlugin(name)
+    if (e.target.parentElement.classList.contains('active')) {
+      this.select('filePanel')
+    }
+    this.renderComponent()
+  }
+
   async activateHome () {
     await this.appManager.activatePlugin('home')
     this.call('tabs', 'focus', 'home')
