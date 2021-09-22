@@ -138,8 +138,11 @@ module.exports = class Filepanel extends ViewPlugin {
     this.emit('displayNewFileInput', dir)
   }
 
-  async uploadFile (event) {
-    return await this.request.uploadFile(event)
+  async uploadFile (target) {
+    const provider = this.fileManager.currentFileProvider()
+    const dir = provider.workspace || '/'
+
+    return this.emit('uploadFileEvent', dir, target)
   }
 
   async processCreateWorkspace (name) {
