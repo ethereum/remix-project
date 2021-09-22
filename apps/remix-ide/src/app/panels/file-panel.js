@@ -230,19 +230,19 @@ module.exports = class Filepanel extends ViewPlugin {
   async processCreateWorkspace (name) {
     const workspaceProvider = this._deps.fileProviders.workspace
     const browserProvider = this._deps.fileProviders.browser
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
+    const workspacePath = '/' + workspaceProvider.workspacesPath + '/' + name
+    const workspaceRootPath = '/' + workspaceProvider.workspacesPath
     const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
     const workspacePathExists = await browserProvider.exists(workspacePath)
-
-    if (!workspaceRootPathExists) browserProvider.createDir(workspaceRootPath)
-    if (!workspacePathExists) browserProvider.createDir(workspacePath)
+    console.log('CRS', workspacePath, workspaceRootPath, workspacePathExists, workspaceRootPathExists)
+    if (!workspaceRootPathExists) await browserProvider.createDir(workspaceRootPath)
+    if (!workspacePathExists) await browserProvider.createDir(workspacePath)
   }
 
   async workspaceExists (name) {
     const workspaceProvider = this._deps.fileProviders.workspace
     const browserProvider = this._deps.fileProviders.browser
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    const workspacePath = '/' + workspaceProvider.workspacesPath + '/' + name
     return browserProvider.exists(workspacePath)
   }
 
@@ -252,6 +252,7 @@ module.exports = class Filepanel extends ViewPlugin {
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     else {
       const workspaceProvider = this._deps.fileProviders.workspace
+      console.log('create WS', workspaceName)
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace

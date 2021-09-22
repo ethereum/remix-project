@@ -52,7 +52,7 @@ class DGitProvider extends Plugin {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     return {
       fs: window.remixFileSystemCallback,
-      dir: addSlash(workspace.absolutePath) + '/'
+      dir: addSlash(workspace.absolutePath)
     }
   }
 
@@ -82,11 +82,10 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log("STATUS", status, await this.getGitConfig())
     return status
   }
 
-  async add(cmd) {
+  async add (cmd) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
@@ -573,3 +572,14 @@ const normalize = (filesList) => {
 }
 
 module.exports = DGitProvider
+
+/*
+if (navigator.storage && navigator.storage.estimate) {
+  const quota = await navigator.storage.estimate();
+  // quota.usage -> Number of bytes used.
+  // quota.quota -> Maximum number of bytes available.
+  const percentageUsed = (quota.usage / quota.quota) * 100;
+  console.log(`You've used ${percentageUsed}% of the available storage.`);
+  const remaining = quota.quota - quota.usage;
+  console.log(`You can write up to ${(remaining/ 1048576).toFixed(2)} more MB.`);
+} */
