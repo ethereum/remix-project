@@ -9,26 +9,22 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
   links: { Documentation: string, CanDeactivate: boolean }
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
-  hideContextMenu: () => void
-  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
+  hideContextMenu: (evt: any) => void
 }
 
 interface MenuLinksProps {
   listItems: { Documentation: string, CanDeactivate: boolean }
-  hide: () => void
+  hide: (someEvent: any, value: boolean) => void
   profileName: string
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
-  ref?: React.MutableRefObject<any>
-  toggle: (name: string) => void
-  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 interface MenuProps {
   verticalIconsPlugin: VerticalIcons
   profileName: string
   listItems: { Documentation: string, CanDeactivate: boolean }
-  hide: () => void
+  hide: (someEvent: any, value: boolean) => void
 }
 
 function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
@@ -45,7 +41,7 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
     <div
       id="menuItemsContainer"
       className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
-      onBlur={props.hideContextMenu}
+      onBlur={() => props.hideContextMenu}
       style={{
         left: props.pageX,
         top: props.pageY,
@@ -73,35 +69,57 @@ function MenuForLinks({
   listItems,
   hide,
   profileName,
-  contextMenuAction
+  canBeDeactivated,
+  verticalIconPlugin
 }: MenuLinksProps) {
+  console.log('linkitems ', listItems)
   return (
     <Fragment>
-      {listItems.CanDeactivate &&
-        <li
-        id="menuitemdeactivate"
-        onClick={(evt) => {
-          contextMenuAction(evt, profileName ,listItems.Documentation)
-          hide()
-        }}
-        className="remixui_liitem"
-      >
-        Deactivate
-      </li>}
-      {(listItems.Documentation && listItems.Documentation.length > 0)
-        &&
+      <Menu
+        hide={hide}
+        profileName={profileName}
+        listItems={listItems}
+        verticalIconsPlugin={verticalIconPlugin}
+      />
+      {listItems && Object.keys(listItems).length > 0
+        ? Object.keys(listItems).map((item, idx) => (
             <li
               id="menuitemdocumentation"
               className="remixui_liitem"
             >
               <a
-                onClick={hide}
-                href={listItems.Documentation}
+                onClick={(evt) => hide(evt, true)}
+                onBlur={(evt) => hide(evt, true)}
+                href={listItems[item]}
                 target="_blank"
               >
                 Documentation
               </a>
-            </li>}
+            </li>
+          ))
+        : null}
+    </Fragment>
+  )
+}
+
+function Menu(props: MenuProps) {
+  console.log('props contains ', props)
+  return (
+    <Fragment>
+      { props.listItems.CanDeactivate ? (
+        <li
+          id="menuitemdeactivate"
+          onClick={(evt) => {
+            props.verticalIconsPlugin
+            .itemContextMenu(evt, props.profileName ,props.listItems.Documentation)
+            props.hide(evt, true)
+          }}
+          onBlur={(evt) => props.hide(evt, true)}
+          className="remixui_liitem"
+        >
+          Deactivate
+        </li>
+      ) : null}
     </Fragment>
   )
 }
