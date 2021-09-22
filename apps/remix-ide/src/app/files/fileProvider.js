@@ -288,7 +288,6 @@ class FileProvider {
           const absPath = (path === '/' ? '' : path) + '/' + element
           ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: (await window.remixFileSystem.statExtended(this.addSlash(absPath))).isDirectory() }
           // ^ ret does not accept path starting with '/'
-          console.log(ret)
         }
       }
       if (cb) cb(null, ret)
