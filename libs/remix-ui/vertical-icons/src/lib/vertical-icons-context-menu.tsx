@@ -16,7 +16,7 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
 
 interface MenuLinksProps {
   listItems: { Documentation: string, CanDeactivate: boolean }
-  hide: (someEvent: any, value: boolean) => void
+  hide: () => void
   profileName: string
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
@@ -29,7 +29,7 @@ interface MenuProps {
   verticalIconsPlugin: VerticalIcons
   profileName: string
   listItems: { Documentation: string, CanDeactivate: boolean }
-  hide: (someEvent: any, value: boolean) => void
+  hide: () => void
 }
 
 function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
@@ -96,16 +96,13 @@ function MenuForLinks ({
               className="remixui_liitem"
             >
               <a
-                onClick={(evt) => hide(evt, true)}
-                onBlur={(evt) => hide(evt, true)}
-                href={listItems[item]}
+                onClick={hide}
+                href={listItems.Documentation}
                 target="_blank"
               >
                 Documentation
               </a>
-            </li>
-          ))
-        : null}
+            </li>}
     </Fragment>
   )
 }
