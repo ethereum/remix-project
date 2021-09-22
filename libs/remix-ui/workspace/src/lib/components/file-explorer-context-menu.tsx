@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react' // eslint-disable-line
 import { action, FileExplorerContextMenuProps } from '../types'
 
-import './css/file-explorer-context-menu.css'
+import '../css/file-explorer-context-menu.css'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 declare global {

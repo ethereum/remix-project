@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
-import './remix-ui-workspace.css'
+import './css/remix-ui-workspace.css'
 import { WorkspaceProps, WorkspaceState } from './types'
 import { FileSystemContext } from './contexts'
 
@@ -9,12 +9,9 @@ const canUpload = window.File || window.FileReader || window.FileList || window.
 export function Workspace (props: WorkspaceProps) {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
-  const [state, setState] = useState<WorkspaceState>({
-    reset: false,
+  const [state] = useState<WorkspaceState>({
     hideRemixdExplorer: true,
     displayNewFile: false,
-    externalUploads: null,
-    uploadFileEvent: null,
     loadingLocalhost: false
   })
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
@@ -49,19 +46,6 @@ export function Workspace (props: WorkspaceProps) {
   props.plugin.request.createWorkspace = () => {
     return createWorkspace()
   }
-
-  // props.plugin.request.createNewFile = async () => {
-  //   if (!state.workspaces.length) await createNewWorkspace('default_workspace')
-  //   props.plugin.resetNewFile()
-  // }
-
-  // props.plugin.request.uploadFile = async (target: EventTarget & HTMLInputElement) => {
-  //   if (!state.workspaces.length) await createNewWorkspace('default_workspace')
-
-  //   setState(prevState => {
-  //     return { ...prevState, uploadFileEvent: target }
-  //   })
-  // }
 
   props.plugin.request.getCurrentWorkspace = () => {
     return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.plugin.workspace.workspacesPath}/${currentWorkspace}` }
@@ -120,10 +104,8 @@ export function Workspace (props: WorkspaceProps) {
   }
   /** ** ****/
 
-  const resetFocus = (reset) => {
-    setState(prevState => {
-      return { ...prevState, reset }
-    })
+  const resetFocus = () => {
+    global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
   }
 
   const switchWorkspace = async (name: string) => {
@@ -153,7 +135,7 @@ export function Workspace (props: WorkspaceProps) {
 
   return (
     <div className='remixui_container'>
-      <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
+      <div className='remixui_fileexplorer' onClick={resetFocus}>
         <div>
           <header>
             <div className="mb-2">
@@ -214,14 +196,12 @@ export function Workspace (props: WorkspaceProps) {
                   <FileExplorer
                     name={currentWorkspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                    plugin={props.plugin}
-                    focusRoot={state.reset}
                     contextMenuItems={props.plugin.registeredMenuItems}
                     removedContextMenuItems={props.plugin.removedMenuItems}
-                    displayInput={state.displayNewFile}
-                    externalUploads={state.uploadFileEvent}
-                    resetFocus={resetFocus}
                     files={global.fs.browser.files}
+                    expandPath={global.fs.browser.expandPath}
+                    focusEdit={global.fs.focusEdit}
+                    focusElement={global.fs.focusElement}
                   />
               }
             </div>
@@ -232,12 +212,12 @@ export function Workspace (props: WorkspaceProps) {
                       <FileExplorer
                         name='localhost'
                         menuItems={['createNewFile', 'createNewFolder']}
-                        plugin={props.plugin}
-                        focusRoot={state.reset}
                         contextMenuItems={props.plugin.registeredMenuItems}
                         removedContextMenuItems={props.plugin.removedMenuItems}
-                        resetFocus={resetFocus}
                         files={global.fs.localhost.files}
+                        expandPath={global.fs.localhost.expandPath}
+                        focusEdit={global.fs.focusEdit}
+                        focusElement={global.fs.focusElement}
                       />
                   }
                 </div>
