@@ -227,19 +227,11 @@ export class VerticalIcons extends Plugin {
   }
 
   async itemContextMenu (e, name, documentation) {
-    const actions = {}
-    if (await this.appManager.canDeactivatePlugin(profile, { name })) {
-      console.log('name passed into canDeactivate ', name)
-      console.log('e in itemContextMenu is ', e)
-      console.log('profile is ', profile)
-      actions.Deactivate = () => {
-        // this.call('manager', 'deactivatePlugin', name)
-        this.appManager.deactivatePlugin(name)
-        if (e.target.parentElement.classList.contains('active')) {
-          this.select('filePanel')
-        }
-      }
+    this.appManager.deactivatePlugin(name)
+    if (e.target.parentElement.classList.contains('active')) {
+      this.select('filePanel')
     }
+    this.renderComponent()
   }
 
   async activateHome () {

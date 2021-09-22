@@ -30,8 +30,8 @@ function Icon({
     const temp = tooltip || displayName || name
     return temp.replace(/^\w/, word => word.toUpperCase())
   })
-  const [links, setLinks] = useState<{ Documentation: string }>(
-    {} as { Documentation: string }
+  const [links, setLinks] = useState<{ Documentation: string, CanDeactivate: boolean }>(
+    {} as { Documentation: string, CanDeactivate: boolean }
   )
   const [pageX, setPageX] = useState<number>(null)
   const [pageY, setPageY] = useState<number>(null)
@@ -39,44 +39,46 @@ function Icon({
   const [canDeactivate, flipCanDeactivate] = useState(false)
 
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
-    if (documentation) {
-      setLinks({ Documentation: documentation })
+    if (documentation 
+      && verticalIconPlugin.appManager
+      .canDeactivatePlugin(verticalIconPlugin.defaultProfile, { name })) {
+      setLinks({ Documentation: documentation, CanDeactivate: true })
     }
     setShowContext(false)
     setPageX(e.pageX)
     setPageY(e.pageY)
-    // verticalIconPlugin.itemContextMenu(e, name, documentation)
-    deactivateAction(
-      verticalIconPlugin.defaultProfile,
-      name,
-      e,
-      verticalIconPlugin
-    )
     setShowContext(true)
+    // verticalIconPlugin.itemContextMenu(e, name, documentation)
+    // deactivateAction(
+    //   verticalIconPlugin.defaultProfile,
+    //   name,
+    //   e,
+    //   verticalIconPlugin
+    // )
   }
-  const closeContextMenu = (evt: any & PointerEvent) => {
+  const closeContextMenu = (evt: SyntheticEvent & PointerEvent) => {
     console.log('evt is ', evt)
     setShowContext(false)
   }
 
-  const deactivateAction = async (
-    profile: defaultModuleProfile,
-    name: string,
-    e: SyntheticEvent & PointerEvent,
-    verticalIconPlugin: VerticalIcons
-  ) => {
-    const actions = {}
-    if (
-      await verticalIconPlugin.appManager.canDeactivatePlugin(profile, { name })
-    ) {
-      console.log('name passed into canDeactivate ', name)
-      console.log('e in itemContextMenu is ', e)
-      // actions['Deactivate'] = () =>
-      //   verticalIconPlugin.appManager.deactivatePlugin(name)
-      flipCanDeactivate(true)
-    }
-    return actions
-  }
+  // const deactivateAction = async (
+  //   profile: defaultModuleProfile,
+  //   name: string,
+  //   e: SyntheticEvent & PointerEvent,
+  //   verticalIconPlugin: VerticalIcons
+  // ) => {
+  //   // const actions = {}
+  //   if (
+  //     await verticalIconPlugin.appManager.canDeactivatePlugin(profile, { name })
+  //   ) {
+  //     console.log('name passed into canDeactivate ', name)
+  //     console.log('e in itemContextMenu is ', e)
+  //     // actions['Deactivate'] = () =>
+  //     //   verticalIconPlugin.appManager.deactivatePlugin(name)
+  //     flipCanDeactivate(true)
+  //   }
+  //   // return actions
+  // }
 
   return (
     <Fragment>
