@@ -148,10 +148,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory or file
    * @returns {boolean} true if path is a file.
    */
-  isFile (path) {
+  async isFile (path) {
     const provider = this.fileProviderOf(path)
-    const result = provider.isFile(path)
-
+    const result = await provider.isFile(path)
     return result
   }
 

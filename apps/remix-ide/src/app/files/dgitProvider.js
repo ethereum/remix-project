@@ -51,8 +51,8 @@ class DGitProvider extends Plugin {
   async getGitConfig () {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     return {
-      fs: window.remixFileSystem,
-      dir: workspace.absolutePath
+      fs: window.remixFileSystemCallback,
+      dir: addSlash(workspace.absolutePath) + '/'
     }
   }
 
@@ -82,10 +82,11 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
+    console.log("STATUS", status, await this.getGitConfig())
     return status
   }
 
-  async add (cmd) {
+  async add(cmd) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
@@ -299,7 +300,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`${workspace.absolutePath}/${file}`)
+      const c = await window.remixFileSystem.readFile(addSlash(`${workspace.absolutePath}/${file}`))
       const ob = {
         path: file,
         content: c
@@ -320,7 +321,7 @@ class DGitProvider extends Plugin {
 
     const data = new FormData()
     files.forEach(async (file) => {
-      const c = window.remixFileSystem.readFileSync(`${workspace.absolutePath}/${file}`)
+      const c = window.remixFileSystem.readFileSync(addSlash(`${workspace.absolutePath}/${file}`))
       data.append('file', new Blob([c]), `base/${file}`)
     })
     // get last commit data
@@ -431,7 +432,7 @@ class DGitProvider extends Plugin {
           this.createDirectories(`${workspace.absolutePath}/${dir}`)
         } catch (e) { throw new Error(e) }
         try {
-          window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
+          await window.remixFileSystem.writeFile(addSlash(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array()))
         } catch (e) { throw new Error(e) }
       }
     } catch (e) {
@@ -495,7 +496,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`${workspace.absolutePath}/${file}`)
+      const c = await window.remixFileSystem.readFile(addSlash(`${workspace.absolutePath}/${file}`))
       zip.file(file, c)
     }
     await zip.generateAsync({
@@ -515,8 +516,8 @@ class DGitProvider extends Plugin {
       if (i > 0) previouspath = '/' + directories.slice(0, i).join('/')
       const finalPath = previouspath + '/' + directories[i]
       try {
-        if (!window.remixFileSystem.existsSync(finalPath)) {
-          window.remixFileSystem.mkdirSync(finalPath)
+        if (!await window.remixFileSystem.exists(addSlash(finalPath))) {
+          await window.remixFileSystem.mkdir(addSlash(finalPath))
         }
       } catch (e) {
         console.log(e)
@@ -545,6 +546,11 @@ class DGitProvider extends Plugin {
     }
     return result
   }
+}
+
+const addSlash = (file) => {
+  if (!file.startsWith('/'))file = '/' + file
+  return file
 }
 
 const normalize = (filesList) => {
