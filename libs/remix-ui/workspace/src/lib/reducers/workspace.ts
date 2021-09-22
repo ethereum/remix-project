@@ -1,4 +1,5 @@
 import { extractNameFromKey } from '@remix-ui/helper'
+import { FileType } from '../types'
 import * as _ from 'lodash'
 interface Action {
     type: string
@@ -8,7 +9,7 @@ export interface BrowserState {
   browser: {
     currentWorkspace: string,
     workspaces: string[],
-    files: { [x: string]: Record<string, File> },
+    files: { [x: string]: Record<string, FileType> },
     expandPath: string[]
     isRequesting: boolean,
     isSuccessful: boolean,
@@ -16,7 +17,7 @@ export interface BrowserState {
   },
   localhost: {
     sharedFolder: string,
-    files: { [x: string]: Record<string, File> },
+    files: { [x: string]: Record<string, FileType> },
     expandPath: string[],
     isRequesting: boolean,
     isSuccessful: boolean,
@@ -469,7 +470,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 }
 
-const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
+const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
@@ -482,7 +483,7 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
   return files
 }
 
-const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<string, File> } => {
+const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
   const files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
@@ -491,7 +492,7 @@ const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<s
 }
 
 // IDEA: Modify function to remove blank input field without fetching content
-const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }, deletePath?: string): { [x: string]: Record<string, File> } => {
+const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }, deletePath?: string): { [x: string]: Record<string, FileType> } => {
   if (!payload.fileTree) return state.mode === 'browser' ? state.browser.files : state[state.mode].files
   if (state.mode === 'browser') {
     if (payload.path === state.browser.currentWorkspace) {
@@ -538,7 +539,7 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
   }
 }
 
-const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }): { [x: string]: Record<string, File> } => {
+const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }): { [x: string]: Record<string, FileType> } => {
   if (state.mode === 'browser') {
     const files = normalize(payload.fileTree, payload.path)
 
@@ -548,7 +549,7 @@ const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree
   }
 }
 
-const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'file'): Record<string, File> => {
+const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'file'): Record<string, FileType> => {
   const folders = {}
   const files = {}
 

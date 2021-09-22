@@ -3,16 +3,18 @@ import React, { useEffect, useState, useRef, useContext } from 'react' // eslint
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, File, MenuItems, FileExplorerState } from '../types'
-import { FileSystemContext } from '@remix-ui/workspace'
+import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
+import { FileSystemContext } from '../contexts'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
 
-import './css/file-explorer.css'
-import { checkSpecialChars, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
+import '../css/file-explorer.css'
+import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FileRender } from './file-render'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, focusRoot, contextMenuItems, externalUploads, removedContextMenuItems, resetFocus, files } = props
+  const { name, contextMenuItems, externalUploads, removedContextMenuItems, files } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -36,37 +38,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
-  const editRef = useRef(null)
   const global = useContext(FileSystemContext)
 
   useEffect(() => {
-    if (global.fs.mode === 'browser') {
-      setState(prevState => {
-        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...global.fs.browser.expandPath])] }
-      })
-    } else if (global.fs.mode === 'localhost') {
-      setState(prevState => {
-        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...global.fs.localhost.expandPath])] }
-      })
-    }
-  }, [global.fs.browser.expandPath, global.fs.localhost.expandPath])
-
-  useEffect(() => {
-    if (state.focusEdit.element) {
-      setTimeout(() => {
-        if (editRef && editRef.current) {
-          editRef.current.focus()
-        }
-      }, 0)
-    }
-  }, [state.focusEdit.element])
-
-  useEffect(() => {
-    if (focusRoot) {
-      global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
-      resetFocus(false)
-    }
-  }, [focusRoot])
+    setState(prevState => {
+      return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...props.expandPath])] }
+    })
+  }, [props.expandPath])
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -81,12 +59,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [contextMenuItems])
 
   useEffect(() => {
-    if (global.fs.focusEdit) {
+    if (props.focusEdit) {
       setState(prevState => {
-        return { ...prevState, focusEdit: { element: global.fs.focusEdit, type: 'file', isNew: true, lastEdit: null } }
+        return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
       })
     }
-  }, [global.fs.focusEdit])
+  }, [props.focusEdit])
 
   useEffect(() => {
     if (externalUploads) {
@@ -161,22 +139,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const extractNameFromKey = (key: string):string => {
-    const keyPath = key.split('/')
-
-    return keyPath[keyPath.length - 1]
-  }
-
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
     else return false
   }
 
   const getFocusedFolder = () => {
-    if (global.fs.focusElement[0]) {
-      if (global.fs.focusElement[0].type === 'folder' && global.fs.focusElement[0].key) return global.fs.focusElement[0].key
-      else if (global.fs.focusElement[0].type === 'gist' && global.fs.focusElement[0].key) return global.fs.focusElement[0].key
-      else if (global.fs.focusElement[0].type === 'file' && global.fs.focusElement[0].key) return extractParentFromKey(global.fs.focusElement[0].key) ? extractParentFromKey(global.fs.focusElement[0].key) : name
+    if (props.focusElement[0]) {
+      if (props.focusElement[0].type === 'folder' && props.focusElement[0].key) return props.focusElement[0].key
+      else if (props.focusElement[0].type === 'gist' && props.focusElement[0].key) return props.focusElement[0].key
+      else if (props.focusElement[0].type === 'file' && props.focusElement[0].key) return extractParentFromKey(props.focusElement[0].key) ? extractParentFromKey(props.focusElement[0].key) : name
       else return name
     }
   }
@@ -279,12 +251,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (!state.ctrlKey) {
       global.dispatchHandleClickFile(path, type)
     } else {
-      if (global.fs.focusElement.findIndex(item => item.key === path) !== -1) {
-        const focusElement = global.fs.focusElement.filter(item => item.key !== path)
+      if (props.focusElement.findIndex(item => item.key === path) !== -1) {
+        const focusElement = props.focusElement.filter(item => item.key !== path)
 
         global.dispatchSetFocusElement(focusElement)
       } else {
-        const nonRootFocus = global.fs.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+        const nonRootFocus = props.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
 
         nonRootFocus.push({ key: path, type })
         global.dispatchSetFocusElement(nonRootFocus)
@@ -294,12 +266,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
     if (state.ctrlKey) {
-      if (global.fs.focusElement.findIndex(item => item.key === path) !== -1) {
-        const focusElement = global.fs.focusElement.filter(item => item.key !== path)
+      if (props.focusElement.findIndex(item => item.key === path) !== -1) {
+        const focusElement = props.focusElement.filter(item => item.key !== path)
 
         global.dispatchSetFocusElement(focusElement)
       } else {
-        const nonRootFocus = global.fs.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+        const nonRootFocus = props.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
 
         nonRootFocus.push({ key: path, type })
         global.dispatchSetFocusElement(nonRootFocus)
@@ -321,14 +293,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string, type: string) => {
-    if (!content) return
-    setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
-    })
-  }
-
-  const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string, type: string) => {
+  const handleContextMenu = (pageX: number, pageY: number, path: string, content: string, type: string) => {
     if (!content) return
     setState(prevState => {
       return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
@@ -359,14 +324,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       } else {
-        editRef.current.textContent = state.focusEdit.lastEdit
+        // editRef.current.textContent = state.focusEdit.lastEdit
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       }
     } else {
       if (state.focusEdit.lastEdit === content) {
-        editRef.current.textContent = content
+        // editRef.current.textContent = content
         return setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
@@ -384,14 +349,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
           }
         } else {
           if (hasReservedKeyword(content)) {
-            editRef.current.textContent = state.focusEdit.lastEdit
+            // editRef.current.textContent = state.focusEdit.lastEdit
             global.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             const oldPath: string = state.focusEdit.element
             const oldName = extractNameFromKey(oldPath)
             const newPath = oldPath.replace(oldName, content)
 
-            editRef.current.textContent = extractNameFromKey(oldPath)
+            // editRef.current.textContent = extractNameFromKey(oldPath)
             renamePath(oldPath, newPath)
           }
         }
@@ -425,25 +390,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
 
-  const handleEditInput = (event) => {
-    if (event.which === 13) {
-      event.preventDefault()
-      editModeOff(editRef.current.innerText)
-    }
-  }
-
-  const handleMouseOver = (path: string) => {
-    setState(prevState => {
-      return { ...prevState, mouseOverElement: path }
-    })
-  }
-
-  const handleMouseOut = () => {
-    setState(prevState => {
-      return { ...prevState, mouseOverElement: null }
-    })
-  }
-
   const handleCopyClick = (path: string, type: 'folder' | 'gist' | 'file') => {
     setState(prevState => {
       return { ...prevState, copyElement: [{ key: path, type }] }
@@ -470,113 +416,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
-  const label = (file: File) => {
-    const isEditable = (state.focusEdit.element === file.path) || (global.fs.focusEdit === file.path)
-
-    return (
-      <div
-        className='remixui_items d-inline-block w-100'
-        ref={ isEditable ? editRef : null}
-        suppressContentEditableWarning={true}
-        contentEditable={isEditable}
-        onKeyDown={handleEditInput}
-        onBlur={(e) => {
-          e.stopPropagation()
-          editModeOff(editRef.current.innerText)
-        }}
-      >
-        <span
-          title={file.path}
-          className={'remixui_label ' + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={file.path}
-        >
-          { file.name }
-        </span>
-      </div>
-    )
-  }
-
-  const renderFiles = (file: File, index: number) => {
-    if (!file || !file.path || typeof file === 'string' || typeof file === 'number' || typeof file === 'boolean') return
-    const labelClass = state.focusEdit.element === file.path
-      ? 'bg-light' : global.fs.focusElement.findIndex(item => item.key === file.path) !== -1
-        ? 'bg-secondary' : state.mouseOverElement === file.path
-          ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
-            ? 'bg-light border' : ''
-    const icon = getPathIcon(file.path)
-    const spreadProps = {
-      onClick: (e) => e.stopPropagation()
-    }
-
-    if (file.isDirectory) {
-      return (
-        <TreeViewItem
-          id={`treeViewItem${file.path}`}
-          iconX='pr-3 fa fa-folder'
-          iconY='pr-3 fa fa-folder-open'
-          key={`${file.path + index}`}
-          label={label(file)}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (state.focusEdit.element !== file.path) handleClickFolder(file.path, file.type)
-          }}
-          onContextMenu={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent, file.type)
-          }}
-          labelClass={labelClass}
-          controlBehaviour={ state.ctrlKey }
-          expand={state.expandPath.includes(file.path)}
-          onMouseOver={(e) => {
-            e.stopPropagation()
-            handleMouseOver(file.path)
-          }}
-          onMouseOut={(e) => {
-            e.stopPropagation()
-            if (state.mouseOverElement === file.path) handleMouseOut()
-          }}
-        >
-          {
-            file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
-              Object.keys(file.child).map((key, index) => {
-                return renderFiles(file.child[key], index)
-              })
-            }
-            </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }/>
-          }
-        </TreeViewItem>
-      )
-    } else {
-      return (
-        <TreeViewItem
-          id={`treeViewItem${file.path}`}
-          key={`treeView${file.path}`}
-          label={label(file)}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (state.focusEdit.element !== file.path) handleClickFile(file.path, file.type)
-          }}
-          onContextMenu={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent, file.type)
-          }}
-          icon={icon}
-          labelClass={labelClass}
-          onMouseOver={(e) => {
-            e.stopPropagation()
-            handleMouseOver(file.path)
-          }}
-          onMouseOut={(e) => {
-            e.stopPropagation()
-            if (state.mouseOverElement === file.path) handleMouseOut()
-          }}
-        />
-      )
-    }
-  }
-
   return (
     <div>
       <TreeView id='treeView'>
@@ -597,7 +436,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
               setState(prevState => {
                 return { ...prevState, expandPath }
               })
-              resetFocus(true)
             }}>
               <FileExplorerMenu
                 title={''}
@@ -613,9 +451,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
-                files[props.name] && Object.keys(files[props.name]).map((key, index) => {
-                  return renderFiles(files[props.name][key], index)
-                })
+                files[props.name] && Object.keys(files[props.name]).map((key, index) => <FileRender
+                  file={files[props.name][key]}
+                  index={index}
+                  focusContext={state.focusContext}
+                  focusEdit={state.focusEdit}
+                  focusElement={props.focusElement}
+                  ctrlKey={state.ctrlKey}
+                  expandPath={state.expandPath}
+                  editModeOff={editModeOff}
+                  handleClickFile={handleClickFile}
+                  handleClickFolder={handleClickFolder}
+                  handleContextMenu={handleContextMenu}
+                />)
               }
             </TreeView>
           </div>
@@ -623,7 +471,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       </TreeView>
       { state.showContextMenu &&
         <FileExplorerContextMenu
-          actions={global.fs.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
+          actions={props.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
@@ -637,11 +485,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           pageY={state.focusContext.y}
           path={state.focusContext.element}
           type={state.focusContext.type}
-          focus={global.fs.focusElement}
-          onMouseOver={(e) => {
-            e.stopPropagation()
-            handleMouseOver(state.focusContext.element)
-          }}
+          focus={props.focusElement}
           pushChangesToGist={pushChangesToGist}
           publishFolderToGist={publishFolderToGist}
           publishFileToGist={publishFileToGist}

@@ -28,11 +28,8 @@ export interface WorkspaceProps {
   }
 }
 export interface WorkspaceState {
-  reset: boolean
   hideRemixdExplorer: boolean
   displayNewFile: boolean
-  externalUploads: EventTarget & HTMLInputElement
-  uploadFileEvent: EventTarget & HTMLInputElement
   loadingLocalhost: boolean
 }
 
@@ -46,7 +43,7 @@ export interface Modal {
   cancelFn: () => void
 }
 
-export interface File {
+export interface FileType {
   path: string,
   name: string,
   isDirectory: boolean,
@@ -58,13 +55,14 @@ export interface File {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
-    focusRoot: boolean,
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement,
-    resetFocus?: (value: boolean) => void,
-    files: { [x: string]: Record<string, File> }
+    files: { [x: string]: Record<string, FileType> },
+    expandPath: string[],
+    focusEdit: string,
+    focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[]
 }
 
 export interface FileExplorerMenuProps {
