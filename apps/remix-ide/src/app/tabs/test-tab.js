@@ -44,6 +44,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.allFilesInvolved = []
     this.isDebugging = false
+    this.currentErrors = []
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -117,6 +118,14 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async updateForNewCurrent (file) {
+    // Ensure that when someone clicks on compilation error and that opens a new file
+    // Test result, which is compilation error in this case, is not cleared
+    if (this.currentErrors) {
+      if (Array.isArray(this.currentErrors) && this.currentErrors.length > 0) {
+        const errFiles = this.currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file })
+        if (errFiles.includes(file)) return
+      } else if (this.currentErrors.sourceLocation && this.currentErrors.sourceLocation.file && this.currentErrors.sourceLocation.file === file) return
+    }
     // if current file is changed while debugging and one of the files imported in test file are opened
     // do not clear the test results in SUT plugin
     if (this.isDebugging && this.allFilesInvolved.includes(file)) return
@@ -377,6 +386,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsOutput.hidden = false
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
       this.testCallback({ type: 'contract', filename })
+      this.currentErrors = _errors.errors
       this.setHeader(false)
     }
     if (_errors && _errors.errors) {
