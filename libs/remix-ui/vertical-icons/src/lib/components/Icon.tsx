@@ -55,6 +55,13 @@ function Icon ({
     setPageX(e.pageX)
     setPageY(e.pageY)
     setShowContext(true)
+    // verticalIconPlugin.itemContextMenu(e, name, documentation)
+    // deactivateAction(
+    //   verticalIconPlugin.defaultProfile,
+    //   name,
+    //   e,
+    //   verticalIconPlugin
+    // )
   }
   function closeContextMenu () {
     setShowContext(false)
