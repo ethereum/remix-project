@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
@@ -150,6 +151,7 @@ export function compileFileOrFiles (
         process.exit()
       }
     }
+  // eslint-disable-next-line no-useless-catch
   } catch (e) {
     // eslint-disable-line no-useless-catch
     throw e
@@ -280,5 +282,5 @@ export function compileContractSources (
       if (!isBrowser) require('signale').fatal(errors)
       return cb(new CompilationErrors(errors))
     }
-  )
+  })
 }
