@@ -13,16 +13,16 @@ function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
   return indexOf >= 0 ? indexOf + startpos : indexOf
 }
 
-function writeTestAccountsContract(accounts: string[]) {
-  const testAccountContract = require('../sol/tests_accounts.sol');
-  let body = `address[${accounts.length}] memory accounts;`;
-  if (!accounts.length) body += ';';
+function writeTestAccountsContract (accounts: string[]) {
+  const testAccountContract = require('../sol/tests_accounts.sol')
+  let body = `address[${accounts.length}] memory accounts;`
+  if (!accounts.length) body += ';'
   else {
     accounts.map((address, index) => {
-      body += `\naccounts[${index}] = ${address};\n`;
-    });
+      body += `\naccounts[${index}] = ${address};\n`
+    })
   }
-  return testAccountContract.replace('>accounts<', body);
+  return testAccountContract.replace('>accounts<', body)
 }
 
 /**
@@ -59,8 +59,8 @@ function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
     return
   }
 
-  let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' });
-  const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm;
+  let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' })
+  const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
   // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it
   if (
@@ -71,8 +71,8 @@ function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
     const includeTestLibs = "\nimport 'remix_tests.sol';\n"
     content = includeTestLibs.concat(content)
   }
-  sources[filePath] = { content };
-  importRegEx.exec(''); // Resetting state of RegEx
+  sources[filePath] = { content }
+  importRegEx.exec('') // Resetting state of RegEx
 
   // Process each 'import' in file content
   while ((group = importRegEx.exec(content))) {
@@ -121,13 +121,13 @@ export function compileFileOrFiles (
   try {
     if (!isDirectory && fs.existsSync(filename)) {
       if (filename.split('.').pop() === 'sol') {
-        processFile(filename, sources, true);
+        processFile(filename, sources, true)
       } else {
-        throw new Error('Not a solidity file');
+        throw new Error('Not a solidity file')
       }
     } else {
       // walkSync only if it is a directory
-      let testFileCount = 0;
+      let testFileCount = 0
       fs.walkSync(filepath, (foundpath: string) => {
         // only process .sol files
         if (
@@ -137,7 +137,7 @@ export function compileFileOrFiles (
           testFileCount++
           processFile(foundpath, sources, true)
         }
-      });
+      })
       if (testFileCount > 0) {
         log.info(
           `${testFileCount} Solidity test file${
@@ -182,8 +182,8 @@ export function compileFileOrFiles (
               next()
             }
           } else {
-            compiler.onInternalCompilerLoaded();
-            next();
+            compiler.onInternalCompilerLoaded()
+            next()
           }
         },
         function doCompilation (next) {
@@ -239,7 +239,7 @@ export function compileContractSources (
       content: writeTestAccountsContract(accounts)
     }
   }
-  const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm;
+  const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
   const includeTestLibs = "\nimport 'remix_tests.sol';\n"
   for (const file in sources) {
