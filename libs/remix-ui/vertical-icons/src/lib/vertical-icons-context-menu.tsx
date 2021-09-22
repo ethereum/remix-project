@@ -6,24 +6,25 @@ export interface VerticalIconsContextMenuProps {
   pageX: number
   pageY: number
   profileName: string
-  links: { Documentation: string }
+  links: { Documentation: string, CanDeactivate: boolean }
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
-  hideContextMenu: (evt: SyntheticEvent<Element, Event> & PointerEvent) => void
+  hideContextMenu: (evt: any) => void
 }
 
 interface MenuLinksProps {
-  linkItems?: any
-  hide?: (some: null | any, value: boolean) => void
+  listItems: { Documentation: string, CanDeactivate: boolean }
+  hide: (someEvent: any, value: boolean) => void
   profileName: string
   canBeDeactivated: boolean
+  verticalIconPlugin: VerticalIcons
 }
 
 interface MenuProps {
   verticalIconsPlugin: VerticalIcons
   profileName: string
-  evt: SyntheticEvent & PointerEvent & MouseEvent
-  canBeDeactivated: boolean
+  listItems: { Documentation: string, CanDeactivate: boolean }
+  hide: (someEvent: any, value: boolean) => void
 }
 
 function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
@@ -31,16 +32,18 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
     <div
       id="menuItemsContainer"
       className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
+      onBlur={() => props.hideContextMenu}
       style={{
         left: props.pageX,
-        right: props.pageY,
-        display: 'block'
+        top: props.pageY,
+        display: 'block',
+
       }}
     >
       <ul id="menuitems">
         <MenuForLinks
           hide={props.hideContextMenu}
-          linkItems={props.links}
+          listItems={props.links}
           profileName={props.profileName}
           canBeDeactivated={props.canBeDeactivated}
           verticalIconPlugin={props.verticalIconPlugin}
@@ -51,32 +54,32 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
 }
 
 function MenuForLinks({
-  linkItems,
+  listItems,
   hide,
   profileName,
   canBeDeactivated,
   verticalIconPlugin
-}) {
-  console.log('linkitems ', linkItems)
+}: MenuLinksProps) {
+  console.log('linkitems ', listItems)
   return (
     <Fragment>
       <Menu
-        linkItems={linkItems}
         hide={hide}
         profileName={profileName}
-        canBeDeactivated={canBeDeactivated}
-        verticalIconPlugin={verticalIconPlugin}
+        listItems={listItems}
+        verticalIconsPlugin={verticalIconPlugin}
       />
-      {linkItems && Object.keys(linkItems).length > 0
-        ? Object.keys(linkItems).map((item, idx) => (
+      {listItems && Object.keys(listItems).length > 0
+        ? Object.keys(listItems).map((item, idx) => (
             <li
               id="menuitem${item.toLowerCase()}"
               className="remixui_liitem"
               key={item}
             >
               <a
-                onClick={() => hide(null, true)}
-                href={linkItems[item]}
+                onClick={(evt) => hide(evt, true)}
+                onBlur={(evt) => hide(evt, true)}
+                href={listItems[item]}
                 target="_blank"
               >
                 {item}
@@ -88,24 +91,24 @@ function MenuForLinks({
   )
 }
 
-function Menu(props: any) {
+function Menu(props: MenuProps) {
   console.log('props contains ', props)
   return (
     <Fragment>
-      {Object.keys(props.linkItems).map((item, index) => (
+      { props.listItems.CanDeactivate ? (
         <li
-          id={`menuitem${item.toLowerCase()}`}
-          onClick={() => {
-            props.hide(null, true)
-            if (props.canDeactivate)
-              props.verticalIconPlugin.appManager.deactivate(props.profileName)
+          id="menuitemdeactivate"
+          onClick={(evt) => {
+            props.verticalIconsPlugin
+            .itemContextMenu(evt, props.profileName ,props.listItems.Documentation)
+            props.hide(evt, true)
           }}
+          onBlur={(evt) => props.hide(evt, true)}
           className="remixui_liitem"
-          key={item}
         >
-          {item}
+          Deactivate
         </li>
-      ))}
+      ) : null}
     </Fragment>
   )
 }
