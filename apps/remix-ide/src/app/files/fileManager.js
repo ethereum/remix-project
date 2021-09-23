@@ -121,12 +121,12 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory or file
    * @returns {boolean} true if the path exists
    */
-  exists (path) {
+  async exists (path) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
       const provider = this.fileProviderOf(path)
-      const result = provider.exists(path)
+      const result = await provider.exists(path)
 
       return result
     } catch (e) {
