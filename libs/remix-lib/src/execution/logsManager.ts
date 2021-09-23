@@ -147,19 +147,18 @@ export class LogsManager {
   getLogsByTxHash (hash) {
     return this.oldLogs.filter((log) => '0x' + log.tx.hash().toString('hex') === hash)
                       .map((log) => {
-                        return {
-                          logIndex: '0x1', // 1
-                          blockNumber: log.blockNumber,
-                          blockHash: ('0x' + log.block.hash().toString('hex')),
-                          transactionHash: ('0x' + log.tx.hash().toString('hex')),
-                          transactionIndex: '0x' + log.txNumber.toString(16),
-                          // TODO: if it's a contract deploy, it should be that address instead
-                          address: log.log.address,
-                          data: log.log.data,
-                          topics: log.log.topics
-                        }
+            return {
+              logIndex: '0x1', // 1
+              blockNumber: log.blockNumber,
+              blockHash: ('0x' + log.block.hash().toString('hex')),
+              transactionHash: ('0x' + log.tx.hash().toString('hex')),
+              transactionIndex: '0x' + log.txNumber.toString(16),
+              // TODO: if it's a contract deploy, it should be that address instead
+              address: log.log.address,
+              data: log.log.data,
+              topics: log.log.topics
+            }
                       })
-
   }
 
   getLogsFor (params) {
