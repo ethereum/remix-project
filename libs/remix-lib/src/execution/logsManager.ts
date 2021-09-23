@@ -55,11 +55,10 @@ export class LogsManager {
     if (queryFilter.topics.filter((logTopic) => changeEvent.log.topics.indexOf(logTopic) >= 0).length === 0) return false
 
     if (queryType === 'logs') {
-
+      const fromBlock = queryFilter.fromBlock || '0x0'
+      const toBlock = queryFilter.toBlock || this.oldLogs.length ? this.oldLogs[this.oldLogs.length - 1].blockNumber : '0x0'
       if ((queryFilter.address === (changeEvent.tx.to || '').toString()) || queryFilter.address === (changeEvent.tx.getSenderAddress().toString())) {
-        if (!queryFilter.toBlock) {
-          return true
-        } else if (parseInt(queryFilter.toBlock) >= parseInt(changeEvent.blockNumber)) {
+        if ((parseInt(toBlock) >= parseInt(changeEvent.blockNumber)) && (parseInt(fromBlock) <= parseInt(changeEvent.blockNumber))) {
           return true
         }
       }
