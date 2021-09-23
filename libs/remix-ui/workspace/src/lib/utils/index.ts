@@ -1,3 +1,5 @@
+import { MenuItems } from '../types'
+
 export const contextMenuActions: MenuItems = [{
   id: 'newFile',
   name: 'New File',
