@@ -103,7 +103,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 120000)
       .click('*[data-id="tests/compilationError_test.sol"]')
       .pause(1000)
-      .getEditorValue((content) => browser.assert.ok(content.indexOf(`contract failOnCompilation {`) !== -1))
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('contract failOnCompilation {') !== -1))
       .verify.elementPresent('*[data-id="tests/compilationError_test.sol"]')
   },
 
