@@ -80,6 +80,7 @@ class FileProvider {
   async _exists (path) {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
+    console.log(this.addSlash(unprefixedpath))
     return path === this.type ? true : await window.remixFileSystem.exists(this.addSlash(unprefixedpath))
   }
 
