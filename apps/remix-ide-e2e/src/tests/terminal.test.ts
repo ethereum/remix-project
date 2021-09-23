@@ -106,7 +106,7 @@ module.exports = {
       .pause(1000)
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
-      .openFile('.deps/github/newFile.sol')      
+      .openFile('.deps/github/newFile.sol')
   },
 
   'Deploy "Owner" using an ether.js script listen to event and check event are logged in the terminal': function (browser: NightwatchBrowser) {
