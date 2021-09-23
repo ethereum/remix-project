@@ -202,6 +202,24 @@ export function Workspace (props: WorkspaceProps) {
                     expandPath={global.fs.browser.expandPath}
                     focusEdit={global.fs.focusEdit}
                     focusElement={global.fs.focusElement}
+                    dispatchCreateNewFile={global.dispatchCreateNewFile}
+                    modal={global.modal}
+                    dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                    readonly={global.fs.readonly}
+                    toast={global.toast}
+                    dispatchDeletePath={global.dispatchDeletePath}
+                    dispatchRenamePath={global.dispatchRenamePath}
+                    dispatchUploadFile={global.dispatchUploadFile}
+                    dispatchCopyFile={global.dispatchCopyFile}
+                    dispatchCopyFolder={global.dispatchCopyFolder}
+                    dispatchPublishToGist={global.dispatchPublishToGist}
+                    dispatchRunScript={global.dispatchRunScript}
+                    dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                    dispatchHandleClickFile={global.dispatchHandleClickFile}
+                    dispatchSetFocusElement={global.dispatchSetFocusElement}
+                    dispatchFetchDirectory={global.dispatchFetchDirectory}
+                    dispatchRemoveInputField={global.dispatchRemoveInputField}
+                    dispatchAddInputField={global.dispatchAddInputField}
                   />
               }
             </div>
@@ -218,6 +236,24 @@ export function Workspace (props: WorkspaceProps) {
                         expandPath={global.fs.localhost.expandPath}
                         focusEdit={global.fs.focusEdit}
                         focusElement={global.fs.focusElement}
+                        dispatchCreateNewFile={global.dispatchCreateNewFile}
+                        modal={global.modal}
+                        dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                        readonly={global.fs.readonly}
+                        toast={global.toast}
+                        dispatchDeletePath={global.dispatchDeletePath}
+                        dispatchRenamePath={global.dispatchRenamePath}
+                        dispatchUploadFile={global.dispatchUploadFile}
+                        dispatchCopyFile={global.dispatchCopyFile}
+                        dispatchCopyFolder={global.dispatchCopyFolder}
+                        dispatchPublishToGist={global.dispatchPublishToGist}
+                        dispatchRunScript={global.dispatchRunScript}
+                        dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                        dispatchHandleClickFile={global.dispatchHandleClickFile}
+                        dispatchSetFocusElement={global.dispatchSetFocusElement}
+                        dispatchFetchDirectory={global.dispatchFetchDirectory}
+                        dispatchRemoveInputField={global.dispatchRemoveInputField}
+                        dispatchAddInputField={global.dispatchAddInputField}
                       />
                   }
                 </div>
