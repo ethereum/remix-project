@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
 
 export interface FileLabelProps {
@@ -17,6 +17,7 @@ export const FileLabel = (props: FileLabelProps) => {
   const { file, focusEdit, editModeOff } = props
   const isEditable = focusEdit.element === file.path
   const labelRef = useRef(null)
+  const [defaultValue, setDefaultValue] = useState<string>(null)
 
   useEffect(() => {
     if (isEditable) {
@@ -26,16 +27,22 @@ export const FileLabel = (props: FileLabelProps) => {
     }
   }, [isEditable])
 
+  useEffect(() => {
+    setDefaultValue(labelRef.current.innerText)
+  }, [labelRef.current])
+
   const handleEditInput = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.which === 13) {
       event.preventDefault()
       editModeOff(labelRef.current.innerText)
+      labelRef.current.innerText = defaultValue
     }
   }
 
   const handleEditBlur = (event: React.SyntheticEvent) => {
     event.stopPropagation()
     editModeOff(labelRef.current.innerText)
+    labelRef.current.innerText = defaultValue
   }
 
   return (
