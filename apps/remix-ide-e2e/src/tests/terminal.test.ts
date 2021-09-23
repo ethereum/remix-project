@@ -112,13 +112,13 @@ module.exports = {
   'Deploy "Owner" using an ether.js script listen to event and check event are logged in the terminal': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .openFile('contracts/2_Owner.sol')
+      .verifyContracts(['Owner'])
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
       .openFile('deployWithEthersJs.js')
       .pause(1000)
       .executeScript('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
-      .openFile('contracts/2_Owner.sol')
-      .verifyContracts(['Owner'])
       .addAtAddressInstance('0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', true, true)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
