@@ -106,7 +106,24 @@ module.exports = {
       .pause(1000)
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
-      .openFile('.deps/github/newFile.sol')
+      .openFile('.deps/github/newFile.sol')      
+  },
+
+  'Deploy "Owner" using an ether.js script listen to event and check event are logged in the terminal': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
+      .openFile('deployWithEthersJs.js')
+      .pause(1000)
+      .executeScript('remix.execute(\'deployWithEthersJs.js\')')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
+      .openFile('contracts/2_Owner.sol')
+      .verifyContracts(['Owner'])
+      .addAtAddressInstance('0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', true, true)
+      .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000)
       .end()
   }
 }
@@ -180,3 +197,40 @@ const resolveUrl = `
   }
 })()  
 `
+
+const deployWithEthersJs = `
+// Right click on the script name and hit "Run" to execute
+(async () => {
+    try {
+        console.log('Running deployWithEthers script...')
+    
+        const constructorArgs = []    // Put constructor args (if any) here for your contract
+
+        // Note that the script needs the ABI which is generated from the compilation artifact.
+        // Make sure contract is compiled and artifacts are generated
+        const artifactsPath = 'contracts/artifacts/Owner.json' // Change this for different path
+    
+        const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
+        // 'web3Provider' is a remix global variable object
+        const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    
+        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    
+        let contract = await factory.deploy(...constructorArgs);
+    
+        console.log('Contract Address: ', contract.address);
+    
+        // The contract is NOT deployed yet; we must wait until it is mined
+        await contract.deployed()
+        console.log('Deployment successful.')
+        
+        contract.on('OwnerSet', (previousOwner, newOwner) => {
+            console.log('previousOwner' , previousOwner)
+            console.log('newOwner' , newOwner)
+        })
+       
+        console.log('ok')
+    } catch (e) {
+        console.log(e.message)
+    }
+})()`
