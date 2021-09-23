@@ -93,8 +93,7 @@ module.exports = {
   'Should fail on compilation': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .clickLaunchIcon('filePanel')
-      .openFile('tests/compilationError_test.sol')
+      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close"]')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')
@@ -102,6 +101,17 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified', 120000)
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 120000)
+      .click('*[data-id="tests/compilationError_test.sol"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`
+        contract failOnCompilation {
+          fallback() {
+  
+          }
+        }`) !== -1,
+        'current displayed content is not from the compilationError_test source code')
+      })
+      .pause(20000)
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
