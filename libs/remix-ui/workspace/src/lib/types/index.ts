@@ -57,12 +57,28 @@ export interface FileExplorerProps {
     menuItems?: string[],
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
-    displayInput?: boolean,
-    externalUploads?: EventTarget & HTMLInputElement,
     files: { [x: string]: Record<string, FileType> },
     expandPath: string[],
     focusEdit: string,
-    focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[]
+    focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
+    dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
+    modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+    dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>,
+    readonly: boolean,
+    toast: (toasterMsg: string) => void,
+    dispatchDeletePath: (path: string[]) => Promise<void>,
+    dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
+    dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
+    dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+    dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
+    dispatchRunScript: (path: string) => Promise<void>,
+    dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
+    dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
+    dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
+    dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
+    dispatchFetchDirectory:(path: string) => Promise<void>,
+    dispatchRemoveInputField:(path: string) => Promise<void>,
+    dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>
 }
 
 export interface FileExplorerMenuProps {
