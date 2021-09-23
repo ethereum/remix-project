@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef, useContext } from 'react' // eslint-disable-line
-// import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
+import React, { useEffect, useState, useContext, SyntheticEvent } from 'react' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
-import { FileSystemContext } from '../contexts'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
 
@@ -14,7 +12,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, externalUploads, removedContextMenuItems, files } = props
+  const { name, contextMenuItems, removedContextMenuItems, files } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -38,7 +36,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
-  const global = useContext(FileSystemContext)
 
   useEffect(() => {
     setState(prevState => {
@@ -65,12 +62,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [props.focusEdit])
-
-  useEffect(() => {
-    if (externalUploads) {
-      uploadFile(externalUploads)
-    }
-  }, [externalUploads])
 
   useEffect(() => {
     const keyPressHandler = (e: KeyboardEvent) => {
@@ -155,32 +146,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const createNewFile = async (newFilePath: string) => {
     try {
-      global.dispatchCreateNewFile(newFilePath, props.name)
+      props.dispatchCreateNewFile(newFilePath, props.name)
     } catch (error) {
-      return global.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      return props.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
   const createNewFolder = async (newFolderPath: string) => {
     try {
-      global.dispatchCreateNewFolder(newFolderPath, props.name)
+      props.dispatchCreateNewFolder(newFolderPath, props.name)
     } catch (e) {
-      return global.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
+      return props.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
     }
   }
 
   const deletePath = async (path: string[]) => {
-    if (global.fs.readonly) return global.toast('cannot delete file. ' + name + ' is a read only explorer')
+    if (props.readonly) return props.toast('cannot delete file. ' + name + ' is a read only explorer')
     if (!Array.isArray(path)) path = [path]
 
-    global.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', () => { global.dispatchDeletePath(path) }, 'Cancel', () => {})
+    props.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', () => { props.dispatchDeletePath(path) }, 'Cancel', () => {})
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
-      global.dispatchRenamePath(oldPath, newPath)
+      props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
-      global.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      props.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
@@ -191,75 +182,75 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       return { ...prevState, expandPath }
     })
-    global.dispatchUploadFile(target, parentFolder)
+    props.dispatchUploadFile(target, parentFolder)
   }
 
   const copyFile = (src: string, dest: string) => {
     try {
-      global.dispatchCopyFile(src, dest)
+      props.dispatchCopyFile(src, dest)
     } catch (error) {
-      global.modal('Copy File Failed', 'Unexpected error while copying file: ' + src, 'Close', async () => {})
+      props.modal('Copy File Failed', 'Unexpected error while copying file: ' + src, 'Close', async () => {})
     }
   }
 
   const copyFolder = (src: string, dest: string) => {
     try {
-      global.dispatchCopyFolder(src, dest)
+      props.dispatchCopyFolder(src, dest)
     } catch (error) {
-      global.modal('Copy Folder Failed', 'Unexpected error while copying folder: ' + src, 'Close', async () => {})
+      props.modal('Copy Folder Failed', 'Unexpected error while copying folder: ' + src, 'Close', async () => {})
     }
   }
 
   const publishToGist = (path?: string, type?: string) => {
-    global.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+    props.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const pushChangesToGist = (path?: string, type?: string) => {
-    global.modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
+    props.modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const publishFolderToGist = (path?: string, type?: string) => {
-    global.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+    props.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const publishFileToGist = (path?: string, type?: string) => {
-    global.modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+    props.modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const toGist = (path?: string, type?: string) => {
-    global.dispatchPublishToGist(path, type)
+    props.dispatchPublishToGist(path, type)
   }
 
   const runScript = async (path: string) => {
     try {
-      global.dispatchRunScript(path)
+      props.dispatchRunScript(path)
     } catch (error) {
-      global.toast('Run script failed')
+      props.toast('Run script failed')
     }
   }
 
   const emitContextMenuEvent = (cmd: customAction) => {
     try {
-      global.dispatchEmitContextMenuEvent(cmd)
+      props.dispatchEmitContextMenuEvent(cmd)
     } catch (error) {
-      global.toast(error)
+      props.toast(error)
     }
   }
 
   const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
     path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
     if (!state.ctrlKey) {
-      global.dispatchHandleClickFile(path, type)
+      props.dispatchHandleClickFile(path, type)
     } else {
       if (props.focusElement.findIndex(item => item.key === path) !== -1) {
         const focusElement = props.focusElement.filter(item => item.key !== path)
 
-        global.dispatchSetFocusElement(focusElement)
+        props.dispatchSetFocusElement(focusElement)
       } else {
         const nonRootFocus = props.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
 
         nonRootFocus.push({ key: path, type })
-        global.dispatchSetFocusElement(nonRootFocus)
+        props.dispatchSetFocusElement(nonRootFocus)
       }
     }
   }
@@ -269,24 +260,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (props.focusElement.findIndex(item => item.key === path) !== -1) {
         const focusElement = props.focusElement.filter(item => item.key !== path)
 
-        global.dispatchSetFocusElement(focusElement)
+        props.dispatchSetFocusElement(focusElement)
       } else {
         const nonRootFocus = props.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
 
         nonRootFocus.push({ key: path, type })
-        global.dispatchSetFocusElement(nonRootFocus)
+        props.dispatchSetFocusElement(nonRootFocus)
       }
     } else {
       let expandPath = []
 
       if (!state.expandPath.includes(path)) {
         expandPath = [...new Set([...state.expandPath, path])]
-        global.dispatchFetchDirectory(path)
+        props.dispatchFetchDirectory(path)
       } else {
         expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
       }
 
-      global.dispatchSetFocusElement([{ key: path, type }])
+      props.dispatchSetFocusElement([{ key: path, type }])
       setState(prevState => {
         return { ...prevState, expandPath }
       })
@@ -307,7 +298,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
-    if (global.fs.readonly) return
+    if (props.readonly) return
     setState(prevState => {
       return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
     })
@@ -319,7 +310,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     if (!content || (content.trim() === '')) {
       if (state.focusEdit.isNew) {
-        global.dispatchRemoveInputField(parentFolder)
+        props.dispatchRemoveInputField(parentFolder)
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
@@ -337,20 +328,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
       if (checkSpecialChars(content)) {
-        global.modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
+        props.modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
-            global.dispatchRemoveInputField(parentFolder)
-            global.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+            props.dispatchRemoveInputField(parentFolder)
+            props.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-            global.dispatchRemoveInputField(parentFolder)
+            props.dispatchRemoveInputField(parentFolder)
           }
         } else {
           if (hasReservedKeyword(content)) {
             // editRef.current.textContent = state.focusEdit.lastEdit
-            global.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+            props.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             const oldPath: string = state.focusEdit.element
             const oldName = extractNameFromKey(oldPath)
@@ -371,7 +362,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
-    await global.dispatchAddInputField(parentFolder, 'file')
+    await props.dispatchAddInputField(parentFolder, 'file')
     setState(prevState => {
       return { ...prevState, expandPath }
     })
@@ -383,7 +374,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
-    await global.dispatchAddInputField(parentFolder, 'folder')
+    await props.dispatchAddInputField(parentFolder, 'folder')
     setState(prevState => {
       return { ...prevState, expandPath }
     })
@@ -395,7 +386,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return { ...prevState, copyElement: [{ key: path, type }] }
     })
     setCanPaste(true)
-    global.toast(`Copied to clipboard ${path}`)
+    props.toast(`Copied to clipboard ${path}`)
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
@@ -416,27 +407,29 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
+  const handleFileExplorerMenuClick = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
+    if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload') return // we don't want to let propagate the input of type file
+    let expandPath = []
+
+    if (!state.expandPath.includes(props.name)) {
+      expandPath = [props.name, ...new Set([...state.expandPath])]
+    } else {
+      expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
+    }
+    setState(prevState => {
+      return { ...prevState, expandPath }
+    })
+  }
+
   return (
     <div>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
           controlBehaviour={true}
           label={
-            <div onClick={(e) => {
-              e.stopPropagation()
-              if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
-              if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload') return // we don't want to let propagate the input of type file
-              let expandPath = []
-
-              if (!state.expandPath.includes(props.name)) {
-                expandPath = [props.name, ...new Set([...state.expandPath])]
-              } else {
-                expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
-              }
-              setState(prevState => {
-                return { ...prevState, expandPath }
-              })
-            }}>
+            <div onClick={handleFileExplorerMenuClick}>
               <FileExplorerMenu
                 title={''}
                 menuItems={props.menuItems}
