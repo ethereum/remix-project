@@ -104,6 +104,8 @@ module.exports = {
       .click('*[data-id="tests/compilationError_test.sol"]')
       .pause(1000)
       .getEditorValue((content) => browser.assert.ok(content.indexOf('contract failOnCompilation {') !== -1))
+      // Verify that compilation error is still present after a file is opened
+      // usually, tests result is cleared on opening a new file
       .verify.elementPresent('*[data-id="tests/compilationError_test.sol"]')
   },
 
