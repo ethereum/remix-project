@@ -456,6 +456,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   handleClickFile={handleClickFile}
                   handleClickFolder={handleClickFolder}
                   handleContextMenu={handleContextMenu}
+                  key={index}
                 />)
               }
             </TreeView>
