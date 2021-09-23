@@ -92,6 +92,7 @@ export const FileRender = (props: RenderFileProps) => {
               handleClickFolder={props.handleClickFolder}
               handleContextMenu={props.handleContextMenu}
               expandPath={props.expandPath}
+              key={index}
             />)
           }
           </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }/>
