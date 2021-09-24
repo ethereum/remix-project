@@ -1060,13 +1060,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
 export default FileExplorer
 
 async function packageFiles (filesProvider, directory, callback) {
-  const isFile = filesProvider.isFile(directory)
+  const isFile = await filesProvider.isFile(directory)
   const ret = {}
-
+  console.log(isFile)
   if (isFile) {
     try {
       filesProvider.get(directory, (error, content) => {
-        if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+        if (error) throw new Error('An error ocurred while getting file content. ' + error)
         if (/^\s+$/.test(content) || !content.length) {
           content = '// this line is added to create a gist. Empty file is not allowed.'
         }
