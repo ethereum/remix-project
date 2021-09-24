@@ -181,7 +181,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />
         </div>
-        <div>Type of connection <small>(required)</small></div>
+        <h6>Type of connection <small>(required)</small></h6>
         <div className="form-check form-group">
           <div className="radio">
             <input
@@ -208,7 +208,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             <label className="form-check-label" htmlFor="ws">Websocket</label>
           </div>
         </div>
-        <div>Location in remix <small>(required)</small></div>
+        <h6>Location in remix <small>(required)</small></h6>
         <div className="form-check form-group">
           <div className="radio">
             <input
