@@ -74,15 +74,11 @@ export function RemixUiVerticalIcons({
 
   return (
     <div id="iconsP" className="h-100">
-      <div className="remixui_icons" ref={iconPanelRef}>
+      <div className="remixui_icons">
         <div>
         <Home verticalIconPlugin={verticalIconsPlugin} />
         </div>
-        <div
-          id="remixuiScrollable"
-          className="remixui_scrollable-container remixui_scrollbar remixui_hide-scroll"
-          ref={scrollableRef}
-        >
+        <div id="remixuiScrollable" className="remixui_scrollable-container remixui_scrollbar remixui_hide-scroll">
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length
             ? Object.keys(verticalIconsPlugin.targetProfileForChange)
@@ -137,10 +133,6 @@ export function RemixUiVerticalIcons({
               ))}
           </OtherIcons>
           </div>
-          {scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight 
-            ? <i className="fa fa-chevron-double-down remixui_icon-chevron m-3"></i> 
-            : null
-          }
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>

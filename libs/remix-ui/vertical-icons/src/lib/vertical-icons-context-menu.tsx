@@ -33,9 +33,6 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
     document.addEventListener("click", props.hideContextMenu)
     return () => document.removeEventListener("click", props.hideContextMenu)
   }, [])
-  useEffect(() => {
-    menuRef.current.focus()
-  }, [])
   
   return (
     <div
