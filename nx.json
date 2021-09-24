@@ -123,6 +123,9 @@
     },
     "solidity-compiler": {
       "tags": []
+    },
+    "remix-ide-e2e-src-local-plugin": {
+      "tags": []
     }
-}
+  }
 }
