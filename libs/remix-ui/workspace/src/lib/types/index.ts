@@ -90,7 +90,7 @@ export interface FileExplorerMenuProps {
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
 
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string }
+export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 
 export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
