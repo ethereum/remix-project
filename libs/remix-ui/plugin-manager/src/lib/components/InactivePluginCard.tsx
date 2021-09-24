@@ -36,8 +36,8 @@ function InactivePluginCard ({
             </div>
             {
               <button
-                onClick={() => {
-                  activatePlugin(profile.name)
+                onClick={async () => {
+                  await activatePlugin(profile.name)
                 }}
                 className="btn btn-success btn-sm"
                 data-id={`pluginManagerComponentActivateButton${profile.name}`}

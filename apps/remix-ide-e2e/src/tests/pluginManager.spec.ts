@@ -127,7 +127,7 @@ module.exports = {
       // .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 60000)
   },
 
-  'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
+/*   'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
       .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
@@ -145,7 +145,7 @@ module.exports = {
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .pause(5000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
-  },
+  }, */
 
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')

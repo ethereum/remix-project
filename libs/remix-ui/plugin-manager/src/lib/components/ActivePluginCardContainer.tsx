@@ -11,8 +11,8 @@ interface ActivePluginCardContainerProps {
   activeProfiles: Profile[]
 }
 function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContainerProps) {
-  const deactivatePlugin = (pluginName: string) => {
-    pluginComponent.deactivateP(pluginName)
+  const deactivatePlugin = async (pluginName: string) => {
+    await pluginComponent.deactivateP(pluginName)
   }
 
   return (

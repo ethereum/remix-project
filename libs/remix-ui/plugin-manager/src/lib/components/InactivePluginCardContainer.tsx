@@ -22,8 +22,8 @@ interface LocalPluginInterface {
   iframe: {}
 }
 function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardContainerProps) {
-  const activatePlugin = (pluginName: string) => {
-    pluginComponent.activateP(pluginName)
+  const activatePlugin = async (pluginName: string) => {
+    await pluginComponent.activateP(pluginName)
   }
 
   return (

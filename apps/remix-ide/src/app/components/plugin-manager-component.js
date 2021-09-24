@@ -51,8 +51,9 @@ class PluginManagerComponent extends ViewPlugin {
    * RemixAppManager to enable plugin activation
    * @param {string} name name of Plugin
    */
-  activateP (name) {
-    this.appManager.activatePlugin(name)
+  async activateP (name) {
+    await this.appManager.deactivatePlugin(name)
+    await this.appManager.activatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
@@ -65,7 +66,8 @@ class PluginManagerComponent extends ViewPlugin {
   async activateAndRegisterLocalPlugin (localPlugin) {
     if (localPlugin) {
       this.engine.register(localPlugin)
-      this.appManager.activatePlugin(localPlugin.profile.name)
+      await this.appManager.deactivatePlugin(localPlugin.profile.name)
+      await this.appManager.activatePlugin(localPlugin.profile.name)
       this.getAndFilterPlugins()
       localStorage.setItem('plugins/local', JSON.stringify(localPlugin.profile))
     }
@@ -77,9 +79,14 @@ class PluginManagerComponent extends ViewPlugin {
    * of the plugin
    * @param {string} name name of Plugin
    */
-  deactivateP (name) {
-    this.call('manager', 'deactivatePlugin', name)
+  async deactivateP (name) {
+    await this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
+  }
+
+  async removeP (name) {
+    await this.engine.remove(name)
+    await this.appManager.removeProfile(name)
   }
 
   onActivation () {

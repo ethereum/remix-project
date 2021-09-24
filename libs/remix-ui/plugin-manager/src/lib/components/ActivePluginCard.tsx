@@ -32,8 +32,8 @@ function ActivePluginCard ({
               }
             </div>
             {<button
-              onClick={() => {
-                deactivatePlugin(profile.name)
+              onClick={async () => {
+                await deactivatePlugin(profile.name)
               } }
               className="btn btn-secondary btn-sm"
               data-id={`pluginManagerComponentDeactivateButton${profile.name}`}

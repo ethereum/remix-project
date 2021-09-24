@@ -106,6 +106,20 @@ export class RemixAppManager extends PluginManager {
     return requiredModules.includes(name)
   }
 
+  /**
+   * Remove the profile of the plugin
+   * @param profile The Updated version of the plugin
+   * @note Only the caller plugin should be able to update its profile
+   */
+  async removeProfile (name) {
+    if (!name) return
+    if (!this.profiles[name]) {
+      throw new Error(`Plugin ${name} is not registered, you cannot remove its profile.`)
+    }
+    delete this.profiles[name]
+    this.emit('profileRemoved', this.profiles[name])
+  }
+
   async registeredPlugins () {
     let plugins
     try {

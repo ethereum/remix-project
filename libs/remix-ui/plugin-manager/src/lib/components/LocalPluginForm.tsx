@@ -6,6 +6,7 @@ import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 import { canActivate, FormStateProps, PluginManagerComponent } from '../../types'
+import { ExternalProfile, Profile } from '@remixproject/plugin-utils'
 
 interface LocalPluginFormProps {
   closeModal: () => void
@@ -43,6 +44,9 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
   const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
   const [methods, setMethods] = useState<string>('')
   const [canactivate, setCanactivate] = useState<string>('')
+  const [modalReplacePluginVisibility, setModalReplacePluginVisibility] = useState<boolean>(false)
+  const [localPlugin, setLocalPlugin] = useState<IframePlugin | WebsocketPlugin>()
+  const [replacedProfile, setReplacedProfile] = useState <Profile & ExternalProfile>()
 
   useEffect(() => {
     const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
@@ -58,9 +62,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
   const handleModalOkClick = async () => {
     try {
       if (!name) throw new Error('Plugin should have a name')
-      if (pluginManager.appManager.getIds().includes(name)) {
-        throw new Error('This name has already been used')
-      }
+
       if (!location) throw new Error('Plugin should have a location')
       if (!url) throw new Error('Plugin should have an URL')
       const newMethods = typeof methods === 'string' ? methods.split(',').filter(val => val).map(val => { return val.trim() }) : []
@@ -85,12 +87,35 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
       targetPlugin.events = localPlugin.profile.events !== undefined ? localPlugin.profile.events : []
       targetPlugin.kind = localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
       localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
-      pluginManager.activateAndRegisterLocalPlugin(localPlugin)
+      setLocalPlugin(localPlugin)
+      if (pluginManager.appManager.getIds().includes(name)) {
+        const profiles: any[] = await pluginManager.appManager.getAll()
+        setReplacedProfile(profiles.find((p) => p.name === localPlugin.profile.name))
+        setModalReplacePluginVisibility(true)
+      } else {
+        await pluginManager.activateAndRegisterLocalPlugin(localPlugin)
+      }
     } catch (error) {
       const action: localPluginReducerActionType = { type: 'show', payload: `${error.message}` }
       dispatchToastMsg(action)
       console.log(error)
     }
+  }
+
+  const cancelReplacePlugin = function () {
+    setModalReplacePluginVisibility(false)
+  }
+
+  const replacePlugin = async function () {
+    try {
+      await pluginManager.removeP(localPlugin.profile.name)
+      await pluginManager.activateAndRegisterLocalPlugin(localPlugin)
+    } catch (error) {
+      const action: localPluginReducerActionType = { type: 'show', payload: `${error.message}` }
+      dispatchToastMsg(action)
+      console.log(error)
+    }
+    setModalReplacePluginVisibility(false)
   }
 
   return (
@@ -156,7 +181,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />
         </div>
-        <h6>Type of connection <small>(required)</small></h6>
+        <div>Type of connection <small>(required)</small></div>
         <div className="form-check form-group">
           <div className="radio">
             <input
@@ -183,7 +208,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             <label className="form-check-label" htmlFor="ws">Websocket</label>
           </div>
         </div>
-        <h6>Location in remix <small>(required)</small></h6>
+        <div>Location in remix <small>(required)</small></div>
         <div className="form-check form-group">
           <div className="radio">
             <input
@@ -221,6 +246,45 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
               onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
             <label className="form-check-label" htmlFor="none">None</label>
           </div>
+        </div>
+      </form>
+    </ModalDialog>
+    <ModalDialog
+      handleHide={cancelReplacePlugin}
+      cancelFn={cancelReplacePlugin}
+      okFn={ replacePlugin }
+      hide={!modalReplacePluginVisibility}
+      title="Replace existing plugin?"
+      okLabel="Yes I am sure!"
+      cancelLabel="No"
+    >
+      <h4 className="text-center">Warning!</h4>
+      <form className="remixui_permissionForm" data-id="pluginManagerSettingsPermissionForm">
+        <div>You are about to replace an existing plugin:</div>
+        <div className='row mt-2'>
+          <div className='col'>
+            <h6>FROM</h6>
+            <label>Name</label>
+            <div>{replacedProfile && replacedProfile.name}</div>
+            <label>Displayname</label>
+            <div>{replacedProfile && replacedProfile.displayName}</div>
+            <label>Url</label>
+            <div>{replacedProfile && replacedProfile.url}</div>
+          </div>
+          <div className='col'>
+            <h6>TO</h6>
+            <label>Name</label>
+            <div>{localPlugin && localPlugin.profile && localPlugin.profile.name}</div>
+            <label>Displayname</label>
+            <div>{localPlugin && localPlugin.profile && localPlugin.profile.displayName}</div>
+            <label>Url</label>
+            <div>{localPlugin && localPlugin.profile && localPlugin.profile.url}</div>
+          </div>
+        </div>
+        <hr>
+        </hr>
+        <div>
+            This can cause serious issues with Remix and may result in data loss! Only do this if you know what you are doing.
         </div>
       </form>
     </ModalDialog>
