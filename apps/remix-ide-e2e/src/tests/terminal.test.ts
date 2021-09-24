@@ -111,20 +111,28 @@ module.exports = {
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('settings')
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="settingsVMLondonMode"]')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
-      .openFile('contracts/2_Owner.sol')
-      .clickLaunchIcon('solidity')
-      .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
       .openFile('deployWithEthersJs.js')
       .pause(1000)
+      .openFile('contracts/2_Owner.sol')
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
       .executeScript('remix.execute(\'deployWithEthersJs.js\')')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address: 0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
-      .addAtAddressInstance('0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', true, true)
+      .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .click('*[data-id="universalDappUiTitleExpander"]')
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .end()
   }
 }
