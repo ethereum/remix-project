@@ -109,11 +109,12 @@ module.exports = {
       .openFile('.deps/github/newFile.sol')
   },
 
-  'Deploy "Owner" using an ether.js script listen to event and check event are logged in the terminal': function (browser: NightwatchBrowser) {
+  'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .openFile('contracts/2_Owner.sol')
-      .verifyContracts(['Owner'])
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
       .openFile('deployWithEthersJs.js')
       .pause(1000)
