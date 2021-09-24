@@ -127,7 +127,7 @@ module.exports = {
       // .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 60000)
   },
 
-/*   'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
+  /*   'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
       .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
