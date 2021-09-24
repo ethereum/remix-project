@@ -5,7 +5,7 @@ import { checkSpecialChars, checkSlash, extractNameFromKey, createNonClashingNam
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, focusElement, hideNotification, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setMode, setRenameWorkspace, setWorkspaces } from './payload'
-import { listenOnEvents } from './events'
+import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
@@ -43,9 +43,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       }
     }
 
-    listenOnEvents(plugin, workspaceProvider)(dispatch)
-    listenOnEvents(plugin, localhostProvider)(dispatch)
-    // dispatch(setWorkspaces(workspaces))
+    listenOnPluginEvents(plugin)
+    listenOnProviderEvents(workspaceProvider)(dispatch)
+    listenOnProviderEvents(localhostProvider)(dispatch)
     dispatch(setMode('browser'))
   }
 }
@@ -106,6 +106,7 @@ export const removeInputField = async (path: string) => {
 }
 
 export const createWorkspace = async (workspaceName: string) => {
+  console.log('workspaceName: ', workspaceName)
   const promise = createWorkspaceTemplate(workspaceName, true, 'default-template')
 
   dispatch(createWorkspaceRequest(promise))
