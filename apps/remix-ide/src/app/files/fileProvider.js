@@ -91,6 +91,7 @@ class FileProvider {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     try {
+      console.log('getting', this.addSlash(unprefixedpath))
       const content = await window.remixFileSystem.readFile(this.addSlash(unprefixedpath), 'utf8')
       if (cb) cb(null, content)
       return content
@@ -207,35 +208,34 @@ class FileProvider {
    * @param {Function} visitFolder is a function called for each visited folders
    */
   async _copyFolderToJsonInternal (path, visitFile, visitFolder) {
-    /*     visitFile = visitFile || (() => { })
+    visitFile = visitFile || (() => { })
     visitFolder = visitFolder || (() => { })
-    return new Promise((resolve, reject) => {
-      const json = {}
-      path = this.removePrefix(path)
-      if (window.remixFileSystem.exists(this.addSlash(path))) {
-        try {
-          const items = await window.remixFileSystem.readdir(this.addSlash(path))
-          visitFolder({ path })
-          if (items.length !== 0) {
-            for (const item of items) {
-              const file = {}
-              const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
-              if (await window.remixFileSystem.statExtended(curPath).isDirectory()) {
-                file.children = await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder)
-              } else {
-                file.content = window.remixFileSystem.readFileSync(curPath, 'utf8')
-                visitFile({ path: curPath, content: file.content })
-              }
-              json[curPath] = file
+
+    const json = {}
+    path = this.removePrefix(path)
+    if (await window.remixFileSystem.exists(this.addSlash(path))) {
+      try {
+        const items = await window.remixFileSystem.readdir(this.addSlash(path))
+        visitFolder({ path })
+        if (items.length !== 0) {
+          for (const item of items) {
+            const file = {}
+            const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
+            if ((await window.remixFileSystem.statExtended(this.addSlash(curPath))).isDirectory()) {
+              file.children = await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder)
+            } else {
+              file.content = await window.remixFileSystem.readFile(this.addSlash(curPath), 'utf8')
+              visitFile({ path: curPath, content: file.content })
             }
+            json[curPath] = file
           }
-        } catch (e) {
-          console.log(e)
-          return reject(e)
         }
+      } catch (e) {
+        console.log(e)
+        throw new Error(e)
       }
-      return resolve(json)
-    }) */
+    }
+    return json
   }
 
   /**
