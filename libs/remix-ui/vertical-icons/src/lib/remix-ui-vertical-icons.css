@@ -76,6 +76,21 @@
 .remixui_liitem:hover {
   background-color: var(--secondary);
 }
+
+.remixui_scrollbar {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox hide scrollbar */
+  -ms-overflow-style: none;
+}
+.remixui_scrollable-container {
+  height: 600px;
+}
+.remixui_scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.remixui_hide-scroll {
+  overflow-x: 'hidden',
+}
 #menuitems {
   list-style: none;
   margin: 0px;
