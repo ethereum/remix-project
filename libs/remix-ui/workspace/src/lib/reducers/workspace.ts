@@ -1,5 +1,5 @@
 import { extractNameFromKey } from '@remix-ui/helper'
-import { FileType } from '../types'
+import { action, FileType } from '../types'
 import * as _ from 'lodash'
 interface Action {
     type: string
@@ -13,7 +13,12 @@ export interface BrowserState {
     expandPath: string[]
     isRequesting: boolean,
     isSuccessful: boolean,
-    error: string
+    error: string,
+    contextMenu: {
+      registeredMenuItems: action[],
+      removedMenuItems: action[],
+      error: string
+    }
   },
   localhost: {
     sharedFolder: string,
@@ -21,7 +26,12 @@ export interface BrowserState {
     expandPath: string[],
     isRequesting: boolean,
     isSuccessful: boolean,
-    error: string
+    error: string,
+    contextMenu: {
+      registeredMenuItems: action[],
+      removedMenuItems: action[],
+      error: string
+    }
   },
   mode: 'browser' | 'localhost',
   notification: {
@@ -46,7 +56,12 @@ export const browserInitialState: BrowserState = {
     expandPath: [],
     isRequesting: false,
     isSuccessful: false,
-    error: null
+    error: null,
+    contextMenu: {
+      registeredMenuItems: [],
+      removedMenuItems: [],
+      error: null
+    }
   },
   localhost: {
     sharedFolder: '',
@@ -54,7 +69,12 @@ export const browserInitialState: BrowserState = {
     expandPath: [],
     isRequesting: false,
     isSuccessful: false,
-    error: null
+    error: null,
+    contextMenu: {
+      registeredMenuItems: [],
+      removedMenuItems: [],
+      error: null
+    }
   },
   mode: 'browser',
   notification: {
@@ -465,6 +485,38 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'SET_CONTEXT_MENU_ITEM': {
+      const payload = action.payload as action
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          contextMenu: state.mode === 'browser' ? addContextMenuItem(state, payload) : state.browser.contextMenu
+        },
+        localhost: {
+          ...state.localhost,
+          contextMenu: state.mode === 'localhost' ? addContextMenuItem(state, payload) : state.localhost.contextMenu
+        }
+      }
+    }
+
+    case 'REMOVE_CONTEXT_MENU_ITEM': {
+      const payload = action.payload
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          contextMenu: state.mode === 'browser' ? removeContextMenuItem(state, payload) : state.browser.contextMenu
+        },
+        localhost: {
+          ...state.localhost,
+          contextMenu: state.mode === 'localhost' ? removeContextMenuItem(state, payload) : state.localhost.contextMenu
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
@@ -608,4 +660,47 @@ const splitPath = (state: BrowserState, path: string): string[] | string => {
   }, [])
 
   return _path
+}
+
+const addContextMenuItem = (state: BrowserState, item: action): { registeredMenuItems: action[], removedMenuItems: action[], error: string } => {
+  let registeredItems = state[state.mode].contextMenu.registeredMenuItems
+  let removedItems = state[state.mode].contextMenu.removedMenuItems
+  let error = null
+
+  if (registeredItems.filter((o) => {
+    return o.id === item.id && o.name === item.name
+  }).length) {
+    error = `Action ${item.name} already exists on ${item.id}`
+    return {
+      registeredMenuItems: registeredItems,
+      removedMenuItems: removedItems,
+      error
+    }
+  }
+  registeredItems = [...registeredItems, item]
+  removedItems = removedItems.filter(menuItem => item.id !== menuItem.id)
+  return {
+    registeredMenuItems: registeredItems,
+    removedMenuItems: removedItems,
+    error
+  }
+}
+
+const removeContextMenuItem = (state: BrowserState, plugin): { registeredMenuItems: action[], removedMenuItems: action[], error: string } => {
+  let registeredItems = state[state.mode].contextMenu.registeredMenuItems
+  const removedItems = state[state.mode].contextMenu.removedMenuItems
+  const error = null
+
+  registeredItems = registeredItems.filter((item) => {
+    if (item.id !== plugin.name || item.sticky === true) return true
+    else {
+      removedItems.push(item)
+      return false
+    }
+  })
+  return {
+    registeredMenuItems: registeredItems,
+    removedMenuItems: removedItems,
+    error
+  }
 }
