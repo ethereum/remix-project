@@ -9,7 +9,6 @@ const { GitHandle } = require('../files/git-handle.js')
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { SlitherHandle } = require('../files/slither-handle.js')
 const globalRegistry = require('../../global/registry')
-const modalDialogCustom = require('../ui/modal-dialog-custom')
 /*
   Overview of APIs:
    * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
@@ -53,11 +52,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.gitHandle = new GitHandle()
     this.hardhatHandle = new HardhatHandle()
     this.slitherHandle = new SlitherHandle()
-    this.registeredMenuItems = []
-    this.removedMenuItems = []
-    this.request = {}
     this.workspaces = []
-    this.initialWorkspace = null
     this.appManager = appManager
     this.workspaceStatus = {}
   }
@@ -81,26 +76,11 @@ module.exports = class Filepanel extends ViewPlugin {
    * @param callback (...args) => void
    */
   registerContextMenuItem (item) {
-    if (!item) throw new Error('Invalid register context menu argument')
-    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
-    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
-    if (this.registeredMenuItems.filter((o) => {
-      return o.id === item.id && o.name === item.name
-    }).length) throw new Error(`Action ${item.name} already exists on ${item.id}`)
-    this.registeredMenuItems = [...this.registeredMenuItems, item]
-    this.removedMenuItems = this.removedMenuItems.filter(menuItem => item.id !== menuItem.id)
-    this.renderComponent()
+    this.emit('registerContextMenuItem', item)
   }
 
   removePluginActions (plugin) {
-    this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
-      if (item.id !== plugin.name || item.sticky === true) return true
-      else {
-        this.removedMenuItems.push(item)
-        return false
-      }
-    })
-    this.renderComponent()
+    this.emit('removePluginActions', plugin)
   }
 
   getCurrentWorkspace () {

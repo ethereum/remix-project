@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import './css/remix-ui-workspace.css'
-import { WorkspaceProps, WorkspaceState } from './types'
+import { WorkspaceState } from './types'
 import { FileSystemContext } from './contexts'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
-export function Workspace (props: WorkspaceProps) {
+export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [state] = useState<WorkspaceState>({
@@ -16,6 +16,8 @@ export function Workspace (props: WorkspaceProps) {
   })
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const global = useContext(FileSystemContext)
+  const workspaceRenameInput = useRef()
+  const workspaceCreateInput = useRef()
 
   useEffect(() => {
     global.dispatchInitWorkspace()
@@ -53,9 +55,6 @@ export function Workspace (props: WorkspaceProps) {
   const deleteCurrentWorkspace = () => {
     global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
   }
-
-  const workspaceRenameInput = useRef()
-  const workspaceCreateInput = useRef()
 
   const onFinishRenameWorkspace = async () => {
     if (workspaceRenameInput.current === undefined) return
@@ -185,8 +184,8 @@ export function Workspace (props: WorkspaceProps) {
                   <FileExplorer
                     name={currentWorkspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                    contextMenuItems={props.plugin.registeredMenuItems}
-                    removedContextMenuItems={props.plugin.removedMenuItems}
+                    contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
+                    removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                     files={global.fs.browser.files}
                     expandPath={global.fs.browser.expandPath}
                     focusEdit={global.fs.focusEdit}
@@ -219,8 +218,8 @@ export function Workspace (props: WorkspaceProps) {
                       <FileExplorer
                         name='localhost'
                         menuItems={['createNewFile', 'createNewFolder']}
-                        contextMenuItems={props.plugin.registeredMenuItems}
-                        removedContextMenuItems={props.plugin.removedMenuItems}
+                        contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
+                        removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                         files={global.fs.localhost.files}
                         expandPath={global.fs.localhost.expandPath}
                         focusEdit={global.fs.focusEdit}
