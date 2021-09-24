@@ -54,19 +54,12 @@ export function RemixUiVerticalIcons({
   }, [verticalIconsPlugin.targetProfileForChange.length])
 
   return (
-    <div className="h-100">
+    <div id="iconsP" className="h-100">
       <div className="remixui_icons">
+        <div>
         <Home verticalIconPlugin={verticalIconsPlugin} />
-        <div
-          style={{
-            borderBottom: '3px solid #e3e3e3',
-            overflowY: 'scroll',
-            scrollbarWidth: 'none',
-            overflowX: 'hidden',
-            width: '42px'
-          }}
-          id="topSection"
-        >
+        </div>
+        <div id="remixuiScrollable" className="remixui_scrollable-container remixui_scrollbar remixui_hide-scroll">
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length
             ? Object.keys(verticalIconsPlugin.targetProfileForChange)
@@ -93,7 +86,7 @@ export function RemixUiVerticalIcons({
                     }
                   />
                 ))
-            : null}
+            : null}  
           <OtherIcons>
             {Object.keys(verticalIconsPlugin.targetProfileForChange)
               .filter(p => p === 'none')
@@ -118,14 +111,8 @@ export function RemixUiVerticalIcons({
                 />
               ))}
           </OtherIcons>
-        </div>
-        <div
-          id="bottomSection"
-          style={{
-            minHeight: '30px',
-            width: '42px'
-          }}
-        >
+          </div>
+
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>
@@ -199,6 +186,5 @@ export function RemixUiVerticalIcons({
           ) : null}
         </div>
       </div>
-    </div>
   )
 }

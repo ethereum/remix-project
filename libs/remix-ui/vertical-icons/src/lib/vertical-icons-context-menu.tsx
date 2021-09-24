@@ -30,7 +30,7 @@ interface MenuProps {
 function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
   useEffect(() => {
     document.addEventListener("click", props.hideContextMenu)
-    return () => document.addEventListener("click", props.hideContextMenu)
+    return () => document.removeEventListener("click", props.hideContextMenu)
   }, [])
   
   return (
