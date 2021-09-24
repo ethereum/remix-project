@@ -42,17 +42,6 @@ export function Workspace (props: WorkspaceProps) {
     }
   }, [global.fs.browser.workspaces])
 
-  /* implement an external API, consumed by the parent */
-  props.plugin.request.createWorkspace = () => {
-    return createWorkspace()
-  }
-
-  props.plugin.request.getCurrentWorkspace = () => {
-    return { name: currentWorkspace, isLocalhost: currentWorkspace === LOCALHOST, absolutePath: `${props.plugin.workspace.workspacesPath}/${currentWorkspace}` }
-  }
-
-  /* workspace creation, renaming and deletion */
-
   const renameCurrentWorkspace = () => {
     global.modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
   }
