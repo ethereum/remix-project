@@ -74,7 +74,7 @@
     "nightwatch_local_gist": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/gist.spec.js --env=chrome",
     "nightwatch_local_workspace": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/workspace.test.js --env=chrome",
     "nightwatch_local_defaultLayout": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/defaultLayout.test.js --env=chrome",
-    "nightwatch_local_pluginManager": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/pluginManager.spec.js --env=chrome",
+    "nightwatch_local_pluginManager": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/pluginManager.js --env=chrome",
     "nightwatch_local_publishContract": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/publishContract.test.js --env=chrome",
     "nightwatch_local_generalSettings": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/generalSettings.test.js --env=chrome",
     "nightwatch_local_fileExplorer": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/fileExplorer.test.js --env=chrome",
