@@ -80,7 +80,6 @@ class FileProvider {
   async _exists (path) {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
-    console.log(this.addSlash(unprefixedpath))
     return path === this.type ? true : await window.remixFileSystem.exists(this.addSlash(unprefixedpath))
   }
 
@@ -103,8 +102,8 @@ class FileProvider {
 
   async set (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
-    const exists = await window.remixFileSystem.exists(unprefixedpath)
-    if (exists && await window.remixFileSystem.readFile(unprefixedpath, 'utf8') === content) {
+    const exists = await window.remixFileSystem.exists(this.addSlash(unprefixedpath))
+    if (exists && await window.remixFileSystem.readFile(this.addSlash(unprefixedpath), 'utf8') === content) {
       if (cb) cb()
       return null
     }
@@ -117,9 +116,9 @@ class FileProvider {
       return false
     }
     if (!exists) {
-      this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
+      this.event.emit('fileAdded', this._normalizePath(this.addSlash(unprefixedpath)), false)
     } else {
-      this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
+      this.event.emit('fileChanged', this._normalizePath(this.addSlash(unprefixedpath)))
     }
     if (cb) cb()
     return true
@@ -181,13 +180,13 @@ class FileProvider {
           if (items.length !== 0) {
             for (const item of items) {
               const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
-              if ((await window.remixFileSystem.statExtended(curPath)).isDirectory()) { // delete folder
+              if ((await window.remixFileSystem.statExtended(this.addSlash(curPath))).isDirectory()) { // delete folder
                 await this.remove(curPath)
               } else { // delete file
                 await this.removeFile(curPath)
               }
             }
-            if (await window.remixFileSystem.readdir(this.addSlash(path)).length === 0) await window.remixFileSystem.rmdir(path)
+            await window.remixFileSystem.rmdir(this.addSlash(path))
           } else {
             // folder is empty
             await window.remixFileSystem.rmdir(this.addSlash(path))
