@@ -32,83 +32,83 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchFetchDirectory = async (path: string) => {
-    await fetchDirectory(path)(fsDispatch)
+    await fetchDirectory(path)
   }
 
   const dispatchAddInputField = async (path: string, type: 'file' | 'folder') => {
-    await addInputField(type, path)(fsDispatch)
+    await addInputField(type, path)
   }
 
   const dispatchRemoveInputField = async (path: string) => {
-    await removeInputField(path)(fsDispatch)
+    await removeInputField(path)
   }
 
   const dispatchCreateWorkspace = async (workspaceName: string) => {
-    await createWorkspace(workspaceName)(fsDispatch)
+    await createWorkspace(workspaceName)
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
-    await fetchWorkspaceDirectory(path)(fsDispatch)
+    await fetchWorkspaceDirectory(path)
   }
 
   const dispatchSwitchToWorkspace = async (name: string) => {
-    await switchToWorkspace(name)(fsDispatch)
+    await switchToWorkspace(name)
   }
 
   const dispatchRenameWorkspace = async (oldName: string, workspaceName: string) => {
-    await renameWorkspace(oldName, workspaceName)(fsDispatch)
+    await renameWorkspace(oldName, workspaceName)
   }
 
   const dispatchDeleteWorkspace = async (workspaceName: string) => {
-    await deleteWorkspace(workspaceName)(fsDispatch)
+    await deleteWorkspace(workspaceName)
   }
 
   const dispatchPublishToGist = async (path?: string, type?: string) => {
-    await publishToGist(path, type)(fsDispatch)
+    await publishToGist(path, type)
   }
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
-    await uploadFile(target, targetFolder)(fsDispatch)
+    await uploadFile(target, targetFolder)
   }
 
   const dispatchCreateNewFile = async (path: string, rootDir: string) => {
-    await createNewFile(path, rootDir)(fsDispatch)
+    await createNewFile(path, rootDir)
   }
 
   const dispatchSetFocusElement = async (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
-    await setFocusElement(elements)(fsDispatch)
+    await setFocusElement(elements)
   }
 
   const dispatchCreateNewFolder = async (path: string, rootDir: string) => {
-    await createNewFolder(path, rootDir)(fsDispatch)
+    await createNewFolder(path, rootDir)
   }
 
   const dispatchDeletePath = async (path: string[]) => {
-    await deletePath(path)(fsDispatch)
+    await deletePath(path)
   }
 
   const dispatchRenamePath = async (oldPath: string, newPath: string) => {
-    await renamePath(oldPath, newPath)(fsDispatch)
+    await renamePath(oldPath, newPath)
   }
 
   const dispatchCopyFile = async (src: string, dest: string) => {
-    await copyFile(src, dest)(fsDispatch)
+    await copyFile(src, dest)
   }
 
   const dispatchCopyFolder = async (src: string, dest: string) => {
-    await copyFolder(src, dest)(fsDispatch)
+    await copyFolder(src, dest)
   }
 
   const dispatchRunScript = async (path: string) => {
-    await runScript(path)(fsDispatch)
+    await runScript(path)
   }
 
   const dispatchEmitContextMenuEvent = async (cmd: customAction) => {
-    await emitContextMenuEvent(cmd)()
+    await emitContextMenuEvent(cmd)
   }
 
   const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
-    await handleClickFile(path, type)(fsDispatch)
+    await handleClickFile(path, type)
   }
 
   useEffect(() => {
@@ -171,7 +171,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const handleToaster = () => {
     setFocusToaster('')
-    clearPopUp()(fsDispatch)
+    clearPopUp()
   }
 
   const toast = (toasterMsg: string) => {
