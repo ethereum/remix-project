@@ -36,7 +36,7 @@ const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem'],
-  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
+  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace', 'workspaceInit'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -137,6 +137,7 @@ module.exports = class Filepanel extends ViewPlugin {
           console.error(error)
           return reject(error)
         }
+        this.emit('workspaceInit')
         resolve(Object.keys(items)
           .filter((item) => items[item].isDirectory)
           .map((folder) => folder.replace(workspacesPath + '/', '')))
@@ -234,7 +235,6 @@ module.exports = class Filepanel extends ViewPlugin {
     const workspaceRootPath = '/' + workspaceProvider.workspacesPath
     const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
     const workspacePathExists = await browserProvider.exists(workspacePath)
-    console.log('CRS', workspacePath, workspaceRootPath, workspacePathExists, workspaceRootPathExists)
     if (!workspaceRootPathExists) await browserProvider.createDir(workspaceRootPath)
     if (!workspacePathExists) await browserProvider.createDir(workspacePath)
   }
@@ -252,7 +252,6 @@ module.exports = class Filepanel extends ViewPlugin {
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     else {
       const workspaceProvider = this._deps.fileProviders.workspace
-      console.log('create WS', workspaceName)
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace

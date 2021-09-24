@@ -470,45 +470,49 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
+  function setWorkSpace () {
+    if (Array.isArray(workspace)) {
+      appManager.activatePlugin(workspace).then(async () => {
+        try {
+          if (params.deactivate) {
+            await appManager.deactivatePlugin(params.deactivate.split(','))
+          }
+        } catch (e) {
+          console.log(e)
+        }
+
+        if (params.code) {
+          // if code is given in url we focus on solidity plugin
+          menuicons.select('solidity')
+        } else {
+          // If plugins are loaded from the URL params, we focus on the last one.
+          if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+        }
+
+        if (params.call) {
+          const callDetails = params.call.split('//')
+          if (callDetails.length > 1) {
+            toolTip(`initiating ${callDetails[0]} ...`)
+            // @todo(remove the timeout when activatePlugin is on 0.3.0)
+            appManager.call(...callDetails).catch(console.error)
+          }
+        }
+      }).catch(console.error)
+    } else {
+      // activate solidity plugin
+      appManager.activatePlugin(['solidity', 'udapp'])
+    }
+  }
+
   await appManager.activatePlugin(['theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['settings'])
+  appManager.on('filePanel', 'workspaceInit', () => { setWorkSpace() })
   await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
   await appManager.registerContextMenuItems()
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) {
-    appManager.activatePlugin(workspace).then(async () => {
-      try {
-        if (params.deactivate) {
-          await appManager.deactivatePlugin(params.deactivate.split(','))
-        }
-      } catch (e) {
-        console.log(e)
-      }
-
-      if (params.code) {
-        // if code is given in url we focus on solidity plugin
-        menuicons.select('solidity')
-      } else {
-        // If plugins are loaded from the URL params, we focus on the last one.
-        if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
-      }
-
-      if (params.call) {
-        const callDetails = params.call.split('//')
-        if (callDetails.length > 1) {
-          toolTip(`initiating ${callDetails[0]} ...`)
-          // @todo(remove the timeout when activatePlugin is on 0.3.0)
-          appManager.call(...callDetails).catch(console.error)
-        }
-      }
-    }).catch(console.error)
-  } else {
-    // activate solidity plugin
-    appManager.activatePlugin(['solidity', 'udapp'])
-  }
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
