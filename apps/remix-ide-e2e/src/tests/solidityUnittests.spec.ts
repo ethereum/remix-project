@@ -207,6 +207,23 @@ module.exports = {
       .removeFile('tests/hhLogs_test.sol', 'workspace_new')
   },
 
+  'Solidity Unit tests with hardhat console log for EVM revert': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .addFile('tests/ballotFailedLog_test.sol', sources[0]['tests/ballotFailedLog_test.sol'])
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
+      .click('*[id="singleTesttests/4_Ballot_test.sol"]')
+      .click('#runTestsTabRunAction')
+      .pause(2000)
+      .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+      .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedLog_test.sol', 60000)
+      .assert.containsText('#journal > div:nth-child(6) > span > div', 'Check winning proposal:')
+      .assert.containsText('#journal > div:nth-child(6) > span > div', 'Inside checkWinningProposal')
+      .openFile('tests/ballotFailedLog_test.sol')
+      .removeFile('tests/ballotFailedLog_test.sol', 'workspace_new')
+  },
+
   'Debug failed test using debugger': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
@@ -480,6 +497,31 @@ const sources = [
           
           function checkWinninProposalWithReturnValue () public view returns (bool) {
               return ballotToTest.winningProposal() == 0;
+          }
+      }`
+    },
+    'tests/ballotFailedLog_test.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+      import "remix_tests.sol"; // this import is automatically injected by Remix.
+      import "../contracts/3_Ballot.sol";
+
+      import "hardhat/console.sol";
+      
+      contract BallotTest {
+         
+          bytes32[] proposalNames;
+         
+          Ballot ballotToTest;
+          function beforeAll () public {
+              proposalNames.push(bytes32("candidate1"));
+              ballotToTest = new Ballot(proposalNames);
+          }
+          
+          function checkWinningProposal () public {
+              console.log("Inside checkWinningProposal");
+              ballotToTest.vote(1); // This will revert the transaction
           }
       }`
     },
