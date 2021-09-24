@@ -209,7 +209,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
   return (
     <FileSystemContext.Provider value={value}>
-      <Workspace plugin={plugin} />
+      <Workspace />
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
     </FileSystemContext.Provider>

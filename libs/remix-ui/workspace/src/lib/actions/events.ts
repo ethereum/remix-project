@@ -1,6 +1,7 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { displayNotification, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, rootFolderChangedSuccess } from './payload'
+import { action } from '../types'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem } from './payload'
 import { addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const queuedEvents = []
@@ -8,8 +9,39 @@ const pendingEvents = {}
 const LOCALHOST = ' - connect to localhost - '
 let plugin, dispatch: React.Dispatch<any>
 
-export const listenOnEvents = (filePanelPlugin, provider) => async (reducerDispatch: React.Dispatch<any>) => {
+export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
+
+  plugin.on('filePanel', 'createWorkspace', (name: string) => {
+    createWorkspace(name)
+  })
+
+  plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
+    renameWorkspace(oldName, workspaceName)
+  })
+
+  plugin.on('filePanel', 'registerContextMenuItem', (item: action) => {
+    registerContextMenuItem(item)
+  })
+
+  plugin.on('filePanel', 'removePluginActions', (plugin) => {
+    removePluginActions(plugin)
+  })
+
+  plugin.on('filePanel', 'displayNewFileInput', (path) => {
+    addInputField('file', path)
+  })
+
+  plugin.on('filePanel', 'uploadFileEvent', (dir: string, target) => {
+    uploadFile(target, dir)
+  })
+
+  plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
+    await executeEvent('rootFolderChanged', path)
+  })
+}
+
+export const listenOnProviderEvents = (provider) => async (reducerDispatch: React.Dispatch<any>) => {
   dispatch = reducerDispatch
 
   provider.event.on('fileAdded', async (filePath: string) => {
@@ -27,10 +59,6 @@ export const listenOnEvents = (filePanelPlugin, provider) => async (reducerDispa
 
   provider.event.on('fileRenamed', async (oldPath: string, newPath: string) => {
     await executeEvent('fileRenamed', oldPath, newPath)
-  })
-
-  plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
-    await executeEvent('rootFolderChanged', path)
   })
 
   // provider.event.on('disconnected', () => {
@@ -77,29 +105,21 @@ export const listenOnEvents = (filePanelPlugin, provider) => async (reducerDispa
   provider.event.on('fileRenamedError', async () => {
     dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
   })
+}
 
-  plugin.on('filePanel', 'displayNewFileInput', (path) => {
-    addInputField('file', path)
-  })
+const registerContextMenuItem = (item: action) => {
+  if (!item) return dispatch(displayPopUp('Invalid register context menu argument'))
+  if (!item.name || !item.id) return dispatch(displayPopUp('Item name and id is mandatory'))
+  if (!item.type && !item.path && !item.extension && !item.pattern) return dispatch(displayPopUp('Invalid file matching criteria provided'))
+  dispatch(setContextMenuItem(item))
+}
 
-  plugin.on('filePanel', 'uploadFileEvent', (dir: string, target) => {
-    uploadFile(target, dir)
-  })
-
-  provider.event.on('createWorkspace', (name: string) => {
-    createWorkspace(name)
-  })
-
-  plugin.on('filePanel', 'createWorkspace', (name: string) => {
-    createWorkspace(name)
-  })
-
-  plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
-    renameWorkspace(oldName, workspaceName)
-  })
+const removePluginActions = (plugin) => {
+  dispatch(removeContextMenuItem(plugin))
 }
 
 const fileAdded = async (filePath: string) => {
+  console.log('fileAdded: ', filePath)
   await dispatch(fileAddedSuccess(filePath))
   if (filePath.includes('_test.sol')) {
     plugin.emit('newTestFileCreated', filePath)
@@ -107,6 +127,7 @@ const fileAdded = async (filePath: string) => {
 }
 
 const folderAdded = async (folderPath: string) => {
+  console.log('folderAdded: ', folderPath)
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
 
