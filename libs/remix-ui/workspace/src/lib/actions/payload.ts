@@ -1,3 +1,5 @@
+import { action } from '../types'
+
 export const setCurrentWorkspace = (workspace: string) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
@@ -182,5 +184,19 @@ export const focusElement = (elements: { key: string, type: 'file' | 'folder' | 
   return {
     type: 'SET_FOCUS_ELEMENT',
     payload: elements
+  }
+}
+
+export const setContextMenuItem = (item: action) => {
+  return {
+    type: 'SET_CONTEXT_MENU_ITEM',
+    payload: item
+  }
+}
+
+export const removeContextMenuItem = (plugin) => {
+  return {
+    type: 'REMOVE_CONTEXT_MENU_ITEM',
+    payload: plugin
   }
 }
