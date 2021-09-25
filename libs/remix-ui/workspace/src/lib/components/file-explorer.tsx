@@ -10,6 +10,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
+import { handleExpandPath } from '../actions/workspace'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files } = props
@@ -29,19 +30,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       isNew: false,
       lastEdit: ''
     },
-    expandPath: [name],
     mouseOverElement: null,
     showContextMenu: false,
     reservedKeywords: [name, 'gist-'],
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
-
-  useEffect(() => {
-    setState(prevState => {
-      return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...props.expandPath])] }
-    })
-  }, [props.expandPath])
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -177,11 +171,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const uploadFile = (target) => {
     const parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...state.expandPath, parentFolder])]
+    const expandPath = [...new Set([...props.expandPath, parentFolder])]
 
-    setState(prevState => {
-      return { ...prevState, expandPath }
-    })
+    props.dispatchHandleExpandPath(expandPath)
     props.dispatchUploadFile(target, parentFolder)
   }
 
@@ -270,17 +262,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     } else {
       let expandPath = []
 
-      if (!state.expandPath.includes(path)) {
-        expandPath = [...new Set([...state.expandPath, path])]
+      if (!props.expandPath.includes(path)) {
+        expandPath = [...new Set([...props.expandPath, path])]
         props.dispatchFetchDirectory(path)
       } else {
-        expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
+        expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
       }
 
       props.dispatchSetFocusElement([{ key: path, type }])
-      setState(prevState => {
-        return { ...prevState, expandPath }
-      })
+      props.dispatchHandleExpandPath(expandPath)
     }
   }
 
@@ -360,24 +350,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...state.expandPath, parentFolder])]
+    const expandPath = [...new Set([...props.expandPath, parentFolder])]
 
     await props.dispatchAddInputField(parentFolder, 'file')
-    setState(prevState => {
-      return { ...prevState, expandPath }
-    })
+    props.dispatchHandleExpandPath(expandPath)
     editModeOn(parentFolder + '/blank', 'file', true)
   }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
-    const expandPath = [...new Set([...state.expandPath, parentFolder])]
+    const expandPath = [...new Set([...props.expandPath, parentFolder])]
 
     await props.dispatchAddInputField(parentFolder, 'folder')
-    setState(prevState => {
-      return { ...prevState, expandPath }
-    })
+    props.dispatchHandleExpandPath(expandPath)
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
 
@@ -413,14 +399,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload') return // we don't want to let propagate the input of type file
     let expandPath = []
 
-    if (!state.expandPath.includes(props.name)) {
-      expandPath = [props.name, ...new Set([...state.expandPath])]
+    if (!props.expandPath.includes(props.name)) {
+      expandPath = [props.name, ...new Set([...props.expandPath])]
     } else {
-      expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
+      expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
     }
-    setState(prevState => {
-      return { ...prevState, expandPath }
-    })
+    handleExpandPath(expandPath)
   }
 
   return (
@@ -451,7 +435,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   focusEdit={state.focusEdit}
                   focusElement={props.focusElement}
                   ctrlKey={state.ctrlKey}
-                  expandPath={state.expandPath}
+                  expandPath={props.expandPath}
                   editModeOff={editModeOff}
                   handleClickFile={handleClickFile}
                   handleClickFolder={handleClickFolder}

@@ -517,6 +517,22 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'SET_EXPAND_PATH': {
+      const payload = action.payload as string[]
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          expandPath: state.mode === 'browser' ? payload : state.browser.expandPath
+        },
+        localhost: {
+          ...state.localhost,
+          expandPath: state.mode === 'localhost' ? payload : state.localhost.expandPath
+        }
+      }
+    }
+
     default:
       throw new Error()
   }

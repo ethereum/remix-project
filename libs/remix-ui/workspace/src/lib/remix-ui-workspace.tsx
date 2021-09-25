@@ -99,6 +99,7 @@ export function Workspace () {
   const switchWorkspace = async (name: string) => {
     try {
       await global.dispatchSwitchToWorkspace(name)
+      global.dispatchHandleExpandPath([])
     } catch (e) {
       global.modal('Switch To Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -208,6 +209,7 @@ export function Workspace () {
                     dispatchFetchDirectory={global.dispatchFetchDirectory}
                     dispatchRemoveInputField={global.dispatchRemoveInputField}
                     dispatchAddInputField={global.dispatchAddInputField}
+                    dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   />
               }
             </div>
@@ -242,6 +244,7 @@ export function Workspace () {
                         dispatchFetchDirectory={global.dispatchFetchDirectory}
                         dispatchRemoveInputField={global.dispatchRemoveInputField}
                         dispatchAddInputField={global.dispatchAddInputField}
+                        dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                       />
                   }
                 </div>

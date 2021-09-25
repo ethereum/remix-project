@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile, createNewFile, setFocusElement, createNewFolder, deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile } from '../actions/workspace'
+import { initWorkspace, fetchDirectory, addInputField, removeInputField, createWorkspace, fetchWorkspaceDirectory, switchToWorkspace, renameWorkspace, deleteWorkspace, clearPopUp, publishToGist, uploadFile, createNewFile, setFocusElement, createNewFolder, deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath } from '../actions/workspace'
 import { Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -111,6 +111,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await handleClickFile(path, type)
   }
 
+  const dispatchHandleExpandPath = async (paths: string[]) => {
+    await handleExpandPath(paths)
+  }
+
   useEffect(() => {
     if (modals.length > 0) {
       setFocusModal(() => {
@@ -205,7 +209,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCopyFolder,
     dispatchRunScript,
     dispatchEmitContextMenuEvent,
-    dispatchHandleClickFile
+    dispatchHandleClickFile,
+    dispatchHandleExpandPath
   }
   return (
     <FileSystemContext.Provider value={value}>
