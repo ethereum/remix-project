@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios'
 import { checkSpecialChars, checkSlash, extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
-import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, focusElement, hideNotification, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setMode, setRenameWorkspace, setWorkspaces } from './payload'
+import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, focusElement, hideNotification, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setExpandPath, setMode, setRenameWorkspace, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
@@ -26,14 +26,17 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
 
     dispatch(setWorkspaces(workspaces))
     if (params.gist) {
-      await createWorkspaceTemplate('gist-sample', true, 'gist-template')
+      await createWorkspaceTemplate('gist-sample', 'gist-template')
+      await loadWorkspacePreset('gist-template')
       dispatch(setCurrentWorkspace('gist-sample'))
     } else if (params.code || params.url) {
-      await createWorkspaceTemplate('code-sample', true, 'code-template')
+      await createWorkspaceTemplate('code-sample', 'code-template')
+      await loadWorkspacePreset('code-template')
       dispatch(setCurrentWorkspace('code-sample'))
     } else {
       if (workspaces.length === 0) {
-        await createWorkspaceTemplate('default_workspace')
+        await createWorkspaceTemplate('default_workspace', 'default-template')
+        await loadWorkspacePreset('default-template')
         dispatch(setCurrentWorkspace('default_workspace'))
       } else {
         if (workspaces.length > 0) {
@@ -106,14 +109,14 @@ export const removeInputField = async (path: string) => {
 }
 
 export const createWorkspace = async (workspaceName: string) => {
-  console.log('workspaceName: ', workspaceName)
-  const promise = createWorkspaceTemplate(workspaceName, true, 'default-template')
+  const promise = createWorkspaceTemplate(workspaceName, 'default-template')
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
     await plugin.fileManager.closeAllFiles()
     dispatch(createWorkspaceSuccess(workspaceName))
-    switchToWorkspace(workspaceName)
+    await loadWorkspacePreset('default-template')
+    // await switchToWorkspace(workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
   })
@@ -389,7 +392,11 @@ export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'g
   dispatch(focusElement([{ key: path, type }]))
 }
 
-const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
+export const handleExpandPath = (paths: string[]) => {
+  dispatch(setExpandPath(paths))
+}
+
+const createWorkspaceTemplate = async (workspaceName: string, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if (await workspaceExists(workspaceName) && template === 'default-template') throw new Error('workspace already exists')
@@ -397,80 +404,81 @@ const createWorkspaceTemplate = async (workspaceName: string, setDefaults = true
     const workspaceProvider = plugin.fileProviders.workspace
 
     await workspaceProvider.createWorkspace(workspaceName)
-    if (setDefaults) {
-      const params = queryParams.get()
+  }
+}
 
-      switch (template) {
-        case 'code-template':
-          // creates a new workspace code-sample and loads code from url params.
-          try {
-            await workspaceProvider.createWorkspace(workspaceName)
-            let path = ''; let content = ''
+const loadWorkspacePreset = async (template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
+  const workspaceProvider = plugin.fileProviders.workspace
+  const params = queryParams.get()
 
-            if (params.code) {
-              const hash = bufferToHex(keccakFromString(params.code))
+  switch (template) {
+    case 'code-template':
+      // creates a new workspace code-sample and loads code from url params.
+      try {
+        let path = ''; let content = ''
 
-              path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-              content = atob(params.code)
-              await workspaceProvider.set(path, content)
-            } else if (params.url) {
-              const data = await plugin.call('contentImport', 'resolve', params.url)
+        if (params.code) {
+          const hash = bufferToHex(keccakFromString(params.code))
 
-              path = data.cleanUrl
-              content = data.content
-              await workspaceProvider.set(path, content)
-            }
-            await plugin.fileManager.openFile(path)
-          } catch (e) {
-            console.error(e)
-          }
-          break
+          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+          content = atob(params.code)
+          await workspaceProvider.set(path, content)
+        } else if (params.url) {
+          const data = await plugin.call('contentImport', 'resolve', params.url)
 
-        case 'gist-template':
-          // creates a new workspace gist-sample and get the file from gist
-          try {
-            const gistId = params.gist
-            const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
-            const data = response.data
-
-            if (!data.files) {
-              return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => { dispatch(hideNotification()) }, null))
-            }
-            const obj = {}
-
-            Object.keys(data.files).forEach((element) => {
-              const path = element.replace(/\.\.\./g, '/')
-
-              obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-            })
-            plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
-              if (!errorLoadingFile) {
-                const provider = plugin.fileManager.getProvider('workspace')
-
-                provider.lastLoadedGistId = gistId
-              } else {
-                dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
-              }
-            })
-          } catch (e) {
-            dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
-            console.error(e)
-          }
-          break
-
-        case 'default-template':
-          // creates a new workspace and populates it with default project template.
-          // insert example contracts
-          for (const file in examples) {
-            try {
-              await workspaceProvider.set(examples[file].name, examples[file].content)
-            } catch (error) {
-              console.error(error)
-            }
-          }
-          break
+          path = data.cleanUrl
+          content = data.content
+          await workspaceProvider.set(path, content)
+        }
+        await plugin.fileManager.openFile(path)
+      } catch (e) {
+        console.error(e)
       }
-    }
+      break
+
+    case 'gist-template':
+      // creates a new workspace gist-sample and get the file from gist
+      try {
+        const gistId = params.gist
+        const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
+        const data = response.data
+
+        if (!data.files) {
+          return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => { dispatch(hideNotification()) }, null))
+        }
+        const obj = {}
+
+        Object.keys(data.files).forEach((element) => {
+          const path = element.replace(/\.\.\./g, '/')
+
+          obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
+        })
+        plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
+          if (!errorLoadingFile) {
+            const provider = plugin.fileManager.getProvider('workspace')
+
+            provider.lastLoadedGistId = gistId
+          } else {
+            dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
+          }
+        })
+      } catch (e) {
+        dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
+        console.error(e)
+      }
+      break
+
+    case 'default-template':
+      // creates a new workspace and populates it with default project template.
+      // insert example contracts
+      for (const file in examples) {
+        try {
+          await workspaceProvider.set(examples[file].name, examples[file].content)
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      break
   }
 }
 

@@ -119,7 +119,6 @@ const removePluginActions = (plugin) => {
 }
 
 const fileAdded = async (filePath: string) => {
-  console.log('fileAdded: ', filePath)
   await dispatch(fileAddedSuccess(filePath))
   if (filePath.includes('_test.sol')) {
     plugin.emit('newTestFileCreated', filePath)
@@ -127,7 +126,6 @@ const fileAdded = async (filePath: string) => {
 }
 
 const folderAdded = async (folderPath: string) => {
-  console.log('folderAdded: ', folderPath)
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
 
@@ -180,7 +178,9 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
   pendingEvents[eventName + args[0]] = { eventName, path: args[0] }
   switch (eventName) {
     case 'fileAdded':
-      await fileAdded(args[0])
+      setTimeout(() => {
+        fileAdded(args[0])
+      }, 0)
       delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
@@ -190,7 +190,9 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'folderAdded':
-      await folderAdded(args[0])
+      setTimeout(() => {
+        folderAdded(args[0])
+      }, 0)
       delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
@@ -200,7 +202,9 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'fileRemoved':
-      await fileRemoved(args[0])
+      setTimeout(() => {
+        fileRemoved(args[0])
+      }, 0)
       delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
@@ -210,7 +214,9 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'fileRenamed':
-      await fileRenamed(args[0])
+      setTimeout(() => {
+        fileRenamed(args[0])
+      }, 0)
       delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
@@ -220,7 +226,9 @@ const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemove
       break
 
     case 'rootFolderChanged':
-      await rootFolderChanged(args[0])
+      setTimeout(() => {
+        rootFolderChanged(args[0])
+      }, 0)
       delete pendingEvents[eventName + args[0]]
       if (queuedEvents.length) {
         const next = queuedEvents.pop()
