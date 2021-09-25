@@ -200,3 +200,10 @@ export const removeContextMenuItem = (plugin) => {
     payload: plugin
   }
 }
+
+export const setExpandPath = (paths: string[]) => {
+  return {
+    type: 'SET_EXPAND_PATH',
+    payload: paths
+  }
+}
