@@ -78,7 +78,8 @@ export interface FileExplorerProps {
     dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
     dispatchFetchDirectory:(path: string) => Promise<void>,
     dispatchRemoveInputField:(path: string) => Promise<void>,
-    dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>
+    dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
+    dispatchHandleExpandPath: (paths: string[]) => Promise<void>
 }
 
 export interface FileExplorerMenuProps {
@@ -141,7 +142,6 @@ export interface FileExplorerState {
       isNew: boolean
       lastEdit: string
     }
-    expandPath: string[]
     mouseOverElement: string
     showContextMenu: boolean
     reservedKeywords: string[]
