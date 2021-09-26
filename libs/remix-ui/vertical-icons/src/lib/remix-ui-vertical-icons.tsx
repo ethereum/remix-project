@@ -98,6 +98,11 @@ export function RemixUiVerticalIcons ({
     })
   }, [])
 
+  useEffect(() => {
+    console.log('scrollheight of verticalicons div', scrollableRef.current.scrollHeight)
+    console.log('clientHeight of verticalicons div', scrollableRef.current.clientHeight)
+  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
+
   return (
     <div id="iconsP" className="h-100">
       <div className="remixui_icons" ref={iconPanelRef}>
