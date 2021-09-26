@@ -207,3 +207,22 @@ export const setExpandPath = (paths: string[]) => {
     payload: paths
   }
 }
+
+export const loadLocalhostError = (error: any) => {
+  return {
+    type: 'LOAD_LOCALHOST_ERROR',
+    payload: error
+  }
+}
+
+export const loadLocalhostRequest = () => {
+  return {
+    type: 'LOAD_LOCALHOST_REQUEST'
+  }
+}
+
+export const loadLocalhostSuccess = () => {
+  return {
+    type: 'LOAD_LOCALHOST_SUCCESS'
+  }
+}
