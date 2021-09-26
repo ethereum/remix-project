@@ -3,28 +3,28 @@ import React, { useEffect, useState, useRef, useReducer } from 'react'; // eslin
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'; // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog'; // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster'; // eslint-disable-line
-import Gists from 'gists';
+import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu'; // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu'; // eslint-disable-line
-import { FileExplorerProps, File, MenuItems } from './types';
+import { FileExplorerProps, File, MenuItems } from './types'
 import {
   fileSystemReducer,
   fileSystemInitialState
-} from './reducers/fileSystem';
+} from './reducers/fileSystem'
 import {
   fetchDirectory,
   init,
   resolveDirectory,
   addInputField,
   removeInputField
-} from './actions/fileSystem';
-import * as helper from '../../../../../apps/remix-ide/src/lib/helper';
-import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params';
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel';
+} from './actions/fileSystem'
+import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
+import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
-import './css/file-explorer.css';
+import './css/file-explorer.css'
 
-const queryParams = new QueryParams();
+const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const {
@@ -36,7 +36,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     displayInput,
     externalUploads,
     removedContextMenuItems
-  } = props;
+  } = props
   const [state, setState] = useState({
     focusElement: [
       {
@@ -179,25 +179,25 @@ export const FileExplorer = (props: FileExplorerProps) => {
     showContextMenu: false,
     reservedKeywords: [name, 'gist-'],
     copyElement: []
-  });
-  const [canPaste, setCanPaste] = useState(false);
+  })
+  const [canPaste, setCanPaste] = useState(false)
   const [fileSystem, dispatch] = useReducer(
     fileSystemReducer,
     fileSystemInitialState
-  );
-  const editRef = useRef(null);
+  )
+  const editRef = useRef(null)
 
   useEffect(() => {
-    init(props.filesProvider, props.plugin, props.registry)(dispatch);
-  }, []);
+    init(props.filesProvider, props.plugin, props.registry)(dispatch)
+  }, [])
 
   useEffect(() => {
-    const provider = fileSystem.provider.provider;
+    const provider = fileSystem.provider.provider
 
     if (provider) {
-      fetchDirectory(provider, props.name)(dispatch);
+      fetchDirectory(provider, props.name)(dispatch)
     }
-  }, [fileSystem.provider.provider, props.name]);
+  }, [fileSystem.provider.provider, props.name])
 
   useEffect(() => {
     if (fileSystem.notification.message) {
@@ -208,9 +208,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
         fileSystem.notification.actionOk,
         fileSystem.notification.labelCancel,
         fileSystem.notification.actionCancel
-      );
+      )
     }
-  }, [fileSystem.notification.message]);
+  }, [fileSystem.notification.message])
 
   useEffect(() => {
     if (fileSystem.files.expandPath.length > 0) {
@@ -223,65 +223,65 @@ export const FileExplorer = (props: FileExplorerProps) => {
               ...fileSystem.files.expandPath
             ])
           ]
-        };
-      });
+        }
+      })
     }
-  }, [fileSystem.files.expandPath]);
+  }, [fileSystem.files.expandPath])
 
   useEffect(() => {
     if (state.focusEdit.element) {
       setTimeout(() => {
         if (editRef && editRef.current) {
-          editRef.current.focus();
+          editRef.current.focus()
         }
-      }, 150);
+      }, 150)
     }
-  }, [state.focusEdit.element]);
+  }, [state.focusEdit.element])
 
   useEffect(() => {
     (async () => {
-      const fileManager = registry.get('filemanager').api;
+      const fileManager = registry.get('filemanager').api
 
       setState(prevState => {
-        return { ...prevState, fileManager, expandPath: [name] };
-      });
-    })();
-  }, [name]);
+        return { ...prevState, fileManager, expandPath: [name] }
+      })
+    })()
+  }, [name])
 
   useEffect(() => {
     if (focusRoot) {
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: '', type: 'folder' }] };
-      });
-      plugin.resetFocus(false);
+        return { ...prevState, focusElement: [{ key: '', type: 'folder' }] }
+      })
+      plugin.resetFocus(false)
     }
-  }, [focusRoot]);
+  }, [focusRoot])
 
   useEffect(() => {
     if (contextMenuItems) {
-      addMenuItems(contextMenuItems);
+      addMenuItems(contextMenuItems)
     }
-  }, [contextMenuItems]);
+  }, [contextMenuItems])
 
   useEffect(() => {
     if (removedContextMenuItems) {
-      removeMenuItems(removedContextMenuItems);
+      removeMenuItems(removedContextMenuItems)
     }
-  }, [contextMenuItems]);
+  }, [contextMenuItems])
 
   useEffect(() => {
     if (displayInput) {
-      handleNewFileInput();
-      plugin.resetNewFile();
+      handleNewFileInput()
+      plugin.resetNewFile()
     }
-  }, [displayInput]);
+  }, [displayInput])
 
   useEffect(() => {
     if (externalUploads) {
-      uploadFile(externalUploads);
-      plugin.resetUploadFile();
+      uploadFile(externalUploads)
+      plugin.resetUploadFile()
     }
-  }, [externalUploads]);
+  }, [externalUploads])
 
   useEffect(() => {
     if (state.modals.length > 0) {
@@ -295,42 +295,42 @@ export const FileExplorer = (props: FileExplorerProps) => {
           cancelLabel: prevState.modals[0].cancelLabel,
           cancelFn: prevState.modals[0].cancelFn,
           handleHide: prevState.modals[0].handleHide
-        };
+        }
 
-        prevState.modals.shift();
+        prevState.modals.shift()
         return {
           ...prevState,
           focusModal,
           modals: prevState.modals
-        };
-      });
+        }
+      })
     }
-  }, [state.modals]);
+  }, [state.modals])
 
   useEffect(() => {
     const keyPressHandler = (e: KeyboardEvent) => {
       if (e.shiftKey) {
         setState(prevState => {
-          return { ...prevState, ctrlKey: true };
-        });
+          return { ...prevState, ctrlKey: true }
+        })
       }
-    };
+    }
 
     const keyUpHandler = (e: KeyboardEvent) => {
       if (!e.shiftKey) {
         setState(prevState => {
-          return { ...prevState, ctrlKey: false };
-        });
+          return { ...prevState, ctrlKey: false }
+        })
       }
-    };
+    }
 
-    document.addEventListener('keydown', keyPressHandler);
-    document.addEventListener('keyup', keyUpHandler);
+    document.addEventListener('keydown', keyPressHandler)
+    document.addEventListener('keyup', keyUpHandler)
     return () => {
-      document.removeEventListener('keydown', keyPressHandler);
-      document.removeEventListener('keyup', keyUpHandler);
-    };
-  }, []);
+      document.removeEventListener('keydown', keyPressHandler)
+      document.removeEventListener('keyup', keyUpHandler)
+    }
+  }, [])
 
   useEffect(() => {
     if (canPaste) {
@@ -345,7 +345,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           multiselect: false,
           label: ''
         }
-      ]);
+      ])
     } else {
       removeMenuItems([
         {
@@ -358,9 +358,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
           multiselect: false,
           label: ''
         }
-      ]);
+      ])
     }
-  }, [canPaste]);
+  }, [canPaste])
 
   const addMenuItems = (items: MenuItems) => {
     setState(prevState => {
@@ -368,90 +368,84 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const actions = items.filter(
         ({ name }) =>
           prevState.actions.findIndex(action => action.name === name) === -1
-      );
+      )
 
-      return { ...prevState, actions: [...prevState.actions, ...actions] };
-    });
-  };
+      return { ...prevState, actions: [...prevState.actions, ...actions] }
+    })
+  }
 
   const removeMenuItems = (items: MenuItems) => {
     setState(prevState => {
       const actions = prevState.actions.filter(
         ({ id, name }) =>
           items.findIndex(item => id === item.id && name === item.name) === -1
-      );
-      return { ...prevState, actions };
-    });
-  };
+      )
+      return { ...prevState, actions }
+    })
+  }
 
   const extractNameFromKey = (key: string): string => {
-    const keyPath = key.split('/');
+    const keyPath = key.split('/')
 
-    return keyPath[keyPath.length - 1];
-  };
+    return keyPath[keyPath.length - 1]
+  }
 
   const extractParentFromKey = (key: string): string => {
-    if (!key) return;
-    const keyPath = key.split('/');
-    keyPath.pop();
+    if (!key) return
+    const keyPath = key.split('/')
+    keyPath.pop()
 
-    return keyPath.join('/');
-  };
+    return keyPath.join('/')
+  }
 
   const hasReservedKeyword = (content: string): boolean => {
     if (
       state.reservedKeywords.findIndex(value => content.startsWith(value)) !==
       -1
-    )
-      return true;
-    else return false;
-  };
+    ) { return true } else return false
+  }
 
   const getFocusedFolder = () => {
     if (state.focusElement[0]) {
-      if (state.focusElement[0].type === 'folder' && state.focusElement[0].key)
-        return state.focusElement[0].key;
-      else if (
+      if (state.focusElement[0].type === 'folder' && state.focusElement[0].key) { return state.focusElement[0].key } else if (
         state.focusElement[0].type === 'gist' &&
         state.focusElement[0].key
-      )
-        return state.focusElement[0].key;
-      else if (
+      ) { return state.focusElement[0].key } else if (
         state.focusElement[0].type === 'file' &&
         state.focusElement[0].key
-      )
+      ) {
         return extractParentFromKey(state.focusElement[0].key)
           ? extractParentFromKey(state.focusElement[0].key)
-          : name;
-      else return name;
+          : name
+      } else return name
     }
-  };
+  }
 
   const createNewFile = async (newFilePath: string) => {
-    const fileManager = state.fileManager;
+    const fileManager = state.fileManager
 
     try {
       const newName = await helper.createNonClashingNameAsync(
         newFilePath,
         fileManager
-      );
-      const createFile = await fileManager.writeFile(newName, '');
+      )
+      const createFile = await fileManager.writeFile(newName, '')
 
       if (!createFile) {
-        return toast('Failed to create file ' + newName);
+        return toast('Failed to create file ' + newName)
       } else {
         const path =
           newName.indexOf(props.name + '/') === 0
             ? newName.replace(props.name + '/', '')
-            : newName;
+            : newName
 
-        await fileManager.open(path);
+        await fileManager.open(path)
         setState(prevState => {
           return {
             ...prevState,
             focusElement: [{ key: newName, type: 'file' }]
-          };
-        });
+          }
+        })
       }
     } catch (error) {
       return modal(
@@ -459,16 +453,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
         typeof error === 'string' ? error : error.message,
         'Close',
         async () => {}
-      );
+      )
     }
-  };
+  }
 
   const createNewFolder = async (newFolderPath: string) => {
-    const fileManager = state.fileManager;
-    const dirName = newFolderPath + '/';
+    const fileManager = state.fileManager
+    const dirName = newFolderPath + '/'
 
     try {
-      const exists = await fileManager.exists(dirName);
+      const exists = await fileManager.exists(dirName)
 
       if (exists) {
         return modal(
@@ -478,33 +472,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
           )} already exists at this location. Please choose a different name.`,
           'Close',
           () => {}
-        );
+        )
       }
-      await fileManager.mkdir(dirName);
+      await fileManager.mkdir(dirName)
       setState(prevState => {
         return {
           ...prevState,
           focusElement: [{ key: newFolderPath, type: 'folder' }]
-        };
-      });
+        }
+      })
     } catch (e) {
       return modal(
         'Folder Creation Failed',
         typeof e === 'string' ? e : e.message,
         'Close',
         async () => {}
-      );
+      )
     }
-  };
+  }
 
   const deletePath = async (path: string | string[]) => {
-    const filesProvider = fileSystem.provider.provider;
-    if (!Array.isArray(path)) path = [path];
+    const filesProvider = fileSystem.provider.provider
+    if (!Array.isArray(path)) path = [path]
     for (const p of path) {
       if (filesProvider.isReadOnly(p)) {
         return toast(
           'cannot delete file. ' + name + ' is a read only explorer'
-        );
+        )
       }
     }
     modal(
@@ -512,25 +506,25 @@ export const FileExplorer = (props: FileExplorerProps) => {
       deleteMessage(path),
       'OK',
       async () => {
-        const fileManager = state.fileManager;
+        const fileManager = state.fileManager
         for (const p of path) {
           try {
-            await fileManager.remove(p);
+            await fileManager.remove(p)
           } catch (e) {
-            const isDir = await state.fileManager.isDirectory(p);
-            toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`);
+            const isDir = await state.fileManager.isDirectory(p)
+            toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
           }
         }
       },
       'Cancel',
       () => {}
-    );
-  };
+    )
+  }
 
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
-      const fileManager = state.fileManager;
-      const exists = await fileManager.exists(newPath);
+      const fileManager = state.fileManager
+      const exists = await fileManager.exists(newPath)
 
       if (exists) {
         modal(
@@ -540,9 +534,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
           )} already exists at this location. Please choose a different name.`,
           'Close',
           () => {}
-        );
+        )
       } else {
-        await fileManager.rename(oldPath, newPath);
+        await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
       modal(
@@ -552,38 +546,38 @@ export const FileExplorer = (props: FileExplorerProps) => {
           : error.message,
         'Close',
         async () => {}
-      );
+      )
     }
-  };
+  }
 
   const uploadFile = target => {
-    const filesProvider = fileSystem.provider.provider;
+    const filesProvider = fileSystem.provider.provider
     // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
-    const parentFolder = getFocusedFolder();
-    const expandPath = [...new Set([...state.expandPath, parentFolder])];
+    const parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     setState(prevState => {
-      return { ...prevState, expandPath };
+      return { ...prevState, expandPath }
     });
 
     [...target.files].forEach(file => {
       const loadFile = (name: string): void => {
-        const fileReader = new FileReader();
+        const fileReader = new FileReader()
 
-        fileReader.onload = async function(event) {
+        fileReader.onload = async function (event) {
           if (helper.checkSpecialChars(file.name)) {
             modal(
               'File Upload Failed',
               'Special characters are not allowed',
               'Close',
               async () => {}
-            );
-            return;
+            )
+            return
           }
-          const success = await filesProvider.set(name, event.target.result);
+          const success = await filesProvider.set(name, event.target.result)
 
           if (!success) {
             return modal(
@@ -591,69 +585,69 @@ export const FileExplorer = (props: FileExplorerProps) => {
               'Failed to create file ' + name,
               'Close',
               async () => {}
-            );
+            )
           }
-          const config = registry.get('config').api;
-          const editor = registry.get('editor').api;
+          const config = registry.get('config').api
+          const editor = registry.get('editor').api
 
           if (
             config.get('currentFile') === name &&
             editor.currentContent() !== event.target.result
           ) {
-            editor.setText(event.target.result);
+            editor.setText(event.target.result)
           }
-        };
-        fileReader.readAsText(file);
-      };
-      const name = `${parentFolder}/${file.name}`;
+        }
+        fileReader.readAsText(file)
+      }
+      const name = `${parentFolder}/${file.name}`
 
       filesProvider
         .exists(name)
         .then(exist => {
           if (!exist) {
-            loadFile(name);
+            loadFile(name)
           } else {
             modal(
               'Confirm overwrite',
               `The file ${name} already exists! Would you like to overwrite it?`,
               'OK',
               () => {
-                loadFile(name);
+                loadFile(name)
               },
               'Cancel',
               () => {}
-            );
+            )
           }
         })
         .catch(error => {
-          if (error) console.log(error);
-        });
-    });
-  };
+          if (error) console.log(error)
+        })
+    })
+  }
 
   const copyFile = (src: string, dest: string) => {
-    const fileManager = state.fileManager;
+    const fileManager = state.fileManager
 
     try {
-      fileManager.copyFile(src, dest);
+      fileManager.copyFile(src, dest)
     } catch (error) {
       console.log(
         'Oops! An error ocurred while performing copyFile operation.' + error
-      );
+      )
     }
-  };
+  }
 
   const copyFolder = (src: string, dest: string) => {
-    const fileManager = state.fileManager;
+    const fileManager = state.fileManager
 
     try {
-      fileManager.copyDir(src, dest);
+      fileManager.copyDir(src, dest)
     } catch (error) {
       console.log(
         'Oops! An error ocurred while performing copyDir operation.' + error
-      );
+      )
     }
-  };
+  }
 
   const publishToGist = (path?: string, type?: string) => {
     modal(
@@ -663,8 +657,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       () => toGist(path, type),
       'Cancel',
       () => {}
-    );
-  };
+    )
+  }
 
   const pushChangesToGist = (path?: string, type?: string) => {
     modal(
@@ -674,8 +668,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       () => toGist(path, type),
       'Cancel',
       () => {}
-    );
-  };
+    )
+  }
 
   const publishFolderToGist = (path?: string, type?: string) => {
     modal(
@@ -685,8 +679,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       () => toGist(path, type),
       'Cancel',
       () => {}
-    );
-  };
+    )
+  }
 
   const publishFileToGist = (path?: string, type?: string) => {
     modal(
@@ -696,19 +690,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
       () => toGist(path, type),
       'Cancel',
       () => {}
-    );
-  };
+    )
+  }
 
   const toGist = (path?: string, type?: string) => {
-    const filesProvider = fileSystem.provider.provider;
-    const proccedResult = function(error, data) {
+    const filesProvider = fileSystem.provider.provider
+    const proccedResult = function (error, data) {
       if (error) {
         modal(
           'Publish to gist Failed',
           'Failed to manage gist: ' + error,
           'Close',
           () => {}
-        );
+        )
       } else {
         if (data.html_url) {
           modal(
@@ -716,27 +710,27 @@ export const FileExplorer = (props: FileExplorerProps) => {
             `The gist is at ${data.html_url}. Would you like to open it in a new window?`,
             'OK',
             () => {
-              window.open(data.html_url, '_blank');
+              window.open(data.html_url, '_blank')
             },
             'Cancel',
             () => {}
-          );
+          )
         } else {
-          const error = JSON.stringify(data.errors, null, '\t') || '';
+          const error = JSON.stringify(data.errors, null, '\t') || ''
           const message =
             data.message === 'Not Found'
               ? data.message +
                 '. Please make sure the API token has right to create a gist.'
-              : data.message;
+              : data.message
           modal(
             'Publish to gist Failed',
             message + ' ' + data.documentation_url + ' ' + error,
             'Close',
             () => {}
-          );
+          )
         }
       }
-    };
+    }
 
     /**
      * This function is to get the original content of given gist
@@ -744,32 +738,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
      */
     const getOriginalFiles = async id => {
       if (!id) {
-        return [];
+        return []
       }
 
-      const url = `https://api.github.com/gists/${id}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      return data.files || [];
-    };
+      const url = `https://api.github.com/gists/${id}`
+      const res = await fetch(url)
+      const data = await res.json()
+      return data.files || []
+    }
 
     // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-    const folder = path || '/';
-    const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null;
+    const folder = path || '/'
+    const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
 
     packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
-        console.log(error);
+        console.log(error)
         modal(
           'Publish to gist Failed',
           'Failed to create gist: ' + error.message,
           'Close',
           async () => {}
-        );
+        )
       } else {
         // check for token
-        const config = registry.get('config').api;
-        const accessToken = config.get('settings/gist-access-token');
+        const config = registry.get('config').api
+        const accessToken = config.get('settings/gist-access-token')
 
         if (!accessToken) {
           modal(
@@ -777,7 +771,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.',
             'Close',
             () => {}
-          );
+          )
         } else {
           const description =
             'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
@@ -786,13 +780,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
             queryParams.get().optimize +
             '&runs=' +
             queryParams.get().runs +
-            '&gist=';
-          const gists = new Gists({ token: accessToken });
+            '&gist='
+          const gists = new Gists({ token: accessToken })
 
           if (id) {
-            const originalFileList = await getOriginalFiles(id);
+            const originalFileList = await getOriginalFiles(id)
             // Telling the GIST API to remove files
-            const updatedFileList = Object.keys(packaged);
+            const updatedFileList = Object.keys(packaged)
             const allItems = Object.keys(originalFileList)
               .filter(fileName => updatedFileList.indexOf(fileName) === -1)
               .reduce(
@@ -801,15 +795,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   [deleteFileName]: null
                 }),
                 originalFileList
-              );
+              )
             // adding new files
             updatedFileList.forEach(file => {
-              const _items = file.split('/');
-              const _fileName = _items[_items.length - 1];
-              allItems[_fileName] = packaged[file];
-            });
+              const _items = file.split('/')
+              const _fileName = _items[_items.length - 1]
+              allItems[_fileName] = packaged[file]
+            })
 
-            toast('Saving gist (' + id + ') ...');
+            toast('Saving gist (' + id + ') ...')
             gists.edit(
               {
                 description: description,
@@ -818,17 +812,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 id: id
               },
               (error, result) => {
-                proccedResult(error, result);
+                proccedResult(error, result)
                 if (!error) {
                   for (const key in allItems) {
-                    if (allItems[key] === null) delete allItems[key];
+                    if (allItems[key] === null) delete allItems[key]
                   }
                 }
               }
-            );
+            )
           } else {
             // id is not existing, need to create a new gist
-            toast('Creating a new gist ...');
+            toast('Creating a new gist ...')
             gists.create(
               {
                 description: description,
@@ -836,33 +830,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 files: packaged
               },
               (error, result) => {
-                proccedResult(error, result);
+                proccedResult(error, result)
               }
-            );
+            )
           }
         }
       }
-    });
-  };
+    })
+  }
 
   const runScript = async (path: string) => {
-    const filesProvider = fileSystem.provider.provider;
+    const filesProvider = fileSystem.provider.provider
 
     filesProvider.get(path, (error, content: string) => {
-      if (error) return console.log(error);
-      plugin.call('scriptRunner', 'execute', content);
-    });
-  };
+      if (error) return console.log(error)
+      plugin.call('scriptRunner', 'execute', content)
+    })
+  }
 
   const emitContextMenuEvent = (cmd: customAction) => {
-    plugin.call(cmd.id, cmd.name, cmd);
-  };
+    plugin.call(cmd.id, cmd.name, cmd)
+  }
 
   const handleHideModal = () => {
     setState(prevState => {
-      return { ...prevState, focusModal: { ...state.focusModal, hide: true } };
-    });
-  };
+      return { ...prevState, focusModal: { ...state.focusModal, hide: true } }
+    })
+  }
 
   const modal = (
     title: string,
@@ -887,26 +881,26 @@ export const FileExplorer = (props: FileExplorerProps) => {
             handleHide: handleHideModal
           }
         ]
-      };
-    });
-  };
+      }
+    })
+  }
 
   const toast = (message: string) => {
     setState(prevState => {
-      return { ...prevState, toasterMsg: message };
-    });
-  };
+      return { ...prevState, toasterMsg: message }
+    })
+  }
 
   const handleClickFile = (path: string, type: string) => {
     path =
       path.indexOf(props.name + '/') === 0
         ? path.replace(props.name + '/', '')
-        : path;
+        : path
     if (!state.ctrlKey) {
-      state.fileManager.open(path);
+      state.fileManager.open(path)
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: path, type }] };
-      });
+        return { ...prevState, focusElement: [{ key: path, type }] }
+      })
     } else {
       if (state.focusElement.findIndex(item => item.key === path) !== -1) {
         setState(prevState => {
@@ -915,20 +909,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
             focusElement: prevState.focusElement.filter(
               item => item.key !== path
             )
-          };
-        });
+          }
+        })
       } else {
         setState(prevState => {
           const nonRootFocus = prevState.focusElement.filter(el => {
-            return !(el.key === '' && el.type === 'folder');
-          });
+            return !(el.key === '' && el.type === 'folder')
+          })
 
-          nonRootFocus.push({ key: path, type });
-          return { ...prevState, focusElement: nonRootFocus };
-        });
+          nonRootFocus.push({ key: path, type })
+          return { ...prevState, focusElement: nonRootFocus }
+        })
       }
     }
-  };
+  }
 
   const handleClickFolder = async (path: string, type: string) => {
     if (state.ctrlKey) {
@@ -939,24 +933,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
             focusElement: [
               ...prevState.focusElement.filter(item => item.key !== path)
             ]
-          };
-        });
+          }
+        })
       } else {
         setState(prevState => {
           const nonRootFocus = prevState.focusElement.filter(el => {
-            return !(el.key === '' && el.type === 'folder');
-          });
+            return !(el.key === '' && el.type === 'folder')
+          })
 
-          nonRootFocus.push({ key: path, type });
-          return { ...prevState, focusElement: nonRootFocus };
-        });
+          nonRootFocus.push({ key: path, type })
+          return { ...prevState, focusElement: nonRootFocus }
+        })
       }
     } else {
-      let expandPath = [];
+      let expandPath = []
 
       if (!state.expandPath.includes(path)) {
-        expandPath = [...new Set([...state.expandPath, path])];
-        resolveDirectory(fileSystem.provider.provider, path)(dispatch);
+        expandPath = [...new Set([...state.expandPath, path])]
+        resolveDirectory(fileSystem.provider.provider, path)(dispatch)
       } else {
         expandPath = [
           ...new Set(
@@ -964,7 +958,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               key => key && typeof key === 'string' && !key.startsWith(path)
             )
           )
-        ];
+        ]
       }
 
       setState(prevState => {
@@ -972,10 +966,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           ...prevState,
           focusElement: [{ key: path, type }],
           expandPath
-        };
-      });
+        }
+      })
     }
-  };
+  }
 
   const handleContextMenuFile = (
     pageX: number,
@@ -984,16 +978,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     content: string,
     type: string
   ) => {
-    if (!content) return;
+    if (!content) return
     setState(prevState => {
       return {
         ...prevState,
         focusContext: { element: path, x: pageX, y: pageY, type },
         focusEdit: { ...prevState.focusEdit, lastEdit: content },
         showContextMenu: prevState.focusEdit.element !== path
-      };
-    });
-  };
+      }
+    })
+  }
 
   const handleContextMenuFolder = (
     pageX: number,
@@ -1002,16 +996,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     content: string,
     type: string
   ) => {
-    if (!content) return;
+    if (!content) return
     setState(prevState => {
       return {
         ...prevState,
         focusContext: { element: path, x: pageX, y: pageY, type },
         focusEdit: { ...prevState.focusEdit, lastEdit: content },
         showContextMenu: prevState.focusEdit.element !== path
-      };
-    });
-  };
+      }
+    })
+  }
 
   const hideContextMenu = () => {
     setState(prevState => {
@@ -1019,51 +1013,51 @@ export const FileExplorer = (props: FileExplorerProps) => {
         ...prevState,
         focusContext: { element: null, x: 0, y: 0, type: '' },
         showContextMenu: false
-      };
-    });
-  };
+      }
+    })
+  }
 
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
-    if (fileSystem.provider.provider.isReadOnly(path)) return;
+    if (fileSystem.provider.provider.isReadOnly(path)) return
     setState(prevState => {
       return {
         ...prevState,
         focusEdit: { ...prevState.focusEdit, element: path, isNew, type }
-      };
-    });
-  };
+      }
+    })
+  }
 
   const editModeOff = async (content: string) => {
-    if (typeof content === 'string') content = content.trim();
-    const parentFolder = extractParentFromKey(state.focusEdit.element);
+    if (typeof content === 'string') content = content.trim()
+    const parentFolder = extractParentFromKey(state.focusEdit.element)
 
     if (!content || content.trim() === '') {
       if (state.focusEdit.isNew) {
-        removeInputField(parentFolder)(dispatch);
+        removeInputField(parentFolder)(dispatch)
         setState(prevState => {
           return {
             ...prevState,
             focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
-          };
-        });
+          }
+        })
       } else {
-        editRef.current.textContent = state.focusEdit.lastEdit;
+        editRef.current.textContent = state.focusEdit.lastEdit
         setState(prevState => {
           return {
             ...prevState,
             focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
-          };
-        });
+          }
+        })
       }
     } else {
       if (state.focusEdit.lastEdit === content) {
-        editRef.current.textContent = content;
+        editRef.current.textContent = content
         return setState(prevState => {
           return {
             ...prevState,
             focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
-          };
-        });
+          }
+        })
       }
       if (helper.checkSpecialChars(content)) {
         modal(
@@ -1071,120 +1065,119 @@ export const FileExplorer = (props: FileExplorerProps) => {
           'Special characters are not allowed',
           'OK',
           () => {}
-        );
+        )
       } else {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
-            removeInputField(parentFolder)(dispatch);
+            removeInputField(parentFolder)(dispatch)
             modal(
               'Reserved Keyword',
               `File name contains remix reserved keywords. '${content}'`,
               'Close',
               () => {}
-            );
+            )
           } else {
             state.focusEdit.type === 'file'
               ? createNewFile(joinPath(parentFolder, content))
-              : createNewFolder(joinPath(parentFolder, content));
-            removeInputField(parentFolder)(dispatch);
+              : createNewFolder(joinPath(parentFolder, content))
+            removeInputField(parentFolder)(dispatch)
           }
         } else {
           if (hasReservedKeyword(content)) {
-            editRef.current.textContent = state.focusEdit.lastEdit;
+            editRef.current.textContent = state.focusEdit.lastEdit
             modal(
               'Reserved Keyword',
               `File name contains remix reserved keywords. '${content}'`,
               'Close',
               () => {}
-            );
+            )
           } else {
-            const oldPath: string = state.focusEdit.element;
-            const oldName = extractNameFromKey(oldPath);
-            const newPath = oldPath.replace(oldName, content);
+            const oldPath: string = state.focusEdit.element
+            const oldName = extractNameFromKey(oldPath)
+            const newPath = oldPath.replace(oldName, content)
 
-            editRef.current.textContent = extractNameFromKey(oldPath);
-            renamePath(oldPath, newPath);
+            editRef.current.textContent = extractNameFromKey(oldPath)
+            renamePath(oldPath, newPath)
           }
         }
         setState(prevState => {
           return {
             ...prevState,
             focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
-          };
-        });
+          }
+        })
       }
     }
-  };
+  }
 
   const handleNewFileInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = getFocusedFolder();
-    const expandPath = [...new Set([...state.expandPath, parentFolder])];
+    if (!parentFolder) parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     await addInputField(
       fileSystem.provider.provider,
       'file',
       parentFolder
-    )(dispatch);
+    )(dispatch)
     setState(prevState => {
-      return { ...prevState, expandPath };
-    });
-    editModeOn(parentFolder + '/blank', 'file', true);
-  };
+      return { ...prevState, expandPath }
+    })
+    editModeOn(parentFolder + '/blank', 'file', true)
+  }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = getFocusedFolder();
+    if (!parentFolder) parentFolder = getFocusedFolder()
     else if (
       parentFolder.indexOf('.sol') !== -1 ||
       parentFolder.indexOf('.js') !== -1
-    )
-      parentFolder = extractParentFromKey(parentFolder);
-    const expandPath = [...new Set([...state.expandPath, parentFolder])];
+    ) { parentFolder = extractParentFromKey(parentFolder) }
+    const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     await addInputField(
       fileSystem.provider.provider,
       'folder',
       parentFolder
-    )(dispatch);
+    )(dispatch)
     setState(prevState => {
-      return { ...prevState, expandPath };
-    });
-    editModeOn(parentFolder + '/blank', 'folder', true);
-  };
+      return { ...prevState, expandPath }
+    })
+    editModeOn(parentFolder + '/blank', 'folder', true)
+  }
 
   const handleEditInput = event => {
     if (event.which === 13) {
-      event.preventDefault();
-      editModeOff(editRef.current.innerText);
+      event.preventDefault()
+      editModeOff(editRef.current.innerText)
     }
-  };
+  }
 
   const handleMouseOver = (path: string) => {
     setState(prevState => {
-      return { ...prevState, mouseOverElement: path };
-    });
-  };
+      return { ...prevState, mouseOverElement: path }
+    })
+  }
 
   const handleMouseOut = () => {
     setState(prevState => {
-      return { ...prevState, mouseOverElement: null };
-    });
-  };
+      return { ...prevState, mouseOverElement: null }
+    })
+  }
 
   const handleCopyClick = (path: string, type: string) => {
     setState(prevState => {
-      return { ...prevState, copyElement: [{ key: path, type }] };
-    });
-    setCanPaste(true);
-    toast(`Copied to clipboard ${path}`);
-  };
+      return { ...prevState, copyElement: [{ key: path, type }] }
+    })
+    setCanPaste(true)
+    toast(`Copied to clipboard ${path}`)
+  }
 
   const handlePasteClick = (dest: string, destType: string) => {
     dest =
-      destType === 'file' ? extractParentFromKey(dest) || props.name : dest;
+      destType === 'file' ? extractParentFromKey(dest) || props.name : dest
     state.copyElement.map(({ key, type }) => {
-      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest);
-    });
-  };
+      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
+    })
+  }
 
   const deleteMessage = (path: string[]) => {
     return (
@@ -1197,8 +1190,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <li key={i}>{item}</li>
         ))}
       </div>
-    );
-  };
+    )
+  }
 
   const label = (file: File) => {
     return (
@@ -1209,8 +1202,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         contentEditable={state.focusEdit.element === file.path}
         onKeyDown={handleEditInput}
         onBlur={e => {
-          e.stopPropagation();
-          editModeOff(editRef.current.innerText);
+          e.stopPropagation()
+          editModeOff(editRef.current.innerText)
         }}
       >
         <span
@@ -1223,8 +1216,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           {file.name}
         </span>
       </div>
-    );
-  };
+    )
+  }
 
   const renderFiles = (file: File, index: number) => {
     if (
@@ -1233,23 +1226,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
       typeof file === 'string' ||
       typeof file === 'number' ||
       typeof file === 'boolean'
-    )
-      return;
+    ) { return }
     const labelClass =
       state.focusEdit.element === file.path
         ? 'bg-light'
         : state.focusElement.findIndex(item => item.key === file.path) !== -1
-        ? 'bg-secondary'
-        : state.mouseOverElement === file.path
-        ? 'bg-light border'
-        : state.focusContext.element === file.path &&
+          ? 'bg-secondary'
+          : state.mouseOverElement === file.path
+            ? 'bg-light border'
+            : state.focusContext.element === file.path &&
           state.focusEdit.element !== file.path
-        ? 'bg-light border'
-        : '';
-    const icon = helper.getPathIcon(file.path);
+              ? 'bg-light border'
+              : ''
+    const icon = helper.getPathIcon(file.path)
     const spreadProps = {
       onClick: e => e.stopPropagation()
-    };
+    }
 
     if (file.isDirectory) {
       return (
@@ -1260,31 +1252,30 @@ export const FileExplorer = (props: FileExplorerProps) => {
           key={`${file.path + index}`}
           label={label(file)}
           onClick={e => {
-            e.stopPropagation();
-            if (state.focusEdit.element !== file.path)
-              handleClickFolder(file.path, file.type);
+            e.stopPropagation()
+            if (state.focusEdit.element !== file.path) { handleClickFolder(file.path, file.type) }
           }}
           onContextMenu={e => {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault()
+            e.stopPropagation()
             handleContextMenuFolder(
               e.pageX,
               e.pageY,
               file.path,
               e.target.textContent,
               file.type
-            );
+            )
           }}
           labelClass={labelClass}
           controlBehaviour={state.ctrlKey}
           expand={state.expandPath.includes(file.path)}
           onMouseOver={e => {
-            e.stopPropagation();
-            handleMouseOver(file.path);
+            e.stopPropagation()
+            handleMouseOver(file.path)
           }}
           onMouseOut={e => {
-            e.stopPropagation();
-            if (state.mouseOverElement === file.path) handleMouseOut();
+            e.stopPropagation()
+            if (state.mouseOverElement === file.path) handleMouseOut()
           }}
         >
           {file.child ? (
@@ -1294,7 +1285,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               {...spreadProps}
             >
               {Object.keys(file.child).map((key, index) => {
-                return renderFiles(file.child[key], index);
+                return renderFiles(file.child[key], index)
               })}
             </TreeView>
           ) : (
@@ -1305,7 +1296,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             />
           )}
         </TreeViewItem>
-      );
+      )
     } else {
       return (
         <TreeViewItem
@@ -1313,35 +1304,34 @@ export const FileExplorer = (props: FileExplorerProps) => {
           key={`treeView${file.path}`}
           label={label(file)}
           onClick={e => {
-            e.stopPropagation();
-            if (state.focusEdit.element !== file.path)
-              handleClickFile(file.path, file.type);
+            e.stopPropagation()
+            if (state.focusEdit.element !== file.path) { handleClickFile(file.path, file.type) }
           }}
           onContextMenu={e => {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault()
+            e.stopPropagation()
             handleContextMenuFile(
               e.pageX,
               e.pageY,
               file.path,
               e.target.textContent,
               file.type
-            );
+            )
           }}
           icon={icon}
           labelClass={labelClass}
           onMouseOver={e => {
-            e.stopPropagation();
-            handleMouseOver(file.path);
+            e.stopPropagation()
+            handleMouseOver(file.path)
           }}
           onMouseOut={e => {
-            e.stopPropagation();
-            if (state.mouseOverElement === file.path) handleMouseOut();
+            e.stopPropagation()
+            if (state.mouseOverElement === file.path) handleMouseOut()
           }}
         />
-      );
+      )
     }
-  };
+  }
 
   return (
     <div>
@@ -1352,23 +1342,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={
             <div
               onClick={e => {
-                e.stopPropagation();
+                e.stopPropagation()
                 if (
                   e &&
                   (e.target as any).getAttribute('data-id') ===
                     'fileExplorerUploadFileuploadFile'
-                )
-                  return; // we don't want to let propagate the input of type file
+                ) { return } // we don't want to let propagate the input of type file
                 if (
                   e &&
                   (e.target as any).getAttribute('data-id') ===
                     'fileExplorerFileUpload'
-                )
-                  return; // we don't want to let propagate the input of type file
-                let expandPath = [];
+                ) { return } // we don't want to let propagate the input of type file
+                let expandPath = []
 
                 if (!state.expandPath.includes(props.name)) {
-                  expandPath = [props.name, ...new Set([...state.expandPath])];
+                  expandPath = [props.name, ...new Set([...state.expandPath])]
                 } else {
                   expandPath = [
                     ...new Set(
@@ -1379,12 +1367,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
                           !key.startsWith(props.name)
                       )
                     )
-                  ];
+                  ]
                 }
                 setState(prevState => {
-                  return { ...prevState, expandPath };
-                });
-                plugin.resetFocus(true);
+                  return { ...prevState, expandPath }
+                })
+                plugin.resetFocus(true)
               }}
             >
               <FileExplorerMenu
@@ -1408,7 +1396,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     return renderFiles(
                       fileSystem.files.files[props.name][key],
                       index
-                    );
+                    )
                   }
                 )}
             </TreeView>
@@ -1451,8 +1439,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           type={state.focusContext.type}
           focus={state.focusElement}
           onMouseOver={e => {
-            e.stopPropagation();
-            handleMouseOver(state.focusContext.element);
+            e.stopPropagation()
+            handleMouseOver(state.focusContext.element)
           }}
           pushChangesToGist={pushChangesToGist}
           publishFolderToGist={publishFolderToGist}
@@ -1460,59 +1448,60 @@ export const FileExplorer = (props: FileExplorerProps) => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default FileExplorer;
+export default FileExplorer
 
-async function packageFiles(filesProvider, directory, callback) {
-  const isFile = filesProvider.isFile(directory);
-  const ret = {};
+async function packageFiles (filesProvider, directory, callback) {
+  const isFile = filesProvider.isFile(directory)
+  const ret = {}
 
   if (isFile) {
     try {
       filesProvider.get(directory, (error, content) => {
-        if (error)
+        if (error) {
           throw new Error(
             'An error ocurred while getting file content. ' + directory
-          );
+          )
+        }
         if (/^\s+$/.test(content) || !content.length) {
           content =
-            '// this line is added to create a gist. Empty file is not allowed.';
+            '// this line is added to create a gist. Empty file is not allowed.'
         }
-        directory = directory.replace(/\//g, '...');
-        ret[directory] = { content };
-        callback(null, ret);
-      });
+        directory = directory.replace(/\//g, '...')
+        ret[directory] = { content }
+        callback(null, ret)
+      })
     } catch (e) {
-      return callback(e);
+      return callback(e)
     }
   } else {
     try {
       await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
         if (/^\s+$/.test(content) || !content.length) {
           content =
-            '// this line is added to create a gist. Empty file is not allowed.';
+            '// this line is added to create a gist. Empty file is not allowed.'
         }
         if (path.indexOf('gist-') === 0) {
-          path = path.split('/');
-          path.shift();
-          path = path.join('/');
+          path = path.split('/')
+          path.shift()
+          path = path.join('/')
         }
-        path = path.replace(/\//g, '...');
-        ret[path] = { content };
-      });
-      callback(null, ret);
+        path = path.replace(/\//g, '...')
+        ret[path] = { content }
+      })
+      callback(null, ret)
     } catch (e) {
-      return callback(e);
+      return callback(e)
     }
   }
 }
 
-function joinPath(...paths) {
+function joinPath (...paths) {
   paths = paths
     .filter(value => value !== '')
-    .map(path => path.replace(/^\/|\/$/g, '')); // remove first and last slash)
-  if (paths.length === 1) return paths[0];
-  return paths.join('/');
+    .map(path => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
+  if (paths.length === 1) return paths[0]
+  return paths.join('/')
 }
