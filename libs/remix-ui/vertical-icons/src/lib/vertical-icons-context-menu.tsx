@@ -41,7 +41,6 @@ function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
   useEffect(() => {
     menuRef.current.focus()
   }, [])
-
   return (
     <div
       id="menuItemsContainer"
