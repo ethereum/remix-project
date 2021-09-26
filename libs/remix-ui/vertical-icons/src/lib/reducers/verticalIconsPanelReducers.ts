@@ -58,3 +58,25 @@ const mutateIconStatus = (
 }
 
 export function listenOnStatusReducer() {}
+
+function onThemeChanged (themeType) {
+  const invert = themeType === 'dark' ? 1 : 0
+  const active = this.view.querySelector('.active')
+  if (active) {
+    const image = active.querySelector('.image')
+    image.style.setProperty('filter', `invert(${invert})`)
+  }
+}
+
+type ThemeChangeActionType = {
+  themeType: 'dark' | 'light',
+  payload: any
+}
+
+export function ThemeChangeReducer (defaultValue: any, themeAction: ThemeChangeActionType) {
+  let invert = 0
+  if (themeAction.themeType === 'dark') {
+    invert = 1
+  }
+  const active = document.querySelector('.active')
+}
