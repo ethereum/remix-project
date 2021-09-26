@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import './css/remix-ui-workspace.css'
-import { WorkspaceState } from './types'
 import { FileSystemContext } from './contexts'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -9,11 +8,6 @@ const canUpload = window.File || window.FileReader || window.FileList || window.
 export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
-  const [state] = useState<WorkspaceState>({
-    hideRemixdExplorer: true,
-    displayNewFile: false,
-    loadingLocalhost: false
-  })
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
@@ -215,9 +209,9 @@ export function Workspace () {
               }
             </div>
             {
-              state.loadingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
+              global.fs.localhost.isRequesting ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
                 : <div className='pl-2 filesystemexplorer remixui_treeview'>
-                  { global.fs.mode === 'localhost' &&
+                  { global.fs.mode === 'localhost' && global.fs.localhost.isSuccessful &&
                       <FileExplorer
                         name='localhost'
                         menuItems={['createNewFile', 'createNewFolder']}
