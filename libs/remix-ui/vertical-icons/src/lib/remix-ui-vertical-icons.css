@@ -83,13 +83,17 @@
   -ms-overflow-style: none;
 }
 .remixui_scrollable-container {
-  height: 600px;
+  max-height: 700px;
 }
-.remixui_scrollbar::-webkit-scrollbar {
+.remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
   display: none;
 }
 .remixui_hide-scroll {
   overflow-x: 'hidden',
+}
+
+.remixui_icon-chevron {
+  z-index: 1000;
 }
 #menuitems {
   list-style: none;

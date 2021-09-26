@@ -68,6 +68,7 @@ function Icon({
           e.stopPropagation()
           handleContextMenu(e)
         }}
+        onBlur={closeContextMenu}
         data-id={`verticalIconsKind${name}`}
         id={`verticalIconsKind${name}`}
       >

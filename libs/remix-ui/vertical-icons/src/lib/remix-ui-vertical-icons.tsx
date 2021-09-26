@@ -37,7 +37,12 @@ interface AddIconProps {
   pProfile: PassedProfile
   verticalIcons: VerticalIcons
 }
-let VERTICALMENU_HANDLE
+
+function ShowChevron () {
+  return (
+    <span className="remixui_icon-chevron"></span>
+  )
+}
 
 export function RemixUiVerticalIcons({
   verticalIconsPlugin
@@ -47,11 +52,16 @@ export function RemixUiVerticalIcons({
     ''
   )
   const [iconKind, setIconKind] = useState<IconKindType>()
-
+  const scrollableRef = useRef(null)
   useEffect(() => {
     console.log('length of array', verticalIconsPlugin.targetProfileForChange)
     // @ts-ignore
   }, [verticalIconsPlugin.targetProfileForChange.length])
+
+  useEffect(() => {
+    console.log('scrollheight of verticalicons div', scrollableRef.current.scrollHeight)
+    console.log('clientHeight of verticalicons div', scrollableRef.current.clientHeight)
+  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
 
   return (
     <div id="iconsP" className="h-100">
@@ -59,7 +69,11 @@ export function RemixUiVerticalIcons({
         <div>
         <Home verticalIconPlugin={verticalIconsPlugin} />
         </div>
-        <div id="remixuiScrollable" className="remixui_scrollable-container remixui_scrollbar remixui_hide-scroll">
+        <div
+          id="remixuiScrollable"
+          className="remixui_scrollable-container remixui_scrollbar remixui_hide-scroll"
+          ref={scrollableRef}
+        >
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length
             ? Object.keys(verticalIconsPlugin.targetProfileForChange)
@@ -112,7 +126,10 @@ export function RemixUiVerticalIcons({
               ))}
           </OtherIcons>
           </div>
-
+          {scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight 
+            ? <i className="fa fa-chevron-double-down remixui_icon-chevron m-3"></i> 
+            : null
+          }
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>

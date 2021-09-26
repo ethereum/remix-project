@@ -1,7 +1,7 @@
 import React, { Fragment, PointerEvent, SyntheticEvent, useEffect, useRef } from 'react'
 import { defaultModuleProfile, VerticalIcons } from '../../types/vertical-icons'
 
-export interface VerticalIconsContextMenuProps {
+export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   // actions: action[]
   pageX: number
   pageY: number
@@ -18,6 +18,7 @@ interface MenuLinksProps {
   profileName: string
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
+  ref?: React.MutableRefObject<any>
 }
 
 interface MenuProps {
@@ -28,22 +29,27 @@ interface MenuProps {
 }
 
 function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
+  const menuRef = useRef(null)
   useEffect(() => {
     document.addEventListener("click", props.hideContextMenu)
     return () => document.removeEventListener("click", props.hideContextMenu)
+  }, [])
+  useEffect(() => {
+    menuRef.current.focus()
   }, [])
   
   return (
     <div
       id="menuItemsContainer"
       className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
-      onBlur={() => props.hideContextMenu()}
+      onBlur={props.hideContextMenu}
       style={{
         left: props.pageX,
         top: props.pageY,
         display: 'block',
 
       }}
+      ref={menuRef}
     >
       <ul id="menuitems">
         <MenuForLinks
@@ -62,7 +68,6 @@ function MenuForLinks({
   listItems,
   hide,
   profileName,
-  canBeDeactivated,
   verticalIconPlugin
 }: MenuLinksProps) {
   console.log('linkitems ', listItems)
@@ -97,27 +102,5 @@ function MenuForLinks({
     </Fragment>
   )
 }
-
-// function Menu(props: MenuProps) {
-//   console.log('props contains ', props)
-//   return (
-//     <Fragment>
-//       { props.listItems.CanDeactivate ? (
-//         <li
-//           id="menuitemdeactivate"
-//           onClick={(evt) => {
-//             props.verticalIconsPlugin
-//             .itemContextMenu(evt, props.profileName ,props.listItems.Documentation)
-//             props.hide(evt, true)
-//           }}
-//           onBlur={(evt) => props.hide(evt, true)}
-//           className="remixui_liitem"
-//         >
-//           Deactivate
-//         </li>
-//       ) : null}
-//     </Fragment>
-//   )
-// }
 
 export default VerticalIconsContextMenu
