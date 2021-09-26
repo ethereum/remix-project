@@ -1,7 +1,7 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
 import { action } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem } from './payload'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode } from './payload'
 import { addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const queuedEvents = []
@@ -61,28 +61,25 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
     await executeEvent('fileRenamed', oldPath, newPath)
   })
 
-  // provider.event.on('disconnected', () => {
-  //   dispatch(setMode('browser'))
-  // })
-
-  provider.event.on('connected', async () => {
-    fetchWorkspaceDirectory('/')
-    // setState(prevState => {
-    //   return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
-    // })
-  })
-
   provider.event.on('disconnected', async () => {
+    plugin.fileManager.setMode('browser')
+    dispatch(setMode('browser'))
+    dispatch(loadLocalhostError('Remixd disconnected!'))
     const workspaceProvider = plugin.fileProviders.workspace
 
     await switchToWorkspace(workspaceProvider.workspace)
   })
 
+  provider.event.on('connected', async () => {
+    plugin.fileManager.setMode('localhost')
+    dispatch(setMode('localhost'))
+    fetchWorkspaceDirectory('/')
+    dispatch(loadLocalhostSuccess())
+  })
+
   provider.event.on('loadingLocalhost', async () => {
     await switchToWorkspace(LOCALHOST)
-    // setState(prevState => {
-    //   return { ...prevState, loadingLocalhost: true }
-    // })
+    dispatch(loadLocalhostRequest())
   })
 
   provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
