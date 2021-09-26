@@ -533,6 +533,44 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'LOAD_LOCALHOST_REQUEST': {
+      return {
+        ...state,
+        localhost: {
+          ...state.localhost,
+          isRequesting: true,
+          isSuccessful: false,
+          error: null
+        }
+      }
+    }
+
+    case 'LOAD_LOCALHOST_SUCCESS': {
+      return {
+        ...state,
+        localhost: {
+          ...state.localhost,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
+
+    case 'LOAD_LOCALHOST_ERROR': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        localhost: {
+          ...state.localhost,
+          isRequesting: false,
+          isSuccessful: false,
+          error: payload
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
