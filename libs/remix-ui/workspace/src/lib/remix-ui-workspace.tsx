@@ -21,6 +21,7 @@ export function Workspace () {
 
   useEffect(() => {
     global.dispatchInitWorkspace()
+    resetFocus()
   }, [])
 
   useEffect(() => {

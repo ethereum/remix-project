@@ -15,12 +15,18 @@ export interface FileLabelProps {
 
 export const FileLabel = (props: FileLabelProps) => {
   const { file, focusEdit, editModeOff } = props
-  const isEditable = focusEdit.element === file.path
+  const [isEditable, setIsEditable] = useState<boolean>(false)
   const labelRef = useRef(null)
   const [defaultValue, setDefaultValue] = useState<string>(null)
 
   useEffect(() => {
-    if (isEditable) {
+    if (focusEdit.element && file.path) {
+      setIsEditable(focusEdit.element === file.path)
+    }
+  }, [file.path, focusEdit])
+
+  useEffect(() => {
+    if (labelRef.current) {
       setTimeout(() => {
         labelRef.current.focus()
       }, 0)
@@ -28,7 +34,7 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [isEditable])
 
   useEffect(() => {
-    setDefaultValue(labelRef.current.innerText)
+    if (labelRef.current) setDefaultValue(labelRef.current.innerText)
   }, [labelRef.current])
 
   const handleEditInput = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -48,7 +54,7 @@ export const FileLabel = (props: FileLabelProps) => {
   return (
     <div
       className='remixui_items d-inline-block w-100'
-      ref={labelRef}
+      ref={isEditable ? labelRef : null}
       suppressContentEditableWarning={true}
       contentEditable={isEditable}
       onKeyDown={handleEditInput}
