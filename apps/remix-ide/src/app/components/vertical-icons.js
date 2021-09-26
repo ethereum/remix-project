@@ -151,7 +151,6 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   removeIcon ({ kind, name }) {
-    // if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
     if (this.targetProfileForChange[name]) delete this.targetProfileForChange[name]
     this.renderComponent()
   }
