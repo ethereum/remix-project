@@ -59,66 +59,26 @@ const mutateIconStatus = (
   verticalIconsPlugin.setIconStatus(profile.name, status)
 }
 
-export function listenOnStatusReducer() {
+export function listenOnStatusReducer() {}
 
-}
-
-type ListenOnStatus = {
-  key: string,
-  type: string
-}
-
-// /**
-//    * Set a new status for the @arg name
-//    * @param {String} name
-//    * @param {Object} status
-//    */
-// function setIconStatus (name: string, status: any) {
-//   const el = this.icons[name] // current icon selected
-//   if (!el) return
-//   const statusEl = el.querySelector('i')
-//   if (statusEl) {
-//     el.removeChild(statusEl)
-//   }
-//   if (status.key === 'none') return // remove status
-
-//   let text = ''
-//   let key = ''
-//   if (typeof status.key === 'number') {
-//     key = status.key.toString()
-//     text = key
-//   } else key = helper.checkSpecialChars(status.key) ? '' : status.key
-
-//   let type = ''
-//   if (status.type === 'error') {
-//     type = 'danger' // to use with bootstrap
-//   } else type = helper.checkSpecialChars(status.type) ? '' : status.type
-//   const title = helper.checkSpecialChars(status.title) ? '' : status.title
-
-//   el.appendChild(yo`<i
-//   title="${title}"
-//     class="${this.resolveClasses(key, type)}"
-//     aria-hidden="true"    console.log('in verticalIcons constructor!')
-//   >
-//   ${text}
-//   </i>`)
-
-//   el.classList.add(`${css.icon}`)
-// }
-
-function listenOnStatus (profile: Profile) {
-  // the list of supported keys. 'none' will remove the status
-  const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
-  const types = ['error', 'warning', 'success', 'info', '']
-  const fn = (status: ListenOnStatus) => {
-    if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
-    if (status.key === undefined) throw new Error('status key should be defined')
-
-    if (typeof status.key === 'string' && (!keys.includes(status.key))) {
-      throw new Error('key should contain either number or ' + keys.join())
-    }
-    this.setIconStatus(profile.name, status)
+function onThemeChanged (themeType) {
+  const invert = themeType === 'dark' ? 1 : 0
+  const active = this.view.querySelector('.active')
+  if (active) {
+    const image = active.querySelector('.image')
+    image.style.setProperty('filter', `invert(${invert})`)
   }
-  this.iconStatus[profile.name] = fn
-  this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
+}
+
+type ThemeChangeActionType = {
+  themeType: 'dark' | 'light',
+  payload: any
+}
+
+export function ThemeChangeReducer (defaultValue: any, themeAction: ThemeChangeActionType) {
+  let invert = 0
+  if (themeAction.themeType === 'dark') {
+    invert = 1
+  }
+  const active = document.querySelector('.active')
 }
