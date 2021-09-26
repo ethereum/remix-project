@@ -10,7 +10,6 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
-import { handleExpandPath } from '../actions/workspace'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files } = props
@@ -404,7 +403,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     } else {
       expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
     }
-    handleExpandPath(expandPath)
+    props.dispatchHandleExpandPath(expandPath)
   }
 
   return (
