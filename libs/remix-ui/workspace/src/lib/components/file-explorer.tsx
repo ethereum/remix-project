@@ -287,7 +287,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
-    if (props.readonly) return
+    if (props.readonly) return props.toast('Cannot write/modify file system in read only mode.')
     setState(prevState => {
       return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
     })

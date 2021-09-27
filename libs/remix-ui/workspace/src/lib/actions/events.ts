@@ -1,7 +1,7 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
 import { action } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode } from './payload'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const queuedEvents = []
@@ -101,6 +101,10 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
 
   provider.event.on('fileRenamedError', async () => {
     dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
+  })
+
+  provider.event.on('readOnlyModeChanged', (mode: boolean) => {
+    dispatch(setReadOnlyMode(mode))
   })
 }
 
