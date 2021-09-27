@@ -601,8 +601,8 @@ class FileManager extends Plugin {
     this.openFile()
   }
 
-  unselectCurrentFile () {
-    this.saveCurrentFile()
+  async unselectCurrentFile () {
+    await this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
@@ -614,7 +614,7 @@ class FileManager extends Plugin {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     } else {
-      this.saveCurrentFile()
+      await this.saveCurrentFile()
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
       const provider = resolved.provider
@@ -707,14 +707,14 @@ class FileManager extends Plugin {
     return this.appManager.isActive('remixd')
   }
 
-  saveCurrentFile () {
+  async saveCurrentFile () {
     var currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
       var input = this.editor.get(currentFile)
       if ((input !== null) && (input !== undefined)) {
         var provider = this.fileProviderOf(currentFile)
         if (provider) {
-          provider.set(currentFile, input)
+          await provider.set(currentFile, input)
           this.emit('fileSaved', currentFile)
         } else {
           console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
