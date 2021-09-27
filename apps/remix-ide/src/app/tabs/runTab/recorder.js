@@ -148,10 +148,10 @@ class RecorderUI extends Plugin {
       var fileProvider = this.fileManager.fileProviderOf(path)
       if (!fileProvider) return
       var newFile = path + '/' + input
-      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
+      helper.createNonClashingName(newFile, fileProvider, async (error, newFile) => {
         if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
-        if (!fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
-        this.fileManager.open(newFile)
+        if (!await fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
+        await this.fileManager.open(newFile)
       })
     })
   }

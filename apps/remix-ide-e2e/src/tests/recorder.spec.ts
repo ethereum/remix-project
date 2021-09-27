@@ -44,6 +44,7 @@ module.exports = {
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
       .click('i.savetransaction')
       .modalFooterOKClick()
+      .pause(1000)
       .getEditorValue(function (result) {
         console.log(result)
         const parsed = JSON.parse(result)
