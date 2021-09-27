@@ -299,7 +299,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = await window.remixFileSystem.readFile(addSlash(`${workspace.absolutePath}/${file}`))
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
       const ob = {
         path: file,
         content: c
@@ -319,10 +319,10 @@ class DGitProvider extends Plugin {
     this.filesToSend = []
 
     const data = new FormData()
-    files.forEach(async (file) => {
-      const c = window.remixFileSystem.readFileSync(addSlash(`${workspace.absolutePath}/${file}`))
+    for (const file of files) {
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
       data.append('file', new Blob([c]), `base/${file}`)
-    })
+    }
     // get last commit data
     let ob
     try {
@@ -431,7 +431,7 @@ class DGitProvider extends Plugin {
           this.createDirectories(`${workspace.absolutePath}/${dir}`)
         } catch (e) { throw new Error(e) }
         try {
-          await window.remixFileSystem.writeFile(addSlash(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array()))
+          await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
         } catch (e) { throw new Error(e) }
       }
     } catch (e) {
@@ -495,7 +495,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = await window.remixFileSystem.readFile(addSlash(`${workspace.absolutePath}/${file}`))
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
       zip.file(file, c)
     }
     await zip.generateAsync({
@@ -515,8 +515,8 @@ class DGitProvider extends Plugin {
       if (i > 0) previouspath = '/' + directories.slice(0, i).join('/')
       const finalPath = previouspath + '/' + directories[i]
       try {
-        if (!await window.remixFileSystem.exists(addSlash(finalPath))) {
-          await window.remixFileSystem.mkdir(addSlash(finalPath))
+        if (!await window.remixFileSystem.exists(finalPath)) {
+          await window.remixFileSystem.mkdir(finalPath)
         }
       } catch (e) {
         console.log(e)
