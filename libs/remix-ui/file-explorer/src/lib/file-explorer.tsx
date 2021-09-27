@@ -1062,7 +1062,6 @@ export default FileExplorer
 async function packageFiles (filesProvider, directory, callback) {
   const isFile = await filesProvider.isFile(directory)
   const ret = {}
-  console.log(isFile)
   if (isFile) {
     try {
       filesProvider.get(directory, (error, content) => {
