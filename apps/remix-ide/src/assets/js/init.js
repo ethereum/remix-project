@@ -56,16 +56,44 @@ window.onload = () => {
   class RemixFileSystem extends LightningFS {
     constructor (...t) {
       super(...t)
+      this.addSlash = (file) => {
+        if (!file.startsWith('/'))file = '/' + file
+        return file
+      }
+      this.base = this.promises
       this.promises = {
         ...this.promises,
+
         exists: async (path) => {
           return new Promise((resolve, reject) => {
-            this.promises.stat(path).then(() => resolve(true)).catch(() => resolve(false))
+            this.base.stat(this.addSlash(path)).then(() => resolve(true)).catch(() => resolve(false))
           })
         },
-        statExtended: async (path) => {
-          return new Promise((resolve, reject) => {
-            this.promises.stat(path).then((stat) => {
+        rmdir: async (path) => {
+          return this.base.rmdir(this.addSlash(path))
+        },
+        readdir: async (path) => {
+          return this.base.readdir(this.addSlash(path))
+        },
+        unlink: async (path) => {
+          return this.base.unlink(this.addSlash(path))
+        },
+        mkdir: async (path) => {
+          return this.base.mkdir(this.addSlash(path))
+        },
+        readFile: async (path, options) => {
+          return this.base.readFile(this.addSlash(path), options)
+        },
+        rename: async (from, to) => {
+          return this.base.rename(this.addSlash(from), this.addSlash(to))
+        },
+        writeFile: async (path, content, options) => {
+          return this.base.writeFile(this.addSlash(path), content, options)
+        },
+        stat: async (path) => {
+          return this.base.stat(this.addSlash(path))
+          /* return new Promise((resolve, reject) => {
+            this.base.stat(this.addSlash(path)).then((stat) => {
               resolve({
                 isDirectory: () => {
                   return stat.type === 'dir'
@@ -75,7 +103,7 @@ window.onload = () => {
                 }
               })
             }).catch(() => reject(false))
-          })
+          }) */
         }
       }
     }
