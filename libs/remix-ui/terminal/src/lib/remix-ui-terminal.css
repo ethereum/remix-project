@@ -266,16 +266,7 @@ element.style {
   .log:hover {
     opacity: 0.8;
   }
-  .arrow {
-    color: var(--text-info);
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    margin-left: 10px;
-  }
-  .arrow:hover {
-    color: var(--secondary);
-  }
+
   .txStatus {
     display: flex;
     font-size: 20px;
