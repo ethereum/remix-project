@@ -98,12 +98,15 @@
       "tags": []
     },
     "remix-ui-settings": {
-       "tags": []
+      "tags": []
     },
     "remix-ui-static-analyser": {
       "tags": []
     },
     "remix-ui-checkbox": {
+      "tags": []
+    },
+    "remix-ui-plugin-manager": {
       "tags": []
     },
     "remix-core-plugin": {
@@ -116,6 +119,12 @@
       "tags": []
     },
     "remix-ui-renderer": {
+      "tags": []
+    },
+    "solidity-compiler": {
+      "tags": []
+    },
+    "remix-ide-e2e-src-local-plugin": {
       "tags": []
     }
   }

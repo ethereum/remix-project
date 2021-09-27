@@ -15,6 +15,7 @@ Release managers will oversee the various aspects of a project before it is due 
 ## Quality checks:
 The quality of the release needs to be reviewed before a project is officially launched.
 The release manager is in charge of ensuring manual testing is properly planned and done.
+During the feature freeze time, only the release manager has permission to merge pull requests. As staging should at this point be already deployed, this is to ensure that the release manager has enough visibility on the changes being applied.
 Also that unit testing and e2e for new feaures have been included.
 
 ## Deployment: 

@@ -1,72 +1,10 @@
-import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginManagerSettings } from './plugin-manager-settings'
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-const yo = require('yo-yo')
-const csjs = require('csjs-inject')
-const EventEmitter = require('events')
-const LocalPlugin = require('./local-plugin')
-const addToolTip = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
-
-const css = csjs`
-  .pluginSearch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--light);
-    padding: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    margin-bottom: 0px;
-  }
-  .pluginSearchInput {
-    height: 38px;
-  }
-  .pluginSearchButton {
-    font-size: 13px;
-  }
-  .displayName {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .pluginIcon {
-    height: 0.7rem;
-    width: 0.7rem;
-    filter: invert(0.5);
-  }
-  .description {
-    font-size: 13px;
-    line-height: 18px;
-  }
-  .descriptiontext {
-    display: block;
-  }
-  .descriptiontext:first-letter {
-    text-transform: uppercase;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-  }
-  .isStuck {
-    background-color: var(--primary);
-    color: 
-  }
-  .versionWarning {
-    padding: 4px;
-    margin: 0 8px;
-    font-weight: 700;
-    font-size: 9px;
-    line-height: 12px;
-    text-transform: uppercase;
-    cursor: default;
-    border: 1px solid;
-    border-radius: 2px;
-  }
-`
 
 const profile = {
   name: 'pluginManager',
@@ -84,112 +22,86 @@ const profile = {
 class PluginManagerComponent extends ViewPlugin {
   constructor (appManager, engine) {
     super(profile)
-    this.event = new EventEmitter()
     this.appManager = appManager
-    this.views = {
-      root: null,
-      items: {}
-    }
-    this.localPlugin = new LocalPlugin()
-    this.filter = ''
-    this.appManager.event.on('activate', () => { this.reRender() })
-    this.appManager.event.on('deactivate', () => { this.reRender() })
     this.engine = engine
-    this.engine.event.on('onRegistration', () => { this.reRender() })
+    this.pluginManagerSettings = new PluginManagerSettings()
+    this.htmlElement = document.createElement('div')
+    this.htmlElement.setAttribute('id', 'pluginManager')
+    this.filter = ''
+
+    this.activePlugins = []
+    this.inactivePlugins = []
+    this.activeProfiles = this.appManager.actives
+    this._paq = _paq
+    this.listenOnEvent()
   }
 
+  /**
+   * Checks and returns true or false if plugin name
+   * passed in exists in the actives string array in
+   * RemixAppManager
+   * @param {string} name name of Plugin
+   */
   isActive (name) {
     return this.appManager.actives.includes(name)
   }
 
+  /**
+   * Delegates to method activatePlugin in
+   * RemixAppManager to enable plugin activation
+   * @param {string} name name of Plugin
+   */
   activateP (name) {
     this.appManager.activatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
+  /**
+   * Takes the name of a local plugin and does both
+   * activation and registration
+   * @param {Profile} pluginName
+   * @returns {void}
+   */
+  async activateAndRegisterLocalPlugin (localPlugin) {
+    if (localPlugin) {
+      this.engine.register(localPlugin)
+      this.appManager.activatePlugin(localPlugin.profile.name)
+      this.getAndFilterPlugins()
+      localStorage.setItem('plugins/local', JSON.stringify(localPlugin.profile))
+    }
+  }
+
+  /**
+   * Calls and triggers the event deactivatePlugin
+   * with with manager permission passing in the name
+   * of the plugin
+   * @param {string} name name of Plugin
+   */
   deactivateP (name) {
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
-  renderItem (profile) {
-    const displayName = (profile.displayName) ? profile.displayName : profile.name
-    const doclink = profile.documentation ? yo`<a href="${profile.documentation}" class="px-1" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>`
-      : yo``
-
-    // Check version of the plugin
-    let versionWarning
-    // Alpha
-    if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning} plugin-version">alpha</small>`
-    }
-    // Beta
-    if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning} plugin-version">beta</small>`
-    }
-
-    const activationButton = this.isActive(profile.name)
-      ? yo`
-      <button
-        onclick="${() => this.deactivateP(profile.name)}"
-        class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}"
-      >
-        Deactivate
-      </button>
-      `
-      : yo`
-      <button
-        onclick="${() => this.activateP(profile.name)}"
-        class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${profile.name}"
-      >
-        Activate
-      </button>`
-
-    return yo`
-      <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 mb-1 plugins-list-group-item" title="${displayName}" >
-        <div class="${css.row} justify-content-between align-items-center mb-2">
-          <h6 class="${css.displayName} plugin-name">
-            <div>
-              ${displayName}
-              ${doclink}
-              ${versionWarning}
-            </div>
-            ${activationButton}
-          </h6>
-        </div>
-        <div class="${css.description} d-flex text-body plugin-text mb-2">
-          <img src="${profile.icon}" class="mr-1 mt-1 ${css.pluginIcon}" />
-          <span class="${css.descriptiontext}">${profile.description}</span>
-        </div>
-      </article>
-    `
+  onActivation () {
+    this.renderComponent()
   }
 
-  /***************
-   * SUB-COMPONENT
-   */
-  /**
-   * Add a local plugin to the list of plugins
-   */
-  async openLocalPlugin () {
-    try {
-      const profile = await this.localPlugin.open(this.appManager.getAll())
-      if (!profile) return
-      if (this.appManager.getIds().includes(profile.name)) {
-        throw new Error('This name has already been used')
-      }
-      const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-      this.engine.register(plugin)
-      await this.appManager.activatePlugin(plugin.name)
-    } catch (err) {
-      // TODO : Use an alert to handle this error instead of a console.log
-      console.log(`Cannot create Plugin : ${err.message}`)
-      addToolTip(`Cannot create Plugin : ${err.message}`)
-    }
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiPluginManager
+        pluginComponent={this}
+        pluginManagerSettings={this.pluginManagerSettings}
+      />,
+      this.htmlElement)
   }
 
   render () {
-    // Filtering helpers
+    return this.htmlElement
+  }
+
+  getAndFilterPlugins (filter) {
+    this.filter = typeof filter === 'string' ? filter.toLowerCase() : this.filter
+
     const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
     const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
     const isNotDependent = (profile) => !this.appManager.isDependent(profile.name)
@@ -199,71 +111,35 @@ class PluginManagerComponent extends ViewPlugin {
       const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
       return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
     }
-
-    // Filter all active and inactive modules that are not required
-    const { actives, inactives } = this.appManager.getAll()
+    const activatedPlugins = []
+    const deactivatedPlugins = []
+    const tempArray = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
       .filter(isNotDependent)
       .filter(isNotHome)
       .sort(sortByName)
-      .reduce(({ actives, inactives }, profile) => {
-        return this.isActive(profile.name)
-          ? { actives: [...actives, profile], inactives }
-          : { inactives: [...inactives, profile], actives }
-      }, { actives: [], inactives: [] })
 
-    const activeTile = actives.length !== 0
-      ? yo`
-      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
-        <span class="navbar-brand plugins-list-title">Active Modules</span>
-        <span class="badge badge-primary" data-id="pluginManagerComponentActiveTilesCount">${actives.length}</span>
-      </nav>`
-      : ''
-    const inactiveTile = inactives.length !== 0
-      ? yo`
-      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
-        <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
-        <span class="badge badge-primary" style = "cursor: default;" data-id="pluginManagerComponentInactiveTilesCount">${inactives.length}</span>
-      </nav>`
-      : ''
-
-    const settings = new PluginManagerSettings().render()
-
-    const rootView = yo`
-      <div id='pluginManager' data-id="pluginManagerComponentPluginManager">
-        <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
-          <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput">
-          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
-            Connect to a Local Plugin
-          </button>
-        </header>
-        <section data-id="pluginManagerComponentPluginManagerSection">
-          ${activeTile}
-          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-            ${actives.map(profile => this.renderItem(profile))}
-          </div>
-          ${inactiveTile}
-          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
-            ${inactives.map(profile => this.renderItem(profile))}
-          </div>
-        </section>
-        ${settings}
-      </div>
-    `
-    if (!this.views.root) this.views.root = rootView
-    return rootView
+    tempArray.forEach(profile => {
+      if (this.appManager.actives.includes(profile.name)) {
+        activatedPlugins.push(profile)
+      } else {
+        deactivatedPlugins.push(profile)
+      }
+    })
+    this.activePlugins = activatedPlugins
+    this.inactivePlugins = deactivatedPlugins
+    this.renderComponent()
   }
 
-  reRender () {
-    if (this.views.root) {
-      yo.update(this.views.root, this.render())
-    }
-  }
-
-  filterPlugins ({ target }) {
-    this.filter = target.value.toLowerCase()
-    this.reRender()
+  listenOnEvent () {
+    this.engine.event.on('onRegistration', () => this.renderComponent())
+    this.appManager.event.on('activate', () => {
+      this.getAndFilterPlugins()
+    })
+    this.appManager.event.on('deactivate', () => {
+      this.getAndFilterPlugins()
+    })
   }
 }
 

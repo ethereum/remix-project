@@ -108,7 +108,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               break
             default:
-              _paq.push(['trackEvent', 'fileExplorer', 'customAction', item.name])
+              _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])
               emit && emit({ ...item, path: [path] } as customAction)
               break
           }

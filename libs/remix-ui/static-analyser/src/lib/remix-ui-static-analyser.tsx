@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useReducer } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
-import remixLib from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
@@ -9,7 +9,13 @@ import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
-const utils = remixLib.util
+
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 /* eslint-disable-next-line */
 export interface RemixUiStaticAnalyserProps {
@@ -31,7 +37,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     })
   }
 
-  const groupedModules = utils.groupBy(
+  const groupedModules = util.groupBy(
     preProcessModules(runner.modules()),
     'categoryId'
   )
@@ -154,6 +160,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const warningErrors = []
 
         // Remix Analysis
+        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithRemixAnalyzer'])
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
             let moduleName
@@ -209,14 +216,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           })
           // Slither Analysis
           if (slitherEnabled) {
-            props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
+            props.analysisModule.call('solidity', 'getCompilerState').then((compilerState) => {
               const { currentVersion, optimize, evmVersion } = compilerState
               props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
-              props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then((result) => {
+              _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
+              props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(async (result) => {
                 if (result.status) {
                   props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
                   const report = result.data
-                  report.map((item) => {
+                  for (const item of report) {
                     let location: any = {}
                     let locationString = 'not available'
                     let column = 0
@@ -224,7 +232,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     let fileName = currentFile
 
                     if (item.sourceMap && item.sourceMap.length) {
-                      const fileIndex = Object.keys(lastCompilationResult.sources).indexOf(item.sourceMap[0].source_mapping.filename_relative)
+                      let path = item.sourceMap[0].source_mapping.filename_relative
+                      let fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path)
+                      if (fileIndex === -1) {
+                        path = await props.analysisModule.call('fileManager', 'getUrlFromPath', path)
+                        fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path.file)
+                      }
                       if (fileIndex >= 0) {
                         location = {
                           start: item.sourceMap[0].source_mapping.start,
@@ -259,7 +272,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     }
                     warningErrors.push(options)
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
-                  })
+                  }
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
@@ -466,7 +479,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   <span className="text-dark h6">{element[0]}</span>
                   {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
                     x.hasWarning ? ( // eslint-disable-next-line  dot-notation
-                      <div id={`staticAnalysisModule${element[1]['warningModuleName']}`} key={i}>
+                      <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
                         <ErrorRenderer message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
                       </div>
 

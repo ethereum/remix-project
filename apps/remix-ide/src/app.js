@@ -425,13 +425,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
-  const compileTab = new CompileTab(
-    editor,
-    registry.get('config').api,
-    registry.get('fileproviders/browser').api,
-    registry.get('filemanager').api,
-    contentImport
-  )
+  const compileTab = new CompileTab(registry.get('config').api, registry.get('filemanager').api)
   const run = new RunTab(
     blockchain,
     registry.get('config').api,
@@ -456,7 +450,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   engine.register([
     compileTab,
-    compileTab.compileTabLogic,
     run,
     debug,
     analysis,
@@ -495,8 +488,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         console.log(e)
       }
 
-      // If plugins are loaded from the URL params, we focus on the last one.
-      if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+      if (params.code) {
+        // if code is given in url we focus on solidity plugin
+        menuicons.select('solidity')
+      } else {
+        // If plugins are loaded from the URL params, we focus on the last one.
+        if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+      }
 
       if (params.call) {
         const callDetails = params.call.split('//')

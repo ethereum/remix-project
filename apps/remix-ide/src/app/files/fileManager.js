@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -59,6 +59,10 @@ class FileManager extends Plugin {
 
   limitPluginScope (path) {
     return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
+  }
+
+  normalize (path) {
+    return path.replace(/^\/+/, '')
   }
 
   /**
@@ -119,6 +123,7 @@ class FileManager extends Plugin {
    */
   exists (path) {
     try {
+      path = this.normalize(path)
       path = this.limitPluginScope(path)
       const provider = this.fileProviderOf(path)
       const result = provider.exists(path)
@@ -134,8 +139,8 @@ class FileManager extends Plugin {
   */
   refresh () {
     const provider = this.fileProviderOf('/')
-    // emit folderAdded so that File Explorer reloads the file tree
-    provider.event.emit('folderAdded', '/')
+    // emit rootFolderChanged so that File Explorer reloads the file tree
+    provider.event.emit('rootFolderChanged')
   }
 
   /**
@@ -168,14 +173,12 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
-    try {
-      path = this.limitPluginScope(path)
-      await this._handleExists(path, `Cannot open file ${path}`)
-      await this._handleIsFile(path, `Cannot open file ${path}`)
-      return this.openFile(path)
-    } catch (e) {
-      throw new Error(e)
-    }
+    path = this.normalize(path)
+    path = this.limitPluginScope(path)
+    path = this.getPathFromUrl(path).file
+    await this._handleExists(path, `Cannot open file ${path}`)
+    await this._handleIsFile(path, `Cannot open file ${path}`)
+    await this.openFile(path)
   }
 
   /**
@@ -186,6 +189,7 @@ class FileManager extends Plugin {
    */
   async writeFile (path, data) {
     try {
+      path = this.normalize(path)
       path = this.limitPluginScope(path)
       if (await this.exists(path)) {
         await this._handleIsFile(path, `Cannot write file ${path}`)
@@ -207,6 +211,7 @@ class FileManager extends Plugin {
    */
   async readFile (path) {
     try {
+      path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot read file ${path}`)
       await this._handleIsFile(path, `Cannot read file ${path}`)
@@ -224,6 +229,8 @@ class FileManager extends Plugin {
    */
   async copyFile (src, dest, customName) {
     try {
+      src = this.normalize(src)
+      dest = this.normalize(dest)
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
       await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
@@ -248,6 +255,8 @@ class FileManager extends Plugin {
    */
   async copyDir (src, dest) {
     try {
+      src = this.normalize(src)
+      dest = this.normalize(dest)
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
       await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
@@ -284,6 +293,8 @@ class FileManager extends Plugin {
    */
   async rename (oldPath, newPath) {
     try {
+      oldPath = this.normalize(oldPath)
+      newPath = this.normalize(newPath)
       oldPath = this.limitPluginScope(oldPath)
       newPath = this.limitPluginScope(newPath)
       await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
@@ -316,6 +327,7 @@ class FileManager extends Plugin {
    */
   async mkdir (path) {
     try {
+      path = this.normalize(path)
       path = this.limitPluginScope(path)
       if (await this.exists(path)) {
         throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
@@ -335,6 +347,7 @@ class FileManager extends Plugin {
    */
   async readdir (path) {
     try {
+      path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path)
       await this._handleIsDir(path)
@@ -359,6 +372,7 @@ class FileManager extends Plugin {
    */
   async remove (path) {
     try {
+      path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
@@ -401,7 +415,7 @@ class FileManager extends Plugin {
   }
 
   fileChangedEvent (path) {
-    this.emit('currentFileChanged', path)
+    this.emit('fileChanged', path)
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
@@ -538,6 +552,36 @@ class FileManager extends Plugin {
     }
   }
 
+  /**
+   * Try to resolve the given file path (the actual path in the file system)
+   * e.g if it's specified a github link, npm library, or any external content,
+   * it returns the actual path where the content can be found.
+   * @param {string} file url we are trying to resolve
+   * @returns {{ string, provider }} file path resolved and its provider.
+   */
+  getPathFromUrl (file) {
+    const provider = this.fileProviderOf(file)
+    if (!provider) throw new Error(`no provider for ${file}`)
+    return {
+      file: provider.getPathFromUrl(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
+      provider
+    }
+  }
+
+  /**
+   * Try to resolve the given file URl. opposite of getPathFromUrl
+   * @param {string} file path we are trying to resolve
+   * @returns {{ string, provider }} file url resolved and its provider.
+   */
+  getUrlFromPath (file) {
+    const provider = this.fileProviderOf(file)
+    if (!provider) throw new Error(`no provider for ${file}`)
+    return {
+      file: provider.getUrlFromPath(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
+      provider
+    }
+  }
+
   removeTabsOf (provider) {
     for (var tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
@@ -566,33 +610,37 @@ class FileManager extends Plugin {
     this.events.emit('noFileSelected')
   }
 
-  openFile (file) {
-    const _openFile = (file) => {
-      this.saveCurrentFile()
-      const provider = this.fileProviderOf(file)
-      if (!provider) return console.error(`no provider for ${file}`)
-      file = provider.getPathFromUrl(file) || file // in case an external URL is given as input, we resolve it to the right internal path
-      this._deps.config.set('currentFile', file)
-      this.openedFiles[file] = file
-      provider.get(file, (error, content) => {
-        if (error) {
-          console.log(error)
-        } else {
-          if (provider.isReadOnly(file)) {
-            this.editor.openReadOnly(file, content)
-          } else {
-            this.editor.open(file, content)
-          }
-          // TODO: Only keep `this.emit` (issue#2210)
-          this.emit('currentFileChanged', file)
-          this.events.emit('currentFileChanged', file)
-        }
-      })
-    }
-    if (file) return _openFile(file)
-    else {
+  async openFile (file) {
+    if (!file) {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
+    } else {
+      this.saveCurrentFile()
+      const resolved = this.getPathFromUrl(file)
+      file = resolved.file
+      const provider = resolved.provider
+      this._deps.config.set('currentFile', file)
+      this.openedFiles[file] = file
+      await (() => {
+        return new Promise((resolve, reject) => {
+          provider.get(file, (error, content) => {
+            if (error) {
+              console.log(error)
+              reject(error)
+            } else {
+              if (provider.isReadOnly(file)) {
+                this.editor.openReadOnly(file, content)
+              } else {
+                this.editor.open(file, content)
+              }
+              // TODO: Only keep `this.emit` (issue#2210)
+              this.emit('currentFileChanged', file)
+              this.events.emit('currentFileChanged', file)
+              resolve()
+            }
+          })
+        })
+      })()
     }
   }
 
@@ -679,7 +727,6 @@ class FileManager extends Plugin {
   syncEditor (path) {
     var currentFile = this._deps.config.get('currentFile')
     if (path !== currentFile) return
-
     var provider = this.fileProviderOf(currentFile)
     if (provider) {
       provider.get(currentFile, (error, content) => {

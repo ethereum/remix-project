@@ -34,7 +34,7 @@ function removeFile (browser: NightwatchBrowser, path: string, workspace: string
     contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
   }, [path], function () {
     browser
-      .waitForElementVisible('#menuitemdelete')
+      .waitForElementVisible('#menuitemdelete', 60000)
       .click('#menuitemdelete')
       .pause(2000)
       .perform(() => {

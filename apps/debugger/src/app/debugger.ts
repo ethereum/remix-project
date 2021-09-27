@@ -1,7 +1,7 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "@remixproject/plugin-webview";
 import { IDebuggerApi, RawLocation, Sources, Asts, LineColumnLocation, 
-  onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, TransactionReceipt } from '@remix-ui/debugger-ui'
+  onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/debugger-ui'
 import { DebuggerApiMixin, CompilerAbstract} from './debugger-api'
 
 export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {  
@@ -18,6 +18,7 @@ export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {
   onBreakpointCleared: (listener: onBreakpointClearedListener) => void
   onBreakpointAdded: (listener: onBreakpointAddedListener) => void
   onEditorContentChanged: (listener: onEditorContentChanged) => void
+  onEnvChanged: (listener: onEnvChangedListener) => void
   discardHighlight: () => Promise<void>
   highlight: (lineColumnPos: LineColumnLocation, path: string) => Promise<void>
   fetchContractAndCompile: (address: string, currentReceipt: TransactionReceipt) => Promise<CompilerAbstract>

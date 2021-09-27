@@ -10,7 +10,7 @@ class NodeProvider {
 
   getAccounts (cb) {
     if (this.config.get('settings/personal-mode')) {
-      return this.executionContext.web3().personal.getListAccounts(cb)
+      return this.executionContext.web3().eth.personal.getAccounts(cb)
     }
     return this.executionContext.web3().eth.getAccounts(cb)
   }
@@ -20,7 +20,7 @@ class NodeProvider {
       return cb('Not running in personal mode')
     }
     passwordPromptCb((passphrase) => {
-      this.executionContext.web3().personal.newAccount(passphrase, cb)
+      this.executionContext.web3().eth.personal.newAccount(passphrase, cb)
     })
   }
 

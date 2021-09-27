@@ -7,7 +7,9 @@ var async = require('async')
 var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
-var remixTests = require('@remix-project/remix-tests')
+var { UnitTestRunner } = require('@remix-project/remix-tests')
+
+const _paq = window._paq = window._paq || []
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -33,12 +35,16 @@ module.exports = class TestTab extends ViewPlugin {
     this.data = {}
     this.appManager = appManager
     this.renderer = new Renderer(this)
+    this.testRunner = new UnitTestRunner()
     this.hasBeenStopped = false
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
     this.areTestsRunning = false
     this.defaultPath = 'tests'
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
+    this.allFilesInvolved = []
+    this.isDebugging = false
+    this.currentErrors = []
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -71,7 +77,8 @@ module.exports = class TestTab extends ViewPlugin {
   onDeactivation () {
     this.off('filePanel', 'newTestFileCreated')
     this.off('filePanel', 'setWorkspace')
-    this.fileManager.events.removeListener('currentFileChanged', this.updateForNewCurrent)
+    // 'currentFileChanged' event is added more than once
+    this.fileManager.events.removeAllListeners('currentFileChanged')
   }
 
   listenToEvents () {
@@ -95,6 +102,15 @@ module.exports = class TestTab extends ViewPlugin {
       this.setCurrentPath(this.defaultPath)
     })
 
+    this.testRunner.event.on('compilationFinished', (success, data, source) => {
+      if (success) {
+        this.allFilesInvolved = Object.keys(data.sources)
+        // forwarding the event to the appManager infra
+        // This is listened by compilerArtefacts to show data while debugging
+        this.emit('compilationFinished', source.target, source, 'soljson', data)
+      }
+    })
+
     this.fileManager.events.on('noFileSelected', () => {
     })
 
@@ -102,6 +118,17 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async updateForNewCurrent (file) {
+    // Ensure that when someone clicks on compilation error and that opens a new file
+    // Test result, which is compilation error in this case, is not cleared
+    if (this.currentErrors) {
+      if (Array.isArray(this.currentErrors) && this.currentErrors.length > 0) {
+        const errFiles = this.currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file })
+        if (errFiles.includes(file)) return
+      } else if (this.currentErrors.sourceLocation && this.currentErrors.sourceLocation.file && this.currentErrors.sourceLocation.file === file) return
+    }
+    // if current file is changed while debugging and one of the files imported in test file are opened
+    // do not clear the test results in SUT plugin
+    if (this.isDebugging && this.allFilesInvolved.includes(file)) return
     this.data.allTests = []
     this.updateTestFileList()
     this.clearResults()
@@ -192,6 +219,13 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  async startDebug (txHash, web3) {
+    this.isDebugging = true
+    if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
+    this.call('menuicons', 'select', 'debugger')
+    this.call('debugger', 'debug', txHash, web3)
+  }
+
   printHHLogs (logsArr, testName) {
     let finalLogs = `<b>${testName}:</b>\n`
     for (const log of logsArr) {
@@ -207,6 +241,7 @@ module.exports = class TestTab extends ViewPlugin {
       }
       finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
     this.call('terminal', 'log', { type: 'info', value: finalLogs })
   }
 
@@ -242,13 +277,30 @@ module.exports = class TestTab extends ViewPlugin {
     } else if (result.type === 'testFailure') {
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
+        let debugBtn = yo``
+        if (result.errMsg.includes('Transaction has been reverted by the EVM')) {
+          const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
+          const { web3 } = result
+          debugBtn = yo`<div
+            class="btn border btn btn-sm ml-1"
+            title="Start debugging"
+            onclick=${() => this.startDebug(txHash, web3)}
+          >
+            <i class="fas fa-bug"></i>
+          </div>`
+          debugBtn.style.visibility = 'visible'
+          debugBtn.style.cursor = 'pointer'
+        } else debugBtn.style.visibility = 'hidden'
         this.testsOutput.appendChild(yo`
         <div
-          class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
+          class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
           id="UTContext${result.context}"
           onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
         >
-          <span> ✘ ${result.value}</span>
+          <div class="d-flex my-1 align-items-start justify-content-between">
+            <span> ✘ ${result.value}</span>
+            ${debugBtn}
+          </div>
           <span class="text-dark">Error Message:</span>
           <span class="pb-2 text-break">"${result.errMsg}"</span>
         </div>
@@ -259,7 +311,7 @@ module.exports = class TestTab extends ViewPlugin {
         const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
         this.testsOutput.appendChild(yo`
           <div
-            class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
+            class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
             id="UTContext${result.context}"
             onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
           >
@@ -278,6 +330,8 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
         `)
       }
+    } else if (result.type === 'logOnly') {
+      if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
     }
   }
 
@@ -332,12 +386,13 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsOutput.hidden = false
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
       this.testCallback({ type: 'contract', filename })
+      this.currentErrors = _errors.errors
       this.setHeader(false)
     }
     if (_errors && _errors.errors) {
-      _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity }))
+      _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity, errorType: err.type }))
     } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
-      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity }))
+      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity, errorType: err.type }))
     } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
       // To track error like this: https://github.com/ethereum/remix/pull/1438
       this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, { type: 'error' })
@@ -444,7 +499,7 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      remixTests.runTestSources(runningTest, compilerConfig, () => {}, () => {}, (error, result) => {
+      this.testRunner.runTestSources(runningTest, compilerConfig, () => {}, () => {}, (error, result) => {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {
@@ -454,6 +509,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTest (testFilePath, callback) {
+    this.isDebugging = false
     if (this.hasBeenStopped) {
       this.updateFinalResult()
       return
@@ -471,7 +527,7 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      remixTests.runTestSources(
+      this.testRunner.runTestSources(
         runningTests,
         compilerConfig,
         (result) => this.testCallback(result, runningTests),
@@ -526,6 +582,7 @@ module.exports = class TestTab extends ViewPlugin {
     const tests = this.data.selectedTests
     if (!tests) return
     this.resultStatistics.hidden = tests.length === 0
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
     async.eachOfSeries(tests, (value, key, callback) => {
       if (this.hasBeenStopped) return
       this.runTest(value, callback)

@@ -281,7 +281,8 @@ export class Compiler {
     })
 
     this.state.worker.addEventListener('error', (msg: Record <'data', MessageFromWorker>) => {
-      this.onCompilationFinished({ error: { formattedMessage: 'Worker error: ' + msg.data } })
+      const formattedMessage = `Worker error: ${msg.data && msg.data !== undefined ? msg.data : msg['message']}`
+      this.onCompilationFinished({ error: { formattedMessage } })
     })
 
     this.state.compileJSON = (source: SourceWithTarget) => {

@@ -319,7 +319,7 @@ class ContractDropdownUI {
     try {
       contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
     } catch (error) {
-      return statusCb(`creation of ${selectedContract.name} errored: ` + (error.message ? error.message : error))
+      return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
     }
 
     const compilerContracts = this.dropdownLogic.getCompilerContracts()

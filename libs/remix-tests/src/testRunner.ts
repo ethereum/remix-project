@@ -232,6 +232,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
   testCallback(undefined, resp)
   async.eachOfLimit(runList, 1, function (func, index, next) {
     let sender: string | null = null
+    let hhLogs
     if (func.signature) {
       sender = getOverridedSender(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
       if (opts.accounts && sender) {
@@ -244,8 +245,15 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
     const startTime = Date.now()
     if (func.constant) {
-      method.call(sendParams).then((result) => {
+      sendParams = {}
+      const tagTimestamp = 'remix_tests_tag' + Date.now()
+      sendParams.timestamp = tagTimestamp
+      method.call(sendParams).then(async (result) => {
         const time = (Date.now() - startTime) / 1000.0
+        let tagTxHash
+        let hhLogs
+        if (web3.eth && web3.eth.getHashFromTagBySimulator) tagTxHash = await web3.eth.getHashFromTagBySimulator(tagTimestamp)
+        if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(tagTxHash)
         if (result) {
           const resp: TestResultInterface = {
             type: 'testPass',
@@ -254,6 +262,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             time: time,
             context: testName
           }
+          if (hhLogs) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
           passingNum += 1
           timePassed += time
@@ -266,6 +275,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             errMsg: 'function returned false',
             context: testName
           }
+          if (hhLogs) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
           failureNum += 1
           timePassed += time
@@ -284,7 +294,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       sendParams.gas = 10000000 * 8
       method.send(sendParams).on('receipt', async (receipt) => {
         try {
-          let hhLogs
           if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(receipt.transactionHash)
           const time: number = (Date.now() - startTime) / 1000.0
           const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
@@ -313,7 +322,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     assertMethod,
                     returned: testEvent[3],
                     expected: testEvent[4],
-                    location
+                    location,
+                    web3
                   }
                   if (hhLogs) resp.hhLogs = hhLogs
                   testCallback(undefined, resp)
@@ -338,6 +348,17 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             testCallback(undefined, resp)
             passingNum += 1
             timePassed += time
+          } else if (hhLogs) {
+            const resp: TestResultInterface = {
+              type: 'logOnly',
+              value: changeCase.sentenceCase(func.name),
+              filename: testObject.filename,
+              time: time,
+              context: testName,
+              hhLogs
+            }
+            testCallback(undefined, resp)
+            timePassed += time
           }
 
           return next()
@@ -345,7 +366,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           console.error(err)
           return next(err)
         }
-      }).on('error', function (err: Error) {
+      }).on('error', async (err: Error) => {
         const time: number = (Date.now() - startTime) / 1000.0
         const resp: TestResultInterface = {
           type: 'testFailure',
@@ -353,7 +374,13 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           filename: testObject.filename,
           time: time,
           errMsg: err.message,
-          context: testName
+          context: testName,
+          web3
+        }
+        if (err.message.includes('Transaction has been reverted by the EVM')) {
+          const txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
+          if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(txHash)
+          if (hhLogs) resp.hhLogs = hhLogs
         }
         testCallback(undefined, resp)
         failureNum += 1

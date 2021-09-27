@@ -2,10 +2,21 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
+declare global {
+  interface Window { testmode: boolean; }
+}
+
 const testData = {
   pluginName: 'remixIde',
   pluginDisplayName: 'Remix IDE',
   pluginUrl: 'https://zokrates.github.io/zokrates-remix-plugin/'
+}
+
+const localPluginData = {
+  pluginName: 'localPlugin',
+  pluginDisplayName: 'Local Plugin',
+  pluginCanActivate: 'LearnEth',
+  pluginUrl: 'http://localhost:2020'
 }
 
 module.exports = {
@@ -17,6 +28,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .pause(3000)
       .click('*[plugin="pluginManager"]')
+      .pause(3000)
       .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
   },
@@ -36,7 +48,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
       .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
       .click('*[data-id="pluginManagerComponentSearchInput"]')
-      .keys(browser.Keys.ENTER)
+      .keys(browser.Keys.SPACE)
+      .keys(browser.Keys.BACK_SPACE)
   },
 
   'Should activate plugins': function (browser: NightwatchBrowser) {
@@ -46,7 +59,7 @@ module.exports = {
       .pause(2000)
       .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonvyper"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]', 60000)
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]', 70000)
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
       .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]', 60000)
   },
@@ -103,48 +116,84 @@ module.exports = {
 
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .execute(function () {
+        window.testmode = true
+      })
       .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-      .waitForElementVisible('*[data-id="modalDialogContainer"]')
-      .click('*[data-id="modalDialogModalBody"]')
-      .waitForElementVisible('*[data-id="localPluginName"]')
-      .setValue('*[data-id="localPluginName"]', testData.pluginName)
-      .setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
-      .setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
-      .click('*[data-id="localPluginRadioButtoniframe"]')
-      .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .click('*[data-id="modalDialogModalFooter"]')
-      .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 100000)
-  },
-
-  'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-      .waitForElementVisible('*[data-id="modalDialogContainer"]')
-      .click('*[data-id="modalDialogModalBody"]')
+      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
       .waitForElementVisible('*[data-id="localPluginName"]')
       .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
       .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
       .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
       .click('*[data-id="localPluginRadioButtoniframe"]')
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .click('*[data-id="modalDialogModalFooter"]')
-      .modalFooterOKClick()
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
+      // .modalFooterOKClick()
+      // .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 60000)
+  },
+
+  'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="localPluginName"]')
+      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
+      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
+      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
+      .click('*[data-id="localPluginRadioButtoniframe"]')
+      .click('*[data-id="localPluginRadioButtonsidePanel"]')
+      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]', 60000)
+      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]')
+      // .modalFooterOKClick()
+      // .pause(2000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .pause(5000)
-      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
+  },
+
+  'Local plugin should activate LearnEth plugin': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="localPluginName"]')
+      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', localPluginData.pluginName)
+      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', localPluginData.pluginDisplayName)
+      .clearValue('*[data-id="localPluginCanActivate"]').setValue('*[data-id="localPluginCanActivate"]', localPluginData.pluginCanActivate)
+      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', localPluginData.pluginUrl)
+      .click('*[data-id="localPluginRadioButtoniframe"]')
+      .click('*[data-id="localPluginRadioButtonsidePanel"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
+      .waitForElementVisible('[data-id="verticalIconsKindlocalPlugin"]')
+      .click('[data-id="verticalIconsKindlocalPlugin"]')
+      .waitForElementNotPresent('[data-id="verticalIconsKindLearnEth"]')
       .pause(2000)
-      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
+      // @ts-ignore
+      .frame('plugin-localPlugin')
+      .useXpath().click("//button[text()='Activate Learneth']")
+      .pause(2000)
+      .frameParent()
+      .useCss().waitForElementPresent('[data-id="verticalIconsKindLearnEth"]')
   },
 
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+    browser
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .click('*[plugin="pluginManager"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .getInstalledPlugins((plugins) => {
         browser.refresh()
           .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
           .pause(3000)
           .perform((done) => {
+            // const filtered = plugins.filter(plugin => plugin !== 'testremixIde') // remove this when localplugin bug is resolved
             plugins.forEach(plugin => {
-              if (plugin !== testData.pluginName) {
+              if ((plugin !== testData.pluginName) && plugin !== localPluginData.pluginName) {
                 browser.waitForElementVisible(`[plugin="${plugin}"`)
               }
             })

@@ -10,7 +10,9 @@ export class RemixEngine extends Engine {
   setPluginOption ({ name, kind }) {
     if (kind === 'provider') return { queueTimeout: 60000 * 2 }
     if (name === 'LearnEth') return { queueTimeout: 60000 }
+    if (name === 'dGitProvider') return { queueTimeout: 60000 * 4 }
     if (name === 'slither') return { queueTimeout: 60000 * 4 } // Requires when a solc version is installed
+    if (name === 'hardhat') return { queueTimeout: 60000 * 4 }
     return { queueTimeout: 10000 }
   }
 
