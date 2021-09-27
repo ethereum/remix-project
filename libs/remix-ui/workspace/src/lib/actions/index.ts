@@ -2,7 +2,7 @@ import React from 'react'
 import { extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
-import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, hideNotification, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
+import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, loadWorkspacePreset, setPlugin } from './workspace'
 
