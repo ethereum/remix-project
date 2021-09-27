@@ -46,7 +46,6 @@ module.exports = {
       .modalFooterOKClick()
       .pause(1000)
       .getEditorValue(function (result) {
-        console.log(result)
         const parsed = JSON.parse(result)
         browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
         browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))
