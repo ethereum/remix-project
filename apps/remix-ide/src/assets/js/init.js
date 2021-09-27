@@ -92,18 +92,6 @@ window.onload = () => {
         },
         stat: async (path) => {
           return this.base.stat(this.addSlash(path))
-          /* return new Promise((resolve, reject) => {
-            this.base.stat(this.addSlash(path)).then((stat) => {
-              resolve({
-                isDirectory: () => {
-                  return stat.type === 'dir'
-                },
-                isFile: () => {
-                  return stat.type === 'file'
-                }
-              })
-            }).catch(() => reject(false))
-          }) */
         }
       }
     }
