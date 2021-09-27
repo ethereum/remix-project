@@ -256,7 +256,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- editor service ----------------------------
   const editor = new Editor({}, themeModule) // wrapper around ace editor
   registry.put({ api: editor, name: 'editor' })
-  editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
+  editor.event.register('requiringToSaveCurrentfile', async () => await fileManager.saveCurrentFile())
 
   // ----------------- fileManager service ----------------------------
   const fileManager = new FileManager(editor, appManager)
