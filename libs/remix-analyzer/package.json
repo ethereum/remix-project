@@ -22,7 +22,7 @@
     "@ethereumjs/block": "^3.4.0",
     "@ethereumjs/tx": "^3.3.0",
     "@ethereumjs/vm": "^5.5.0",
-    "@remix-project/remix-astwalker": "^0.0.26",
+    "@remix-project/remix-astwalker": "^0.0.37",
     "@remix-project/remix-lib": "^0.5.7",
     "async": "^2.6.2",
     "ethereumjs-util": "^7.0.10",
