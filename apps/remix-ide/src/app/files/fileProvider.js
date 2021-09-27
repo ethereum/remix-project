@@ -117,9 +117,9 @@ class FileProvider {
       return false
     }
     if (!exists) {
-      this.event.emit('fileAdded', this._normalizePath(this.addSlash(unprefixedpath)), false)
+      this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
     } else {
-      this.event.emit('fileChanged', this._normalizePath(this.addSlash(unprefixedpath)))
+      this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
     }
     if (cb) cb()
     return true
