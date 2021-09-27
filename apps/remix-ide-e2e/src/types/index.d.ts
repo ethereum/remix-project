@@ -1,8 +1,8 @@
 // Merge custom command types with nightwatch types
 
-import { NightwatchBrowser, NightwatchBrowser, NightwatchBrowser } from "nightwatch";
+import { NightwatchBrowser } from 'nightwatch'
 
-declare module "nightwatch" {
+declare module 'nightwatch' {
     export interface NightwatchCustomCommands {
         clickLaunchIcon(icon: string): NightwatchBrowser,
         switchBrowserTab(index: number): NightwatchBrowser,
