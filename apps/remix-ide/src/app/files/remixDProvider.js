@@ -66,6 +66,7 @@ module.exports = class RemixDProvider extends FileProvider {
       .then((result) => {
         this._isReady = true
         this._readOnlyMode = result
+        this.event.emit('readOnlyModeChanged', result)
         this._registerEvent()
         this.event.emit('connected')
         cb && cb()
