@@ -20,7 +20,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
       .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
       .click('*[data-id="verticalIconsFileExplorerIcons"]')
-      .click('[data-id="treeViewLitreeViewItem/contracts"]')
+      .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .click('*[data-id="verticalIconsKindsolidity"]')
       .pause(2000)
