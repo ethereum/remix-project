@@ -296,7 +296,7 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
     plugin.setWorkspaces(workspaces)
     return workspaces
   } catch (e) {
-    dispatch(displayNotification('Workspaces', 'Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.', 'OK', null, () => { dispatch(hideNotification()) }, null))
+    // dispatch(displayNotification('Workspaces', 'Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.', 'OK', null, () => { dispatch(hideNotification()) }, null))
     console.log(e)
   }
 }
