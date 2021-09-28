@@ -62,10 +62,10 @@ export const fileAddedSuccess = (filePath: string) => {
   }
 }
 
-export const folderAddedSuccess = (folderPath: string, fileTree) => {
+export const folderAddedSuccess = (path: string, folderPath: string, fileTree) => {
   return {
     type: 'FOLDER_ADDED_SUCCESS',
-    payload: { path: folderPath, fileTree }
+    payload: { path, folderPath, fileTree }
   }
 }
 
