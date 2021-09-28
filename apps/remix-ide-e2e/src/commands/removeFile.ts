@@ -39,8 +39,8 @@ function removeFile (browser: NightwatchBrowser, path: string, workspace: string
       .pause(2000)
       .perform(() => {
         console.log(path, 'to remove')
-        browser.waitForElementVisible('*[data-id="' + workspace + 'ModalDialogContainer-react"] .modal-ok')
-          .click('*[data-id="' + workspace + 'ModalDialogContainer-react"] .modal-ok')
+        browser.waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+          .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
           .waitForElementNotPresent('[data-path="' + path + '"]')
         done()
       })
