@@ -30,7 +30,7 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true
       },
-      exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js']
+      exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.spec.ts']
     },
 
     chrome: {
