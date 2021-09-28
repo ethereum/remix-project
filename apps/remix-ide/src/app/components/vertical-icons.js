@@ -36,12 +36,7 @@ export class VerticalIcons extends Plugin {
     this.defaultProfile = profile
     this.targetProfileForChange = {}
     this.targetProfileForRemoval = {}
-
-    const themeModule = globalRegistry.get('themeModule').api
-    themeModule.events.on('themeChanged', (theme) => {
-      this.onThemeChanged(theme.quality)
-    })
-    console.log('in verticalIcons constructor!')
+    this.registry = globalRegistry
   }
 
   renderComponent () {
@@ -58,7 +53,6 @@ export class VerticalIcons extends Plugin {
 
   linkContent (profile) {
     if (!profile.icon) return
-    // this.addIcon(profile)
     this.targetProfileForChange[profile.name] = profile
     this.listenOnStatus(profile)
     this.renderComponent()
@@ -84,28 +78,6 @@ export class VerticalIcons extends Plugin {
     }
     this.iconStatus[profile.name] = fn
     this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
-  }
-
-  /**
-   * Add an icon to the map
-   * @param {ModuleProfile} profile The profile of the module
-   */
-  addIcon ({ kind, name, icon, displayName, tooltip, documentation }) {
-    let title = (tooltip || displayName || name)
-    title = title.replace(/^\w/, c => c.toUpperCase())
-    this.icons[name] = yo`
-      <div
-        class="${css.icon} m-2"
-        onclick="${() => { this.toggle(name) }}"
-        plugin="${name}"
-        title="${title}"
-        oncontextmenu="${(e) => this.itemContextMenu(e, name, documentation)}"
-        data-id="verticalIconsKind${name}"
-        id="verticalIconsKind${name}"
-      >
-        <img class="image" src="${icon}" alt="${name}" />
-        </div>`
-    this.iconKind[kind || 'none'].appendChild(this.icons[name])
   }
 
   /**
@@ -160,13 +132,16 @@ export class VerticalIcons extends Plugin {
    */
   removeActive () {
     // reset filters
-    const images = this.view.querySelectorAll('.image')
+    // const images = this.view.querySelectorAll('.image')
+    const panel = document.getElementById('iconsP')
+    console.log('icon div container ', panel)
+    const images = panel.querySelectorAll('.image')
     images.forEach(function (im) {
       im.style.setProperty('filter', 'invert(0.5)')
     })
 
     // remove active
-    const currentActive = this.view.querySelector('.active')
+    const currentActive = panel.querySelector('.active')
     if (currentActive) {
       currentActive.classList.remove('active')
     }
@@ -177,13 +152,14 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   addActive (name) {
+    const panel = document.getElementById('iconsP')
     if (name === 'home') return
-    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
+    const themeType = this.registry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
     const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
-    const nextActive = this.view.querySelector(`[plugin="${name}"]`)
+    const nextActive = panel.querySelector(`[plugin="${name}"]`)
     if (nextActive) {
-      const image = nextActive.querySelector('.image')
+      const image = nextActive.querySelector('.remixui_image')
       nextActive.classList.add('active')
       image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
     }
@@ -216,68 +192,12 @@ export class VerticalIcons extends Plugin {
     this.addActive(name)
   }
 
-  onThemeChanged (themeType) {
-    const invert = themeType === 'dark' ? 1 : 0
-    const active = this.view.querySelector('.active')
-    if (active) {
-      const image = active.querySelector('.image')
-      image.style.setProperty('filter', `invert(${invert})`)
-    }
-  }
-
-  async itemContextMenu (e, name, documentation) {
-    this.appManager.deactivatePlugin(name)
-    if (e.target.parentElement.classList.contains('active')) {
-      this.select('filePanel')
-    }
-    this.renderComponent()
-  }
-
   async activateHome () {
     await this.appManager.activatePlugin('home')
     this.call('tabs', 'focus', 'home')
   }
 
   render () {
-    const home = yo`
-    <div
-    class="m-1 mt-2 ${css.homeIcon}"
-    onclick="${async () => {
-      await this.appManager.activatePlugin('home')
-      this.call('tabs', 'focus', 'home')
-    }}"
-    plugin="home" title="Home"
-    data-id="verticalIconsHomeIcon"
-    id="verticalIconsHomeIcon"
-    >
-    ${basicLogo()}
-    </div>
-    `
-    this.iconKind.fileexplorer = yo`<div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons"></div>`
-    this.iconKind.compiler = yo`<div id='compileIcons'></div>`
-    this.iconKind.udapp = yo`<div id='runIcons'></div>`
-    this.iconKind.testing = yo`<div id='testingIcons'></div>`
-    this.iconKind.analysis = yo`<div id='analysisIcons'></div>`
-    this.iconKind.debugging = yo`<div id='debuggingIcons' data-id="verticalIconsDebuggingIcons"></div>`
-    this.iconKind.none = yo`<div id='otherIcons'></div>`
-    this.iconKind.settings = yo`<div id='settingsIcons' data-id="verticalIconsSettingsIcons"></div>`
-
-    this.view = yo`
-    <div class="h-100">
-    <div class=${css.icons}>
-    ${home}
-    ${this.iconKind.fileexplorer}
-    ${this.iconKind.compiler}
-    ${this.iconKind.udapp}
-    ${this.iconKind.testing}
-    ${this.iconKind.analysis}
-    ${this.iconKind.debugging}
-    ${this.iconKind.none}
-    ${this.iconKind.settings}
-    </div>
-    </div>
-    `
-    // return this.view
     return this.htmlElement
   }
 }

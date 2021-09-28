@@ -4,7 +4,8 @@ import {
 } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { Fragment, SyntheticEvent, useState } from 'react'
+import React, { Fragment, SyntheticEvent, useRef, useState } from 'react'
+// import helper from 'apps/remix-ide/src/lib/helper'
 
 interface IconProps {
   verticalIconPlugin: VerticalIcons
@@ -14,6 +15,7 @@ interface IconProps {
   displayName: string
   tooltip: string
   documentation: string
+  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,7 +26,8 @@ function Icon({
   displayName,
   tooltip,
   documentation,
-  verticalIconPlugin
+  verticalIconPlugin,
+  contextMenuAction
 }: IconProps) {
   const [title] = useState(() => {
     const temp = tooltip || displayName || name
@@ -37,6 +40,7 @@ function Icon({
   const [pageY, setPageY] = useState<number>(null)
   const [showContext, setShowContext] = useState(false)
   const [canDeactivate, flipCanDeactivate] = useState(false)
+  const iconRef = useRef(null)
 
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
     const deactivationState = verticalIconPlugin.appManager
@@ -51,7 +55,7 @@ function Icon({
     setPageY(e.pageY)
     setShowContext(true)
   }
-  const closeContextMenu = () => {
+  function closeContextMenu () {
     setShowContext(false)
   }
 
@@ -71,6 +75,7 @@ function Icon({
         onBlur={closeContextMenu}
         data-id={`verticalIconsKind${name}`}
         id={`verticalIconsKind${name}`}
+        ref={iconRef}
       >
         <img className="remixui_image" src={icon} alt={name} />
       </div>
@@ -83,6 +88,7 @@ function Icon({
           hideContextMenu={closeContextMenu}
           canBeDeactivated={canDeactivate}
           verticalIconPlugin={verticalIconPlugin}
+          contextMenuAction={contextMenuAction}
         />
       ) : null}
     </Fragment>

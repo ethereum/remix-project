@@ -10,6 +10,7 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
   hideContextMenu: () => void
+  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 interface MenuLinksProps {
@@ -19,6 +20,8 @@ interface MenuLinksProps {
   canBeDeactivated: boolean
   verticalIconPlugin: VerticalIcons
   ref?: React.MutableRefObject<any>
+  toggle: (name: string) => void
+  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 interface MenuProps {
@@ -58,6 +61,8 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
           profileName={props.profileName}
           canBeDeactivated={props.canBeDeactivated}
           verticalIconPlugin={props.verticalIconPlugin}
+          toggle={props.verticalIconPlugin.toggle}
+          contextMenuAction={props.contextMenuAction}
         />
       </ul>
     </div>
@@ -68,17 +73,15 @@ function MenuForLinks({
   listItems,
   hide,
   profileName,
-  verticalIconPlugin
+  contextMenuAction
 }: MenuLinksProps) {
-  console.log('linkitems ', listItems)
   return (
     <Fragment>
       {listItems.CanDeactivate &&
         <li
         id="menuitemdeactivate"
         onClick={(evt) => {
-          verticalIconPlugin
-          .itemContextMenu(evt, profileName ,listItems.Documentation)
+          contextMenuAction(evt, profileName ,listItems.Documentation)
           hide()
         }}
         className="remixui_liitem"
