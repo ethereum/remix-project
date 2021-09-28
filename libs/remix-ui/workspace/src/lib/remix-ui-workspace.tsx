@@ -119,7 +119,7 @@ export function Workspace () {
 
   return (
     <div className='remixui_container'>
-      <div className='remixui_fileexplorer' onClick={resetFocus}>
+      <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
             <div className="mb-2">
