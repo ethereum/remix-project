@@ -74,7 +74,7 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  async activate () {
+  async onActivation () {
     const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
