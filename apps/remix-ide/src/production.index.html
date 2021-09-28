@@ -56,60 +56,7 @@
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/introjs.min.css">
 	</head>
 	<body>
-		<script>
-			function  urlParams () {
-				var qs = window.location.hash.substr(1)
-
-				if (window.location.search.length > 0) {
-					// use legacy query params instead of hash
-					window.location.hash = window.location.search.substr(1)
-					window.location.search = ''
-				}
-
-				var params = {}
-				var parts = qs.split('&')
-				for (var x in parts) {
-					var keyValue = parts[x].split('=')
-					if (keyValue[0] !== '') {
-						params[keyValue[0]] = keyValue[1]
-					}
-				}
-				return params
-			}
-			const defaultVersion = '0.8.0'
-			let versionToLoad = urlParams().appVersion ? urlParams().appVersion : defaultVersion
-                
-			let assets = {
-				'0.8.0': ['https://use.fontawesome.com/releases/v5.8.1/css/all.css', 'assets/css/pygment_trac.css'],
-				'0.7.7': ['assets/css/font-awesome.min.css', 'assets/css/pygment_trac.css']
-			}
-			let versions = {
-				'0.7.7': 'assets/js/0.7.7/app.js', // commit 7b5c7ae3de935e0ccc32eadfd83bf7349478491e
-				'0.8.0': 'main.js'
-			}
-			for (let k in assets[versionToLoad]) {
-				let app = document.createElement('link')
-				app.setAttribute('rel', 'stylesheet')
-				app.setAttribute('href', assets[versionToLoad][k])
-				if (assets[versionToLoad][k] === 'https://use.fontawesome.com/releases/v5.8.1/css/all.css') {
-					app.setAttribute('integrity', 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf')
-					app.setAttribute('crossorigin', 'anonymous')
-				}
-				document.head.appendChild(app)
-			}
-			window.onload = () => {
-				BrowserFS.install(window)
-				BrowserFS.configure({
-					fs: "LocalStorage"
-				}, function(e) {
-					if (e) console.log(e)
-					let app = document.createElement('script')
-					app.setAttribute('src', versions[versionToLoad])
-					document.body.appendChild(app)
-					window.remixFileSystem = require('fs')
-				})
-			}
-		</script>
+		<script type="text/javascript" src="assets/js/init.js"></script>
 		<script src="polyfills.js" type="module"></script>
 		<script src="https://kit.fontawesome.com/41dd021e94.js" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="assets/js/intro.min.js"></script>
