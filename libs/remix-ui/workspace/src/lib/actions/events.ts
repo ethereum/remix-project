@@ -139,7 +139,8 @@ const folderAdded = async (folderPath: string) => {
   })
 
   promise.then((files) => {
-    dispatch(folderAddedSuccess(path, files))
+    folderPath = folderPath.replace(/^\/+/, '')
+    dispatch(folderAddedSuccess(path, folderPath, files))
   }).catch((error) => {
     console.error(error)
   })
