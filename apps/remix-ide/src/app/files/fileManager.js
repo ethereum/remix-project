@@ -458,11 +458,14 @@ class FileManager extends Plugin {
 
   closeAllFiles () {
     // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('filesAllClosed')
-    this.events.emit('filesAllClosed')
-    for (const file in this.openedFiles) {
-      this.closeFile(file)
-    }
+    return new Promise((resolve) => {
+      this.emit('filesAllClosed')
+      this.events.emit('filesAllClosed')
+      for (const file in this.openedFiles) {
+        this.closeFile(file)
+      }
+      resolve(true)
+    })
   }
 
   closeFile (name) {
