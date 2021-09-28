@@ -76,9 +76,11 @@ export function RemixUiVerticalIcons ({
   }, [])
 
   useEffect(() => {
-    console.log('scrollheight of verticalicons div', scrollableRef.current.scrollHeight)
-    console.log('clientHeight of verticalicons div', scrollableRef.current.clientHeight)
-  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
+    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    themeModule.events.on('themeChanged', (theme) => {
+      onThemeChanged(theme.quality)
+    })
+  }, [])
 
   return (
     <div id="iconsP" className="h-100">
