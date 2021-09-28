@@ -51,7 +51,7 @@ window.onload = () => {
                         document.body.appendChild(app)
                         window.remixFileSystem = require('fs')
                     }) */
-
+  console.log('loading indexdb')
   // eslint-disable-next-line no-undef
   class RemixFileSystem extends LightningFS {
     constructor (...t) {
