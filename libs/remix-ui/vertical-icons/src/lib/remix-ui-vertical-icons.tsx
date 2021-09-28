@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {
   Fragment,
-  SyntheticEvent,
   useEffect,
   useReducer,
   useRef,
   useState
 } from 'react'
 import {
-  IconKindType,
-  Kind,
-  PassedProfile,
   VerticalIcons
 } from '../../types/vertical-icons'
 import * as packageJson from '../../../../../package.json'
 import Home from './components/Home'
 import Icon from './components/Icon'
-import IconKind from './components/IconKind'
 import { resolveClassesReducer } from './reducers/verticalIconsPanelReducers'
 import './remix-ui-vertical-icons.css'
 import Settings from './components/Settings'
@@ -33,11 +28,6 @@ export const profile = {
   methods: ['select']
 }
 
-interface AddIconProps {
-  pProfile: PassedProfile
-  verticalIcons: VerticalIcons
-}
-
 function ShowChevron () {
   return (
     <span className="remixui_icon-chevron"></span>
@@ -51,21 +41,40 @@ export function RemixUiVerticalIcons({
     resolveClassesReducer,
     ''
   )
-  const [iconKind, setIconKind] = useState<IconKindType>()
   const scrollableRef = useRef(null)
-  useEffect(() => {
-    console.log('length of array', verticalIconsPlugin.targetProfileForChange)
-    // @ts-ignore
-  }, [verticalIconsPlugin.targetProfileForChange.length])
+  const iconPanelRef = useRef(null)
+
+  function onThemeChanged (themeType: any) {
+    const invert = themeType === 'dark' ? 1 : 0
+    const active = iconPanelRef.current.querySelector('.active')
+    if (active) {
+      const image = iconPanelRef.current.querySelector('.remixui_image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
+  }
+
+  async function itemContextAction (e: any, name: string, documentation: string) {
+    verticalIconsPlugin.appManager.deactivatePlugin(name)
+    if (e.target.parentElement.classList.contains('active')) {
+      verticalIconsPlugin.select('filePanel')
+    }
+    verticalIconsPlugin.renderComponent()
+  }
 
   useEffect(() => {
-    console.log('scrollheight of verticalicons div', scrollableRef.current.scrollHeight)
-    console.log('clientHeight of verticalicons div', scrollableRef.current.clientHeight)
-  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
+    console.log('panel ref ', iconPanelRef.current)
+  }, [])
+
+  useEffect(() => {
+    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    themeModule.events.on('themeChanged', (theme) => {
+      onThemeChanged(theme.quality)
+    })
+  }, [])
 
   return (
     <div id="iconsP" className="h-100">
-      <div className="remixui_icons">
+      <div className="remixui_icons" ref={iconPanelRef}>
         <div>
         <Home verticalIconPlugin={verticalIconsPlugin} />
         </div>
@@ -95,6 +104,7 @@ export function RemixUiVerticalIcons({
                       verticalIconsPlugin.targetProfileForChange[p].tooltip
                     }
                     verticalIconPlugin={verticalIconsPlugin}
+                    contextMenuAction={itemContextAction}
                     key={
                       verticalIconsPlugin.targetProfileForChange[p].displayName
                     }
@@ -119,6 +129,7 @@ export function RemixUiVerticalIcons({
                     verticalIconsPlugin.targetProfileForChange[p].tooltip
                   }
                   verticalIconPlugin={verticalIconsPlugin}
+                  contextMenuAction={itemContextAction}
                   key={
                     verticalIconsPlugin.targetProfileForChange[p].displayName
                   }
@@ -160,6 +171,7 @@ export function RemixUiVerticalIcons({
                           verticalIconsPlugin.targetProfileForChange[p].tooltip
                         }
                         verticalIconPlugin={verticalIconsPlugin}
+                        contextMenuAction={itemContextAction}
                         key={
                           verticalIconsPlugin.targetProfileForChange[p]
                             .displayName
@@ -191,6 +203,7 @@ export function RemixUiVerticalIcons({
                           verticalIconsPlugin.targetProfileForChange[p].tooltip
                         }
                         verticalIconPlugin={verticalIconsPlugin}
+                        contextMenuAction={itemContextAction}
                         key={
                           verticalIconsPlugin.targetProfileForChange[p]
                             .displayName
