@@ -55,7 +55,7 @@ function Icon({
     setPageY(e.pageY)
     setShowContext(true)
   }
-  const closeContextMenu = () => {
+  function closeContextMenu () {
     setShowContext(false)
   }
 
