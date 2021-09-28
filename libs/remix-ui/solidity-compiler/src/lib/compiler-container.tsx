@@ -23,6 +23,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
+    matomoAutocompileOnce: true,
     optimize: false,
     compileTimeout: null,
     timeout: 300,
@@ -69,7 +70,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const optimize = params.optimize
         const runs = params.runs as string
         const evmVersion = params.evmVersion
-
         return {
           ...prevState,
           hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
@@ -134,6 +134,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setConfiguration(configurationSettings)
     }
   }, [configurationSettings])
+
+  const _retrieveVersion = (version?) => {
+    if (!version) version = state.selectedVersion
+    if (version === 'builtin') version = state.defaultVersion
+    return semver.coerce(version) ? semver.coerce(version).version : ''
+  }
 
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   const fetchAllVersion = async (callback) => {
@@ -281,7 +287,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', 'idle')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
-    _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
+    if (!state.autoCompile || (state.autoCompile && state.matomoAutocompileOnce)) {
+      _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
+      if (state.autoCompile && state.matomoAutocompileOnce) {
+        setState(prevState => {
+          return { ...prevState, matomoAutocompileOnce: false }
+        })
+      }
+    }
   }
 
   const scheduleCompilation = () => {
@@ -303,12 +316,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     _setCompilerVersionFromPragma(currentFile)
     compileTabLogic.runCompiler(hhCompilation)
-  }
-
-  const _retrieveVersion = (version?) => {
-    if (!version) version = state.selectedVersion
-    if (version === 'builtin') version = state.defaultVersion
-    return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
   const _updateVersionSelector = (version, customUrl = '') => {
@@ -405,7 +412,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     api.setAppParameter('autoCompile', checked)
     checked && compile()
     setState(prevState => {
-      return { ...prevState, autoCompile: checked }
+      return { ...prevState, autoCompile: checked, matomoAutocompileOnce: state.matomoAutocompileOnce || checked }
     })
   }
 
