@@ -232,6 +232,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
   testCallback(undefined, resp)
   async.eachOfLimit(runList, 1, function (func, index, next) {
     let sender: string | null = null
+    let hhLogs
     if (func.signature) {
       sender = getOverridedSender(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
       if (opts.accounts && sender) {
@@ -293,7 +294,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       sendParams.gas = 10000000 * 8
       method.send(sendParams).on('receipt', async (receipt) => {
         try {
-          let hhLogs
           if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(receipt.transactionHash)
           const time: number = (Date.now() - startTime) / 1000.0
           const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
@@ -366,7 +366,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           console.error(err)
           return next(err)
         }
-      }).on('error', function (err: Error) {
+      }).on('error', async (err: Error) => {
         const time: number = (Date.now() - startTime) / 1000.0
         const resp: TestResultInterface = {
           type: 'testFailure',
@@ -376,6 +376,11 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           errMsg: err.message,
           context: testName,
           web3
+        }
+        if (err.message.includes('Transaction has been reverted by the EVM')) {
+          const txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
+          if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(txHash)
+          if (hhLogs) resp.hhLogs = hhLogs
         }
         testCallback(undefined, resp)
         failureNum += 1
