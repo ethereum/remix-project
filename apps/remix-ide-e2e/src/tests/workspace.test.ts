@@ -38,8 +38,8 @@ module.exports = {
       .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
-      .pause(1000)
-      .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(1000)
       .addFile('test.sol', { content: 'test' })
@@ -48,11 +48,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
-      .waitForElementVisible('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
-    // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('span[data-id="workspacesModalDialog-modal-footer-ok-react"]') })
-      .pause(2000)
-      .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok]')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
@@ -68,10 +65,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
-      .pause(2000)
-      .waitForElementPresent('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
-      .click('span[data-id="workspacesModalDialog-modal-footer-ok-react"]')
-      .pause(2000)
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
@@ -84,10 +79,8 @@ module.exports = {
     browser
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
-      .waitForElementVisible('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
-      .pause(2000)
-      .click('[data-id="workspacesModalDialogModalDialogModalFooter-react"] > span')
-      .pause(2000)
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .end()
   },
