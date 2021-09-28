@@ -286,19 +286,19 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'FOLDER_ADDED_SUCCESS': {
-      const payload = action.payload as { path: string, fileTree }
+      const payload = action.payload as { path: string, folderPath: string, fileTree }
 
       return {
         ...state,
         browser: {
           ...state.browser,
           files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
-          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload.path])] : state.browser.expandPath
+          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
         },
         localhost: {
           ...state.localhost,
           files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
-          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.path])] : state.localhost.expandPath
+          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
         }
       }
     }
