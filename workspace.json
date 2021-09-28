@@ -961,6 +961,80 @@
           }
         }
       }
+    },
+    "remix-ide-e2e-src-local-plugin": {
+      "root": "apps/remix-ide-e2e/src/local-plugin",
+      "sourceRoot": "apps/remix-ide-e2e/src/local-plugin/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/remix-ide-e2e/src/local-plugin",
+            "index": "apps/remix-ide-e2e/src/local-plugin/src/index.html",
+            "main": "apps/remix-ide-e2e/src/local-plugin/src/main.tsx",
+            "polyfills": "apps/remix-ide-e2e/src/local-plugin/src/polyfills.ts",
+            "tsConfig": "apps/remix-ide-e2e/src/local-plugin/tsconfig.app.json",
+            "assets": [
+              "apps/remix-ide-e2e/src/local-plugin/src/favicon.ico",
+              "apps/remix-ide-e2e/src/local-plugin/src/assets"
+            ],
+            "styles": ["apps/remix-ide-e2e/src/local-plugin/src/styles.css"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/remix-ide-e2e/src/local-plugin/src/environments/environment.ts",
+                  "with": "apps/remix-ide-e2e/src/local-plugin/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "remix-ide-e2e-src-local-plugin:build",
+            "port": 2020
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "remix-ide-e2e-src-local-plugin:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/remix-ide-e2e/src/local-plugin/tsconfig.app.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/remix-ide-e2e/src/local-plugin/**/*"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
