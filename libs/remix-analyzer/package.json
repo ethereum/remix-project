@@ -2,8 +2,8 @@
   "name": "@remix-project/remix-analyzer",
   "version": "0.5.16",
   "description": "Tool to perform static analysis on Solidity smart contracts",
-  "main": "index.js",
-  "types": ".index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "contributors": [
     {
       "name": "Alex Beregszaszi",
@@ -50,6 +50,6 @@
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
-  "typings": "index.d.ts",
+  "typings": "src/index.d.ts",
   "gitHead": "4705cbc4d1761f75267992552da9db6cff2f3ed5"
 }
