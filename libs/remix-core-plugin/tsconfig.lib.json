@@ -7,6 +7,9 @@
     "rootDir": "./src",
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts"],
+  "exclude": [
+    "**/*.spec.ts",
+    "test/"
+  ],
   "include": ["**/*.ts"]
 }

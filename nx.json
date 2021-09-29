@@ -110,7 +110,14 @@
       "tags": []
     },
     "remix-core-plugin": {
-      "tags": []
+      "tags":  [],
+      "implicitDependencies": [
+        "remix-solidity",
+        "remix-tests",
+        "remix-url-resolver",
+        "remix-debug",
+        "remix-lib"
+      ]
     },
     "remix-ui-solidity-compiler": {
       "tags": []

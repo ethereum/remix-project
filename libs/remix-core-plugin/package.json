@@ -7,6 +7,13 @@
       "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Remix Team",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+      "@remix-project/remix-solidity": "^0.4.7",
+      "@remix-project/remix-tests": "^0.2.7",
+      "@remix-project/remix-url-resolver": "^0.0.28",
+      "@remix-project/remix-debug": "^0.5.7",
+      "@remix-project/remix-lib": "^0.5.7"
+    }
   }
   
