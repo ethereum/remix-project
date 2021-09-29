@@ -1,6 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 async function migrateFilesFromLocalStorage (cb) {
-  if (window.testmigration) localStorage.clear()
+  let testmigration = false // migration loads test data into localstorage with browserfs
+  // indexeddb will be empty by this point, so there is no danger but do a check for the origin to load test data so it runs only locally
+  testmigration = window.location.hash.includes('e2e_testmigration=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
   // eslint-disable-next-line no-undef
   BrowserFS.install(window)
   // eslint-disable-next-line no-undef
@@ -92,9 +94,8 @@ async function migrateFilesFromLocalStorage (cb) {
       }
     }
     //
-    if (window.testmigration) await populateWorkspace(testData, browserFS)
+    if (testmigration) await populateWorkspace(testData, browserFS)
     const files = await copyFolderToJson('/', null, null, browserFS)
-    console.log(files)
     await populateWorkspace(files, window.remixFileSystem)
     // eslint-disable-next-line no-undef
     if (cb) cb()
@@ -109,49 +110,23 @@ const testData = {
         children: {
           '.workspaces/default_workspace/README.txt': {
             content: 'TEST README'
-          },
-          '.workspaces/default_workspace/contracts': {
-            children: {
-              '.workspaces/default_workspace/contracts/1_Storage.sol': {
-                content: "// SPDX-License-Identifier: GPL-3.0\n\npragma solidity >=0.7.0 <0.9.0;\n\n/**\n * @title Storage\n * @dev Store & retrieve value in a variable\n */\ncontract Storage {\n\n    uint256 number;\n\n    /**\n     * @dev Store value in variable\n     * @param num value to store\n     */\n    function store(uint256 num) public {\n        number = num;\n    }\n\n    /**\n     * @dev Return value \n     * @return value of 'number'\n     */\n    function retrieve() public view returns (uint256){\n        return number;\n    }\n}"
-              },
-              '.workspaces/default_workspace/contracts/2_Owner.sol': {
-                content: 'Owner'
-              },
-              '.workspaces/default_workspace/contracts/3_Ballot.sol': {
-                content: 'Balllot'
-              }
-            }
-          },
-          '.workspaces/default_workspace/tests': {
-            children: {
-              '.workspaces/default_workspace/tests/4_Ballot_test.sol': {
-                content: 'test'
-              }
-            }
           }
         }
       },
       '.workspaces/workspace_test': {
         children: {
-          '.workspaces/workspace_test/README.txt': {
+          '.workspaces/workspace_test/TEST_README.txt': {
             content: 'TEST README'
           },
-          '.workspaces/workspace_test/contracts': {
+          '.workspaces/workspace_test/test_contracts': {
             children: {
-              '.workspaces/workspace_test/contracts/2_Owner.sol': {
-                content: 'Owner'
-              },
-              '.workspaces/workspace_test/contracts/3_Ballot.sol': {
-                content: 'Balllot'
-              },
-              '.workspaces/workspace_test/contracts/1_Storage.sol': {
+              '.workspaces/workspace_test/test_contracts/1_Storage.sol': {
                 content: 'testing'
               },
-              '.workspaces/workspace_test/contracts/artifacts': {
+              '.workspaces/workspace_test/test_contracts/artifacts': {
                 children: {
-                  '.workspaces/workspace_test/contracts/artifacts/Storage_metadata.json': {
-                    content: 'artifact'
+                  '.workspaces/workspace_test/test_contracts/artifacts/Storage_metadata.json': {
+                    content: '{ "test": "data" }'
                   }
                 }
               }

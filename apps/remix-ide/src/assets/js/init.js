@@ -91,16 +91,15 @@ window.onload = () => {
     app.setAttribute('src', versions[versionToLoad])
     document.body.appendChild(app)
   }
-  const queryString = window.location.hash
-  window.testmigration = queryString.includes('testmigration')
+
   window.remixFileSystemCallback = new RemixFileSystem()
-  window.remixFileSystemCallback.init('RemixFileSystem', { wipe: !!window.testmigration }).then(() => {
+  window.remixFileSystemCallback.init('RemixFileSystem').then(() => {
     window.remixFileSystem = window.remixFileSystemCallback.promises
     // check if .workspaces is present in indexeddb
     window.remixFileSystem.stat('.workspaces').then((dir) => {
       if (dir.isDirectory()) loadApp()
     }).catch(() => {
-      // no indexeddb workspaces
+      // no indexeddb .workspaces -> run migration
       // eslint-disable-next-line no-undef
       migrateFilesFromLocalStorage(loadApp)
     })
