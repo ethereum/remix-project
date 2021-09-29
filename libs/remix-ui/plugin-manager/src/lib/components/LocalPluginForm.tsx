@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useReducer, useState } from 'react';
-import { ModalDialog } from '@remix-ui/modal-dialog';
-import { Toaster } from '@remix-ui/toaster';
-import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web';
+import React, { useEffect, useReducer, useState } from 'react'
+import { ModalDialog } from '@remix-ui/modal-dialog'
+import { Toaster } from '@remix-ui/toaster'
+import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 import { FormStateProps, PluginManagerComponent } from '../../types'
@@ -32,7 +32,7 @@ const defaultProfile = {
   displayName: '',
   url: '',
   hash: ''
-};
+}
 
 function LocalPluginForm ({
   closeModal,
@@ -73,9 +73,9 @@ function LocalPluginForm ({
 
   const handleModalOkClick = async () => {
     try {
-      if (!name) throw new Error('Plugin should have a name');
+      if (!name) throw new Error('Plugin should have a name')
       if (pluginManager.appManager.getIds().includes(name)) {
-        throw new Error('This name has already been used');
+        throw new Error('This name has already been used')
       }
       if (!location) throw new Error('Plugin should have a location')
       if (!url) throw new Error('Plugin should have an URL')
@@ -131,7 +131,7 @@ function LocalPluginForm ({
       dispatchToastMsg(action)
       console.log(error)
     }
-  };
+  }
 
   return (
     <>
@@ -311,7 +311,7 @@ function LocalPluginForm ({
       </ModalDialog>
       {errorMsg ? <Toaster message={errorMsg} /> : null}
     </>
-  );
+  )
 }
 
-export default LocalPluginForm;
+export default LocalPluginForm
