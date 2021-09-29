@@ -8,8 +8,8 @@ import { localPluginReducerActionType, localPluginToastReducer } from '../reduce
 import { FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
-  closeModal: () => void;
-  visible: boolean;
+  closeModal: () => void
+  visible: boolean
   pluginManager: PluginManagerComponent;
 }
 

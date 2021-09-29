@@ -367,5 +367,6 @@ export function RemixUiVerticalIcons ({
             </Fragment>
           ) : null}
       </div>
+    </div>
   )
 }
