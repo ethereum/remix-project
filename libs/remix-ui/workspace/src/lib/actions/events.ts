@@ -11,31 +11,31 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
   plugin.on('filePanel', 'createWorkspace', (name: string) => {
-    createWorkspace(name)
+    setTimeout(() => createWorkspace(name), 10)
   })
 
   plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
-    renameWorkspace(oldName, workspaceName)
+    setTimeout(() => renameWorkspace(oldName, workspaceName), 10)
   })
 
   plugin.on('filePanel', 'registerContextMenuItem', (item: action) => {
-    registerContextMenuItem(item)
+    setTimeout(() => registerContextMenuItem(item), 10)
   })
 
   plugin.on('filePanel', 'removePluginActions', (plugin) => {
-    removePluginActions(plugin)
+    setTimeout(() => removePluginActions(plugin), 10)
   })
 
   plugin.on('filePanel', 'displayNewFileInput', (path) => {
-    addInputField('file', path)
+    setTimeout(() => addInputField('file', path), 10)
   })
 
   plugin.on('filePanel', 'uploadFileEvent', (dir: string, target) => {
-    uploadFile(target, dir)
+    setTimeout(() => uploadFile(target, dir), 10)
   })
 
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
-    setTimeout(() => rootFolderChanged(path), 0)
+    setTimeout(() => rootFolderChanged(path), 10)
   })
 }
 
@@ -43,20 +43,20 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
   dispatch = reducerDispatch
 
   provider.event.on('fileAdded', (filePath: string) => {
-    setTimeout(() => fileAdded(filePath), 0)
+    setTimeout(() => fileAdded(filePath), 10)
   })
 
   provider.event.on('folderAdded', (folderPath: string) => {
     if (folderPath.indexOf('/.workspaces') === 0) return
-    setTimeout(() => folderAdded(folderPath), 0)
+    setTimeout(() => folderAdded(folderPath), 10)
   })
 
   provider.event.on('fileRemoved', (removePath: string) => {
-    setTimeout(() => fileRemoved(removePath), 0)
+    setTimeout(() => fileRemoved(removePath), 10)
   })
 
   provider.event.on('fileRenamed', (oldPath: string) => {
-    setTimeout(() => fileRenamed(oldPath), 0)
+    setTimeout(() => fileRenamed(oldPath), 10)
   })
 
   provider.event.on('disconnected', () => {
@@ -67,7 +67,7 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
       const workspaceProvider = plugin.fileProviders.workspace
 
       await switchToWorkspace(workspaceProvider.workspace)
-    }, 0)
+    }, 10)
   })
 
   provider.event.on('connected', async () => {
@@ -76,14 +76,14 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
       dispatch(setMode('localhost'))
       fetchWorkspaceDirectory('/')
       dispatch(loadLocalhostSuccess())
-    }, 0)
+    }, 10)
   })
 
   provider.event.on('loadingLocalhost', async () => {
     setTimeout(async () => {
       await switchToWorkspace(LOCALHOST)
       dispatch(loadLocalhostRequest())
-    }, 0)
+    }, 10)
   })
 
   provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
@@ -102,15 +102,15 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
           }
         ))
       }
-    }, 0)
+    }, 10)
   })
 
   provider.event.on('fileRenamedError', async () => {
-    setTimeout(() => dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel')), 0)
+    setTimeout(() => dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel')), 10)
   })
 
   provider.event.on('readOnlyModeChanged', (mode: boolean) => {
-    setTimeout(() => dispatch(setReadOnlyMode(mode)), 0)
+    setTimeout(() => dispatch(setReadOnlyMode(mode)), 10)
   })
 }
 
