@@ -42,7 +42,7 @@ export const createWorkspace = async (workspaceName: string) => {
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
     await loadWorkspacePreset('default-template')
-    // await switchToWorkspace(workspaceName)
+    plugin.emit('setWorkspace', { name: workspaceName, isLocalhost: false })
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
   })
