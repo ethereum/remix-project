@@ -93,7 +93,7 @@ window.onload = () => {
   }
 
   window.remixFileSystemCallback = new RemixFileSystem()
-  window.remixFileSystemCallback.init('RemixFileSystem', { wipe: false }).then(() => {
+  window.remixFileSystemCallback.init('RemixFileSystem', { wipe: true }).then(() => {
     window.remixFileSystem = window.remixFileSystemCallback.promises
     // check if .workspaces is present in indexeddb
     window.remixFileSystem.stat('.workspaces').then((dir) => {
