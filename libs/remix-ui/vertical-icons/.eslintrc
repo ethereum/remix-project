@@ -3,7 +3,7 @@
     "browser": true,
     "es6": true
   },
-  "extends": ["../../../.eslintrc", "plugin:prettier/recommended"],
+  "extends": ["../../../.eslintrc"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"

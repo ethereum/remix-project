@@ -1,12 +1,13 @@
-import React, { ReactNode } from "react"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { ReactNode } from 'react'
 
 interface SettingsProps {
   children: ReactNode
 }
 
 function Settings ({ children }: SettingsProps) {
-    return (
-      <div id="settingsIcons" data-id="vertialIconsSettingsIcons">{ children }</div>
+  return (
+    <div id="settingsIcons" data-id="vertialIconsSettingsIcons">{ children }</div>
   )
 }
 

@@ -1,7 +1,7 @@
 import {
-  defaultModuleProfile,
   VerticalIcons
 } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, SyntheticEvent, useRef, useState } from 'react'
@@ -19,7 +19,8 @@ interface IconProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Icon({
+function Icon ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   kind,
   name,
   icon,
@@ -39,17 +40,17 @@ function Icon({
   const [pageX, setPageX] = useState<number>(null)
   const [pageY, setPageY] = useState<number>(null)
   const [showContext, setShowContext] = useState(false)
-  const [canDeactivate, flipCanDeactivate] = useState(false)
+  const [canDeactivate] = useState(false)
   const iconRef = useRef(null)
 
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
     const deactivationState = verticalIconPlugin.appManager
-    .canDeactivatePlugin(verticalIconPlugin.defaultProfile, { name })
+      .canDeactivatePlugin(verticalIconPlugin.defaultProfile, { name })
     if (documentation && documentation.length > 0 && deactivationState) {
       setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
     } else {
       setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
-    } 
+    }
     setShowContext(false)
     setPageX(e.pageX)
     setPageY(e.pageY)

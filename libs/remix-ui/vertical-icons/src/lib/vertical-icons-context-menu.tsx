@@ -1,5 +1,6 @@
-import React, { Fragment, PointerEvent, SyntheticEvent, useEffect, useRef } from 'react'
-import { defaultModuleProfile, VerticalIcons } from '../../types/vertical-icons'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { Fragment, useEffect, useRef } from 'react'
+import { VerticalIcons } from '../../types/vertical-icons'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   // actions: action[]
@@ -31,16 +32,16 @@ interface MenuProps {
   hide: (someEvent: any, value: boolean) => void
 }
 
-function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
+function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
   const menuRef = useRef(null)
   useEffect(() => {
-    document.addEventListener("click", props.hideContextMenu)
-    return () => document.removeEventListener("click", props.hideContextMenu)
+    document.addEventListener('click', props.hideContextMenu)
+    return () => document.removeEventListener('click', props.hideContextMenu)
   }, [])
   useEffect(() => {
     menuRef.current.focus()
   }, [])
-  
+
   return (
     <div
       id="menuItemsContainer"
@@ -49,7 +50,7 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
       style={{
         left: props.pageX,
         top: props.pageY,
-        display: 'block',
+        display: 'block'
 
       }}
       ref={menuRef}
@@ -69,7 +70,8 @@ function VerticalIconsContextMenu(props: VerticalIconsContextMenuProps) {
   )
 }
 
-function MenuForLinks({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function MenuForLinks ({
   listItems,
   hide,
   profileName,
@@ -79,17 +81,16 @@ function MenuForLinks({
     <Fragment>
       {listItems.CanDeactivate &&
         <li
-        id="menuitemdeactivate"
-        onClick={(evt) => {
-          contextMenuAction(evt, profileName ,listItems.Documentation)
-          hide()
-        }}
-        className="remixui_liitem"
-      >
+          id="menuitemdeactivate"
+          onClick={(evt) => {
+            contextMenuAction(evt, profileName, listItems.Documentation)
+            hide()
+          }}
+          className="remixui_liitem"
+        >
         Deactivate
-      </li>}
-      {(listItems.Documentation && listItems.Documentation.length > 0)
-        &&
+        </li>}
+      {(listItems.Documentation && listItems.Documentation.length > 0) &&
             <li
               id="menuitemdocumentation"
               className="remixui_liitem"
