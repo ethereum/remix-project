@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useReducer, useState } from 'react';
-import { ModalDialog } from '@remix-ui/modal-dialog';
-import { Toaster } from '@remix-ui/toaster';
-import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web';
+import React, { useEffect, useReducer, useState } from 'react'
+import { ModalDialog } from '@remix-ui/modal-dialog'
+import { Toaster } from '@remix-ui/toaster'
+import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
 
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 import { FormStateProps, PluginManagerComponent } from '../../types'
@@ -32,23 +32,23 @@ const defaultProfile = {
   displayName: '',
   url: '',
   hash: ''
-};
+}
 
-function LocalPluginForm({
+function LocalPluginForm ({
   closeModal,
   visible,
   pluginManager
 }: LocalPluginFormProps) {
-  const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '');
-  const [name, setName] = useState<string>('');
-  const [displayName, setDisplayName] = useState<string>('');
-  const [url, setUrl] = useState<string>('');
-  const [type, setType] = useState<'iframe' | 'ws'>('iframe');
+  const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
+  const [name, setName] = useState<string>('')
+  const [displayName, setDisplayName] = useState<string>('')
+  const [url, setUrl] = useState<string>('')
+  const [type, setType] = useState<'iframe' | 'ws'>('iframe')
   const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>(
     'sidePanel'
-  );
-  const [methods, setMethods] = useState<string>('');
-  const [canactivate, setCanactivate] = useState<string>('');
+  )
+  const [methods, setMethods] = useState<string>('')
+  const [canactivate, setCanactivate] = useState<string>('')
 
   useEffect(() => {
     const storagePlugin:FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
@@ -63,9 +63,9 @@ function LocalPluginForm({
 
   const handleModalOkClick = async () => {
     try {
-      if (!name) throw new Error('Plugin should have a name');
+      if (!name) throw new Error('Plugin should have a name')
       if (pluginManager.appManager.getIds().includes(name)) {
-        throw new Error('This name has already been used');
+        throw new Error('This name has already been used')
       }
       if (!location) throw new Error('Plugin should have a location')
       if (!url) throw new Error('Plugin should have an URL')
@@ -96,11 +96,11 @@ function LocalPluginForm({
       const action: localPluginReducerActionType = {
         type: 'show',
         payload: `${error.message}`
-      };
-      dispatchToastMsg(action);
-      console.log(error);
+      }
+      dispatchToastMsg(action)
+      console.log(error)
     }
-  };
+  }
 
   return (
     <>
@@ -280,7 +280,7 @@ function LocalPluginForm({
       </ModalDialog>
       {errorMsg ? <Toaster message={errorMsg} /> : null}
     </>
-  );
+  )
 }
 
-export default LocalPluginForm;
+export default LocalPluginForm

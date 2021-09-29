@@ -12,7 +12,6 @@ import {
 import * as packageJson from '../../../../../package.json'
 import Home from './components/Home'
 import Icon from './components/Icon'
-import { resolveClassesReducer } from './reducers/verticalIconsPanelReducers'
 import './remix-ui-vertical-icons.css'
 import Settings from './components/Settings'
 import OtherIcons from './components/OtherIcon'
@@ -34,13 +33,9 @@ function ShowChevron () {
   )
 }
 
-export function RemixUiVerticalIcons({
+export function RemixUiVerticalIcons ({
   verticalIconsPlugin
 }: RemixUiVerticalIconsProps) {
-  const [classes, dispatchResolveClasses] = useReducer(
-    resolveClassesReducer,
-    ''
-  )
   const scrollableRef = useRef(null)
   const iconPanelRef = useRef(null)
 
@@ -76,7 +71,7 @@ export function RemixUiVerticalIcons({
     <div id="iconsP" className="h-100">
       <div className="remixui_icons" ref={iconPanelRef}>
         <div>
-        <Home verticalIconPlugin={verticalIconsPlugin} />
+          <Home verticalIconPlugin={verticalIconsPlugin} />
         </div>
         <div
           id="remixuiScrollable"
@@ -86,31 +81,31 @@ export function RemixUiVerticalIcons({
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length
             ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-                .filter(p => p !== 'settings')
-                .filter(p => p !== 'pluginManager')
-                .map(p => (
-                  <Icon
-                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                    displayName={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                    documentation={
-                      verticalIconsPlugin.targetProfileForChange[p]
-                        .documentation
-                    }
-                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                    name={verticalIconsPlugin.targetProfileForChange[p].name}
-                    tooltip={
-                      verticalIconsPlugin.targetProfileForChange[p].tooltip
-                    }
-                    verticalIconPlugin={verticalIconsPlugin}
-                    contextMenuAction={itemContextAction}
-                    key={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                  />
-                ))
-            : null}  
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .map(p => (
+                <Icon
+                  kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                  displayName={
+                    verticalIconsPlugin.targetProfileForChange[p].displayName
+                  }
+                  documentation={
+                    verticalIconsPlugin.targetProfileForChange[p]
+                      .documentation
+                  }
+                  icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                  name={verticalIconsPlugin.targetProfileForChange[p].name}
+                  tooltip={
+                    verticalIconsPlugin.targetProfileForChange[p].tooltip
+                  }
+                  verticalIconPlugin={verticalIconsPlugin}
+                  contextMenuAction={itemContextAction}
+                  key={
+                    verticalIconsPlugin.targetProfileForChange[p].displayName
+                  }
+                />
+              ))
+            : null}
           <OtherIcons>
             {Object.keys(verticalIconsPlugin.targetProfileForChange)
               .filter(p => p === 'none')
@@ -136,12 +131,12 @@ export function RemixUiVerticalIcons({
                 />
               ))}
           </OtherIcons>
-          </div>
-          {scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight 
-            ? <i className="fa fa-chevron-double-down remixui_icon-chevron m-3"></i> 
-            : null
-          }
-          {verticalIconsPlugin.targetProfileForChange &&
+        </div>
+        {scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
+          ? <i className="fa fa-chevron-double-down remixui_icon-chevron m-3"></i>
+          : null
+        }
+        {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>
               <Settings>
@@ -214,7 +209,7 @@ export function RemixUiVerticalIcons({
               </Settings>
             </Fragment>
           ) : null}
-        </div>
       </div>
+    </div>
   )
 }

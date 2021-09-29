@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-vertical-icons';
+export * from './lib/remix-ui-vertical-icons'
