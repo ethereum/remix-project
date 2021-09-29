@@ -1,4 +1,5 @@
 export const extractNameFromKey = (key: string): string => {
+  if (!key) return
   const keyPath = key.split('/')
 
   return keyPath[keyPath.length - 1]
