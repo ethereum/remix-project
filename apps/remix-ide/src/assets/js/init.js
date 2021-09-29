@@ -96,11 +96,35 @@ window.onload = () => {
       }
     }
   }
-  window.remixFileSystemCallback = new RemixFileSystem()
-  window.remixFileSystemCallback.init('RemixFileSystem').then(() => {
-    window.remixFileSystem = window.remixFileSystemCallback.promises
+
+  function loadApp(){
     const app = document.createElement('script')
     app.setAttribute('src', versions[versionToLoad])
     document.body.appendChild(app)
+  }
+
+  function migrateFiles(){
+    BrowserFS.install(window)
+    BrowserFS.configure({
+        fs: "LocalStorage"
+    }, function(e) {
+        if (e) console.log(e)
+        let browserFS = require('fs')
+        console.log(browserFS)
+    })
+  }
+
+  window.remixFileSystemCallback = new RemixFileSystem()
+  window.remixFileSystemCallback.init('RemixFileSystem').then(() => {
+    window.remixFileSystem = window.remixFileSystemCallback.promises
+    // check if .workspaces is present in indexeddb
+    window.remixFileSystem.stat('.workspaces2').then((dir) => {
+      if(dir.isDirectory()) loadApp()
+    }).catch(()=>{
+      // no indexeddb workspaces
+      console.log("loading localstorage FS")
+      migrateFiles();
+    });
+
   })
 }
