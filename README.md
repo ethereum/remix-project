@@ -41,7 +41,8 @@ And build it:
 ```bash
 cd remix-project
 npm install
-nx build remix-ide --with-deps
+npm run build:libs
+npm run build
 nx serve
 ```
 
@@ -126,7 +127,7 @@ Running unit tests via `nx test` requires at least node v10.0.0
 
 To run the Selenium tests via Nightwatch:
 
- - Build Remix IDE and serve it: `nx build remix-ide --with-deps && nx serve` # starts web server at localhost:8080
+ - Build Remix IDE and serve it: `npm run build:libs && npm run build` # starts web server at localhost:8080
  - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
  - Run a selenium server `npm run selenium`
  - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`

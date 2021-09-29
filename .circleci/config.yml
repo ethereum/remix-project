@@ -72,7 +72,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
+      - run: npm run build:libs
+      - run: npm run build
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
@@ -106,7 +107,8 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run downloadsolc_assets
-      - run: npx nx build remix-ide --with-deps
+      - run: npm run build:libs
+      - run: npm run build
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
@@ -139,7 +141,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
+      - run: npm run build:libs
+      - run: npm run build
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
@@ -173,7 +176,8 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run downloadsolc_assets
-      - run: npx nx build remix-ide --with-deps
+      - run: npm run build:libs
+      - run: npm run build
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
@@ -206,7 +210,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
+      - run: npm run build:libs
+      - run: npm run build
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
@@ -239,7 +244,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
+      - run: npm run build:libs
+      - run: npm run build
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run:
           name: Download Selenium
@@ -286,7 +292,7 @@ jobs:
   publish:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.19.0-buster
+      - image: circleci/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
