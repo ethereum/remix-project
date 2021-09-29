@@ -614,7 +614,13 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
 
       if (prevFiles) {
         prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
-        if (deletePath) delete prevFiles.child[deletePath]
+        if (deletePath) {
+          if (deletePath.endsWith('/blank')) delete prevFiles.child[deletePath]
+          else {
+            deletePath = extractNameFromKey(deletePath)
+            delete prevFiles.child[deletePath]
+          }
+        }
         files = _.set(files, _path, prevFiles)
       } else if (payload.fileTree && payload.path) {
         files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
@@ -635,7 +641,13 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
 
       if (prevFiles) {
         prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
-        if (deletePath) delete prevFiles.child[deletePath]
+        if (deletePath) {
+          if (deletePath.endsWith('/blank')) delete prevFiles.child[deletePath]
+          else {
+            deletePath = extractNameFromKey(deletePath)
+            delete prevFiles.child[deletePath]
+          }
+        }
         files = _.set(files, _path, prevFiles)
       } else {
         files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
