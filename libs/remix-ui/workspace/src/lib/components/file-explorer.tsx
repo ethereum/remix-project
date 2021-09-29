@@ -304,14 +304,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       } else {
-        // editRef.current.textContent = state.focusEdit.lastEdit
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       }
     } else {
       if (state.focusEdit.lastEdit === content) {
-        // editRef.current.textContent = content
         return setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
@@ -329,15 +327,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
           }
         } else {
           if (hasReservedKeyword(content)) {
-            // editRef.current.textContent = state.focusEdit.lastEdit
             props.modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
-            const oldPath: string = state.focusEdit.element
-            const oldName = extractNameFromKey(oldPath)
-            const newPath = oldPath.replace(oldName, content)
+            if (state.focusEdit.element) {
+              const oldPath: string = state.focusEdit.element
+              const oldName = extractNameFromKey(oldPath)
+              const newPath = oldPath.replace(oldName, content)
 
-            // editRef.current.textContent = extractNameFromKey(oldPath)
-            renamePath(oldPath, newPath)
+              renamePath(oldPath, newPath)
+            }
           }
         }
         setState(prevState => {
