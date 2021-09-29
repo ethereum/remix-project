@@ -76,7 +76,8 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
           path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
           content = atob(params.code)
           await workspaceProvider.set(path, content)
-        } else if (params.url) {
+        }
+        if (params.url) {
           const data = await plugin.call('contentImport', 'resolve', params.url)
 
           path = data.cleanUrl
