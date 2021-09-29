@@ -11,7 +11,7 @@ export function formatMemory (mem, width) {
 
   for (let k = 0; k < mem.length; k += (width * 2)) {
     const memory = mem.substr(k, width * 2)
-    const content = this.tryConvertAsciiFormat(memory)
+    const content = tryConvertAsciiFormat(memory)
     ret['0x' + (k / 2).toString(16)] = content.raw + '\t' + content.ascii
   }
   return ret
