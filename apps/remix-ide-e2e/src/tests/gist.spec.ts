@@ -103,14 +103,13 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .pause(2000)
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .pause(10000)
-      .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
+      .getText('[data-id="fileSystemModalDialogModalBody-react"]', (result) => {
         browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
       })
-      .click('[data-id="default_workspace-modal-footer-ok-react"]')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
   },
 
   'Import From Gist For Valid Gist ID': function (browser: NightwatchBrowser) {
