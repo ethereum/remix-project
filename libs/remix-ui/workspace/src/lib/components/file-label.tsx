@@ -17,7 +17,6 @@ export const FileLabel = (props: FileLabelProps) => {
   const { file, focusEdit, editModeOff } = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const labelRef = useRef(null)
-  const [defaultValue, setDefaultValue] = useState<string>(null)
 
   useEffect(() => {
     if (focusEdit.element && file.path) {
@@ -33,22 +32,18 @@ export const FileLabel = (props: FileLabelProps) => {
     }
   }, [isEditable])
 
-  useEffect(() => {
-    if (labelRef.current) setDefaultValue(labelRef.current.innerText)
-  }, [labelRef.current])
-
   const handleEditInput = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.which === 13) {
       event.preventDefault()
       editModeOff(labelRef.current.innerText)
-      labelRef.current.innerText = defaultValue
+      labelRef.current.innerText = file.name
     }
   }
 
   const handleEditBlur = (event: React.SyntheticEvent) => {
     event.stopPropagation()
     editModeOff(labelRef.current.innerText)
-    labelRef.current.innerText = defaultValue
+    labelRef.current.innerText = file.name
   }
 
   return (
