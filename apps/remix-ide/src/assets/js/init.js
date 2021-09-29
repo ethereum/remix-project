@@ -41,23 +41,12 @@ for (const k in assets[versionToLoad]) {
 }
 
 window.onload = () => {
-  /* BrowserFS.install(window)
-                    BrowserFS.configure({
-                        fs: "LocalStorage"
-                    }, function(e) {
-                        if (e) console.log(e)
-                        let app = document.createElement('script')
-                        app.setAttribute('src', versions[versionToLoad])
-                        document.body.appendChild(app)
-                        window.remixFileSystem = require('fs')
-                    }) */
-  console.log('loading indexdb')
   // eslint-disable-next-line no-undef
   class RemixFileSystem extends LightningFS {
     constructor (...t) {
       super(...t)
       this.addSlash = (file) => {
-        if (!file.startsWith('/'))file = '/' + file
+        if (!file.startsWith('/')) file = '/' + file
         return file
       }
       this.base = this.promises
@@ -97,34 +86,22 @@ window.onload = () => {
     }
   }
 
-  function loadApp(){
+  function loadApp () {
     const app = document.createElement('script')
     app.setAttribute('src', versions[versionToLoad])
     document.body.appendChild(app)
   }
 
-  function migrateFiles(){
-    BrowserFS.install(window)
-    BrowserFS.configure({
-        fs: "LocalStorage"
-    }, function(e) {
-        if (e) console.log(e)
-        let browserFS = require('fs')
-        console.log(browserFS)
-    })
-  }
-
   window.remixFileSystemCallback = new RemixFileSystem()
-  window.remixFileSystemCallback.init('RemixFileSystem').then(() => {
+  window.remixFileSystemCallback.init('RemixFileSystem', { wipe: false }).then(() => {
     window.remixFileSystem = window.remixFileSystemCallback.promises
     // check if .workspaces is present in indexeddb
-    window.remixFileSystem.stat('.workspaces2').then((dir) => {
-      if(dir.isDirectory()) loadApp()
-    }).catch(()=>{
+    window.remixFileSystem.stat('.workspaces').then((dir) => {
+      if (dir.isDirectory()) loadApp()
+    }).catch(() => {
       // no indexeddb workspaces
-      console.log("loading localstorage FS")
-      migrateFiles();
-    });
-
+      // eslint-disable-next-line no-undef
+      migrateFilesFromLocalStorage(loadApp)
+    })
   })
 }
