@@ -74,10 +74,10 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  onActivation () {
-    const isSolidityActive = this.call('manager', 'isActive', 'solidity')
+  async onActivation () {
+    const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
-      this.call('manager', 'activatePlugin', 'solidity')
+      await this.call('manager', 'activatePlugin', 'solidity')
     }
   }
 
@@ -625,7 +625,7 @@ module.exports = class TestTab extends ViewPlugin {
     return this.generateFileActionElement
   }
 
-  updateRunAction (currentFile) {
+  async updateRunAction (currentFile) {
     const el = yo`
       <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
@@ -639,7 +639,7 @@ module.exports = class TestTab extends ViewPlugin {
         el.setAttribute('title', 'No solidity file selected')
       } else {
         el.setAttribute('title', 'The "Solidity Plugin" should be activated')
-        this.call('manager', 'activatePlugin', 'solidity')
+        await this.call('manager', 'activatePlugin', 'solidity')
       }
     }
     if (!this.runActionElement) {
