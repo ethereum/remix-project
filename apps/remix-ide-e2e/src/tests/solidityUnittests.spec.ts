@@ -32,9 +32,10 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
-      .waitForElementPresent('*[title="tests/simple_storage_test.sol"]')
+      .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
       .clickLaunchIcon('filePanel')
-      .pause(10000)
+      .waitForElementPresent('[data-id="treeViewDivtreeViewItemtests"]')
+      .click('[data-id="treeViewDivtreeViewItemtests"]')
       .openFile('tests/simple_storage_test.sol')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
@@ -164,9 +165,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
-      .pause(5000)
-      .waitForElementPresent('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
