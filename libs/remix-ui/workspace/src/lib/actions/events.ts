@@ -4,8 +4,6 @@ import { action } from '../types'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
-const queuedEvents = []
-const pendingEvents = {}
 const LOCALHOST = ' - connect to localhost - '
 let plugin, dispatch: React.Dispatch<any>
 
@@ -37,74 +35,82 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   })
 
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
-    await executeEvent('rootFolderChanged', path)
+    setTimeout(() => rootFolderChanged(path), 0)
   })
 }
 
 export const listenOnProviderEvents = (provider) => async (reducerDispatch: React.Dispatch<any>) => {
   dispatch = reducerDispatch
 
-  provider.event.on('fileAdded', async (filePath: string) => {
-    await executeEvent('fileAdded', filePath)
+  provider.event.on('fileAdded', (filePath: string) => {
+    setTimeout(() => fileAdded(filePath), 0)
   })
 
-  provider.event.on('folderAdded', async (folderPath: string) => {
+  provider.event.on('folderAdded', (folderPath: string) => {
     if (folderPath.indexOf('/.workspaces') === 0) return
-    await executeEvent('folderAdded', folderPath)
+    setTimeout(() => folderAdded(folderPath), 0)
   })
 
-  provider.event.on('fileRemoved', async (removePath: string) => {
-    await executeEvent('fileRemoved', removePath)
+  provider.event.on('fileRemoved', (removePath: string) => {
+    setTimeout(() => fileRemoved(removePath), 0)
   })
 
-  provider.event.on('fileRenamed', async (oldPath: string, newPath: string) => {
-    await executeEvent('fileRenamed', oldPath, newPath)
+  provider.event.on('fileRenamed', (oldPath: string) => {
+    setTimeout(() => fileRenamed(oldPath), 0)
   })
 
-  provider.event.on('disconnected', async () => {
-    plugin.fileManager.setMode('browser')
-    dispatch(setMode('browser'))
-    dispatch(loadLocalhostError('Remixd disconnected!'))
-    const workspaceProvider = plugin.fileProviders.workspace
+  provider.event.on('disconnected', () => {
+    setTimeout(async () => {
+      plugin.fileManager.setMode('browser')
+      dispatch(setMode('browser'))
+      dispatch(loadLocalhostError('Remixd disconnected!'))
+      const workspaceProvider = plugin.fileProviders.workspace
 
-    await switchToWorkspace(workspaceProvider.workspace)
+      await switchToWorkspace(workspaceProvider.workspace)
+    }, 0)
   })
 
   provider.event.on('connected', async () => {
-    plugin.fileManager.setMode('localhost')
-    dispatch(setMode('localhost'))
-    fetchWorkspaceDirectory('/')
-    dispatch(loadLocalhostSuccess())
+    setTimeout(() => {
+      plugin.fileManager.setMode('localhost')
+      dispatch(setMode('localhost'))
+      fetchWorkspaceDirectory('/')
+      dispatch(loadLocalhostSuccess())
+    }, 0)
   })
 
   provider.event.on('loadingLocalhost', async () => {
-    await switchToWorkspace(LOCALHOST)
-    dispatch(loadLocalhostRequest())
+    setTimeout(async () => {
+      await switchToWorkspace(LOCALHOST)
+      dispatch(loadLocalhostRequest())
+    }, 0)
   })
 
   provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
-    const config = plugin.registry.get('config').api
-    const editor = plugin.registry.get('editor').api
+    setTimeout(() => {
+      const config = plugin.registry.get('config').api
+      const editor = plugin.registry.get('editor').api
 
-    if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
-      if (provider.isReadOnly(path)) return editor.setText(file.content)
-      dispatch(displayNotification(
-        path + ' changed',
-        'This file has been changed outside of Remix IDE.',
-        'Replace by the new content', 'Keep the content displayed in Remix',
-        () => {
-          editor.setText(file.content)
-        }
-      ))
-    }
+      if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
+        if (provider.isReadOnly(path)) return editor.setText(file.content)
+        dispatch(displayNotification(
+          path + ' changed',
+          'This file has been changed outside of Remix IDE.',
+          'Replace by the new content', 'Keep the content displayed in Remix',
+          () => {
+            editor.setText(file.content)
+          }
+        ))
+      }
+    }, 0)
   })
 
   provider.event.on('fileRenamedError', async () => {
-    dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
+    setTimeout(() => dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel')), 0)
   })
 
   provider.event.on('readOnlyModeChanged', (mode: boolean) => {
-    dispatch(setReadOnlyMode(mode))
+    setTimeout(() => dispatch(setReadOnlyMode(mode)), 0)
   })
 }
 
@@ -171,72 +177,4 @@ const fileRenamed = async (oldPath: string) => {
 
 const rootFolderChanged = async (path) => {
   await dispatch(rootFolderChangedSuccess(path))
-}
-
-const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', ...args) => {
-  if (Object.keys(pendingEvents).length) {
-    return queuedEvents.push({ eventName, path: args[0] })
-  }
-  pendingEvents[eventName + args[0]] = { eventName, path: args[0] }
-  switch (eventName) {
-    case 'fileAdded':
-      setTimeout(() => {
-        fileAdded(args[0])
-      }, 0)
-      delete pendingEvents[eventName + args[0]]
-      if (queuedEvents.length) {
-        const next = queuedEvents.pop()
-
-        await executeEvent(next.eventName, next.path)
-      }
-      break
-
-    case 'folderAdded':
-      setTimeout(() => {
-        folderAdded(args[0])
-      }, 0)
-      delete pendingEvents[eventName + args[0]]
-      if (queuedEvents.length) {
-        const next = queuedEvents.pop()
-
-        await executeEvent(next.eventName, next.path)
-      }
-      break
-
-    case 'fileRemoved':
-      setTimeout(() => {
-        fileRemoved(args[0])
-      }, 0)
-      delete pendingEvents[eventName + args[0]]
-      if (queuedEvents.length) {
-        const next = queuedEvents.pop()
-
-        await executeEvent(next.eventName, next.path)
-      }
-      break
-
-    case 'fileRenamed':
-      setTimeout(() => {
-        fileRenamed(args[0])
-      }, 0)
-      delete pendingEvents[eventName + args[0]]
-      if (queuedEvents.length) {
-        const next = queuedEvents.pop()
-
-        await executeEvent(next.eventName, next.path)
-      }
-      break
-
-    case 'rootFolderChanged':
-      setTimeout(() => {
-        rootFolderChanged(args[0])
-      }, 0)
-      delete pendingEvents[eventName + args[0]]
-      if (queuedEvents.length) {
-        const next = queuedEvents.pop()
-
-        await executeEvent(next.eventName, next.path)
-      }
-      break
-  }
 }
