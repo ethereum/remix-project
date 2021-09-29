@@ -226,8 +226,8 @@ module.exports = {
       .pause(2000)
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedLog_test.sol', 60000)
-      .assert.containsText('#journal > div:nth-child(6) > span > div', 'Check winning proposal:')
-      .assert.containsText('#journal > div:nth-child(6) > span > div', 'Inside checkWinningProposal')
+      .assert.containsText('#journal > div:nth-child(5) > span', 'Check winning proposal:')
+      .assert.containsText('#journal > div:nth-child(5) > span', 'Inside checkWinningProposal')
       .openFile('tests/ballotFailedLog_test.sol')
       .removeFile('tests/ballotFailedLog_test.sol', 'workspace_new')
   },
