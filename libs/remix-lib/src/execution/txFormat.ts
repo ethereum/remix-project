@@ -77,7 +77,7 @@ export function encodeParams (params, funAbi, callback) {
 * @param {Function} callback    - callback
 */
 export function encodeFunctionCall (params, funAbi, callback) {
-  this.encodeParams(params, funAbi, (error, encodedParam) => {
+  encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
     callback(null, { dataHex: encodeFunctionId(funAbi) + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs })
   })
@@ -94,7 +94,7 @@ export function encodeFunctionCall (params, funAbi, callback) {
 * @param {Function} callback    - callback
 */
 export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi, linkLibraries, linkReferences, callback) {
-  this.encodeParams(params, funAbi, (error, encodedParam) => {
+  encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
@@ -103,7 +103,7 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
           for (const lib in linkLibraries[libFile]) {
             const address = linkLibraries[libFile][lib]
             if (!isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
-            bytecodeToDeploy = this.linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
+            bytecodeToDeploy = linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
           }
         }
       }
@@ -129,13 +129,13 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
 * @param {Function} callback    - callback
 */
 export function encodeConstructorCallAndDeployLibraries (contractName, contract, contracts, params, funAbi, callback, callbackStep, callbackDeployLibrary) {
-  this.encodeParams(params, funAbi, (error, encodedParam) => {
+  encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
     let dataHex = ''
     const contractBytecode = contract.evm.bytecode.object
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
-      this.linkBytecode(contract, contracts, (err, bytecode) => {
+      linkBytecode(contract, contracts, (err, bytecode) => {
         if (err) {
           callback('Error deploying required libraries: ' + err)
         } else {
@@ -176,7 +176,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
   } else {
     try {
       if (params.length > 0) {
-        funArgs = this.parseFunctionParams(params)
+        funArgs = parseFunctionParams(params)
       }
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
@@ -199,7 +199,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
     contractBytecode = contract.evm.bytecode.object
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
-      this.linkBytecode(contract, contracts, (err, bytecode) => {
+      linkBytecode(contract, contracts, (err, bytecode) => {
         if (err) {
           callback('Error deploying required libraries: ' + err)
         } else {
@@ -225,7 +225,7 @@ export function linkBytecodeStandard (contract, contracts, callback, callbackSte
     eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
       const library = contracts[file][libName]
       if (library) {
-        this.deployLibrary(file + ':' + libName, libName, library, contracts, (error, address) => {
+        deployLibrary(file + ':' + libName, libName, library, contracts, (error, address) => {
           if (error) {
             return cbLibDeployed(error)
           }
@@ -233,7 +233,7 @@ export function linkBytecodeStandard (contract, contracts, callback, callbackSte
           if (hexAddress.slice(0, 2) === '0x') {
             hexAddress = hexAddress.slice(2)
           }
-          contractBytecode = this.linkLibraryStandard(libName, hexAddress, contractBytecode, contract)
+          contractBytecode = linkLibraryStandard(libName, hexAddress, contractBytecode, contract)
           cbLibDeployed()
         }, callbackStep, callbackDeployLibrary)
       } else {
@@ -269,7 +269,7 @@ export function linkBytecodeLegacy (contract, contracts, callback, callbackStep,
   if (!library) {
     return callback('Library ' + libraryName + ' not found.')
   }
-  this.deployLibrary(libraryName, libraryShortName, library, contracts, (err, address) => {
+  deployLibrary(libraryName, libraryShortName, library, contracts, (err, address) => {
     if (err) {
       return callback(err)
     }
@@ -277,8 +277,8 @@ export function linkBytecodeLegacy (contract, contracts, callback, callbackStep,
     if (hexAddress.slice(0, 2) === '0x') {
       hexAddress = hexAddress.slice(2)
     }
-    contract.evm.bytecode.object = this.linkLibrary(libraryName, hexAddress, contract.evm.bytecode.object)
-    this.linkBytecode(contract, contracts, callback, callbackStep, callbackDeployLibrary)
+    contract.evm.bytecode.object = linkLibrary(libraryName, hexAddress, contract.evm.bytecode.object)
+    linkBytecode(contract, contracts, callback, callbackStep, callbackDeployLibrary)
   }, callbackStep, callbackDeployLibrary)
 }
 
@@ -287,9 +287,9 @@ export function linkBytecode (contract, contracts, callback?, callbackStep?, cal
     return callback(null, contract.evm.bytecode.object)
   }
   if (contract.evm.bytecode.linkReferences && Object.keys(contract.evm.bytecode.linkReferences).length) {
-    this.linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
+    linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
   } else {
-    this.linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
+    linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
   }
 }
 
@@ -300,11 +300,11 @@ export function deployLibrary (libraryName, libraryShortName, library, contracts
   }
   const bytecode = library.evm.bytecode.object
   if (bytecode.indexOf('_') >= 0) {
-    this.linkBytecode(library, contracts, (err, bytecode) => {
+    linkBytecode(library, contracts, (err, bytecode) => {
       if (err) callback(err)
       else {
         library.evm.bytecode.object = bytecode
-        this.deployLibrary(libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary)
+        deployLibrary(libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary)
       }
     }, callbackStep, callbackDeployLibrary)
   } else {
@@ -325,7 +325,7 @@ export function linkLibraryStandardFromlinkReferences (libraryName, address, byt
   for (const file in linkReferences) {
     for (const libName in linkReferences[file]) {
       if (libraryName === libName) {
-        bytecode = this.setLibraryAddress(address, bytecode, linkReferences[file][libName])
+        bytecode = setLibraryAddress(address, bytecode, linkReferences[file][libName])
       }
     }
   }
@@ -333,7 +333,7 @@ export function linkLibraryStandardFromlinkReferences (libraryName, address, byt
 }
 
 export function linkLibraryStandard (libraryName, address, bytecode, contract) {
-  return this.linkLibraryStandardFromlinkReferences(libraryName, address, bytecode, contract.evm.bytecode.linkReferences)
+  return linkLibraryStandardFromlinkReferences(libraryName, address, bytecode, contract.evm.bytecode.linkReferences)
 }
 
 export function setLibraryAddress (address, bytecodeToLink, positions) {
@@ -384,7 +384,7 @@ export function decodeResponse (response, fnabi) {
 export function parseFunctionParams (params) {
   let args = []
   // Check if parameter string starts with array or string
-  let startIndex = this.isArrayOrStringStart(params, 0) ? -1 : 0
+  let startIndex = isArrayOrStringStart(params, 0) ? -1 : 0
   for (let i = 0; i < params.length; i++) {
     // If a quote is received
     if (params.charAt(i) === '"') {
@@ -427,7 +427,7 @@ export function parseFunctionParams (params) {
         args.push(params.substring(startIndex, i))
       }
       // Register start index of a parameter to parse
-      startIndex = this.isArrayOrStringStart(params, i + 1) ? -1 : i + 1
+      startIndex = isArrayOrStringStart(params, i + 1) ? -1 : i + 1
     } else if (startIndex >= 0 && i === params.length - 1) {
       // If start index is registered and string is completed (To handle last parameter)
       args.push(params.substring(startIndex, params.length))
