@@ -56,7 +56,7 @@ module.exports = {
       .waitForElementVisible('#stepdetail')
       .goToVMTraceStep(144)
       .pause(2000)
-      .checkVariableDebug('soliditystate', stateCheck)
+      // .checkVariableDebug('soliditystate', stateCheck)
       .checkVariableDebug('soliditylocals', localsCheck)
   },
 
