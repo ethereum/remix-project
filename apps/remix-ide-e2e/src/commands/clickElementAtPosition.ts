@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class ClickElement extends EventEmitter {
-  command (this: NightwatchBrowser, cssSelector: string, index = 0 , opt = { forceSelectIfUnselected: false }): NightwatchBrowser {
+  command (this: NightwatchBrowser, cssSelector: string, index = 0, opt = { forceSelectIfUnselected: false }): NightwatchBrowser {
     this.api.perform((done) => {
       _clickElement(this.api, cssSelector, index, opt.forceSelectIfUnselected, () => {
         done()
