@@ -84,28 +84,27 @@ function MenuForLinks ({
           id="menuitemdeactivate"
           onClick={(evt) => {
             contextMenuAction(evt, profileName, listItems.Documentation)
-            hide()
+            hide(evt, true)
           }}
           className="remixui_liitem"
         >
         Deactivate
         </li>}
       {(listItems.Documentation && listItems.Documentation.length > 0) &&
-            <li
-              id="menuitemdocumentation"
-              className="remixui_liitem"
-            >
-              <a
-                onClick={(evt) => hide(evt, true)}
-                onBlur={(evt) => hide(evt, true)}
-                href={listItems[item]}
-                target="_blank"
-              >
+        <li
+          id="menuitemdocumentation"
+          className="remixui_liitem"
+        >
+          <a
+            onClick={(evt) => hide(evt, true)}
+            onBlur={(evt) => hide(evt, true)}
+            href={listItems.Documentation}
+            target="_blank"
+          >
                 Documentation
-              </a>
-            </li>
-          ))
-        : null}
+          </a>
+        </li>
+      }
     </Fragment>
   )
 }
