@@ -194,8 +194,18 @@ module.exports = {
   },
 
   'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
+
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .perform((done) => {
+        if (runtimeBrowser !== 'chrome') {
+          browser.clickLaunchIcon('filePanel')
+            .waitForElementVisible('[data-id="treeViewLitreeViewItemtests"]')
+            .click('[data-id="treeViewLitreeViewItemtests"]')
+        }
+        done()
+      })
       .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
       .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
