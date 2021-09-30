@@ -83,7 +83,7 @@ function MenuForLinks ({
           id="menuitemdeactivate"
           onClick={(evt) => {
             contextMenuAction(evt, profileName, listItems.Documentation)
-            hide()
+            hide(evt, true)
           }}
           className="remixui_liitem"
         >
