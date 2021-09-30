@@ -97,10 +97,10 @@ export const addInputFieldSuccess = (path: string, fileTree, type: 'file' | 'fol
   }
 }
 
-export const removeInputFieldSuccess = (path: string, fileTree) => {
+export const removeInputFieldSuccess = (path: string) => {
   return {
     type: 'REMOVE_INPUT_FIELD',
-    payload: { path, fileTree }
+    payload: { path }
   }
 }
 
