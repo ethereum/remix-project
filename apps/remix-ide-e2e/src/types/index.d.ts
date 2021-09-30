@@ -46,7 +46,7 @@ declare module 'nightwatch' {
         setupMetamask(passphrase: string, password: string): NightwatchBrowser,
         signMessage(msg: string, callback: (hash: { value: string }, signature: { value: string }) => void): NightwatchBrowser,
         setSolidityCompilerVersion(version: string): NightwatchBrowser,
-        clickElementAtPosition(cssSelector: string, index: number): NightwatchBrowser,
+        clickElementAtPosition(cssSelector: string, index: number, opt?: { forceSelectIfUnselected: boolean }): NightwatchBrowser,
         notContainsText(cssSelector: string, text: string): NightwatchBrowser,
         sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser,
         journalLastChild(val: string): NightwatchBrowser,
