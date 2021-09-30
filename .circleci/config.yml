@@ -286,7 +286,7 @@ jobs:
   publish:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.19.0-buster
+      - image: circleci/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
