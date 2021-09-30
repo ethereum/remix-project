@@ -1,6 +1,5 @@
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
-
-const Compiler = require('@remix-project/remix-solidity').Compiler
+import { Compiler } from '@remix-project/remix-solidity'
 const EventEmitter = require('events')
 
 declare global {
