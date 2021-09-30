@@ -39,7 +39,7 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   })
 }
 
-export const listenOnProviderEvents = (provider) => async (reducerDispatch: React.Dispatch<any>) => {
+export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Dispatch<any>) => {
   dispatch = reducerDispatch
 
   provider.event.on('fileAdded', (filePath: string) => {
@@ -70,7 +70,7 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
     }, 10)
   })
 
-  provider.event.on('connected', async () => {
+  provider.event.on('connected', () => {
     setTimeout(() => {
       plugin.fileManager.setMode('localhost')
       dispatch(setMode('localhost'))
@@ -79,33 +79,33 @@ export const listenOnProviderEvents = (provider) => async (reducerDispatch: Reac
     }, 10)
   })
 
-  provider.event.on('loadingLocalhost', async () => {
+  provider.event.on('loadingLocalhost', () => {
     setTimeout(async () => {
       await switchToWorkspace(LOCALHOST)
       dispatch(loadLocalhostRequest())
     }, 10)
   })
 
-  provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
+  provider.event.on('fileExternallyChanged', (path: string, content: string) => {
     setTimeout(() => {
       const config = plugin.registry.get('config').api
       const editor = plugin.registry.get('editor').api
 
-      if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
-        if (provider.isReadOnly(path)) return editor.setText(file.content)
+      if (config.get('currentFile') === path && editor.currentContent() !== content) {
+        if (provider.isReadOnly(path)) return editor.setText(content)
         dispatch(displayNotification(
           path + ' changed',
           'This file has been changed outside of Remix IDE.',
           'Replace by the new content', 'Keep the content displayed in Remix',
           () => {
-            editor.setText(file.content)
+            editor.setText(content)
           }
         ))
       }
     }, 10)
   })
 
-  provider.event.on('fileRenamedError', async () => {
+  provider.event.on('fileRenamedError', () => {
     setTimeout(() => dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel')), 10)
   })
 
