@@ -20,6 +20,10 @@
   "bin": {
     "remix-ide": "./apps/remix-ide/bin/remix-ide"
   },
+  "engines": {
+    "node": "^14.17.6",
+    "npm": "^6.14.15"
+  }
   "scripts": {
     "nx": "nx",
     "start": "nx start",
