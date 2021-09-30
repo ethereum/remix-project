@@ -558,7 +558,7 @@ const sources = [
     }
   }
 ]
-
+/*
 const locals = {
   sender: {
     value: {
@@ -586,3 +586,4 @@ const locals = {
     type: 'uint256'
   }
 }
+*/
