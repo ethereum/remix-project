@@ -140,6 +140,7 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting')
       .setValue('*[data-id="uiPathInput"]', 'myTests')
       .click('*[data-id="testTabGenerateTestFolder"]')
+      .pause(1000)
       .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 60000)
