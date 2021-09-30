@@ -2,7 +2,7 @@ import { Plugin } from '@remixproject/engine/lib/abstract'
 import * as packageJson from '../../../../package.json'
 import * as registry from 'apps/remix-ide/src/global/registry'
 
-type Kind =
+export type Kind =
   | 'fileexplorer'
   | 'compiler'
   | 'udapp'

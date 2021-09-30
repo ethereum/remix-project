@@ -83,7 +83,7 @@
   -ms-overflow-style: none;
 }
 .remixui_scrollable-container {
-  max-height: 700px;
+  max-height: 500px;
 }
 .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
   display: none;
