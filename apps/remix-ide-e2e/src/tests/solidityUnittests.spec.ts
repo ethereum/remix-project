@@ -562,7 +562,7 @@ const locals = {
   sender: {
     value: {
       weight: {
-        value: '1',
+        value: '0',
         type: 'uint256'
       },
       voted: {
