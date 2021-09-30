@@ -56,6 +56,7 @@ module.exports = {
       .waitForElementVisible('#stepdetail')
       .goToVMTraceStep(144)
       .pause(2000)
+      // Should be uncommented while fixing https://github.com/ethereum/remix-project/issues/1644
       // .checkVariableDebug('soliditystate', stateCheck)
       .checkVariableDebug('soliditylocals', localsCheck)
   },
