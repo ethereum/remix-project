@@ -357,11 +357,11 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload, payload.path + '/' + 'blank') : state.browser.files
+          files: state.mode === 'browser' ? removeInputField(state, payload.path) : state.browser.files
         },
         localhost: {
           ...state.localhost,
-          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, payload.path + '/' + 'blank') : state.localhost.files
+          files: state.mode === 'localhost' ? removeInputField(state, payload.path) : state.localhost.files
         },
         focusEdit: null
       }
@@ -594,6 +594,31 @@ const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<s
   const _path = splitPath(state, path)
 
   _.unset(files, _path)
+  return files
+}
+
+const removeInputField = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
+  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+  const root = state.mode === 'browser' ? state.browser.currentWorkspace : state.mode
+
+  if (path === root) {
+    delete files[root][path + '/' + 'blank']
+    return files
+  }
+  const _path = splitPath(state, path)
+  const prevFiles = _.get(files, _path)
+
+  if (prevFiles) {
+    prevFiles.child && prevFiles.child[path + '/' + 'blank'] && delete prevFiles.child[path + '/' + 'blank']
+    files = _.set(files, _path, {
+      isDirectory: true,
+      path,
+      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+      child: prevFiles ? prevFiles.child : {}
+    })
+  }
+
   return files
 }
 
