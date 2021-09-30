@@ -73,21 +73,7 @@ export const fetchDirectory = async (path: string) => {
 }
 
 export const removeInputField = async (path: string) => {
-  const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
-      if (error) console.error(error)
-
-      resolve(fileTree)
-    })
-  })
-
-  promise.then((files) => {
-    dispatch(removeInputFieldSuccess(path, files))
-  }).catch((error) => {
-    console.error(error)
-  })
-  return promise
+  dispatch(removeInputFieldSuccess(path))
 }
 
 export const deleteWorkspace = async (workspaceName: string) => {
