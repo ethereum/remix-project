@@ -15,9 +15,9 @@ module.exports = class RemixDProvider extends FileProvider {
 
   _registerEvent () {
     var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
-    remixdEvents.forEach((value) => {
-      this._appManager.on('remixd', value, (event) => {
-        this.event.emit(value, event)
+    remixdEvents.forEach((event) => {
+      this._appManager.on('remixd', event, (value) => {
+        this.event.emit(event, value)
       })
     })
 
@@ -43,6 +43,16 @@ module.exports = class RemixDProvider extends FileProvider {
 
     this._appManager.on('remixd', 'rootFolderChanged', (path) => {
       this.event.emit('rootFolderChanged', path)
+    })
+
+    this._appManager.on('remixd', 'removed', (path) => {
+      this.event.emit('fileRemoved', path)
+    })
+
+    this._appManager.on('remixd', 'changed', (path) => {
+      this.get(path, (_error, content) => {
+        this.event.emit('fileExternallyChanged', path, content)
+      })
     })
   }
 
