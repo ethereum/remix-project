@@ -131,6 +131,7 @@ export class Web3VmProvider {
       try {
         // dumpStorage throws error as 'Missing Node in DB'
         // This can be uncommented once that error is handled
+        // https://github.com/ethereum/remix-project/issues/1644
         // const storage = await this.vm.stateManager.dumpStorage(data.to)
         const storage = {}
         this.storageCache[this.processingHash][tx['to']] = storage
@@ -250,6 +251,7 @@ export class Web3VmProvider {
           try {
             // dumpStorage throws error as 'Missing Node in DB'
             // This can be uncommented once that error is handled
+            // https://github.com/ethereum/remix-project/issues/1644
             // const storage = await this.vm.stateManager.dumpStorage(account)
             const storage = {}
             this.storageCache[this.processingHash][this.processingAddress] = storage
