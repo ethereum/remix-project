@@ -2,14 +2,9 @@
 import React, {
   Fragment,
   useEffect,
-  useReducer,
-  useRef,
-  useState
+  useRef
 } from 'react'
-import {
-  VerticalIcons,
-  Kind
-} from '../../types/vertical-icons'
+import { VerticalIcons } from '../../types/vertical-icons'
 import * as packageJson from '../../../../../package.json'
 import Home from './components/Home'
 import Icon from './components/Icon'
