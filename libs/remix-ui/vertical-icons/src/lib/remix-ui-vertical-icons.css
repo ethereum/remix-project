@@ -83,11 +83,7 @@
   -ms-overflow-style: none;
 }
 .remixui_scrollable-container {
-<<<<<<< HEAD
   max-height: 500px;
-=======
-  max-height: 700px;
->>>>>>> 48c255bc8 (fix mistaken semi columns in file explorer. Complete vertical icons panel feature request)
 }
 .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
   display: none;
