@@ -116,7 +116,7 @@ const localsCheck = {
     type: 'address'
   }
 }
-
+/*
 const stateCheck = {
   chairperson: {
     value: '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
@@ -174,6 +174,7 @@ const stateCheck = {
     immutable: false
   }
 }
+*/
 
 const ballotABI = `[
 {
