@@ -53,7 +53,7 @@ export function newContextStorage (step) {
 export function isCallToPrecompiledContract (index, trace) {
   // if stack empty => this is not a precompiled contract
   const step = trace[index]
-  if (this.isCallInstruction(step)) {
+  if (isCallInstruction(step)) {
     return index + 1 < trace.length && trace[index + 1].stack.length !== 0
   }
   return false
