@@ -7,7 +7,8 @@ import React, {
   useState
 } from 'react'
 import {
-  VerticalIcons
+  VerticalIcons,
+  Kind
 } from '../../types/vertical-icons'
 import * as packageJson from '../../../../../package.json'
 import Home from './components/Home'
@@ -27,11 +28,17 @@ export const profile = {
   methods: ['select']
 }
 
-function ShowChevron () {
-  return (
-    <span className="remixui_icon-chevron"></span>
-  )
-}
+const defaultIcons = ['fileexplorer', 'filePanel',
+  'compiler',
+  'solidity',
+  'udapp',
+  'testing',
+  'analysis',
+  'solidityStaticAnalysis',
+  'debugging',
+  'debugger',
+  'settings',
+  'none']
 
 export function RemixUiVerticalIcons ({
   verticalIconsPlugin
@@ -58,6 +65,7 @@ export function RemixUiVerticalIcons ({
 
   useEffect(() => {
     console.log('panel ref ', iconPanelRef.current)
+    console.log('targetProfiles ', verticalIconsPlugin.targetProfileForChange)
   }, [])
 
   useEffect(() => {
@@ -72,43 +80,185 @@ export function RemixUiVerticalIcons ({
       <div className="remixui_icons" ref={iconPanelRef}>
         <div>
           <Home verticalIconPlugin={verticalIconsPlugin} />
+          {verticalIconsPlugin.targetProfileForChange &&
+          Object.keys(verticalIconsPlugin.targetProfileForChange).length
+            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .filter(p => p === 'filePanel')
+              .map(p => (
+                <div id="fileExplorerIcons" key={
+                  verticalIconsPlugin.targetProfileForChange[p].displayName
+                } data-id="verticalIconsFileExplorerIcons">
+                  <Icon
+                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                    displayName={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                    documentation={
+                      verticalIconsPlugin.targetProfileForChange[p]
+                        .documentation
+                    }
+                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                    name={verticalIconsPlugin.targetProfileForChange[p].name}
+                    tooltip={
+                      verticalIconsPlugin.targetProfileForChange[p].tooltip
+                    }
+                    verticalIconPlugin={verticalIconsPlugin}
+                    contextMenuAction={itemContextAction}
+                  />
+                </div>
+              ))
+            : null}
+          {verticalIconsPlugin.targetProfileForChange &&
+          Object.keys(verticalIconsPlugin.targetProfileForChange).length
+            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .filter(p => p === 'solidity')
+              .map(p => (
+                <div id="compileIcons" key={
+                  verticalIconsPlugin.targetProfileForChange[p].displayName
+                }>
+                  <Icon
+                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                    displayName={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                    documentation={
+                      verticalIconsPlugin.targetProfileForChange[p]
+                        .documentation
+                    }
+                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                    name={verticalIconsPlugin.targetProfileForChange[p].name}
+                    tooltip={
+                      verticalIconsPlugin.targetProfileForChange[p].tooltip
+                    }
+                    verticalIconPlugin={verticalIconsPlugin}
+                    contextMenuAction={itemContextAction}
+                    key={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                  />
+                </div>
+              ))
+            : null}
+          {verticalIconsPlugin.targetProfileForChange &&
+          Object.keys(verticalIconsPlugin.targetProfileForChange).length
+            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .filter(p => p === 'udapp')
+              .map(p => (
+                <div id="compileIcons" key={
+                  verticalIconsPlugin.targetProfileForChange[p].displayName
+                }>
+                  <Icon
+                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                    displayName={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                    documentation={
+                      verticalIconsPlugin.targetProfileForChange[p]
+                        .documentation
+                    }
+                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                    name={verticalIconsPlugin.targetProfileForChange[p].name}
+                    tooltip={
+                      verticalIconsPlugin.targetProfileForChange[p].tooltip
+                    }
+                    verticalIconPlugin={verticalIconsPlugin}
+                    contextMenuAction={itemContextAction}
+                    key={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                  />
+                </div>
+              ))
+            : null}
+          {verticalIconsPlugin.targetProfileForChange &&
+          Object.keys(verticalIconsPlugin.targetProfileForChange).length
+            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .filter(p => p === 'solidityStaticAnalysis')
+              .map(p => (
+                <div id="analysisIcons" key={
+                  verticalIconsPlugin.targetProfileForChange[p].displayName
+                }>
+                  <Icon
+                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                    displayName={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                    documentation={
+                      verticalIconsPlugin.targetProfileForChange[p]
+                        .documentation
+                    }
+                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                    name={verticalIconsPlugin.targetProfileForChange[p].name}
+                    tooltip={
+                      verticalIconsPlugin.targetProfileForChange[p].tooltip
+                    }
+                    verticalIconPlugin={verticalIconsPlugin}
+                    contextMenuAction={itemContextAction}
+                    key={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                  />
+                </div>
+              ))
+            : null}
+          {verticalIconsPlugin.targetProfileForChange &&
+          Object.keys(verticalIconsPlugin.targetProfileForChange).length
+            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .filter(p => p === 'debugger') // || 'debugging')
+              .map(p => (
+                <div id="debuggingIcons" data-id="verticalIconsDebuggingIcons" key={
+                  verticalIconsPlugin.targetProfileForChange[p].displayName
+                }>
+                  <Icon
+                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
+                    displayName={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                    documentation={
+                      verticalIconsPlugin.targetProfileForChange[p]
+                        .documentation
+                    }
+                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
+                    name={verticalIconsPlugin.targetProfileForChange[p].name}
+                    tooltip={
+                      verticalIconsPlugin.targetProfileForChange[p].tooltip
+                    }
+                    verticalIconPlugin={verticalIconsPlugin}
+                    contextMenuAction={itemContextAction}
+                    key={
+                      verticalIconsPlugin.targetProfileForChange[p].displayName
+                    }
+                  />
+                </div>
+              ))
+            : null}
         </div>
         <div
           id="remixuiScrollable"
           className="remixui_scrollable-container remixui_scrollbar remixui_hide-scroll"
           ref={scrollableRef}
         >
-          {verticalIconsPlugin.targetProfileForChange &&
-          Object.keys(verticalIconsPlugin.targetProfileForChange).length
-            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .map(p => (
-                <Icon
-                  kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                  displayName={
-                    verticalIconsPlugin.targetProfileForChange[p].displayName
-                  }
-                  documentation={
-                    verticalIconsPlugin.targetProfileForChange[p]
-                      .documentation
-                  }
-                  icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                  name={verticalIconsPlugin.targetProfileForChange[p].name}
-                  tooltip={
-                    verticalIconsPlugin.targetProfileForChange[p].tooltip
-                  }
-                  verticalIconPlugin={verticalIconsPlugin}
-                  contextMenuAction={itemContextAction}
-                  key={
-                    verticalIconsPlugin.targetProfileForChange[p].displayName
-                  }
-                />
-              ))
-            : null}
           <OtherIcons>
             {Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p === 'none')
+              .filter(p => p !== 'settings')
+              .filter(p => p !== 'pluginManager')
+              .filter(p => p !== 'filePanel')
+              .filter(p => p !== 'debugger')
+              .filter(p => p !== 'compiler')
+              .filter(p => p !== 'solidity')
+              .filter(p => p !== 'udapp')
+              .filter(p => p !== 'testing')
+              .filter(p => p !== 'solidityStaticAnalysis') // 'filePanel') || 'fileexplorer')
               .map(p => (
                 <Icon
                   kind={verticalIconsPlugin.targetProfileForChange[p].kind}

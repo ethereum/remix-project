@@ -53,6 +53,7 @@ export class VerticalIcons extends Plugin {
 
   linkContent (profile) {
     if (!profile.icon) return
+    if (!profile.kind) profile.kind = 'none'
     this.targetProfileForChange[profile.name] = profile
     this.listenOnStatus(profile)
     this.renderComponent()
