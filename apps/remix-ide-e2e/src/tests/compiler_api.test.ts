@@ -21,7 +21,7 @@ module.exports = {
     browser
       .addFile('test_jsCompile.js', { content: jsCompile })
       .executeScript('remix.exeCurrent()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '"languageversion": "0.6.8+commit.0bbfe453"', 60000)
+      .waitForElementContainsText('div[data-id="terminalJournal"]', '"languageversion": "0.6.8+commit.0bbfe453"', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
@@ -29,7 +29,7 @@ module.exports = {
     browser
       .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
       .executeScript('remix.exeCurrent()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}', 60000)
+      .waitForElementContainsText('div[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
@@ -37,7 +37,7 @@ module.exports = {
     browser
       .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
       .executeScript('remix.exeCurrent()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}', 60000)
+      .waitForElementContainsText('div[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
