@@ -193,11 +193,6 @@ export class VerticalIcons extends Plugin {
     this.addActive(name)
   }
 
-  async activateHome () {
-    await this.appManager.activatePlugin('home')
-    this.call('tabs', 'focus', 'home')
-  }
-
   render () {
     return this.htmlElement
   }
