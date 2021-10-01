@@ -149,6 +149,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     return () => {
       setFilesFunc = () => {}
+      setFiles({})
     }
   }, [props.files])
 
