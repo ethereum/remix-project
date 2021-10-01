@@ -16,10 +16,15 @@ class AddFile extends EventEmitter {
 function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser.clickLaunchIcon('udapp')
     .clickLaunchIcon('filePanel')
-    .getLog('browser', function (logEntriesArray) {
-      console.log('Log length: ' + logEntriesArray.length)
-      logEntriesArray.forEach(function (log) {
-        console.log('[' + log.level + '] ' + log.timestamp + ' : ' + log.message)
+    .perform((done) => {
+      browser.getLog('browser', function (logEntriesArray) {
+        if (Array.isArray(logEntriesArray)) {
+          console.log('Log length: ' + logEntriesArray.length)
+          logEntriesArray.forEach(function (log) {
+            console.log('[' + log.level + '] ' + log.timestamp + ' : ' + log.message)
+          })
+        }
+        done()
       })
     })
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
