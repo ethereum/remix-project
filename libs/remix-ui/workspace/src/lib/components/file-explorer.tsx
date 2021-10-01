@@ -56,13 +56,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [contextMenuItems])
 
   useEffect(() => {
-    if (props.focusEdit) {
-      setState(prevState => {
-        return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
-      })
+    let setFocusEdit = () => {
+      if (props.focusEdit) {
+        setState(prevState => {
+          return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
+        })
+      }
     }
+    setFocusEdit()
 
     return () => {
+      setFocusEdit = () => {}
       console.log('file-explorer -> focusEdit')
     }
   }, [props.focusEdit])
