@@ -34,15 +34,19 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   })
 
   useEffect(() => {
-    const actions = {
-      updateGist: () => {}
-    }
+    let actionFunc = () => {
+      const actions = {
+        updateGist: () => {}
+      }
 
-    setState(prevState => {
-      return { ...prevState, actions }
-    })
+      setState(prevState => {
+        return { ...prevState, actions }
+      })
+    }
+    actionFunc()
 
     return () => {
+      actionFunc = () => {}
       console.log('file-explorer-menu -> init')
     }
   }, [])

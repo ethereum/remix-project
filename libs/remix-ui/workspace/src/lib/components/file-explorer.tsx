@@ -37,36 +37,44 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [canPaste, setCanPaste] = useState(false)
 
   useEffect(() => {
-    if (contextMenuItems) {
-      addMenuItems(contextMenuItems)
+    let addMenuItemsFunc = () => {
+      if (contextMenuItems) {
+        addMenuItems(contextMenuItems)
+      }
     }
+    addMenuItemsFunc()
 
     return () => {
+      addMenuItemsFunc = () => {}
       console.log('file-explorer -> add -> contextMenuItems')
     }
   }, [contextMenuItems])
 
   useEffect(() => {
-    if (removedContextMenuItems) {
-      removeMenuItems(removedContextMenuItems)
+    let removeMenuItemsFunc = () => {
+      if (removedContextMenuItems) {
+        removeMenuItems(removedContextMenuItems)
+      }
     }
+    removeMenuItemsFunc()
     return () => {
+      removeMenuItemsFunc = () => {}
       console.log('file-explorer -> remove -> contextMenuItems')
     }
   }, [contextMenuItems])
 
   useEffect(() => {
-    let setFocusEdit = () => {
+    let focusEditFunc = () => {
       if (props.focusEdit) {
         setState(prevState => {
           return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
         })
       }
     }
-    setFocusEdit()
+    focusEditFunc()
 
     return () => {
-      setFocusEdit = () => {}
+      focusEditFunc = () => {}
       console.log('file-explorer -> focusEdit')
     }
   }, [props.focusEdit])
@@ -98,28 +106,35 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [])
 
   useEffect(() => {
-    if (canPaste) {
-      addMenuItems([{
-        id: 'paste',
-        name: 'Paste',
-        type: ['folder', 'file'],
-        path: [],
-        extension: [],
-        pattern: [],
-        multiselect: false,
-        label: ''
-      }])
-    } else {
-      removeMenuItems([{
-        id: 'paste',
-        name: 'Paste',
-        type: ['folder', 'file'],
-        path: [],
-        extension: [],
-        pattern: [],
-        multiselect: false,
-        label: ''
-      }])
+    let pasteFunc = () => {
+      if (canPaste) {
+        addMenuItems([{
+          id: 'paste',
+          name: 'Paste',
+          type: ['folder', 'file'],
+          path: [],
+          extension: [],
+          pattern: [],
+          multiselect: false,
+          label: ''
+        }])
+      } else {
+        removeMenuItems([{
+          id: 'paste',
+          name: 'Paste',
+          type: ['folder', 'file'],
+          path: [],
+          extension: [],
+          pattern: [],
+          multiselect: false,
+          label: ''
+        }])
+      }
+    }
+    pasteFunc()
+
+    return () => {
+      pasteFunc = () => {}
     }
   }, [canPaste])
 
