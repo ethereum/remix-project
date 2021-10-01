@@ -41,6 +41,10 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     setState(prevState => {
       return { ...prevState, actions }
     })
+
+    return () => {
+      console.log('file-explorer-menu -> init')
+    }
   }, [])
 
   return (

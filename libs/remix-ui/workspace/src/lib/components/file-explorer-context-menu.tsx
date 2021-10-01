@@ -16,6 +16,9 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   const contextMenuRef = useRef(null)
   useEffect(() => {
     contextMenuRef.current.focus()
+    return () => {
+      console.log('file-explorer-context-menu -> init')
+    }
   }, [])
 
   useEffect(() => {
@@ -26,6 +29,10 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       menuItemsContainer.style.position = 'fixed'
       menuItemsContainer.style.bottom = '10px'
       menuItemsContainer.style.top = null
+    }
+
+    return () => {
+      console.log('file-explorer-context-menu -> pageX')
     }
   }, [pageX, pageY])
 

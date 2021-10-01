@@ -40,11 +40,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
     }
+
+    return () => {
+      console.log('file-explorer -> add -> contextMenuItems')
+    }
   }, [contextMenuItems])
 
   useEffect(() => {
     if (removedContextMenuItems) {
       removeMenuItems(removedContextMenuItems)
+    }
+    return () => {
+      console.log('file-explorer -> remove -> contextMenuItems')
     }
   }, [contextMenuItems])
 
@@ -53,6 +60,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       setState(prevState => {
         return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
       })
+    }
+
+    return () => {
+      console.log('file-explorer -> focusEdit')
     }
   }, [props.focusEdit])
 
@@ -78,6 +89,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return () => {
       document.removeEventListener('keydown', keyPressHandler)
       document.removeEventListener('keyup', keyUpHandler)
+      console.log('file-explorer -> init')
     }
   }, [])
 

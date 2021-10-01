@@ -16,6 +16,10 @@ export function Workspace () {
   useEffect(() => {
     global.dispatchInitWorkspace()
     resetFocus()
+
+    return () => {
+      console.log('remix-ui-workspace -> init')
+    }
   }, [])
 
   useEffect(() => {
@@ -27,6 +31,10 @@ export function Workspace () {
       // global.dispatchFetchWorkspaceDirectory('/')
       setCurrentWorkspace(LOCALHOST)
     }
+
+    return () => {
+      console.log('remix-ui-workspace -> currentWorkspace')
+    }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
 
   useEffect(() => {
@@ -36,6 +44,10 @@ export function Workspace () {
       } else {
         switchWorkspace(NO_WORKSPACE)
       }
+    }
+
+    return () => {
+      console.log('remix-ui-workspace -> workspaces')
     }
   }, [global.fs.browser.workspaces])
 

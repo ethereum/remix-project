@@ -134,6 +134,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
       modalList.shift()
       setModals(modalList)
     }
+
+    return () => {
+      console.log('fileSystemProvider -> modals')
+    }
   }, [modals])
 
   useEffect(() => {
@@ -146,17 +150,28 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
       toasterList.shift()
       setToasters(toasterList)
     }
+    return () => {
+      console.log('fileSystemProvider -> toasters')
+    }
   }, [toasters])
 
   useEffect(() => {
     if (fs.notification.title) {
       modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
     }
+
+    return () => {
+      console.log('fileSystemProvider -> notification')
+    }
   }, [fs.notification])
 
   useEffect(() => {
     if (fs.popup) {
       toast(fs.popup)
+    }
+
+    return () => {
+      console.log('fileSystemProvider -> popup')
     }
   }, [fs.popup])
 
