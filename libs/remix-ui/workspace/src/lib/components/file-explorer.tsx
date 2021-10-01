@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, SyntheticEvent } from 'react' /
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
+import { FileExplorerProps, MenuItems, FileExplorerState, FileType } from '../types'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
 
@@ -12,7 +12,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files } = props
+  const { name, contextMenuItems, removedContextMenuItems } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -35,6 +35,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
+  const [files, setFiles] = useState<{ [x: string]: Record<string, FileType> }>({})
 
   useEffect(() => {
     let addMenuItemsFunc = () => {
@@ -137,6 +138,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
       pasteFunc = () => {}
     }
   }, [canPaste])
+
+  useEffect(() => {
+    let setFilesFunc = () => {
+      if (props.files) {
+        setFiles(props.files)
+      }
+    }
+    setFilesFunc()
+
+    return () => {
+      setFilesFunc = () => {}
+    }
+  }, [props.files])
 
   const addMenuItems = (items: MenuItems) => {
     setState(prevState => {
