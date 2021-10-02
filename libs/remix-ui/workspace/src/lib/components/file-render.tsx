@@ -27,7 +27,7 @@ export const FileRender = (props: RenderFileProps) => {
   const [icon, setIcon] = useState<string>('')
 
   useEffect(() => {
-    if (props.file && props.file.path && props.file.name && props.file.type) {
+    if (props.file && props.file.path && props.file.type) {
       setFile(props.file)
       setIcon(getPathIcon(props.file.path))
     }
