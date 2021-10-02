@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { FileType } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
@@ -22,16 +22,23 @@ export interface RenderFileProps {
 }
 
 export const FileRender = (props: RenderFileProps) => {
-  const { file } = props
-
-  if (!file || !file.path || typeof file === 'string' || typeof file === 'number' || typeof file === 'boolean') return
+  const [file, setFile] = useState<FileType>({} as FileType)
   const [hover, setHover] = useState<boolean>(false)
+  const [icon, setIcon] = useState<string>('')
+
+  useEffect(() => {
+    if (props.file && props.file.path && props.file.name && props.file.type) {
+      setFile(props.file)
+      setIcon(getPathIcon(props.file.path))
+    }
+  }, [props.file])
+
   const labelClass = props.focusEdit.element === file.path
     ? 'bg-light' : props.focusElement.findIndex(item => item.key === file.path) !== -1
       ? 'bg-secondary' : hover
         ? 'bg-light border' : (props.focusContext.element === file.path) && (props.focusEdit.element !== file.path)
           ? 'bg-light border' : ''
-  const icon = getPathIcon(file.path)
+
   const spreadProps = {
     onClick: (e) => e.stopPropagation()
   }
