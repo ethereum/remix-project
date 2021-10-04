@@ -1,6 +1,6 @@
 // Merge custom command types with nightwatch types
-
-import { NightwatchBrowser } from 'nightwatch'
+/* eslint-disable no-use-before-define */
+import { NightwatchBrowser } from 'nightwatch' // eslint-disable-line @typescript-eslint/no-unused-vars
 
 declare module 'nightwatch' {
     export interface NightwatchCustomCommands {
