@@ -16,6 +16,8 @@ interface IconProps {
   tooltip: string
   documentation: string
   contextMenuAction: (evt: any, profileName: string, documentation: string) => void
+  addActive: (profileName: string) => void
+  removeActive: () => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,7 +30,9 @@ function Icon ({
   tooltip,
   documentation,
   verticalIconPlugin,
-  contextMenuAction
+  contextMenuAction,
+  addActive,
+  removeActive
 }: IconProps) {
   const [title] = useState(() => {
     const temp = tooltip || displayName || name
@@ -64,7 +68,16 @@ function Icon ({
     <Fragment>
       <div
         className="remixui_icon m-2"
-        onClick={() => verticalIconPlugin.toggle(name)}
+        onLoad={() => {
+          if (name === 'filePanel') {
+            addActive(name)
+          }
+        }}
+        onClick={() => {
+          removeActive()
+          addActive(name)
+          verticalIconPlugin.toggle(name)
+        }}
         // @ts-ignore
         plugin={name}
         title={title}

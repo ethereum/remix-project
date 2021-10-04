@@ -51,7 +51,7 @@ export function RemixUiVerticalIcons ({
   }
 
   function removeActive () {
-    const images = iconPanelRef.current.querySelectorAll('.image')
+    const images = iconPanelRef.current.querySelectorAll('.remixui_image')
     images.forEach(function (im) {
       im.style.setProperty('filter', 'invert(0.5)')
     })
@@ -84,10 +84,12 @@ export function RemixUiVerticalIcons ({
     verticalIconsPlugin.renderComponent()
   }
 
-  useEffect(() => {
-    console.log('panel ref ', iconPanelRef.current)
-    console.log('targetProfiles ', verticalIconsPlugin.targetProfileForChange)
-  }, [])
+  // useEffect(() => {
+  //   const filePanelIcon = iconPanelRef.current.querySelector('[plugin="filePanel"]')
+  //   if (filePanelIcon) {
+  //     addActive('filePanel')
+  //   }
+  // }, [verticalIconsPlugin.targetProfileForChange])
 
   useEffect(() => {
     const themeModule = verticalIconsPlugin.registry.get('themeModule').api
@@ -106,7 +108,7 @@ export function RemixUiVerticalIcons ({
   return (
     <div id="iconsP" className="h-100">
       <div className="remixui_icons" ref={iconPanelRef}>
-        <div style={{ borderBottom: '1px solid #3f4455' }}>
+        <div className="remixui_default-icons-container">
           <Home verticalIconPlugin={verticalIconsPlugin} />
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length
@@ -134,6 +136,8 @@ export function RemixUiVerticalIcons ({
                     }
                     verticalIconPlugin={verticalIconsPlugin}
                     contextMenuAction={itemContextAction}
+                    addActive={addActive}
+                    removeActive={removeActive}
                   />
                 </div>
               ))
@@ -164,6 +168,8 @@ export function RemixUiVerticalIcons ({
                     }
                     verticalIconPlugin={verticalIconsPlugin}
                     contextMenuAction={itemContextAction}
+                    addActive={addActive}
+                    removeActive={removeActive}
                     key={
                       verticalIconsPlugin.targetProfileForChange[p].displayName
                     }
@@ -197,6 +203,8 @@ export function RemixUiVerticalIcons ({
                     }
                     verticalIconPlugin={verticalIconsPlugin}
                     contextMenuAction={itemContextAction}
+                    addActive={addActive}
+                    removeActive={removeActive}
                     key={
                       verticalIconsPlugin.targetProfileForChange[p].displayName
                     }
@@ -230,6 +238,8 @@ export function RemixUiVerticalIcons ({
                     }
                     verticalIconPlugin={verticalIconsPlugin}
                     contextMenuAction={itemContextAction}
+                    addActive={addActive}
+                    removeActive={removeActive}
                     key={
                       verticalIconsPlugin.targetProfileForChange[p].displayName
                     }
@@ -263,6 +273,8 @@ export function RemixUiVerticalIcons ({
                     }
                     verticalIconPlugin={verticalIconsPlugin}
                     contextMenuAction={itemContextAction}
+                    addActive={addActive}
+                    removeActive={removeActive}
                     key={
                       verticalIconsPlugin.targetProfileForChange[p].displayName
                     }
@@ -303,6 +315,8 @@ export function RemixUiVerticalIcons ({
                   }
                   verticalIconPlugin={verticalIconsPlugin}
                   contextMenuAction={itemContextAction}
+                  addActive={addActive}
+                  removeActive={removeActive}
                   key={
                     verticalIconsPlugin.targetProfileForChange[p].displayName
                   }
@@ -345,6 +359,8 @@ export function RemixUiVerticalIcons ({
                         }
                         verticalIconPlugin={verticalIconsPlugin}
                         contextMenuAction={itemContextAction}
+                        addActive={addActive}
+                        removeActive={removeActive}
                         key={
                           verticalIconsPlugin.targetProfileForChange[p]
                             .displayName
@@ -377,6 +393,8 @@ export function RemixUiVerticalIcons ({
                         }
                         verticalIconPlugin={verticalIconsPlugin}
                         contextMenuAction={itemContextAction}
+                        addActive={addActive}
+                        removeActive={removeActive}
                         key={
                           verticalIconsPlugin.targetProfileForChange[p]
                             .displayName
