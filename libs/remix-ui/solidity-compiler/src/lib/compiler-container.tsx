@@ -391,7 +391,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const handleLoadVersion = (value) => {
     setState(prevState => {
-      return { ...prevState, selectedVersion: value }
+      return { ...prevState, selectedVersion: value, matomoAutocompileOnce: true }
     })
     updateCurrentVersion(value)
     _updateVersionSelector(value)
