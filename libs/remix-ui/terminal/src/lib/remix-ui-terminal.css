@@ -279,6 +279,17 @@ element.style {
   .failed {
     color: var(--danger);
   }
+
+  .terminal_arrow {
+    color: var(--text-info);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    margin-left: 10px;
+  }
+  .terminal_arrow:hover {
+    color: var(--secondary);
+  }
   .notavailable {
   }
   .call {

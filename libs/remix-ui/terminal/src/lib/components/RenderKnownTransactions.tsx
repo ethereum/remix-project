@@ -9,12 +9,18 @@ const remixLib = require('@remix-project/remix-lib')
 const typeConversion = remixLib.execution.typeConversion
 
 const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails }) => {
+  const [hideModal, setHideModal] = useState(true)
+
+  const handleHideModal = () => {
+    setHideModal(false)
+  }
+
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
       return (<ModalDialog
-        hide={false}
-        handleHide={() => {} }
+        hide={hideModal}
+        handleHide={ handleHideModal }
         message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
       />)
     } else {

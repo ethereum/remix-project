@@ -5,17 +5,23 @@ import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
 const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails }) => {
+  const [hideModal, setHideModal] = useState(true)
+
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
       return (<ModalDialog
-        hide={false}
-        handleHide={() => {} }
+        hide={hideModal}
+        handleHide={ handleHideModal }
         message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
       />)
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
     }
+  }
+
+  const handleHideModal = () => {
+    setHideModal(false)
   }
 
   const from = tx.from
@@ -31,7 +37,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
         <div className='buttons'>
           <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
-        <i className = {`arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
+        <i className = {`terminal_arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>
       {showTableHash.includes(tx.hash) ? showTable({
         hash: tx.hash,
