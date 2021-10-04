@@ -50,6 +50,32 @@ export function RemixUiVerticalIcons ({
     }
   }
 
+  function removeActive () {
+    const images = iconPanelRef.current.querySelectorAll('.image')
+    images.forEach(function (im) {
+      im.style.setProperty('filter', 'invert(0.5)')
+    })
+
+    // remove active
+    const currentActive = iconPanelRef.current.querySelector('.active')
+    if (currentActive) {
+      currentActive.classList.remove('active')
+    }
+  }
+
+  function addActive (name: string) {
+    if (name === 'home') return
+    const themeType = verticalIconsPlugin.registry.get('themeModule').api.currentTheme().quality
+    const invert = themeType === 'dark' ? 1 : 0
+    const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
+    const nextActive = iconPanelRef.current.querySelector(`[plugin="${name}"]`)
+    if (nextActive) {
+      const image = nextActive.querySelector('.remixui_image')
+      nextActive.classList.add('active')
+      image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
+    }
+  }
+
   async function itemContextAction (e: any, name: string, documentation: string) {
     verticalIconsPlugin.appManager.deactivatePlugin(name)
     if (e.target.parentElement.classList.contains('active')) {
@@ -73,7 +99,7 @@ export function RemixUiVerticalIcons ({
   return (
     <div id="iconsP" className="h-100">
       <div className="remixui_icons" ref={iconPanelRef}>
-        <div>
+        <div style={{ borderBottom: '1px solid #3f4455' }}>
           <Home verticalIconPlugin={verticalIconsPlugin} />
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length

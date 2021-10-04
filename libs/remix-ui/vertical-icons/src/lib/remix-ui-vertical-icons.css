@@ -89,9 +89,11 @@
   display: none;
 }
 .remixui_hide-scroll {
-  overflow-x: 'hidden',
+  overflow-x: 'hidden';
 }
-
+.remixui_default-icons-container {
+  border-bottom: '1px solid #3f4455';
+}
 .remixui_icon-chevron {
   z-index: 1000;
 }
