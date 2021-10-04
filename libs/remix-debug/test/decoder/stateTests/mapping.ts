@@ -8,12 +8,10 @@ import { StorageViewer } from '../../../src/storage/storageViewer'
 import {  Address, bufferToHex } from 'ethereumjs-util'
 
 module.exports = async function testMappingStorage (st, cb) {
-  console.log('start testMappingStorage')
   var mappingStorage = require('../contracts/mappingStorage')
   var privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
   var output = compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output);
-  console.log('BYTECODE', output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object);
   const web3 = await (vmCall as any).getWeb3();
   (vmCall as any).sendTx(web3, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, hash) {
     if (error) {
@@ -26,7 +24,6 @@ module.exports = async function testMappingStorage (st, cb) {
           st.end(error)
         } else {
           // const storage = await this.vm.stateManager.dumpStorage(data.to)
-          console.log(tx);
           // (vmCall as any).web3().eth.getCode(tx.contractAddress).then((code) => console.log('code:', code))
           // (vmCall as any).web3().debug.traceTransaction(hash).then((code) => console.log('trace:', code))
           testMapping(st, privateKey, tx.contractAddress, output, web3, cb)

@@ -263,7 +263,6 @@ function testDebugging (debugManager) {
       debugManager.decodeLocalsAt(327, location, (error, decodedlocals) => {
         if (error) return t.end(error)
         const res = deepequal(decodedlocals, tested)
-        console.log(res)
         t.ok(res, `test if locals does match. expected: ${JSON.stringify(tested)} - current: ${JSON.stringify(decodedlocals)}`)
       })
     } catch (error) {
