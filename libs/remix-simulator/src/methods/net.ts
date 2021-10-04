@@ -1,8 +1,8 @@
 export function methods (): Record<string, unknown> {
   return {
-    net_version: this.net_version,
-    net_listening: this.net_listening,
-    net_peerCount: this.net_peerCount
+    net_version: net_version,
+    net_listening: net_listening,
+    net_peerCount: net_peerCount
   }
 }
 
