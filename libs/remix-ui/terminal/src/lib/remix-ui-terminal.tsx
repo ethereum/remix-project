@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
-import { useWindowResize } from 'beautiful-react-hooks'
 import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
@@ -28,7 +27,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-  const [, setWindowHeight] = useState(window.innerHeight)
+
   // dragable state
   const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
   const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
@@ -37,7 +36,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
-  const [, setIsListeningOnNetwork] = useState(false)
+
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
   const [autoCompletState, setAutoCompleteState] = useState({
@@ -61,13 +60,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [searchInput, setSearchInput] = useState('')
   const [showTableHash, setShowTableHash] = useState([])
 
-  useWindowResize(() => {
-    setWindowHeight(window.innerHeight)
-  })
-
   // terminal inputRef
   const inputEl = useRef(null)
   const messagesEndRef = useRef(null)
+
+  // terminal dragable
+  const leftRef = useRef(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -266,9 +264,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const mousedown = (event: MouseEvent) => {
     setSeparatorYPosition(event.clientY)
-    const leftRef = document.getElementById('dragId')
-    leftRef.style.backgroundColor = '#007AA6'
-    leftRef.style.border = '2px solid #007AA6'
+    leftRef.current.style.backgroundColor = '#007AA6'
+    leftRef.current.style.border = '2px solid #007AA6'
     setDragging(true)
   }
 
@@ -283,9 +280,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const onMouseUp = () => {
-    const leftRef = document.getElementById('dragId')
-    leftRef.style.backgroundColor = ''
-    leftRef.style.border = ''
+    leftRef.current.style.backgroundColor = ''
+    leftRef.current.style.border = ''
     setDragging(false)
   }
 
@@ -343,7 +339,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           return val
         })
         if (values.length) {
-          return `<span class="${mode}" >${values}</span>`
+          return values
         }
       }
     } else {
@@ -362,7 +358,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const listenOnNetwork = (e: any) => {
     const isListening = e.target.checked
-    setIsListeningOnNetwork(isListening)
+    // setIsListeningOnNetwork(isListening)
     listenOnNetworkAction(event, isListening)
   }
 
@@ -445,15 +441,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
       <div className="bar">
-        <div className="dragbarHorizontal" onMouseDown={mousedown} id='dragId'></div>
+        <div className="dragbarHorizontal" onMouseDown={mousedown} ref={leftRef}></div>
         <div className="menu border-top border-dark bg-light" data-id="terminalToggleMenu">
-          {/* ${self._view.icon} */}
           <i className={`mx-2 toggleTerminal fas ${toggleDownUp}`} data-id="terminalToggleIcon" onClick={ handleMinimizeTerminal }></i>
           <div className="mx-2 console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
             <i className="fas fa-ban" aria-hidden="true" title="Clear console"
             ></i>
           </div>
-          {/* ${self._view.pendingTxCount} */}
           <div className="mx-2" title='Pending Transactions'>0</div>
           <div className="pt-1 h-80 mx-3 align-items-center listenOnNetwork custom-control custom-checkbox">
             <input
@@ -473,7 +467,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
           <div className="search">
             <i className="fas fa-search searchIcon bg-light" aria-hidden="true"></i>
-            {/* ${self._view.inputSearch} */}
             <input
               // spellcheck = "false"
               onChange={(event) => setSearchInput(event.target.value.trim()) }
@@ -544,6 +537,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
         </div>
       </div>
+
     </div>
   )
 }

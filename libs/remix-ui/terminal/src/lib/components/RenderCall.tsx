@@ -9,19 +9,24 @@ const remixLib = require('@remix-project/remix-lib')
 var typeConversion = remixLib.execution.typeConversion
 
 const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDetails }) => {
+  const [hideModal, setHideModal] = useState(true)
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const from = tx.from ? tx.from : ' - '
   const input = tx.input ? helper.shortenHexData(tx.input) : ''
   const txType = 'call'
 
+  const handleHideModal = () => {
+    setHideModal(false)
+  }
+
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
-      return (<ModalDialog
-        hide={false}
-        handleHide={() => {} }
+      return <ModalDialog
+        hide={hideModal}
+        handleHide={ handleHideModal }
         message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
-      />)
+      />
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
     }
@@ -40,7 +45,7 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
         <div className='buttons'>
           <div className="debug btn btn-primary btn-sm" onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
-        <i className="arrow fas fa-angle-down"></i>
+        <i className="terminal_arrow fas fa-angle-down"></i>
       </div>
       {showTableHash.includes(tx.hash) ? showTable({
         hash: tx.hash,
