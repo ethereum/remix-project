@@ -11,6 +11,7 @@ export class Transactions {
   tags
   txRunnerVMInstance
   txRunnerInstance
+  TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
 
   constructor (vmContext) {
     this.vmContext = vmContext
@@ -101,7 +102,7 @@ export class Transactions {
 
       const r: Record <string, unknown> = {
         transactionHash: receipt.hash,
-        transactionIndex: '0x0',
+        transactionIndex: this.TX_INDEX,
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         gasUsed: receipt.gasUsed,
@@ -202,7 +203,7 @@ export class Transactions {
         hash: receipt.transactionHash,
         input: receipt.input,
         nonce: '0x' + tx.nonce.toString('hex'),
-        transactionIndex: '0x0',
+        transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
@@ -251,7 +252,7 @@ export class Transactions {
         hash: receipt.transactionHash,
         input: receipt.input,
         nonce: '0x' + tx.nonce.toString('hex'),
-        // "transactionIndex": 0,
+        transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
@@ -296,7 +297,7 @@ export class Transactions {
         hash: receipt.transactionHash,
         input: receipt.input,
         nonce: '0x' + tx.nonce.toString('hex'),
-        transactionIndex: '0x0',
+        transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
