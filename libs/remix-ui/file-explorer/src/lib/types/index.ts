@@ -1,4 +1,5 @@
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+export type MenuItems = action[] // eslint-disable-line no-use-before-define
 
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
@@ -34,7 +35,6 @@ export interface FileExplorerMenuProps {
 
 export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean, label: string }
 
-export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
     actions: action[],
     createNewFile: (folder?: string) => void,
