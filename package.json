@@ -150,7 +150,6 @@
     "ansi-gray": "^0.1.1",
     "async": "^2.6.2",
     "axios": ">=0.21.1",
-    "beautiful-react-hooks": "^0.35.0",
     "brace": "^0.8.0",
     "change-case": "^4.1.1",
     "chokidar": "^2.1.8",
