@@ -1,5 +1,5 @@
 import React from 'react'
-import { EmptyBlock, KnownTransaction, NewBlock, NewCall, NewTransaction, UnknownTransaction } from '../types/terminalTypes'
+import { EMPTY_BLOCK, KNOWN_TRANSACTION, NEW_BLOCK, NEW_CALL, NEW_TRANSACTION, UNKNOWN_TRANSACTION } from '../types/terminalTypes'
 
 export const registerCommandAction = (name: string, command, activate, dispatch: React.Dispatch<any>) => {
   const commands: any = {}
@@ -53,7 +53,7 @@ export const registerCommandAction = (name: string, command, activate, dispatch:
   if (activate.filterFn) {
     registerFilter(name, activate.filterFn)
   }
-  if (name !== (KnownTransaction || UnknownTransaction || EmptyBlock)) {
+  if (name !== (KNOWN_TRANSACTION || UNKNOWN_TRANSACTION || EMPTY_BLOCK)) {
     dispatch({ type: name, payload: { commands: commands, _commands: _commands, data: data } })
   }
 
@@ -111,18 +111,18 @@ export const listenOnNetworkAction = async (event, isListening) => {
 }
 
 export const initListeningOnNetwork = (props, dispatch: React.Dispatch<any>) => {
-  props.txListener.event.register(NewBlock, (block) => {
+  props.txListener.event.register(NEW_BLOCK, (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
-      dispatch({ type: EmptyBlock, payload: { message: 0 } })
+      dispatch({ type: EMPTY_BLOCK, payload: { message: 0 } })
     }
   })
-  props.txListener.event.register(KnownTransaction, () => {
+  props.txListener.event.register(KNOWN_TRANSACTION, () => {
   })
-  props.txListener.event.register(NewCall, (tx, receipt) => {
+  props.txListener.event.register(NEW_CALL, (tx, receipt) => {
     log(props, tx, receipt, dispatch)
     // log(this, tx, null)
   })
-  props.txListener.event.register(NewTransaction, (tx, receipt) => {
+  props.txListener.event.register(NEW_TRANSACTION, (tx, receipt) => {
     log(props, tx, receipt, dispatch)
   })
 
@@ -135,11 +135,11 @@ export const initListeningOnNetwork = (props, dispatch: React.Dispatch<any>) => 
       }
       await props.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, async (error, logs) => {
         if (!error) {
-          await dispatch({ type: KnownTransaction, payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
+          await dispatch({ type: KNOWN_TRANSACTION, payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
         }
       })
     } else {
-      await dispatch({ type: UnknownTransaction, payload: { message: [{ tx: tx, receipt: receipt }] } })
+      await dispatch({ type: UNKNOWN_TRANSACTION, payload: { message: [{ tx: tx, receipt: receipt }] } })
     }
   }
 

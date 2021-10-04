@@ -8,7 +8,7 @@ import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
 import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
-const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
+import { CodeAnalysis } from '@remix-project/remix-analyzer'
 
 declare global {
   interface Window {
@@ -25,7 +25,7 @@ export interface RemixUiStaticAnalyserProps {
 }
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
-  const [runner] = useState(new StaticAnalysisRunner())
+  const [runner] = useState(new CodeAnalysis())
 
   const preProcessModules = (arr: any) => {
     return arr.map((Item, i) => {
@@ -196,7 +196,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 fileName = Object.keys(lastCompilationResult.contracts)[file]
               }
               warningCount++
-              const msg = message(item.name, item.warning, item.more, fileName, locationString)
+              const msg = message(result.name, item.warning, item.more, fileName, locationString)
               const options = {
                 type: 'warning',
                 useSpan: true,
