@@ -1,63 +1,44 @@
 'use strict'
 import { Block } from '@ethereumjs/block'
+import { Transaction } from '@ethereumjs/tx'
 import VM from '@ethereumjs/vm'
+import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
+import { extendWeb3 } from '../src/init' 
 var utileth = require('ethereumjs-util')
 var Tx = require('@ethereumjs/tx').Transaction
 var BN = require('ethereumjs-util').BN
 var remixLib = require('@remix-project/remix-lib')
+const { Provider, extend } = require('@remix-project/remix-simulator')
+const Web3 = require('web3')
 
-function sendTx (vm, from, to, value, data, cb) {
-  var tx = new Tx({
-    nonce: new BN(from.nonce++),
-    // gasPrice: new BN(1),
-    gasLimit: new BN(3000000, 10),
-    to: to,
-    value: new BN(value, 10),
-    data: Buffer.from(data, 'hex')
-  })
-  tx = tx.sign(from.privateKey)
 
-  var block = Block.fromBlockData({
-    header: {
-      timestamp: new Date().getTime() / 1000 | 0,
-      number: 0
-    }
-  }) // still using default common
-  vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
-    setTimeout(() => {
-      cb(null, utileth.bufferToHex(tx.hash()))
-    }, 500)
-  }).catch((error) => {
-    console.error(error)
-    cb(error)
-  })
+async function getWeb3 () {
+  const remixSimulatorProvider = new Provider({ fork: 'berlin' })
+  await remixSimulatorProvider.init()
+  await remixSimulatorProvider.Accounts.resetAccounts()
+  const web3 = new Web3(remixSimulatorProvider)
+  extendWeb3(web3)
+  return web3
 }
 
-/*
-  Init VM / Send Transaction
-*/
-async function initVM (privateKey) {
-  var address = utileth.Address.fromPrivateKey(privateKey)
-  var vm = new VM({
-    activatePrecompiles: true
-  })
-  await vm.init()
-
+async function sendTx (web3, from, to, value, data, cb) {
   try {
-    let account = await vm.stateManager.getAccount(address)
-    account.balance = new BN('f00000000000000001', 16)
-    await vm.stateManager.putAccount(address, account)
-  } catch (error) {
-    console.log(error)
-  } 
-
-  var web3Provider = new remixLib.vm.Web3VMProvider()
-  web3Provider.setVM(vm)
-  vm.web3 = web3Provider
-  return vm
+    cb = cb || (() => {})
+    const receipt = await web3.eth.sendTransaction({
+      from: utileth.Address.fromPrivateKey(from.privateKey).toString('hex'),
+      to,
+      value,
+      data,
+      gas: 7000000
+    })
+    cb(null, receipt.transactionHash)
+    return receipt.transactionHash
+  } catch (e) {
+    cb(e)
+  }
 }
 
 module.exports = {
-  sendTx: sendTx,
-  initVM: initVM
+  sendTx,
+  getWeb3
 }
