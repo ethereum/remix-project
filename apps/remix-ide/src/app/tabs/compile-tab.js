@@ -124,9 +124,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
       path: [],
       pattern: []
     })
-    try {
-      this.currentFile = await this.call('fileManager', 'file')
-    } catch (error) {}
+    this.currentFile = await this.call('fileManager', 'file')
   }
 
   getCompilerParameters () {
