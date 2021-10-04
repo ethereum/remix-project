@@ -140,7 +140,7 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting')
       .setValue('*[data-id="uiPathInput"]', 'myTests')
       .click('*[data-id="testTabGenerateTestFolder"]')
-      .clickElementAtPosition('.singleTestLabel', 0)
+      .clickElementAtPosition('.singleTest', 0, { forceSelectIfUnselected: true })
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 60000)
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
@@ -255,7 +255,8 @@ module.exports = {
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
       .pause(2000)
-      .checkVariableDebug('soliditylocals', locals)
+      // Should be uncommented while fixing https://github.com/ethereum/remix-project/issues/1644
+      // .checkVariableDebug('soliditylocals', locals)
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')
@@ -561,7 +562,7 @@ const sources = [
     }
   }
 ]
-
+/*
 const locals = {
   sender: {
     value: {
@@ -589,3 +590,4 @@ const locals = {
     type: 'uint256'
   }
 }
+*/

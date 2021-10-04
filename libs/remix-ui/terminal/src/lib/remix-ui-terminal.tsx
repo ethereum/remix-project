@@ -14,7 +14,7 @@ import RenderUnKnownTransactions from './components/RenderUnknownTransactions' /
 import RenderCall from './components/RenderCall' // eslint-disable-line
 import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
-import { EmptyBlock, KnownTransaction, RemixUiTerminalProps, UnknownTransaction } from './types/terminalTypes'
+import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
 
 /* eslint-disable-next-line */
@@ -501,18 +501,18 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           <div id='journal' className='journal' data-id='terminalJournal'>
             {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
-              if (x.name === EmptyBlock) {
+              if (x.name === EMPTY_BLOCK) {
                 return (
                   <div className="px-4 block" data-id='block' key={index}>
                     <span className='txLog'>
                       <span className='tx'><div className='txItem'>[<span className='txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ] </div></span></span>
                   </div>
                 )
-              } else if (x.name === UnknownTransaction) {
+              } else if (x.name === UNKNOWN_TRANSACTION) {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { <RenderUnKnownTransactions tx={trans.tx} receipt={trans.receipt} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} />} </div>)
                 })
-              } else if (x.name === KnownTransaction) {
+              } else if (x.name === KNOWN_TRANSACTION) {
                 return x.message.map((trans) => {
                   return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? <RenderCall tx={trans.tx} resolvedData={trans.resolvedData} logs={trans.logs} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} /> : (<RenderKnownTransactions tx = { trans.tx } receipt = { trans.receipt } resolvedData = { trans.resolvedData } logs = {trans.logs } index = { index } plugin = { props.plugin } showTableHash = { showTableHash } txDetails = { txDetails } />) } </div>)
                 })
