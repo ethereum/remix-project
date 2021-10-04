@@ -107,7 +107,6 @@ export class Web3VmProvider {
   async txWillProcess (data) {
     this.incr++
     this.processingHash = bufferToHex(data.hash())
-
     this.vmTraces[this.processingHash] = {
       gas: '0x0',
       return: '0x0',
@@ -115,23 +114,19 @@ export class Web3VmProvider {
     }
     const tx = {}
     tx['hash'] = this.processingHash
-
     tx['from'] = toChecksumAddress(data.getSenderAddress().toString())
     if (data.to) {
       tx['to'] = toChecksumAddress(data.to.toString())
     }
-
     this.processingAddress = tx['to']
     tx['input'] = bufferToHex(data.data)
     tx['gas'] = data.gasLimit.toString(10)
     if (data.value) {
       tx['value'] = data.value.toString(10)
     }
-
     this.txs[this.processingHash] = tx
     this.txsReceipt[this.processingHash] = tx
     this.storageCache[this.processingHash] = {}
-
     if (data.to) {
       try {
         // dumpStorage throws error as 'Missing Node in DB'
