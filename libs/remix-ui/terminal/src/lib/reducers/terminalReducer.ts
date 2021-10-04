@@ -1,3 +1,4 @@
+import { CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN } from '../types/terminalTypes'
 
 export const initialState = {
   journalBlocks: [
@@ -24,14 +25,14 @@ export const initialState = {
 
 export const registerCommandReducer = (state, action) => {
   switch (action.type) {
-    case 'html' :
+    case HTML :
       return {
         ...state,
         _commands: Object.assign(initialState._commands, action.payload._commands),
         commands: Object.assign(initialState.commands, action.payload.commands),
         data: Object.assign(initialState.data, { ...action.payload.data })
       }
-    case 'log':
+    case LOG:
       return {
         ...state,
         _commands: Object.assign(initialState._commands, action.payload._commands),
@@ -39,40 +40,40 @@ export const registerCommandReducer = (state, action) => {
         data: Object.assign(initialState.data, { ...action.payload.data })
 
       }
-    case 'info':
+    case INFO:
       return {
         ...state,
         _commands: Object.assign(initialState._commands, action.payload._commands),
         commands: Object.assign(initialState.commands, action.payload.commands),
         data: Object.assign(initialState.data, action.payload.data)
       }
-    case 'warn':
+    case WARN:
       return {
         ...state,
         _commands: Object.assign(initialState._commands, action.payload._commands),
         commands: Object.assign(initialState.commands, action.payload.commands),
         data: Object.assign(initialState.data, action.payload.data)
       }
-    case 'error':
+    case ERROR:
       return {
         ...state,
         _commands: Object.assign(initialState._commands, action.payload._commands),
         commands: Object.assign(initialState.commands, action.payload.commands),
         data: Object.assign(initialState.data, action.payload.data)
       }
-    case 'script':
+    case SCRIPT:
       return {
         ...state,
         _commands: Object.assign(initialState._commands, action.payload._commands),
         commands: Object.assign(initialState.commands, action.payload.commands),
         data: Object.assign(initialState.data, action.payload.data)
       }
-    case 'clearconsole':
+    case CLEAR_CONSOLE:
       return {
         ...state,
         ...state.journalBlocks.splice(0)
       }
-    case 'listenOnNetWork':
+    case LISTEN_ON_NETWORK:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
@@ -84,28 +85,28 @@ export const registerCommandReducer = (state, action) => {
 
 export const registerFilterReducer = (state, action) => {
   switch (action.type) {
-    case 'log':
+    case LOG:
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
 
       }
-    case 'info':
+    case INFO:
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
       }
-    case 'warn':
+    case WARN:
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
       }
-    case 'error':
+    case ERROR:
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
       }
-    case 'script':
+    case SCRIPT:
       return {
         ...state,
         data: Object.assign(initialState.data.filterFns, action.payload.data.filterFns)
@@ -117,7 +118,7 @@ export const registerFilterReducer = (state, action) => {
 
 export const addCommandHistoryReducer = (state, action) => {
   switch (action.type) {
-    case 'cmdHistory':
+    case CMD_HISTORY:
       return {
         ...state,
         _commandHistory: initialState._commandHistory.unshift(action.payload.script)
@@ -140,52 +141,52 @@ export const remixWelcomeTextReducer = (state, action) => {
 
 export const registerScriptRunnerReducer = (state, action) => {
   switch (action.type) {
-    case 'html':
+    case HTML:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
       }
-    case 'log':
+    case LOG:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
       }
-    case 'info':
+    case INFO:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
       }
-    case 'warn':
+    case WARN:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-warning' })
       }
-    case 'error':
+    case ERROR:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-danger' })
       }
-    case 'script':
+    case SCRIPT:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
       }
-    case 'knownTransaction':
+    case KNOWN_TRANSACTION:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'knownTransaction' })
       }
-    case 'unknownTransaction':
+    case UNKNOWN_TRANSACTION:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'unknownTransaction' })
       }
-    case 'emptyBlock':
+    case EMPTY_BLOCK:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'emptyBlock' })
       }
-    case 'newTransaction':
+    case NEW_TRANSACTION:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '' })

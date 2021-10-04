@@ -2,7 +2,7 @@
   "name": "@remix-project/remix-astwalker",
   "version": "0.0.37",
   "description": "Tool to walk through Solidity AST",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "tsc",
     "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text"
@@ -52,6 +52,6 @@
   "devDependencies": {
     "tap-spec": "^5.0.0"
   },
-  "typings": "index.d.ts",
+  "typings": "src/index.d.ts",
   "gitHead": "4705cbc4d1761f75267992552da9db6cff2f3ed5"
 }
