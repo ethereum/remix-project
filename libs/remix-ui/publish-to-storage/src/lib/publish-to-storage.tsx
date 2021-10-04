@@ -34,7 +34,8 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             let parseError = err
             try {
               parseError = JSON.stringify(err)
-            } catch (e) {}
+            } catch (e) {
+            }
             modal('Swarm Publish Failed', publishMessageFailed(storage, parseError))
           }
         } else {
