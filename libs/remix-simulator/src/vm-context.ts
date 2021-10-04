@@ -56,7 +56,6 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   async setStateRoot (stateRoot) {
-    console.log('setstateroot', stateRoot.toString('hex'))
     if (this._checkpointCount !== 0) {
       throw new Error('Cannot set state root with uncommitted checkpoints')
     }
