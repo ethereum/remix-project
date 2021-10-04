@@ -24,13 +24,6 @@ async function getWeb3 () {
 async function sendTx (web3, from, to, value, data, cb) {
   try {
     cb = cb || (() => {})
-    console.log('TX', {
-      from: utileth.Address.fromPrivateKey(from.privateKey).toString('hex'),
-      to,
-      value,
-      data,
-      gas: 7000000
-    })
     const receipt = await web3.eth.sendTransaction({
       from: utileth.Address.fromPrivateKey(from.privateKey).toString('hex'),
       to,
@@ -38,7 +31,6 @@ async function sendTx (web3, from, to, value, data, cb) {
       data,
       gas: 7000000
     })
-    console.log('end tx')
     cb(null, receipt.transactionHash)
     return receipt.transactionHash
   } catch (e) {
