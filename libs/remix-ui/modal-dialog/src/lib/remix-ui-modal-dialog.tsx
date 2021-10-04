@@ -4,6 +4,7 @@ import { ModalDialogProps } from './types' // eslint-disable-line
 import './remix-ui-modal-dialog.css'
 
 declare global {
+  // eslint-disable-next-line no-unused-vars
   interface Window { testmode: boolean; }
 }
 

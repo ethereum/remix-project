@@ -636,7 +636,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return { ...prevState, focusModal: { ...state.focusModal, hide: true } }
     })
   }
-
+  // eslint-disable-next-line no-undef
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setState(prevState => {
       return {
