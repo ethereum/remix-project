@@ -17,7 +17,6 @@ import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTI
 import { wrapScript } from './utils/wrapScript'
 
 /* eslint-disable-next-line */
-
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
   clipboardData: DataTransfer;
 }
@@ -27,7 +26,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-
   // dragable state
   const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
   const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
