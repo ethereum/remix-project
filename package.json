@@ -57,7 +57,7 @@
     "downloadsolc_assets": "wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js -O ./apps/remix-ide/src/assets/js/soljson.js && wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js -O ./apps/solidity-compiler/src/assets/js/soljson.js",
     "make-mock-compiler": "node apps/remix-ide/ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
-    "build:production": "NODE_ENV=production npx nx build remix-ide --with-deps --skip-nx-cache && npx nx build remix-ide",
+    "build:production": "NODE_ENV=production npx nx build remix-ide --with-deps --skip-nx-cache && NODE_ENV=production npx nx build remix-ide",
     "serve:production": "npx http-server ./dist/apps/remix-ide",
     "nightwatch_parallel": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome,firefox",
     "nightwatch_local_firefox": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=firefox",
