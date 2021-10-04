@@ -1,6 +1,11 @@
-import swarm from 'swarmgw'
+import { Bee } from '@ethersphere/bee-js'
 
-const swarmgw = swarm()
+const beeNodes = [
+  new Bee('http://localhost:1633/'),
+  new Bee('https://bee-0.gateway.ethswarm.org/')
+]
+
+const postageBatchId = '0000000000000000000000000000000000000000000000000000000000000000'
 
 export const publishToSwarm = async (contract, api) => {
   // gather list of files to publish
@@ -19,6 +24,8 @@ export const publishToSwarm = async (contract, api) => {
     throw new Error('No metadata')
   }
 
+  console.debug({ metadata })
+
   await Promise.all(Object.keys(metadata.sources).map(fileName => {
     // find hash
     let hash = null
@@ -31,7 +38,7 @@ export const publishToSwarm = async (contract, api) => {
       // TODO: refactor this with publishOnIpfs
       if (metadata.sources[fileName].urls) {
         metadata.sources[fileName].urls.forEach(url => {
-          if (url.includes('bzz')) hash = url.match('(bzzr|bzz-raw)://(.+)')[1]
+          if (url.includes('bzz')) hash = url.match('bzz://(.+)')[1]
         })
       }
     } catch (e) {
@@ -55,7 +62,7 @@ export const publishToSwarm = async (contract, api) => {
       const result = await swarmVerifiedPublish(item.content, item.hash)
 
       try {
-        item.hash = result.url.match('bzz-raw://(.+)')[1]
+        item.hash = result.url.match('bzz://(.+)')[1]
       } catch (e) {
         item.hash = '<Metadata inconsistency> - ' + item.fileName
       }
@@ -73,7 +80,7 @@ export const publishToSwarm = async (contract, api) => {
     const result = await swarmVerifiedPublish(metadataContent, '')
 
     try {
-      contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
+      contract.metadataHash = result.url.match('bzz://(.+)')[1]
     } catch (e) {
       contract.metadataHash = '<Metadata inconsistency> - metadata.json'
     }
@@ -93,15 +100,24 @@ export const publishToSwarm = async (contract, api) => {
 }
 
 const swarmVerifiedPublish = async (content, expectedHash): Promise<Record<string, any>> => {
-  return new Promise((resolve, reject) => {
-    swarmgw.put(content, function (err, ret) {
-      if (err) {
-        reject(err)
-      } else if (expectedHash && ret !== expectedHash) {
-        resolve({ message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + ret, hash: ret })
-      } else {
-        resolve({ message: 'ok', url: 'bzz-raw://' + ret, hash: ret })
-      }
-    })
-  })
+  try {
+    const results = (await beeNodes[0].uploadData(content, postageBatchId)).reference
+
+    console.debug({ results, expectedHash })
+
+    if (expectedHash && results !== expectedHash) {
+      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz://' + results, hash: results }
+    } else {
+      return { message: 'ok', url: 'bzz://' + results, hash: results }
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
 }
+
+// const severalGatewaysPush = (content) => {
+//   const invert = p => new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
+//   const promises = beeNodes.map((node) => invert(node.uploadData(content, postageBatchId)))
+
+//   return invert(Promise.all(promises))
+// }
