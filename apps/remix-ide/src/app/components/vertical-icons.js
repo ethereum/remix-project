@@ -129,49 +129,10 @@ export class VerticalIcons extends Plugin {
   }
 
   /**
-   *  Remove active for the current activated icons
-   */
-  removeActive () {
-    // reset filters
-    // const images = this.view.querySelectorAll('.image')
-    // const panel = document.getElementById('iconsP')
-    // // console.log('icon div container ', panel)
-    // const images = panel.querySelectorAll('.image')
-    // images.forEach(function (im) {
-    //   im.style.setProperty('filter', 'invert(0.5)')
-    // })
-
-    // // remove active
-    // const currentActive = panel.querySelector('.active')
-    // if (currentActive) {
-    //   currentActive.classList.remove('active')
-    // }
-  }
-
-  /**
-   *  Add active for the new activated icon
-   * @param {string} name Name of profile of the module to activate
-   */
-  addActive (name) {
-    // const panel = document.getElementById('iconsP')
-    // if (name === 'home') return
-    // const themeType = this.registry.get('themeModule').api.currentTheme().quality
-    // const invert = themeType === 'dark' ? 1 : 0
-    // const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
-    // const nextActive = panel.querySelector(`[plugin="${name}"]`)
-    // if (nextActive) {
-    //   const image = nextActive.querySelector('.remixui_image')
-    //   nextActive.classList.add('active')
-    //   image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
-    // }
-  }
-
-  /**
    * Set an icon as active
    * @param {string} name Name of profile of the module to activate
    */
   select (name) {
-    // this.updateActivations(name)
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('showContent', name)
     this.events.emit('showContent', name)
@@ -182,16 +143,10 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   toggle (name) {
-    // this.updateActivations(name)
     // // TODO: Only keep `this.emit` (issue#2210)
     this.emit('toggleContent', name)
     this.events.emit('toggleContent', name)
   }
-
-  // updateActivations (name) {
-  //   this.removeActive()
-  //   this.addActive(name)
-  // }
 
   render () {
     return this.htmlElement
