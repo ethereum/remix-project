@@ -586,4 +586,3 @@ const locals = {
     type: 'uint256'
   }
 }
-
