@@ -2,8 +2,8 @@
   "name": "@remix-project/remix-solidity",
   "version": "0.4.7",
   "description": "Tool to load and run Solidity compiler",
-  "main": "index.js",
-  "types": "./index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "contributors": [
     {
       "name": "Yann Levreau",
@@ -60,6 +60,6 @@
     "url": "https://github.com/ethereum/remix-project/issues"
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-solidity#readme",
-  "typings": "index.d.ts",
+  "typings": "src/index.d.ts",
   "gitHead": "4705cbc4d1761f75267992552da9db6cff2f3ed5"
 }
