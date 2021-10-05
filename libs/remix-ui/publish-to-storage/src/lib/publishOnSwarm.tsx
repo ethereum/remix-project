@@ -1,11 +1,13 @@
 import { Bee } from '@ethersphere/bee-js'
+// eslint-disable-next-line no-unused-vars
+import type { UploadResult } from '@ethersphere/bee-js'
 
 const beeNodes = [
   new Bee('http://localhost:1633/'),
   new Bee('https://bee-0.gateway.ethswarm.org/')
 ]
 
-const postageBatchId = '0000000000000000000000000000000000000000000000000000000000000000'
+const postageBatchId = 'b75edc084f30f76368a6a1a596c39d3d913048d20b34d00a69ddd14cb15f507f'
 
 export const publishToSwarm = async (contract, api) => {
   // gather list of files to publish
@@ -24,8 +26,6 @@ export const publishToSwarm = async (contract, api) => {
     throw new Error('No metadata')
   }
 
-  console.debug({ metadata })
-
   await Promise.all(Object.keys(metadata.sources).map(fileName => {
     // find hash
     let hash = null
@@ -38,7 +38,7 @@ export const publishToSwarm = async (contract, api) => {
       // TODO: refactor this with publishOnIpfs
       if (metadata.sources[fileName].urls) {
         metadata.sources[fileName].urls.forEach(url => {
-          if (url.includes('bzz')) hash = url.match('bzz://(.+)')[1]
+          if (url.includes('bzz')) hash = url.match('bzz-raw://(.+)')[1]
         })
       }
     } catch (e) {
@@ -62,7 +62,7 @@ export const publishToSwarm = async (contract, api) => {
       const result = await swarmVerifiedPublish(item.content, item.hash)
 
       try {
-        item.hash = result.url.match('bzz://(.+)')[1]
+        item.hash = result.url.match('bzz-raw://(.+)')[1]
       } catch (e) {
         item.hash = '<Metadata inconsistency> - ' + item.fileName
       }
@@ -71,6 +71,7 @@ export const publishToSwarm = async (contract, api) => {
       // TODO this is a fix cause Solidity metadata does not contain the right swarm hash (poc 0.3)
       metadata.sources[item.filename].urls[0] = result.url
     } catch (error) {
+      console.error(error)
       throw new Error(error)
     }
   }))
@@ -80,7 +81,7 @@ export const publishToSwarm = async (contract, api) => {
     const result = await swarmVerifiedPublish(metadataContent, '')
 
     try {
-      contract.metadataHash = result.url.match('bzz://(.+)')[1]
+      contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
     } catch (e) {
       contract.metadataHash = '<Metadata inconsistency> - metadata.json'
     }
@@ -93,6 +94,7 @@ export const publishToSwarm = async (contract, api) => {
       output: result
     })
   } catch (error) {
+    console.error(error)
     throw new Error(error)
   }
 
@@ -101,23 +103,36 @@ export const publishToSwarm = async (contract, api) => {
 
 const swarmVerifiedPublish = async (content, expectedHash): Promise<Record<string, any>> => {
   try {
-    const results = (await beeNodes[0].uploadData(content, postageBatchId)).reference
+    const results = await uploadToBeeNodes(content)
+    const hash = hashFromResults(results)
 
-    console.debug({ results, expectedHash })
-
-    if (expectedHash && results !== expectedHash) {
-      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz://' + results, hash: results }
+    if (expectedHash && hash !== expectedHash) {
+      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + hash, hash }
     } else {
-      return { message: 'ok', url: 'bzz://' + results, hash: results }
+      return { message: 'ok', url: 'bzz-raw://' + hash, hash }
     }
   } catch (error) {
     throw new Error(error)
   }
 }
 
-// const severalGatewaysPush = (content) => {
-//   const invert = p => new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
-//   const promises = beeNodes.map((node) => invert(node.uploadData(content, postageBatchId)))
+const hashFromResults = (results: UploadResult[]) => {
+  for (const result of results) {
+    if (result != null) {
+      return result.reference
+    }
+  }
+  throw new Error('no result')
+}
 
-//   return invert(Promise.all(promises))
-// }
+const uploadToBee = async (bee, content) => {
+  try {
+    return await bee.uploadData(postageBatchId, content)
+  } catch {
+    return null
+  }
+}
+
+const uploadToBeeNodes = (content) => {
+  return Promise.all(beeNodes.map((node) => uploadToBee(node, content)))
+}
