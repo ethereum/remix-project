@@ -113,7 +113,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     return super.compileFile(event)
   }
 
-  onActivation () {
+  async onActivation () {
     super.onActivation()
     this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidity',
@@ -124,6 +124,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
       path: [],
       pattern: []
     })
+    this.currentFile = await this.call('fileManager', 'file')
   }
 
   getCompilerParameters () {
@@ -138,7 +139,9 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   getAppParameter (name) {
-    const param = this.config.get(name)
+    // first look in the URL params then in the local storage
+    const params = this.queryParams.get()
+    const param = params[name] ? params[name] : this.config.get(name)
     if (param === 'true') return true
     if (param === 'false') return false
     return param
