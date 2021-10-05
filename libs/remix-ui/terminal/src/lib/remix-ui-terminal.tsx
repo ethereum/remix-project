@@ -114,12 +114,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
 
     if (typeof file === 'undefined') {
-      var content = _deps.editor.currentContent()
+      const content = _deps.editor.currentContent()
       _execute(content, cb)
       return
     }
 
-    var provider = _deps.fileManager.fileProviderOf(file)
+    const provider = _deps.fileManager.fileProviderOf(file)
+    console.log({ provider })
 
     if (!provider) {
       // toolTip(`provider for path ${file} not found`)
@@ -128,6 +129,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
 
     provider.get(file, (error, content) => {
+      console.log({ content })
       if (error) {
         // toolTip(error)
         // TODO: pop up
@@ -137,7 +139,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
       _execute(content, cb)
     })
-    return ''
   }
 
   function loadgist (id, cb) {
@@ -326,8 +327,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (mode) {
       const filterUndefined = (el) => el !== undefined && el !== null
       return function logger (args) {
-        var types = args.filter(filterUndefined).map(type => type)
-        var values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
+        const types = args.filter(filterUndefined).map(type => type)
+        const values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
           if (typeof args[idx] === 'string') {
             const el = document.createElement('div')
             el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')
@@ -412,7 +413,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const handleAutoComplete = () => (
-    <div className='popup alert alert-secondary' style={{ display: autoCompletState.showSuggestions && autoCompletState.userInput !== '' ? 'block' : 'none' }}>
+    <div className='popup alert alert-secondary' style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '') && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}>
       <div>
         {autoCompletState.data._options.map((item, index) => {
           return (
