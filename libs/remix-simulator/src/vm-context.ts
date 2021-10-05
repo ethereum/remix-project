@@ -24,31 +24,27 @@ class StateManagerCommonStorageDump extends StateManager {
     return super.putContractStorage(address, key, value)
   }
 
-  async dumpStorage (address) {
-    let trie
-    try {
-      trie = await this._getStorageTrie(address)
-    } catch (e) {
-      console.log(e)
-      throw e
-    }
-    return new Promise<StorageDump>((resolve, reject) => {
-      try {
-        const storage = {}
-        const stream = trie.createReadStream()
-        stream.on('data', (val) => {
-          const value = rlp.decode(val.value)
-          storage['0x' + val.key.toString('hex')] = {
-            key: this.keyHashes[val.key.toString('hex')],
-            value: '0x' + value.toString('hex')
-          }
+  async dumpStorage (address): Promise<StorageDump> {
+    return new Promise((resolve, reject) => {
+      this._getStorageTrie(address)
+        .then((trie) => {
+          const storage = {}
+          const stream = trie.createReadStream()
+
+          stream.on('data', (val) => {
+            const value = rlp.decode(val.value)
+            storage['0x' + val.key.toString('hex')] = {
+              key: this.keyHashes[val.key.toString('hex')],
+              value: '0x' + value.toString('hex')
+            }
+          })
+          stream.on('end', () => {
+            resolve(storage)
+          })
         })
-        stream.on('end', function () {
-          resolve(storage)
+        .catch((e) => {
+          reject(e)
         })
-      } catch (e) {
-        reject(e)
-      }
     })
   }
 
@@ -60,18 +56,17 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   async setStateRoot (stateRoot) {
-    await this._cache.flush()
-
-    if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
-      this._trie.root = stateRoot
-      this._cache.clear()
-      this._storageTries = {}
-      return
+    if (this._checkpointCount !== 0) {
+      throw new Error('Cannot set state root with uncommitted checkpoints')
     }
 
-    const hasRoot = await this._trie.checkRoot(stateRoot)
-    if (!hasRoot) {
-      throw new Error('State trie does not contain state root')
+    await this._cache.flush()
+
+    if (!stateRoot.equals(this._trie.EMPTY_TRIE_ROOT)) {
+      const hasRoot = await this._trie.checkRoot(stateRoot)
+      if (!hasRoot) {
+        throw new Error('State trie does not contain state root')
+      }
     }
 
     this._trie.root = stateRoot
@@ -90,7 +85,8 @@ export class VMContext {
   customNetWorks
   blocks
   latestBlockNumber
-  txs
+  blockByTxHash
+  txByHash
   currentVm
   web3vm
   logsManager
@@ -103,7 +99,8 @@ export class VMContext {
     this.currentVm = this.createVm(this.currentFork)
     this.blocks = {}
     this.latestBlockNumber = 0
-    this.txs = {}
+    this.blockByTxHash = {}
+    this.txByHash = {}
     this.exeResults = {}
     this.logsManager = new execution.LogsManager()
   }
@@ -156,8 +153,9 @@ export class VMContext {
     this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
-  trackTx (tx, block) {
-    this.txs[tx] = block
+  trackTx (txHash, block, tx) {
+    this.blockByTxHash[txHash] = block
+    this.txByHash[txHash] = tx
   }
 
   trackExecResult (tx, execReult) {

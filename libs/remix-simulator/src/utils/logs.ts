@@ -9,11 +9,11 @@ function hasFlag (flag) {
 }
 
 function addColor (str) {
-  if (this.hasFlag('no-color')) {
+  if (hasFlag('no-color')) {
     return str
   }
 
-  if (this.hasFlag('color')) {
+  if (hasFlag('color')) {
     return gray(str)
   }
 
@@ -35,41 +35,36 @@ function stderr (arg) {
 }
 
 function getTimestamp () {
-  const coloredTimestamp = this.addColor(timestamp('HH:mm:ss'))
+  const coloredTimestamp = addColor(timestamp('HH:mm:ss'))
   return '[' + coloredTimestamp + ']'
 }
 
 export function log (...args: any[]) {
-  const time = this.getTimestamp()
-  this.stdout(time + ' ')
+  const time = getTimestamp()
+  stdout(time + ' ')
   console.log(args)
-  return this
 }
 
 export function info (...args: any[]) {
-  const time = this.getTimestamp()
-  this.stdout(time + ' ')
+  const time = getTimestamp()
+  stdout(time + ' ')
   console.info(args)
-  return this
 }
 
 export function dir (...args: any[]) {
-  const time = this.getTimestamp()
-  this.stdout(time + ' ')
+  const time = getTimestamp()
+  stdout(time + ' ')
   console.dir(args)
-  return this
 }
 
 export function warn (...args: any[]) {
-  const time = this.getTimestamp()
-  this.stderr(time + ' ')
+  const time = getTimestamp()
+  stderr(time + ' ')
   console.warn(args)
-  return this
 }
 
 export function error (...args: any[]) {
-  const time = this.getTimestamp()
-  this.stderr(time + ' ')
+  const time = getTimestamp()
+  stderr(time + ' ')
   console.error(args)
-  return this
 }

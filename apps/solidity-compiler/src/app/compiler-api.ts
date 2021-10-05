@@ -115,11 +115,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {string} fileName to compile
    */
   compile (fileName) {
+    this.currentFile = fileName
     return this.compileTabLogic.compileFile(fileName)
   }
 
   compileFile (event) {
     if (event.path.length > 0) {
+      this.currentFile = event.path[0]
       this.compileTabLogic.compileFile(event.path[0])
     }
   }
@@ -262,7 +264,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
           )
         })
       } else {
-        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0) + data.error ? 1 : 0
+        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
         this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
