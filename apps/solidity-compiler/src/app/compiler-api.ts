@@ -7,6 +7,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   contractMap: {
     file: string
   } | Record<string, any>
+
   compileErrors: any
   compileTabLogic: CompileTabLogic
   contractsDetails: Record<string, any>
@@ -45,7 +46,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   onActivation () {
-    this.call('manager', 'activatePlugin', 'solidity-logic')
     this.listenToEvents()
   }
 
@@ -55,6 +55,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onLoadingCompiler) {
       this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
     }
+
     if (this.data.eventHandlers.onCompilerLoaded) {
       this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
     }
@@ -62,6 +63,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onCompilationFinished) {
       this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     }
+
     this.off('filePanel', 'setWorkspace')
 
     this.off('remixd', 'rootFolderChanged')
@@ -93,14 +95,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   compileWithHardhat (configFile) {
     return this.call('hardhat', 'compile', configFile)
-  }
-
-  logToTerminal (content) {
-    return this.call('terminal', 'log', content)
-  }
-  
-  setSelectedVersion (version) {
-    this.selectedVersion = version
   }
 
   logToTerminal (content) {
@@ -197,8 +191,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
   listenToEvents () {
     this.on('editor', 'contentChanged', () => {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
-    }
-    this.on('editor', 'contentChanged', this.data.eventHandlers.onContentChanged)
+      if (this.onContentChanged) this.onContentChanged()
+    })
 
     this.data.eventHandlers.onLoadingCompiler = () => {
       this.data.loading = true
@@ -229,10 +223,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.resetResults()
       if (this.onSetWorkspace) this.onSetWorkspace(true)
     })
-
-    this.on('editor', 'sessionSwitched', () => {
-      if (this.onSessionSwitched) this.onSessionSwitched()
-    })    
 
     this.on('editor', 'sessionSwitched', () => {
       if (this.onSessionSwitched) this.onSessionSwitched()

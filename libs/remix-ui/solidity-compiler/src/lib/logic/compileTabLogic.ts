@@ -5,10 +5,10 @@ const EventEmitter = require('events')
 
 declare global {
   interface Window {
-    _paq: any;
+    _paq: any
   }
 }
-const _paq = (window._paq = window._paq || []); //eslint-disable-line
+const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export class CompileTabLogic {
   public compiler
@@ -34,11 +34,7 @@ export class CompileTabLogic {
     this.compiler.set('runs', this.runs)
 
     this.evmVersion = this.api.getCompilerParameters().evmVersion
-    if (
-      this.evmVersion === 'undefined' ||
-      this.evmVersion === 'null' ||
-      !this.evmVersion
-    ) {
+    if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
       this.evmVersion = null
     }
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
@@ -82,20 +78,14 @@ export class CompileTabLogic {
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
     return new Promise((resolve, reject) => {
-      this.api
-        .readFile(target)
-        .then(content => {
-          const sources = { [target]: { content } }
-          this.event.emit('startingCompilation')
-          // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-          setTimeout(() => {
-            this.compiler.compile(sources, target)
-            resolve(true)
-          }, 100)
-        })
-        .catch(error => {
-          reject(error)
-        })
+      this.api.readFile(target).then((content) => {
+        const sources = { [target]: { content } }
+        this.event.emit('startingCompilation')
+        // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
+        setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
+      }).catch((error) => {
+        reject(error)
+      })
     })
   }
 
@@ -111,10 +101,7 @@ export class CompileTabLogic {
         const { currentVersion, optimize, runs } = this.compiler.state
         if (currentVersion) {
           const fileContent = `module.exports = {
-            solidity: '${currentVersion.substring(
-              0,
-              currentVersion.indexOf('+commit')
-            )}',
+            solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
             settings: {
               optimizer: {
                 enabled: ${optimize},
@@ -126,13 +113,11 @@ export class CompileTabLogic {
           const configFilePath = 'remix-compiler.config.js'
           this.api.writeFile(configFilePath, fileContent)
           _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
-          this.call('hardhat', 'compile', configFilePath)
-            .then(result => {
-              this.call('terminal', 'log', { type: 'info', value: result })
-            })
-            .catch(error => {
-              this.api.logToTerminal({ type: 'error', value: error })
-            })
+          this.api.compileWithHardhat(configFilePath).then((result) => {
+            this.api.logToTerminal({ type: 'info', value: result })
+          }).catch((error) => {
+            this.api.logToTerminal({ type: 'error', value: error })
+          })
         }
       }
       // TODO readd saving current file

@@ -84,13 +84,6 @@ export function RemixUiVerticalIcons ({
     verticalIconsPlugin.renderComponent()
   }
 
-  // useEffect(() => {
-  //   const filePanelIcon = iconPanelRef.current.querySelector('[plugin="filePanel"]')
-  //   if (filePanelIcon) {
-  //     addActive('filePanel')
-  //   }
-  // }, [verticalIconsPlugin.targetProfileForChange])
-
   useEffect(() => {
     const themeModule = verticalIconsPlugin.registry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {
