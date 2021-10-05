@@ -29,7 +29,7 @@ export function nameOpCodes (raw, hardfork) {
 
     const data = (pushData as any).toString('hex') !== '' ? ' ' + (pushData as any).toString('hex') : ''
 
-    code.push(this.pad(pc, this.roundLog(raw.length, 10)) + ' ' + curOpCode + data)
+    code.push(pad(pc, roundLog(raw.length, 10)) + ' ' + curOpCode + data)
     pushData = ''
   }
   return [code, codeMap]
