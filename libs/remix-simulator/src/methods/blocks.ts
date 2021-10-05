@@ -1,13 +1,10 @@
 export class Blocks {
   vmContext
   coinbase: string
-  blockNumber: number
-
   constructor (vmContext, _options) {
     this.vmContext = vmContext
     const options = _options || {}
     this.coinbase = options.coinbase || '0x0000000000000000000000000000000000000000'
-    this.blockNumber = 0
   }
 
   methods (): Record<string, unknown> {
@@ -107,7 +104,7 @@ export class Blocks {
   }
 
   eth_blockNumber (payload, cb) {
-    cb(null, this.blockNumber)
+    cb(null, parseInt(this.vmContext.latestBlockNumber))
   }
 
   eth_getBlockTransactionCountByHash (payload, cb) {

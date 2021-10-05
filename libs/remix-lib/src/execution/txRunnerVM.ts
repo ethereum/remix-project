@@ -13,7 +13,6 @@ export class TxRunnerVM {
   vmaccounts
   queusTxs
   blocks
-  txs
   logsManager
   commonContext
   getVMObject: () => any
