@@ -2,8 +2,8 @@
   "name": "@remix-project/remix-url-resolver",
   "version": "0.0.28",
   "description": "Solidity import url resolver engine",
-  "main": "index.js",
-  "types": "./index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000"
@@ -41,6 +41,6 @@
     "tslint": "^5.11.0",
     "typescript": "^3.1.6"
   },
-  "typings": "index.d.ts",
+  "typings": "src/index.d.ts",
   "gitHead": "4705cbc4d1761f75267992552da9db6cff2f3ed5"
 }
