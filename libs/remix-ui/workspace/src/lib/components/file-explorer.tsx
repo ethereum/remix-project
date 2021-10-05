@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, SyntheticEvent } from 'react' /
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, MenuItems, FileExplorerState, FileType } from '../types'
+import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
 
@@ -12,7 +12,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems } = props
+  const { name, contextMenuItems, removedContextMenuItems, files } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -35,48 +35,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
-  const [files, setFiles] = useState<{ [x: string]: Record<string, FileType> }>({})
 
   useEffect(() => {
-    let addMenuItemsFunc = () => {
-      if (contextMenuItems) {
-        addMenuItems(contextMenuItems)
-      }
-    }
-    addMenuItemsFunc()
-
-    return () => {
-      addMenuItemsFunc = () => {}
-      console.log('file-explorer -> add -> contextMenuItems')
+    if (contextMenuItems) {
+      addMenuItems(contextMenuItems)
     }
   }, [contextMenuItems])
 
   useEffect(() => {
-    let removeMenuItemsFunc = () => {
-      if (removedContextMenuItems) {
-        removeMenuItems(removedContextMenuItems)
-      }
-    }
-    removeMenuItemsFunc()
-    return () => {
-      removeMenuItemsFunc = () => {}
-      console.log('file-explorer -> remove -> contextMenuItems')
+    if (removedContextMenuItems) {
+      removeMenuItems(removedContextMenuItems)
     }
   }, [contextMenuItems])
 
   useEffect(() => {
-    let focusEditFunc = () => {
-      if (props.focusEdit) {
-        setState(prevState => {
-          return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
-        })
-      }
-    }
-    focusEditFunc()
-
-    return () => {
-      focusEditFunc = () => {}
-      console.log('file-explorer -> focusEdit')
+    if (props.focusEdit) {
+      setState(prevState => {
+        return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
+      })
     }
   }, [props.focusEdit])
 
@@ -102,56 +78,34 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return () => {
       document.removeEventListener('keydown', keyPressHandler)
       document.removeEventListener('keyup', keyUpHandler)
-      console.log('file-explorer -> init')
     }
   }, [])
 
   useEffect(() => {
-    let pasteFunc = () => {
-      if (canPaste) {
-        addMenuItems([{
-          id: 'paste',
-          name: 'Paste',
-          type: ['folder', 'file'],
-          path: [],
-          extension: [],
-          pattern: [],
-          multiselect: false,
-          label: ''
-        }])
-      } else {
-        removeMenuItems([{
-          id: 'paste',
-          name: 'Paste',
-          type: ['folder', 'file'],
-          path: [],
-          extension: [],
-          pattern: [],
-          multiselect: false,
-          label: ''
-        }])
-      }
-    }
-    pasteFunc()
-
-    return () => {
-      pasteFunc = () => {}
+    if (canPaste) {
+      addMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: ''
+      }])
+    } else {
+      removeMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: ''
+      }])
     }
   }, [canPaste])
-
-  useEffect(() => {
-    let setFilesFunc = () => {
-      if (props.files) {
-        setFiles(props.files)
-      }
-    }
-    setFilesFunc()
-
-    return () => {
-      setFilesFunc = () => {}
-      setFiles({})
-    }
-  }, [props.files])
 
   const addMenuItems = (items: MenuItems) => {
     setState(prevState => {

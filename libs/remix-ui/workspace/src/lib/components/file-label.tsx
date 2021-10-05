@@ -19,32 +19,16 @@ export const FileLabel = (props: FileLabelProps) => {
   const labelRef = useRef(null)
 
   useEffect(() => {
-    let editInput = () => {
-      if (focusEdit.element && file.path) {
-        setIsEditable(focusEdit.element === file.path)
-      }
-    }
-    editInput()
-
-    return () => {
-      editInput = () => {}
-      console.log('file-label -> path')
+    if (focusEdit.element && file.path) {
+      setIsEditable(focusEdit.element === file.path)
     }
   }, [file.path, focusEdit])
 
   useEffect(() => {
-    let focusInput = () => {
-      if (labelRef.current) {
-        setTimeout(() => {
-          labelRef.current.focus()
-        }, 0)
-      }
-    }
-    focusInput()
-
-    return () => {
-      focusInput = () => {}
-      console.log('file-label -> isEditable')
+    if (labelRef.current) {
+      setTimeout(() => {
+        labelRef.current.focus()
+      }, 0)
     }
   }, [isEditable])
 

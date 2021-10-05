@@ -14,52 +14,28 @@ export function Workspace () {
   const workspaceCreateInput = useRef()
 
   useEffect(() => {
-    let initFunc = () => {
-      global.dispatchInitWorkspace()
-      resetFocus()
-    }
-    initFunc()
-
-    return () => {
-      initFunc = () => {}
-      console.log('remix-ui-workspace -> init')
-    }
+    global.dispatchInitWorkspace()
+    resetFocus()
   }, [])
 
   useEffect(() => {
-    let loadWorkspace = () => {
-      if (global.fs.mode === 'browser') {
-        if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
-        else setCurrentWorkspace(NO_WORKSPACE)
-        global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
-      } else if (global.fs.mode === 'localhost') {
-        // global.dispatchFetchWorkspaceDirectory('/')
-        setCurrentWorkspace(LOCALHOST)
-      }
-    }
-    loadWorkspace()
-
-    return () => {
-      loadWorkspace = () => {}
-      console.log('remix-ui-workspace -> currentWorkspace')
+    if (global.fs.mode === 'browser') {
+      if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
+      else setCurrentWorkspace(NO_WORKSPACE)
+      global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
+    } else if (global.fs.mode === 'localhost') {
+      // global.dispatchFetchWorkspaceDirectory('/')
+      setCurrentWorkspace(LOCALHOST)
     }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
 
   useEffect(() => {
-    let switchWorkspacesFunc = () => {
-      if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.includes(global.fs.browser.currentWorkspace)) {
-        if (global.fs.browser.workspaces.length > 0) {
-          switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1])
-        } else {
-          switchWorkspace(NO_WORKSPACE)
-        }
+    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.includes(global.fs.browser.currentWorkspace)) {
+      if (global.fs.browser.workspaces.length > 0) {
+        switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1])
+      } else {
+        switchWorkspace(NO_WORKSPACE)
       }
-    }
-    switchWorkspacesFunc()
-
-    return () => {
-      switchWorkspacesFunc = () => {}
-      console.log('remix-ui-workspace -> workspaces')
     }
   }, [global.fs.browser.workspaces])
 

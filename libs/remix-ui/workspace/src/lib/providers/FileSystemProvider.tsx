@@ -116,79 +116,47 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   useEffect(() => {
-    let modalsFunc = () => {
-      if (modals.length > 0) {
-        setFocusModal(() => {
-          const focusModal = {
-            hide: false,
-            title: modals[0].title,
-            message: modals[0].message,
-            okLabel: modals[0].okLabel,
-            okFn: modals[0].okFn,
-            cancelLabel: modals[0].cancelLabel,
-            cancelFn: modals[0].cancelFn
-          }
-          return focusModal
-        })
-        const modalList = modals.slice()
+    if (modals.length > 0) {
+      setFocusModal(() => {
+        const focusModal = {
+          hide: false,
+          title: modals[0].title,
+          message: modals[0].message,
+          okLabel: modals[0].okLabel,
+          okFn: modals[0].okFn,
+          cancelLabel: modals[0].cancelLabel,
+          cancelFn: modals[0].cancelFn
+        }
+        return focusModal
+      })
+      const modalList = modals.slice()
 
-        modalList.shift()
-        setModals(modalList)
-      }
-    }
-    modalsFunc()
-
-    return () => {
-      modalsFunc = () => {}
-      console.log('fileSystemProvider -> modals')
+      modalList.shift()
+      setModals(modalList)
     }
   }, [modals])
 
   useEffect(() => {
-    let toastersFunc = () => {
-      if (toasters.length > 0) {
-        setFocusToaster(() => {
-          return toasters[0]
-        })
-        const toasterList = toasters.slice()
+    if (toasters.length > 0) {
+      setFocusToaster(() => {
+        return toasters[0]
+      })
+      const toasterList = toasters.slice()
 
-        toasterList.shift()
-        setToasters(toasterList)
-      }
-    }
-    toastersFunc()
-
-    return () => {
-      toastersFunc = () => {}
-      console.log('fileSystemProvider -> toasters')
+      toasterList.shift()
+      setToasters(toasterList)
     }
   }, [toasters])
 
   useEffect(() => {
-    let notificationFunc = () => {
-      if (fs.notification.title) {
-        modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
-      }
-    }
-    notificationFunc()
-
-    return () => {
-      notificationFunc = () => {}
-      console.log('fileSystemProvider -> notification')
+    if (fs.notification.title) {
+      modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
     }
   }, [fs.notification])
 
   useEffect(() => {
-    let popUpFunc = () => {
-      if (fs.popup) {
-        toast(fs.popup)
-      }
-    }
-    popUpFunc()
-
-    return () => {
-      popUpFunc = () => {}
-      console.log('fileSystemProvider -> popup')
+    if (fs.popup) {
+      toast(fs.popup)
     }
   }, [fs.popup])
 

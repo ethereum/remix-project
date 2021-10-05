@@ -1,8 +1,8 @@
 // Merge custom command types with nightwatch types
 
-import { NightwatchBrowser, NightwatchBrowser, NightwatchBrowser } from "nightwatch";
+import { NightwatchBrowser } from 'nightwatch'
 
-declare module "nightwatch" {
+declare module 'nightwatch' {
     export interface NightwatchCustomCommands {
         clickLaunchIcon(icon: string): NightwatchBrowser,
         switchBrowserTab(index: number): NightwatchBrowser,
@@ -46,7 +46,7 @@ declare module "nightwatch" {
         setupMetamask(passphrase: string, password: string): NightwatchBrowser,
         signMessage(msg: string, callback: (hash: { value: string }, signature: { value: string }) => void): NightwatchBrowser,
         setSolidityCompilerVersion(version: string): NightwatchBrowser,
-        clickElementAtPosition(cssSelector: string, index: number): NightwatchBrowser,
+        clickElementAtPosition(cssSelector: string, index: number, opt?: { forceSelectIfUnselected: boolean }): NightwatchBrowser,
         notContainsText(cssSelector: string, text: string): NightwatchBrowser,
         sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser,
         journalLastChild(val: string): NightwatchBrowser,
