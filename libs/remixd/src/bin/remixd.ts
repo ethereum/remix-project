@@ -12,7 +12,7 @@ import * as program from 'commander'
 
 async function warnLatestVersion () {
   const latest = await latestVersion('@remix-project/remixd')
-  const pjson = require('../package.json')
+  const pjson = require('../../package.json')
   if (semver.eq(latest, pjson.version)) {
     console.log('\x1b[32m%s\x1b[0m', `[INFO] you are using the latest version ${latest}`)
   } else if (semver.gt(latest, pjson.version)) {
@@ -54,7 +54,7 @@ function errorHandler (error: any, service: string) {
 }
 
 (async () => {
-  const { version } = require('../package.json')
+  const { version } = require('../../package.json')
   program.version(version, '-v, --version')
 
   program
