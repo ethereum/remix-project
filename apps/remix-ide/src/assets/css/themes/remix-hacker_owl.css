@@ -8722,7 +8722,7 @@ a.text-dark:hover {
 
 /* Plugins manager */
 .plugin-manager {
-  background: var(--theme-background-panels);
+  background: var(--light);
 }
 .plugins-header {
   background-color: var(--theme-background-panels) !important;
@@ -8908,4 +8908,8 @@ remix-tab .fak {
 
 .ace_rightAlignedText {
   color: var(--theme-ace-symbols)!important;
+}
+
+div[data-id="remixIdeSidePanel"] {
+  margin-right: -1px
 }
