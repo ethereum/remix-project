@@ -2,57 +2,59 @@ import { compilerInput } from '../../helpers/compilerHelper'
 import { TraceManager } from '../../../src/trace/traceManager'
 import { compile } from 'solc'
 import * as stateDecoder from '../../../src/solidity-decoder/stateDecoder'
-import { sendTx, initVM } from '../vmCall'
+import * as vmCall from '../../vmCall'
 import { StorageResolver } from '../../../src/storage/storageResolver'
 import { StorageViewer } from '../../../src/storage/storageViewer'
+import {  Address, bufferToHex } from 'ethereumjs-util'
 
 module.exports = async function testMappingStorage (st, cb) {
   var mappingStorage = require('../contracts/mappingStorage')
-  var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
-  var vm = await initVM(st, privateKey)
+  var privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
   var output = compile(compilerInput(mappingStorage.contract))
-  output = JSON.parse(output)
-  sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, data) {
+  output = JSON.parse(output);
+  const web3 = await (vmCall as any).getWeb3();
+  (vmCall as any).sendTx(web3, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, hash) {
     if (error) {
       console.log(error)
       st.end(error)
     } else {
-      const txHash = data.hash
-      vm.web3.eth.getTransaction(txHash, (error, tx) => {
+      web3.eth.getTransactionReceipt(hash, (error, tx) => {
         if (error) {
           console.log(error)
           st.end(error)
         } else {
-          testMapping(st, vm, privateKey, tx.contractAddress, output, cb)
+          // const storage = await this.vm.stateManager.dumpStorage(data.to)
+          // (vmCall as any).web3().eth.getCode(tx.contractAddress).then((code) => console.log('code:', code))
+          // (vmCall as any).web3().debug.traceTransaction(hash).then((code) => console.log('trace:', code))
+          testMapping(st, privateKey, tx.contractAddress, output, web3, cb)
+          // st.end()
         }
       })
     }
   })
 }
 
-function testMapping (st, vm, privateKey, contractAddress, output, cb) {
-  sendTx(vm, {nonce: 1, privateKey: privateKey}, contractAddress, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
-        function (error, data) {
+function testMapping (st, privateKey, contractAddress, output, web3, cb) {
+  (vmCall as any).sendTx(web3, {nonce: 1, privateKey: privateKey}, contractAddress, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
+        function (error, hash) {
           if (error) {
             console.log(error)
             st.end(error)
-          } else {
-            const txHash = data.hash
-            vm.web3.eth.getTransaction(txHash, (error, tx) => {
+          } else {            
+            web3.eth.getTransaction(hash, (error, tx) => {
               if (error) {
                 console.log(error)
                 st.end(error)
               } else {
-                var traceManager = new TraceManager({web3: vm.web3})
+                var traceManager = new TraceManager({web3})
                 traceManager.resolveTrace(tx).then(() => {
                   var storageViewer = new StorageViewer({
                     stepIndex: 268,
                     tx: tx,
                     address: contractAddress
-                  }, new StorageResolver({web3: vm.web3}), traceManager)
+                  }, new StorageResolver({web3}), traceManager)
                   var stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
                   stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
-                    console.log('ok', JSON.stringify(result))
                     st.equal(result['_num'].value, '1')
                     st.equal(result['_num'].type, 'uint256')
                     st.equal(result['_iBreakSolidityState'].type, 'mapping(string => uint256)')

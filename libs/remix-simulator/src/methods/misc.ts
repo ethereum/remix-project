@@ -3,16 +3,16 @@ const version = require('../../package.json').version
 
 export function methods () {
   return {
-    web3_clientVersion: this.web3_clientVersion.bind(this),
-    eth_protocolVersion: this.eth_protocolVersion.bind(this),
-    eth_syncing: this.eth_syncing.bind(this),
-    eth_mining: this.eth_mining.bind(this),
-    eth_hashrate: this.eth_hashrate.bind(this),
-    web3_sha3: this.web3_sha3.bind(this),
-    eth_getCompilers: this.eth_getCompilers.bind(this),
-    eth_compileSolidity: this.eth_compileSolidity.bind(this),
-    eth_compileLLL: this.eth_compileLLL.bind(this),
-    eth_compileSerpent: this.eth_compileSerpent.bind(this)
+    web3_clientVersion: web3_clientVersion,
+    eth_protocolVersion: eth_protocolVersion,
+    eth_syncing: eth_syncing,
+    eth_mining: eth_mining,
+    eth_hashrate: eth_hashrate,
+    web3_sha3: web3_sha3,
+    eth_getCompilers: eth_getCompilers,
+    eth_compileSolidity: eth_compileSolidity,
+    eth_compileLLL: eth_compileLLL,
+    eth_compileSerpent: eth_compileSerpent
   }
 }
 
