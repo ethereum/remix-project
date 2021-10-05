@@ -428,7 +428,7 @@ class DGitProvider extends Plugin {
         }
         const dir = path.dirname(file.path)
         try {
-          this.createDirectories(`${workspace.absolutePath}/${dir}`)
+          await this.createDirectories(`${workspace.absolutePath}/${dir}`)
         } catch (e) { throw new Error(e) }
         try {
           await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
@@ -572,14 +572,3 @@ const normalize = (filesList) => {
 }
 
 module.exports = DGitProvider
-
-/*
-if (navigator.storage && navigator.storage.estimate) {
-  const quota = await navigator.storage.estimate();
-  // quota.usage -> Number of bytes used.
-  // quota.quota -> Maximum number of bytes available.
-  const percentageUsed = (quota.usage / quota.quota) * 100;
-  console.log(`You've used ${percentageUsed}% of the available storage.`);
-  const remaining = quota.quota - quota.usage;
-  console.log(`You can write up to ${(remaining/ 1048576).toFixed(2)} more MB.`);
-} */
