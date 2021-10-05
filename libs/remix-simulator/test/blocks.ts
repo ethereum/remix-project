@@ -115,7 +115,7 @@ describe('blocks', () => {
       assert.deepEqual(numberTransactions, correctBlock.uncles.length)
     })
   })
-
+/*
   describe('eth_getStorageAt', () => {
     it('should get storage at position at given address', async () => {
       const abi: any = [
@@ -222,7 +222,7 @@ describe('blocks', () => {
       assert.deepEqual(storage, '0xc8')
     })
   })
-
+*/
   describe('eth_call', () => {
     it('should get a value', async () => {
       const abi: any = [
