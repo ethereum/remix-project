@@ -428,7 +428,7 @@ class DGitProvider extends Plugin {
         }
         const dir = path.dirname(file.path)
         try {
-          this.createDirectories(`${workspace.absolutePath}/${dir}`)
+          await this.createDirectories(`${workspace.absolutePath}/${dir}`)
         } catch (e) { throw new Error(e) }
         try {
           await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
