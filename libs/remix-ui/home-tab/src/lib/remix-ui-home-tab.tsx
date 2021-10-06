@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react' // eslint-disable-lin
 
 import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
@@ -27,13 +28,17 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     themeQuality: { filter: string, name: string },
     showMediaPanel: 'none' | 'twitter' | 'medium',
     showModalDialog: boolean,
-    modalInfo: { title: string, loadItem: string, examples: Array<string> }
+    modalInfo: { title: string, loadItem: string, examples: Array<string> },
+    importSource: string,
+    toasterMsg: string
   }>({
     showBasicMigration: false,
     themeQuality: registry.get('themeModule').api.currentTheme().quality === 'dark' ? themes.dark : themes.light,
     showMediaPanel: 'none',
     showModalDialog: false,
-    modalInfo: { title: '', loadItem: '', examples: []}
+    modalInfo: { title: '', loadItem: '', examples: []},
+    importSource: '',
+    toasterMsg: ''
   })
 
   const playRemi = async () => {
@@ -41,6 +46,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }
 
   const remiAudioEl = useRef(null)
+  const inputValue = useRef(null)
 
   useEffect(() => {
     registry.get('themeModule').api.events.on('themeChanged', (theme) => {
@@ -51,12 +57,18 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     })
     window.addEventListener('click', (event) => {
       const { id } = (event.target as HTMLButtonElement).dataset
-      if ( id !== 'remixIDEHomeTwitterbtn' && id!== 'remixIDEHomeMediumbtn') {
+      if ( id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn') {
         // todo check event.target
         setState(prevState => { return { ...prevState, showMediaPanel: 'none' } })
       }
     })
   }, [])
+
+  const toast = (message: string) => {
+    setState(prevState => {
+      return { ...prevState, toasterMsg: message }
+    })
+  }
 
   const createNewFile = async () => {
     await plugin.call('filePanel', 'createNewFile')
@@ -110,14 +122,15 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
+    console.log('showFullMessage')
     setState(prevState => {
-      return { ...prevState, modalInfo: { title: title, loadItem: loadItem , examples: examples } }
+      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem , examples: examples } }
     })
   }
 
   const hideFullMessage = () => { //eslint-disable-line
     setState(prevState => {
-      return { ...prevState, showModalDialog: false }
+      return { ...prevState, showModalDialog: false, importSource: '' }
     })
   }
 
@@ -125,45 +138,71 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     const contentImport = plugin.contentImport
     const fileProviders = registry.get('fileproviders').api
     contentImport.import(
-      null,//target,
+      state.importSource,
       (loadingMsg) => { setState(prevState => { return { ...prevState, tooltip: loadingMsg } }) },
       (error, content, cleanUrl, type, url) => {
         if (error) {
           //modalDialogCustom.alert(state.modalInfo.title, error.message || error)
+          toast(error.message || error)
         } else {
           try {
             fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
             plugin.call('menuicons', 'select', 'filePanel')
           } catch (e) {
             //modalDialogCustom.alert(state.modalInfo.title, e.message)
+            toast(e.message)
+
           }
         }
       }
     )
+    setState(prevState => {
+      return { ...prevState, showModalDialog: false }
+    })
   }
 
   const maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
+  const examples = state.modalInfo.examples.map((urlEl, key) => (<div key={key} className="p-1 user-select-auto"><a>{urlEl}</a></div>))
   return (
     <>
       <ModalDialog
-        title={ 'Import from ' +  state.modalInfo.title }
-        cancelLabel='Close'
-        cancelFn={ () => {} }
+        title={ 'Import from ' + state.modalInfo.title }
+        okLabel='Import'
         hide={ !state.showModalDialog }
         handleHide={ () => hideFullMessage() }
-        okFn={ () => processLoading() }
+        okFn={ () => {
+          processLoading()
+          setState(prevState => {
+            return { ...prevState, importSource: '' }
+          })}
+        }
       >
-        <div className="p-2">
-        { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
-        { state.modalInfo.examples.length !== 0 && 
+        <div className="p-2 user-select-auto">
+          { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
+          { state.modalInfo.examples.length !== 0 &&
           <>
-            <div>e.g </div>
+            <div>e.g</div>
             <div>
-            { state.modalInfo.examples.map((url) => { return `<div className="p-1"><a>${url}</a></div>` }) }
+              { examples }
             </div>
           </> }
+          <input
+            ref={inputValue}
+            type='text'
+            name='prompt_text'
+            id='prompt_text'
+            className="w-100 form-control"
+            data-id="modalDialogCustomPromptText"
+            value={state.importSource}
+            onInput={(e) => {
+              setState(prevState => {
+                return { ...prevState, importSource: inputValue.current.value }
+              })
+            }}
+          />
         </div>
       </ModalDialog>
+      <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column justify-content-between clearfix py-3 mb-4">
           <div className="mx-4 w-100 d-flex">
