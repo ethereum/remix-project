@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react' // eslint-disable-line no-use-before-define
 /* eslint-disable-line */
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import useLocalStorage from '../custom-hooks/useLocalStorage'
