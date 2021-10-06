@@ -157,6 +157,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds) // eslint-disable-line
+        console.log({ result })
         return done(null, result)
       } catch (error) {
         return done(error.message)
