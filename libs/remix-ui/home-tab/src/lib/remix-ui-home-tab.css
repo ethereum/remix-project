@@ -2,14 +2,12 @@
     cursor: pointer;
     font-weight: normal;
     max-width: 300px;
-    user-select: none;
   }
   .remixui_text:hover {
     cursor: pointer;
     text-decoration: underline;
   }
   .remixui_homeContainer {
-    user-select: none;
     overflow-y: hidden;
     overflow-y: auto;
     flex-grow: 3;
