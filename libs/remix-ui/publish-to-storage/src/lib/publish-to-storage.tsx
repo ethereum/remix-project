@@ -79,7 +79,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     resetStorage()
   }
 
-  const modal = async (title: string, message: string | JSX.Element) => {
+  const modal = async (title: string, message: string | JSX.Element) => { // eslint-disable-line no-undef
     await setState(prevState => {
       return {
         ...prevState,
