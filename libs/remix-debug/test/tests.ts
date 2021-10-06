@@ -1,5 +1,5 @@
 'use strict'
-
+require('./vmCall')
 require('./traceManager')
 require('./codeManager')
 require('./disassembler')

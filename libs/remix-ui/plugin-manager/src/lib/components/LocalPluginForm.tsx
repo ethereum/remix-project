@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react' // eslint-disable-line no-use-before-define
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'

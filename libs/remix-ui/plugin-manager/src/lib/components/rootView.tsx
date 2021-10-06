@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment, ReactNode, useEffect, useState } from 'react'
+import React, { Fragment, ReactNode, useEffect, useState } from 'react' // eslint-disable-line no-use-before-define
 import { PluginManagerComponent, PluginManagerSettings } from '../../types'
 import PermisssionsSettings from './permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
