@@ -2,9 +2,9 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class ClickElement extends EventEmitter {
-  command (this: NightwatchBrowser, cssSelector: string, index = 0): NightwatchBrowser {
+  command (this: NightwatchBrowser, cssSelector: string, index = 0, opt = { forceSelectIfUnselected: false }): NightwatchBrowser {
     this.api.perform((done) => {
-      _clickElement(this.api, cssSelector, index, () => {
+      _clickElement(this.api, cssSelector, index, opt.forceSelectIfUnselected, () => {
         done()
         this.emit('complete')
       })
@@ -13,13 +13,14 @@ class ClickElement extends EventEmitter {
   }
 }
 
-function _clickElement (browser: NightwatchBrowser, cssSelector: string, index: number, cb: VoidFunction) {
+function _clickElement (browser: NightwatchBrowser, cssSelector: string, index: number, forceSelectIfUnselected: boolean, cb: VoidFunction) {
   browser.waitForElementPresent(cssSelector)
-    .execute(function (cssSelector: string, index: number) {
+    .execute(function (cssSelector: string, index: number, forceSelectIfUnselected: boolean) {
       const elem = document.querySelectorAll(cssSelector)[index] as HTMLElement
-
-      elem.click()
-    }, [cssSelector, index], function () {
+      if (forceSelectIfUnselected) {
+        if (!(elem as any).checked) elem.click()
+      } else elem.click()
+    }, [cssSelector, index, forceSelectIfUnselected], function () {
       cb()
     })
 }

@@ -4,12 +4,12 @@ import Web3 from 'web3'
 export function loadWeb3 (url = 'http://localhost:8545') {
   const web3 = new Web3()
   web3.setProvider(new Web3.providers.HttpProvider(url))
-  this.extend(web3)
+  extend(web3)
   return web3
 }
 
 export function extendWeb3 (web3) {
-  this.extend(web3)
+  extend(web3)
 }
 
 export function extend (web3) {
