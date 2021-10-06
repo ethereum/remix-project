@@ -53,7 +53,12 @@ class PluginManagerComponent extends ViewPlugin {
    */
   async activateP (name) {
     await this.appManager.deactivatePlugin(name)
-    await this.appManager.activatePlugin(name)
+    try {
+      await this.appManager.activatePlugin(name)
+    } catch (e) {
+      console.log(e.message)
+      this.appManager.toggleActive(name)
+    }
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
@@ -64,9 +69,10 @@ class PluginManagerComponent extends ViewPlugin {
    * @returns {void}
    */
   async activateAndRegisterLocalPlugin (localPlugin) {
+    console.log('activeate ', localPlugin)
     if (localPlugin) {
       this.engine.register(localPlugin)
-      await this.appManager.deactivatePlugin(localPlugin.profile.name)
+      console.log(this.appManager.getAll())
       await this.appManager.activatePlugin(localPlugin.profile.name)
       this.getAndFilterPlugins()
       localStorage.setItem('plugins/local', JSON.stringify(localPlugin.profile))
@@ -85,8 +91,12 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   async removeP (name) {
+    // await this.deactivateP(name)
+    console.log('removing is active?', this.isActive())
     await this.engine.remove(name)
+    // console.log(this.appManager.getIds())
     await this.appManager.removeProfile(name)
+    // console.log(this.appManager.getIds())
   }
 
   onActivation () {

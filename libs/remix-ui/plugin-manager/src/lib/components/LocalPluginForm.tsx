@@ -89,9 +89,14 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
       localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
       setLocalPlugin(localPlugin)
       if (pluginManager.appManager.getIds().includes(name)) {
-        const profiles: any[] = await pluginManager.appManager.getAll()
-        setReplacedProfile(profiles.find((p) => p.name === localPlugin.profile.name))
-        setModalReplacePluginVisibility(true)
+        if (pluginManager.appManager.isRequired(name)) {
+          const action: localPluginReducerActionType = { type: 'show', payload: 'Cannot replace this plugin' }
+          dispatchToastMsg(action)
+        } else {
+          const profiles: any[] = await pluginManager.appManager.getAll()
+          setReplacedProfile(profiles.find((p) => p.name === localPlugin.profile.name))
+          setModalReplacePluginVisibility(true)
+        }
       } else {
         await pluginManager.activateAndRegisterLocalPlugin(localPlugin)
       }
@@ -108,6 +113,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
 
   const replacePlugin = async function () {
     try {
+      // await pluginManager.replaceP(localPlugin)
       await pluginManager.removeP(localPlugin.profile.name)
       await pluginManager.activateAndRegisterLocalPlugin(localPlugin)
     } catch (error) {
