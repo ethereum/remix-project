@@ -184,7 +184,6 @@ const stateCheck = {
   }
 }
 */
-
 const ballotABI = `[
 {
   "inputs": [
