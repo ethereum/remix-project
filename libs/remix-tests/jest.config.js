@@ -6,7 +6,7 @@ module.exports = {
     transform: {
       '^.+\\.[tj]sx?$': 'ts-jest',
     },
-    transformIgnorePatterns: ["/node_modules/", "\\.pnp\\.[^\\\/]+$"],
+    transformIgnorePatterns: ["/node_modules/", "/dist/", "\\.pnp\\.[^\\\/]+$"],
     rootDir: "./",
     testTimeout: 40000,
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html', 'json'],

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
-import React, { useState } from 'react'
+import React, { useState } from 'react' // eslint-disable-line no-use-before-define
 import { RemixUiPluginManagerProps } from '../types'
 import ActivePluginCardContainer from './components/ActivePluginCardContainer'
 import InactivePluginCardContainer from './components/InactivePluginCardContainer'

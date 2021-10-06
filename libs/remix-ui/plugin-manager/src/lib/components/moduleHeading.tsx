@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars,no-use-before-define */
 import React from 'react'
 
 interface ModuleHeadingProps {
