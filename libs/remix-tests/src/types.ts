@@ -38,6 +38,7 @@ export interface TestResultInterface {
   location?: string
   hhLogs?: []
   web3?: any
+  debugTxHash?: string
 }
 export interface TestCbInterface {
   (error: Error | null | undefined, result: TestResultInterface) : void;
