@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { compile } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
@@ -7,6 +8,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   contractMap: {
     file: string
   } | Record<string, any>
+
   compileErrors: any
   compileTabLogic: CompileTabLogic
   contractsDetails: Record<string, any>
@@ -29,6 +31,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       errorContainer: null,
       contractEl: null
     }
+
     this.contractsDetails = {}
     this.data = {
       eventHandlers: {},
@@ -53,6 +56,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onLoadingCompiler) {
       this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
     }
+
     if (this.data.eventHandlers.onCompilerLoaded) {
       this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
     }
@@ -60,6 +64,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onCompilationFinished) {
       this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     }
+
     this.off('filePanel', 'setWorkspace')
 
     this.off('remixd', 'rootFolderChanged')
@@ -96,7 +101,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   logToTerminal (content) {
     return this.call('terminal', 'log', content)
   }
-  
+
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
@@ -239,11 +244,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onCurrentFileChanged) this.onCurrentFileChanged(name)
     }
     this.on('fileManager', 'currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
+
     this.data.eventHandlers.onNoFileSelected = () => {
       this.currentFile = ''
       if (this.onNoFileSelected) this.onNoFileSelected()
     }
     this.on('fileManager', 'noFileSelected', this.data.eventHandlers.onNoFileSelected)
+
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       this.compileErrors = data
       if (success) {

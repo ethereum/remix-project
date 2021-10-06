@@ -1,5 +1,7 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable dot-notation */
+/* eslint-disable no-undef */
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import { CompilerApiMixin } from './compiler-api'
