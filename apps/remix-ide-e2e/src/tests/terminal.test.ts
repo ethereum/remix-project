@@ -124,8 +124,10 @@ module.exports = {
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .click('*[data-id="universalDappUiTitleExpander"]')
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner', 60000) // check that the script is logging the event
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .end()
   }
 }
