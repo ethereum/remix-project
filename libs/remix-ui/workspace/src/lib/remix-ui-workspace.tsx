@@ -292,7 +292,7 @@ export const Workspace = (props: WorkspaceProps) => {
       return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
     })
   }
-
+  // eslint-disable-next-line no-undef
   const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
     await setState(prevState => {
       return {

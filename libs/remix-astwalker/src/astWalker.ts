@@ -39,6 +39,7 @@ export function isYulAstNode (node: Record<string, unknown>): boolean {
  * in each case, if the event emits false it does not descend into children.
  * If no event for the current type, children are visited.
  */
+// eslint-disable-next-line no-redeclare
 export class AstWalker extends EventEmitter {
   manageCallback (
     node: AstNode,
