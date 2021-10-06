@@ -244,6 +244,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     if (func.inputs && func.inputs.length > 0) { return resultsCallback(new Error(`Method '${func.name}' can not have parameters inside a test contract`), { passingNum, failureNum, timePassed }) }
     const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
     const startTime = Date.now()
+    let debugTxHash:string
     if (func.constant) {
       sendParams = {}
       const tagTimestamp = 'remix_tests_tag' + Date.now()
@@ -253,13 +254,15 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         let tagTxHash
         if (web3.eth && web3.eth.getHashFromTagBySimulator) tagTxHash = await web3.eth.getHashFromTagBySimulator(tagTimestamp)
         if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(tagTxHash)
+        debugTxHash = tagTxHash
         if (result) {
           const resp: TestResultInterface = {
             type: 'testPass',
             value: changeCase.sentenceCase(func.name),
             filename: testObject.filename,
             time: time,
-            context: testName
+            context: testName,
+            debugTxHash
           }
           if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
@@ -272,7 +275,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             filename: testObject.filename,
             time: time,
             errMsg: 'function returned false',
-            context: testName
+            context: testName,
+            debugTxHash
           }
           if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
@@ -293,6 +297,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       sendParams.gas = 10000000 * 8
       method.send(sendParams).on('receipt', async (receipt) => {
         try {
+          debugTxHash = receipt.transactionHash
           if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(receipt.transactionHash)
           const time: number = (Date.now() - startTime) / 1000.0
           const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
@@ -322,7 +327,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     returned: testEvent[3],
                     expected: testEvent[4],
                     location,
-                    web3
+                    web3,
+                    debugTxHash
                   }
                   if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
                   testCallback(undefined, resp)
@@ -341,7 +347,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
               value: changeCase.sentenceCase(func.name),
               filename: testObject.filename,
               time: time,
-              context: testName
+              context: testName,
+              debugTxHash
             }
             if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
             testCallback(undefined, resp)
@@ -380,6 +387,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           const txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
           if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(txHash)
           if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
+          resp.debugTxHash = txHash
         }
         testCallback(undefined, resp)
         failureNum += 1
