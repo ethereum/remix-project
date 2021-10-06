@@ -127,7 +127,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     try {
       this.currentFile = await this.call('fileManager', 'file')
     } catch (error) {
-      if (error.message !== 'Error: No such file or directory No file selected') throw new Error(error.message)
+      if (error.message !== 'Error: No such file or directory No file selected') throw error
     }
   }
 
