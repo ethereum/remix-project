@@ -164,11 +164,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
     }
     try {
-      let result: any // eslint-disable-line
       if (script.trim().startsWith('git')) {
-        // result = await this.call('git', 'execute', script) code might be used in the future
+        // await this.call('git', 'execute', script) code might be used in the future
       } else {
-        result = await call('scriptRunner', 'execute', script)
+        await call('scriptRunner', 'execute', script)
       }
       done()
     } catch (error) {
