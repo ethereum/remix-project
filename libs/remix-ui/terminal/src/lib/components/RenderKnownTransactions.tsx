@@ -41,7 +41,7 @@ const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugi
         <div className='buttons'>
           <div className='debug btn btn-primary btn-sm' data-shared='txLoggerDebugButton' data-id={`txLoggerDebugButton${tx.hash}`} onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
-        <i className = {`arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
+        <i className = {`terminal_arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>
       { console.log({ showTableHash: showTableHash.includes(tx.hash) })}
       {showTableHash.includes(tx.hash) ? showTable({
