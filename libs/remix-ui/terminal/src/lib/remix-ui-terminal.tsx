@@ -156,7 +156,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       const context = { remix: { exeCurrent: (script: any) => { return execute(undefined, script) }, loadgist: (id: any) => { return loadgist(id, () => {}) }, execute: (fileName, callback) => { return execute(fileName, callback) } } }
       try {
         const cmds = vm.createContext(context)
-        const result = vm.runInContext(script, cmds)
+        const result = vm.runInContext(script, cmds) // eslint-disable-line
         return done(null, result)
       } catch (error) {
         return done(error.message)
