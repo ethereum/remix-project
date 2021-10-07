@@ -6,6 +6,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
+import { TwitterTimelineEmbed, TwitterShareButton, TwitterFollowButton, TwitterHashtagButton, TwitterMentionButton, TwitterTweetEmbed, TwitterMomentShare, TwitterDMButton, TwitterVideoEmbed, TwitterOnAirButton } from 'react-twitter-embed';
 import { stat } from 'fs'
 
 declare global {
@@ -56,8 +57,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       })
     })
     window.addEventListener('click', (event) => {
-      const { id } = (event.target as HTMLButtonElement).dataset
-      if ( id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn') {
+      const target = event.target as Element
+      const id = target.id
+      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn') {
         // todo check event.target
         setState(prevState => { return { ...prevState, showMediaPanel: 'none' } })
       }
@@ -142,14 +144,12 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       (loadingMsg) => { setState(prevState => { return { ...prevState, tooltip: loadingMsg } }) },
       (error, content, cleanUrl, type, url) => {
         if (error) {
-          //modalDialogCustom.alert(state.modalInfo.title, error.message || error)
           toast(error.message || error)
         } else {
           try {
             fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
             plugin.call('menuicons', 'select', 'filePanel')
           } catch (e) {
-            //modalDialogCustom.alert(state.modalInfo.title, e.message)
             toast(e.message)
 
           }
@@ -161,7 +161,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     })
   }
 
-  const maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
+  const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
   const examples = state.modalInfo.examples.map((urlEl, key) => (<div key={key} className="p-1 user-select-auto"><a>{urlEl}</a></div>))
   return (
     <>
@@ -322,18 +322,19 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </div>
               </div>
             </div> }
-            { (state.showMediaPanel === 'twitter') && <div id="remixIDE_TwitterBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia">
-              <div className="px-2 remixui_media" style={ { maxHeight: maxHeight } } >
-                <a className="twitter-timeline"
-                  data-width="350"
-                  data-theme={ state.themeQuality.name }
-                  data-chrome="nofooter noheader transparent"
-                  data-tweet-limit="8"
-                  href="https://twitter.com/EthereumRemix"
-                >
-                </a>
+            { (state.showMediaPanel === 'twitter') && <div id="remixIDE_TwitterBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } } >
+              <div className="px-2 remixui_media" style={ { minHeight: '4000px' } } >
+                <TwitterTimelineEmbed
+                  sourceType="profile"
+                  screenName="EthereumRemix"
+                  options={{tweetLimit: 18, width: 350}}
+                  transparent={true}
+                  noHeader={true}
+                  noFooter={true}
+                  theme={ state.themeQuality.name }
+                />
               </div>
-            </div> }
+            </div>}
           </div>
         </div>
       </div>
