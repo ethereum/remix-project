@@ -26,7 +26,6 @@
   "dependencies": {
     "@erebos/bzz-node": "^0.13.0",
     "axios": ">=0.21.1",
-    "solc": "^0.7.4",
     "url": "^0.11.0",
     "valid-url": "^1.0.9"
   },
