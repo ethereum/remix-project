@@ -163,6 +163,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
   const examples = state.modalInfo.examples.map((urlEl, key) => (<div key={key} className="p-1 user-select-auto"><a>{urlEl}</a></div>))
+  const elHeight = '4000px'
   return (
     <>
       <ModalDialog
@@ -286,7 +287,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <button
               className="btn-info p-2 m-1 border rounded-circle remixui_mediaBadge fab fa-twitter"
               id="remixIDEHomeTwitterbtn"
-              title="Medium blogs"
+              title="Twitter"
               onClick={(e) => {
                 setState(prevState => {
                   return { ...prevState, showMediaPanel: state.showMediaPanel === 'twitter' ? 'none' : 'twitter' }
@@ -297,7 +298,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <button
               className="btn-danger p-2 m-1 border rounded-circle remixui_mediaBadge fab fa-medium"
               id="remixIDEHomeMediumbtn"
-              title="Twitter"
+              title="Medium blogs"
               onClick={(e) => {
                 setState(prevState => {
                   return { ...prevState, showMediaPanel: state.showMediaPanel === 'medium' ? 'none' : 'medium' }
@@ -307,8 +308,8 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             ></button>
           </div>
           <div className="mr-3 d-flex bg-light remixui_panels" id="remixIDEMediaPanels">
-            { (state.showMediaPanel === 'medium') && <div id="remixIDE_MediumBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia">
-              <div id="medium-widget" className="p-3 remixui_media" style={ { maxHeight: maxHeight } }>
+            { (state.showMediaPanel === 'medium') && <div id="remixIDE_MediumBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } }>
+              <div id="medium-widget" className="p-3 remixui_media" style={ { maxHeight: elHeight } }>
                 <div
                   id="retainable-rss-embed"
                   data-rss="https://medium.com/feed/remix-ide"
@@ -323,7 +324,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               </div>
             </div> }
             { (state.showMediaPanel === 'twitter') && <div id="remixIDE_TwitterBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } } >
-              <div className="px-2 remixui_media" style={ { minHeight: '4000px' } } >
+              <div className="px-2 remixui_media" style={ { minHeight: elHeight } } >
                 <TwitterTimelineEmbed
                   sourceType="profile"
                   screenName="EthereumRemix"
