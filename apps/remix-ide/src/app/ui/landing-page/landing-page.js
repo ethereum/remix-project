@@ -34,8 +34,7 @@ export class LandingPage extends ViewPlugin {
     this.el.setAttribute('class', 'remixui_homeContainer justify-content-between bg-light d-flex')
     this.el.setAttribute('data-id', 'landingPageHomeContainer')
     // to retrieve medium posts
-    document.body.appendChild(yo`<script src="https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
-    document.body.appendChild(yo`<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>`)
+    //document.body.appendChild(yo`<script src="https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
   }
 
   render () {
