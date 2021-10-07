@@ -262,6 +262,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             filename: testObject.filename,
             time: time,
             context: testName,
+            web3,
             debugTxHash
           }
           if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
@@ -276,6 +277,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             time: time,
             errMsg: 'function returned false',
             context: testName,
+            web3,
             debugTxHash
           }
           if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
