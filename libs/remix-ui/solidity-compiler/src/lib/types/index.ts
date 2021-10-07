@@ -10,8 +10,8 @@ export interface CompilerContainerProps {
   api: ICompilerApi,
   compileTabLogic: CompileTabLogic,
   isHardhatProject: boolean,
-  tooltip: (message: string | JSX.Element) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  tooltip: (message: string | JSX.Element) => void, // eslint-disable-line no-undef
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void, // eslint-disable-line no-undef
   compiledFileName: string,
   updateCurrentVersion: any,
   configurationSettings: ConfigurationSettings
@@ -21,6 +21,6 @@ export interface ContractSelectionProps {
   contractMap: {
     file: string
   } | Record<string, any>,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void, // eslint-disable-line no-undef
   contractsDetails: Record<string, any>
 }
