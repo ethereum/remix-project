@@ -3,9 +3,11 @@ import React, { useState, useRef, useEffect } from 'react' // eslint-disable-lin
 import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import Mediumfeed from './components/mediumFeed' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
+import { TwitterTimelineEmbed } from 'react-twitter-embed'
 import { stat } from 'fs'
 
 declare global {
@@ -56,8 +58,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       })
     })
     window.addEventListener('click', (event) => {
-      const { id } = (event.target as HTMLButtonElement).dataset
-      if ( id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn') {
+      const target = event.target as Element
+      const id = target.id
+      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn') {
         // todo check event.target
         setState(prevState => { return { ...prevState, showMediaPanel: 'none' } })
       }
@@ -142,14 +145,12 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       (loadingMsg) => { setState(prevState => { return { ...prevState, tooltip: loadingMsg } }) },
       (error, content, cleanUrl, type, url) => {
         if (error) {
-          //modalDialogCustom.alert(state.modalInfo.title, error.message || error)
           toast(error.message || error)
         } else {
           try {
             fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
             plugin.call('menuicons', 'select', 'filePanel')
           } catch (e) {
-            //modalDialogCustom.alert(state.modalInfo.title, e.message)
             toast(e.message)
 
           }
@@ -161,8 +162,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     })
   }
 
-  const maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
+  const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
   const examples = state.modalInfo.examples.map((urlEl, key) => (<div key={key} className="p-1 user-select-auto"><a>{urlEl}</a></div>))
+  const elHeight = '4000px'
   return (
     <>
       <ModalDialog
@@ -286,7 +288,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <button
               className="btn-info p-2 m-1 border rounded-circle remixui_mediaBadge fab fa-twitter"
               id="remixIDEHomeTwitterbtn"
-              title="Medium blogs"
+              title="Twitter"
               onClick={(e) => {
                 setState(prevState => {
                   return { ...prevState, showMediaPanel: state.showMediaPanel === 'twitter' ? 'none' : 'twitter' }
@@ -297,7 +299,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <button
               className="btn-danger p-2 m-1 border rounded-circle remixui_mediaBadge fab fa-medium"
               id="remixIDEHomeMediumbtn"
-              title="Twitter"
+              title="Medium blogs"
               onClick={(e) => {
                 setState(prevState => {
                   return { ...prevState, showMediaPanel: state.showMediaPanel === 'medium' ? 'none' : 'medium' }
@@ -307,33 +309,24 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             ></button>
           </div>
           <div className="mr-3 d-flex bg-light remixui_panels" id="remixIDEMediaPanels">
-            { (state.showMediaPanel === 'medium') && <div id="remixIDE_MediumBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia">
-              <div id="medium-widget" className="p-3 remixui_media" style={ { maxHeight: maxHeight } }>
-                <div
-                  id="retainable-rss-embed"
-                  data-rss="https://medium.com/feed/remix-ide"
-                  data-maxcols="1"
-                  data-layout="grid"
-                  data-poststyle="external"
-                  data-readmore="More..."
-                  data-buttonclass="btn mb-3"
-                  data-offset="-100"
-                >
-                </div>
+            { (state.showMediaPanel === 'medium') && <div id="remixIDE_MediumBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } }>
+              <div id="medium-widget" className="p-3 remixui_media" style={ { maxHeight: elHeight } }>
+                <Mediumfeed userName="remix-ide" postN="6"/>
               </div>
             </div> }
-            { (state.showMediaPanel === 'twitter') && <div id="remixIDE_TwitterBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia">
-              <div className="px-2 remixui_media" style={ { maxHeight: maxHeight } } >
-                <a className="twitter-timeline"
-                  data-width="350"
-                  data-theme={ state.themeQuality.name }
-                  data-chrome="nofooter noheader transparent"
-                  data-tweet-limit="8"
-                  href="https://twitter.com/EthereumRemix"
-                >
-                </a>
+            { (state.showMediaPanel === 'twitter') && <div id="remixIDE_TwitterBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } } >
+              <div className="px-2 remixui_media" style={ { minHeight: elHeight } } >
+                <TwitterTimelineEmbed
+                  sourceType="profile"
+                  screenName="EthereumRemix"
+                  options={{ tweetLimit: 18, width: 350 }}
+                  transparent={true}
+                  noHeader={true}
+                  noFooter={true}
+                  theme={ state.themeQuality.name }
+                />
               </div>
-            </div> }
+            </div>}
           </div>
         </div>
       </div>
