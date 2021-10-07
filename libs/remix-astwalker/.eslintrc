@@ -3,7 +3,8 @@
     "rules": {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/prefer-namespace-keyword": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "no-use-before-define": "off"
     }, 
     "ignorePatterns": ["!**/*"] 
 }

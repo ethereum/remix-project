@@ -80,6 +80,7 @@ export class CompileTabLogic {
     return new Promise((resolve, reject) => {
       this.api.readFile(target).then((content) => {
         const sources = { [target]: { content } }
+        this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
@@ -122,7 +123,6 @@ export class CompileTabLogic {
       }
       // TODO readd saving current file
       this.api.saveCurrentFile()
-      this.event.emit('removeAnnotations')
       var currentFile = this.api.currentFile
       return this.compileFile(currentFile)
     } catch (err) {
