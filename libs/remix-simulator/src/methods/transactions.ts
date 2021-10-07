@@ -11,6 +11,7 @@ export class Transactions {
   tags
   txRunnerVMInstance
   txRunnerInstance
+  TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
 
   constructor (vmContext) {
     this.vmContext = vmContext
@@ -71,7 +72,7 @@ export class Transactions {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
-        this.vmContext.trackTx(hash, result.block)
+        this.vmContext.trackTx(hash, result.block, result.tx)
         this.vmContext.trackExecResult(hash, result.result.execResult)
         return cb(null, result.transactionHash)
       }
@@ -95,17 +96,19 @@ export class Transactions {
         return cb(error)
       }
 
-      const txBlock = this.vmContext.txs[receipt.hash]
+      const txBlock = this.vmContext.blockByTxHash[receipt.hash]
+
+      const logs = this.vmContext.logsManager.getLogsByTxHash(receipt.hash)
 
       const r: Record <string, unknown> = {
         transactionHash: receipt.hash,
-        transactionIndex: '0x00',
+        transactionIndex: this.TX_INDEX,
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         gasUsed: receipt.gasUsed,
         cumulativeGasUsed: receipt.gasUsed, // only 1 tx per block
         contractAddress: receipt.contractAddress,
-        logs: receipt.logs,
+        logs,
         status: receipt.status,
         to: receipt.to
       }
@@ -151,7 +154,7 @@ export class Transactions {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
-        this.vmContext.trackTx(hash, result.block)
+        this.vmContext.trackTx(hash, result.block, result.tx)
         this.vmContext.trackExecResult(hash, result.result.execResult)
         this.tags[tag] = result.transactionHash
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
@@ -185,7 +188,8 @@ export class Transactions {
         return cb(error)
       }
 
-      const txBlock = this.vmContext.txs[receipt.transactionHash]
+      const txBlock = this.vmContext.blockByTxHash[receipt.transactionHash]
+      const tx = this.vmContext.txByHash[receipt.transactionHash]
 
       // TODO: params to add later
       const r: Record<string, unknown> = {
@@ -198,8 +202,8 @@ export class Transactions {
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: 2, // 0x15 // the nonce should be updated
-        // "transactionIndex": 0,
+        nonce: '0x' + tx.nonce.toString('hex'),
+        transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
@@ -234,6 +238,8 @@ export class Transactions {
         return cb(error)
       }
 
+      const tx = this.vmContext.txByHash[receipt.transactionHash]
+
       // TODO: params to add later
       const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
@@ -245,8 +251,8 @@ export class Transactions {
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: 2, // 0x15 // the nonce should be updated
-        // "transactionIndex": 0,
+        nonce: '0x' + tx.nonce.toString('hex'),
+        transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
@@ -277,6 +283,8 @@ export class Transactions {
         return cb(error)
       }
 
+      const tx = this.vmContext.txByHash[receipt.transactionHash]
+
       // TODO: params to add later
       const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
@@ -288,8 +296,8 @@ export class Transactions {
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: 2, // 0x15 // the nonce should be updated
-        // "transactionIndex": 0,
+        nonce: '0x' + tx.nonce.toString('hex'),
+        transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37

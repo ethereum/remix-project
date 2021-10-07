@@ -115,8 +115,7 @@ describe('blocks', () => {
       assert.deepEqual(numberTransactions, correctBlock.uncles.length)
     })
   })
-
-  /*
+/*
   describe('eth_getStorageAt', () => {
     it('should get storage at position at given address', async () => {
       const abi: any = [
@@ -201,30 +200,29 @@ describe('blocks', () => {
         }
       ]
 
-  //     const code = '0x608060405234801561001057600080fd5b506040516020806102018339810180604052602081101561003057600080fd5b810190808051906020019092919050505080600081905550506101a9806100586000396000f3fe60806040526004361061005c576000357c0100000000000000000000000000000000000000000000000000000000900480632a1afcd91461006157806360fe47b11461008c5780636d4ce63c146100c7578063ce01e1ec146100f2575b600080fd5b34801561006d57600080fd5b5061007661012d565b6040518082815260200191505060405180910390f35b34801561009857600080fd5b506100c5600480360360208110156100af57600080fd5b8101908080359060200190929190505050610133565b005b3480156100d357600080fd5b506100dc61013d565b6040518082815260200191505060405180910390f35b3480156100fe57600080fd5b5061012b6004803603602081101561011557600080fd5b8101908080359060200190929190505050610146565b005b60005481565b8060008190555050565b60008054905090565b80600081905550807f63a242a632efe33c0e210e04e4173612a17efa4f16aa4890bc7e46caece80de060405160405180910390a25056fea165627a7a7230582063160eb16dc361092a85ced1a773eed0b63738b83bea1e1c51cf066fa90e135d0029'
+      const code = '0x608060405234801561001057600080fd5b506040516020806102018339810180604052602081101561003057600080fd5b810190808051906020019092919050505080600081905550506101a9806100586000396000f3fe60806040526004361061005c576000357c0100000000000000000000000000000000000000000000000000000000900480632a1afcd91461006157806360fe47b11461008c5780636d4ce63c146100c7578063ce01e1ec146100f2575b600080fd5b34801561006d57600080fd5b5061007661012d565b6040518082815260200191505060405180910390f35b34801561009857600080fd5b506100c5600480360360208110156100af57600080fd5b8101908080359060200190929190505050610133565b005b3480156100d357600080fd5b506100dc61013d565b6040518082815260200191505060405180910390f35b3480156100fe57600080fd5b5061012b6004803603602081101561011557600080fd5b8101908080359060200190929190505050610146565b005b60005481565b8060008190555050565b60008054905090565b80600081905550807f63a242a632efe33c0e210e04e4173612a17efa4f16aa4890bc7e46caece80de060405160405180910390a25056fea165627a7a7230582063160eb16dc361092a85ced1a773eed0b63738b83bea1e1c51cf066fa90e135d0029'
 
-  //     const contract = new web3.eth.Contract(abi)
-  //     const accounts = await web3.eth.getAccounts()
+      const contract = new web3.eth.Contract(abi)
+      const accounts = await web3.eth.getAccounts()
 
-  //     const contractInstance: any = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
-  //     contractInstance.currentProvider = web3.eth.currentProvider
-  //     contractInstance.givenProvider = web3.eth.currentProvider
+      const contractInstance: any = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
+      contractInstance.currentProvider = web3.eth.currentProvider
+      contractInstance.givenProvider = web3.eth.currentProvider
 
-  //     await contractInstance.methods.set(100).send({ from: accounts[0].toLowerCase(), gas: 400000 })
-  //     let storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
-  //     assert.deepEqual(storage, '0x64')
+      await contractInstance.methods.set(100).send({ from: accounts[0].toLowerCase(), gas: 400000 })
+      let storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
+      assert.deepEqual(storage, '0x64')
 
-  //     await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
-  //     storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
-  //     assert.deepEqual(storage, '0x64')
+      await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
+      storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
+      assert.deepEqual(storage, '0x64')
 
       await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
       storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
       assert.deepEqual(storage, '0xc8')
     })
   })
-  */
-
+*/
   describe('eth_call', () => {
     it('should get a value', async () => {
       const abi: any = [

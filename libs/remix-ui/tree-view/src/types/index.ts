@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export interface TreeViewProps {
     children?: React.ReactNode,
     id?: string
