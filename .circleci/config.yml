@@ -52,7 +52,7 @@ jobs:
       - run: npm install
       - run: npm run build:libs
       - run: cd dist/libs/remix-tests && npm install
-      - run: cd ../../.. && npm run test:libs
+      - run: npm run test:libs
 
   remix-ide-chrome-1:
     docker:
