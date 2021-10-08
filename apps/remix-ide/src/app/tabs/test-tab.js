@@ -250,7 +250,7 @@ module.exports = class TestTab extends ViewPlugin {
     let debugBtn = yo``
     if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
       const { web3, debugTxHash } = result
-      debugBtn = yo`<div class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${() => this.startDebug(debugTxHash, web3)}>
+      debugBtn = yo`<div id=${result.value.replace(' ', '_')} class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${() => this.startDebug(debugTxHash, web3)}>
         <i class="fas fa-bug"></i>
       </div>`
       debugBtn.style.cursor = 'pointer'
