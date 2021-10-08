@@ -57,9 +57,7 @@ export class RemixAppManager extends PluginManager {
       await this.getProfile(name),
       await this.getProfile(this.requestFrom)
     ]
-    console.log("toggle from ma", name, await this.isActive(name))
     if (this.canDeactivatePlugin(from, to) && await this.isActive(name)) {
-      console.log("toggle from ma", name, await this.isActive(name))
       await this.toggleActive(name)
     }
   }
