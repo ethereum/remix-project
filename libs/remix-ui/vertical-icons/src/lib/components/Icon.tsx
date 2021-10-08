@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import {
   VerticalIcons
 } from 'libs/remix-ui/vertical-icons/types/vertical-icons'

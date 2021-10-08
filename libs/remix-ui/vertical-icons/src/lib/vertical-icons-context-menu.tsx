@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-use-before-define */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, useEffect, useRef } from 'react'
 import { VerticalIcons } from '../../types/vertical-icons'

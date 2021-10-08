@@ -1,8 +1,8 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons/types/vertical-icons'
 import React, { ReactNode } from 'react'
 import BasicLogo from './BasicLogo'
-import IconKind from './IconKind'
 interface HomeProps {
   verticalIconPlugin: VerticalIcons
 }
