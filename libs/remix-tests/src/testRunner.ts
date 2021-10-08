@@ -251,7 +251,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       method.call(sendParams).then(async (result) => {
         const time = (Date.now() - startTime) / 1000.0
         let tagTxHash
-        let hhLogs
         if (web3.eth && web3.eth.getHashFromTagBySimulator) tagTxHash = await web3.eth.getHashFromTagBySimulator(tagTimestamp)
         if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(tagTxHash)
         if (result) {
@@ -262,7 +261,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             time: time,
             context: testName
           }
-          if (hhLogs) resp.hhLogs = hhLogs
+          if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
           passingNum += 1
           timePassed += time
@@ -275,7 +274,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             errMsg: 'function returned false',
             context: testName
           }
-          if (hhLogs) resp.hhLogs = hhLogs
+          if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
           testCallback(undefined, resp)
           failureNum += 1
           timePassed += time
@@ -325,7 +324,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     location,
                     web3
                   }
-                  if (hhLogs) resp.hhLogs = hhLogs
+                  if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
                   testCallback(undefined, resp)
                   failureNum += 1
                   timePassed += time
@@ -344,11 +343,11 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
               time: time,
               context: testName
             }
-            if (hhLogs) resp.hhLogs = hhLogs
+            if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
             testCallback(undefined, resp)
             passingNum += 1
             timePassed += time
-          } else if (hhLogs) {
+          } else if (hhLogs && hhLogs.length) {
             const resp: TestResultInterface = {
               type: 'logOnly',
               value: changeCase.sentenceCase(func.name),
@@ -380,7 +379,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         if (err.message.includes('Transaction has been reverted by the EVM')) {
           const txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
           if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(txHash)
-          if (hhLogs) resp.hhLogs = hhLogs
+          if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
         }
         testCallback(undefined, resp)
         failureNum += 1
