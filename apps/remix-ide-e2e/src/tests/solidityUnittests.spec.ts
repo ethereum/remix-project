@@ -229,7 +229,7 @@ module.exports = {
       .removeFile('tests/ballotFailedLog_test.sol', 'workspace_new')
   },
 
-  'Debug failed test using debugger': function (browser: NightwatchBrowser) {
+  'Debug tests using debugger': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
@@ -239,17 +239,19 @@ module.exports = {
       .click('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedDebug_test.sol', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal failed', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal passed', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winnin proposal again', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
-      .click('.fa-bug')
+      .click('#Check_winning_proposal_failed > i')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
       // eslint-disable-next-line dot-notation
       .execute(function () { document.getElementById('slider')['value'] = '235' }) // It only moves slider to 235 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
       .pause(2000)
       .checkVariableDebug('soliditylocals', locals)
@@ -495,9 +497,18 @@ const sources = [
               ballotToTest = new Ballot(proposalNames);
           }
           
-          function checkWinningProposal () public {
-              ballotToTest.vote(1); // This will revert the transaction
+          function checkWinningProposalFailed () public {
+              ballotToTest.vote(1);
               Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
+          }
+          
+          function checkWinningProposalPassed () public {
+              ballotToTest.vote(0);
+              Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
+          }
+          
+          function checkWinningProposalAgain () public {
+              Assert.equal(ballotToTest.winningProposal(), uint(1), "proposal at index 0 should be the winning proposal");
           }
           
           function checkWinninProposalWithReturnValue () public view returns (bool) {
