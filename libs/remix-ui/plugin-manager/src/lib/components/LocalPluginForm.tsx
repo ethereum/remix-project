@@ -263,6 +263,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
       title="Replace existing plugin?"
       okLabel="Yes I am sure!"
       cancelLabel="No"
+      id="replacePluginModal"
     >
       <h4 className="text-center">Warning!</h4>
       <form className="remixui_permissionForm" data-id="pluginManagerSettingsPermissionForm">
