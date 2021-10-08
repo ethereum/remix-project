@@ -243,7 +243,7 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal passed', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winnin proposal again', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
-      .click('#Check_winning_proposal_failed > i')
+      .click('#Check_winning_proposal_failed')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
