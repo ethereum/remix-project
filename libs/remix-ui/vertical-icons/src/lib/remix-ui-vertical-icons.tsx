@@ -98,6 +98,20 @@ export function RemixUiVerticalIcons ({
     })
   }, [])
 
+  useEffect(() => {
+    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    themeModule.events.on('themeChanged', (theme) => {
+      onThemeChanged(theme.quality)
+    })
+  }, [])
+
+  useEffect(() => {
+    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    themeModule.events.on('themeChanged', (theme) => {
+      onThemeChanged(theme.quality)
+    })
+  }, [])
+
   return (
     <div id="iconsP" className="h-100">
       <div className="remixui_icons" ref={iconPanelRef}>

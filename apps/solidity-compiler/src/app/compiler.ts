@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-/* eslint-disable dot-notation */
-import { PluginClient } from "@remixproject/plugin";
-import { createClient } from "@remixproject/plugin-webview";
+import { PluginClient } from '@remixproject/plugin'
+import { createClient } from '@remixproject/plugin-webview'
 import { CompilerApiMixin } from './compiler-api'
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import { CompileTabLogic } from '@remix-ui/solidity-compiler'
@@ -16,7 +16,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: '0.0.1',
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile' ,'getCompilerState']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState']
 }
 
 const defaultAppParameters = {
@@ -33,27 +33,7 @@ const defaultCompilerParameters = {
   language: 'Solidity'
 }
 
-const getOptimize = () => {
-  let value = localStorage.getItem('optimize') || defaultCompilerParameters['optimize']
-  value = (value === 'false' || value === null || value === undefined) ? false : value
-  value = value === 'true' ? true : false
-}
-
-
-const defaultAppParameters = {
-  hideWarnings: false,
-  autoCompile: false,
-  includeNightlies: false
-}
-
-const defaultCompilerParameters = {
-  runs: '200',
-  optimize: false,
-  version: 'soljson-v0.8.7+commit.e28d00a7',
-  evmVersion: null, // compiler default
-  language: 'Solidity'
-}
-
+export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
   constructor () {
     super()
     createClient(this as any)
@@ -65,11 +45,11 @@ const defaultCompilerParameters = {
 
   getCompilerParameters () {
     const params = {
-      runs: localStorage.getItem('runs') || defaultCompilerParameters['runs'],
-      optimize: localStorage.getItem('optimize') === 'true' ? true : false,
-      version: localStorage.getItem('version') || defaultCompilerParameters['version'],
-      evmVersion: localStorage.getItem('evmVersion') || defaultCompilerParameters['evmVersion'], // default
-      language: localStorage.getItem('language') || defaultCompilerParameters['language']
+      runs: localStorage.getItem('runs') || defaultCompilerParameters.runs,
+      optimize: localStorage.getItem('optimize') === 'true',
+      version: localStorage.getItem('version') || defaultCompilerParameters.version,
+      evmVersion: localStorage.getItem('evmVersion') || defaultCompilerParameters.evmVersion, // default
+      language: localStorage.getItem('language') || defaultCompilerParameters.language
     }
     return params
   }

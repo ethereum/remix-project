@@ -5,10 +5,10 @@ const EventEmitter = require('events')
 
 declare global {
   interface Window {
-    _paq: any
+    _paq: any;
   }
 }
-const _paq = window._paq = window._paq || []  //eslint-disable-line
+const _paq = (window._paq = window._paq || []); //eslint-disable-line
 
 export class CompileTabLogic {
   public compiler
@@ -102,7 +102,10 @@ export class CompileTabLogic {
         const { currentVersion, optimize, runs } = this.compiler.state
         if (currentVersion) {
           const fileContent = `module.exports = {
-            solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+            solidity: '${currentVersion.substring(
+              0,
+              currentVersion.indexOf('+commit')
+            )}',
             settings: {
               optimizer: {
                 enabled: ${optimize},
