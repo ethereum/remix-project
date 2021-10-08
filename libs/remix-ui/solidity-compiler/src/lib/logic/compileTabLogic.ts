@@ -1,7 +1,7 @@
-import { ICompilerApi } from '@remix-project/remix-lib-ts';
+import { ICompilerApi } from '@remix-project/remix-lib-ts'
 
-const Compiler = require('@remix-project/remix-solidity').Compiler;
-const EventEmitter = require('events');
+const Compiler = require('@remix-project/remix-solidity').Compiler
+const EventEmitter = require('events')
 
 declare global {
   interface Window {
