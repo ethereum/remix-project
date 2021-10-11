@@ -24,10 +24,6 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
-  // @ts-ignore
-  // scrollHeight = scrollableRef.current!.scrollHeight
-  // // @ts-ignore
-  // clientHeight = scrollableRef.current!.clientHeight
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
@@ -78,22 +74,10 @@ export function RemixUiVerticalIconsPanel ({
   }
 
   useEffect(() => {
-    console.log('usefRef for scrolling', scrollableRef)
-  })
-
-  useEffect(() => {
     const themeModule = verticalIconsPlugin.registry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme: any) => {
       onThemeChanged(theme.quality)
     })
-  }, [])
-
-  useEffect(() => {
-    // @ts-ignore
-    scrollHeight = scrollableRef.current.scrollHeight
-    // @ts-ignore
-    clientHeight = scrollableRef.current.clientHeight
-    console.log('scrollHeight ', scrollHeight)
   }, [])
 
   useEffect(() => {
@@ -329,7 +313,7 @@ export function RemixUiVerticalIconsPanel ({
               ))}
           </OtherIcons>
         </div>
-        {scrollableRef.current && scrollableRef.current!.scrollHeight > clientHeight
+        {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
           ? <i className="fa fa-chevron-double-down remixui_icon-chevron m-3"></i>
           : null
         }
