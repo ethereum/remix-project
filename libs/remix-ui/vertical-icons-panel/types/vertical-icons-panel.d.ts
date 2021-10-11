@@ -79,7 +79,11 @@ export class VerticalIcons extends Plugin<any, any> {
    * Remove an icon from the map
    * @param {ModuleProfile} profile The profile of the module
    */
+<<<<<<< HEAD
   removeIcon({ name }: any): void
+=======
+  removeIcon({ kind, name }: any): void
+>>>>>>> b6322066e (update components and setttings)
   /**
    *  Remove active for the current activated icons
    */
