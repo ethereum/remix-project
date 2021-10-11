@@ -1,6 +1,8 @@
+/* eslint-disable no-use-before-define */
 import { Plugin } from '@remixproject/engine/lib/abstract'
 import * as packageJson from '../../../../package.json'
 import * as registry from 'apps/remix-ide/src/global/registry'
+import { RemixAppManager } from '@remix-ui/plugin-manager'
 
 export type Kind =
   | 'fileexplorer'
@@ -40,14 +42,15 @@ interface targetProfileIcons {
   profile: PassedProfile
 }
 export class VerticalIcons extends Plugin<any, any> {
-  constructor(appManager: any)
+  // constructor(appManager: RemixAppManager)
   events: EventEmitter
-  appManager: any
+  appManager: RemixAppManager
   htmlElement: HTMLDivElement
   icons: {
     name: any
   }
-  iconKind: IconKind
+
+  iconKind: {}
   iconStatus: {}
   defaultProfile: defaultModuleProfile
   targetProfileForChange: {}
