@@ -1,5 +1,4 @@
 {
-  "npmScope": "remix-project",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -11,6 +10,7 @@
     ".eslintrc": "*",
     "nx.json": "*"
   },
+  "npmScope": "remix-project",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -130,19 +130,14 @@
     "remix-ui-editor": {
       "tags": []
     },
-    "remix-ui-helper": {
+    "remix-ui-helper": { 
+      "tags": []
+    },
+    "remix-ui-vertical-icons-panel": {
       "tags": []
     },
     "remix-ui-tabs": {
       "tags": []
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   }
 }
