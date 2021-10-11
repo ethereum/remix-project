@@ -1,5 +1,71 @@
 {
   "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "defaultProject": "remix-ide",
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    }
+  },
   "projects": {
     "remix-ide": {
       "root": "apps/remix-ide",
@@ -1179,17 +1245,34 @@
         "linter": "eslint"
       }
     },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "eslint"
+    "@remix-ui-verticaliconspanel": {
+      "root": "libs/@remix-ui/verticaliconspanel",
+      "sourceRoot": "libs/@remix-ui/verticaliconspanel/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/@remix-ui/verticaliconspanel/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
       }
     },
-    "@nrwl/express": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
+    "remix-ui-vertical-icons-panel": {
+      "root": "libs/remix-ui/vertical-icons-panel",
+      "sourceRoot": "libs/remix-ui/vertical-icons-panel/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/remix-ui/vertical-icons-panel/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
       }
     }
   },
