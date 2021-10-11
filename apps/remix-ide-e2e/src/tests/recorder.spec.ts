@@ -44,7 +44,7 @@ module.exports = {
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
       .click('i.savetransaction')
       .modalFooterOKClick()
-      .pause(1000)
+      .pause(2000)
       .getEditorValue(function (result) {
         const parsed = JSON.parse(result)
         browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
