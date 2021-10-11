@@ -62,7 +62,7 @@ module.exports = {
   'Call web3.eth.getAccounts() using JavaScript VM': function (browser: NightwatchBrowser) {
     browser
       .executeScript('web3.eth.getAccounts()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2", "0x17F6AD8Ef982297579C203069C1DbfFE4348c372", "0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C"', 80000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 80000)
   },
 
   'Call web3.eth.getAccounts() using Web3 Provider': function (browser: NightwatchBrowser) {
