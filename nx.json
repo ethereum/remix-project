@@ -139,13 +139,5 @@
     "remix-ui-tabs": {
       "tags": []
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   }
 }
