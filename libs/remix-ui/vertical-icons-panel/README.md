@@ -1,6 +1,6 @@
 # remix-ui-vertical-icons-panel
 
-This library was generated with [Nx](https://nx.dev).
+React library for RemixIde vertical icons Panel
 
 ## Running unit tests
 

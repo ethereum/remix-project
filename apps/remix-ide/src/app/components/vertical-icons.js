@@ -9,10 +9,8 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
 const globalRegistry = require('../../global/registry')
-// const contextMenu = require('../ui/contextMenu')
 const { Plugin } = require('@remixproject/engine')
 const EventEmitter = require('events')
-// let VERTICALMENU_HANDLE
 
 const profile = {
   name: 'menuicons',
@@ -123,7 +121,7 @@ export class VerticalIcons extends Plugin {
    * Remove an icon from the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  removeIcon ({ kind, name }) {
+  removeIcon ({ name }) {
     if (this.targetProfileForChange[name]) delete this.targetProfileForChange[name]
     this.renderComponent()
   }
@@ -143,7 +141,7 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   toggle (name) {
-    // // TODO: Only keep `this.emit` (issue#2210)
+    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('toggleContent', name)
     this.events.emit('toggleContent', name)
   }
