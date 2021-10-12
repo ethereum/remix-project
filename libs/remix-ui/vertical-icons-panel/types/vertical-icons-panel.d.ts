@@ -43,7 +43,6 @@ interface targetProfileIcons {
   profile: PassedProfile
 }
 export class VerticalIcons extends Plugin<any, any> {
-  // constructor(appManager: RemixAppManager)
   events: EventEmitter
   appManager: RemixAppManager
   htmlElement: HTMLDivElement
@@ -83,7 +82,7 @@ export class VerticalIcons extends Plugin<any, any> {
    * Remove an icon from the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  removeIcon({ kind, name }: any): void
+  removeIcon({ name }: any): void
   /**
    *  Remove active for the current activated icons
    */
