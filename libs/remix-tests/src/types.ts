@@ -49,6 +49,7 @@ export interface ResultCbInterface {
 
 export interface Options {
   accounts?: string[] | null,
+  testFilePath?: string
   web3?: any
 }
 

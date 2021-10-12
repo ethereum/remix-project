@@ -527,17 +527,22 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
+      const deployCb = async (file, contractAddress) => {
+        const compilerData = await this.call('compilerArtefacts', 'getCompilerAbstract', file)
+        await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilerData)
+      }
       this.testRunner.runTestSources(
         runningTests,
         compilerConfig,
         (result) => this.testCallback(result, runningTests),
         (_err, result, cb) => this.resultsCallback(_err, result, cb),
+        deployCb,
         (error, result) => {
           this.updateFinalResult(error, result, testFilePath)
           callback(error)
         }, (url, cb) => {
           return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-        }
+        }, {testFilePath}
       )
     }).catch((error) => {
       if (error) return // eslint-disable-line
