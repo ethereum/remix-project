@@ -64,6 +64,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   // terminal dragable
   const leftRef = useRef(null)
+  const panelRef = useRef(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -297,15 +298,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   })
 
   React.useEffect(() => {
-    const leftRef = document.getElementById('terminal-view')
-    if (leftRef) {
+    if (panelRef) {
       if (!leftHeight) {
-        setLeftHeight(leftRef.offsetHeight)
+        setLeftHeight(panelRef.current.offsetHeight)
         return
       }
-      leftRef.style.height = `${leftHeight}px`
+      panelRef.current.style.height = `${leftHeight}px`
     }
-  }, [leftHeight, setLeftHeight, inputEl])
+  }, [leftHeight, setLeftHeight, panelRef])
 
   /* block contents that gets rendered from scriptRunner */
 
@@ -438,7 +438,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   return (
-    <div style={{ height: '323px', flexGrow: 1 }} className='panel'>
+    <div style={{ height: '323px', flexGrow: 1 }} className='panel' ref={panelRef}>
       <div className="bar">
         <div className="dragbarHorizontal" onMouseDown={mousedown} ref={leftRef}></div>
         <div className="menu border-top border-dark bg-light" data-id="terminalToggleMenu">
