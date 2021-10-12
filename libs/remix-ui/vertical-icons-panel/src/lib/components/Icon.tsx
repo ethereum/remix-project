@@ -5,7 +5,6 @@ import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, SyntheticEvent, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-// import helper from 'apps/remix-ide/src/lib/helper'
 
   interface IconProps {
     verticalIconPlugin: VerticalIcons

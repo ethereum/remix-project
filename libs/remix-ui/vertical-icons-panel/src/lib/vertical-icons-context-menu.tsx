@@ -6,7 +6,6 @@ import React, { Fragment, useEffect, useRef } from 'react'
 import { VerticalIcons } from '../../types/vertical-icons-panel'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  // actions: action[]
   pageX: number
   pageY: number
   profileName: string
