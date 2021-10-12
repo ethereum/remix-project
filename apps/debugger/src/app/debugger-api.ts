@@ -123,7 +123,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   debug (hash, web3?) {
     this.debugHash = hash
-    if (web3) remixDebug.init.extendWeb3(web3)
+    if (web3) {
+      this._web3 = web3
+      remixDebug.init.extendWeb3(web3)
+    } 
     if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash, web3)
   }
 

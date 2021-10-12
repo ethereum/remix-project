@@ -11,7 +11,7 @@ import { compilationInterface } from './types'
  * @param callback Callback
  */
 
-export function deployAll (compileResult: compilationInterface, web3: Web3, withDoubleGas: boolean, callback) {
+export function deployAll (compileResult: compilationInterface, web3: Web3, withDoubleGas: boolean, deployCb, callback) {
   const compiledObject = {}
   const contracts = {}
   let accounts: string[] = []
@@ -70,7 +70,7 @@ export function deployAll (compileResult: compilationInterface, web3: Web3, with
           deployObject.send({
             from: accounts[0],
             gas: gas
-          }).on('receipt', function (receipt) {
+          }).on('receipt', async function (receipt) {
             contractObject.options.address = receipt.contractAddress
             contractObject.options.from = accounts[0]
             contractObject.options.gas = 5000 * 1000
@@ -79,6 +79,7 @@ export function deployAll (compileResult: compilationInterface, web3: Web3, with
             contracts[contractName] = contractObject
             contracts[contractName].filename = filename
 
+            if(deployCb) await deployCb(filename, receipt.contractAddress)
             callback(null, { receipt: { contractAddress: receipt.contractAddress } }) // TODO this will only work with JavaScriptV VM
           }).on('error', function (err) {
             console.error(err)
