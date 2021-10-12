@@ -99,7 +99,7 @@
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
     "reinstall": "rm ./node-modules/ -rf && rm package-lock.json && rm ./build/ -rf && npm install & npm run build",
     "ganache-cli": "npx ganache-cli"
-  }, 
+  },
   "browserify": {
     "transform": [
       [
