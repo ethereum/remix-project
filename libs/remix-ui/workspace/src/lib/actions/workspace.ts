@@ -1,3 +1,4 @@
+import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
@@ -95,7 +96,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
       try {
         const gistId = params.gist
         const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
-        const data = response.data
+        const data = response.data as { files: any }
 
         if (!data.files) {
           return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => { dispatch(hideNotification()) }, null))
