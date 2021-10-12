@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react' // eslint-disable-line
-import { action, FileExplorerContextMenuProps } from './types'
+import { action, FileExplorerContextMenuProps } from '../types'
 
-import './css/file-explorer-context-menu.css'
+import '../css/file-explorer-context-menu.css'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 declare global {
@@ -15,17 +15,32 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
   useEffect(() => {
-    contextMenuRef.current.focus()
+    let setFocus = () => {
+      contextMenuRef.current.focus()
+    }
+    setFocus()
+    return () => {
+      setFocus = () => {}
+      console.log('file-explorer-context-menu -> init')
+    }
   }, [])
 
   useEffect(() => {
-    const menuItemsContainer = contextMenuRef.current
-    const boundary = menuItemsContainer.getBoundingClientRect()
+    let setCordinates = () => {
+      const menuItemsContainer = contextMenuRef.current
+      const boundary = menuItemsContainer.getBoundingClientRect()
 
-    if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
-      menuItemsContainer.style.position = 'fixed'
-      menuItemsContainer.style.bottom = '10px'
-      menuItemsContainer.style.top = null
+      if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+        menuItemsContainer.style.position = 'fixed'
+        menuItemsContainer.style.bottom = '10px'
+        menuItemsContainer.style.top = null
+      }
+    }
+    setCordinates()
+
+    return () => {
+      setCordinates = () => {}
+      console.log('file-explorer-context-menu -> pageX')
     }
   }, [pageX, pageY])
 

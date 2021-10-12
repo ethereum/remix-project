@@ -23,7 +23,7 @@ export class RemixdClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
-    if (this.isLoaded) this.emit('rootFolderChanged')
+    if (this.isLoaded) this.emit('rootFolderChanged', this.currentSharedFolder)
   }
 
   list (): Filelist {

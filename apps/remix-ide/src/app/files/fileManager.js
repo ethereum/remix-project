@@ -457,24 +457,30 @@ class FileManager extends Plugin {
 
   closeAllFiles () {
     // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('filesAllClosed')
-    this.events.emit('filesAllClosed')
-    for (const file in this.openedFiles) {
-      this.closeFile(file)
-    }
+    return new Promise((resolve) => {
+      this.emit('filesAllClosed')
+      this.events.emit('filesAllClosed')
+      for (const file in this.openedFiles) {
+        this.closeFile(file)
+      }
+      resolve(true)
+    })
   }
 
   closeFile (name) {
-    delete this.openedFiles[name]
-    if (!Object.keys(this.openedFiles).length) {
-      this._deps.config.set('currentFile', '')
+    return new Promise((resolve) => {
+      delete this.openedFiles[name]
+      if (!Object.keys(this.openedFiles).length) {
+        this._deps.config.set('currentFile', '')
+        // TODO: Only keep `this.emit` (issue#2210)
+        this.emit('noFileSelected')
+        this.events.emit('noFileSelected')
+      }
       // TODO: Only keep `this.emit` (issue#2210)
-      this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
-    }
-    // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('fileClosed', name)
-    this.events.emit('fileClosed', name)
+      this.emit('fileClosed', name)
+      this.events.emit('fileClosed', name)
+      resolve(true)
+    })
   }
 
   currentPath () {
