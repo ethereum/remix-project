@@ -255,8 +255,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
       .pause(2000)
-      // Should be uncommented while fixing https://github.com/ethereum/remix-project/issues/1644
-      // .checkVariableDebug('soliditylocals', locals)
+      .checkVariableDebug('soliditylocals', locals)
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')
@@ -562,7 +561,7 @@ const sources = [
     }
   }
 ]
-/*
+
 const locals = {
   sender: {
     value: {
@@ -590,4 +589,3 @@ const locals = {
     type: 'uint256'
   }
 }
-*/
