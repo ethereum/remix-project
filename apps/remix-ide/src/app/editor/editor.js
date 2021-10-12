@@ -40,7 +40,6 @@ class Editor extends Plugin {
       this.renderComponent()
     })
     this.currentTheme = translateTheme(this._deps.themeModule.currentTheme())
-    this.models = []
     // Init
     this.event = new EventManager()
     this.sessions = {}
@@ -65,12 +64,14 @@ class Editor extends Plugin {
       rs: 'rust'
     }
 
-    this.onBreakPointAdded = (file, line) => this.triggerEvent('breakpointAdded', [file, line])
-    this.onBreakPointCleared = (file, line) => this.triggerEvent('breakpointCleared', [file, line])
+    this.activated = false
 
-    this.onDidChangeContent = (file) => this._onChange(file)
-
-    this.onEditorMounted = () => this.triggerEvent('editorMounted', [])
+    this.events = {
+      onBreakPointAdded: (file, line) => this.triggerEvent('breakpointAdded', [file, line]),
+      onBreakPointCleared: (file, line) => this.triggerEvent('breakpointCleared', [file, line]),
+      onDidChangeContent: (file) => this._onChange(file),
+      onEditorMounted: () => this.triggerEvent('editorMounted', [])
+    }
 
     // to be implemented by the react component
     this.api = {}
@@ -96,7 +97,15 @@ class Editor extends Plugin {
 
   renderComponent () {
     ReactDOM.render(
-      <EditorUI editorAPI={this.api} theme={this.currentTheme} currentFile={this.currentFile} sourceAnnotationsPerFile={this.sourceAnnotationsPerFile} markerPerFile={this.markerPerFile} onBreakPointAdded={this.onBreakPointAdded} onBreakPointCleared={this.onBreakPointCleared} onDidChangeContent={this.onDidChangeContent} onEditorMounted={this.onEditorMounted} />
+      <EditorUI
+        editorAPI={this.api}
+        theme={this.currentTheme}
+        currentFile={this.currentFile}
+        sourceAnnotationsPerFile={this.sourceAnnotationsPerFile}
+        markerPerFile={this.markerPerFile}
+        events={this.events}
+        plugin={this}
+      />
       , this.el)
   }
 
@@ -106,6 +115,7 @@ class Editor extends Plugin {
   }
 
   onActivation () {
+    this.activated = true
     this.on('sidePanel', 'focusChanged', (name) => {
       this.keepDecorationsFor(name, 'sourceAnnotationsPerFile')
       this.keepDecorationsFor(name, 'markerPerFile')
@@ -118,10 +128,6 @@ class Editor extends Plugin {
   onDeactivation () {
     this.off('sidePanel', 'focusChanged')
     this.off('sidePanel', 'pluginDisabled')
-  }
-
-  setTheme (type) {
-    this.api.setTheme(this._themes[type])
   }
 
   _onChange (file) {
@@ -180,18 +186,19 @@ class Editor extends Plugin {
    * @param {string} mode Mode for this file [Default is `text`]
    */
   _createSession (path, content, mode) {
-    this.api.addModel(content, mode, path, false)
+    if (!this.activated) return
+    this.emit('addModel', content, mode, path, false)
     return {
       path,
       language: mode,
       setValue: (content) => {
-        this.api.setValue(path, content)
+        this.emit('setValue', path, content)
       },
       getValue: () => {
         return this.api.getValue(path, content)
       },
       dispose: () => {
-        this.api.disposeModel(path)
+        this.emit('disposeModel', path)
       }
     }
   }
@@ -208,9 +215,9 @@ class Editor extends Plugin {
    * Display an Empty read-only session
    */
   displayEmptyReadOnlySession () {
+    if (!this.activated) return
     this.currentFile = null
-    this.api.addModel('', 'text', '_blank', true)
-    this.api.setCurrentPath('_blank')
+    this.emit('addModel', '', 'text', '_blank', true)
   }
 
   /**
@@ -324,9 +331,10 @@ class Editor extends Plugin {
    * @param {number} incr The amount of pixels to add to the font.
    */
   editorFontSize (incr) {
+    if (!this.activated) return
     const newSize = this.api.getFontSize() + incr
     if (newSize >= 6) {
-      this.api.setFontSize(newSize)
+      this.emit('setFontSize', newSize)
     }
   }
 
@@ -335,7 +343,8 @@ class Editor extends Plugin {
    * @param {boolean} useWrapMode Enable (or disable) wrap mode
    */
   resize (useWrapMode) {
-    this.api.setWordWrap(useWrapMode)
+    if (!this.activated) return
+    this.emit('setWordWrap', useWrapMode)
   }
 
   /**
@@ -344,8 +353,9 @@ class Editor extends Plugin {
    * @param {number} col
    */
   gotoLine (line, col) {
-    this.api.focus()
-    this.api.revealLine(line + 1, col)
+    if (!this.activated) return
+    this.emit('focus')
+    this.emit('revealLine', line + 1, col)
   }
 
   /**
@@ -353,7 +363,8 @@ class Editor extends Plugin {
    * @param {number} line The line to scroll to
    */
   scrollToLine (line) {
-    this.api.revealLine(line)
+    if (!this.activated) return
+    this.emit('revealLine', line, 0)
   }
 
   /**
