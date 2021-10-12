@@ -10,8 +10,8 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspace', (name: string) => {
-    setTimeout(() => createWorkspace(name), 10)
+  plugin.on('filePanel', 'createWorkspace', (name: string, loadPreset: boolean) => {
+    setTimeout(() => createWorkspace(name, loadPreset), 10)
   })
 
   plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {

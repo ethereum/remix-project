@@ -109,8 +109,8 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.emit('uploadFileEvent', dir, target)
   }
 
-  async createWorkspace (workspaceName) {
-    this.emit('createWorkspace', workspaceName)
+  async createWorkspace (workspaceName, loadPreset = true) {
+    this.emit('createWorkspace', workspaceName, loadPreset)
   }
 
   async renameWorkspace (oldName, workspaceName) {

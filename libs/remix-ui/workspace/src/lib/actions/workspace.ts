@@ -35,14 +35,14 @@ export const addInputField = async (type: 'file' | 'folder', path: string) => {
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string) => {
+export const createWorkspace = async (workspaceName: string, loadPreset: boolean = true) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, 'default-template')
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
-    await loadWorkspacePreset('default-template')
+    if (loadPreset) await loadWorkspacePreset('default-template')
     plugin.emit('setWorkspace', { name: workspaceName, isLocalhost: false })
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
