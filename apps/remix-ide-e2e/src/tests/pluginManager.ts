@@ -33,6 +33,27 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
   },
 
+  'Should remove unresponsive plugine with right click': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="localPluginName"]')
+      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', 'unresponsive')
+      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', 'Unresponsive plugin')
+      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', 'http://localhost:7879')
+      .click('*[data-id="localPluginRadioButtoniframe"]')
+      .click('*[data-id="localPluginRadioButtonsidePanel"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
+      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
+      .waitForElementVisible('*[data-id="verticalIconsKindunresponsive"]', 7000)
+      .pause(5000)
+      .rightClick('[data-id="verticalIconsKindunresponsive"]')
+      .click('*[id="menuitemdeactivate"]')
+      .waitForElementNotPresent('*[data-id="verticalIconsKindunresponsive"]')
+  },
+
   'Should Search for plugins': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentSearchInput"]')
@@ -170,7 +191,7 @@ module.exports = {
             })
             done()
           })
-      }).end()
+      })
   }
 
 }
