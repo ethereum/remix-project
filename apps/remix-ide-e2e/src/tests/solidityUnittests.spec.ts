@@ -487,7 +487,7 @@ const sources = [
     },
     'tests/deployError_test.sol': {
       content: `
-      pragma solidity ^0.7.0;
+      pragma solidity ^0.8.0;
 
       contract failingDeploy {
           constructor() {
@@ -498,7 +498,7 @@ const sources = [
     },
     'tests/methodFailure_test.sol': {
       content: `
-      pragma solidity ^0.7.0;
+      pragma solidity ^0.8.0;
 
       contract methodfailure {
         function add(uint a, uint b) public {
