@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useReducer } from 'react'
 import Editor from '@monaco-editor/react'
+import { reducerActions, reducerListener, initialState } from './actions/editor'
 
 import './remix-ui-editor.css'
 
@@ -44,37 +45,37 @@ type sourceMarkerMap = {
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
+  activated: boolean
   theme: string
   currentFile: string
   sourceAnnotationsPerFile: sourceAnnotationMap
   markerPerFile: sourceMarkerMap
-  onBreakPointAdded: (file: string, line: number) => void
-  onBreakPointCleared: (file: string, line: number) => void
-  onDidChangeContent: (file: string) => void
-  onEditorMounted: () => void
+  events: {
+    onBreakPointAdded: (file: string, line: number) => void
+    onBreakPointCleared: (file: string, line: number) => void
+    onDidChangeContent: (file: string) => void
+    onEditorMounted: () => void
+  }
+  plugin: {
+    on: (plugin: string, event: string, listener: any) => void
+  }
   editorAPI:{
     findMatches: (uri: string, value: string) => any
-    addModel: (value: string, language: string, uri: string, readOnly: boolean) => void
-    disposeModel: (uri: string) => void,
-    setFontSize: (fontSize: number) => void,
     getFontSize: () => number,
     getValue: (uri: string) => string
     getCursorPosition: () => cursorPosition
-    revealLine: (line: number, column: number) => void
-    focus: () => void
-    setWordWrap: (wrap: boolean) => void
-    setValue: (uri: string, value: string) => void
   }
 }
 
 export const EditorUI = (props: EditorUIProps) => {
-  const [models, setModels] = useState({})
   const [, setCurrentBreakpoints] = useState({})
   const [currentAnnotations, setCurrentAnnotations] = useState({})
   const [currentMarkers, setCurrentMarkers] = useState({})
   const editorRef = useRef(null)
   const monacoRef = useRef(null)
   const currentFileRef = useRef('')
+
+  const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
   useEffect(() => {
     if (!monacoRef.current) return
@@ -83,7 +84,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const setAnnotationsbyFile = (uri) => {
     if (props.sourceAnnotationsPerFile[uri]) {
-      const model = models[uri]?.model
+      const model = editorModelsState[uri]?.model
       const newAnnotations = []
       for (const annotation of props.sourceAnnotationsPerFile[uri]) {
         if (!annotation.hide) {
@@ -106,7 +107,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const setMarkerbyFile = (uri) => {
     if (props.markerPerFile[uri]) {
-      const model = models[uri]?.model
+      const model = editorModelsState[uri]?.model
       const newMarkers = []
       for (const marker of props.markerPerFile[uri]) {
         if (!marker.hide) {
@@ -134,8 +135,8 @@ export const EditorUI = (props: EditorUIProps) => {
   useEffect(() => {
     if (!editorRef.current) return
     currentFileRef.current = props.currentFile
-    editorRef.current.setModel(models[props.currentFile].model)
-    editorRef.current.updateOptions({ readOnly: models[props.currentFile].readOnly })
+    editorRef.current.setModel(editorModelsState[props.currentFile].model)
+    editorRef.current.updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
     setAnnotationsbyFile(props.currentFile)
     setMarkerbyFile(props.currentFile)
   }, [props.currentFile])
@@ -150,78 +151,29 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
     if (!editorRef.current) return
-    const model = models[uri]?.model
+    const model = editorModelsState[uri]?.model
     if (model) return model.findMatches(value)
-  }
-
-  props.editorAPI.addModel = (value: string, language: string, uri: string, readOnly: boolean) => {
-    if (!monacoRef.current) return
-    if (models[uri]) return // already existing
-    const model = monacoRef.current.editor.createModel(value, language, monacoRef.current.Uri.parse(uri))
-    model.onDidChangeContent(() => props.onDidChangeContent(uri))
-    setModels(prevState => {
-      prevState[uri] = { language, uri, readOnly, model }
-      return prevState
-    })
-  }
-
-  props.editorAPI.disposeModel = (uri: string) => {
-    const model = models[uri]?.model
-    if (model) model.dispose()
-    setModels(prevState => {
-      delete prevState[uri]
-      return prevState
-    })
   }
 
   props.editorAPI.getValue = (uri: string) => {
     if (!editorRef.current) return
-    const model = models[uri]?.model
+    const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
     }
   }
 
-  props.editorAPI.setValue = (uri: string, value: string) => {
-    if (!editorRef.current) return
-    const model = models[uri]?.model
-    if (model) {
-      model.setValue(value)
-    }
-  }
-
   props.editorAPI.getCursorPosition = () => {
     if (!monacoRef.current) return
-    const model = models[currentFileRef.current]?.model
+    const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
       return model.getOffsetAt(editorRef.current.getPosition())
     }
   }
 
-  props.editorAPI.revealLine = (line: number, column: number) => {
-    if (!editorRef.current) return
-    editorRef.current.revealLine(line)
-    editorRef.current.setPosition({ column, lineNumber: line })
-  }
-
-  props.editorAPI.focus = () => {
-    if (!editorRef.current) return
-    editorRef.current.focus()
-  }
-
-  props.editorAPI.setFontSize = (size: number) => {
-    if (!editorRef.current) return
-    editorRef.current.updateOptions({ fontSize: size })
-  }
-
   props.editorAPI.getFontSize = () => {
     if (!editorRef.current) return
     return editorRef.current.getOption(42).fontSize
-  }
-
-  props.editorAPI.setWordWrap = (wrap: boolean) => {
-    if (!editorRef.current) return
-    editorRef.current.updateOptions({ wordWrap: wrap ? 'on' : 'off' })
   }
 
   (window as any).addRemixBreakpoint = (position) => { // make it available from e2e testing...
@@ -232,11 +184,11 @@ export const EditorUI = (props: EditorUIProps) => {
         if (!prevState[currentFile]) prevState[currentFile] = {}
         const decoration = Object.keys(prevState[currentFile]).filter((line) => parseInt(line) === position.lineNumber)
         if (decoration.length) {
-          props.onBreakPointCleared(currentFile, position.lineNumber)
+          props.events.onBreakPointCleared(currentFile, position.lineNumber)
           model.deltaDecorations([prevState[currentFile][position.lineNumber]], [])
           delete prevState[currentFile][position.lineNumber]
         } else {
-          props.onBreakPointAdded(currentFile, position.lineNumber)
+          props.events.onBreakPointAdded(currentFile, position.lineNumber)
           const decorationIds = model.deltaDecorations([], [{
             range: new monacoRef.current.Range(position.lineNumber, 1, position.lineNumber, 1),
             options: {
@@ -254,7 +206,7 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorDidMount (editor) {
     editorRef.current = editor
     monacoRef.current.editor.setTheme(props.theme)
-    props.onEditorMounted()
+    props.events.onEditorMounted()
     editor.onMouseUp((e) => {
       if (e && e.target && e.target.toString().startsWith('GUTTER')) {
         (window as any).addRemixBreakpoint(e.target.position)
@@ -264,6 +216,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
+    reducerListener(props.plugin, dispatch, monacoRef.current)
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
     const backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
     const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
@@ -285,7 +238,7 @@ export const EditorUI = (props: EditorUIProps) => {
       width="100%"
       height="100%"
       path={props.currentFile}
-      language={models[props.currentFile] ? models[props.currentFile].language : 'text'}
+      language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
       onMount={handleEditorDidMount}
       beforeMount={handleEditorWillMount}
       options= { { glyphMargin: true } }
