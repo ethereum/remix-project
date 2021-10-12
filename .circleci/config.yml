@@ -51,6 +51,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build:libs
+      - run: cd dist/libs/remix-tests && npm install
       - run: npm run test:libs
 
   remix-ide-chrome-1:
