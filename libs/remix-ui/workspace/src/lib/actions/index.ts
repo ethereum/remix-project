@@ -214,7 +214,6 @@ export const copyFile = async (src: string, dest: string) => {
   try {
     fileManager.copyFile(src, dest)
   } catch (error) {
-    console.log('Oops! An error ocurred while performing copyFile operation.' + error)
     dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
   }
 }
@@ -225,7 +224,6 @@ export const copyFolder = async (src: string, dest: string) => {
   try {
     fileManager.copyDir(src, dest)
   } catch (error) {
-    console.log('Oops! An error ocurred while performing copyDir operation.' + error)
     dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
   }
 }
@@ -235,8 +233,7 @@ export const runScript = async (path: string) => {
 
   provider.get(path, (error, content: string) => {
     if (error) {
-      dispatch(displayPopUp(error))
-      return console.log(error)
+      return dispatch(displayPopUp(error))
     }
     plugin.call('scriptRunner', 'execute', content)
   })
@@ -282,12 +279,11 @@ const getWorkspaces = async (): Promise<string[]> | undefined => {
     plugin.setWorkspaces(workspaces)
     return workspaces
   } catch (e) {
-    // dispatch(displayNotification('Workspaces', 'Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.', 'OK', null, () => { dispatch(hideNotification()) }, null))
     console.log(e)
   }
 }
 
-const packageGistFiles = async (directory) => {
+const packageGistFiles = (directory) => {
   return new Promise((resolve, reject) => {
     const workspaceProvider = plugin.fileProviders.workspace
     const isFile = workspaceProvider.isFile(directory)
