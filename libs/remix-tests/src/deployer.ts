@@ -79,7 +79,7 @@ export function deployAll (compileResult: compilationInterface, web3: Web3, with
             contracts[contractName] = contractObject
             contracts[contractName].filename = filename
 
-            if(deployCb) await deployCb(filename, receipt.contractAddress)
+            if (deployCb) await deployCb(filename, receipt.contractAddress)
             callback(null, { receipt: { contractAddress: receipt.contractAddress } }) // TODO this will only work with JavaScriptV VM
           }).on('error', function (err) {
             console.error(err)
