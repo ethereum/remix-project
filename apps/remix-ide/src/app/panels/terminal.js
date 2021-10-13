@@ -4,18 +4,18 @@ import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-var vm = require('vm')
-var EventManager = require('../../lib/events')
+const vm = require('vm')
+const EventManager = require('../../lib/events')
 
-var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-var AutoCompletePopup = require('../ui/auto-complete-popup')
+const CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
+const AutoCompletePopup = require('../ui/auto-complete-popup')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
-var globalRegistry = require('../../global/registry')
-var SourceHighlighter = require('../../app/editor/sourceHighlighter')
-var GistHandler = require('../../lib/gist-handler')
+const globalRegistry = require('../../global/registry')
+const SourceHighlighter = require('../../app/editor/sourceHighlighter')
+const GistHandler = require('../../lib/gist-handler')
 
-var KONSOLES = []
+const KONSOLES = []
 
 function register (api) { KONSOLES.push(api) }
 
@@ -29,7 +29,7 @@ const profile = {
 }
 
 class Terminal extends Plugin {
-  constructor (opts, api, config, registry) {
+  constructor (opts, api, registry) {
     super(profile)
     this.fileImport = new CompilerImports()
     this.gistHandler = new GistHandler()
@@ -60,7 +60,7 @@ class Terminal extends Plugin {
     this.vm = vm
     this._api = api
     this._opts = opts
-    this.config = config
+    this.config = registry.get('config').api
     this.version = packageJson.version
     this.data = {
       lineLength: opts.lineLength || 80, // ????

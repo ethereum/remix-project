@@ -31,11 +31,11 @@ const findDeep = (object, fn, found = { break: false, value: undefined }) => {
 
 export const find = (args, query) => {
   query = query.trim()
-  var isMatch = !!findDeep(args, function check (value) {
+  const isMatch = !!findDeep(args, function check (value) {
     if (value === undefined || value === null) return false
     if (typeof value === 'function') return false
     if (typeof value === 'object') return false
-    var contains = String(value).indexOf(query.trim()) !== -1
+    const contains = String(value).indexOf(query.trim()) !== -1
     return contains
   })
   return isMatch
