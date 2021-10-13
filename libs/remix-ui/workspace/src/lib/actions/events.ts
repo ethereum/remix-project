@@ -1,6 +1,6 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { action } from '../types'
+import { action, CallbackParam } from '../types'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
@@ -10,8 +10,8 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspace', (name: string, loadPreset: boolean) => {
-    setTimeout(() => createWorkspace(name, loadPreset), 10)
+  plugin.on('filePanel', 'createWorkspace', (name: string, loadPreset: boolean, cb: CallbackParam<any, void>, err: CallbackParam<any, void>) => {
+    setTimeout(() => createWorkspace(name, loadPreset, cb, err), 10)
   })
 
   plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
@@ -35,6 +35,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   })
 
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
+    setTimeout(() => rootFolderChanged(path), 10)
+  })
+
+  plugin.on('fileManager', 'rootFolderChanged', async (path: string) => {
     setTimeout(() => rootFolderChanged(path), 10)
   })
 }

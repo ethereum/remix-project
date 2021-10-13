@@ -110,7 +110,9 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async createWorkspace (workspaceName, loadPreset = true) {
-    this.emit('createWorkspace', workspaceName, loadPreset)
+    return new Promise((resolve, reject) => {
+      this.emit('createWorkspace', workspaceName, loadPreset, (done) => resolve(done), (err) => reject(err))
+    })
   }
 
   async renameWorkspace (oldName, workspaceName) {
@@ -118,6 +120,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   setWorkspace (workspace) {
+    console.log("SETTING WS", workspace)
     const workspaceProvider = this.fileProviders.workspace
 
     this.workspaceStatus = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }

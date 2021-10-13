@@ -1,6 +1,7 @@
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
+import { CallbackParam } from '../types'
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
@@ -9,7 +10,7 @@ export const FileSystemContext = createContext<{
   dispatchFetchDirectory:(path: string) => Promise<void>,
   dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
   dispatchRemoveInputField:(path: string) => Promise<void>,
-  dispatchCreateWorkspace: (workspaceName: string) => Promise<void>,
+  dispatchCreateWorkspace: (workspaceName: string, loadPreset: boolean, cb: CallbackParam<any, void>, err:CallbackParam<any, void>) => Promise<void>,
   toast: (toasterMsg: string) => void,
   dispatchFetchWorkspaceDirectory: (path: string) => Promise<void>,
   dispatchSwitchToWorkspace: (name: string) => Promise<void>,

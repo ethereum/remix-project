@@ -6,7 +6,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder, deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from '../actions'
-import { Modal, WorkspaceProps } from '../types'
+import { CallbackParam, Modal, WorkspaceProps } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
@@ -43,8 +43,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await removeInputField(path)
   }
 
-  const dispatchCreateWorkspace = async (workspaceName: string) => {
-    await createWorkspace(workspaceName)
+  const dispatchCreateWorkspace = async (workspaceName: string, loadPreset: boolean, cb: CallbackParam<any, void>, err: CallbackParam<any, void>) => {
+    await createWorkspace(workspaceName, loadPreset, cb, err)
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {

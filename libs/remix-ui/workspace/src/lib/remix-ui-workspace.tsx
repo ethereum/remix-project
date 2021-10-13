@@ -70,7 +70,7 @@ export function Workspace () {
     const workspaceName = workspaceCreateInput.current.value
 
     try {
-      await global.dispatchCreateWorkspace(workspaceName)
+      await global.dispatchCreateWorkspace(workspaceName, true, () => {}, () => {})
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)

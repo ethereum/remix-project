@@ -150,3 +150,7 @@ export interface FileExplorerState {
       type: 'folder' | 'gist' | 'file'
     }[]
   }
+
+export interface CallbackParam<T1, T2 = void> {
+    (param1: T1): T2;
+  }

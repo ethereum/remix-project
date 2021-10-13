@@ -3,6 +3,7 @@ import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
+import { CallbackParam } from '../types'
 
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
 const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
@@ -35,7 +36,7 @@ export const addInputField = async (type: 'file' | 'folder', path: string) => {
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, loadPreset: boolean = true) => {
+export const createWorkspace = async (workspaceName: string, loadPreset: boolean = true, cb: CallbackParam<any, void>, err: CallbackParam<any, void>) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, 'default-template')
 
@@ -43,8 +44,12 @@ export const createWorkspace = async (workspaceName: string, loadPreset: boolean
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
     if (loadPreset) await loadWorkspacePreset('default-template')
+    const workspace = { name: workspaceName, isLocalhost: false }
+    plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     plugin.emit('setWorkspace', { name: workspaceName, isLocalhost: false })
+    if (cb) cb(workspace)
   }).catch((error) => {
+    if (err) err(error)
     dispatch(createWorkspaceError({ error }))
   })
   return promise
@@ -188,6 +193,7 @@ export const switchToWorkspace = async (name: string) => {
 
     if (!isActive) await plugin.call('manager', 'activatePlugin', 'remixd')
     dispatch(setMode('localhost'))
+    plugin.setWorkspace({ name: LOCALHOST, isLocalhost: false })
     plugin.emit('setWorkspace', { name: LOCALHOST, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
     plugin.fileProviders.workspace.clearWorkspace()
@@ -200,6 +206,7 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace(name))
     dispatch(setReadOnlyMode(false))
+    plugin.setWorkspace({ name, isLocalhost: false })
     plugin.emit('setWorkspace', { name, isLocalhost: false })
   }
 }

@@ -428,10 +428,10 @@ class DGitProvider extends Plugin {
         }
         const dir = path.dirname(file.path)
         try {
-          await this.createDirectories(`${workspace.absolutePath}/${dir}`)
+          await this.createDirectories(`${workspace.absolutePath}${dir}`)
         } catch (e) { throw new Error(e) }
         try {
-          await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
+          await window.remixFileSystem.writeFile(`${workspace.absolutePath}${file.path}`, Buffer.concat(content) || new Uint8Array())
         } catch (e) { throw new Error(e) }
       }
     } catch (e) {
@@ -459,20 +459,16 @@ class DGitProvider extends Plugin {
     if (!permission) return false
     if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
     const cid = cmd.cid
-    this.on('filePanel', 'setWorkspace', async (x) => {
-      console.log(x)
-      const workspace = x.name
-      console.log('get current workspace', workspace)
-      let result
-      if (cmd.local) {
-        result = await this.importIPFSFiles(this.ipfsconfig, cid, workspace)
-      } else {
-        result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
-      }
-      await this.call('fileManager', 'refresh')
-      if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
-    })
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, false)
+    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
+    let result
+    if (cmd.local) {
+      result = await this.importIPFSFiles(this.ipfsconfig, cid, workspace)
+    } else {
+      result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
+    }
+    await this.call('fileManager', 'refresh')
+    if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
 
   async getItem (name) {
