@@ -4,6 +4,8 @@ import { initialState, registerCommandReducer, addCommandHistoryReducer, registe
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
 import {allCommands, allPrograms} from './commands' // eslint-disable-line
 import TerminalWelcomeMessage from './terminalWelcome' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 import './remix-ui-terminal.css'
 import vm from 'vm'
@@ -34,6 +36,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
+  const [toaster, setToaster] = useState(false)
+  const [toastProvider, setToastProvider] = useState({ show: false, fileName: '' })
+  const [modalState, setModalState] = useState({
+    message: '',
+    title: '',
+    okLabel: '',
+    cancelLabel: '',
+    hide: true,
+    cancelFn: () => {},
+    handleHide: () => {}
+  })
 
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
@@ -102,12 +115,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [newstate.journalBlocks.length, logHtmlResponse.length])
+  }, [newstate.journalBlocks.length, logHtmlResponse.length, toaster])
 
   function execute (file, cb) {
     function _execute (content, cb) {
       if (!content) {
-      //  toolTip('no content to execute')
+        setToaster(true)
         if (cb) cb()
         return
       }
@@ -125,6 +138,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
     if (!provider) {
       // toolTip(`provider for path ${file} not found`)
+      setToastProvider({ show: true, fileName: file })
       if (cb) cb()
       return
     }
@@ -183,7 +197,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setToggleDownUp('fa-angle-double-up')
       event.trigger('resize', [])
     } else {
-      const terminalTopOffset = config.config.get('terminal-top-offset')
+      const terminalTopOffset = config.get('terminal-top-offset')
       event.trigger('resize', [terminalTopOffset])
       setToggleDownUp('fa-angle-double-down')
     }
@@ -295,7 +309,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
     }
-  })
+  }, [onMouseMove, onMouseUp])
 
   React.useEffect(() => {
     if (panelRef) {
@@ -401,6 +415,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  const modal = (title: string, message: string, okLabel: string, hide: boolean, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
+    setModalState(prevState => ({ ...prevState, message, okLabel, okFn, cancelLabel, cancelFn, hide }))
+  }
+
+  const handleHideModal = () => {
+    setModalState(prevState => ({ ...prevState, hide: true }))
+  }
+
   const txDetails = (event, tx) => {
     if (showTableHash.includes(tx.hash)) {
       const index = showTableHash.indexOf(tx.hash)
@@ -467,12 +489,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           <div className="search">
             <i className="fas fa-search searchIcon bg-light" aria-hidden="true"></i>
             <input
-              // spellcheck = "false"
               onChange={(event) => setSearchInput(event.target.value.trim()) }
               type="text"
               className="border filter form-control"
               id="searchInput"
-              // onkeydown=${filter}
               placeholder="Search with transaction hash or address"
               data-id="terminalInputSearch" />
           </div>
@@ -502,11 +522,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 )
               } else if (x.name === UNKNOWN_TRANSACTION) {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { <RenderUnKnownTransactions tx={trans.tx} receipt={trans.receipt} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} />} </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { <RenderUnKnownTransactions tx={trans.tx} receipt={trans.receipt} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} modal={modal}/>} </div>)
                 })
               } else if (x.name === KNOWN_TRANSACTION) {
                 return x.message.map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? <RenderCall tx={trans.tx} resolvedData={trans.resolvedData} logs={trans.logs} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} /> : (<RenderKnownTransactions tx = { trans.tx } receipt = { trans.receipt } resolvedData = { trans.resolvedData } logs = {trans.logs } index = { index } plugin = { props.plugin } showTableHash = { showTableHash } txDetails = { txDetails } />) } </div>)
+                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? <RenderCall tx={trans.tx} resolvedData={trans.resolvedData} logs={trans.logs} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} modal={modal}/> : (<RenderKnownTransactions tx = { trans.tx } receipt = { trans.receipt } resolvedData = { trans.resolvedData } logs = {trans.logs } index = { index } plugin = { props.plugin } showTableHash = { showTableHash } txDetails = { txDetails } modal={modal}/>) } </div>)
                 })
               } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
@@ -536,7 +556,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
         </div>
       </div>
-
+      <ModalDialog
+        title={ modalState.title }
+        message={ modalState.message }
+        hide={ modalState.hide }
+        okLabel={ modalState.okLabel }
+        cancelLabel={ modalState.cancelLabel }
+        cancelFn={ modalState.cancelFn }
+        handleHide={ handleHideModal }
+      />
+      {toaster && <Toaster message="no content to execute"/>}
+      {toastProvider && <Toaster message={`provider for path ${toastProvider.fileName} not found`} />}
     </div>
   )
 }

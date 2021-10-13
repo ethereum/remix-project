@@ -4,29 +4,18 @@ import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
-const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails }) => {
-  const [hideModal, setHideModal] = useState(true)
-
+const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails, modal }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
-      return (<ModalDialog
-        hide={hideModal}
-        handleHide={ handleHideModal }
-        message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
-      />)
+      modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
     }
   }
 
-  const handleHideModal = () => {
-    setHideModal(false)
-  }
-
   const from = tx.from
   const to = tx.to
-  // const obj = { from, to }
   const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
   const options = { from, to, tx }
   return (

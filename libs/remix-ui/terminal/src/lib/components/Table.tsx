@@ -3,7 +3,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import helper from 'apps/remix-ide/src/lib/helper'
 
 const remixLib = require('@remix-project/remix-lib')
-var typeConversion = remixLib.execution.typeConversion
+const typeConversion = remixLib.execution.typeConversion
 
 const showTable = (opts, showTableHash) => {
   let msg = ''
