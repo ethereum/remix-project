@@ -154,33 +154,6 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
   },
 
-  'Local plugin should activate LearnEth plugin': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
-      .waitForElementVisible('*[data-id="localPluginName"]')
-      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', localPluginData.pluginName)
-      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', localPluginData.pluginDisplayName)
-      .clearValue('*[data-id="localPluginCanActivate"]').setValue('*[data-id="localPluginCanActivate"]', localPluginData.pluginCanActivate)
-      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', localPluginData.pluginUrl)
-      .click('*[data-id="localPluginRadioButtoniframe"]')
-      .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
-      .waitForElementVisible('[data-id="verticalIconsKindlocalPlugin"]')
-      .click('[data-id="verticalIconsKindlocalPlugin"]')
-      .waitForElementNotPresent('[data-id="verticalIconsKindLearnEth"]')
-      .pause(2000)
-      // @ts-ignore
-      .frame('plugin-localPlugin')
-      .useXpath().click("//button[text()='Activate Learneth']")
-      .pause(2000)
-      .frameParent()
-      .useCss().waitForElementPresent('[data-id="verticalIconsKindLearnEth"]')
-  },
-
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
