@@ -216,7 +216,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
-    reducerListener(props.plugin, dispatch, monacoRef.current)
+    reducerListener(props.plugin, dispatch, monacoRef.current, props.events)
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
     const backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
     const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
