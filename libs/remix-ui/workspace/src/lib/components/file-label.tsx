@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
 
