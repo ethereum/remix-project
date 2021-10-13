@@ -17,7 +17,7 @@ export const reducerActions = (models = initialState, action: Action) => {
       const readOnly = action.payload.readOnly
       if (models[uri]) return models // already existing
       const model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
-      model.onDidChangeContent(() => action.payload.onDidChangeContent(uri))
+      model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
       models[uri] = { language, uri, readOnly, model }
       return models
     }
@@ -66,11 +66,11 @@ export const reducerActions = (models = initialState, action: Action) => {
   }
 }
 
-export const reducerListener = (plugin, dispatch, monaco) => {
+export const reducerListener = (plugin, dispatch, monaco, events) => {
   plugin.on('editor', 'addModel', (value, language, uri, readOnly) => {
     dispatch({
       type: 'ADD_MODEL',
-      payload: { uri, value, language, readOnly },
+      payload: { uri, value, language, readOnly, events },
       monaco
     })
   })
