@@ -1,16 +1,12 @@
 import { Selector, RequestLogger, Role } from 'testcafe'
 import { Profile, LocationProfile, ExternalProfile } from '@remixproject/plugin-utils'
 
-const logger = RequestLogger()
-
-const role = Role(process.env.TEST_URL || 'http://localhost:8080', async t => {
-
-})
-
-fixture`DGIT production tests`
-  .page(process.env.TEST_URL || 'http://localhost:8080')
+fixture`Plugin API tests`
+  .page(process.env.TEST_URL || 'http://127.0.0.1:8080')
   .beforeEach(async t => {
 
+  }).afterEach(async t => {
+    console.log(await t.getBrowserConsoleMessages())
   })
 const openPlugin = async (t: TestController, plugin: string) => {
   await t.click(`#icon-panel div[plugin="${plugin}"]`)
@@ -20,7 +16,7 @@ interface dataIdSelectorInterface extends Selector {
   select(id: string): Promise<any>
 }
 
-const dataIdSelector = async (id:string) => { return Selector(`[data-id="${id}"]`) }
+const dataIdSelector = async (id: string) => { return Selector(`[data-id="${id}"]`) }
 
 const installPlugin = async (t: TestController, profile: Profile & LocationProfile & ExternalProfile) => {
   await t.click('*[plugin="pluginManager"]')
@@ -46,7 +42,7 @@ const localPluginData = {
   location: 'sidePanel',
   url: 'http://localhost:2020',
   canActivate: [
-    'dGitProvider,flattener'
+    'dGitProvider,flattener,solidityUnitTesting'
   ]
 }
 
@@ -64,7 +60,7 @@ test('install plugin', async t => {
 test.disablePageReloads('switch to plugin', async t => {
   await t
     .click('#verticalIconsKindpluginManager')
-  // .click('[data-id="pluginManagerComponentActivateButtondgittest"]')
+    // .click('[data-id="pluginManagerComponentActivateButtondgittest"]')
     .click('[data-id="verticalIconsKindlocalplugin"]')
     .switchToIframe('#plugin-localplugin')
 })
@@ -122,4 +118,19 @@ test.disablePageReloads('open a file', async t => {
     .withText('getcurrentfile'))
 
   await expectLogMessage(t, file)
+})
+
+test.disablePageReloads('run a test file', async t => {
+  await t
+    .click('#appendToLog')
+    .click(Selector('Button')
+      .withText('run sol test'))
+    .switchToMainWindow()
+    .click('#remember')
+    .click(Selector('span').withText('Accept'))
+    .switchToIframe('#plugin-localplugin')
+    .click(Selector('Button')
+      .withText('run sol test')).wait(5000)
+
+  await expectLogMessage(t, '"totalPassing":1,"totalFailing":0')
 })
