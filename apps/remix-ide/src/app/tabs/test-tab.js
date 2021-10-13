@@ -280,7 +280,7 @@ module.exports = class TestTab extends ViewPlugin {
           onclick=${() => this.discardHighlight()}
         >
           <div class="d-flex my-1 align-items-start justify-content-between">
-            <span> ✓ ${result.value}</span>
+            <span style="margin-block: auto" > ✓ ${result.value}</span>
             ${debugBtn}
           </div>
         </div>
