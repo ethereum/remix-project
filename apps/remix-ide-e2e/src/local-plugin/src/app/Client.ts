@@ -35,10 +35,9 @@ export class WorkSpacePlugin extends PluginClient {
 
   constructor () {
     super()
-    console.log('CONSTRUCTOR')
     createClient(this)
 
-    this.methods = ['qr', 'dismiss', 'customAction']
+    this.methods = ['customAction']
 
     this.onload()
       .then(async (x) => {
@@ -482,7 +481,7 @@ export class WorkSpacePlugin extends PluginClient {
   }
 
   async soltest () {
-    const f = `pragma solidity >=0.4.0 <0.7.0;
+    const f = `pragma solidity >=0.4.0;
 
     contract SimpleStorage {
         uint storedData;
@@ -498,7 +497,7 @@ export class WorkSpacePlugin extends PluginClient {
     }
     `
 
-    const t = `pragma solidity >=0.4.0 <0.7.0;
+    const t = `pragma solidity >=0.4.0;
     import "remix_tests.sol"; // this import is automatically injected by Remix.
     import "./modifyVariable.sol";
     
@@ -515,10 +514,6 @@ export class WorkSpacePlugin extends PluginClient {
         }
     }
     `
-
-    console.log(f)
-    console.log(t)
-
     await this.call('fileManager', 'setFile', '/modifyVariable.sol', f)
     await this.call('fileManager', 'switchFile', '/modifyVariable.sol')
     await this.call('fileManager', 'setFile', '/modifyVariable_test.sol', t)
@@ -527,7 +522,7 @@ export class WorkSpacePlugin extends PluginClient {
       'testFromPath',
       'modifyVariable_test.sol'
     )
-    return result.errors
+    this.setFeedback(result)
   }
 
   async disableCallBacks () {

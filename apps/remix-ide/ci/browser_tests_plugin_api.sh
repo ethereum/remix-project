@@ -8,9 +8,7 @@ TEST_EXITCODE=0
 
 npm run serve &
 npx nx serve remix-ide-e2e-src-local-plugin &
-
-sleep 5
-
+sleep 5 &
 npm run testcafe_local_pluginApi || TEST_EXITCODE=1
 
 echo "$TEST_EXITCODE"
