@@ -129,8 +129,11 @@ test.disablePageReloads('run a test file', async t => {
     .click('#remember')
     .click(Selector('span').withText('Accept'))
     .switchToIframe('#plugin-localplugin')
+    .typeText('#payload', '/', { replace: true })
     .click(Selector('Button')
-      .withText('run sol test')).wait(5000)
+      .withText('readdir'))
+    .click(Selector('Button')
+      .withText('run sol test'))
 
   await expectLogMessage(t, '"totalPassing":1,"totalFailing":0')
 })
