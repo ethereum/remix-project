@@ -107,6 +107,10 @@ export function RemixUiVerticalIconsPanel ({
             scrollableRef={scrollableRef}
           />
         </div>
+        {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
+          ? <i className="fa fa-chevron-up remixui_icon-chevron m-3"></i>
+          : null
+        }
         <div
           id="remixuiScrollable"
           className={scrollableRef.current && scrollableRef.current.scrollHeight > 500
