@@ -31,7 +31,6 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   removePrefix (path) {
-    // if (!this.workspace) this.createWorkspace()
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     if (path.startsWith(this.workspace)) return path.replace(this.workspace, this.workspacesPath + '/' + this.workspace)
@@ -52,7 +51,6 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   resolveDirectory (path, callback) {
-    // if (!this.workspace) this.createWorkspace()
     super.resolveDirectory(path, (error, files) => {
       if (error) return callback(error)
       const unscoped = {}
@@ -77,7 +75,6 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   _normalizePath (path) {
-    // if (!this.workspace) this.createWorkspace()
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
   }
 

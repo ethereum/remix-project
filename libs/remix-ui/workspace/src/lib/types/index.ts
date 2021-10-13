@@ -1,4 +1,9 @@
+import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+
+export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
+
+export type MenuItems = action[]
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
@@ -36,6 +41,7 @@ export interface WorkspaceState {
 export interface Modal {
   hide?: boolean
   title: string
+  // eslint-disable-next-line no-undef
   message: string | JSX.Element
   okLabel: string
   okFn: () => void
@@ -62,6 +68,7 @@ export interface FileExplorerProps {
     focusEdit: string,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
+    // eslint-disable-next-line no-undef
     modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
     dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>,
     readonly: boolean,
@@ -90,10 +97,6 @@ export interface FileExplorerMenuProps {
     publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
-
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
-
-export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
     actions: action[],
     createNewFile: (folder?: string) => void,
