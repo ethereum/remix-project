@@ -54,7 +54,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.slitherHandle = new SlitherHandle()
     this.workspaces = []
     this.appManager = appManager
-    this.currentWorkspaceInfo = {}
+    this.currentWorkspaceMetadata = {}
   }
 
   onActivation () {
@@ -84,7 +84,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   getCurrentWorkspace () {
-    return this.currentWorkspaceInfo
+    return this.currentWorkspaceMetadata
   }
 
   getWorkspaces () {
@@ -120,7 +120,7 @@ module.exports = class Filepanel extends ViewPlugin {
   setWorkspace (workspace) {
     const workspaceProvider = this.fileProviders.workspace
 
-    this.currentWorkspaceInfo = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }
+    this.currentWorkspaceMetadata = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }
   }
 
   workspaceDeleted (workspace) {

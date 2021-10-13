@@ -19,9 +19,9 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
 
 export const addInputField = async (type: 'file' | 'folder', path: string) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve) => {
+  const promise = new Promise((resolve, reject) => {
     provider.resolveDirectory(path, (error, fileTree) => {
-      if (error) console.error(error)
+      if (error) reject(error)
 
       resolve(fileTree)
     })
@@ -216,8 +216,7 @@ export const uploadFile = async (target, targetFolder: string) => {
 
       fileReader.onload = async function (event) {
         if (checkSpecialChars(file.name)) {
-          dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => {}))
-          return
+          return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => {}))
         }
         const success = await workspaceProvider.set(name, event.target.result)
 
