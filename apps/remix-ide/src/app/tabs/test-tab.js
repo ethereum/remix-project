@@ -542,7 +542,7 @@ module.exports = class TestTab extends ViewPlugin {
           callback(error)
         }, (url, cb) => {
           return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-        }, {testFilePath}
+        }, { testFilePath }
       )
     }).catch((error) => {
       if (error) return // eslint-disable-line
