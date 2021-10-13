@@ -8,21 +8,22 @@ export const client = new WorkSpacePlugin()
 function App () {
   const [payload, setPayload] = useState<string>('')
   const [result, setResult] = useState<string>()
+  const [append, setAppend] = useState<boolean>(false)
 
   const handleChange = ({ target }: any) => {
     setPayload(target.value)
   }
 
-  const test = async () => {
-    setResult('')
-    const r = await client.soltest()
-    setResult('test done')
+  const setAppendChange = ({ target }: any) => {
+    console.log('append', target.checked)
+    setAppend(target.checked)
   }
 
   return (
     <div className="App">
       <div>v5</div>
-      <Logger></Logger>
+      <Logger append={append}></Logger>
+      <input id='appendToLog' type='checkbox' onChange={setAppendChange}/><label>append logs</label>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.zip()}>zip</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.ipfspush()}>ipfs push</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.ipfspull(payload)}>ipfs pull</button>
@@ -30,7 +31,7 @@ function App () {
       <button className='btn btn-primary btn-sm' onClick={async () => await client.getAccounts()}>get accounts</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.setSettings()}>set settings to injected</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.getSettings()}>get settings</button>
-      <button className='btn btn-primary btn-sm' onClick={async () => await test()}>run sol test</button>
+      <button className='btn btn-primary btn-sm' onClick={async () => await client.soltest()}>run sol test</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.highlight(payload)}>highlight</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.addAnnotation(payload)}>annotation</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.clearAnnotations(payload)}>clear annotation</button>
