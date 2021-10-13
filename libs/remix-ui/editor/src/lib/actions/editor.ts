@@ -18,9 +18,10 @@ export const reducerActions = (models = initialState, action: Action) => {
       const language = action.payload.language
       const readOnly = action.payload.readOnly
       if (models[uri]) return models // already existing
+      models[uri] = { language, uri, readOnly }
       const model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
+      models[uri].model = model
       model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
-      models[uri] = { language, uri, readOnly, model }
       return models
     }
     case 'DISPOSE_MODEL': {
