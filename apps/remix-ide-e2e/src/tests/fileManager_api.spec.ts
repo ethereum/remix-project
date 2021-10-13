@@ -11,7 +11,7 @@ module.exports = {
     browser
       .addFile('file.js', { content: executeFile })
       .executeScript('remix.exeCurrent()')
-      .pause(5000)
+      .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'file.js', 60000)
   },
 

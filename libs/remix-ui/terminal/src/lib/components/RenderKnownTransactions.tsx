@@ -8,21 +8,11 @@ import showTable from './Table'
 const remixLib = require('@remix-project/remix-lib')
 const typeConversion = remixLib.execution.typeConversion
 
-const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails }) => {
-  const [hideModal, setHideModal] = useState(true)
-
-  const handleHideModal = () => {
-    setHideModal(false)
-  }
-
+const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails, modal }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
-      return (<ModalDialog
-        hide={hideModal}
-        handleHide={ handleHideModal }
-        message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
-      />)
+      modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
     }
@@ -30,7 +20,6 @@ const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugi
 
   const from = tx.from
   const to = resolvedData.contractName + '.' + resolvedData.fn
-  // const obj = { from, to }
   const txType = 'knownTx'
   const options = { from, to, tx }
   return (
@@ -43,7 +32,6 @@ const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugi
         </div>
         <i className = {`terminal_arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>
-      { console.log({ showTableHash: showTableHash.includes(tx.hash) })}
       {showTableHash.includes(tx.hash) ? showTable({
         hash: tx.hash,
         status: receipt !== null ? receipt.status : null,

@@ -6,27 +6,18 @@ import showTable from './Table'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 const remixLib = require('@remix-project/remix-lib')
-var typeConversion = remixLib.execution.typeConversion
+const typeConversion = remixLib.execution.typeConversion
 
-const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDetails }) => {
-  const [hideModal, setHideModal] = useState(true)
+const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDetails, modal }) => {
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const from = tx.from ? tx.from : ' - '
   const input = tx.input ? helper.shortenHexData(tx.input) : ''
   const txType = 'call'
 
-  const handleHideModal = () => {
-    setHideModal(false)
-  }
-
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
-      return <ModalDialog
-        hide={hideModal}
-        handleHide={ handleHideModal }
-        message="Cannot debug this call. Debugging calls is only possible in JavaScript VM mode."
-      />
+      modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
     }

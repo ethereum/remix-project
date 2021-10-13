@@ -10,7 +10,6 @@ class JournalLastChildIncludes extends EventEmitter {
       .waitForElementVisible('*[data-id="terminalJournal"]', 10000)
       .pause(1000)
       .getText('*[data-id="terminalJournal"]', (result) => {
-        this.api.pause(5000)
         console.log('JournalLastChildIncludes', result.value)
         if (typeof result.value === 'string' && result.value.indexOf(val) === -1) return this.api.assert.fail(`wait for ${val} in ${result.value}`)
         else this.api.assert.ok(true, `<*[data-id="terminalJournal"]> contains ${val}.`)
