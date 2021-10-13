@@ -16,6 +16,16 @@ interface dataIdSelectorInterface extends Selector {
   select(id: string): Promise<any>
 }
 
+const setCompilerVersion = async (t: TestController, version: string) => {
+  const citySelect = Selector('#versionSelector')
+  const cityOption = citySelect.find('option')
+  await t.click(citySelect).click(cityOption.withAttribute('value', 'builtin'))
+}
+
+const ClickLaunchIcon = async (t: TestController, icon: string) => {
+  await t.click('#icon-panel div[plugin="' + icon + '"]')// .click('#icon-panel div[plugin="' + icon + '"]')
+}
+
 const dataIdSelector = async (id: string) => { return Selector(`[data-id="${id}"]`) }
 
 const installPlugin = async (t: TestController, profile: Profile & LocationProfile & ExternalProfile) => {
@@ -54,6 +64,8 @@ test('install plugin', async t => {
     await t.click(Selector('Button').withText('Sure'))
   }
   await t.click('.introjs-skipbutton')
+  // await ClickLaunchIcon(t, 'solidity')
+  // await setCompilerVersion(t, 'builtin')
   await installPlugin(t, localPluginData)
 })
 
