@@ -276,7 +276,7 @@ module.exports = class TestTab extends ViewPlugin {
         <div
           id="${this.runningTestFileName}"
           data-id="testTabSolidityUnitTestsOutputheader"
-          class="${css.testPass} ${css.testLog} bg-light mb-2 text-success border-0"
+          class="${css.testPass} ${css.testLog} bg-light mb-2 px-2 text-success border-0"
           onclick=${() => this.discardHighlight()}
         >
           <div class="d-flex my-1 align-items-start justify-content-between">
