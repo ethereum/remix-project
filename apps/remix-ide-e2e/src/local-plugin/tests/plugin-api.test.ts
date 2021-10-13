@@ -133,7 +133,7 @@ test.disablePageReloads('run a test file', async t => {
     .click(Selector('Button')
       .withText('readdir'))
     .click(Selector('Button')
-      .withText('run sol test'))
+      .withText('run sol test')).wait(5000)
 
   await expectLogMessage(t, '"totalPassing":1,"totalFailing":0')
 })
