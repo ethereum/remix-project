@@ -2,7 +2,7 @@ let os = require("os");
 
 module.exports = {
     skipJsErrors: true,
-    browsers: ['chrome'],
+    browsers: ['chrome  -incognito'],
     screenshots: {
         "path": "/tmp/artifacts",
         "takeOnFails": true,
