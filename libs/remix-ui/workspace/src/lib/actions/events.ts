@@ -11,31 +11,31 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
   plugin.on('filePanel', 'createWorkspace', (name: string) => {
-    setTimeout(() => createWorkspace(name), 10)
+    createWorkspace(name)
   })
 
   plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
-    setTimeout(() => renameWorkspace(oldName, workspaceName), 10)
+    renameWorkspace(oldName, workspaceName)
   })
 
   plugin.on('filePanel', 'registerContextMenuItem', (item: action) => {
-    setTimeout(() => registerContextMenuItem(item), 10)
+    registerContextMenuItem(item)
   })
 
   plugin.on('filePanel', 'removePluginActions', (plugin) => {
-    setTimeout(() => removePluginActions(plugin), 10)
+    removePluginActions(plugin)
   })
 
   plugin.on('filePanel', 'displayNewFileInput', (path) => {
-    setTimeout(() => addInputField('file', path), 10)
+    addInputField('file', path)
   })
 
   plugin.on('filePanel', 'uploadFileEvent', (dir: string, target) => {
-    setTimeout(() => uploadFile(target, dir), 10)
+    uploadFile(target, dir)
   })
 
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
-    setTimeout(() => rootFolderChanged(path), 10)
+    rootFolderChanged(path)
   })
 }
 
@@ -43,74 +43,66 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
   dispatch = reducerDispatch
 
   provider.event.on('fileAdded', (filePath: string) => {
-    setTimeout(() => fileAdded(filePath), 10)
+    fileAdded(filePath)
   })
 
   provider.event.on('folderAdded', (folderPath: string) => {
     if (folderPath.indexOf('/.workspaces') === 0) return
-    setTimeout(() => folderAdded(folderPath), 10)
+    folderAdded(folderPath)
   })
 
   provider.event.on('fileRemoved', (removePath: string) => {
-    setTimeout(() => fileRemoved(removePath), 10)
+    fileRemoved(removePath)
   })
 
   provider.event.on('fileRenamed', (oldPath: string) => {
-    setTimeout(() => fileRenamed(oldPath), 10)
+    fileRenamed(oldPath)
   })
 
-  provider.event.on('disconnected', () => {
-    setTimeout(async () => {
-      plugin.fileManager.setMode('browser')
-      dispatch(setMode('browser'))
-      dispatch(loadLocalhostError('Remixd disconnected!'))
-      const workspaceProvider = plugin.fileProviders.workspace
+  provider.event.on('disconnected', async () => {
+    plugin.fileManager.setMode('browser')
+    dispatch(setMode('browser'))
+    dispatch(loadLocalhostError('Remixd disconnected!'))
+    const workspaceProvider = plugin.fileProviders.workspace
 
-      await switchToWorkspace(workspaceProvider.workspace)
-    }, 10)
+    await switchToWorkspace(workspaceProvider.workspace)
   })
 
   provider.event.on('connected', () => {
-    setTimeout(() => {
-      plugin.fileManager.setMode('localhost')
-      dispatch(setMode('localhost'))
-      fetchWorkspaceDirectory('/')
-      dispatch(loadLocalhostSuccess())
-    }, 10)
+    plugin.fileManager.setMode('localhost')
+    dispatch(setMode('localhost'))
+    fetchWorkspaceDirectory('/')
+    dispatch(loadLocalhostSuccess())
   })
 
-  provider.event.on('loadingLocalhost', () => {
-    setTimeout(async () => {
-      await switchToWorkspace(LOCALHOST)
-      dispatch(loadLocalhostRequest())
-    }, 10)
+  provider.event.on('loadingLocalhost', async () => {
+    await switchToWorkspace(LOCALHOST)
+    dispatch(loadLocalhostRequest())
   })
 
   provider.event.on('fileExternallyChanged', (path: string, content: string) => {
-    setTimeout(() => {
-      const config = plugin.registry.get('config').api
-      const editor = plugin.registry.get('editor').api
+    const config = plugin.registry.get('config').api
+    const editor = plugin.registry.get('editor').api
 
-      if (config.get('currentFile') === path && editor.currentContent() !== content) {
-        if (provider.isReadOnly(path)) return editor.setText(content)
-        dispatch(displayNotification(
-          path + ' changed',
-          'This file has been changed outside of Remix IDE.',
-          'Replace by the new content', 'Keep the content displayed in Remix',
-          () => {
-            editor.setText(content)
-          }
-        ))
-      }
-    }, 10)
+    if (config.get('currentFile') === path && editor.currentContent() !== content) {
+      if (provider.isReadOnly(path)) return editor.setText(content)
+      dispatch(displayNotification(
+        path + ' changed',
+        'This file has been changed outside of Remix IDE.',
+        'Replace by the new content', 'Keep the content displayed in Remix',
+        () => {
+          editor.setText(content)
+        }
+      ))
+    }
   })
 
   provider.event.on('fileRenamedError', () => {
-    setTimeout(() => dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel')), 10)
+    dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
   })
 
   provider.event.on('readOnlyModeChanged', (mode: boolean) => {
-    setTimeout(() => dispatch(setReadOnlyMode(mode)), 10)
+    dispatch(setReadOnlyMode(mode))
   })
 }
 
