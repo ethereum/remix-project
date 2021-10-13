@@ -68,7 +68,7 @@ function Icon ({
   return (
     <Fragment>
       <div
-        className="remixui_icon m-2"
+        className="remixui_icon m-2 pl-1"
         onLoad={() => {
           if (name === 'filePanel') {
             addActive(name)
