@@ -249,7 +249,7 @@ module.exports = {
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '235' }) // It only moves slider to 235 but vm traces are not updated
+      .execute(function () { document.getElementById('slider')['value'] = '315' }) // It only moves slider to 315 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
