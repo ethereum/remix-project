@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react'
-import './App.css'
 import { WorkSpacePlugin } from './Client'
 import { Logger } from './logger'
 
