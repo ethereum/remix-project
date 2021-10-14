@@ -36,6 +36,7 @@ module.exports = {
       .addFile('asyncAwait.js', { content: asyncAwait })
       .openFile('asyncAwait.js')
       .executeScript('remix.execute("asyncAwait.js")')
+      .pause(2000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Waiting Promise', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - ', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Promise Resolved', 60000)
