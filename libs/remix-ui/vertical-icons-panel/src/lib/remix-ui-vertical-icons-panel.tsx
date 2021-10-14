@@ -3,6 +3,7 @@
 import React, {
   Fragment,
   useEffect,
+  useReducer,
   useRef
 } from 'react'
 
@@ -23,6 +24,7 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
+  const udappPanelRef = useRef<any>()
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
@@ -107,10 +109,6 @@ export function RemixUiVerticalIconsPanel ({
             scrollableRef={scrollableRef}
           />
         </div>
-        {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
-          ? <i className="fa fa-chevron-up remixui_icon-chevron m-3"></i>
-          : null
-        }
         <div
           id="remixuiScrollable"
           className={scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
