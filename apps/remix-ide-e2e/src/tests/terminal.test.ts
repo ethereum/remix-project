@@ -111,6 +111,7 @@ module.exports = {
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
       .openFile('deployWithEthersJs.js')
       .pause(1000)
+      .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
