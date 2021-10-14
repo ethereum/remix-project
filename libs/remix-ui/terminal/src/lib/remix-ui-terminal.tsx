@@ -566,7 +566,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         handleHide={ handleHideModal }
       />
       {toaster && <Toaster message="no content to execute"/>}
-      {toastProvider && <Toaster message={`provider for path ${toastProvider.fileName} not found`} />}
+      {toastProvider.show && <Toaster message={`provider for path ${toastProvider.fileName} not found`} />}
     </div>
   )
 }
