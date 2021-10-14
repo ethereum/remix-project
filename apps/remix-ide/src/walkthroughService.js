@@ -6,8 +6,13 @@ export class WalkthroughService {
   }
 
   start (params) {
+<<<<<<< HEAD
     document.addEventListener('doWalkThrough', (e) => {
       if (!localStorage.getItem('hadTour_initial')) {
+=======
+    if (!localStorage.getItem('hadTour_initial')) {
+      document.addEventListener('doWalkThrough', (e) => {
+>>>>>>> e0fcb6bcd (changes based on LianaHus comments complete)
         introJs().setOptions({
           steps: [{
             title: 'Welcome to Remix IDE',
@@ -47,8 +52,13 @@ export class WalkthroughService {
           }
         }).start()
         localStorage.setItem('hadTour_initial', true)
+<<<<<<< HEAD
       }
     })
+=======
+      })
+    }
+>>>>>>> e0fcb6bcd (changes based on LianaHus comments complete)
   }
 
   startFeatureTour () {
