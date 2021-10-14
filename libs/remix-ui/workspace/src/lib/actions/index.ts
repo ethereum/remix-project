@@ -50,6 +50,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     listenOnProviderEvents(workspaceProvider)(dispatch)
     listenOnProviderEvents(localhostProvider)(dispatch)
     dispatch(setMode('browser'))
+    plugin.emit('workspaceInitializationCompleted')
   }
 }
 

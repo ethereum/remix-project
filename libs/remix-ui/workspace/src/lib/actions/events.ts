@@ -10,28 +10,28 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspace', (name: string) => {
-    createWorkspace(name)
+  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    createWorkspace(name, isEmpty, cb)
   })
 
   plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
     renameWorkspace(oldName, workspaceName)
   })
 
-  plugin.on('filePanel', 'registerContextMenuItem', (item: action) => {
-    registerContextMenuItem(item)
+  plugin.on('filePanel', 'registerContextMenuItemReducerEvent', (item: action, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    registerContextMenuItem(item, cb)
   })
 
-  plugin.on('filePanel', 'removePluginActions', (plugin) => {
-    removePluginActions(plugin)
+  plugin.on('filePanel', 'removePluginActionsReducerEvent', (plugin, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    removePluginActions(plugin, cb)
   })
 
-  plugin.on('filePanel', 'displayNewFileInput', (path) => {
-    addInputField('file', path)
+  plugin.on('filePanel', 'createNewFileInputReducerEvent', (path, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    addInputField('file', path, cb)
   })
 
-  plugin.on('filePanel', 'uploadFileEvent', (dir: string, target) => {
-    uploadFile(target, dir)
+  plugin.on('filePanel', 'uploadFileReducerEvent', (dir: string, target, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    uploadFile(target, dir, cb)
   })
 
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
@@ -106,15 +106,26 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
   })
 }
 
-const registerContextMenuItem = (item: action) => {
-  if (!item) return dispatch(displayPopUp('Invalid register context menu argument'))
-  if (!item.name || !item.id) return dispatch(displayPopUp('Item name and id is mandatory'))
-  if (!item.type && !item.path && !item.extension && !item.pattern) return dispatch(displayPopUp('Invalid file matching criteria provided'))
+const registerContextMenuItem = (item: action, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  if (!item) {
+    cb && cb(new Error('Invalid register context menu argument'))
+    return dispatch(displayPopUp('Invalid register context menu argument'))
+  }
+  if (!item.name || !item.id) {
+    cb && cb(new Error('Item name and id is mandatory'))
+    return dispatch(displayPopUp('Item name and id is mandatory'))
+  }
+  if (!item.type && !item.path && !item.extension && !item.pattern) {
+    cb && cb(new Error('Invalid file matching criteria provided'))
+    return dispatch(displayPopUp('Invalid file matching criteria provided'))
+  }
   dispatch(setContextMenuItem(item))
+  cb && cb(null, item)
 }
 
-const removePluginActions = (plugin) => {
+const removePluginActions = (plugin, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   dispatch(removeContextMenuItem(plugin))
+  cb && cb(null, true)
 }
 
 const fileAdded = async (filePath: string) => {

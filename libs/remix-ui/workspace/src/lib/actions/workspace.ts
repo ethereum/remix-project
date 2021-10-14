@@ -17,12 +17,16 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   dispatch = reducerDispatch
 }
 
-export const addInputField = async (type: 'file' | 'folder', path: string) => {
+export const addInputField = async (type: 'file' | 'folder', path: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   const provider = plugin.fileManager.currentFileProvider()
   const promise = new Promise((resolve, reject) => {
     provider.resolveDirectory(path, (error, fileTree) => {
-      if (error) reject(error)
+      if (error) {
+        cb && cb(error)
+        return reject(error)
+      }
 
+      cb(null, true)
       resolve(fileTree)
     })
   })
@@ -35,17 +39,19 @@ export const addInputField = async (type: 'file' | 'folder', path: string) => {
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string) => {
+export const createWorkspace = async (workspaceName: string, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, 'default-template')
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
-    await loadWorkspacePreset('default-template')
+    if (!isEmpty) await loadWorkspacePreset('default-template')
     plugin.emit('setWorkspace', { name: workspaceName, isLocalhost: false })
+    cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
+    cb && cb(error)
   })
   return promise
 }
@@ -204,7 +210,7 @@ export const switchToWorkspace = async (name: string) => {
   }
 }
 
-export const uploadFile = async (target, targetFolder: string) => {
+export const uploadFile = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   // TODO The file explorer is merely a view on the current state of
   // the files module. Please ask the user here if they want to overwrite
   // a file and then just use `files.add`. The file explorer will
@@ -231,6 +237,7 @@ export const uploadFile = async (target, targetFolder: string) => {
         }
       }
       fileReader.readAsText(file)
+      cb(null, true)
     }
     const name = `${targetFolder}/${file.name}`
 
@@ -243,6 +250,7 @@ export const uploadFile = async (target, targetFolder: string) => {
         }, () => {}))
       }
     }).catch(error => {
+      cb(error)
       if (error) console.log(error)
     })
   })
