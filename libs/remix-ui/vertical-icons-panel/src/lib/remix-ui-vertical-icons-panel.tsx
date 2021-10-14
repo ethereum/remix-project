@@ -3,6 +3,7 @@
 import React, {
   Fragment,
   useEffect,
+  useReducer,
   useRef
 } from 'react'
 
@@ -17,18 +18,13 @@ export interface RemixUiVerticalIconsPanelProps {
 }
 
 let scrollHeight: any
-let clientHeight: any
-const requiredModules = [
-  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
-  'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic']
-const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider']
 
 export function RemixUiVerticalIconsPanel ({
   verticalIconsPlugin
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
+  const udappPanelRef = useRef<any>()
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
@@ -93,17 +89,12 @@ export function RemixUiVerticalIconsPanel ({
   }, [])
 
   useEffect(() => {
-    const found = iconPanelRef.current!.querySelector('#fileExplorerIcons')
-    const localRead = localStorage.getItem('hadTour_initial') as string
-    const hadInitialTour = JSON.parse(localRead)
-    console.log('initial tour value ', hadInitialTour)
-    if (!found) console.log('VerticalIcon is not loaded yet!', found)
-    // return () => {
-    //   if (!hadInitialTour) {
-    //     if (found) console.log('Its event emission time!', found)
-    //   }
-    //   console.log('Won\'t be doing an initial tour of remix now!')
-    // }
+    const found = iconPanelRef.current!.querySelector('#verticalIconsKindudapp')
+    if (found) {
+      console.log('emit event now as vertical panel is in the viewport', found)
+      const doWalkThroughEvent = new Event('doWalkThrough')
+      document.dispatchEvent(doWalkThroughEvent)
+    }
   })
 
   return (
@@ -185,9 +176,10 @@ export function RemixUiVerticalIconsPanel ({
               .filter(p => p !== 'pluginManager')
               .filter(p => p === 'udapp')
               .map(p => (
-                <div id="compileIcons" key={
+                <div id="runIcons" data-id="verticalIconsKindUdapp" key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
-                }>
+                } ref={udappPanelRef}
+                >
                   <Icon
                     kind={verticalIconsPlugin.targetProfileForChange[p].kind}
                     displayName={
@@ -317,15 +309,15 @@ export function RemixUiVerticalIconsPanel ({
                 }
               />
             ))}
+          {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
+            ? <i className="fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3"></i>
+            : null
+          }
         </div>
-        {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
-          ? <i className="fa fa-chevron-up remixui_icon-chevron m-3"></i>
-          : null
-        }
         <div
           id="remixuiScrollable"
           className={scrollableRef.current && scrollableRef.current.clientHeight > 0
-            ? 'border-bottom remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
+            ? 'border-bottom remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
             : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'}
           ref={scrollableRef}
         >
@@ -366,7 +358,7 @@ export function RemixUiVerticalIconsPanel ({
           </OtherIcons>
         </div>
         {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
-          ? <i className="fa fa-chevron-down remixui_icon-chevron m-3"></i>
+          ? <i className="fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3"></i>
           : null
         }
         {verticalIconsPlugin.targetProfileForChange &&
