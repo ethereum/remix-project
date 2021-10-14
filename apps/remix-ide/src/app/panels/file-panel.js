@@ -76,11 +76,21 @@ module.exports = class Filepanel extends ViewPlugin {
    * @param callback (...args) => void
    */
   registerContextMenuItem (item) {
-    this.emit('registerContextMenuItem', item)
+    return new Promise((resolve, reject) => {
+      this.emit('registerContextMenuItemReducerEvent', item, (err, data) => {
+        if (err) reject(err)
+        else resolve(data)
+      })
+    })
   }
 
   removePluginActions (plugin) {
-    this.emit('removePluginActions', plugin)
+    return new Promise((resolve, reject) => {
+      this.emit('removePluginActionsReducerEvent', plugin, (err, data) => {
+        if (err) reject(err)
+        else resolve(data)
+      })
+    })
   }
 
   getCurrentWorkspace () {
@@ -95,25 +105,40 @@ module.exports = class Filepanel extends ViewPlugin {
     this.worspaces = workspaces
   }
 
-  async createNewFile () {
-    const provider = this.fileManager.currentFileProvider()
-    const dir = provider.workspace || '/'
+  createNewFile () {
+    return new Promise((resolve, reject) => {
+      const provider = this.fileManager.currentFileProvider()
+      const dir = provider.workspace || '/'
 
-    this.emit('displayNewFileInput', dir)
+      this.emit('createNewFileInputReducerEvent', dir, (err, data) => {
+        if (err) reject(err)
+        else resolve(data)
+      })
+    })
   }
 
-  async uploadFile (target) {
-    const provider = this.fileManager.currentFileProvider()
-    const dir = provider.workspace || '/'
+  uploadFile (target) {
+    return new Promise((resolve, reject) => {
+      const provider = this.fileManager.currentFileProvider()
+      const dir = provider.workspace || '/'
 
-    return this.emit('uploadFileEvent', dir, target)
+      return this.emit('uploadFileReducerEvent', dir, target, (err, data) => {
+        if (err) reject(err)
+        else resolve(data)
+      })
+    })
   }
 
-  async createWorkspace (workspaceName) {
-    this.emit('createWorkspace', workspaceName)
+  createWorkspace (workspaceName, isEmpty) {
+    return new Promise((resolve, reject) => {
+      this.emit('createWorkspaceReducerEvent', workspaceName, isEmpty, (err, data) => {
+        if (err) reject(err)
+        else resolve(data || true)
+      })
+    })
   }
 
-  async renameWorkspace (oldName, workspaceName) {
+  renameWorkspace (oldName, workspaceName) {
     this.emit('renameWorkspace', oldName, workspaceName)
   }
 
