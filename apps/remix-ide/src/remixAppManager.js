@@ -135,25 +135,27 @@ export class RemixAppManager extends PluginManager {
   }
 
   async registerContextMenuItems () {
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'flattener',
-      name: 'flattenFileCustomAction',
-      label: 'Flatten',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: [],
-      sticky: true
-    })
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'optimism-compiler',
-      name: 'compileCustomAction',
-      label: 'Compile with Optimism',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: [],
-      sticky: true
+    this.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      await this.call('filePanel', 'registerContextMenuItem', {
+        id: 'flattener',
+        name: 'flattenFileCustomAction',
+        label: 'Flatten',
+        type: [],
+        extension: ['.sol'],
+        path: [],
+        pattern: [],
+        sticky: true
+      })
+      await this.call('filePanel', 'registerContextMenuItem', {
+        id: 'optimism-compiler',
+        name: 'compileCustomAction',
+        label: 'Compile with Optimism',
+        type: [],
+        extension: ['.sol'],
+        path: [],
+        pattern: [],
+        sticky: true
+      })
     })
   }
 }
