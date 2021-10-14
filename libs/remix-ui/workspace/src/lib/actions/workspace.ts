@@ -26,7 +26,7 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
         return reject(error)
       }
 
-      cb(null, true)
+      cb && cb(null, true)
       resolve(fileTree)
     })
   })
@@ -237,7 +237,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         }
       }
       fileReader.readAsText(file)
-      cb(null, true)
+      cb && cb(null, true)
     }
     const name = `${targetFolder}/${file.name}`
 
@@ -250,7 +250,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         }, () => {}))
       }
     }).catch(error => {
-      cb(error)
+      cb && cb(error)
       if (error) console.log(error)
     })
   })
