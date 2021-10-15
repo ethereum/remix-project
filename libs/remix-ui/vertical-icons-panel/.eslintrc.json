@@ -16,8 +16,4 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error"
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> b6322066e (update components and setttings)
