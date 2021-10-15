@@ -18,9 +18,8 @@ const TerminalWelcomeMessage = ({ packageJson }) => {
       </ul>
       <div>The following libraries are accessible:</div>
       <ul className='ul'>
-        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
+        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
         <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
-        <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
         <li>remix (run remix.help() for more info)</li>
       </ul>
     </div>
