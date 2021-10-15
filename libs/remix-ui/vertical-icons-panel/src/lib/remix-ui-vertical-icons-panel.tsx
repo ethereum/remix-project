@@ -4,7 +4,8 @@ import React, {
   Fragment,
   useEffect,
   useReducer,
-  useRef
+  useRef,
+  useState
 } from 'react'
 
 import './remix-ui-vertical-icons-panel.css'
@@ -24,7 +25,7 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
-  const udappPanelRef = useRef<any>()
+  // const [first] = useState(localStorage.getItem('firstTime'))
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
