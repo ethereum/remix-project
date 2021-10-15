@@ -11,6 +11,7 @@ module.exports = {
     browser
       .addFile('file.js', { content: executeFile })
       .executeScript('remix.exeCurrent()')
+      .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'file.js', 60000)
   },
 
@@ -72,7 +73,8 @@ module.exports = {
     browser
       .addFile('readdirFile.js', { content: executeReaddir })
       .executeScript('remix.exeCurrent()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Test_Folder isDirectory true', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Test_Folder isDirectory', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'true', 5000)
   },
 
   'Should execute `remove` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -175,8 +177,8 @@ const executeMkdir = `
 const executeReaddir = `
   const run = async () => {
     const result = await remix.call('fileManager', 'readdir', '/')
-
-    console.log('Test_Folder isDirectory ', result["Test_Folder"].isDirectory)
+    const output = result["Test_Folder"].isDirectory
+    console.log('Test_Folder isDirectory ', output)
   }
 
   run()
