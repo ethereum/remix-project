@@ -6,8 +6,8 @@ export class WalkthroughService {
   }
 
   start (params) {
-    if (!localStorage.getItem('hadTour_initial')) {
-      document.addEventListener('doWalkThrough', (e) => {
+    document.addEventListener('doWalkThrough', (e) => {
+      if (!localStorage.getItem('hadTour_initial')) {
         introJs().setOptions({
           steps: [{
             title: 'Welcome to Remix IDE',
@@ -47,8 +47,8 @@ export class WalkthroughService {
           }
         }).start()
         localStorage.setItem('hadTour_initial', true)
-      })
-    }
+      }
+    })
   }
 
   startFeatureTour () {

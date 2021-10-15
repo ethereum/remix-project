@@ -4,7 +4,8 @@ import React, {
   Fragment,
   useEffect,
   useReducer,
-  useRef
+  useRef,
+  useState
 } from 'react'
 
 import './remix-ui-vertical-icons-panel.css'
@@ -24,7 +25,7 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
-  const udappPanelRef = useRef<any>()
+  // const [first] = useState(localStorage.getItem('firstTime'))
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
@@ -90,12 +91,11 @@ export function RemixUiVerticalIconsPanel ({
 
   useEffect(() => {
     const found = iconPanelRef.current!.querySelector('#verticalIconsKindudapp')
-    if (found) {
-      console.log('emit event now as vertical panel is in the viewport', found)
+    if (verticalIconsPlugin.targetProfileForChange && verticalIconsPlugin.targetProfileForChange.udapp) {
       const doWalkThroughEvent = new Event('doWalkThrough')
       document.dispatchEvent(doWalkThroughEvent)
     }
-  })
+  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
 
   return (
     <div id="iconsP" className="h-100">
@@ -178,7 +178,7 @@ export function RemixUiVerticalIconsPanel ({
               .map(p => (
                 <div id="runIcons" data-id="verticalIconsKindUdapp" key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
-                } ref={udappPanelRef}
+                }
                 >
                   <Icon
                     kind={verticalIconsPlugin.targetProfileForChange[p].kind}
