@@ -357,14 +357,14 @@ export function RemixUiVerticalIconsPanel ({
               ))}
           </OtherIcons>
         </div>
-        {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
-          ? <i className="fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3"></i>
-          : null
-        }
         {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>
               <Settings>
+                {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
+                  ? <i className="fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3"></i>
+                  : null
+                }
                 {Object.keys(verticalIconsPlugin.targetProfileForChange)
                   .filter(p => p === 'settings')
                   .map(p => (
