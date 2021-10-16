@@ -171,8 +171,9 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  * @param cb Callback
  */
 export function compileContractSources (sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb): void {
-  let compiler, filepath: string
+  let compiler
   const accounts: string[] = opts.accounts || []
+  const filepath = opts.testFilePath || ''
   // Iterate over sources keys. Inject test libraries. Inject test library import statements.
   if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
     sources['tests.sol'] = { content: require('../sol/tests.sol.js') }
