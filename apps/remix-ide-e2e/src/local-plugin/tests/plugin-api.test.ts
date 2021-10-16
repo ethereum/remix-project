@@ -17,9 +17,9 @@ interface dataIdSelectorInterface extends Selector {
 }
 
 const setCompilerVersion = async (t: TestController, version: string) => {
-  const citySelect = Selector('#versionSelector')
+  const citySelect = Selector('#evmVersionSelector')
   const cityOption = citySelect.find('option')
-  await t.click(citySelect).click(cityOption.withAttribute('value', 'builtin'))
+  await t.click(citySelect).click(cityOption.withAttribute('value', 'london'))
 }
 
 const ClickLaunchIcon = async (t: TestController, icon: string) => {
@@ -56,7 +56,7 @@ const localPluginData = {
   ]
 }
 
-test('install plugin', async t => {
+test.only('install plugin', async t => {
   // exists doesn't wait with timeouts, this is a hack but it works, it will wait for buttons to appear
   // https://testcafe.io/documentation/402829/guides/basic-guides/select-page-elements#selector-timeout
   await Selector('Button', { timeout: 120000 }).innerText
@@ -64,9 +64,14 @@ test('install plugin', async t => {
     await t.click(Selector('Button').withText('Sure'))
   }
   await t.click('.introjs-skipbutton')
-  // await ClickLaunchIcon(t, 'solidity')
+  await ClickLaunchIcon(t, 'solidity')
+ 
+  await t.click(Selector("#optimize"))
+  await setCompilerVersion(t, 'builtin')
+  await t.wait(10000)
   // await setCompilerVersion(t, 'builtin')
-  await installPlugin(t, localPluginData)
+  
+  // await installPlugin(t, localPluginData)
 })
 
 test.disablePageReloads('switch to plugin', async t => {
