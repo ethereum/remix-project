@@ -143,7 +143,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   setWorkspace (workspace) {
-    console.log('workspace: ', workspace)
     const workspaceProvider = this.fileProviders.workspace
 
     this.currentWorkspaceMetadata = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }
