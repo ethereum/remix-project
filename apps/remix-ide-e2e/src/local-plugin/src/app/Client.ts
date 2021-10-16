@@ -310,7 +310,11 @@ export class WorkSpacePlugin extends PluginClient {
   }
 
   async write (dir: string) {
-    this.call('fileManager', 'setFile', dir, simpleContract)
+    try {
+      this.call('fileManager', 'setFile', dir, 'simple readme')
+    } catch (e) {
+      this.setFeedback(e.message)
+    }
   }
 
   async getcurrentfile () {
@@ -322,8 +326,13 @@ export class WorkSpacePlugin extends PluginClient {
     }
   }
 
-  async switchfile (dir: string) {
-    var files = await this.call('fileManager', 'switchFile', dir)
+  async switchfile(dir: string) {
+    
+    try {
+      const files = await this.call('fileManager', 'switchFile', dir)
+    } catch (e) {
+      this.setFeedback(e.message)
+    }
   }
 
   async zip () {
@@ -514,13 +523,13 @@ export class WorkSpacePlugin extends PluginClient {
         }
     }
     `
-    await this.call('fileManager', 'setFile', '/modifyVariable.sol', f)
-    await this.call('fileManager', 'switchFile', '/modifyVariable.sol')
-    await this.call('fileManager', 'setFile', '/modifyVariable_test.sol', t)
+    //await this.call('fileManager', 'setFile', '/modifyVariable.sol', f)
+    await this.call('fileManager', 'switchFile', 'tests/4_Ballot_test.sol')
+    //await this.call('fileManager', 'setFile', '/modifyVariable_test.sol', t)
     const result = await this.call(
       'solidityUnitTesting',
       'testFromPath',
-      'modifyVariable_test.sol'
+      'tests/4_Ballot_test.sol'
     )
     this.setFeedback(result)
   }
