@@ -14,6 +14,7 @@ import { VerticalIcons } from '../../types/vertical-icons-panel'
 import Home from './components/Home'
 import Icon from './components/Icon'
 import Settings from './components/Settings'
+import { Chevron } from './components/Chevron'
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: VerticalIcons
 }
@@ -90,7 +91,7 @@ export function RemixUiVerticalIconsPanel ({
   }, [])
 
   useEffect(() => {
-    const found = iconPanelRef.current!.querySelector('#verticalIconsKindudapp')
+    // const found = iconPanelRef.current!.querySelector('#verticalIconsKindudapp')
     if (verticalIconsPlugin.targetProfileForChange && verticalIconsPlugin.targetProfileForChange.udapp) {
       const doWalkThroughEvent = new Event('doWalkThrough')
       document.dispatchEvent(doWalkThroughEvent)
@@ -100,7 +101,7 @@ export function RemixUiVerticalIconsPanel ({
   return (
     <div id="iconsP" className="h-100">
       <div className="remixui_icons" ref={iconPanelRef}>
-        <div className="remixui_default-icons-container">
+        <div className="remixui_default-icons-container remixui_requiredSection">
           <Home verticalIconPlugin={verticalIconsPlugin} />
           {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length
@@ -309,10 +310,10 @@ export function RemixUiVerticalIconsPanel ({
                 }
               />
             ))}
-          {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
-            ? <i className="fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3"></i>
-            : null
-          }
+          <Chevron
+            divElementRef={scrollableRef}
+            cssRule={'fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
+          />
         </div>
         <div
           id="remixuiScrollable"
@@ -361,10 +362,10 @@ export function RemixUiVerticalIconsPanel ({
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>
               <Settings>
-                {scrollableRef.current && scrollableRef.current!.scrollHeight > scrollableRef.current!.clientHeight
-                  ? <i className="fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3"></i>
-                  : null
-                }
+                <Chevron
+                  divElementRef={scrollableRef}
+                  cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
+                />
                 {Object.keys(verticalIconsPlugin.targetProfileForChange)
                   .filter(p => p === 'settings')
                   .map(p => (
