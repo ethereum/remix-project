@@ -84,7 +84,7 @@
   }
   .remixui_scrollable-container {
     max-height: 570px;
-    border-bottom: 3px solid #3f4455;
+    /* border-bottom: 3px solid #3f4455; */
   }
   .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
     display: none;
@@ -97,6 +97,10 @@
   }
   .remixui_icon-chevron {
     z-index: 1000;
+  }
+
+  .remixui_settings {
+    min-height: 30px;
   }
 
   #menuitems {

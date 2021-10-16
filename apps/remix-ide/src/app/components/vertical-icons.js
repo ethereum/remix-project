@@ -123,7 +123,9 @@ export class VerticalIcons extends Plugin {
    */
   removeIcon ({ name }) {
     if (this.targetProfileForChange[name]) delete this.targetProfileForChange[name]
-    this.renderComponent()
+    setTimeout(() => {
+      this.renderComponent()
+    }, 150)
   }
 
   /**

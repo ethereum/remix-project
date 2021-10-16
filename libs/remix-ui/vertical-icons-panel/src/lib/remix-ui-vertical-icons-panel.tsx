@@ -316,8 +316,8 @@ export function RemixUiVerticalIconsPanel ({
         </div>
         <div
           id="remixuiScrollable"
-          className={scrollableRef.current && scrollableRef.current.clientHeight > 0
-            ? 'border-bottom remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
+          className={scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
+            ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
             : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'}
           ref={scrollableRef}
         >
