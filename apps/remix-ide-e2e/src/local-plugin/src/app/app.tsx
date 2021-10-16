@@ -43,8 +43,8 @@ function App () {
       <button className='btn btn-primary btn-sm' onClick={async () => await client.importcontent(payload)}>import content resolve</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.fetch(payload)}>api test fetch</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.axios(payload)}>api test axios</button>
-      <button className='btn btn-primary btn-sm' onClick={async () => await client.activate()}>activate</button>
-      <button className='btn btn-primary btn-sm' onClick={async () => await client.deactivate()}>deactivate</button>
+      <button className='btn btn-primary btn-sm' onClick={async () => await client.activate(payload)}>activate</button>
+      <button className='btn btn-primary btn-sm' onClick={async () => await client.deactivate(payload)}>deactivate</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.getresult()}>get compilation result</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.getcompilerconfig()}>get compiler config</button>
       <button className='btn btn-primary btn-sm' onClick={async () => await client.getWorkSpace()}>get workspace</button>

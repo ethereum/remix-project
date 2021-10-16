@@ -176,12 +176,12 @@ export class WorkSpacePlugin extends PluginClient {
 
   async test (p: string) {}
 
-  async activate () {
-    this.call('manager', 'activatePlugin', 'remixd')
+  async activate (id: string) {
+    this.call('manager', 'activatePlugin', id)
   }
 
-  async deactivate () {
-    this.call('manager', 'deactivatePlugin', '111')
+  async deactivate (id: string) {
+    this.call('manager', 'deactivatePlugin', id)
   }
 
   async getresult () {
