@@ -4,7 +4,7 @@ import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
-import { createWorkspaceTemplate, loadWorkspacePreset, setPlugin } from './workspace'
+import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
 
 export * from './events'
 export * from './workspace'
@@ -28,20 +28,20 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       await loadWorkspacePreset('gist-template')
-      dispatch(setCurrentWorkspace('gist-sample'))
+      dispatch(setCurrentWorkspace('gist-sample', plugin))
     } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       await loadWorkspacePreset('code-template')
-      dispatch(setCurrentWorkspace('code-sample'))
+      dispatch(setCurrentWorkspace('code-sample', plugin))
     } else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'default-template')
         await loadWorkspacePreset('default-template')
-        dispatch(setCurrentWorkspace('default_workspace'))
+        dispatch(setCurrentWorkspace('default_workspace', plugin))
       } else {
         if (workspaces.length > 0) {
           workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1], plugin))
         }
       }
     }
@@ -50,6 +50,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     listenOnProviderEvents(workspaceProvider)(dispatch)
     listenOnProviderEvents(localhostProvider)(dispatch)
     dispatch(setMode('browser'))
+    plugin.setWorkspaces(await getWorkspaces())
     plugin.emit('workspaceInitializationCompleted')
   }
 }
@@ -259,29 +260,7 @@ const deleteWorkspaceFromProvider = async (workspaceName: string) => {
   await plugin.fileManager.closeAllFiles()
   plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
   plugin.emit('deleteWorkspace', { name: workspaceName })
-}
-
-const getWorkspaces = async (): Promise<string[]> | undefined => {
-  try {
-    const workspaces: string[] = await new Promise((resolve, reject) => {
-      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-
-      plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
-        if (error) {
-          console.error(error)
-          return reject(error)
-        }
-        resolve(Object.keys(items)
-          .filter((item) => items[item].isDirectory)
-          .map((folder) => folder.replace(workspacesPath + '/', '')))
-      })
-    })
-
-    plugin.setWorkspaces(workspaces)
-    return workspaces
-  } catch (e) {
-    console.log(e)
-  }
+  plugin.setWorkspaces(await getWorkspaces())
 }
 
 const packageGistFiles = (directory) => {
