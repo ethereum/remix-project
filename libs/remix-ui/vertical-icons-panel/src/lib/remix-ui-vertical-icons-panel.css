@@ -83,7 +83,11 @@
     -ms-overflow-style: none;
   }
   .remixui_scrollable-container {
+<<<<<<< HEAD
     height: 540px;
+=======
+    max-height: 570px;
+>>>>>>> aedb4fa83 (fix bug in icon removal in deactivation. Fix bottom border display regression)
     /* border-bottom: 3px solid #3f4455; */
   }
   .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
