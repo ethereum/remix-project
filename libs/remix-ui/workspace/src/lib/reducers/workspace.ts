@@ -11,8 +11,10 @@ export interface BrowserState {
     workspaces: string[],
     files: { [x: string]: Record<string, FileType> },
     expandPath: string[]
-    isRequesting: boolean,
-    isSuccessful: boolean,
+    isRequestingDirectory: boolean,
+    isSuccessfulDirectory: boolean,
+    isRequestingWorkspace: boolean,
+    isSuccessfulWorkspace: boolean,
     error: string,
     contextMenu: {
       registeredMenuItems: action[],
@@ -24,8 +26,10 @@ export interface BrowserState {
     sharedFolder: string,
     files: { [x: string]: Record<string, FileType> },
     expandPath: string[],
-    isRequesting: boolean,
-    isSuccessful: boolean,
+    isRequestingDirectory: boolean,
+    isSuccessfulDirectory: boolean,
+    isRequestingLocalhost: boolean,
+    isSuccessfulLocalhost: boolean,
     error: string,
     contextMenu: {
       registeredMenuItems: action[],
@@ -54,8 +58,10 @@ export const browserInitialState: BrowserState = {
     workspaces: [],
     files: {},
     expandPath: [],
-    isRequesting: false,
-    isSuccessful: false,
+    isRequestingDirectory: false,
+    isSuccessfulDirectory: false,
+    isRequestingWorkspace: false,
+    isSuccessfulWorkspace: false,
     error: null,
     contextMenu: {
       registeredMenuItems: [],
@@ -67,8 +73,10 @@ export const browserInitialState: BrowserState = {
     sharedFolder: '',
     files: {},
     expandPath: [],
-    isRequesting: false,
-    isSuccessful: false,
+    isRequestingDirectory: false,
+    isSuccessfulDirectory: false,
+    isRequestingLocalhost: false,
+    isSuccessfulLocalhost: false,
     error: null,
     contextMenu: {
       registeredMenuItems: [],
@@ -133,14 +141,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: state.mode === 'browser',
-          isSuccessful: false,
+          isRequestingDirectory: state.mode === 'browser',
+          isSuccessfulDirectory: false,
           error: null
         },
         localhost: {
           ...state.localhost,
-          isRequesting: state.mode === 'localhost',
-          isSuccessful: false,
+          isRequestingDirectory: state.mode === 'localhost',
+          isSuccessfulDirectory: false,
           error: null
         }
       }
@@ -154,15 +162,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         browser: {
           ...state.browser,
           files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
-          isRequesting: false,
-          isSuccessful: true,
+          isRequestingDirectory: false,
+          isSuccessfulDirectory: true,
           error: null
         },
         localhost: {
           ...state.localhost,
           files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
-          isRequesting: false,
-          isSuccessful: true,
+          isRequestingDirectory: false,
+          isSuccessfulDirectory: true,
           error: null
         }
       }
@@ -173,14 +181,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: false,
-          isSuccessful: false,
+          isRequestingDirectory: false,
+          isSuccessfulDirectory: false,
           error: state.mode === 'browser' ? action.payload : null
         },
         localhost: {
           ...state.localhost,
-          isRequesting: false,
-          isSuccessful: false,
+          isRequestingDirectory: false,
+          isSuccessfulDirectory: false,
           error: state.mode === 'localhost' ? action.payload : null
         }
       }
@@ -191,14 +199,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: state.mode === 'browser',
-          isSuccessful: false,
+          isRequestingWorkspace: state.mode === 'browser',
+          isSuccessfulWorkspace: false,
           error: null
         },
         localhost: {
           ...state.localhost,
-          isRequesting: state.mode === 'localhost',
-          isSuccessful: false,
+          isRequestingWorkspace: state.mode === 'localhost',
+          isSuccessfulWorkspace: false,
           error: null
         }
       }
@@ -212,15 +220,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         browser: {
           ...state.browser,
           files: state.mode === 'browser' ? fetchWorkspaceDirectoryContent(state, payload) : state.browser.files,
-          isRequesting: false,
-          isSuccessful: true,
+          isRequestingWorkspace: false,
+          isSuccessfulWorkspace: true,
           error: null
         },
         localhost: {
           ...state.localhost,
           files: state.mode === 'localhost' ? fetchWorkspaceDirectoryContent(state, payload) : state.localhost.files,
-          isRequesting: false,
-          isSuccessful: true,
+          isRequestingWorkspace: false,
+          isSuccessfulWorkspace: true,
           error: null
         }
       }
@@ -231,14 +239,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: false,
-          isSuccessful: false,
+          isRequestingWorkspace: false,
+          isSuccessfulWorkspace: false,
           error: state.mode === 'browser' ? action.payload : null
         },
         localhost: {
           ...state.localhost,
-          isRequesting: false,
-          isSuccessful: false,
+          isRequestingWorkspace: false,
+          isSuccessfulWorkspace: false,
           error: state.mode === 'localhost' ? action.payload : null
         }
       }
@@ -397,8 +405,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: true,
-          isSuccessful: false,
+          isRequestingWorkspace: true,
+          isSuccessfulWorkspace: false,
           error: null
         }
       }
@@ -414,8 +422,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           ...state.browser,
           currentWorkspace: payload,
           workspaces: workspaces.filter(workspace => workspace),
-          isRequesting: false,
-          isSuccessful: true,
+          isRequestingWorkspace: false,
+          isSuccessfulWorkspace: true,
           error: null
         }
       }
@@ -426,8 +434,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          isRequesting: false,
-          isSuccessful: false,
+          isRequestingWorkspace: false,
+          isSuccessfulWorkspace: false,
           error: action.payload
         }
       }
@@ -538,8 +546,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         localhost: {
           ...state.localhost,
-          isRequesting: true,
-          isSuccessful: false,
+          isRequestingLocalhost: true,
+          isSuccessfulLocalhost: false,
           error: null
         }
       }
@@ -550,8 +558,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         localhost: {
           ...state.localhost,
-          isRequesting: false,
-          isSuccessful: true,
+          isRequestingLocalhost: false,
+          isSuccessfulLocalhost: true,
           error: null
         }
       }
@@ -564,8 +572,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         localhost: {
           ...state.localhost,
-          isRequesting: false,
-          isSuccessful: false,
+          isRequestingLocalhost: false,
+          isSuccessfulLocalhost: false,
           error: payload
         }
       }
