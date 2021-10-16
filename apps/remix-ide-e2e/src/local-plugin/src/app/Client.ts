@@ -326,10 +326,9 @@ export class WorkSpacePlugin extends PluginClient {
     }
   }
 
-  async switchfile(dir: string) {
-    
+  async switchfile (dir: string) {
     try {
-      const files = await this.call('fileManager', 'switchFile', dir)
+      await this.call('fileManager', 'switchFile', dir)
     } catch (e) {
       this.setFeedback(e.message)
     }
@@ -380,7 +379,7 @@ export class WorkSpacePlugin extends PluginClient {
 
   async createWorkSpace (name: string) {
     try {
-      const s = await this.call('filePanel', 'createWorkspace', name)
+      await this.call('filePanel', 'createWorkspace', name)
     } catch (e) {
       this.setFeedback(e.message)
     }
@@ -523,9 +522,9 @@ export class WorkSpacePlugin extends PluginClient {
         }
     }
     `
-    //await this.call('fileManager', 'setFile', '/modifyVariable.sol', f)
+    // await this.call('fileManager', 'setFile', '/modifyVariable.sol', f)
     await this.call('fileManager', 'switchFile', 'tests/4_Ballot_test.sol')
-    //await this.call('fileManager', 'setFile', '/modifyVariable_test.sol', t)
+    // await this.call('fileManager', 'setFile', '/modifyVariable_test.sol', t)
     const result = await this.call(
       'solidityUnitTesting',
       'testFromPath',
