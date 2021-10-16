@@ -432,6 +432,7 @@ workflows:
             - remix-ide-firefox-2
             - remix-ide-run-deploy
             - remix-ide-plugin-manager
+            - remix-ide-plugin-api
           filters:
             branches:
               only: remix_live
@@ -443,6 +444,7 @@ workflows:
             - remix-ide-firefox-2
             - remix-ide-run-deploy
             - remix-ide-plugin-manager
+            - remix-ide-plugin-api
           filters:
             branches:
               only: master
@@ -454,6 +456,7 @@ workflows:
             - remix-ide-firefox-2
             - remix-ide-run-deploy
             - remix-ide-plugin-manager
+            - remix-ide-plugin-api
           filters:
             branches:
               only: remix_beta
