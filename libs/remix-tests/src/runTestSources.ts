@@ -39,7 +39,7 @@ export class UnitTestRunner {
    * @param importFileCb Import file callback
    * @param opts Options
    */
-  async runTestSources (contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, finalCallback: any, importFileCb, opts: Options) {
+  async runTestSources (contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, deployCb:any, finalCallback: any, importFileCb, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     const web3 = opts.web3 || await this.createWeb3Provider()
@@ -53,19 +53,19 @@ export class UnitTestRunner {
         })
       },
       (next) => {
-        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, event: this.event }, next)
+        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, testFilePath: opts.testFilePath, event: this.event }, next)
       },
       function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
         for (const filename in asts) {
           if (filename.endsWith('_test.sol')) { sourceASTs[filename] = asts[filename].ast }
         }
-        deployAll(compilationResult, web3, false, (err, contracts) => {
+        deployAll(compilationResult, web3, false, deployCb, (err, contracts) => {
           if (err) {
             // If contract deployment fails because of 'Out of Gas' error, try again with double gas
             // This is temporary, should be removed when remix-tests will have a dedicated UI to
             // accept deployment params from UI
             if (err.message.includes('The contract code couldn\'t be stored, please check your gas limit')) {
-              deployAll(compilationResult, web3, true, (error, contracts) => {
+              deployAll(compilationResult, web3, true, deployCb, (error, contracts) => {
                 if (error) next([{ message: 'contract deployment failed after trying twice: ' + error.message, severity: 'error' }]) // IDE expects errors in array
                 else next(null, compilationResult, contracts)
               })
