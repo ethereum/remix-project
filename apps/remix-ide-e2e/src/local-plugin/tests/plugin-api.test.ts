@@ -65,12 +65,12 @@ test.only('install plugin', async t => {
   }
   await t.click('.introjs-skipbutton')
   await ClickLaunchIcon(t, 'solidity')
- 
-  await t.click(Selector("#optimize"))
+
+  await t.click(Selector('#optimize'))
   await setCompilerVersion(t, 'builtin')
   await t.wait(10000)
   // await setCompilerVersion(t, 'builtin')
-  
+
   // await installPlugin(t, localPluginData)
 })
 
