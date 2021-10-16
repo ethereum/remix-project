@@ -11,6 +11,7 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
       .executeScript('console.log(1 + 1)')
+      .pause(2000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '2', 60000)
   },
 
@@ -30,24 +31,14 @@ module.exports = {
       .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 
-  'Should execute remix.help() command': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="terminalCli"]')
-      .executeScript('remix.help()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadgist(id)', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadurl(url)', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.execute(filepath)', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.exeCurrent()', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.help()', 60000)
-  },
-
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
       .openFile('asyncAwait.js')
-      .executeScript('remix.execute(\'asyncAwait.js\')')
+      .executeScript('remix.execute("asyncAwait.js")')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Waiting Promise', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - Promise Resolved', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - ', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Promise Resolved', 60000)
   },
 
   'Call Remix File Manager from a script': function (browser: NightwatchBrowser) {
@@ -62,19 +53,19 @@ module.exports = {
   'Call web3.eth.getAccounts() using JavaScript VM': function (browser: NightwatchBrowser) {
     browser
       .executeScript('web3.eth.getAccounts()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2", "0x17F6AD8Ef982297579C203069C1DbfFE4348c372", "0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C"', 80000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db","0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB","0x617F2E2fD72FD9D5503197092aC168c91465E7f2","0x17F6AD8Ef982297579C203069C1DbfFE4348c372","0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C","0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678","0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7","0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C","0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC","0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB","0x583031D1113aD414F02576BD6afaBfb302140225","0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]', 80000)
   },
 
   'Call web3.eth.getAccounts() using Web3 Provider': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
       .executeScript('web3.eth.getAccounts()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '[ "', 60000) // we check if an array is present, don't need to check for the content
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '" ]', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '", "', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '","', 60000)
   },
 
   'Call Remix File Resolver (external URL) from a script': function (browser: NightwatchBrowser) {
@@ -124,15 +115,18 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
       .executeScript('remix.execute(\'deployWithEthersJs.js\')')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address: 0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
       .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .click('*[data-id="universalDappUiTitleExpander"]')
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner', 60000) // check that the script is logging the event
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .end()
   }
 }
