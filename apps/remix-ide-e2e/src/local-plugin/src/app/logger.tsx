@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { useBehaviorSubject } from './usesubscribe/index'
+
 import { client } from './app'
 
 interface loggerProps {
-    append: boolean
+  append: boolean,
+  log: any
 }
 
 export const Logger: React.FC<loggerProps> = (props) => {
-  const log = useBehaviorSubject(client.feedback)
   const [value, setValue] = useState<string>('')
 
   useEffect(() => {
     setValue(value => {
-      const addValue = typeof log === 'string' ? log : JSON.stringify(log)
+      const addValue = typeof props.log === 'string' ? props.log : JSON.stringify(props.log)
       return props.append ? `${value} ${addValue}` : addValue
     })
-  }, [log])
+  }, [props])
 
-  return (<div id='log'>{value}</div>)
+  return (<div className="jumbotron text-break">{value}</div>)
 }

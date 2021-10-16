@@ -18,8 +18,13 @@ const getBrowserLogs = function (browser: NightwatchBrowser) {
     console.log(logEntries)
   })
 }
-
-const assertLog = function (browser: NightwatchBrowser, buttonText: string, msg: any, payload: string) {
+/*
+* PLUGINACTION
+* buttonText: which button to click
+* msg: what to expect from the log
+* payload: extra param for the call
+*/
+const pluginAction = function (browser: NightwatchBrowser, buttonText: string, msg: any, payload: string) {
   if (payload) {
     browser.clearValue('//*[@id="payload"]').setValue('//*[@id="payload"]', payload).pause(1000)
   }
@@ -82,22 +87,22 @@ module.exports = {
   },
 
   'Should get current workspace': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'get workspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null)
+    pluginAction(browser, 'get workspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null)
   },
   'Should get current files': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null)
+    pluginAction(browser, 'readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null)
   },
   'Should throw error on current file': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'getcurrentfile', 'Error from IDE : Error: No such file or directory No file selected', null)
+    pluginAction(browser, 'getcurrentfile', 'Error from IDE : Error: No such file or directory No file selected', null)
   },
   'Should open readme.txt': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'openfile', null, 'README.txt')
+    pluginAction(browser, 'openfile', null, 'README.txt')
   },
   'Should have current file': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'getcurrentfile', 'README.txt', null)
+    pluginAction(browser, 'getcurrentfile', 'README.txt', null)
   },
   'Should activate solidityUnitTesting': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'activate', null, 'solidityUnitTesting')
+    pluginAction(browser, 'activate', null, 'solidityUnitTesting')
     browser.frameParent()
     assertPluginIsActive(browser, 'solidityUnitTesting')
     // @ts-ignore
@@ -105,13 +110,13 @@ module.exports = {
   },
 
   'Should switch to file': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'switch to file', null, 'contracts/1_Storage.sol')
-    assertLog(browser, 'getcurrentfile', 'contracts/1_Storage.sol', null)
-    assertLog(browser, 'switch to file', null, 'README.txt')
-    assertLog(browser, 'getcurrentfile', 'README.txt', null)
+    pluginAction(browser, 'switch to file', null, 'contracts/1_Storage.sol')
+    pluginAction(browser, 'getcurrentfile', 'contracts/1_Storage.sol', null)
+    pluginAction(browser, 'switch to file', null, 'README.txt')
+    pluginAction(browser, 'getcurrentfile', 'README.txt', null)
   },
   'Should write to file': function (browser: NightwatchBrowser) {
-    assertLog(browser, 'write', 'README.txt', null)
+    pluginAction(browser, 'write', 'README.txt', null)
   }
 
 }
