@@ -4,6 +4,9 @@ import { CompilationOutput, Sources } from '@remix-ui/debugger-ui'
 import type { CompilationResult } from '@remix-project/remix-solidity-ts'
 
 export const DebuggerApiMixin = (Base) => class extends Base {
+
+  initialWeb3
+
   initDebuggerApi () {
     this.debugHash = null
         
@@ -16,6 +19,8 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       }
     }
     this._web3 = new Web3(this.web3Provider)
+    // this._web3 can be overwritten and reset to initial value in 'debug' method
+    this.initialWeb3 = this._web3
     remixDebug.init.extendWeb3(this._web3)
 
     this.offsetToLineColumnConverter = {
@@ -123,7 +128,9 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   debug (hash, web3?) {
     this.debugHash = hash
-    if (web3) remixDebug.init.extendWeb3(web3)
+    if (web3) this._web3 = web3
+    else this._web3 = this.initialWeb3
+    remixDebug.init.extendWeb3(this._web3)
     if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash, web3)
   }
 
