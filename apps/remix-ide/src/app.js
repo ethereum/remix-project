@@ -469,8 +469,13 @@ class App {
     await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await appManager.activatePlugin(['home'])
     await appManager.activatePlugin(['settings'])
-    await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+    await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
     await appManager.registerContextMenuItems()
+
+    appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      await appManager.registerContextMenuItems()
+    })
+    await appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
     appManager.on('editor', 'editorMounted', () => {
       if (Array.isArray(workspace)) {
