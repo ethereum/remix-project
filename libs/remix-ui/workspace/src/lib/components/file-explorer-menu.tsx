@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react' //eslint-disable-line
-import { FileExplorerMenuProps } from './types'
+import { FileExplorerMenuProps } from '../types'
 
 export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   const [state, setState] = useState({
