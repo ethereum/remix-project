@@ -83,7 +83,7 @@
     -ms-overflow-style: none;
   }
   .remixui_scrollable-container {
-    max-height: 570px;
+    height: 540px;
     /* border-bottom: 3px solid #3f4455; */
   }
   .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
@@ -100,7 +100,12 @@
   }
 
   .remixui_settings {
-    min-height: 30px;
+    height: 30px;
+  }
+
+  .remixui_requiredSection {
+    min-height: 180px;
+    max-height: 330px;
   }
 
   #menuitems {
