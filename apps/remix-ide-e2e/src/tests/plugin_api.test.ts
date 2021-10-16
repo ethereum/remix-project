@@ -13,6 +13,12 @@ const localPluginData = {
   pluginUrl: 'http://localhost:2020'
 }
 
+const getBrowserLogs = function (browser: NightwatchBrowser) {
+  browser.getLog('browser', (logEntries) => {
+    console.log(logEntries)
+  })
+}
+
 const assertLog = function (browser: NightwatchBrowser, buttonText: string, msg: any, payload: string) {
   if (payload) {
     browser.clearValue('//*[@id="payload"]').setValue('//*[@id="payload"]', payload).pause(1000)
@@ -22,14 +28,25 @@ const assertLog = function (browser: NightwatchBrowser, buttonText: string, msg:
     .useXpath().waitForElementVisible(`//*[text()='${buttonText}']`).click(`//*[text()='${buttonText}']`)
     .pause(2000)
 
+  getBrowserLogs(browser)
   if (msg) {
-    browser.waitForElementVisible('//*[@id="log"]').assert.containsText('//*[@id="log"]', msg)
+    browser.waitForElementVisible('//*[@id="log"]').verify.containsText('//*[@id="log"]', msg)
   }
+}
+
+const assertPluginIsActive = function (browser: NightwatchBrowser, id: string) {
+  browser.waitForElementVisible(`//*[@data-id="verticalIconsKind${id}"]`)
 }
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
+  },
+
+  afterEach: function (browser: NightwatchBrowser) {
+    browser.getLog('browser', (logEntries) => {
+      console.log(logEntries)
+    })
   },
 
   'Should Load Plugin Manager': function (browser: NightwatchBrowser) {
@@ -81,6 +98,20 @@ module.exports = {
   },
   'Should activate solidityUnitTesting': function (browser: NightwatchBrowser) {
     assertLog(browser, 'activate', null, 'solidityUnitTesting')
+    browser.frameParent()
+    assertPluginIsActive(browser, 'solidityUnitTesting')
+    // @ts-ignore
+    browser.frame(0)
+  },
+
+  'Should switch to file': function (browser: NightwatchBrowser) {
+    assertLog(browser, 'switch to file', null, 'contracts/1_Storage.sol')
+    assertLog(browser, 'getcurrentfile', 'contracts/1_Storage.sol', null)
+    assertLog(browser, 'switch to file', null, 'README.txt')
+    assertLog(browser, 'getcurrentfile', 'README.txt', null)
+  },
+  'Should write to file': function (browser: NightwatchBrowser) {
+    assertLog(browser, 'write', 'README.txt', null)
   }
 
 }
