@@ -66,15 +66,6 @@ export class WorkSpacePlugin extends PluginClient {
         console.log("comp fin",x)
       })
       */
-        await this.setCallBacks()
-
-        this.on(
-          'solidity',
-          'compilationFinished',
-          function (target, source, version, data) {
-            console.log('compile finished', target, source, version, data)
-          }
-        )
       })
       .catch(async (e) => {
         console.log('ERROR CONNECTING', e)
