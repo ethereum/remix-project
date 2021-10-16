@@ -287,7 +287,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
 
   // -------------------Terminal----------------------------------------
-
+  makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
   const terminal = new Terminal(
     { appManager, blockchain },
     {
@@ -299,9 +299,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         newpos = (newpos < height - limitDown) ? newpos : height - limitDown
         return height - newpos
       }
-    }
+    },
+    registry
   )
-  makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
 
   const contextualListener = new ContextualListener({ editor })
 
