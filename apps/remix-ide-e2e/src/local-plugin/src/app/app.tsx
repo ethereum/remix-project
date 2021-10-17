@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { WorkSpacePlugin } from './Client'
 import { Logger } from './logger'
-import { useBehaviorSubject } from './usesubscribe/index'
+
 import { filePanelProfile } from '@remixproject/plugin-api/lib/file-system/file-panel/profile'
 import { filSystemProfile } from '@remixproject/plugin-api/lib/file-system/file-manager/profile'
 import { dGitProfile } from '@remixproject/plugin-api/lib/dgit/profile'
@@ -16,7 +16,6 @@ import { contentImportProfile } from '@remixproject/plugin-api/lib/content-impor
 import { unitTestProfile } from '@remixproject/plugin-api/lib/unit-testing'
 import { windowProfile } from '@remixproject/plugin-api/lib/window'
 import { pluginManagerProfile } from '@remixproject/plugin-api/lib/plugin-manager'
-import { IFileSystem } from '@remixproject/plugin-api'
 
 import { Profile } from '@remixproject/plugin-utils'
 
@@ -26,7 +25,7 @@ function App () {
   const [payload, setPayload] = useState<string>('')
   const [append, setAppend] = useState<boolean>(false)
   const [log, setLog] = useState<any>()
-  const [profiles, setProfiles] = useState<any[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, unitTestProfile, windowProfile])
+  const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, unitTestProfile, windowProfile])
 
   const handleChange = ({ target }: any) => {
     setPayload(target.value)
@@ -34,7 +33,7 @@ function App () {
 
   useEffect(() => {
     client.onload(async () => {
-      const customProfiles = ['solidity']
+      const customProfiles = ['solidity', 'menuicons', 'tabs']
 
       for (const name of customProfiles) {
         const p = await client.call('manager', 'getProfile', name)
@@ -65,8 +64,8 @@ function App () {
       try {
         ob = JSON.parse(payload)
       } catch (e) {}
-      const send = ob || [payload]
-      const result = await client.call(profile.name as any, method, ...send)
+      const args = ob || [payload]
+      const result = await client.call(profile.name as any, method, ...args)
       setLog(result)
     } catch (e) {
       setLog(e.message)
@@ -86,12 +85,15 @@ function App () {
         onChange={handleChange}
       />
 
-      <input className='' id='appendToLog' type='checkbox' onChange={setAppendChange} /><label> Append logs</label>
+      <input className='' id='appendToLog' type='checkbox' onChange={setAppendChange} /><label className='pl-1'>Append logs</label>
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
           return <button data-id={`${profile.name}:${method}`} key={method} className='btn btn-primary btn-sm ml-1 mb-1' onClick={async () => await clientMethod(profile, method)}>{method}</button>
         })
-        return <div key={profile.name} className='small'><label>{profile.name}</label><br></br>{methods}</div>
+        const events = profile.events ? profile.events.map((event: string) => {
+          return <label className='m-1'>{event}</label>
+        }) : null
+        return <div key={profile.name} className='small border-bottom'><label className='text-uppercase'>{profile.name}</label><br></br>{methods}<br></br>{events ? <label>EVENTS:</label> : null}{events}</div>
       })}
 
     </div>
