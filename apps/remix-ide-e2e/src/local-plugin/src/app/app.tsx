@@ -84,6 +84,7 @@ function App () {
       <Logger id='methods' log={log} append={append}></Logger>
       <label>events</label>
       <Logger id='events' log={events} append={append}></Logger>
+      <input className='' id='appendToLog' type='checkbox' onChange={setAppendChange} /><label className='pl-1'>Append to logs</label>
       <input
         className='form-control w-100'
         type="text"
@@ -92,8 +93,6 @@ function App () {
         value={payload}
         onChange={handleChange}
       />
-
-      <input className='' id='appendToLog' type='checkbox' onChange={setAppendChange} /><label className='pl-1'>Append logs</label>
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
           return <button data-id={`${profile.name}:${method}`} key={method} className='btn btn-primary btn-sm ml-1 mb-1' onClick={async () => await clientMethod(profile, method)}>{method}</button>
