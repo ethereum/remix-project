@@ -17,7 +17,21 @@ const localPluginData: Profile & LocationProfile & ExternalProfile = {
 
 const getBrowserLogs = function (browser: NightwatchBrowser) {
   browser.getLog('browser', (logEntries) => {
-    console.log(logEntries)
+    if (logEntries && logEntries.length > 0) {
+      console.log('Browser log:')
+      console.log(logEntries)
+    }
+  })
+}
+const debugValues = function (browser: NightwatchBrowser, field: string, expected: string) {
+  browser.waitForElementVisible(`//*[@id="${field}"]`).getText(`//*[@id="${field}"]`, (result) => {
+    if (!result.value.toString().includes(expected)) {
+      console.log('Actual result:')
+      console.log(result.value.toString())
+      console.log('Expected result:')
+      console.log(expected)
+      getBrowserLogs(browser)
+    }
   })
 }
 
@@ -32,11 +46,12 @@ const clickAndCheckLog = function (browser: NightwatchBrowser, buttonText: strin
     .useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).click(`//*[@data-id='${buttonText}']`)
     .pause(2000)
 
-  getBrowserLogs(browser)
   if (methodResult) {
+    debugValues(browser, 'methods', methodResult)
     browser.waitForElementVisible('//*[@id="methods"]').verify.containsText('//*[@id="methods"]', methodResult)
   }
   if (eventResult) {
+    debugValues(browser, 'events', eventResult)
     browser.waitForElementVisible('//*[@id="events"]').verify.containsText('//*[@id="events"]', eventResult)
   }
 }
@@ -117,6 +132,12 @@ module.exports = {
 
   'Should get compilationresults': function (browser: NightwatchBrowser) {
     clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
+  },
+
+  // DGIT
+  'Should have changes on new workspace': function (browser: NightwatchBrowser) {
+    clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
+    clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], null, null)
   },
 
   // UNIT TESTING
