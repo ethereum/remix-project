@@ -1,4 +1,5 @@
 'use strict'
+import { ExternalProfile, LocationProfile, Profile } from '@remixproject/plugin-utils'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
@@ -6,11 +7,12 @@ declare global {
   interface Window { testmode: boolean; }
 }
 
-const localPluginData = {
-  pluginName: 'localPlugin',
-  pluginDisplayName: 'Local Plugin',
-  pluginCanActivate: 'dGitProvider,flattener,solidityUnitTesting',
-  pluginUrl: 'http://localhost:2020'
+const localPluginData: Profile & LocationProfile & ExternalProfile = {
+  name: 'localPlugin',
+  displayName: 'Local Plugin',
+  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting'],
+  url: 'http://localhost:2020',
+  location: 'sidePanel'
 }
 
 const getBrowserLogs = function (browser: NightwatchBrowser) {
@@ -18,24 +20,19 @@ const getBrowserLogs = function (browser: NightwatchBrowser) {
     console.log(logEntries)
   })
 }
-/*
-* PLUGINACTION
-* buttonText: which button to click
-* msg: what to expect from the log
-* payload: extra param for the call
-*/
-const pluginAction = function (browser: NightwatchBrowser, buttonText: string, msg: any, payload: string) {
+
+const clickAndCheckLog = function (browser: NightwatchBrowser, buttonText: string, msg: any, payload: string) {
   if (payload) {
     browser.clearValue('//*[@id="payload"]').setValue('//*[@id="payload"]', payload).pause(1000)
   }
   if (msg && typeof msg !== 'string') msg = JSON.stringify(msg)
   browser
-    .useXpath().waitForElementVisible(`//*[text()='${buttonText}']`).click(`//*[text()='${buttonText}']`)
+    .useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).click(`//*[@data-id='${buttonText}']`)
     .pause(2000)
 
   getBrowserLogs(browser)
   if (msg) {
-    browser.waitForElementVisible('//*[@id="log"]').verify.containsText('//*[@id="log"]', msg)
+    browser.waitForElementVisible('//*[@id="methods"]').verify.containsText('//*[@id="methods"]', msg)
   }
 }
 
@@ -54,55 +51,29 @@ module.exports = {
     })
   },
 
-  'Should Load Plugin Manager': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-      .pause(3000)
-      .click('*[plugin="pluginManager"]')
-      .pause(3000)
-      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
-  },
-
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .execute(function () {
-        window.testmode = true
-      })
-      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
-      .waitForElementVisible('*[data-id="localPluginName"]')
-      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', localPluginData.pluginName)
-      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', localPluginData.pluginDisplayName)
-      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', localPluginData.pluginUrl)
-      .clearValue('*[data-id="localPluginCanActivate"]').setValue('*[data-id="localPluginCanActivate"]', localPluginData.pluginCanActivate)
-      .click('*[data-id="localPluginRadioButtoniframe"]')
-      .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
-      .waitForElementVisible('[data-id="verticalIconsKindlocalPlugin"]')
-      .click('[data-id="verticalIconsKindlocalPlugin"]')
+    browser.addLocalPlugin(localPluginData)
       // @ts-ignore
       .frame(0)
   },
 
   'Should get current workspace': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'get workspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null)
+    clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null)
   },
   'Should get current files': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null)
+    clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null)
   },
   'Should throw error on current file': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'getcurrentfile', 'Error from IDE : Error: No such file or directory No file selected', null)
+    clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null)
   },
   'Should open readme.txt': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'openfile', null, 'README.txt')
+    clickAndCheckLog(browser, 'fileManager:open', null, 'README.txt')
   },
   'Should have current file': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'getcurrentfile', 'README.txt', null)
+    clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null)
   },
   'Should activate solidityUnitTesting': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'activate', null, 'solidityUnitTesting')
+    clickAndCheckLog(browser, 'manager:activatePlugin', null, 'solidityUnitTesting')
     browser.frameParent()
     assertPluginIsActive(browser, 'solidityUnitTesting')
     // @ts-ignore
@@ -110,13 +81,13 @@ module.exports = {
   },
 
   'Should switch to file': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'switch to file', null, 'contracts/1_Storage.sol')
-    pluginAction(browser, 'getcurrentfile', 'contracts/1_Storage.sol', null)
-    pluginAction(browser, 'switch to file', null, 'README.txt')
-    pluginAction(browser, 'getcurrentfile', 'README.txt', null)
+    clickAndCheckLog(browser, 'fileManager:switchFile', null, 'contracts/1_Storage.sol')
+    clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'contracts/1_Storage.sol', null)
+    clickAndCheckLog(browser, 'fileManager:switchFile', null, 'README.txt')
+    clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null)
   },
   'Should write to file': function (browser: NightwatchBrowser) {
-    pluginAction(browser, 'write', 'README.txt', null)
+    clickAndCheckLog(browser, 'fileManager:writeFile', 'README.txt', null)
   }
 
 }
