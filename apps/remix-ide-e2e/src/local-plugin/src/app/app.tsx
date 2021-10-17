@@ -1,6 +1,6 @@
 
-import React, { useEffect, useRef, useState } from 'react'
-import { WorkSpacePlugin } from './Client'
+import React, { useEffect, useState } from 'react'
+import { RemixPlugin } from './Client'
 import { Logger } from './logger'
 
 import { filePanelProfile } from '@remixproject/plugin-api/lib/file-system/file-panel/profile'
@@ -16,15 +16,17 @@ import { contentImportProfile } from '@remixproject/plugin-api/lib/content-impor
 import { unitTestProfile } from '@remixproject/plugin-api/lib/unit-testing'
 import { windowProfile } from '@remixproject/plugin-api/lib/window'
 import { pluginManagerProfile } from '@remixproject/plugin-api/lib/plugin-manager'
-
 import { Profile } from '@remixproject/plugin-utils'
 
-export const client = new WorkSpacePlugin()
+import './app.css'
+
+export const client = new RemixPlugin()
 
 function App () {
   const [payload, setPayload] = useState<string>('')
   const [append, setAppend] = useState<boolean>(false)
   const [log, setLog] = useState<any>()
+  const [events, setEvents] = useState<any>()
   const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, unitTestProfile, windowProfile])
 
   const handleChange = ({ target }: any) => {
@@ -33,12 +35,14 @@ function App () {
 
   useEffect(() => {
     client.onload(async () => {
-      const customProfiles = ['solidity', 'menuicons', 'tabs']
+      const customProfiles = ['menuicons', 'tabs']
 
+      let addProfiles = []
       for (const name of customProfiles) {
         const p = await client.call('manager', 'getProfile', name)
-        setProfiles(profiles => [p, ...profiles])
+        addProfiles = [...addProfiles, p]
       }
+      setProfiles(profiles => [...profiles, ...addProfiles])
 
       profiles.map((profile: Profile) => {
         if (profile.events) {
@@ -46,6 +50,10 @@ function App () {
             console.log(profile.name, event)
             client.on(profile.name as any, event, (...args:any) => {
               console.log(event, args)
+              setEvents({
+                event: event,
+                args: args
+              })
             })
           })
         }
@@ -75,7 +83,10 @@ function App () {
   return (
     <div className="App container-fluid">
       <h5>PLUGIN API TESTER</h5>
-      <Logger log={log} append={append}></Logger>
+      <label>method results</label>
+      <Logger id='methods' log={log} append={append}></Logger>
+      <label>events</label>
+      <Logger id='events' log={events} append={append}></Logger>
       <input
         className='form-control w-100'
         type="text"
@@ -91,7 +102,7 @@ function App () {
           return <button data-id={`${profile.name}:${method}`} key={method} className='btn btn-primary btn-sm ml-1 mb-1' onClick={async () => await clientMethod(profile, method)}>{method}</button>
         })
         const events = profile.events ? profile.events.map((event: string) => {
-          return <label className='m-1'>{event}</label>
+          return <label key={event} className='m-1'>{event}</label>
         }) : null
         return <div key={profile.name} className='small border-bottom'><label className='text-uppercase'>{profile.name}</label><br></br>{methods}<br></br>{events ? <label>EVENTS:</label> : null}{events}</div>
       })}
