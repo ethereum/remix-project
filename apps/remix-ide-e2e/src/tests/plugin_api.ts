@@ -62,6 +62,8 @@ module.exports = {
       .frame(0)
   },
 
+  // FILESYSTEM
+
   'Should get current workspace': function (browser: NightwatchBrowser) {
     clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
@@ -77,16 +79,15 @@ module.exports = {
   'Should have current file': function (browser: NightwatchBrowser) {
     clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
   },
+  'Should create dir': function (browser: NightwatchBrowser) {
+    clickAndCheckLog(browser, 'fileManager:mkdir', null, null, 'testdir')
+    clickAndCheckLog(browser, 'fileManager:readdir', 'testdir', null, '/')
+  },
+  'Should get file': function (browser: NightwatchBrowser) {
+    clickAndCheckLog(browser, 'fileManager:getFile', 'REMIX EXAMPLE PROJECT', null, 'README.txt')
+  },
   'Should close all files': function (browser: NightwatchBrowser) {
     clickAndCheckLog(browser, 'fileManager:closeAllFiles', null, { event: 'noFileSelected', args: [] }, null)
-  },
-
-  'Should activate solidityUnitTesting': function (browser: NightwatchBrowser) {
-    clickAndCheckLog(browser, 'manager:activatePlugin', null, null, 'solidityUnitTesting')
-    browser.frameParent()
-    assertPluginIsActive(browser, 'solidityUnitTesting')
-    // @ts-ignore
-    browser.frame(0)
   },
 
   'Should switch to file': function (browser: NightwatchBrowser) {
@@ -108,11 +109,22 @@ module.exports = {
     clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
   },
 
+  // COMPILER
+
   'Should compile a file': function (browser: NightwatchBrowser) {
     clickAndCheckLog(browser, 'solidity:compile', null, null, 'contracts/1_Storage.sol')
   },
 
   'Should get compilationresults': function (browser: NightwatchBrowser) {
     clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
+  },
+
+  // UNIT TESTING
+  'Should activate solidityUnitTesting': function (browser: NightwatchBrowser) {
+    clickAndCheckLog(browser, 'manager:activatePlugin', null, null, 'solidityUnitTesting')
+    browser.frameParent()
+    assertPluginIsActive(browser, 'solidityUnitTesting')
+    // @ts-ignore
+    browser.frame(0)
   }
 }
