@@ -157,7 +157,6 @@ module.exports = {
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-      .click('*[plugin="pluginManager"]')
       .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .getInstalledPlugins((plugins) => {
         browser.refresh()
