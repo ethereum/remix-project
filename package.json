@@ -296,7 +296,6 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
     "terser-webpack-plugin": "^4.2.3",
-    "testcafe": "^1.16.1",
     "ts-jest": "^27.0.5",
     "ts-node": "^7.0.1",
     "tslint": "~6.0.0",
