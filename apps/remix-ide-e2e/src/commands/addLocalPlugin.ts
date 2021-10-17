@@ -33,7 +33,7 @@ function addLocalPlugin (browser: NightwatchBrowser, profile: Profile & Location
     .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', profile.name)
     .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', profile.displayName)
     .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', profile.url)
-    .clearValue('*[data-id="localPluginCanActivate"]').setValue('*[data-id="localPluginCanActivate"]', profile.canActivate.join(','))
+    .clearValue('*[data-id="localPluginCanActivate"]').setValue('*[data-id="localPluginCanActivate"]', profile.canActivate ? profile.canActivate.join(',') : '')
     .click('*[data-id="localPluginRadioButtoniframe"]')
     .click(profile.location === 'sidePanel' ? '*[data-id="localPluginRadioButtonsidePanel"]' : '*[data-id="localPluginRadioButtonmainPanel"]')
     .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
