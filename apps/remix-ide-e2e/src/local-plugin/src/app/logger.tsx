@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react'
-
-import { client } from './app'
-
 interface loggerProps {
   append: boolean,
   log: any,

@@ -20,7 +20,7 @@ import { Profile } from '@remixproject/plugin-utils'
 
 import './app.css'
 
-export const client = new RemixPlugin()
+const client = new RemixPlugin()
 
 function App () {
   const [payload, setPayload] = useState<string>('')
@@ -47,9 +47,7 @@ function App () {
       profiles.map((profile: Profile) => {
         if (profile.events) {
           profile.events.map((event: string) => {
-            console.log(profile.name, event)
             client.on(profile.name as any, event, (...args:any) => {
-              console.log(event, args)
               setEvents({
                 event: event,
                 args: args
@@ -62,7 +60,6 @@ function App () {
   }, [])
 
   const setAppendChange = ({ target }: any) => {
-    console.log('append', target.checked)
     setAppend(target.checked)
   }
 
