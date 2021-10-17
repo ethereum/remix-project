@@ -4,7 +4,8 @@ import { client } from './app'
 
 interface loggerProps {
   append: boolean,
-  log: any
+  log: any,
+  id: string
 }
 
 export const Logger: React.FC<loggerProps> = (props) => {
@@ -17,5 +18,5 @@ export const Logger: React.FC<loggerProps> = (props) => {
     })
   }, [props])
 
-  return (<div className="jumbotron text-break">{value}</div>)
+  return (<div id={props.id} className="jumbotron overflow-auto text-break mb-1 p-2">{value}</div>)
 }
