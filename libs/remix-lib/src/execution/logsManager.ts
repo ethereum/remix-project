@@ -55,10 +55,10 @@ export class LogsManager {
     if (queryFilter.topics.filter((logTopic) => changeEvent.log.topics.indexOf(logTopic) >= 0).length === 0) return false
 
     if (queryType === 'logs') {
-      if ((queryFilter.address === ('0x' + changeEvent.tx.to.toString('hex'))) && (queryFilter.address === ('0x' + changeEvent.tx.from.toString('hex')))) {
-        if (!queryFilter.toBlock) {
-          return true
-        } else if (parseInt(queryFilter.toBlock) > parseInt(changeEvent.blockNumber)) {
+      const fromBlock = queryFilter.fromBlock || '0x0'
+      const toBlock = queryFilter.toBlock || this.oldLogs.length ? this.oldLogs[this.oldLogs.length - 1].blockNumber : '0x0'
+      if ((queryFilter.address === (changeEvent.tx.to || '').toString()) || queryFilter.address === (changeEvent.tx.getSenderAddress().toString())) {
+        if ((parseInt(toBlock) >= parseInt(changeEvent.blockNumber)) && (parseInt(fromBlock) <= parseInt(changeEvent.blockNumber))) {
           return true
         }
       }
@@ -142,6 +142,23 @@ export class LogsManager {
     if (filterType === 'pendingTransactions') {
       return []
     }
+  }
+
+  getLogsByTxHash (hash) {
+    return this.oldLogs.filter((log) => '0x' + log.tx.hash().toString('hex') === hash)
+      .map((log) => {
+        return {
+          logIndex: '0x1', // 1
+          blockNumber: log.blockNumber,
+          blockHash: ('0x' + log.block.hash().toString('hex')),
+          transactionHash: ('0x' + log.tx.hash().toString('hex')),
+          transactionIndex: '0x' + log.txNumber.toString(16),
+          // TODO: if it's a contract deploy, it should be that address instead
+          address: log.log.address,
+          data: log.log.data,
+          topics: log.log.topics
+        }
+      })
   }
 
   getLogsFor (params) {

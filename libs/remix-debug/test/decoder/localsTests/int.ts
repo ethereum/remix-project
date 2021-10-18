@@ -1,6 +1,6 @@
 'use strict'
 
-import { sendTx } from '../vmCall'
+import * as vmCall from '../../vmCall'
 import { TraceManager } from '../../../src/trace/traceManager'
 import { CodeManager } from '../../../src/code/codeManager'
 import { contractCreationToken } from '../../../src/trace/traceHelper'
@@ -9,19 +9,19 @@ import { InternalCallTree } from '../../../src/solidity-decoder/internalCallTree
 import { EventManager } from '../../../src/eventManager'
 import * as helper from './helper'
 
-module.exports = function (st, vm, privateKey, contractBytecode, compilationResult) {
-  return new Promise((resolve) => {
-    sendTx(vm, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, data) {      
+module.exports = function (st, privateKey, contractBytecode, compilationResult) {
+  return new Promise(async (resolve) => {    
+    let web3 = await (vmCall as any).getWeb3();
+    (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {      
       if (error) {
         return st.fail(error)
       }
-      const txHash = data.hash
-      vm.web3.eth.getTransaction(txHash, function (error, tx) {
+      web3.eth.getTransaction(hash, function (error, tx) {
         if (error) {
           return st.fail(error)
         }
         tx.to = contractCreationToken('0')
-        var traceManager = new TraceManager({ web3: vm.web3 })
+        var traceManager = new TraceManager({ web3 })
         var codeManager = new CodeManager(traceManager)
         codeManager.clear()
         var solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
@@ -125,6 +125,6 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
         })
       })
     })
-  })  
+  })
 }
 
