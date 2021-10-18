@@ -13,7 +13,6 @@ import { terminalProfile } from '@remixproject/plugin-api/lib/terminal/profile'
 import { udappProfile } from '@remixproject/plugin-api/lib/udapp'
 import { compilerProfile } from '@remixproject/plugin-api/lib/compiler'
 import { contentImportProfile } from '@remixproject/plugin-api/lib/content-import'
-import { unitTestProfile } from '@remixproject/plugin-api/lib/unit-testing'
 import { windowProfile } from '@remixproject/plugin-api/lib/window'
 import { pluginManagerProfile } from '@remixproject/plugin-api/lib/plugin-manager'
 import { Profile } from '@remixproject/plugin-utils'
@@ -27,7 +26,7 @@ function App () {
   const [append, setAppend] = useState<boolean>(false)
   const [log, setLog] = useState<any>()
   const [events, setEvents] = useState<any>()
-  const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, unitTestProfile, windowProfile])
+  const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, windowProfile])
 
   const handleChange = ({ target }: any) => {
     setPayload(target.value)
@@ -35,7 +34,7 @@ function App () {
 
   useEffect(() => {
     client.onload(async () => {
-      const customProfiles = ['menuicons', 'tabs']
+      const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting']
 
       let addProfiles = []
       for (const name of customProfiles) {
