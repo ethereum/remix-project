@@ -48,6 +48,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
+      console.log('solidity is activated')
     })
     appManager.event.on('deactivate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -72,6 +73,14 @@ module.exports = class TestTab extends ViewPlugin {
     if (event.path.length > 0) {
       await this.setCurrentPath(event.path[0])
     }
+  }
+
+  async onActivation () {
+    const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
+    if (!isSolidityActive) {
+      await this.call('manager', 'activatePlugin', 'solidity')
+    }
+    this.updateRunAction()
   }
 
   onDeactivation () {
@@ -637,7 +646,6 @@ module.exports = class TestTab extends ViewPlugin {
         el.setAttribute('title', 'No solidity file selected')
       } else {
         el.setAttribute('title', 'The "Solidity Plugin" should be activated')
-        // @todo(#2747)  we can activate the plugin here
       }
     }
     if (!this.runActionElement) {
