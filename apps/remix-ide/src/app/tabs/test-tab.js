@@ -256,6 +256,14 @@ module.exports = class TestTab extends ViewPlugin {
 
   testCallback (result, runningTests) {
     this.testsOutput.hidden = false
+    let debugBtn = yo``
+    if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
+      const { web3, debugTxHash } = result
+      debugBtn = yo`<div id=${result.value.replaceAll(' ', '_')} class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${() => this.startDebug(debugTxHash, web3)}>
+        <i class="fas fa-bug"></i>
+      </div>`
+      debugBtn.style.cursor = 'pointer'
+    }
     if (result.type === 'contract') {
       this.testSuite = result.value
       if (this.testSuites) {
@@ -277,29 +285,18 @@ module.exports = class TestTab extends ViewPlugin {
         <div
           id="${this.runningTestFileName}"
           data-id="testTabSolidityUnitTestsOutputheader"
-          class="${css.testPass} ${css.testLog} bg-light mb-2 text-success border-0"
+          class="${css.testPass} ${css.testLog} bg-light mb-2 px-2 text-success border-0"
           onclick=${() => this.discardHighlight()}
         >
-          ✓ ${result.value}
+          <div class="d-flex my-1 align-items-start justify-content-between">
+            <span style="margin-block: auto" > ✓ ${result.value}</span>
+            ${debugBtn}
+          </div>
         </div>
       `)
     } else if (result.type === 'testFailure') {
       if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
-        let debugBtn = yo``
-        if (result.errMsg.includes('Transaction has been reverted by the EVM')) {
-          const txHash = JSON.parse(result.errMsg.replace('Transaction has been reverted by the EVM:', '')).transactionHash
-          const { web3 } = result
-          debugBtn = yo`<div
-            class="btn border btn btn-sm ml-1"
-            title="Start debugging"
-            onclick=${() => this.startDebug(txHash, web3)}
-          >
-            <i class="fas fa-bug"></i>
-          </div>`
-          debugBtn.style.visibility = 'visible'
-          debugBtn.style.cursor = 'pointer'
-        } else debugBtn.style.visibility = 'hidden'
         this.testsOutput.appendChild(yo`
         <div
           class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
@@ -324,7 +321,10 @@ module.exports = class TestTab extends ViewPlugin {
             id="UTContext${result.context}"
             onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
           >
-            <span> ✘ ${result.value}</span>
+            <div class="d-flex my-1 align-items-start justify-content-between">  
+              <span> ✘ ${result.value}</span>
+              ${debugBtn}
+            </div> 
             <span class="text-dark">Error Message:</span>
             <span class="pb-2 text-break">"${result.errMsg}"</span>
             <span class="text-dark">Assertion:</span>
@@ -508,7 +508,7 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      this.testRunner.runTestSources(runningTest, compilerConfig, () => {}, () => {}, (error, result) => {
+      this.testRunner.runTestSources(runningTest, compilerConfig, () => {}, () => {}, null, (error, result) => {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {
@@ -536,17 +536,22 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
+      const deployCb = async (file, contractAddress) => {
+        const compilerData = await this.call('compilerArtefacts', 'getCompilerAbstract', file)
+        await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilerData)
+      }
       this.testRunner.runTestSources(
         runningTests,
         compilerConfig,
         (result) => this.testCallback(result, runningTests),
         (_err, result, cb) => this.resultsCallback(_err, result, cb),
+        deployCb,
         (error, result) => {
           this.updateFinalResult(error, result, testFilePath)
           callback(error)
         }, (url, cb) => {
           return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-        }
+        }, { testFilePath }
       )
     }).catch((error) => {
       if (error) return // eslint-disable-line

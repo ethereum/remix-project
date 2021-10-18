@@ -30,7 +30,6 @@ const defaultCompilerParameters = {
   evmVersion: null, // compiler default
   language: 'Solidity'
 }
-
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi  {
   constructor () {
     super()

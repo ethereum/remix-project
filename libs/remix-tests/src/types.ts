@@ -38,6 +38,7 @@ export interface TestResultInterface {
   location?: string
   hhLogs?: []
   web3?: any
+  debugTxHash?: string
 }
 export interface TestCbInterface {
   (error: Error | null | undefined, result: TestResultInterface) : void;
@@ -48,6 +49,7 @@ export interface ResultCbInterface {
 
 export interface Options {
   accounts?: string[] | null,
+  testFilePath?: string
   web3?: any
 }
 
