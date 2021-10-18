@@ -292,7 +292,7 @@ export const Workspace = (props: WorkspaceProps) => {
       return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
     })
   }
-
+  // eslint-disable-next-line no-undef
   const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
     await setState(prevState => {
       return {
@@ -332,7 +332,7 @@ export const Workspace = (props: WorkspaceProps) => {
 
   return (
     <div className='remixui_container'>
-      <ModalDialog
+      { state.modal.message && <ModalDialog
         id='workspacesModalDialog'
         title={ state.modal.title }
         message={ state.modal.message }
@@ -344,6 +344,7 @@ export const Workspace = (props: WorkspaceProps) => {
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>
+      }
       <Toaster message={state.toasterMsg} />
       <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
         <div>

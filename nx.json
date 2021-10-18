@@ -121,11 +121,22 @@
     "remix-ui-renderer": {
       "tags": []
     },
+    "remix-ui-terminal": {
+      "tags": []
+    },
     "solidity-compiler": {
       "tags": []
     },
     "remix-ide-e2e-src-local-plugin": {
       "tags": []
     }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
   }
 }
