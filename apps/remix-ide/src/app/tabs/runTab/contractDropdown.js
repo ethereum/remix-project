@@ -218,11 +218,12 @@ class ContractDropdownUI {
       if (this.selectContractNames.value === '') this.enableAtAddress(false)
     } else {
       this.loadType = 'other'
-      this.createPanel.style.display = 'none'
-      this.orLabel.style.display = 'none'
-      this.compFails.style.display = 'none'
-      this.contractNamesContainer.style.display = 'none'
+      this.createPanel.style.display = 'block'
+      this.orLabel.style.display = 'block'
+      this.contractNamesContainer.style.display = 'block'
+      this.selectContractNames.style.display = 'block'
       this.abiLabel.style.display = 'none'
+      if (this.selectContractNames.value === '') this.enableAtAddress(false)
     }
   }
 
