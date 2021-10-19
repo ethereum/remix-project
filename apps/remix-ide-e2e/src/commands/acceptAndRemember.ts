@@ -16,14 +16,15 @@ class AcceptAndRemember extends EventEmitter {
 function acceptAndRemember (browser: NightwatchBrowser, remember: boolean, accept: boolean, callback: VoidFunction) {
   browser.useXpath().waitForElementVisible('//*[@data-id="modalDialogModalBody"]')
   if (remember) {
-    browser.click('//*[@id="remember"]')
+    browser.click('//*[@id="remember"]', () => {
+      if (accept) {
+        browser.click('//*[@id="modal-footer-ok"]')
+      } else {
+        browser.click('//*[@id="modal-footer-cancel"]')
+      }
+      browser.perform(function () { callback() })
+    })
   }
-  if (accept) {
-    browser.click('//*[@id="modal-footer-ok"]')
-  } else {
-    browser.click('//*[@id="modal-footer-cancel"]')
-  }
-  browser.perform(function () { callback() })
 }
 
 module.exports = AcceptAndRemember
