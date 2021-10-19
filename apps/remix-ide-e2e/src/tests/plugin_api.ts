@@ -133,7 +133,9 @@ module.exports = {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
   },
   'Should open readme.txt': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:open', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
+    await setAppend(browser)
   },
   'Should have current file': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
@@ -146,22 +148,30 @@ module.exports = {
     await clickAndCheckLog(browser, 'fileManager:getFile', 'REMIX EXAMPLE PROJECT', null, 'README.txt')
   },
   'Should close all files': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:closeAllFiles', null, { event: 'noFileSelected', args: [] }, null)
+    await setAppend(browser)
   },
 
   'Should switch to file': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['contracts/1_Storage.sol'] }, 'contracts/1_Storage.sol')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'contracts/1_Storage.sol', null, null)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
+    await setAppend(browser)
   },
   'Should write to file': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileSaved', args: ['README.txt'] }, ['README.txt', 'test'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'README.txt')
+    await setAppend(browser)
   },
   'Should write to new file': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileAdded', args: ['testing.txt'] }, ['testing.txt', 'test'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'testing.txt')
+    await setAppend(browser)
   },
   'Should rename file': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:rename', null, null, ['testing.txt', 'testrename.txt'])
