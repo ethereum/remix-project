@@ -141,7 +141,7 @@ class ContextualListener extends Plugin {
       }
       const fileName = lastCompilationResult.getSourceName(position.file)
       if (fileName) {
-        return this.call('editor', 'highlight', lineColumn, fileName)
+        return this.call('editor', 'highlight', lineColumn, fileName, '', { focus: false })
       }
     }
     return null

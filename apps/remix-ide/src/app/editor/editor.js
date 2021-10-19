@@ -466,10 +466,12 @@ class Editor extends Plugin {
     await this.addDecoration(annotation, filePath, 'sourceAnnotationsPerFile')
   }
 
-  async highlight (position, filePath) {
+  async highlight (position, filePath, highlightColor, opt = { focus: true }) {
     filePath = filePath || this.currentFile
-    await this.call('fileManager', 'open', filePath)
-    this.gotoLine(position.start.line, position.start.column)
+    if (opt.focus) {
+      await this.call('fileManager', 'open', filePath)
+      this.gotoLine(position.start.line, position.start.column)
+    }
     await this.addDecoration({ position }, filePath, 'markerPerFile')
   }
 
