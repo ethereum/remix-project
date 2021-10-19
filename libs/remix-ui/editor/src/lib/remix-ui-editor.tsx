@@ -220,6 +220,7 @@ export const EditorUI = (props: EditorUIProps) => {
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
     const backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
     const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
+    const darkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()
     monaco.editor.defineTheme('remix-dark', {
       base: 'vs-dark',
       inherit: true, // can also be false to completely replace the builtin rules
@@ -228,7 +229,8 @@ export const EditorUI = (props: EditorUIProps) => {
         'editor.background': backgroundColor,
         'editorSuggestWidget.background': backgroundColor,
         'editorSuggestWidget.selectedBackground': backgroundColor,
-        'editorSuggestWidget.highlightForeground': infoColor
+        'editorSuggestWidget.highlightForeground': infoColor,
+        'editor.lineHighlightBorder': darkColor
       }
     })
   }
