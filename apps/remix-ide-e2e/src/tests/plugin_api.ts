@@ -102,7 +102,7 @@ module.exports = {
 
   afterEach: function (browser: NightwatchBrowser) {
     browser.getLog('browser', (logEntries) => {
-      // console.log(logEntries)
+      console.log(logEntries)
     })
   },
 
