@@ -364,7 +364,7 @@ class Editor extends Plugin {
    */
   scrollToLine (line) {
     if (!this.activated) return
-    this.emit('revealLine', line, 0)
+    this.emit('revealLine', line + 1, 0)
   }
 
   /**
