@@ -185,7 +185,6 @@ export const renameWorkspaceFromProvider = async (oldName: string, workspaceName
   const workspacesPath = workspaceProvider.workspacesPath
   browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
   workspaceProvider.setWorkspace(workspaceName)
-  plugin.emit('renameWorkspace', { name: workspaceName })
   plugin.setWorkspaces(await getWorkspaces())
 }
 
