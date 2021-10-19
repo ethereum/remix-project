@@ -50,6 +50,7 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
       .waitForElementVisible('[data-id="fileSystem-modal-footer-ok-react"]')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"]') // focus on footer to ensure ok click
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(2000)

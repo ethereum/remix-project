@@ -104,6 +104,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"]') // focus on footer to ensure ok click
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .pause(10000)
       .perform((done) => {
