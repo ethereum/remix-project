@@ -48,7 +48,6 @@ module.exports = class TestTab extends ViewPlugin {
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
-      console.log('solidity is activated')
     })
     appManager.event.on('deactivate', (name) => {
       if (name === 'solidity') this.updateRunAction()
