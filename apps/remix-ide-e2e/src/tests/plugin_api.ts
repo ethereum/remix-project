@@ -1,7 +1,6 @@
 'use strict'
 import { ExternalProfile, LocationProfile, Profile } from '@remixproject/plugin-utils'
 import { NightwatchBrowser } from 'nightwatch'
-import { resolve } from 'url'
 import init from '../helpers/init'
 
 declare global {
