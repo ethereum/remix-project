@@ -251,6 +251,7 @@ module.exports = class Filepanel extends ViewPlugin {
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     else {
+      await this.call('fileManager', 'closeAllFiles')
       const workspaceProvider = this._deps.fileProviders.workspace
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
