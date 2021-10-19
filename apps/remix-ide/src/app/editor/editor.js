@@ -470,7 +470,7 @@ class Editor extends Plugin {
     filePath = filePath || this.currentFile
     if (opt.focus) {
       await this.call('fileManager', 'open', filePath)
-      this.gotoLine(position.start.line, position.start.column)
+      this.scrollToLine(position.start.line)
     }
     await this.addDecoration({ position }, filePath, 'markerPerFile')
   }
