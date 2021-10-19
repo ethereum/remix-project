@@ -1,6 +1,7 @@
 'use strict'
 import { ExternalProfile, LocationProfile, Profile } from '@remixproject/plugin-utils'
 import { NightwatchBrowser } from 'nightwatch'
+import { resolve } from 'url'
 import init from '../helpers/init'
 
 declare global {
@@ -79,6 +80,14 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
   })
 }
 
+const setAppend = async (browser: NightwatchBrowser) => {
+  return new Promise((resolve) => {
+    browser.waitForElementVisible('//*[@id="appendToLog"]').click('//*[@id="appendToLog"]', () => {
+      resolve(true)
+    })
+  })
+}
+
 const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any) => {
   if (payload) {
     await setPayload(browser, payload)
@@ -109,12 +118,13 @@ module.exports = {
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
     browser.addLocalPlugin(localPluginData)
       // @ts-ignore
-      .frame(0)
+      .frame(0).useXpath()
   },
 
   // FILESYSTEM
 
   'Should get current workspace': async function (browser: NightwatchBrowser) {
+    await browser.pause(20000)
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
 
@@ -170,6 +180,14 @@ module.exports = {
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
     await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
   },
+  'Should get all workspaces': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['default_workspace', 'emptyworkspace', 'testspace'], null, null)
+  },
+  'Should have set workspace event': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
+    await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
+    await setAppend(browser)
+  },
 
   // COMPILER
 
@@ -205,5 +223,9 @@ module.exports = {
     assertPluginIsActive(browser, 'solidityUnitTesting')
     // @ts-ignore
     browser.frame(0)
+  },
+
+  'Should test from path with solidityUnitTesting': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'solidityUnitTesting:testFromPath', '"totalPassing":2,"totalFailing":0', null, 'tests/4_Ballot_test.sol')
   }
 }
