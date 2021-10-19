@@ -165,10 +165,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
-      .waitForElementVisible('[data-id="fileSystem-modal-footer-ok-react"]')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(2000)
-      .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
