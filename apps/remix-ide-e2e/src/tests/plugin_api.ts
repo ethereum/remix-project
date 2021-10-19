@@ -59,7 +59,7 @@ const clickButton = async (browser: NightwatchBrowser, buttonText: string) => {
   return new Promise((resolve) => {
     browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`)
       .click(`//*[@data-id='${buttonText}']`)
-      .pause(2000, () => resolve(true))
+      .pause(5000, () => resolve(true))
   })
 }
 
@@ -123,7 +123,6 @@ module.exports = {
   // FILESYSTEM
 
   'Should get current workspace': async function (browser: NightwatchBrowser) {
-    await browser.pause(20000)
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
 
