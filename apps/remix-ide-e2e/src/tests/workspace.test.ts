@@ -72,6 +72,7 @@ module.exports = {
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
       .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
