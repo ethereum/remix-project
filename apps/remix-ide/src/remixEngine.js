@@ -13,7 +13,7 @@ export class RemixEngine extends Engine {
     if (name === 'dGitProvider') return { queueTimeout: 60000 * 4 }
     if (name === 'slither') return { queueTimeout: 60000 * 4 } // Requires when a solc version is installed
     if (name === 'hardhat') return { queueTimeout: 60000 * 4 }
-    if (name === 'solidityUnitTesting') return { queueTimeout: 60000 * 4 }
+    if (name === 'localPlugin') return { queueTimeout: 60000 * 4 }
     return { queueTimeout: 10000 }
   }
 

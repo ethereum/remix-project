@@ -46,7 +46,8 @@ function App () {
       profiles.map((profile: Profile) => {
         if (profile.events) {
           profile.events.map((event: string) => {
-            client.on(profile.name as any, event, (...args:any) => {
+            client.on(profile.name as any, event, (...args: any) => {
+              console.log('event :', event, args)
               setEvents({
                 event: event,
                 args: args
@@ -67,9 +68,12 @@ function App () {
       let ob: any = null
       try {
         ob = JSON.parse(payload)
-      } catch (e) {}
+        if (ob && !Array.isArray(ob)) { ob = [ob] }
+      } catch (e) { }
       const args = ob || [payload]
+      console.log('calling :', profile.name, method, ...args)
       const result = await client.call(profile.name as any, method, ...args)
+      console.log('result :', result)
       setLog(result)
     } catch (e) {
       setLog(e.message)
