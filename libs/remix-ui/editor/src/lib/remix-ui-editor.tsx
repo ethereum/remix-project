@@ -218,21 +218,22 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
+    const lightColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
     const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
     const darkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()
     const grayColor = window.getComputedStyle(document.documentElement).getPropertyValue('--gray-dark').trim()
     monaco.editor.defineTheme('remix-dark', {
       base: 'vs-dark',
       inherit: true, // can also be false to completely replace the builtin rules
-      rules: [{ background: backgroundColor.replace('#', '') }],
+      rules: [{ background: darkColor.replace('#', '') }],
       colors: {
-        'editor.background': backgroundColor,
-        'editorSuggestWidget.background': backgroundColor,
-        'editorSuggestWidget.selectedBackground': backgroundColor,
+        'editor.background': darkColor,
+        'editorSuggestWidget.background': lightColor,
+        'editorSuggestWidget.selectedBackground': lightColor,
         'editorSuggestWidget.highlightForeground': infoColor,
-        'editor.lineHighlightBorder': darkColor,
-        'editor.lineHighlightBackground': grayColor
+        'editor.lineHighlightBorder': lightColor,
+        'editor.lineHighlightBackground': grayColor,
+        'editorGutter.background': lightColor
       }
     })
   }
