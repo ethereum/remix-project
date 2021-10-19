@@ -166,7 +166,7 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
-      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
       .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
@@ -201,7 +201,6 @@ module.exports = {
         if (runtimeBrowser !== 'chrome') {
           browser.clickLaunchIcon('filePanel')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemtests"]')
-            .click('[data-id="treeViewLitreeViewItemtests"]')
         }
         done()
       })
