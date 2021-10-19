@@ -84,7 +84,7 @@ module.exports = {
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .end()
   },
