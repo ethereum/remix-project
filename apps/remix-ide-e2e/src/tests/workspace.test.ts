@@ -68,6 +68,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
