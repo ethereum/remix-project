@@ -450,7 +450,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         browser: {
           ...state.browser,
           currentWorkspace: payload.workspaceName,
-          workspaces: [...workspaces, payload.workspaceName]
+          workspaces: [...workspaces, payload.workspaceName],
+          expandPath: []
         }
       }
     }
