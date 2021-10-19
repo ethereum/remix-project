@@ -12,7 +12,6 @@ const AutoCompletePopup = require('../ui/auto-complete-popup')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 const globalRegistry = require('../../global/registry')
-const SourceHighlighter = require('../../app/editor/sourceHighlighter')
 const GistHandler = require('../../lib/gist-handler')
 
 const KONSOLES = []
@@ -29,12 +28,11 @@ const profile = {
 }
 
 class Terminal extends Plugin {
-  constructor (opts, api, registry) {
+  constructor (opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
     this.gistHandler = new GistHandler()
     this.event = new EventManager()
-    this.registry = registry
     this.globalRegistry = globalRegistry
     this.element = document.createElement('div')
     this.element.setAttribute('class', 'panel')
@@ -42,12 +40,11 @@ class Terminal extends Plugin {
     this.element.setAttribute('data-id', 'terminalContainer-view')
     this.eventsDecoder = this.globalRegistry.get('eventsDecoder').api
     this.txListener = this.globalRegistry.get('txlistener').api
-    this.sourceHighlighter = new SourceHighlighter()
     this._deps = {
-      fileManager: this.registry.get('filemanager').api,
-      editor: this.registry.get('editor').api,
-      compilersArtefacts: this.registry.get('compilersartefacts').api,
-      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api
+      fileManager: this.globalRegistry.get('filemanager').api,
+      editor: this.globalRegistry.get('editor').api,
+      compilersArtefacts: this.globalRegistry.get('compilersartefacts').api,
+      offsetToLineColumnConverter: this.globalRegistry.get('offsettolinecolumnconverter').api
     }
     this.commandHelp = {
       'remix.loadgist(id)': 'Load a gist in the file explorer.',
@@ -60,7 +57,7 @@ class Terminal extends Plugin {
     this.vm = vm
     this._api = api
     this._opts = opts
-    this.config = registry.get('config').api
+    this.config = this.globalRegistry.get('config').api
     this.version = packageJson.version
     this.data = {
       lineLength: opts.lineLength || 80, // ????
