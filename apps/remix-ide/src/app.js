@@ -283,7 +283,7 @@ class App {
     registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
 
     // -------------------Terminal----------------------------------------
-
+    makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
     const terminal = new Terminal(
       { appManager, blockchain },
       {
@@ -297,8 +297,6 @@ class App {
         }
       }
     )
-    makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
-
     const contextualListener = new ContextualListener({ editor })
 
     engine.register([
