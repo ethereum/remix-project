@@ -224,7 +224,7 @@ module.exports = class TestTab extends ViewPlugin {
         runningTests[fileName].content
       )
       await this.call('editor', 'discardHighlight')
-      await this.call('editor', 'highlight', location, fileName)
+      await this.call('editor', 'highlight', location, fileName, '', { focus: true })
     }
   }
 
