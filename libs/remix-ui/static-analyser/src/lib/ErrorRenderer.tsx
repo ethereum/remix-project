@@ -27,9 +27,7 @@ const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
 
   const handlePointToErrorOnClick = async (location, fileName) => {
     await editor.call('editor', 'discardHighlight')
-    await editor.call('fileManager', 'open', fileName)
-    await editor.call('editor', 'gotoLine', location.start.line, location.start.column)
-    await editor.call('editor', 'highlight', location, fileName)
+    await editor.call('editor', 'highlight', location, fileName, '', { focus: true })
   }
 
   if (!message) return
