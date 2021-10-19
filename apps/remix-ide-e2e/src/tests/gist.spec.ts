@@ -106,9 +106,14 @@ module.exports = {
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .pause(10000)
-      .getText('[data-id="fileSystemModalDialogModalBody-react"]', (result) => {
-        browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
+      .perform((done) => {
+        browser.getText('[data-id="fileSystemModalDialogModalBody-react"]', (result) => {
+          console.log('result.value: ', result.value)
+          browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
+          done()
+        })
       })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
   },
 
