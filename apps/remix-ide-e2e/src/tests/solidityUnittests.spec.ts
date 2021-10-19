@@ -167,12 +167,6 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
       .click('*[data-id="fileSystem-modal-footer-ok-react"]')
-      .getLog('browser', function (logEntriesArray) {
-        console.log('Log length: ' + logEntriesArray.length)
-        logEntriesArray.forEach(function (log) {
-          console.log('[' + log.level + '] ' + log.timestamp + ' : ' + log.message)
-        })
-      })
       .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
