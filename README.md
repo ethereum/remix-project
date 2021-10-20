@@ -1,20 +1,25 @@
-[![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![CircleCI](https://circleci.com/gh/ethereum/remix-project.svg?style=svg)](https://circleci.com/gh/ethereum/remix-project)
 [![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
+![GitHub contributors](https://img.shields.io/github/contributors/ethereum/remix-project)
+[![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green)](https://github.com/ethereum/awesome-remix)
+![GitHub](https://img.shields.io/github/license/ethereum/remix-project)
+[![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ethereumremix?style=social)](https://twitter.com/ethereumremix)
 
 # Remix Project
 
 **Remix Project** is a platform for development tools that use a plugin architecture. It encompasses sub-projects including Remix Plugin Engine, Remix Libraries, and of course Remix IDE.
 
-**Remix IDE** is an open source web and desktop application. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. Remix is used for the **entire journey of contract development with [Solidity language](https://soliditylang.org/)** in as well as being a playground for learning and teaching Ethereum.
+**Remix IDE** is an open source web and desktop application. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. Remix is used for the **entire journey of contract development with [Solidity language](https://soliditylang.org/)** as well as a playground for learning and teaching [Ethereum](https://ethereum.org/).
 
-To try web app, visit: [https://remix.ethereum.org](https://remix.ethereum.org).
+Start developing using Remix on browser, visit: [https://remix.ethereum.org](https://remix.ethereum.org)
 
-For desktop version, See releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
+For desktop version, see releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix_screenshot.png)
 
-**Remix libraries** work as a core of native plugins of Remix IDE. Read more about libraries [here](libs/README.md)
+:point_right: **Remix libraries** work as a core of native plugins of Remix IDE. Read more about libraries [here](libs/README.md)
 
 ## Offline Usage
 
@@ -25,42 +30,46 @@ Note: It contains the latest release of Solidity available at the time of the pa
 
 ## Setup
 
-Install **npm** and **node.js** (see https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), then
-install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
+* Install **NPM** and **Node.js**. See [Guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) <br/>
+*Supported versions:*
+```bash
+"engines": {
+    "node": "^14.17.6",
+    "npm": "^6.14.15"
+  }
+```
+* Install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
 npm install -g @nrwl/cli
 ```
-
-Clone the github repository (`wget` need to be installed first):
+* Clone the github repository (`wget` need to be installed first):
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
 ```
-
-And build it:
+* Build `remix-project`:
 ```bash
 cd remix-project
 npm install
-nx build remix-ide --with-deps
+nx build
 nx serve
 ```
 
-Run `nx serve` and open `http://127.0.0.1:8080` in your browser.
+Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
-Then open your `text editor` and start developing.
-The browser will automatically refresh when files are saved.
+Go to your `text editor` and start developing. Browser will automatically refresh when files are saved.
 
 ## Production Build
 To generate react production builds for remix-project.
 ```bash
 npm run build:production
 ```
-build can be found in `remix-project/dist/apps/remix-ide` directory.
+Build can be found in `remix-project/dist/apps/remix-ide` directory.
 
 ```bash
 npm run serve:production
 ```
-production build will be served by default to `http://localhost:8080/` or `http://127.0.0.1:8080/`
+Production build will be served by default to `http://localhost:8080/` or `http://127.0.0.1:8080/`
 
 ## Docker:
 
@@ -99,9 +108,9 @@ To fetch docker-compose file without cloning this repo run:
 curl https://raw.githubusercontent.com/ethereum/remix-project/master/docker-compose.yaml > docker-compose.yaml
 ```
 
-### Troubleshooting building
+### Troubleshooting
 
-If you have trouble building the package, Make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure you have [Nx CLI](https://nx.dev/react/cli/overview) installed globally.
+If you have trouble building the project, make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure [Nx CLI](https://nx.dev/react/cli/overview) is installed globally.
 
 Run:
 
@@ -115,22 +124,23 @@ In Debian based OS such as Ubuntu 14.04LTS you may need to run `apt-get install 
 
 ## Unit Testing
 
-Run the unit tests via: `nx test <project-name>`
-```bash
-    nx test remix-analyzer
-```
+Run the unit tests using library name like: `nx test <project-name>`
 
-Running unit tests via `nx test` requires at least node v10.0.0
+For example, to run unit tests of `remix-analyzer`, use `nx test remix-analyzer`
 
 ## Browser Testing
 
 To run the Selenium tests via Nightwatch:
 
- - Build Remix IDE and serve it: `nx build remix-ide --with-deps && nx serve` # starts web server at localhost:8080
- - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
- - Run a selenium server `npm run selenium`
- - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
- - Or run a specific test case: 
+ - Install Selenium for first time: `npm run selenium-install`
+ - Run a selenium server: `npm run selenium`
+ - Build & Serve Remix: `nx serve`
+ - Run all the end-to-end tests:
+
+    for Firefox: `npm run nightwatch_local_firefox`, or 
+
+    for Google Chrome: `npm run nightwatch_local_chrome`
+ - Run a specific test case instead, use one of following commands: 
  
 		- npm run nightwatch_local_ballot
 
@@ -185,16 +195,14 @@ To run the Selenium tests via Nightwatch:
         
 **NOTE:**
 
-- **the `ballot` tests suite** requires to run `ganache-cli` locally.
+- **The `ballot` tests suite** requires to run `ganache-cli` locally.
 
-- **the `remixd` tests suite** requires to run `remixd` locally.
+- **The `remixd` tests suite** requires to run `remixd` locally.
 
-- **the `gist` tests suite** requires specifying a github access token in **.env file**. 
+- **The `gist` tests suite** requires specifying a github access token in **.env file**. 
 ```
-    gist_token = <token>
+    gist_token = <token> // token should have permission to create a gist
 ```
-**note that this token should have permission to create a gist.**
-
 
 ## Important Links
 
