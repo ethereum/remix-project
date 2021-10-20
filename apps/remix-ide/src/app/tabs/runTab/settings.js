@@ -170,10 +170,10 @@ class SettingsUI {
             onchange=${() => this.validateValue()}
           >
           <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2} custom-select" id="unit">
-            <option data-unit="wei">wei</option>
-            <option data-unit="gwei">gwei</option>
-            <option data-unit="finney">finney</option>
-            <option data-unit="ether">ether</option>
+            <option data-unit="wei">Wei</option>
+            <option data-unit="gwei">Gwei</option>
+            <option data-unit="finney">Finney</option>
+            <option data-unit="ether">Ether</option>
           </select>
         </div>
       </div>
