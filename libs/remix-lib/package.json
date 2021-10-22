@@ -20,6 +20,7 @@
     "async": "^2.1.2",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^4.0.40",
+    "ethjs-util": "^0.1.6",
     "events": "^3.0.0",
     "solc": "^0.7.4",
     "string-similarity": "^4.0.4",
