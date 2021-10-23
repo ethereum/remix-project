@@ -36,6 +36,11 @@ function App () {
     client.onload(async () => {
       const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting']
 
+      client.testCommand = async (data: any) => {
+        console.log(data)
+        setLog(data)
+      }
+
       let addProfiles = []
       for (const name of customProfiles) {
         const p = await client.call('manager', 'getProfile', name)
@@ -72,6 +77,7 @@ function App () {
       } catch (e) { }
       const args = ob || [payload]
       console.log('calling :', profile.name, method, ...args)
+      await client.call('manager', 'activatePlugin', profile.name)
       const result = await client.call(profile.name as any, method, ...args)
       console.log('result :', result)
       setLog(result)
