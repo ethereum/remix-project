@@ -93,8 +93,10 @@ const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, 
   }
   if (methodResult && typeof methodResult !== 'string') { methodResult = JSON.stringify(methodResult) }
   if (eventResult && typeof eventResult !== 'string') { eventResult = JSON.stringify(eventResult) }
-  await clickButton(browser, buttonText)
-  await checkForAcceptAndRemember(browser)
+  if (buttonText) {
+    await clickButton(browser, buttonText)
+    await checkForAcceptAndRemember(browser)
+  }
   await debugValues(browser, 'methods', methodResult)
   await debugValues(browser, 'events', eventResult)
 }
@@ -121,6 +123,25 @@ module.exports = {
   },
 
   // FILESYSTEM
+
+  'Should create context menu item': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'filePanel:registerContextMenuItem', null, null, {
+      id: 'localPlugin',
+      name: 'testCommand',
+      label: 'testCommand',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: []
+    })
+    await browser.useXpath().frameParent(async () => {
+      await clickButton(browser, 'verticalIconsFileExplorerIcons')
+      // await clickButton(browser, 'treeViewLitreeViewItemcontracts')
+      browser.rightClick('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
+        await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [] }, null, null)
+      })
+    })
+  },
 
   'Should get current workspace': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
@@ -223,6 +244,8 @@ module.exports = {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
     await clickAndCheckLog(browser, 'dGitProvider:log', 'commit-message', null, null)
   },
+
+  // context menu
 
   // UNIT TESTING
   'Should activate solidityUnitTesting': async function (browser: NightwatchBrowser) {
