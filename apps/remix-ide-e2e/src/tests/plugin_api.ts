@@ -55,6 +55,14 @@ const setPayload = async (browser: NightwatchBrowser, payload: any) => {
   })
 }
 
+const clearPayLoad = async (browser: NightwatchBrowser) => {
+  return new Promise((resolve) => {
+    browser.clearValue('//*[@id="payload"]', () => {
+      resolve(true)
+    })
+  })
+}
+
 const clickButton = async (browser: NightwatchBrowser, buttonText: string) => {
   return new Promise((resolve) => {
     browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).pause(100)
@@ -92,6 +100,8 @@ const setAppend = async (browser: NightwatchBrowser) => {
 const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any) => {
   if (payload) {
     await setPayload(browser, payload)
+  } else {
+    await clearPayLoad(browser)
   }
   if (methodResult && typeof methodResult !== 'string') { methodResult = JSON.stringify(methodResult) }
   if (eventResult && typeof eventResult !== 'string') { eventResult = JSON.stringify(eventResult) }
@@ -121,6 +131,11 @@ module.exports = {
     browser.addLocalPlugin(localPluginData)
       // @ts-ignore
       .frame(0).useXpath()
+  },
+
+  // UDAPP
+  'Should get accounts': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
   },
 
   // context menu item
@@ -229,21 +244,6 @@ module.exports = {
     await setAppend(browser)
   },
 
-  // COMPILER
-
-  'Should compile a file': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
-    await clickAndCheckLog(browser, 'solidity:compile', null, null, 'contracts/1_Storage.sol')
-    browser.pause(5000, async () => {
-      await clickAndCheckLog(browser, 'solidity:compile', null, 'compilationFinished', null)
-      await setAppend(browser)
-    })
-  },
-
-  'Should get compilationresults': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
-  },
-
   // DGIT
   'Should have changes on new workspace': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
@@ -274,5 +274,20 @@ module.exports = {
 
   'Should test from path with solidityUnitTesting': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidityUnitTesting:testFromPath', '"totalPassing":2,"totalFailing":0', null, 'tests/4_Ballot_test.sol')
+  },
+
+  // COMPILER
+
+  'Should compile a file': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
+    await clickAndCheckLog(browser, 'solidity:compile', null, null, 'contracts/1_Storage.sol')
+    browser.pause(5000, async () => {
+      await clickAndCheckLog(browser, 'solidity:compile', null, 'compilationFinished', null)
+      await setAppend(browser)
+    })
+  },
+
+  'Should get compilationresults': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
   }
 }
