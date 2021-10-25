@@ -57,9 +57,11 @@ const setPayload = async (browser: NightwatchBrowser, payload: any) => {
 
 const clickButton = async (browser: NightwatchBrowser, buttonText: string) => {
   return new Promise((resolve) => {
-    browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`)
-      .click(`//*[@data-id='${buttonText}']`)
-      .pause(5000, () => resolve(true))
+    browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).pause(100)
+      .click(`//*[@data-id='${buttonText}']`, async () => {
+        await checkForAcceptAndRemember(browser)
+        browser.waitForElementContainsText('//*[@id="callStatus"]', 'stop').perform(() => resolve(true))
+      })
   })
 }
 
@@ -95,7 +97,6 @@ const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, 
   if (eventResult && typeof eventResult !== 'string') { eventResult = JSON.stringify(eventResult) }
   if (buttonText) {
     await clickButton(browser, buttonText)
-    await checkForAcceptAndRemember(browser)
   }
   await debugValues(browser, 'methods', methodResult)
   await debugValues(browser, 'events', eventResult)
@@ -122,7 +123,7 @@ module.exports = {
       .frame(0).useXpath()
   },
 
-  // FILESYSTEM
+  // context menu item
 
   'Should create context menu item': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:registerContextMenuItem', null, null, {
@@ -135,20 +136,24 @@ module.exports = {
       pattern: []
     })
     await browser.useXpath().frameParent(async () => {
-      await clickButton(browser, 'verticalIconsFileExplorerIcons')
-      // await clickButton(browser, 'treeViewLitreeViewItemcontracts')
-      browser.rightClick('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
-        await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [] }, null, null)
-      })
+      browser.useCss().clickLaunchIcon('filePanel')
+        .rightClick('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
+        // @ts-ignore
+          browser.click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
+            await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [] }, null, null)
+          })
+        })
     })
   },
+
+  // FILESYSTEM
 
   'Should get current workspace': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
 
   'Should get current files': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
+    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
   },
   'Should throw error on current file': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -217,11 +222,22 @@ module.exports = {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
     await setAppend(browser)
   },
+  'Should rename workspace': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
+    await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
+    await setAppend(browser)
+  },
 
   // COMPILER
 
   'Should compile a file': async function (browser: NightwatchBrowser) {
+    await setAppend(browser)
     await clickAndCheckLog(browser, 'solidity:compile', null, null, 'contracts/1_Storage.sol')
+    browser.pause(5000, async () => {
+      await clickAndCheckLog(browser, 'solidity:compile', null, 'compilationFinished', null)
+      await setAppend(browser)
+    })
   },
 
   'Should get compilationresults': async function (browser: NightwatchBrowser) {
