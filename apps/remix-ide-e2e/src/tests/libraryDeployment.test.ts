@@ -63,7 +63,7 @@ module.exports = {
   }
 }
 
-function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFunction) {
+async function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFunction) {
   let config
   browser.openFile('artifacts/test.json')
     .getEditorValue((content) => {
@@ -78,10 +78,9 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
     .selectContract('test') // deploy lib
     .createContract('')
     .pause(2000)
-    .getText('div[class^="terminal"]', (value) => {
-      console.log('value: ', value)
-    })
-    .assert.containsText('div[class^="terminal"]', '<address> is not a valid address')
+  const value = await browser.getText('div[class^="terminal"]')
+  console.log('value: ', value)
+  browser.assert.containsText('div[class^="terminal"]', '<address> is not a valid address')
     .perform(() => { callback() })
 }
 
