@@ -30,7 +30,7 @@ class Editor extends Plugin {
       this.currentTheme = translateTheme(theme)
       this.renderComponent()
     })
-    this.call('theme', 'currentTheme', (theme) => this.currentTheme = translateTheme(theme))
+    this.call('theme', 'currentTheme', (theme) => { this.currentTheme = translateTheme(theme) })
 
     // Init
     this.event = new EventManager()
