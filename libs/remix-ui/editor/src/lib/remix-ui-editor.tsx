@@ -82,6 +82,8 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.editor.setTheme(props.theme)
   }, [props.theme])
 
+  if (monacoRef.current) monacoRef.current.editor.setTheme(props.theme)
+
   const setAnnotationsbyFile = (uri) => {
     if (props.sourceAnnotationsPerFile[uri]) {
       const model = editorModelsState[uri]?.model

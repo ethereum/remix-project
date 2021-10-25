@@ -25,13 +25,6 @@ class Editor extends Plugin {
       remixDark: 'remix-dark'
     }
 
-    const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
-    this.on('theme', 'themeChanged', (theme) => {
-      this.currentTheme = translateTheme(theme)
-      this.renderComponent()
-    })
-    this.call('theme', 'currentTheme', (theme) => { this.currentTheme = translateTheme(theme) })
-
     // Init
     this.event = new EventManager()
     this.sessions = {}
@@ -114,6 +107,16 @@ class Editor extends Plugin {
     })
     this.on('sidePanel', 'pluginDisabled', (name) => {
       this.clearAllDecorationsFor(name)
+    })
+
+    const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
+    this.on('theme', 'themeChanged', (theme) => {
+      this.currentTheme = translateTheme(theme)
+      this.renderComponent()
+    })
+    this.call('theme', 'currentTheme', (theme) => { 
+      this.currentTheme = translateTheme(theme)
+      this.renderComponent()
     })
   }
 
