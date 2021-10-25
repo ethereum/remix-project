@@ -25,6 +25,7 @@ function App () {
   const [payload, setPayload] = useState<string>('')
   const [append, setAppend] = useState<boolean>(false)
   const [log, setLog] = useState<any>()
+  const [started, setStarted] = useState<boolean>(false)
   const [events, setEvents] = useState<any>()
   const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, windowProfile])
 
@@ -76,6 +77,7 @@ function App () {
         if (ob && !Array.isArray(ob)) { ob = [ob] }
       } catch (e) { }
       const args = ob || [payload]
+      setStarted(true)
       console.log('calling :', profile.name, method, ...args)
       await client.call('manager', 'activatePlugin', profile.name)
       const result = await client.call(profile.name as any, method, ...args)
@@ -84,11 +86,13 @@ function App () {
     } catch (e) {
       setLog(e.message)
     }
+    setStarted(false)
   }
 
   return (
     <div className="App container-fluid">
       <h5>PLUGIN API TESTER</h5>
+      <label id='callStatus'>{started ? <>start</> : <>stop</> }</label><br></br>
       <label>method results</label>
       <Logger id='methods' log={log} append={append}></Logger>
       <label>events</label>
