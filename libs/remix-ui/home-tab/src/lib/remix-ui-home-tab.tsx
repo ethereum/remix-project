@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react' // eslint-disable-lin
 import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import Mediumfeed from './components/mediumFeed' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
@@ -310,17 +311,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           <div className="mr-3 d-flex bg-light remixui_panels" id="remixIDEMediaPanels">
             { (state.showMediaPanel === 'medium') && <div id="remixIDE_MediumBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } }>
               <div id="medium-widget" className="p-3 remixui_media" style={ { maxHeight: elHeight } }>
-                <div
-                  id="retainable-rss-embed"
-                  data-rss="https://medium.com/feed/remix-ide"
-                  data-maxcols="1"
-                  data-layout="grid"
-                  data-poststyle="external"
-                  data-readmore="More..."
-                  data-buttonclass="btn mb-3"
-                  data-offset="-100"
-                >
-                </div>
+                <Mediumfeed userName="remix-ide" postN="6"/>
               </div>
             </div> }
             { (state.showMediaPanel === 'twitter') && <div id="remixIDE_TwitterBlock" className="p-2 mx-0 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } } >
@@ -328,7 +319,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <TwitterTimelineEmbed
                   sourceType="profile"
                   screenName="EthereumRemix"
-                  options={{tweetLimit: 18, width: 350}}
+                  options={{ tweetLimit: 18, width: 350 }}
                   transparent={true}
                   noHeader={true}
                   noFooter={true}
