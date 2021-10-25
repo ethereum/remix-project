@@ -7,8 +7,6 @@ import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
 
-const globalRegistry = require('../../global/registry')
-
 const profile = {
   displayName: 'Editor',
   name: 'editor',
@@ -20,13 +18,6 @@ const profile = {
 class Editor extends Plugin {
   constructor () {
     super(profile)
-    // Dependancies
-    this._components = {}
-    this._components.registry = globalRegistry
-    this._deps = {
-      config: this._components.registry.get('config').api,
-      themeModule: this._components.registry.get('themeModule').api
-    }
 
     this._themes = {
       light: 'light',
@@ -35,11 +26,12 @@ class Editor extends Plugin {
     }
 
     const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
-    this._deps.themeModule.events.on('themeChanged', (theme) => {
+    this.on('themeModule', 'themeChanged', (theme) => {
       this.currentTheme = translateTheme(theme)
       this.renderComponent()
     })
-    this.currentTheme = translateTheme(this._deps.themeModule.currentTheme())
+    this.call('themeModule', 'currentTheme', (theme) => this.currentTheme = translateTheme(theme))
+
     // Init
     this.event = new EventManager()
     this.sessions = {}
@@ -130,8 +122,8 @@ class Editor extends Plugin {
     this.off('sidePanel', 'pluginDisabled')
   }
 
-  _onChange (file) {
-    const currentFile = this._deps.config.get('currentFile')
+  async _onChange (file) {
+    const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
     }
