@@ -18,7 +18,6 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .clickLaunchIcon('filePanel')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
-      console.log(res)
       if (res.value && (res.value as any).length > 0) {
         browser.openFile(name)
           .perform(function () {
