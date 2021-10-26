@@ -47,7 +47,8 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
     if (!isEmpty) await loadWorkspacePreset('default-template')
-    plugin.emit('setWorkspace', { name: workspaceName, isLocalhost: false })
+    plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+    plugin.setWorkspaces(await getWorkspaces())
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -173,6 +174,7 @@ export const fetchWorkspaceDirectory = async (path: string) => {
 export const renameWorkspace = async (oldName: string, workspaceName: string) => {
   await renameWorkspaceFromProvider(oldName, workspaceName)
   await dispatch(setRenameWorkspace(oldName, workspaceName))
+  plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
 }
 
 export const renameWorkspaceFromProvider = async (oldName: string, workspaceName: string) => {
@@ -184,7 +186,7 @@ export const renameWorkspaceFromProvider = async (oldName: string, workspaceName
   const workspacesPath = workspaceProvider.workspacesPath
   browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
   workspaceProvider.setWorkspace(workspaceName)
-  plugin.emit('renameWorkspace', { name: workspaceName })
+  plugin.setWorkspaces(await getWorkspaces())
 }
 
 export const switchToWorkspace = async (name: string) => {
@@ -194,19 +196,20 @@ export const switchToWorkspace = async (name: string) => {
 
     if (!isActive) await plugin.call('manager', 'activatePlugin', 'remixd')
     dispatch(setMode('localhost'))
-    plugin.emit('setWorkspace', { name: LOCALHOST, isLocalhost: true })
+    plugin.emit('setWorkspace', { name: null, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
     plugin.fileProviders.workspace.clearWorkspace()
+    plugin.setWorkspace({ name: null, isLocalhost: false })
     dispatch(setCurrentWorkspace(null))
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
     if (isActive) plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
+    plugin.setWorkspace({ name, isLocalhost: false })
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace(name))
     dispatch(setReadOnlyMode(false))
-    plugin.emit('setWorkspace', { name, isLocalhost: false })
   }
 }
 
@@ -254,4 +257,27 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
       if (error) console.log(error)
     })
   })
+}
+
+export const getWorkspaces = async (): Promise<string[]> | undefined => {
+  try {
+    const workspaces: string[] = await new Promise((resolve, reject) => {
+      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+
+      plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
+        if (error) {
+          console.error(error)
+          return reject(error)
+        }
+        resolve(Object.keys(items)
+          .filter((item) => items[item].isDirectory)
+          .map((folder) => folder.replace(workspacesPath + '/', '')))
+      })
+    })
+
+    plugin.setWorkspaces(workspaces)
+    return workspaces
+  } catch (e) {
+    console.log(e)
+  }
 }

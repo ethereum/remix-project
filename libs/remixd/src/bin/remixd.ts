@@ -156,7 +156,8 @@ function errorHandler (error: any, service: string) {
         console.error(e)
       }
 
-      return data.includes(origin) ? data.includes(origin) : data.includes(domain)
+      const dataArray:string[] = data
+      return dataArray.includes(origin) ? dataArray.includes(origin) : dataArray.includes(domain)
     } catch (e) {
       try {
         // eslint-disable-next-line
