@@ -87,7 +87,6 @@ export function RemixUiVerticalIconsPanel ({
   }, [])
 
   useEffect(() => {
-    // const found = iconPanelRef.current!.querySelector('#verticalIconsKindudapp')
     if (verticalIconsPlugin.targetProfileForChange && verticalIconsPlugin.targetProfileForChange.udapp) {
       const doWalkThroughEvent = new Event('doWalkThrough')
       document.dispatchEvent(doWalkThroughEvent)
