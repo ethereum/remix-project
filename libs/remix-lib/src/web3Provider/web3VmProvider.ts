@@ -304,7 +304,7 @@ export class Web3VmProvider {
         nextKey: null
       })
     }
-    cb('unable to retrieve storage ' + txIndex + ' ' + address)
+    cb(null, {})
   }
 
   getBlockNumber (cb) { cb(null, 'vm provider') }
