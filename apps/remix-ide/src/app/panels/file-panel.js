@@ -30,7 +30,7 @@ const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace'],
-  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
+  events: ['setWorkspace', 'workspaceRenamed', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -58,7 +58,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   onActivation () {
-    this.on('editor', 'editorMounted', () => this.renderComponent())
+    this.renderComponent()
   }
 
   render () {
