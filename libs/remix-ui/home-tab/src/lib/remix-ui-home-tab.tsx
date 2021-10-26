@@ -6,7 +6,6 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
-import { TwitterTimelineEmbed } from 'react-twitter-embed'
 import { stat } from 'fs'
 
 declare global {
@@ -233,7 +232,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             ></audio>
           </div>
         </div>
-        <div className="row remixui_hpSections mx-2" data-id="landingPageHpSections">
+        <div className="row remixui_hpSections mx-2 mr-4" data-id="landingPageHpSections">
           <div className="ml-3">
             <div className="mb-5">
               <h4>Featured Plugins</h4>
