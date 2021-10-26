@@ -45,9 +45,9 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
-    dispatch(createWorkspaceSuccess(workspaceName, plugin))
+    dispatch(createWorkspaceSuccess(workspaceName))
     if (!isEmpty) await loadWorkspacePreset('default-template')
-    plugin.emit('setWorkspace', { name: workspaceName, isLocalhost: false })
+    plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     plugin.setWorkspaces(await getWorkspaces())
     cb && cb(null, workspaceName)
   }).catch((error) => {
@@ -173,7 +173,8 @@ export const fetchWorkspaceDirectory = async (path: string) => {
 
 export const renameWorkspace = async (oldName: string, workspaceName: string) => {
   await renameWorkspaceFromProvider(oldName, workspaceName)
-  await dispatch(setRenameWorkspace(oldName, workspaceName, plugin))
+  await dispatch(setRenameWorkspace(oldName, workspaceName))
+  plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
 }
 
 export const renameWorkspaceFromProvider = async (oldName: string, workspaceName: string) => {
@@ -195,19 +196,20 @@ export const switchToWorkspace = async (name: string) => {
 
     if (!isActive) await plugin.call('manager', 'activatePlugin', 'remixd')
     dispatch(setMode('localhost'))
-    plugin.emit('setWorkspace', { name: LOCALHOST, isLocalhost: true })
+    plugin.emit('setWorkspace', { name: null, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
     plugin.fileProviders.workspace.clearWorkspace()
-    dispatch(setCurrentWorkspace(null, plugin))
+    plugin.setWorkspace({ name: null, isLocalhost: false })
+    dispatch(setCurrentWorkspace(null))
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
     if (isActive) plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
+    plugin.setWorkspace({ name, isLocalhost: false })
     dispatch(setMode('browser'))
-    dispatch(setCurrentWorkspace(name, plugin))
+    dispatch(setCurrentWorkspace(name))
     dispatch(setReadOnlyMode(false))
-    plugin.emit('setWorkspace', { name, isLocalhost: false })
   }
 }
 

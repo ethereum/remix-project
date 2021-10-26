@@ -102,7 +102,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   setWorkspaces (workspaces) {
-    this.worspaces = workspaces
+    this.workspaces = workspaces
   }
 
   createNewFile () {
@@ -146,6 +146,7 @@ module.exports = class Filepanel extends ViewPlugin {
     const workspaceProvider = this.fileProviders.workspace
 
     this.currentWorkspaceMetadata = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }
+    this.emit('setWorkspace', workspace)
   }
 
   workspaceDeleted (workspace) {
