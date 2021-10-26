@@ -6,8 +6,6 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
-import { stat } from 'fs'
-
 declare global {
   interface Window {
     _paq: any
@@ -222,7 +220,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           <div className="mx-4 my-4 d-flex">
             <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
           </div>
-          <div className="mr-2 d-flex">
+          <div className="mr-4 d-flex">
             <img className="mt-4 mb-2 remixui_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
             <audio
               id="remiAudio"

@@ -5,7 +5,6 @@ import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
 
-const yo = require('yo-yo')
 const globalRegistry = require('../../../global/registry')
 const GistHandler = require('../../../lib/gist-handler')
 
