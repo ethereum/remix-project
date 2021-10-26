@@ -472,10 +472,10 @@ class App {
     await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
 
     // Set workspace after initial activation
-    appManager.on('filePanel', 'workspaceInitializationCompleted', () => {
+    appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       appManager.off('filePanel', 'workspaceInitializationCompleted')
       if (Array.isArray(workspace)) {
-        appManager.activatePlugin(workspace).then(async () => {
+        await appManager.activatePlugin(workspace).then(async () => {
           try {
             if (params.deactivate) {
               await appManager.deactivatePlugin(params.deactivate.split(','))
