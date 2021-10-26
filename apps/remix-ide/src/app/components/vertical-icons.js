@@ -5,8 +5,6 @@ import ReactDOM from 'react-dom'
 import React from 'react' // eslint-disable-line
 // eslint-disable-next-line no-unused-vars
 import { RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
 const globalRegistry = require('../../global/registry')
 const { Plugin } = require('@remixproject/engine')
@@ -80,6 +78,33 @@ export class VerticalIcons extends Plugin {
   }
 
   /**
+   * resolve a classes list for @arg key
+   * @param {Object} key
+   * @param {Object} type
+   */
+  resolveClasses (key, type) {
+    let classes = 'remixui_status'
+    switch (key) {
+      case 'succeed':
+        classes += ' fas fa-check-circle text-' + type + ' ' + 'remixui_statusCheck'
+        break
+      case 'edited':
+        classes += ' fas fa-sync text-' + type + ' ' + 'remixui_statusCheck'
+        break
+      case 'loading':
+        classes += ' fas fa-spinner text-' + type + ' ' + 'remixui_statusCheck'
+        break
+      case 'failed':
+        classes += ' fas fa-exclamation-triangle text-' + type + ' ' + 'remixui_statusCheck'
+        break
+      default: {
+        classes += ' badge badge-pill badge-' + type
+      }
+    }
+    return classes
+  }
+
+  /**
    * Set a new status for the @arg name
    * @param {String} name
    * @param {Object} status
@@ -106,7 +131,7 @@ export class VerticalIcons extends Plugin {
     } else type = helper.checkSpecialChars(status.type) ? '' : status.type
     const title = helper.checkSpecialChars(status.title) ? '' : status.title
 
-    el.appendChild(yo`<i
+    el.appendChild(`<i
     title="${title}"
       class="${this.resolveClasses(key, type)}"
       aria-hidden="true"
@@ -114,7 +139,7 @@ export class VerticalIcons extends Plugin {
     ${text}
     </i>`)
 
-    el.classList.add(`${css.icon}`)
+    el.classList.add('remixui_icon')
   }
 
   /**
@@ -152,66 +177,3 @@ export class VerticalIcons extends Plugin {
     return this.htmlElement
   }
 }
-
-const css = csjs`
-  .homeIcon {
-      display: block;
-      width: 42px;
-      height: 42px;
-      margin-bottom: 20px;
-      cursor: pointer;
-  }
-  .homeIcon svg path {
-    fill: var(--primary);
-  }
-  .homeIcon svg polygon {
-    fill: var(--primary);
-  }
-  .icons {
-  }
-  .icon {
-    cursor: pointer;
-    margin-bottom: 12px;
-    width: 36px;
-    height: 36px;
-    padding: 3px;
-    position: relative;
-    border-radius: 8px;
-  }
-  .icon img {
-    width: 28px;
-    height: 28px;
-    padding: 4px;
-    filter: invert(0.5);
-  }
-  .image {
-  }
-  .icon svg {
-    width: 28px;
-    height: 28px;
-    padding: 4px;
-  }
-  .icon[title='Settings'] {
-    position: absolute;
-    bottom: 0;
-  }
-  .status {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-  }
-  .statusCheck {
-    font-size: 1.2em;
-  }
-  .statusWithBG
-    border-radius: 8px;
-    background-color: var(--danger);
-    color: var(--light);
-    font-size: 12px;
-    height: 15px;
-    text-align: center;
-    font-weight: bold;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-`
