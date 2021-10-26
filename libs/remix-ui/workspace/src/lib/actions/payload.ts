@@ -1,7 +1,6 @@
 import { action } from '../types'
 
-export const setCurrentWorkspace = (workspace: string, plugin?) => {
-  plugin && plugin.setWorkspace(workspace)
+export const setCurrentWorkspace = (workspace: string) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
     payload: workspace
@@ -126,8 +125,7 @@ export const createWorkspaceRequest = (promise: Promise<any>) => {
   }
 }
 
-export const createWorkspaceSuccess = (workspaceName: string, plugin?) => {
-  plugin && plugin.setWorkspace(workspaceName)
+export const createWorkspaceSuccess = (workspaceName: string) => {
   return {
     type: 'CREATE_WORKSPACE_SUCCESS',
     payload: workspaceName
@@ -155,8 +153,7 @@ export const fetchWorkspaceDirectorySuccess = (path: string, fileTree) => {
   }
 }
 
-export const setRenameWorkspace = (oldName: string, workspaceName: string, plugin?) => {
-  plugin && plugin.setWorkspace(workspaceName)
+export const setRenameWorkspace = (oldName: string, workspaceName: string) => {
   return {
     type: 'RENAME_WORKSPACE',
     payload: { oldName, workspaceName }
