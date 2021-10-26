@@ -73,7 +73,7 @@
   }
   .remixui_media {
     overflow: hidden;
-    width: 400px;
+    max-width: 400px;
     transition: .5s ease-out;
     z-index: 1000;
   }
