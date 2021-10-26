@@ -176,7 +176,6 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-bootstrap": "^1.6.4",
     "react-dom": "^17.0.2",
-    "react-twitter-embed": "^3.0.3",
     "selenium": "^2.20.0",
     "signale": "^1.4.0",
     "string-similarity": "^4.0.4",
@@ -184,8 +183,7 @@
     "tslib": "^2.3.0",
     "web3": "^1.5.1",
     "winston": "^3.3.3",
-    "ws": "^7.3.0",
-    "xml2js": "^0.4.23"
+    "ws": "^7.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
