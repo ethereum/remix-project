@@ -1,5 +1,6 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import { Fragment } from 'react'
+// eslint-disable-next-line no-use-before-define
+import React, { Fragment } from 'react'
 import Icon from './Icon'
 
 interface UdappProps {
