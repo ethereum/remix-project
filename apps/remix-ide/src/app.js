@@ -470,8 +470,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  function setWorkSpace () {
-    appManager.off('filePanel', 'workspaceInit')
+  async function setWorkSpace () {
+    appManager.off('filePanel', 'workspaceInitializationCompleted')
     if (Array.isArray(workspace)) {
       appManager.activatePlugin(workspace).then(async () => {
         try {
@@ -510,12 +510,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['settings'])
-  // appManager.on('filePanel', 'workspaceInit', () => { setWorkSpace() })
-  // await appManager.activatePlugin(['hiddenPanel', 'filePanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
-  // await appManager.registerContextMenuItems()
   await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
 
   appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
+    await setWorkSpace()
     await appManager.registerContextMenuItems()
   })
   await appManager.activatePlugin(['filePanel'])
