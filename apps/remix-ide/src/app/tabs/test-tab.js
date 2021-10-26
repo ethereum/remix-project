@@ -48,7 +48,6 @@ module.exports = class TestTab extends ViewPlugin {
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
-      console.log('solidity is activated')
     })
     appManager.event.on('deactivate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -224,7 +223,7 @@ module.exports = class TestTab extends ViewPlugin {
         runningTests[fileName].content
       )
       await this.call('editor', 'discardHighlight')
-      await this.call('editor', 'highlight', location, fileName)
+      await this.call('editor', 'highlight', location, fileName, '', { focus: true })
     }
   }
 

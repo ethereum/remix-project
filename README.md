@@ -23,9 +23,9 @@ For desktop version, see releases: [https://github.com/ethereum/remix-desktop/re
 
 ## Offline Usage
 
-The `master` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
+The `gh-pages` branch of [remix-live](https://github.com/ethereum/remix-live) always has the latest stable build of Remix. It contains a ZIP file with the entire build. Download it to use offline.
 
-Note: It contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
+Note: It contains the latest supported version of Solidity available at the time of the packaging. Other compiler versions can be used online only.
 
 
 ## Setup

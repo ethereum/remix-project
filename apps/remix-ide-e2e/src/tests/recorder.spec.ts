@@ -130,7 +130,7 @@ contract t2est {
 
 const records = `{
   "accounts": {
-    "account{2}": "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
+    "account{10}": "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
   },
   "linkReferences": {
     "testLib": "created{1512830014773}"
@@ -147,7 +147,7 @@ const records = `{
         "linkReferences": {},
         "inputs": "()",  
         "type": "constructor",
-        "from": "account{2}"
+        "from": "account{10}"
       }
     },
     {
@@ -173,7 +173,7 @@ const records = `{
         "name": "",
         "type": "constructor",
         "inputs": "(uint256)",
-        "from": "account{2}"
+        "from": "account{10}"
       }
     },
     {
@@ -189,7 +189,7 @@ const records = `{
         "name": "set",
         "inputs": "(uint256,address)",
         "type": "function",
-        "from": "account{2}"
+        "from": "account{10}"
       }
     }
   ],
@@ -288,7 +288,7 @@ const records = `{
 
 const scenario = {
   accounts: {
-    'account{2}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
+    'account{10}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
   },
   linkReferences: {},
   transactions: [
@@ -306,7 +306,7 @@ const scenario = {
         name: '',
         type: 'constructor',
         inputs: '(uint256)',
-        from: 'account{2}'
+        from: 'account{10}'
       }
     },
     {
@@ -321,7 +321,7 @@ const scenario = {
         name: 'set',
         inputs: '(uint256)',
         type: 'function',
-        from: 'account{2}'
+        from: 'account{10}'
       }
     }
   ],

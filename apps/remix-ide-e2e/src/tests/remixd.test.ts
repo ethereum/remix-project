@@ -85,7 +85,7 @@ module.exports = {
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         browser
           .click('[data-id="staticAnalysisModuleMiscellaneous1"')
-          .waitForElementPresent('.highlightLine15', 60000)
+          .waitForElementPresent('.highlightLine16', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(
               'function _sendLogPayload(bytes memory payload) private view {') !== -1,

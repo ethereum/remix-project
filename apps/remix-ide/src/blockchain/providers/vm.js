@@ -20,7 +20,6 @@ class VMProvider {
     this.accounts = {}
     this.RemixSimulatorProvider = new Provider({ fork: this.executionContext.getCurrentFork() })
     this.RemixSimulatorProvider.init()
-    this.RemixSimulatorProvider.Accounts.resetAccounts()
     this.web3 = new Web3(this.RemixSimulatorProvider)
     extend(this.web3)
     this.accounts = {}
