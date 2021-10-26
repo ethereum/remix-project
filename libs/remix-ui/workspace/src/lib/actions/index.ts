@@ -28,20 +28,24 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       await loadWorkspacePreset('gist-template')
-      dispatch(setCurrentWorkspace('gist-sample', plugin))
+      plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
+      dispatch(setCurrentWorkspace('gist-sample'))
     } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       await loadWorkspacePreset('code-template')
-      dispatch(setCurrentWorkspace('code-sample', plugin))
+      plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
+      dispatch(setCurrentWorkspace('code-sample'))
     } else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'default-template')
         await loadWorkspacePreset('default-template')
-        dispatch(setCurrentWorkspace('default_workspace', plugin))
+        plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
+        dispatch(setCurrentWorkspace('default_workspace'))
       } else {
         if (workspaces.length > 0) {
           workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1], plugin))
+          plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
+          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
         }
       }
     }
