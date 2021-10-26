@@ -1,6 +1,5 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-<<<<<<< HEAD
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 import React from 'react'
 import Icon from './Icon'
@@ -49,17 +48,6 @@ function OtherIcons ({ verticalIconsPlugin, itemContextAction, addActive, remove
             />
           ))}
     </div>
-=======
-import React, { ReactNode } from 'react'
-
-interface OtherIconsProps {
-  children: ReactNode
-}
-
-function OtherIcons ({ children }: OtherIconsProps) {
-  return (
-    <div id="otherIcons">{ children }</div>
->>>>>>> b6322066e (update components and setttings)
   )
 }
 
