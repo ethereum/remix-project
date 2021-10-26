@@ -46,10 +46,7 @@ export class VerticalIcons extends Plugin<any, any> {
   events: EventEmitter
   appManager: RemixAppManager
   htmlElement: HTMLDivElement
-  icons: {
-    name: any
-  }
-
+  icons: any
   iconKind: {}
   iconStatus: {}
   defaultProfile: defaultModuleProfile

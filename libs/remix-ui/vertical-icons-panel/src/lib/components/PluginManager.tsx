@@ -1,27 +1,21 @@
 /* eslint-disable no-use-before-define */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import React from 'react'
-import { Chevron } from './Chevron'
+import React, { Fragment } from 'react'
 import Icon from './Icon'
 
-interface SettingsProps {
+interface PluginManagerProps {
   verticalIconsPlugin: VerticalIcons
   itemContextAction: (e: any, name: string, documentation: string) => Promise<void>
   addActive: (name: string) => void
   removeActive: () => void
-  scrollableRef: React.MutableRefObject<any>
 }
 
-function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addActive, removeActive }: SettingsProps) {
+function PluginManager ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: PluginManagerProps) {
   return (
-    <div id="settingsIcons" data-id="vertialIconsSettingsIcons">
-      <Chevron
-        divElementRef={scrollableRef}
-        cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
-      />
+    <Fragment>
       {Object.keys(verticalIconsPlugin.targetProfileForChange)
-        .filter(p => p === 'settings')
+        .filter(p => p === 'pluginManager')
         .map(p => (
           <Icon
             kind={
@@ -54,8 +48,8 @@ function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addA
             }
           />
         ))}
-    </div>
+    </Fragment>
   )
 }
 
-export default Settings
+export default PluginManager

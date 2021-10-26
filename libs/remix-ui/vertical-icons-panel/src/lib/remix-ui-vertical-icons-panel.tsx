@@ -1,20 +1,17 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
+import {
   Fragment,
   useEffect,
-  useReducer,
-  useRef,
-  useState
+  useRef
 } from 'react'
 
 import './remix-ui-vertical-icons-panel.css'
 import OtherIcons from './components/OtherIcons'
 import { VerticalIcons } from '../../types/vertical-icons-panel'
 import Home from './components/Home'
-import Icon from './components/Icon'
 import Settings from './components/Settings'
-import { Chevron } from './components/Chevron'
+import { RequiredSection } from './components/RequiredSection'
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: VerticalIcons
 }
@@ -26,7 +23,6 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
-  // const [first] = useState(localStorage.getItem('firstTime'))
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
@@ -103,216 +99,12 @@ export function RemixUiVerticalIconsPanel ({
       <div className="remixui_icons" ref={iconPanelRef}>
         <div className="remixui_default-icons-container remixui_requiredSection">
           <Home verticalIconPlugin={verticalIconsPlugin} />
-          {verticalIconsPlugin.targetProfileForChange &&
-          Object.keys(verticalIconsPlugin.targetProfileForChange).length
-            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .filter(p => p === 'filePanel')
-              .map(p => (
-                <div id="fileExplorerIcons" key={
-                  verticalIconsPlugin.targetProfileForChange[p].displayName
-                } data-id="verticalIconsFileExplorerIcons">
-                  <Icon
-                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                    displayName={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                    documentation={
-                      verticalIconsPlugin.targetProfileForChange[p]
-                        .documentation
-                    }
-                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                    name={verticalIconsPlugin.targetProfileForChange[p].name}
-                    tooltip={
-                      verticalIconsPlugin.targetProfileForChange[p].tooltip
-                    }
-                    verticalIconPlugin={verticalIconsPlugin}
-                    contextMenuAction={itemContextAction}
-                    addActive={addActive}
-                    removeActive={removeActive}
-                  />
-                </div>
-              ))
-            : null}
-          {verticalIconsPlugin.targetProfileForChange &&
-          Object.keys(verticalIconsPlugin.targetProfileForChange).length
-            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .filter(p => p === 'solidity')
-              .map(p => (
-                <div id="compileIcons" key={
-                  verticalIconsPlugin.targetProfileForChange[p].displayName
-                }>
-                  <Icon
-                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                    displayName={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                    documentation={
-                      verticalIconsPlugin.targetProfileForChange[p]
-                        .documentation
-                    }
-                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                    name={verticalIconsPlugin.targetProfileForChange[p].name}
-                    tooltip={
-                      verticalIconsPlugin.targetProfileForChange[p].tooltip
-                    }
-                    verticalIconPlugin={verticalIconsPlugin}
-                    contextMenuAction={itemContextAction}
-                    addActive={addActive}
-                    removeActive={removeActive}
-                    key={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                  />
-                </div>
-              ))
-            : null}
-          {verticalIconsPlugin.targetProfileForChange &&
-          Object.keys(verticalIconsPlugin.targetProfileForChange).length
-            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .filter(p => p === 'udapp')
-              .map(p => (
-                <div id="runIcons" data-id="verticalIconsKindUdapp" key={
-                  verticalIconsPlugin.targetProfileForChange[p].displayName
-                }
-                >
-                  <Icon
-                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                    displayName={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                    documentation={
-                      verticalIconsPlugin.targetProfileForChange[p]
-                        .documentation
-                    }
-                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                    name={verticalIconsPlugin.targetProfileForChange[p].name}
-                    tooltip={
-                      verticalIconsPlugin.targetProfileForChange[p].tooltip
-                    }
-                    verticalIconPlugin={verticalIconsPlugin}
-                    contextMenuAction={itemContextAction}
-                    addActive={addActive}
-                    removeActive={removeActive}
-                    key={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                  />
-                </div>
-              ))
-            : null}
-          {verticalIconsPlugin.targetProfileForChange &&
-          Object.keys(verticalIconsPlugin.targetProfileForChange).length
-            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .filter(p => p === 'solidityStaticAnalysis')
-              .map(p => (
-                <div id="analysisIcons" key={
-                  verticalIconsPlugin.targetProfileForChange[p].displayName
-                }>
-                  <Icon
-                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                    displayName={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                    documentation={
-                      verticalIconsPlugin.targetProfileForChange[p]
-                        .documentation
-                    }
-                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                    name={verticalIconsPlugin.targetProfileForChange[p].name}
-                    tooltip={
-                      verticalIconsPlugin.targetProfileForChange[p].tooltip
-                    }
-                    verticalIconPlugin={verticalIconsPlugin}
-                    contextMenuAction={itemContextAction}
-                    addActive={addActive}
-                    removeActive={removeActive}
-                    key={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                  />
-                </div>
-              ))
-            : null}
-          {verticalIconsPlugin.targetProfileForChange &&
-          Object.keys(verticalIconsPlugin.targetProfileForChange).length
-            ? Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .filter(p => p === 'debugger')
-              .map(p => (
-                <div id="debuggingIcons" data-id="verticalIconsDebuggingIcons" key={
-                  verticalIconsPlugin.targetProfileForChange[p].displayName
-                }>
-                  <Icon
-                    kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                    displayName={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                    documentation={
-                      verticalIconsPlugin.targetProfileForChange[p]
-                        .documentation
-                    }
-                    icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                    name={verticalIconsPlugin.targetProfileForChange[p].name}
-                    tooltip={
-                      verticalIconsPlugin.targetProfileForChange[p].tooltip
-                    }
-                    verticalIconPlugin={verticalIconsPlugin}
-                    contextMenuAction={itemContextAction}
-                    addActive={addActive}
-                    removeActive={removeActive}
-                    key={
-                      verticalIconsPlugin.targetProfileForChange[p].displayName
-                    }
-                  />
-                </div>
-              ))
-            : null}
-          {Object.keys(verticalIconsPlugin.targetProfileForChange)
-            .filter(p => p === 'pluginManager')
-            .map(p => (
-              <Icon
-                kind={
-                  verticalIconsPlugin.targetProfileForChange[p].kind
-                }
-                displayName={
-                  verticalIconsPlugin.targetProfileForChange[p]
-                    .displayName
-                }
-                documentation={
-                  verticalIconsPlugin.targetProfileForChange[p]
-                    .documentation
-                }
-                icon={
-                  verticalIconsPlugin.targetProfileForChange[p].icon
-                }
-                name={
-                  verticalIconsPlugin.targetProfileForChange[p].name
-                }
-                tooltip={
-                  verticalIconsPlugin.targetProfileForChange[p].tooltip
-                }
-                verticalIconPlugin={verticalIconsPlugin}
-                contextMenuAction={itemContextAction}
-                addActive={addActive}
-                removeActive={removeActive}
-                key={
-                  verticalIconsPlugin.targetProfileForChange[p]
-                    .displayName
-                }
-              />
-            ))}
-          <Chevron
-            divElementRef={scrollableRef}
-            cssRule={'fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
+          <RequiredSection
+            verticalIconsPlugin={verticalIconsPlugin}
+            addActive={addActive}
+            removeActive={removeActive}
+            itemContextAction={itemContextAction}
+            scrollableRef={scrollableRef}
           />
         </div>
         <div
@@ -322,85 +114,23 @@ export function RemixUiVerticalIconsPanel ({
             : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'}
           ref={scrollableRef}
         >
-          <OtherIcons>
-            {Object.keys(verticalIconsPlugin.targetProfileForChange)
-              .filter(p => p !== 'settings')
-              .filter(p => p !== 'pluginManager')
-              .filter(p => p !== 'filePanel')
-              .filter(p => p !== 'debugger')
-              .filter(p => p !== 'compiler')
-              .filter(p => p !== 'solidity')
-              .filter(p => p !== 'udapp')
-              .filter(p => p !== 'testing')
-              .filter(p => p !== 'solidityStaticAnalysis')
-              .map(p => (
-                <Icon
-                  kind={verticalIconsPlugin.targetProfileForChange[p].kind}
-                  displayName={
-                    verticalIconsPlugin.targetProfileForChange[p].displayName
-                  }
-                  documentation={
-                    verticalIconsPlugin.targetProfileForChange[p].documentation
-                  }
-                  icon={verticalIconsPlugin.targetProfileForChange[p].icon}
-                  name={verticalIconsPlugin.targetProfileForChange[p].name}
-                  tooltip={
-                    verticalIconsPlugin.targetProfileForChange[p].tooltip
-                  }
-                  verticalIconPlugin={verticalIconsPlugin}
-                  contextMenuAction={itemContextAction}
-                  addActive={addActive}
-                  removeActive={removeActive}
-                  key={
-                    verticalIconsPlugin.targetProfileForChange[p].displayName
-                  }
-                />
-              ))}
-          </OtherIcons>
+          <OtherIcons
+            verticalIconsPlugin={verticalIconsPlugin}
+            addActive={addActive}
+            removeActive={removeActive}
+            itemContextAction={itemContextAction}
+          />
         </div>
         {verticalIconsPlugin.targetProfileForChange &&
           Object.keys(verticalIconsPlugin.targetProfileForChange).length ? (
             <Fragment>
-              <Settings>
-                <Chevron
-                  divElementRef={scrollableRef}
-                  cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
-                />
-                {Object.keys(verticalIconsPlugin.targetProfileForChange)
-                  .filter(p => p === 'settings')
-                  .map(p => (
-                    <Icon
-                      kind={
-                        verticalIconsPlugin.targetProfileForChange[p].kind
-                      }
-                      displayName={
-                        verticalIconsPlugin.targetProfileForChange[p]
-                          .displayName
-                      }
-                      documentation={
-                        verticalIconsPlugin.targetProfileForChange[p]
-                          .documentation
-                      }
-                      icon={
-                        verticalIconsPlugin.targetProfileForChange[p].icon
-                      }
-                      name={
-                        verticalIconsPlugin.targetProfileForChange[p].name
-                      }
-                      tooltip={
-                        verticalIconsPlugin.targetProfileForChange[p].tooltip
-                      }
-                      verticalIconPlugin={verticalIconsPlugin}
-                      contextMenuAction={itemContextAction}
-                      addActive={addActive}
-                      removeActive={removeActive}
-                      key={
-                        verticalIconsPlugin.targetProfileForChange[p]
-                          .displayName
-                      }
-                    />
-                  ))}
-              </Settings>
+              <Settings
+                verticalIconsPlugin={verticalIconsPlugin}
+                addActive={addActive}
+                removeActive={removeActive}
+                itemContextAction={itemContextAction}
+                scrollableRef={scrollableRef}
+              />
             </Fragment>
           ) : null}
       </div>
