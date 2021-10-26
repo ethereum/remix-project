@@ -464,13 +464,13 @@ class App {
       console.log('couldn\'t register iframe plugins', e.message)
     }
 
-    await appManager.activatePlugin(['theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await appManager.activatePlugin(['editor'])
+    await appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await appManager.activatePlugin(['home'])
     await appManager.activatePlugin(['settings'])
     await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
-    await appManager.registerContextMenuItems()
 
     appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await appManager.registerContextMenuItems()
