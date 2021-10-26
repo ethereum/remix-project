@@ -80,7 +80,7 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
         // @ts-ignore
         browser.frame(0, () => { resolve(true) })
       } else {
-        browser.click('//*[@id="remember"]').click('//*[@id="modal-footer-ok"]', () => {
+        browser.waitForElementVisible('//*[@id="remember"]').click('//*[@id="remember"]').click('//*[@id="modal-footer-ok"]', () => {
           // @ts-ignore
           browser.frame(0, () => { resolve(true) })
         })
