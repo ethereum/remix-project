@@ -25,7 +25,9 @@
       "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
       "@remix-project/remix-url-resolver": ["dist/libs/remix-url-resolver/src/index.js"],
       "@remixproject/debugger-plugin": ["apps/debugger/src/index.ts"],
-      "@remixproject/solidity-compiler-plugin": ["apps/solidity-compiler/src/index.ts"],
+      "@remixproject/solidity-compiler-plugin": [
+        "apps/solidity-compiler/src/index.ts"
+      ],
       "@remix-project/remixd": ["dist/libs/remixd/index.js"],
       "@remix-ui/tree-view": ["libs/remix-ui/tree-view/src/index.ts"],
       "@remix-ui/debugger-ui": ["libs/remix-ui/debugger-ui/src/index.ts"],
@@ -37,7 +39,9 @@
       "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
       "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"],
       "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"],
-      "@remix-ui/static-analyser": ["libs/remix-ui/static-analyser/src/index.ts"],
+      "@remix-ui/static-analyser": [
+        "libs/remix-ui/static-analyser/src/index.ts"
+      ],
       "@remix-ui/checkbox": ["libs/remix-ui/checkbox/src/index.ts"],
       "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"],
       "@remix-project/core-plugin": ["libs/remix-core-plugin/src/index.ts"],
@@ -45,7 +49,8 @@
       "@remix-ui/publish-to-storage": ["libs/remix-ui/publish-to-storage/src/index.ts"],
       "@remix-ui/renderer": ["libs/remix-ui/renderer/src/index.ts"],
       "@remix-ui/terminal": ["libs/remix-ui/terminal/src/index.ts"],
-      "@remix-ui/plugin-manager": ["libs/remix-ui/plugin-manager/src/index.ts"]
+      "@remix-ui/plugin-manager": ["libs/remix-ui/plugin-manager/src/index.ts"],
+      "@remix-ui/editor": ["libs/remix-ui/editor/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
