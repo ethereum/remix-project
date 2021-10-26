@@ -52,14 +52,30 @@ export class RemixAppManager extends PluginManager {
     return isNative(from.name)
   }
 
-  async deactivatePlugin (name) {
-    const [to, from] = [
-      await this.getProfile(name),
-      await this.getProfile(this.requestFrom)
-    ]
-    if (this.canDeactivatePlugin(from, to)) {
-      await this.toggleActive(name)
+  /**
+   * Check if caller can deactivate plugin and deactivate it if authorized
+   * @param name The name of the plugin to activate
+   */
+  async deactivatePlugin (names) {
+    const deactivate = async (name) => {
+      const isActive = await this.isActive(name)
+      if (!isActive) return
+      const [to, from] = await Promise.all([
+        this.getProfile(name),
+        this.getProfile(this.requestFrom)
+      ])
+      // Manager should have all right else plugin could totally block deactivation
+      if (from.name === 'manager') {
+        return this.toggleActive(name)
+      }
+      // Check manager rules
+      const managerCanDeactivate = await this.canDeactivatePlugin(from, to)
+      if (!managerCanDeactivate) {
+        throw new Error(`Plugin ${this.requestFrom} has no right to deactivate plugin ${name}`)
+      }
+      return this.toggleActive(name)
     }
+    return Array.isArray(names) ? catchAllPromises(names.map(deactivate)) : deactivate(names)
   }
 
   async canCall (from, to, method, message) {
@@ -104,6 +120,20 @@ export class RemixAppManager extends PluginManager {
   isRequired (name) {
     // excluding internal use plugins
     return requiredModules.includes(name)
+  }
+
+  /**
+   * Remove the profile of the plugin
+   * @param profile The Updated version of the plugin
+   * @note Only the caller plugin should be able to update its profile
+   */
+  async removeProfile (name) {
+    if (!name) return
+    if (!this.profiles[name]) {
+      throw new Error(`Plugin ${name} is not registered, you cannot remove its profile.`)
+    }
+    delete this.profiles[name]
+    this.emit('profileRemoved', this.profiles[name])
   }
 
   async registeredPlugins () {
@@ -198,4 +228,28 @@ class PluginLoader {
   get () {
     return this.currentLoader.get()
   }
+}
+
+/**
+ * Wait for all promises to settle
+ * catch if one of them fail
+ */
+function catchAllPromises (promises) {
+  return new Promise((resolve, reject) => {
+    const resolved = []
+    const rejected = []
+    let ended = 0
+    const settle = (value, err) => {
+      if (err) rejected.push(err)
+      if (value) resolved.push(value)
+      if (++ended === promises.length) {
+        rejected.length ? reject(resolved) : resolve(rejected)
+      }
+    }
+    for (const promise of promises) {
+      promise
+        .then(value => settle(value, null))
+        .catch(err => settle(null, err))
+    }
+  })
 }

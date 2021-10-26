@@ -20,7 +20,7 @@ export const App = () => {
   }, [])
 
   const handleClick = () => {
-    remixClient.call('manager', 'activatePlugin', 'LearnEth')
+    remixClient.call('manager', 'activatePlugin', 'flattener')
   }
 
   return (
@@ -30,7 +30,7 @@ export const App = () => {
         <h1>Welcome to local-plugin!</h1>
       </header>
       <main>
-        <button data-id="btnActivateRemixd" onClick={handleClick}>Activate Learneth</button>
+        <button data-id="btnActivatePlugin" onClick={handleClick}>Activate Flattener</button>
       </main>
     </div>
   )

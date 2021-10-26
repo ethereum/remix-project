@@ -225,12 +225,20 @@ export class VerticalIcons extends Plugin {
     }
   }
 
+  /*
+  * Defines actions on right click in the vertical icons panel
+  * Decativation: if it's not active but located in the panel, something is wrong for example it can't do the handshake, so we remove it forcefully.
+  */
   async itemContextMenu (e, name, documentation) {
     const actions = {}
     if (await this.appManager.canDeactivatePlugin(profile, { name })) {
-      actions.Deactivate = () => {
-        // this.call('manager', 'deactivatePlugin', name)
-        this.appManager.deactivatePlugin(name)
+      actions.Deactivate = async () => {
+        if (!await this.appManager.isActive(name)) {
+          const profile = await this.appManager.getProfile(name)
+          if (profile) await this.call(profile.location, 'removeView', profile)
+        } else {
+          this.appManager.deactivatePlugin(name)
+        }
         if (e.target.parentElement.classList.contains('active')) {
           this.select('filePanel')
         }

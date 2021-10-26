@@ -51,8 +51,18 @@ class PluginManagerComponent extends ViewPlugin {
    * RemixAppManager to enable plugin activation
    * @param {string} name name of Plugin
    */
-  activateP (name) {
-    this.appManager.activatePlugin(name)
+  async activateP (name) {
+    try {
+      await this.appManager.activatePlugin(name)
+    } catch (e) {
+      if (e.message.includes('plugin is already rendered')) {
+        // force app manager to have this plugin as active, remove the view by deactivating and try to reactivate
+        if (!await this.appManager.isActive(name)) this.appManager.actives.push(name)
+        await this.appManager.deactivatePlugin(name)
+        await this.appManager.activatePlugin(name)
+      }
+    }
+    this.getAndFilterPlugins()
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
@@ -64,9 +74,10 @@ class PluginManagerComponent extends ViewPlugin {
    */
   async activateAndRegisterLocalPlugin (localPlugin) {
     if (localPlugin) {
-      this.engine.register(localPlugin)
-      this.appManager.activatePlugin(localPlugin.profile.name)
-      this.getAndFilterPlugins()
+      try {
+        this.engine.register(localPlugin)
+      } catch (e) {}
+      await this.activateP(localPlugin.profile.name)
       localStorage.setItem('plugins/local', JSON.stringify(localPlugin.profile))
     }
   }
@@ -77,9 +88,25 @@ class PluginManagerComponent extends ViewPlugin {
    * of the plugin
    * @param {string} name name of Plugin
    */
-  deactivateP (name) {
-    this.call('manager', 'deactivatePlugin', name)
+  async deactivateP (name) {
+    await this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
+  }
+
+  async removeP (name) {
+    const profile = await this.appManager.getProfile(name)
+    // try to remove it from the host view first
+    try {
+      if (profile) await this.call(profile.location, 'removeView', profile)
+    } catch (e) {}
+
+    // removing from the engine also deactivates it, but sometimes it can't remove it from the view if the handshake didn't succeed
+    try {
+      await this.engine.remove(name)
+    } catch (e) {}
+
+    // also clean up the app manager
+    await this.appManager.removeProfile(name)
   }
 
   onActivation () {

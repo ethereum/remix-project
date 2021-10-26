@@ -80,8 +80,9 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   activePlugins: Profile[]
   filter: string
   isActive(name: string): boolean
-  activateP(name: string): void
-  deactivateP(name: string): void
+  activateP: (name: string) => Promise<void>
+  deactivateP: (name: string) => Promise<void>
+  removeP: (name: string) => Promise<void>
   onActivation(): void
   renderComponent(): void
   openLocalPlugin(): Promise<void>
