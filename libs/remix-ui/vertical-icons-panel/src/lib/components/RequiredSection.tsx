@@ -1,5 +1,6 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import { Fragment, MutableRefObject } from 'react'
+// eslint-disable-next-line no-use-before-define
+import React, { Fragment, MutableRefObject } from 'react'
 import { Chevron } from './Chevron'
 import Debugger from './Debugger'
 import FilePanel from './FilePanel'
