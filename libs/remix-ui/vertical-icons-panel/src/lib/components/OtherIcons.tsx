@@ -4,6 +4,13 @@ import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical
 import React from 'react'
 import Icon from './Icon'
 
+function customFilter (p: string) {
+  if (p !== 'settings' && p !== 'pluginManager' &&
+    p !== 'filePanel' && p !== 'debugger' &&
+    p !== 'compiler' && p !== 'solidity' &&
+    p !== 'udapp' && p !== 'testing' && p !== 'solidityStaticAnalysis') return true
+  return false
+}
 interface OtherIconsProps {
   verticalIconsPlugin: VerticalIcons
   itemContextAction: (e: any, name: string, documentation: string) => Promise<void>
@@ -11,18 +18,12 @@ interface OtherIconsProps {
   removeActive: () => void
 }
 
-const profileNames = ['settings', 'pluginManager', 'filePanel', 'debugger', 'compiler', 'solidity', 'udapp', 'testing', 'solidityStaticAnalysis']
 function OtherIcons ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: OtherIconsProps) {
   return (
     <div id="otherIcons">
       {
         Object.keys(verticalIconsPlugin.targetProfileForChange)
-          .filter(function (searchTerm: string) {
-            for (var key in profileNames) {
-              if (searchTerm !== key) return true
-            }
-            return false
-          })
+          .filter(customFilter)
           .map(p => (
             <Icon
               kind={verticalIconsPlugin.targetProfileForChange[p].kind}
