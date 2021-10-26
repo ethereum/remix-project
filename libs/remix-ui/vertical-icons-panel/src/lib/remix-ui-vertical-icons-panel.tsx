@@ -1,11 +1,9 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
+import {
   Fragment,
   useEffect,
-  useReducer,
-  useRef,
-  useState
+  useRef
 } from 'react'
 
 import './remix-ui-vertical-icons-panel.css'
@@ -25,7 +23,6 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
-  // const [first] = useState(localStorage.getItem('firstTime'))
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
