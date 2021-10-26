@@ -391,9 +391,6 @@ workflows:
       - remix-ide-run-deploy:          
           requires:
             - lint
-      - remix-ide-plugin-manager:          
-          requires:
-            - lint
       - publish:
           requires:
             - lint
@@ -404,7 +401,6 @@ workflows:
             - remix-ide-firefox-1
             - remix-ide-firefox-2
             - remix-ide-run-deploy
-            - remix-ide-plugin-manager
             - remix-ide-plugin-api
           filters:
             branches:
@@ -416,7 +412,6 @@ workflows:
             - remix-ide-firefox-1
             - remix-ide-firefox-2
             - remix-ide-run-deploy
-            - remix-ide-plugin-manager
             - remix-ide-plugin-api
           filters:
             branches:
@@ -428,7 +423,6 @@ workflows:
             - remix-ide-firefox-1
             - remix-ide-firefox-2
             - remix-ide-run-deploy
-            - remix-ide-plugin-manager
             - remix-ide-plugin-api
           filters:
             branches:
