@@ -246,7 +246,7 @@ module.exports = class Filepanel extends ViewPlugin {
     return browserProvider.exists(workspacePath)
   }
 
-  async createWorkspace (workspaceName, setDefaults = true) {
+  async createWorkspace (workspaceName, isEmpty = false) {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
@@ -256,7 +256,7 @@ module.exports = class Filepanel extends ViewPlugin {
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
-      if (setDefaults) {
+      if (!isEmpty) {
         for (const file in examples) {
           try {
             await workspaceProvider.set(examples[file].name, examples[file].content)

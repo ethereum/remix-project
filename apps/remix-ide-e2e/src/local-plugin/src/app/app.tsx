@@ -23,7 +23,6 @@ const client = new RemixPlugin()
 
 function App () {
   const [payload, setPayload] = useState<string>('')
-  const [append, setAppend] = useState<boolean>(false)
   const [log, setLog] = useState<any>()
   const [started, setStarted] = useState<boolean>(false)
   const [events, setEvents] = useState<any>()
@@ -39,7 +38,7 @@ function App () {
 
       client.testCommand = async (data: any) => {
         console.log(data)
-        setLog(data)
+        methodLog(data)
       }
 
       let addProfiles = []
@@ -54,7 +53,7 @@ function App () {
           profile.events.map((event: string) => {
             client.on(profile.name as any, event, (...args: any) => {
               console.log('event :', event, args)
-              setEvents({
+              eventLog({
                 event: event,
                 args: args
               })
@@ -65,8 +64,14 @@ function App () {
     })
   }, [])
 
-  const setAppendChange = ({ target }: any) => {
-    setAppend(target.checked)
+  const methodLog = (log: any) => {
+    const addValue = typeof log === 'string' ? log : JSON.stringify(log)
+    setLog((value) => `${value} ${addValue}`)
+  }
+
+  const eventLog = (log: any) => {
+    const addValue = typeof log === 'string' ? log : JSON.stringify(log)
+    setEvents((value) => `${value} ${addValue}`)
   }
 
   const clientMethod = async (profile: Profile, method: string) => {
@@ -78,13 +83,15 @@ function App () {
       } catch (e) { }
       const args = ob || [payload]
       setStarted(true)
+      setLog('')
+      setEvents('')
       console.log('calling :', profile.name, method, ...args)
       await client.call('manager', 'activatePlugin', profile.name)
       const result = await client.call(profile.name as any, method, ...args)
       console.log('result :', result)
-      setLog(result)
+      methodLog(result)
     } catch (e) {
-      setLog(e.message)
+      methodLog(e.message)
     }
     setStarted(false)
   }
@@ -94,10 +101,9 @@ function App () {
       <h5>PLUGIN API TESTER</h5>
       <label id='callStatus'>{started ? <>start</> : <>stop</> }</label><br></br>
       <label>method results</label>
-      <Logger id='methods' log={log} append={append}></Logger>
+      <Logger id='methods' log={log}></Logger>
       <label>events</label>
-      <Logger id='events' log={events} append={append}></Logger>
-      <input className='' id='appendToLog' type='checkbox' onChange={setAppendChange} /><label className='pl-1'>Append to logs</label>
+      <Logger id='events' log={events}></Logger>
       <input
         className='form-control w-100'
         type="text"

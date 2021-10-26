@@ -89,14 +89,6 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
   })
 }
 
-const setAppend = async (browser: NightwatchBrowser) => {
-  return new Promise((resolve) => {
-    browser.waitForElementVisible('//*[@id="appendToLog"]').click('//*[@id="appendToLog"]', () => {
-      resolve(true)
-    })
-  })
-}
-
 const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any) => {
   if (payload) {
     await setPayload(browser, payload)
@@ -112,8 +104,12 @@ const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, 
   await debugValues(browser, 'events', eventResult)
 }
 
-const assertPluginIsActive = function (browser: NightwatchBrowser, id: string) {
-  browser.waitForElementVisible(`//*[@data-id="verticalIconsKind${id}"]`)
+const assertPluginIsActive = function (browser: NightwatchBrowser, id: string, shouldBeVisible: boolean) {
+  if (shouldBeVisible) {
+    browser.waitForElementVisible(`//*[@data-id="verticalIconsKind${id}"]`)
+  } else {
+    browser.waitForElementNotPresent(`//*[@data-id="verticalIconsKind${id}"]`)
+  }
 }
 
 module.exports = {
@@ -152,6 +148,12 @@ module.exports = {
     })
     await browser.useXpath().frameParent(async () => {
       browser.useCss().clickLaunchIcon('filePanel')
+        .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]').element('css selector', '[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', (visible: any) => {
+          if (visible.status && visible.status === -1) {
+            browser.click('[data-id="treeViewLitreeViewItemcontracts"]')
+          }
+        })
+        .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
         .rightClick('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
         // @ts-ignore
           browser.click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
@@ -174,9 +176,7 @@ module.exports = {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
   },
   'Should open readme.txt': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:open', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
-    await setAppend(browser)
   },
   'Should have current file': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
@@ -189,30 +189,26 @@ module.exports = {
     await clickAndCheckLog(browser, 'fileManager:getFile', 'REMIX EXAMPLE PROJECT', null, 'README.txt')
   },
   'Should close all files': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:closeAllFiles', null, { event: 'noFileSelected', args: [] }, null)
-    await setAppend(browser)
   },
 
   'Should switch to file': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['contracts/1_Storage.sol'] }, 'contracts/1_Storage.sol')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'contracts/1_Storage.sol', null, null)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
-    await setAppend(browser)
   },
   'Should write to file': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileSaved', args: ['README.txt'] }, ['README.txt', 'test'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'README.txt')
-    await setAppend(browser)
+  },
+  'Should set file': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'fileManager:setFile', null, { event: 'fileAdded', args: ['new.sol'] }, ['new.sol', 'test'])
+    await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'new.sol')
   },
   'Should write to new file': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileAdded', args: ['testing.txt'] }, ['testing.txt', 'test'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'testing.txt')
-    await setAppend(browser)
   },
   'Should rename file': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:rename', null, null, ['testing.txt', 'testrename.txt'])
@@ -220,7 +216,7 @@ module.exports = {
   },
 
   'Should create empty workspace': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, ['emptyworkspace', false])
+    await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, ['emptyworkspace', true])
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'emptyworkspace', isLocalhost: false, absolutePath: '.workspaces/emptyworkspace' }, null, null)
     await clickAndCheckLog(browser, 'fileManager:readdir', {}, null, '/')
   },
@@ -233,17 +229,18 @@ module.exports = {
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['default_workspace', 'emptyworkspace', 'testspace'], null, null)
   },
   'Should have set workspace event': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
-    await setAppend(browser)
+  },
+  'Should have event when switching workspace': async function (browser: NightwatchBrowser) {
+    // @ts-ignore
+    browser.frameParent().useCss().clickLaunchIcon('filePanel').click('*[data-id="workspacesSelect"] option[value="default_workspace"]').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
+      await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
+    })
   },
   'Should rename workspace': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
-    await setAppend(browser)
   },
-
   // DGIT
   'Should have changes on new workspace': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
@@ -260,30 +257,48 @@ module.exports = {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
     await clickAndCheckLog(browser, 'dGitProvider:log', 'commit-message', null, null)
   },
-
-  // context menu
-
+  'Should have git log': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'dGitProvider:log', 'commit-message', null, null)
+  },
+  'Should have branches': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'dGitProvider:branches', [{ name: 'main' }], null, null)
+  },
+  // resolver
+  'Should resolve url': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'contentImport:resolve', '# Remix Project', null, 'https://github.com/ethereum/remix-project/blob/master/README.md')
+  },
+  'Should resolve and save url': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'contentImport:resolveAndSave', '# Remix Project', { event: 'fileAdded', args: ['.deps/github/ethereum/remix-project/README.md'] }, 'https://github.com/ethereum/remix-project/blob/master/README.md')
+  },
   // UNIT TESTING
   'Should activate solidityUnitTesting': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'manager:activatePlugin', null, null, 'solidityUnitTesting')
     browser.frameParent()
-    assertPluginIsActive(browser, 'solidityUnitTesting')
+    assertPluginIsActive(browser, 'solidityUnitTesting', true)
     // @ts-ignore
     browser.frame(0)
+    await clickAndCheckLog(browser, 'manager:isActive', true, null, 'solidityUnitTesting')
   },
 
   'Should test from path with solidityUnitTesting': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidityUnitTesting:testFromPath', '"totalPassing":2,"totalFailing":0', null, 'tests/4_Ballot_test.sol')
   },
 
+  'Should deactivate solidityUnitTesting': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'manager:deactivatePlugin', null, null, 'solidityUnitTesting')
+    browser.frameParent()
+    assertPluginIsActive(browser, 'solidityUnitTesting', false)
+    // @ts-ignore
+    browser.frame(0)
+    await clickAndCheckLog(browser, 'manager:isActive', false, null, 'solidityUnitTesting')
+  },
+
   // COMPILER
 
   'Should compile a file': async function (browser: NightwatchBrowser) {
-    await setAppend(browser)
     await clickAndCheckLog(browser, 'solidity:compile', null, null, 'contracts/1_Storage.sol')
     browser.pause(5000, async () => {
       await clickAndCheckLog(browser, 'solidity:compile', null, 'compilationFinished', null)
-      await setAppend(browser)
     })
   },
 
