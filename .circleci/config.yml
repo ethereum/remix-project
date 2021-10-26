@@ -221,40 +221,6 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
-  remix-ide-plugin-manager:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
-    working_directory: ~/remix-project
-
-    steps:
-      - checkout
-      - run: npm install
-      - run: npx nx build remix-ide --with-deps
-      - run: npx nx build remix-ide-e2e-src-local-plugin
-      - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-      - run:
-          name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-          background: true
-      - run: ./apps/remix-ide/ci/browser_tests_plugin_manager.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
