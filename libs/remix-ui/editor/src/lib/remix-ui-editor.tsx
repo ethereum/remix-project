@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import Editor from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 
