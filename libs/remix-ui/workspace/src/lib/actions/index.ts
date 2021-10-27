@@ -2,7 +2,7 @@ import React from 'react'
 import { extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
-import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setDeleteWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
+import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
 
@@ -80,11 +80,6 @@ export const fetchDirectory = async (path: string) => {
 
 export const removeInputField = async (path: string) => {
   dispatch(removeInputFieldSuccess(path))
-}
-
-export const deleteWorkspace = async (workspaceName: string) => {
-  await deleteWorkspaceFromProvider(workspaceName)
-  await dispatch(setDeleteWorkspace(workspaceName))
 }
 
 export const publishToGist = async (path?: string, type?: string) => {
@@ -256,15 +251,6 @@ export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'g
 
 export const handleExpandPath = (paths: string[]) => {
   dispatch(setExpandPath(paths))
-}
-
-const deleteWorkspaceFromProvider = async (workspaceName: string) => {
-  const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-
-  await plugin.fileManager.closeAllFiles()
-  plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
-  plugin.emit('deleteWorkspace', { name: workspaceName })
-  plugin.setWorkspaces(await getWorkspaces())
 }
 
 const packageGistFiles = (directory) => {

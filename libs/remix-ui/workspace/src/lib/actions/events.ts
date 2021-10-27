@@ -2,7 +2,7 @@ import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
 import { action } from '../types'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
-import { addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
+import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
 let plugin, dispatch: React.Dispatch<any>
@@ -14,8 +14,12 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
     createWorkspace(name, isEmpty, cb)
   })
 
-  plugin.on('filePanel', 'renameWorkspace', (oldName: string, workspaceName: string) => {
-    renameWorkspace(oldName, workspaceName)
+  plugin.on('filePanel', 'renameWorkspaceReducerEvent', (oldName: string, workspaceName: string, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    renameWorkspace(oldName, workspaceName, cb)
+  })
+
+  plugin.on('filePanel', 'deleteWorkspaceReducerEvent', (workspaceName: string, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    deleteWorkspace(workspaceName, cb)
   })
 
   plugin.on('filePanel', 'registerContextMenuItemReducerEvent', (item: action, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {

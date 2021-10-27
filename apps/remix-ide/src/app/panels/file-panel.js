@@ -29,8 +29,8 @@ const globalRegistry = require('../../global/registry')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace'],
-  events: ['setWorkspace', 'workspaceRenamed', 'deleteWorkspace', 'createWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
+  events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -139,7 +139,21 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   renameWorkspace (oldName, workspaceName) {
-    this.emit('renameWorkspace', oldName, workspaceName)
+    return new Promise((resolve, reject) => {
+      this.emit('renameWorkspaceReducerEvent', oldName, workspaceName, (err, data) => {
+        if (err) reject(err)
+        else resolve(data || true)
+      })
+    })
+  }
+
+  deleteWorkspace (workspaceName) {
+    return new Promise((resolve, reject) => {
+      this.emit('deleteWorkspaceReducerEvent', workspaceName, (err, data) => {
+        if (err) reject(err)
+        else resolve(data || true)
+      })
+    })
   }
 
   setWorkspace (workspace) {
@@ -149,12 +163,16 @@ module.exports = class Filepanel extends ViewPlugin {
     this.emit('setWorkspace', workspace)
   }
 
+  workspaceRenamed (oldName, workspaceName) {
+    this.emit('workspaceRenamed', oldName, workspaceName)
+  }
+
   workspaceDeleted (workspace) {
-    this.emit('deleteWorkspace', workspace)
+    this.emit('workspaceDeleted', workspace)
   }
 
   workspaceCreated (workspace) {
-    this.emit('createWorkspace', workspace)
+    this.emit('workspaceCreated', workspace)
   }
   /** end section */
 }
