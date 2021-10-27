@@ -177,7 +177,7 @@ export function compileContractSources (sources: SrcIfc, compilerConfig: Compile
   // Iterate over sources keys. Inject test libraries. Inject test library import statements.
   if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
     sources['tests.sol'] = { content: require('../sol/tests.sol.js') }
-    sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
+    // sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
     sources['remix_accounts.sol'] = { content: writeTestAccountsContract(accounts) }
   }
   const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
