@@ -15,7 +15,7 @@ function PluginButton ({ imgPath, envID, envText, callback }: PluginButtonProps)
   return (
     <button
       className="btn border-secondary d-flex mr-3 text-nowrap justify-content-center flex-column align-items-center remixui_envButton"
-      data-id="landingPageStart{envText"
+      data-id={'landingPageStart' + envText}
       onClick={() => callback()}
     >
       <img className="m-2 align-self-center remixui_envLogo" id={envID} src={imgPath} alt="" style={ { filter: themeFilter.filter } } />
