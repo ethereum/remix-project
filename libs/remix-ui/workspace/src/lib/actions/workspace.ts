@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
@@ -48,6 +48,7 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
     dispatch(createWorkspaceSuccess(workspaceName))
     plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     plugin.setWorkspaces(await getWorkspaces())
+    plugin.workspaceCreated(workspaceName)
     if (!isEmpty) await loadWorkspacePreset('default-template')
     cb && cb(null, workspaceName)
   }).catch((error) => {
@@ -172,10 +173,12 @@ export const fetchWorkspaceDirectory = async (path: string) => {
   return promise
 }
 
-export const renameWorkspace = async (oldName: string, workspaceName: string) => {
+export const renameWorkspace = async (oldName: string, workspaceName: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   await renameWorkspaceFromProvider(oldName, workspaceName)
   await dispatch(setRenameWorkspace(oldName, workspaceName))
   plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+  plugin.workspaceRenamed(oldName, workspaceName)
+  cb && cb(null, workspaceName)
 }
 
 export const renameWorkspaceFromProvider = async (oldName: string, workspaceName: string) => {
@@ -187,6 +190,21 @@ export const renameWorkspaceFromProvider = async (oldName: string, workspaceName
   const workspacesPath = workspaceProvider.workspacesPath
   browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
   workspaceProvider.setWorkspace(workspaceName)
+  plugin.setWorkspaces(await getWorkspaces())
+}
+
+export const deleteWorkspace = async (workspaceName: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  await deleteWorkspaceFromProvider(workspaceName)
+  await dispatch(setDeleteWorkspace(workspaceName))
+  plugin.workspaceDeleted(workspaceName)
+  cb && cb(null, workspaceName)
+}
+
+const deleteWorkspaceFromProvider = async (workspaceName: string) => {
+  const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+
+  await plugin.fileManager.closeAllFiles()
+  plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
   plugin.setWorkspaces(await getWorkspaces())
 }
 
