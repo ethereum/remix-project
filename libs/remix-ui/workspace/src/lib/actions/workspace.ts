@@ -46,9 +46,9 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
-    if (!isEmpty) await loadWorkspacePreset('default-template')
     plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     plugin.setWorkspaces(await getWorkspaces())
+    if (!isEmpty) await loadWorkspacePreset('default-template')
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -153,6 +153,7 @@ export const workspaceExists = async (name: string) => {
 }
 
 export const fetchWorkspaceDirectory = async (path: string) => {
+  if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
@@ -266,7 +267,6 @@ export const getWorkspaces = async (): Promise<string[]> | undefined => {
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
-          console.error(error)
           return reject(error)
         }
         resolve(Object.keys(items)
@@ -277,7 +277,5 @@ export const getWorkspaces = async (): Promise<string[]> | undefined => {
 
     plugin.setWorkspaces(workspaces)
     return workspaces
-  } catch (e) {
-    console.log(e)
-  }
+  } catch (e) {}
 }
