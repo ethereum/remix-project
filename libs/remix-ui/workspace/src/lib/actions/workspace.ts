@@ -84,16 +84,21 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
           path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
           content = atob(params.code)
-          await workspaceProvider.set(path, content)
+          workspaceProvider.set(path, content, async (error) => {
+            if (error) throw new Error(error)
+            await plugin.fileManager.openFile(path)
+          })
         }
         if (params.url) {
           const data = await plugin.call('contentImport', 'resolve', params.url)
 
           path = data.cleanUrl
           content = data.content
-          await workspaceProvider.set(path, content)
+          workspaceProvider.set(path, content, async (error) => {
+            if (error) throw new Error(error)
+            await plugin.fileManager.openFile(path)
+          })
         }
-        await plugin.fileManager.openFile(path)
       } catch (e) {
         console.error(e)
       }
