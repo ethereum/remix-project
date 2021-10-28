@@ -132,6 +132,9 @@
     },
     "remix-ui-helper": {
       "tags": []
+    },
+    "remix-ui-tabs": {
+      "tags": []
     }
   },
   "targetDependencies": {
