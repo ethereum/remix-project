@@ -44,10 +44,10 @@
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    width: 95%;
+    max-width: 1000px;
 }
 .left-icon {
-    width: 5%;
+    width: 70px;
     height: 49px;
 }
 
