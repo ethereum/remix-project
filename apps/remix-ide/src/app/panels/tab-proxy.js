@@ -211,7 +211,7 @@ export class TabProxy extends Plugin {
   }
 
   addTab (name, title, switchTo, close, icon) {
-    if (this._handlers[name]) return
+    if (this._handlers[name]) return this.renderComponent()
 
     var slash = name.split('/')
     const tabPath = slash.reverse()
