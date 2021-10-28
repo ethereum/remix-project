@@ -1,7 +1,8 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
-const remixTests = require('@remix-project/remix-tests')
+// const remixTests = require('@remix-project/remix-tests')
+var { assertLibCode, getAccountsLib } = require('@remix-project/remix-tests')
 
 const profile = {
   name: 'contentImport',
@@ -106,10 +107,12 @@ export class CompilerImports extends Plugin {
     })
   }
 
-  async importTestFiles () {
+  async importTestFiles (url) {
     const provider = await this.call('fileManager', 'getProviderOf', null)
-    const content = remixTests.assertLibCode
-    if (provider) provider.addExternal('.deps/remix-tests/remix-tests.sol', content, 'remix_tests.sol')
+    let content
+    if (url === 'remix_tests.sol' || url === 'tests.sol') content = assertLibCode
+    else if (url === 'remix_accounts.sol') content = getAccountsLib()
+    if (provider) provider.addExternal('.deps/remix-tests/' + url, content, url)
     return content
   }
 
@@ -124,9 +127,7 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath) {
-    if (url.indexOf('remix_tests.sol') !== -1) {
-      return await this.importTestFiles()
-    }
+    if (['remix_tests.sol', 'tests.sol', 'remix_accounts.sol'].includes(url)) return await this.importTestFiles(url)
     try {
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
