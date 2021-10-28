@@ -94,7 +94,7 @@ module.exports = {
   'Should fail on compilation, open file on error click, not disappear error': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close"]')
+      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close-tabs"]')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')
