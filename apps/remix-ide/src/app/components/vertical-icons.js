@@ -163,6 +163,15 @@ export class VerticalIcons extends Plugin {
     this.events.emit('showContent', name)
   }
 
+  onThemeChanged (themeType) {
+    const invert = themeType === 'dark' ? 1 : 0
+    const active = this.view.querySelector('.active')
+    if (active) {
+      const image = active.querySelector('.image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
+  }
+
   /**
    * Toggles the side panel for plugin
    * @param {string} name Name of profile of the module to activate

@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Chevron } from './Chevron'
 import Icon from './Icon'
 
@@ -11,25 +11,30 @@ interface SettingsProps {
   addActive: (name: string) => void
   removeActive: () => void
   scrollableRef: React.MutableRefObject<any>
-  onThemeChanged: (themeType: any) => void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addActive, removeActive, onThemeChanged }: SettingsProps) {
-  useEffect(() => {
-    // const themeModule = verticalIconsPlugin.registry.get('themeModule').api
-    // themeModule.events.on('themeChanged', (theme: any) => {
-    //   onThemeChanged(theme.quality)
-    // })
-    return () => {
-      document.addEventListener('themeChanged', (theme: any) => {
-        // onThemeChanged(theme.quality)
-        console.log('this is what theme contains', theme)
-      })
+function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addActive, removeActive }: SettingsProps) {
+  const settingsRef = useRef(null)
+  function onThemeChanged (themeType: any) {
+    const invert = themeType === 'dark' ? 1 : 0
+    // @ts-ignore
+    const active = settingsRef.current.querySelector('.active')
+    if (active) {
+      // @ts-ignore
+      const image = settingsRef.current.querySelector('.remixui_image')
+      image.style.setProperty('filter', `invert(${invert})`)
     }
-  })
+  }
+
+  useEffect(() => {
+    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    themeModule.events.on('themeChanged', (theme: any) => {
+      onThemeChanged(theme.quality)
+      console.log('There was a theme change and is caught in settings. This is the theme payload ', theme)
+    })
+  }, [])
   return (
-    <div id="settingsIcons" data-id="vertialIconsSettingsIcons">
+    <div id="settingsIcons" data-id="vertialIconsSettingsIcons" ref={settingsRef}>
       <Chevron
         divElementRef={scrollableRef}
         cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
