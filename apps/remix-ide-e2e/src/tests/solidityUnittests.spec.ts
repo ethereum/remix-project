@@ -276,6 +276,8 @@ module.exports = {
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
+      // remix_test.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
       .pause(1000)
       .clickLaunchIcon('solidityUnitTesting')
       .scrollAndClick('#Check_winning_proposal_again')
