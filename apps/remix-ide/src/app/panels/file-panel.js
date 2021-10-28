@@ -58,7 +58,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   onActivation () {
-    this.on('editor', 'editorMounted', () => this.renderComponent())
+    this.renderComponent()
   }
 
   render () {

@@ -226,3 +226,9 @@ export const loadLocalhostSuccess = () => {
     type: 'LOAD_LOCALHOST_SUCCESS'
   }
 }
+
+export const fsInitializationCompleted = () => {
+  return {
+    type: 'FS_INITIALIZATION_COMPLETED'
+  }
+}
