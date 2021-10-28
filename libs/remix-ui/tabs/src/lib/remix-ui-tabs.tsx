@@ -31,7 +31,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
-    const classNameTab = 'nav-item nav-link tab' + (index === selectedIndex ? ' active' : '')
+    const classNameTab = 'nav-item nav-link tab' + (index === currentIndexRef.current ? ' active' : '')
     return (
       <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
         {tab.icon ? (<img className="my-1 mr-1 iconImage" src={tab.icon} />) : (<i className={classNameImg}></i>)}
@@ -44,12 +44,13 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const active = () => {
+    if (currentIndexRef.current < 0) return ''
     return props.tabs[currentIndexRef.current].name
   }
   const activateTab = (name: string) => {
     const index = props.tabs.findIndex((tab) => tab.name === name)
-    setSelectedIndex(index)
     currentIndexRef.current = index
+    setSelectedIndex(index)
   }
   useEffect(() => {
     props.onReady({
