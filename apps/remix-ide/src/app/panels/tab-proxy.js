@@ -231,7 +231,7 @@ export class TabProxy extends Plugin {
             name,
             title,
             icon,
-            tooltip: title,
+            tooltip: name,
             iconClass: helper.getPathIcon(name)
           })
           formatPath.shift()
@@ -259,7 +259,7 @@ export class TabProxy extends Plugin {
         name,
         title,
         icon,
-        tooltip: title,
+        tooltip: name,
         iconClass: helper.getPathIcon(name)
       })
     }
