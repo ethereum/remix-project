@@ -2,7 +2,7 @@ import React from 'react'
 import { extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
-import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
+import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
 
@@ -34,7 +34,8 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace('code-sample'))
-      await loadWorkspacePreset('code-template')
+      const filePath = await loadWorkspacePreset('code-template')
+      plugin.on('editor', 'editorMounted', () => plugin.fileManager.openFile(filePath))
     } else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'default-template')
@@ -55,6 +56,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     listenOnProviderEvents(localhostProvider)(dispatch)
     dispatch(setMode('browser'))
     plugin.setWorkspaces(await getWorkspaces())
+    dispatch(fsInitializationCompleted())
     plugin.emit('workspaceInitializationCompleted')
   }
 }

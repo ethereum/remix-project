@@ -116,6 +116,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   useEffect(() => {
+    dispatchInitWorkspace()
+  }, [])
+
+  useEffect(() => {
     if (modals.length > 0) {
       setFocusModal(() => {
         const focusModal = {
@@ -215,7 +219,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
   return (
     <FileSystemContext.Provider value={value}>
-      <Workspace />
+      { fs.initializingFS && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
+      { !fs.initializingFS && <Workspace /> }
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
     </FileSystemContext.Provider>

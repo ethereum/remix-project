@@ -14,7 +14,6 @@ export function Workspace () {
   const workspaceCreateInput = useRef()
 
   useEffect(() => {
-    global.dispatchInitWorkspace()
     resetFocus()
   }, [])
 

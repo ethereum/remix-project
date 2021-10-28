@@ -49,7 +49,8 @@ export interface BrowserState {
   readonly: boolean,
   popup: string,
   focusEdit: string,
-  focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[]
+  focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
+  initializingFS: boolean
 }
 
 export const browserInitialState: BrowserState = {
@@ -96,7 +97,8 @@ export const browserInitialState: BrowserState = {
   readonly: false,
   popup: '',
   focusEdit: '',
-  focusElement: []
+  focusElement: [],
+  initializingFS: true
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -577,6 +579,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           isSuccessfulLocalhost: false,
           error: payload
         }
+      }
+    }
+
+    case 'FS_INITIALIZATION_COMPLETED': {
+      return {
+        ...state,
+        initializingFS: false
       }
     }
 
