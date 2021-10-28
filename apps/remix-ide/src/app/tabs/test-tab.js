@@ -42,7 +42,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.areTestsRunning = false
     this.defaultPath = 'tests'
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
-    this.allFilesInvolved = []
+    this.allFilesInvolved = ['.deps/remix-tests/remix_tests.sol', '.deps/remix-tests/remix_accounts.sol']
     this.isDebugging = false
     this.currentErrors = []
 
@@ -112,7 +112,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     this.testRunner.event.on('compilationFinished', (success, data, source) => {
       if (success) {
-        this.allFilesInvolved = Object.keys(data.sources)
+        this.allFilesInvolved.push(...Object.keys(data.sources))
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
         this.emit('compilationFinished', source.target, source, 'soljson', data)
