@@ -22,6 +22,8 @@ export const TabsUI = (props: TabsUIProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
+  const tabs = useRef(props.tabs)
+  tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
   useEffect(() => {
     if (props.tabs[selectedIndex]) {
@@ -31,6 +33,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
+    console.log('renderTab', index, currentIndexRef.current)
     const classNameTab = 'nav-item nav-link tab' + (index === currentIndexRef.current ? ' active' : '')
     return (
       <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
@@ -45,10 +48,10 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const active = () => {
     if (currentIndexRef.current < 0) return ''
-    return props.tabs[currentIndexRef.current].name
+    return tabs.current[currentIndexRef.current].name
   }
   const activateTab = (name: string) => {
-    const index = props.tabs.findIndex((tab) => tab.name === name)
+    const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
     setSelectedIndex(index)
   }
@@ -66,7 +69,7 @@ export const TabsUI = (props: TabsUIProps) => {
         <span data-id="tabProxyZoomIn" className="btn btn-sm px-1 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
         <i className="d-flex flex-row justify-content-center align-items-center far fa-sliders-v px-1" title="press F1 when focusing the editor to show advanced configuration settings"></i>
       </div>
-      <Tabs className="tab-scroll" selectedIndex={selectedIndex} onSelect={index => { props.onSelect(index); setSelectedIndex(index); currentIndexRef.current = index }} >
+      <Tabs className="tab-scroll" selectedIndex={selectedIndex} onSelect={index => { props.onSelect(index); currentIndexRef.current = index; setSelectedIndex(index) }} >
         <TabList>{props.tabs.map((tab, i) => <Tab key={tab.name}>{renderTab(tab, i)}</Tab>)}</TabList>
         {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
       </Tabs>
