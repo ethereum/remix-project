@@ -76,6 +76,7 @@ export function RemixUiVerticalIconsPanel ({
     const themeModule = verticalIconsPlugin.registry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme: any) => {
       onThemeChanged(theme.quality)
+      console.log('There was a theme change. This is the theme payload ', theme)
     })
   }, [])
 
@@ -83,6 +84,7 @@ export function RemixUiVerticalIconsPanel ({
     const themeModule = verticalIconsPlugin.registry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme: any) => {
       onThemeChanged(theme.quality)
+      console.log('There was a theme change. This is the theme payload ', theme)
     })
   }, [])
 
@@ -130,7 +132,6 @@ export function RemixUiVerticalIconsPanel ({
                 removeActive={removeActive}
                 itemContextAction={itemContextAction}
                 scrollableRef={scrollableRef}
-                onThemeChanged={onThemeChanged}
               />
             </Fragment>
           ) : null}
