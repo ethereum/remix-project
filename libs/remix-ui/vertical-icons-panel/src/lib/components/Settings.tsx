@@ -14,13 +14,20 @@ interface SettingsProps {
   onThemeChanged: (themeType: any) => void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addActive, removeActive, onThemeChanged }: SettingsProps) {
   useEffect(() => {
-    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
-    themeModule.events.on('themeChanged', (theme: any) => {
-      onThemeChanged(theme.quality)
-    })
-  }, [onThemeChanged])
+    // const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    // themeModule.events.on('themeChanged', (theme: any) => {
+    //   onThemeChanged(theme.quality)
+    // })
+    return () => {
+      document.addEventListener('themeChanged', (theme: any) => {
+        // onThemeChanged(theme.quality)
+        console.log('this is what theme contains', theme)
+      })
+    }
+  })
   return (
     <div id="settingsIcons" data-id="vertialIconsSettingsIcons">
       <Chevron
