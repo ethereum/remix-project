@@ -9,7 +9,7 @@ const log = logger.logger
 var accountsLibCode
 
 export function getAccountsLib () {
- return accountsLibCode
+  return accountsLibCode
 }
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
