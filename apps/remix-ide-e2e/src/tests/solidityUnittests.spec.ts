@@ -32,9 +32,10 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
-      .waitForElementPresent('*[title="tests/simple_storage_test.sol"]')
+      .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
       .clickLaunchIcon('filePanel')
-      .pause(10000)
+      .waitForElementPresent('[data-id="treeViewDivtreeViewItemtests"]')
+      .click('[data-id="treeViewDivtreeViewItemtests"]')
       .openFile('tests/simple_storage_test.sol')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
@@ -164,10 +165,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
-      .pause(5000)
-      .waitForElementPresent('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
@@ -193,8 +193,17 @@ module.exports = {
   },
 
   'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
+
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .perform((done) => {
+        if (runtimeBrowser !== 'chrome') {
+          browser.clickLaunchIcon('filePanel')
+            .waitForElementVisible('[data-id="treeViewLitreeViewItemtests"]')
+        }
+        done()
+      })
       .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
       .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)

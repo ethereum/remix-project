@@ -4,7 +4,6 @@ import * as packageJson from '../../../../../package.json'
 
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 const { AstWalker } = require('@remix-project/remix-astwalker')
-const csjs = require('csjs-inject')
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
 
@@ -127,14 +126,6 @@ class ContextualListener extends Plugin {
     const lastCompilationResult = this._deps.compilersArtefacts.__last
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
-      const css = csjs`
-        .highlightref_fullLine {
-          position: absolute;
-          z-index: 2;
-          opacity: 0.1;
-          background-color: var(--info);
-        }
-        `
       if (node.nodes && node.nodes.length) {
         // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
         lineColumn = {
@@ -150,7 +141,7 @@ class ContextualListener extends Plugin {
       }
       const fileName = lastCompilationResult.getSourceName(position.file)
       if (fileName) {
-        return this.editor.addMarker(lineColumn, fileName, css.highlightref_fullLine)
+        return this.call('editor', 'highlight', lineColumn, fileName, '', { focus: false })
       }
     }
     return null
@@ -178,10 +169,7 @@ class ContextualListener extends Plugin {
   }
 
   _stopHighlighting () {
-    for (const eventKey in this._activeHighlights) {
-      const event = this._activeHighlights[eventKey]
-      this.editor.removeMarker(event.eventId, event.fileTarget)
-    }
+    this.call('editor', 'discardHighlight')
     this.event.trigger('stopHighlighting', [])
     this._activeHighlights = []
   }

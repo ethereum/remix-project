@@ -44,19 +44,32 @@ export class TabProxy extends Plugin {
 
     fileManager.events.on('fileRemoved', (name) => {
       const workspace = this.fileManager.currentWorkspace()
-      workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
+
+      if (this.fileManager.mode === 'browser') {
+        name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
+        this.removeTab(name)
+      } else {
+        name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
+        this.removeTab(name)
+      }
     })
 
     fileManager.events.on('fileClosed', (name) => {
       const workspace = this.fileManager.currentWorkspace()
 
-      workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
+      if (this.fileManager.mode === 'browser') {
+        name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
+        this.removeTab(name)
+      } else {
+        name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
+        this.removeTab(name)
+      }
     })
 
     fileManager.events.on('currentFileChanged', (file) => {
       const workspace = this.fileManager.currentWorkspace()
 
-      if (workspace) {
+      if (this.fileManager.mode === 'browser') {
         const workspacePath = workspace + '/' + file
 
         if (this._handlers[workspacePath]) {
@@ -72,7 +85,7 @@ export class TabProxy extends Plugin {
           this.event.emit('closeFile', file)
         })
       } else {
-        const path = this.fileManager.mode + '/' + file
+        const path = file.startsWith(this.fileManager.mode + '/') ? file : this.fileManager.mode + '/' + file
 
         if (this._handlers[path]) {
           this._view.filetabs.activateTab(path)
@@ -92,7 +105,7 @@ export class TabProxy extends Plugin {
     fileManager.events.on('fileRenamed', (oldName, newName, isFolder) => {
       const workspace = this.fileManager.currentWorkspace()
 
-      if (workspace) {
+      if (this.fileManager.mode === 'browser') {
         if (isFolder) {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(workspace + '/' + oldName + '/') === 0) {
@@ -115,7 +128,7 @@ export class TabProxy extends Plugin {
           return
         }
         // should change the tab title too
-        this.renameTab(this.fileManager.mode + '/' + oldName, workspace + '/' + newName)
+        this.renameTab(this.fileManager.mode + '/' + oldName, this.fileManager.mode + '/' + newName)
       }
     })
 
@@ -297,7 +310,7 @@ export class TabProxy extends Plugin {
     this._view.filetabs.canAdd = false
 
     const zoomBtns = yo`
-      <div class="d-flex flex-row justify-content-center align-items-center">
+      <div class="d-flex flex-row justify-content-center align-items-center" title="Zoom in/out">
         <span data-id="tabProxyZoomOut" class="btn btn-sm px-1 fas fa-search-minus text-dark" onclick=${() => this.onZoomOut()}></span>
         <span data-id="tabProxyZoomIn" class="btn btn-sm px-1 fas fa-search-plus text-dark" onclick=${() => this.onZoomIn()}></span>
       </div>
@@ -307,6 +320,7 @@ export class TabProxy extends Plugin {
     this._view.tabs = yo`
       <div  style="display: -webkit-box; max-height: 32px">
         ${zoomBtns}
+        <i class="d-flex flex-row justify-content-center align-items-center far fa-sliders-v px-1" title="press F1 when focusing the editor to show advanced configuration settings"></i>
         ${this._view.filetabs}
       </div>
     `
