@@ -30,7 +30,6 @@ function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addA
     const themeModule = verticalIconsPlugin.registry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme: any) => {
       onThemeChanged(theme.quality)
-      console.log('There was a theme change and is caught in settings. This is the theme payload ', theme)
     })
   }, [])
   return (
