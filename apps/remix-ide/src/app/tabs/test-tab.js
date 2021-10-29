@@ -7,7 +7,7 @@ var async = require('async')
 var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
-var { UnitTestRunner } = require('@remix-project/remix-tests')
+var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
 const _paq = window._paq = window._paq || []
 
@@ -78,6 +78,12 @@ module.exports = class TestTab extends ViewPlugin {
     const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
+    }
+    await this.testRunner.init()
+    const provider = await this.fileManager.getProviderOf()
+    if (provider) {
+      provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
+      provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
     }
     this.updateRunAction()
   }
