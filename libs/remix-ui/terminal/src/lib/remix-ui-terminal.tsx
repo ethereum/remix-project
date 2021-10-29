@@ -92,7 +92,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     if (logHtmlResponse.length > 0) {
       scriptRunnerDispatch({ type: 'html', payload: { message: logHtmlResponse.slice(logState.htmlLogIndex) } })
       setLogState(prevState => ({ ...prevState, htmlLogIndex: logHtmlResponse.length }))
-    }    
+    }
   }, [logHtmlResponse.length])
 
   useEffect(() => {
