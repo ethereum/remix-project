@@ -293,7 +293,6 @@ class FileProvider {
       return ret
     } catch (error) {
       if (cb) cb(error, null)
-      throw new Error(error)
     }
   }
 

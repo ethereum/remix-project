@@ -744,10 +744,10 @@ class FileManager extends Plugin {
     if (!fileProvider) fileProvider = 'browser'
     if (override === undefined) override = false
 
-    async.each(Object.keys(filesSet), (file, callback) => {
+    async.each(Object.keys(filesSet), async (file, callback) => {
       if (override) {
         try {
-          self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
+          await self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
         } catch (e) {
           return callback(e.message || e)
         }
@@ -756,14 +756,15 @@ class FileManager extends Plugin {
       }
 
       helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
-        (error, name) => {
+        async (error, name) => {
           if (error) {
             modalDialogCustom.alert('Unexpected error loading the file ' + error)
           } else if (helper.checkSpecialChars(name)) {
             modalDialogCustom.alert('Special characters are not allowed')
           } else {
             try {
-              self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+              console.log('set ', fileProvider, name, filesSet[file].content)
+              await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
             } catch (e) {
               return callback(e.message || e)
             }

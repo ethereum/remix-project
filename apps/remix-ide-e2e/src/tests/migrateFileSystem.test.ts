@@ -9,7 +9,7 @@ module.exports = {
   'Should have README file with TEST README as content': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="verticalIconsFileExplorerIcons"]')
-      .openFile('README.txt')
+      .openFile('TEST_README.txt')
       .getEditorValue((content) => {
         browser.assert.equal(content, 'TEST README')
       })

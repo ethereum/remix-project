@@ -58,8 +58,10 @@ function GistHandler (_window) {
 
           obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
         })
+        console.log('loading gist', obj)
         fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
           if (!errorLoadingFile) {
+            console.log('gist loaded')
             const provider = fileManager.getProvider('workspace')
             provider.lastLoadedGistId = gistId
           } else {
