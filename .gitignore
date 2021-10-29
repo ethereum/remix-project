@@ -52,5 +52,5 @@ testem.log
 
 # System Files
 .DS_Store
-.vscode/launch.json
 .vscode/settings.json
+.vscode/launch.json

@@ -12,7 +12,7 @@ npx nx serve remix-ide-e2e-src-local-plugin &
 sleep 5
 
 npm run build:e2e
-npm run nightwatch_local_pluginManager || TEST_EXITCODE=1
+npm run nightwatch_local_pluginApi || TEST_EXITCODE=1
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
