@@ -57,6 +57,8 @@ declare module 'nightwatch' {
         checkAnnotationsNotPresent(type: string): NightwatchBrowser
         getLastTransactionHash(callback: (hash: string) => void)
         currentWorkspaceIs(name: string): NightwatchBrowser
+        addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile): NightwatchBrowser
+        acceptAndRemember (this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
