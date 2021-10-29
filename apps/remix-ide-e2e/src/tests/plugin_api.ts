@@ -237,10 +237,11 @@ module.exports = {
       await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
     })
   },
-  // 'Should rename workspace': async function (browser: NightwatchBrowser) {
-  //  await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
-  //  await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
-  // },
+
+  'Should rename workspace': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
+  },
   // DGIT
   'Should have changes on new workspace': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
