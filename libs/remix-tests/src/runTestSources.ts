@@ -1,9 +1,7 @@
 import async, { ErrorCallback } from 'async'
-
-import { compileContractSources } from './compiler'
+import { compileContractSources, writeTestAccountsContract } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
-
 import Web3 from 'web3'
 import { EventEmitter } from 'events'
 import { Provider, extend } from '@remix-project/remix-simulator'
@@ -15,13 +13,22 @@ require('colors')
 
 export class UnitTestRunner {
   event
+  accountsLibCode
+  testsAccounts: string[] | null
+  web3
 
   constructor () {
     this.event = new EventEmitter()
   }
 
-  async createWeb3Provider () {
-    const web3 = new Web3()
+  async init (web3 = null, accounts = null) {
+    this.web3 = await this.createWeb3Provider(web3)
+    this.testsAccounts = accounts || await this.web3.eth.getAccounts()
+    this.accountsLibCode = writeTestAccountsContract(this.testsAccounts)
+  }
+
+  async createWeb3Provider (optWeb3) {
+    const web3 = optWeb3 || new Web3()
     const provider: any = new Provider()
     await provider.init()
     web3.setProvider(provider)
@@ -42,30 +49,23 @@ export class UnitTestRunner {
   async runTestSources (contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, deployCb:any, finalCallback: any, importFileCb, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
-    const web3 = opts.web3 || await this.createWeb3Provider()
-    let accounts: string[] | null = opts.accounts || null
+    if (opts.web3 || opts.accounts) this.init(opts.web3, opts.accounts)
+
     async.waterfall([
-      function getAccountList (next) {
-        if (accounts) return next()
-        web3.eth.getAccounts((_err, _accounts) => {
-          accounts = _accounts
-          next()
-        })
-      },
       (next) => {
-        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts, testFilePath: opts.testFilePath, event: this.event }, next)
+        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts: this.testsAccounts, testFilePath: opts.testFilePath, event: this.event }, next)
       },
-      function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
+      (compilationResult: compilationInterface, asts: ASTInterface, next) => {
         for (const filename in asts) {
           if (filename.endsWith('_test.sol')) { sourceASTs[filename] = asts[filename].ast }
         }
-        deployAll(compilationResult, web3, false, deployCb, (err, contracts) => {
+        deployAll(compilationResult, this.web3, false, deployCb, (err, contracts) => {
           if (err) {
             // If contract deployment fails because of 'Out of Gas' error, try again with double gas
             // This is temporary, should be removed when remix-tests will have a dedicated UI to
             // accept deployment params from UI
             if (err.message.includes('The contract code couldn\'t be stored, please check your gas limit')) {
-              deployAll(compilationResult, web3, true, deployCb, (error, contracts) => {
+              deployAll(compilationResult, this.web3, true, deployCb, (error, contracts) => {
                 if (error) next([{ message: 'contract deployment failed after trying twice: ' + error.message, severity: 'error' }]) // IDE expects errors in array
                 else next(null, compilationResult, contracts)
               })
@@ -88,7 +88,7 @@ export class UnitTestRunner {
         }
         next(null, contractsToTest, contractsToTestDetails, contracts)
       },
-      function runTests (contractsToTest: string[], contractsToTestDetails: any[], contracts: any, next) {
+      (contractsToTest: string[], contractsToTestDetails: any[], contracts: any, next) => {
         let totalPassing = 0
         let totalFailing = 0
         let totalTime = 0
@@ -111,7 +111,7 @@ export class UnitTestRunner {
 
         async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
           const fileAST: AstNode = sourceASTs[contracts[contractName]['filename']]
-          runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts, web3 }, _testCallback, (err, result) => {
+          runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts: this.testsAccounts, web3: this.web3 }, _testCallback, (err, result) => {
             if (err) {
               return cb(err)
             }
