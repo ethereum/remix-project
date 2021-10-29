@@ -456,7 +456,7 @@ class FileManager extends Plugin {
     return this._deps.config.get('currentFile')
   }
 
-  closeAllFiles () {
+  async closeAllFiles () {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
     this.events.emit('filesAllClosed')
@@ -465,7 +465,7 @@ class FileManager extends Plugin {
     }
   }
 
-  closeFile (name) {
+  async closeFile (name) {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')

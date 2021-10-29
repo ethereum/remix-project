@@ -44,19 +44,32 @@ export class TabProxy extends Plugin {
 
     fileManager.events.on('fileRemoved', (name) => {
       const workspace = this.fileManager.currentWorkspace()
-      workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
+
+      if (this.fileManager.mode === 'browser') {
+        name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
+        this.removeTab(name)
+      } else {
+        name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
+        this.removeTab(name)
+      }
     })
 
     fileManager.events.on('fileClosed', (name) => {
       const workspace = this.fileManager.currentWorkspace()
 
-      workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
+      if (this.fileManager.mode === 'browser') {
+        name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
+        this.removeTab(name)
+      } else {
+        name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
+        this.removeTab(name)
+      }
     })
 
     fileManager.events.on('currentFileChanged', (file) => {
       const workspace = this.fileManager.currentWorkspace()
 
-      if (workspace) {
+      if (this.fileManager.mode === 'browser') {
         const workspacePath = workspace + '/' + file
 
         if (this._handlers[workspacePath]) {
@@ -72,7 +85,7 @@ export class TabProxy extends Plugin {
           this.event.emit('closeFile', file)
         })
       } else {
-        const path = this.fileManager.mode + '/' + file
+        const path = file.startsWith(this.fileManager.mode + '/') ? file : this.fileManager.mode + '/' + file
 
         if (this._handlers[path]) {
           this._view.filetabs.activateTab(path)
@@ -92,7 +105,7 @@ export class TabProxy extends Plugin {
     fileManager.events.on('fileRenamed', (oldName, newName, isFolder) => {
       const workspace = this.fileManager.currentWorkspace()
 
-      if (workspace) {
+      if (this.fileManager.mode === 'browser') {
         if (isFolder) {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(workspace + '/' + oldName + '/') === 0) {
@@ -115,7 +128,7 @@ export class TabProxy extends Plugin {
           return
         }
         // should change the tab title too
-        this.renameTab(this.fileManager.mode + '/' + oldName, workspace + '/' + newName)
+        this.renameTab(this.fileManager.mode + '/' + oldName, this.fileManager.mode + '/' + newName)
       }
     })
 
