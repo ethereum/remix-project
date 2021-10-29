@@ -15,37 +15,35 @@ module.exports = {
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
-      .waitForElementVisible('*[data-id="editorInput"]')
-      .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
+      .waitForElementVisible('#editorView')
+      .checkElementStyle('.view-lines', 'font-size', '14px')
       .click('*[data-id="tabProxyZoomIn"]')
       .click('*[data-id="tabProxyZoomIn"]')
-      .checkElementStyle('*[data-id="editorInput"]', 'font-size', '14px')
+      .checkElementStyle('.view-lines', 'font-size', '16px')
   },
 
   'Should zoom out editor': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
-      .checkElementStyle('*[data-id="editorInput"]', 'font-size', '14px')
+    browser.waitForElementVisible('#editorView')
+      .checkElementStyle('.view-lines', 'font-size', '16px')
       .click('*[data-id="tabProxyZoomOut"]')
       .click('*[data-id="tabProxyZoomOut"]')
-      .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
+      .checkElementStyle('.view-lines', 'font-size', '14px')
   },
 
   'Should display compile error in editor': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
-      .waitForElementVisible('*[class="ace_content"]')
-      .click('*[class="ace_content"]')
-      .editorScroll('down', 27) // scroll down to line 27 and add the error word
-      .sendKeys('*[class="ace_text-input"]', 'error')
-      .waitForElementVisible('.ace_error', 120000)
-      .checkAnnotations('error', 28)
+    browser.waitForElementVisible('#editorView')
+      .setEditorValue(storageContractWithError + 'error')
+      .pause(2000)
+      .waitForElementVisible('.margin-view-overlays .fa-exclamation-square', 120000)
+      .checkAnnotations('fa-exclamation-square', 29) // error
       .clickLaunchIcon('udapp')
-      .checkAnnotationsNotPresent('error')
+      .checkAnnotationsNotPresent('fa-exclamation-square') // error
       .clickLaunchIcon('solidity')
-      .checkAnnotations('error', 28)
+      .checkAnnotations('fa-exclamation-square', 29) // error
   },
 
-  'Should minimize and maximize codeblock in editor': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
+  'Should minimize and maximize codeblock in editor': '' + function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('#editorView')
       .waitForElementVisible('.ace_open')
       .click('.ace_start:nth-of-type(1)')
       .waitForElementVisible('.ace_closed')
@@ -54,27 +52,29 @@ module.exports = {
   },
 
   'Should add breakpoint to editor': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
-      .waitForElementNotPresent('.ace_breakpoint')
-      .click('.ace_gutter-cell:nth-of-type(1)')
-      .waitForElementVisible('.ace_breakpoint')
+    browser.waitForElementVisible('#editorView')
+      .waitForElementNotPresent('.margin-view-overlays .fa-circle')
+      .execute(() => {
+        (window as any).addRemixBreakpoint(1)
+      }, [], () => {})
+      .waitForElementVisible('.margin-view-overlays .fa-circle')
   },
 
-  'Should load syntax highlighter for ace light theme': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
+  'Should load syntax highlighter for ace light theme': '' + function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('#editorView')
       .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
       .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.light.comment)
       .checkElementStyle('.ace_function', 'color', aceThemes.light.function)
       .checkElementStyle('.ace_variable', 'color', aceThemes.light.variable)
   },
 
-  'Should load syntax highlighter for ace dark theme': function (browser: NightwatchBrowser) {
+  'Should load syntax highlighter for ace dark theme': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
       .click('*[data-id="verticalIconsKindsettings"]')
       .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
       .click('*[data-id="settingsTabThemeLabelDark"]')
       .pause(2000)
-      .waitForElementVisible('*[data-id="editorInput"]')
+      .waitForElementVisible('#editorView')
     /* @todo(#2863) ch for class and not colors
     .checkElementStyle('.ace_keyword', 'color', aceThemes.dark.keyword)
     .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)
@@ -87,24 +87,21 @@ module.exports = {
     // include all files here because switching between plugins in side-panel removes highlight
     browser
       .addFile('sourcehighlight.js', sourcehighlightScript)
-      .addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
       .addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
       .openFile('sourcehighlight.js')
       .executeScript('remix.exeCurrent()')
-      .editorScroll('down', 60)
-      .pause(1000)
-      .waitForElementPresent('.highlightLine32', 60000)
-      .pause(1000)
-      .checkElementStyle('.highlightLine32', 'background-color', 'rgb(8, 108, 181)')
-      .pause(1000)
-      .waitForElementPresent('.highlightLine40', 60000)
-      .pause(1000)
-      .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
-      .waitForElementPresent('.highlightLine50', 60000)
-      .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
+      .scrollToLine(32)
+      .waitForElementPresent('.highlightLine33', 60000)
+      .checkElementStyle('.highlightLine33', 'background-color', 'rgb(52, 152, 219)')
+      .scrollToLine(40)
+      .waitForElementPresent('.highlightLine41', 60000)
+      .checkElementStyle('.highlightLine41', 'background-color', 'rgb(52, 152, 219)')
+      .scrollToLine(50)
+      .waitForElementPresent('.highlightLine51', 60000)
+      .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
-  'Should remove 1 highlight from source code': function (browser: NightwatchBrowser) {
+  'Should remove 1 highlight from source code': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
       .click('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
       .pause(2000)
@@ -113,9 +110,9 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
-      .waitForElementNotPresent('.highlightLine32', 60000)
-      .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
-      .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
+      .waitForElementNotPresent('.highlightLine33', 60000)
+      .checkElementStyle('.highlightLine41', 'background-color', 'rgb(52, 152, 219)')
+      .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
   'Should remove all highlights from source code': function (browser: NightwatchBrowser) {
@@ -126,9 +123,9 @@ module.exports = {
       .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .pause(2000)
-      .waitForElementNotPresent('.highlightLine32', 60000)
-      .waitForElementNotPresent('.highlightLine40', 60000)
-      .waitForElementNotPresent('.highlightLine50', 60000)
+      .waitForElementNotPresent('.highlightLine33', 60000)
+      .waitForElementNotPresent('.highlightLine41', 60000)
+      .waitForElementNotPresent('.highlightLine51', 60000)
       .end()
   }
 }
@@ -152,6 +149,7 @@ const sourcehighlightScript = {
   content: `
   (async () => {
     try {
+        await remix.call('fileManager', 'open', 'contracts/3_Ballot.sol')
         const pos = {
             start: {
                 line: 32,
@@ -194,18 +192,6 @@ const sourcehighlightScript = {
   `
 }
 
-const removeSourcehighlightScript = {
-  content: `
-  (async () => {
-    try {
-        await remix.call('editor', 'discardHighlightAt', 32, 'contracts/3_Ballot.sol')         
-    } catch (e) {
-        console.log(e.message)
-    }
-  })()
-  `
-}
-
 const removeAllSourcehighlightScript = {
   content: `
   (async () => {
@@ -217,3 +203,33 @@ const removeAllSourcehighlightScript = {
   })()
   `
 }
+
+const storageContractWithError = `
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+/**
+ * @title Storage
+ * @dev Store & retrieve value in a variable
+ */
+contract Storage {
+
+    uint256 number;
+
+    /**
+     * @dev Store value in variable
+     * @param num value to store
+     */
+    function store(uint256 num) public {
+        number = num;
+    }
+
+    /**
+     * @dev Return value 
+     * @return value of 'number'
+     */
+    function retrieve() public view returns (uint256){
+        return number;
+    }
+}`

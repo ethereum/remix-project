@@ -74,6 +74,14 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  async onActivation () {
+    const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
+    if (!isSolidityActive) {
+      await this.call('manager', 'activatePlugin', 'solidity')
+    }
+    this.updateRunAction()
+  }
+
   onDeactivation () {
     this.off('filePanel', 'newTestFileCreated')
     this.off('filePanel', 'setWorkspace')
@@ -215,7 +223,7 @@ module.exports = class TestTab extends ViewPlugin {
         runningTests[fileName].content
       )
       await this.call('editor', 'discardHighlight')
-      await this.call('editor', 'highlight', location, fileName)
+      await this.call('editor', 'highlight', location, fileName, '', { focus: true })
     }
   }
 
@@ -637,7 +645,6 @@ module.exports = class TestTab extends ViewPlugin {
         el.setAttribute('title', 'No solidity file selected')
       } else {
         el.setAttribute('title', 'The "Solidity Plugin" should be activated')
-        // @todo(#2747)  we can activate the plugin here
       }
     }
     if (!this.runActionElement) {
