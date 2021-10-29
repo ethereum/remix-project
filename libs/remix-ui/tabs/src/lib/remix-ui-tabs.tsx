@@ -33,7 +33,6 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
-    console.log('renderTab', index, currentIndexRef.current)
     const classNameTab = 'nav-item nav-link tab' + (index === currentIndexRef.current ? ' active' : '')
     return (
       <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
