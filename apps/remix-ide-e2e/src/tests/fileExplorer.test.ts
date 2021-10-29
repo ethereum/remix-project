@@ -68,9 +68,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
       .rightClick('[data-path="Browser_E2E_Tests"]')
       .click('*[id="menuitemdelete"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]', 60000)
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', 60000)
       .pause(2000)
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
   },
 
@@ -81,13 +81,13 @@ module.exports = {
       .pause(10000)
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]', 60000)
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', 60000)
       .pause(2000)
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .pause(2000)
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]', 60000)
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', 60000)
       .pause(2000)
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .pause(2000)
       .perform((done) => {
         if (runtimeBrowser === 'chrome') {
@@ -101,6 +101,7 @@ module.exports = {
 
   'Should open local filesystem explorer': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
+      .click('[data-id="remixUIWorkspaceExplorer"]')
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)

@@ -88,9 +88,6 @@
     "remix-ui-toaster": {
       "tags": []
     },
-    "remix-ui-file-explorer": {
-      "tags": []
-    },
     "debugger": {
       "tags": []
     },
@@ -131,6 +128,9 @@
       "tags": []
     },
     "remix-ui-editor": {
+      "tags": []
+    },
+    "remix-ui-helper": {
       "tags": []
     }
   },

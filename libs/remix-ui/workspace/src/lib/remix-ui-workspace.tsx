@@ -1,200 +1,54 @@
-import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
-import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
-import './remix-ui-workspace.css'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
-import { MenuItems } from 'libs/remix-ui/file-explorer/src/lib/types'
+import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
+import { FileExplorer } from './components/file-explorer' // eslint-disable-line
+import './css/remix-ui-workspace.css'
+import { FileSystemContext } from './contexts'
 
-/* eslint-disable-next-line */
-export interface WorkspaceProps {
-  setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
-  createWorkspace: (name: string) => void,
-  renameWorkspace: (oldName: string, newName: string) => void
-  workspaceRenamed: ({ name: string }) => void,
-  workspaceCreated: ({ name: string }) => void,
-  workspaceDeleted: ({ name: string }) => void,
-  workspace: any // workspace provider,
-  browser: any // browser provider
-  localhost: any // localhost provider
-  fileManager : any
-  registry: any // registry
-  plugin: any // plugin call and resetFocus
-  request: any // api request,
-  workspaces: any,
-  registeredMenuItems: MenuItems // menu items
-  removedMenuItems: MenuItems
-  initialWorkspace: string
-}
+const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
-var canUpload = window.File || window.FileReader || window.FileList || window.Blob
-export const Workspace = (props: WorkspaceProps) => {
+export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
-
-  /* extends the parent 'plugin' with some function needed by the file explorer */
-  props.plugin.resetFocus = (reset) => {
-    setState(prevState => {
-      return { ...prevState, reset }
-    })
-  }
-
-  props.plugin.resetNewFile = () => {
-    setState(prevState => {
-      return { ...prevState, displayNewFile: !state.displayNewFile }
-    })
-  }
-
-  props.plugin.resetUploadFile = () => {}
-
-  /* implement an external API, consumed by the parent */
-  props.request.createWorkspace = () => {
-    return createWorkspace()
-  }
-
-  props.request.setWorkspace = (workspaceName) => {
-    return setWorkspace(workspaceName)
-  }
-
-  props.request.createNewFile = async () => {
-    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
-    props.plugin.resetNewFile()
-  }
-
-  props.request.uploadFile = async (target) => {
-    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
-
-    setState(prevState => {
-      return { ...prevState, uploadFileEvent: target }
-    })
-  }
-
-  props.request.getCurrentWorkspace = () => {
-    return { name: state.currentWorkspace, isLocalhost: state.currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${state.currentWorkspace}` }
-  }
+  const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
+  const global = useContext(FileSystemContext)
+  const workspaceRenameInput = useRef()
+  const workspaceCreateInput = useRef()
 
   useEffect(() => {
-    let getWorkspaces = async () => {
-      if (props.workspaces && Array.isArray(props.workspaces)) {
-        if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
-          const currentWorkspace = props.workspace.getWorkspace() ? props.workspace.getWorkspace() : props.workspaces[0]
-          await props.workspace.setWorkspace(currentWorkspace)
-          setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace }
-          })
-        } else {
-          setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces }
-          })
-        }
-      }
-    }
-
-    getWorkspaces()
-
-    return () => {
-      getWorkspaces = async () => {}
-    }
-  }, [props.workspaces])
-
-  const localhostDisconnect = () => {
-    if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
-    // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
-    else {
-      setWorkspace(state.currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
-      props.fileManager.setMode('browser')
-    }
-  }
-
-  useEffect(() => {
-    props.localhost.event.off('disconnected', localhostDisconnect)
-    props.localhost.event.on('disconnected', localhostDisconnect)
-    props.localhost.event.on('connected', () => {
-      remixdExplorer.show()
-      setWorkspace(LOCALHOST)
-    })
-
-    props.localhost.event.on('disconnected', () => {
-      remixdExplorer.hide()
-    })
-
-    props.localhost.event.on('loading', () => {
-      remixdExplorer.loading()
-    })
-
-    props.workspace.event.on('createWorkspace', (name) => {
-      createNewWorkspace(name)
-    })
-
-    if (props.initialWorkspace) {
-      props.workspace.setWorkspace(props.initialWorkspace)
-      setState(prevState => {
-        return { ...prevState, currentWorkspace: props.initialWorkspace }
-      })
-    }
+    resetFocus()
   }, [])
 
-  const createNewWorkspace = async (workspaceName) => {
-    try {
-      await props.fileManager.closeAllFiles()
-      await props.createWorkspace(workspaceName)
-      await setWorkspace(workspaceName)
-      toast('New default workspace has been created.')
-    } catch (e) {
-      modalMessage('Create Default Workspace', e.message)
-      console.error(e)
+  useEffect(() => {
+    if (global.fs.mode === 'browser') {
+      if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
+      else setCurrentWorkspace(NO_WORKSPACE)
+      global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
+    } else if (global.fs.mode === 'localhost') {
+      // global.dispatchFetchWorkspaceDirectory('/')
+      setCurrentWorkspace(LOCALHOST)
     }
-  }
+  }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
 
-  const [state, setState] = useState({
-    workspaces: [],
-    reset: false,
-    currentWorkspace: NO_WORKSPACE,
-    hideRemixdExplorer: true,
-    displayNewFile: false,
-    externalUploads: null,
-    uploadFileEvent: null,
-    modal: {
-      hide: true,
-      title: '',
-      message: null,
-      okLabel: '',
-      okFn: () => {},
-      cancelLabel: '',
-      cancelFn: () => {},
-      handleHide: null
-    },
-    loadingLocalhost: false,
-    toasterMsg: ''
-  })
-
-  const toast = (message: string) => {
-    setState(prevState => {
-      return { ...prevState, toasterMsg: message }
-    })
-  }
-
-  /* workspace creation, renaming and deletion */
+  useEffect(() => {
+    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.includes(global.fs.browser.currentWorkspace)) {
+      if (global.fs.browser.workspaces.length > 0) {
+        switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1])
+      } else {
+        switchWorkspace(NO_WORKSPACE)
+      }
+    }
+  }, [global.fs.browser.workspaces])
 
   const renameCurrentWorkspace = () => {
-    modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '', () => {})
+    global.modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
   }
 
   const createWorkspace = () => {
-    modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '', () => {})
+    global.modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '')
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '', () => {})
+    global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
   }
-
-  const modalMessage = (title: string, body: string) => {
-    setTimeout(() => { // wait for any previous modal a chance to close
-      modal(title, body, 'OK', () => {}, '', null)
-    }, 200)
-  }
-
-  const workspaceRenameInput = useRef()
-  const workspaceCreateInput = useRef()
 
   const onFinishRenameWorkspace = async () => {
     if (workspaceRenameInput.current === undefined) return
@@ -202,11 +56,9 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceRenameInput.current.value
 
     try {
-      await props.renameWorkspace(state.currentWorkspace, workspaceName)
-      setWorkspace(workspaceName)
-      props.workspaceRenamed({ name: workspaceName })
+      await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
-      modalMessage('Rename Workspace', e.message)
+      global.modal('Rename Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
     }
   }
@@ -217,105 +69,40 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceCreateInput.current.value
 
     try {
-      await props.fileManager.closeAllFiles()
-      await props.createWorkspace(workspaceName)
-      await setWorkspace(workspaceName)
+      await global.dispatchCreateWorkspace(workspaceName)
     } catch (e) {
-      modalMessage('Create Workspace', e.message)
+      global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
     }
   }
 
   const onFinishDeleteWorkspace = async () => {
-    await props.fileManager.closeAllFiles()
-    const workspacesPath = props.workspace.workspacesPath
-    props.browser.remove(workspacesPath + '/' + state.currentWorkspace)
-    const name = state.currentWorkspace
-    setWorkspace(NO_WORKSPACE)
-    props.workspaceDeleted({ name })
+    try {
+      await global.dispatchDeleteWorkspace(global.fs.browser.currentWorkspace)
+    } catch (e) {
+      global.modal('Delete Workspace', e.message, 'OK', () => {}, '')
+      console.error(e)
+    }
   }
   /** ** ****/
 
-  const resetFocus = (reset) => {
-    setState(prevState => {
-      return { ...prevState, reset }
-    })
+  const resetFocus = () => {
+    global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
   }
 
-  const setWorkspace = async (name) => {
-    await props.fileManager.closeAllFiles()
-    if (name === LOCALHOST) {
-      props.workspace.clearWorkspace()
-    } else if (name === NO_WORKSPACE) {
-      props.workspace.clearWorkspace()
-    } else {
-      await props.workspace.setWorkspace(name)
+  const switchWorkspace = async (name: string) => {
+    try {
+      await global.dispatchSwitchToWorkspace(name)
+      global.dispatchHandleExpandPath([])
+    } catch (e) {
+      global.modal('Switch To Workspace', e.message, 'OK', () => {}, '')
+      console.error(e)
     }
-    await props.setWorkspace({ name, isLocalhost: name === LOCALHOST }, !(name === LOCALHOST || name === NO_WORKSPACE))
-    props.plugin.getWorkspaces()
-    setState(prevState => {
-      return { ...prevState, currentWorkspace: name }
-    })
-  }
-
-  const remixdExplorer = {
-    hide: async () => {
-      // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
-      // if (props.fileManager.mode === 'localhost') {
-      await setWorkspace(NO_WORKSPACE)
-      props.fileManager.setMode('browser')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-      })
-      // } else {
-      //   // Hide spinner in file explorer
-      //   setState(prevState => {
-      //     return { ...prevState, loadingLocalhost: false }
-      //   })
-      // }
-    },
-    show: () => {
-      props.fileManager.setMode('localhost')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
-      })
-    },
-    loading: () => {
-      setState(prevState => {
-        return { ...prevState, loadingLocalhost: true }
-      })
-    }
-  }
-
-  const handleHideModal = () => {
-    setState(prevState => {
-      return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
-    })
-  }
-  // eslint-disable-next-line no-undef
-  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
-    await setState(prevState => {
-      return {
-        ...prevState,
-        modal: {
-          ...prevState.modal,
-          hide: false,
-          message,
-          title,
-          okLabel,
-          okFn,
-          cancelLabel,
-          cancelFn,
-          handleHide: handleHideModal
-        }
-      }
-    })
   }
 
   const createModalMessage = () => {
     return (
       <>
-        <span>{ state.modal.message }</span>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
     )
@@ -324,29 +111,14 @@ export const Workspace = (props: WorkspaceProps) => {
   const renameModalMessage = () => {
     return (
       <>
-        <span>{ state.modal.message }</span>
-        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
   }
 
   return (
     <div className='remixui_container'>
-      { state.modal.message && <ModalDialog
-        id='workspacesModalDialog'
-        title={ state.modal.title }
-        message={ state.modal.message }
-        hide={ state.modal.hide }
-        okLabel={ state.modal.okLabel }
-        okFn={ state.modal.okFn }
-        cancelLabel={ state.modal.cancelLabel }
-        cancelFn={ state.modal.cancelFn }
-        handleHide={ handleHideModal }>
-        { (typeof state.modal.message !== 'string') && state.modal.message }
-      </ModalDialog>
-      }
-      <Toaster message={state.toasterMsg} />
-      <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
+      <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
             <div className="mb-2">
@@ -365,7 +137,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Create'>
                 </span>
                 <span
-                  hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspaceRename'
                   data-id='workspaceRename'
                   onClick={(e) => {
@@ -376,7 +148,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Rename'>
                 </span>
                 <span
-                  hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspaceDelete'
                   data-id='workspaceDelete'
                   onClick={(e) => {
@@ -387,15 +159,15 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Delete'>
                 </span>
               </span>
-              <select id="workspacesSelect" value={state.currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {
-                  state.workspaces
+                  global.fs.browser.workspaces
                     .map((folder, index) => {
                       return <option key={index} value={folder}>{folder}</option>
                     })
                 }
-                <option value={LOCALHOST}>{state.currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
-                { state.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
+                <option value={LOCALHOST}>{currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
+                { global.fs.browser.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
               </select>
             </div>
           </header>
@@ -403,34 +175,70 @@ export const Workspace = (props: WorkspaceProps) => {
         <div className='remixui_fileExplorerTree'>
           <div>
             <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-              { state.hideRemixdExplorer && state.currentWorkspace && state.currentWorkspace !== NO_WORKSPACE && state.currentWorkspace !== LOCALHOST &&
+              { (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
                   <FileExplorer
-                    name={state.currentWorkspace}
-                    registry={props.registry}
-                    filesProvider={props.workspace}
+                    name={currentWorkspace}
                     menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                    plugin={props.plugin}
-                    focusRoot={state.reset}
-                    contextMenuItems={props.registeredMenuItems}
-                    removedContextMenuItems={props.removedMenuItems}
-                    displayInput={state.displayNewFile}
-                    externalUploads={state.uploadFileEvent}
+                    contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
+                    removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
+                    files={global.fs.browser.files}
+                    expandPath={global.fs.browser.expandPath}
+                    focusEdit={global.fs.focusEdit}
+                    focusElement={global.fs.focusElement}
+                    dispatchCreateNewFile={global.dispatchCreateNewFile}
+                    modal={global.modal}
+                    dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                    readonly={global.fs.readonly}
+                    toast={global.toast}
+                    dispatchDeletePath={global.dispatchDeletePath}
+                    dispatchRenamePath={global.dispatchRenamePath}
+                    dispatchUploadFile={global.dispatchUploadFile}
+                    dispatchCopyFile={global.dispatchCopyFile}
+                    dispatchCopyFolder={global.dispatchCopyFolder}
+                    dispatchPublishToGist={global.dispatchPublishToGist}
+                    dispatchRunScript={global.dispatchRunScript}
+                    dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                    dispatchHandleClickFile={global.dispatchHandleClickFile}
+                    dispatchSetFocusElement={global.dispatchSetFocusElement}
+                    dispatchFetchDirectory={global.dispatchFetchDirectory}
+                    dispatchRemoveInputField={global.dispatchRemoveInputField}
+                    dispatchAddInputField={global.dispatchAddInputField}
+                    dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   />
               }
             </div>
             {
-              state.loadingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
+              global.fs.localhost.isRequestingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
                 : <div className='pl-2 filesystemexplorer remixui_treeview'>
-                  { !state.hideRemixdExplorer &&
+                  { global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost &&
                       <FileExplorer
                         name='localhost'
-                        registry={props.registry}
-                        filesProvider={props.localhost}
                         menuItems={['createNewFile', 'createNewFolder']}
-                        plugin={props.plugin}
-                        focusRoot={state.reset}
-                        contextMenuItems={props.registeredMenuItems}
-                        removedContextMenuItems={props.removedMenuItems}
+                        contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
+                        removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
+                        files={global.fs.localhost.files}
+                        expandPath={global.fs.localhost.expandPath}
+                        focusEdit={global.fs.focusEdit}
+                        focusElement={global.fs.focusElement}
+                        dispatchCreateNewFile={global.dispatchCreateNewFile}
+                        modal={global.modal}
+                        dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                        readonly={global.fs.readonly}
+                        toast={global.toast}
+                        dispatchDeletePath={global.dispatchDeletePath}
+                        dispatchRenamePath={global.dispatchRenamePath}
+                        dispatchUploadFile={global.dispatchUploadFile}
+                        dispatchCopyFile={global.dispatchCopyFile}
+                        dispatchCopyFolder={global.dispatchCopyFolder}
+                        dispatchPublishToGist={global.dispatchPublishToGist}
+                        dispatchRunScript={global.dispatchRunScript}
+                        dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                        dispatchHandleClickFile={global.dispatchHandleClickFile}
+                        dispatchSetFocusElement={global.dispatchSetFocusElement}
+                        dispatchFetchDirectory={global.dispatchFetchDirectory}
+                        dispatchRemoveInputField={global.dispatchRemoveInputField}
+                        dispatchAddInputField={global.dispatchAddInputField}
+                        dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                       />
                   }
                 </div>
