@@ -1,6 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
+const remixTests = require('@remix-project/remix-tests')
 
 const profile = {
   name: 'contentImport',
@@ -116,6 +117,7 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath) {
+    if (url.indexOf('remix_tests.sol') !== -1) return remixTests.assertLibCode
     try {
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
