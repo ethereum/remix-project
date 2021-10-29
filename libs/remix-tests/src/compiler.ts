@@ -6,18 +6,13 @@ import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 const logger = new Log()
 const log = logger.logger
-var accountsLibCode
-
-export function getAccountsLib () {
-  return accountsLibCode
-}
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
   const indexOf = inputString.substring(startpos).search(regex)
   return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
 }
 
-function writeTestAccountsContract (accounts: string[]) {
+export function writeTestAccountsContract (accounts: string[]) {
   const testAccountContract = require('../sol/tests_accounts.sol')
   let body = `address[${accounts.length}] memory accounts;`
   if (!accounts.length) body += ';'
@@ -26,7 +21,7 @@ function writeTestAccountsContract (accounts: string[]) {
       body += `\n\t\taccounts[${index}] = ${address};\n`
     })
   }
-  accountsLibCode = testAccountContract.replace('>accounts<', body)
+  return testAccountContract.replace('>accounts<', body)
 }
 
 /**
@@ -92,11 +87,10 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
 export function compileFileOrFiles (filename: string, isDirectory: boolean, opts: any, compilerConfig: CompilerConfiguration, cb): void {
   let compiler: any
   const accounts: string[] = opts.accounts || []
-  writeTestAccountsContract(accounts)
   const sources: SrcIfc = {
     'tests.sol': { content: require('../sol/tests.sol') },
     'remix_tests.sol': { content: require('../sol/tests.sol') },
-    'remix_accounts.sol': { content: getAccountsLib() }
+    'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
   }
   const filepath: string = (isDirectory ? filename : path.dirname(filename))
   try {
@@ -178,8 +172,6 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  */
 export function compileContractSources (sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb): void {
   let compiler
-  const accounts: string[] = opts.accounts || []
-  writeTestAccountsContract(accounts)
   const filepath = opts.testFilePath || ''
   const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
