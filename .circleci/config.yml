@@ -221,7 +221,7 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
-  remix-ide-plugin-manager:
+  remix-ide-plugin-api:
     docker:
       # specify the version you desire here
       - image: circleci/node:14.17.6-browsers
@@ -249,13 +249,11 @@ jobs:
           name: Start Selenium
           command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
-      - run: ./apps/remix-ide/ci/browser_tests_plugin_manager.sh
+      - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
-
-
   deploy-remix-live:
     docker:
       # specify the version you desire here
@@ -375,6 +373,9 @@ workflows:
       - remix-libs:
           requires:
             - lint
+      - remix-ide-plugin-api:
+          requires:
+            - lint
       - remix-ide-chrome-1:          
           requires:
             - lint
@@ -390,9 +391,6 @@ workflows:
       - remix-ide-run-deploy:          
           requires:
             - lint
-      - remix-ide-plugin-manager:          
-          requires:
-            - lint
       - publish:
           requires:
             - lint
@@ -403,7 +401,7 @@ workflows:
             - remix-ide-firefox-1
             - remix-ide-firefox-2
             - remix-ide-run-deploy
-            - remix-ide-plugin-manager
+            - remix-ide-plugin-api
           filters:
             branches:
               only: remix_live
@@ -414,7 +412,7 @@ workflows:
             - remix-ide-firefox-1
             - remix-ide-firefox-2
             - remix-ide-run-deploy
-            - remix-ide-plugin-manager
+            - remix-ide-plugin-api
           filters:
             branches:
               only: master
@@ -425,7 +423,7 @@ workflows:
             - remix-ide-firefox-1
             - remix-ide-firefox-2
             - remix-ide-run-deploy
-            - remix-ide-plugin-manager
+            - remix-ide-plugin-api
           filters:
             branches:
               only: remix_beta
