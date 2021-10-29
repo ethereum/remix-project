@@ -204,6 +204,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const _setCompilerVersionFromPragma = (filename: string) => {
     if (!state.allversions) return
     api.readFile(filename).then(data => {
+      if (!data) return
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()

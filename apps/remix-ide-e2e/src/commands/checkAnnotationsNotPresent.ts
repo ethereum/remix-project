@@ -3,7 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 
 class checkAnnotationsNotPresent extends EventEmitter {
   command (this: NightwatchBrowser, type: string): NightwatchBrowser {
-    this.api.waitForElementNotPresent(`.ace_${type}`).perform(() => this.emit('complete'))
+    this.api.waitForElementNotPresent(`.margin-view-overlays .${type}`).perform(() => this.emit('complete'))
     return this
   }
 }
