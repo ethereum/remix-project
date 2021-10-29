@@ -104,21 +104,11 @@ class Terminal extends Plugin {
   logHtml (html) {
     this.logHtmlResponse.push(html.innerText)
     this.renderComponent()
-    this.resetLogHtml()
-  }
-
-  resetLogHtml () {
-    this.logHtmlResponse = []
   }
 
   log (message) {
     this.logResponse.push(message)
     this.renderComponent()
-    this.resetLog()
-  }
-
-  resetLog () {
-    this.logResponse = []
   }
 
   render () {
