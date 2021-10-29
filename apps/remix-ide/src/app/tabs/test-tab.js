@@ -16,7 +16,7 @@ const TestTabLogic = require('./testTab/testTab')
 const profile = {
   name: 'solidityUnitTesting',
   displayName: 'Solidity unit testing',
-  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath'],
+  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath', 'getTestlibs'],
   events: [],
   icon: 'assets/img/unitTesting.webp',
   description: 'Fast tool to generate unit tests for your contracts',
@@ -72,6 +72,10 @@ module.exports = class TestTab extends ViewPlugin {
     if (event.path.length > 0) {
       await this.setCurrentPath(event.path[0])
     }
+  }
+
+  getTestlibs() {
+    return { assertLibCode, accountsLibCode: this.testRunner.accountsLibCode}
   }
 
   async onActivation () {
