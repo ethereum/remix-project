@@ -36,7 +36,9 @@ module.exports = {
       .executeScript('remix.exeCurrent()')
       .pause(2000)
       .openFile('new_contract.sol')
-      .assert.containsText('[data-id="editorInput"]', 'pragma solidity ^0.6.0')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('pragma solidity ^0.6.0') !== -1, 'content does not contain "pragma solidity ^0.6.0"')
+      })
   },
 
   'Should execute `readFile` api from file manager external api': function (browser: NightwatchBrowser) {

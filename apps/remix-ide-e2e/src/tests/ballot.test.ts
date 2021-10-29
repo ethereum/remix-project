@@ -81,8 +81,9 @@ module.exports = {
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
-      .click('option[value="web3"]')
-      .pause(5000)
+      .openFile('Untitled.sol')
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
       .execute(function () {
         const env: any = document.getElementById('selectExEnvOptions')
@@ -92,8 +93,8 @@ module.exports = {
         browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
       })
       .clickLaunchIcon('solidity')
-      .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
+      .pause(2000)
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
