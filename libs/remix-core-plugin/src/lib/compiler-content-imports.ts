@@ -1,7 +1,6 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
-const remixTests = require('@remix-project/remix-tests')
 
 const profile = {
   name: 'contentImport',
@@ -118,7 +117,7 @@ export class CompilerImports extends Plugin {
     */
   async resolveAndSave (url, targetPath) {
     if (url.indexOf('remix_tests.sol') !== -1 || url.indexOf('remix_accounts.sol') !== -1) {
-      const {assertLibCode, accountsLibCode} = await this.call('solidityUnitTesting', 'getTestlibs')
+      const { assertLibCode, accountsLibCode } = await this.call('solidityUnitTesting', 'getTestlibs')
       if (url === 'remix_tests.sol') return assertLibCode
       else if (url === 'remix_accounts.sol') return accountsLibCode
     }
