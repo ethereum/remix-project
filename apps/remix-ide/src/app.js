@@ -20,7 +20,7 @@ import { MainPanel } from './app/components/main-panel'
 
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
 
-import migrateFileSystem from './migrateFileSystem'
+
 
 const isElectron = require('is-electron')
 const csjs = require('csjs-inject')
@@ -158,7 +158,7 @@ class App {
 
     registry.put({ api: self._components.filesProviders, name: 'fileproviders' })
 
-    migrateFileSystem(self._components.filesProviders.browser)
+
   }
 
   init () {
