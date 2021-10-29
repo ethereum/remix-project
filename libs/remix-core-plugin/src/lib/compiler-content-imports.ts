@@ -117,7 +117,11 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath) {
-    if (url.indexOf('remix_tests.sol') !== -1) return remixTests.assertLibCode
+    if (url.indexOf('remix_tests.sol') !== -1 || url.indexOf('remix_accounts.sol') !== -1) {
+      const {assertLibCode, accountsLibCode} = await this.call('solidityUnitTesting', 'getTestlibs')
+      if (url === 'remix_tests.sol') return assertLibCode
+      else if (url === 'remix_accounts.sol') return accountsLibCode
+    }
     try {
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
