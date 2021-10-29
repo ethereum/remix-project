@@ -75,16 +75,18 @@ const clickButton = async (browser: NightwatchBrowser, buttonText: string) => {
 
 const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
   return new Promise((resolve) => {
-    browser.frameParent().element('xpath', '//*[@data-id="modalDialogModalBody"]', (visible:any) => {
-      if (visible.status && visible.status === -1) {
+    browser.frameParent(() => {
+      browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible:any) => {
+        if (visible.status && visible.status === -1) {
         // @ts-ignore
-        browser.frame(0, () => { resolve(true) })
-      } else {
-        browser.waitForElementVisible('//*[@id="remember"]').click('//*[@id="remember"]').click('//*[@id="modal-footer-ok"]', () => {
-          // @ts-ignore
           browser.frame(0, () => { resolve(true) })
-        })
-      }
+        } else {
+          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@id="modal-footer-ok"]').click('//*[@id="modal-footer-ok"]', () => {
+          // @ts-ignore
+            browser.frame(0, () => { resolve(true) })
+          })
+        }
+      })
     })
   })
 }
