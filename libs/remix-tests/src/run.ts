@@ -81,8 +81,8 @@ commander
       const compVersion = commander.compiler
       const baseURL = 'https://binaries.soliditylang.org/wasm/'
       const response: AxiosResponse = await axios.get(baseURL + 'list.json')
-      const { releases, latestRelease } = response.data
-      const compString = releases[compVersion]
+      const { releases, latestRelease } = response.data as { releases: string[], latestRelease: string }
+      const compString = releases ? releases[compVersion] : null
       if (!compString) {
         log.error(`No compiler found in releases with version ${compVersion}`)
         process.exit()

@@ -85,7 +85,7 @@ module.exports = {
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         browser
           .click('[data-id="staticAnalysisModuleMiscellaneous1"')
-          .waitForElementPresent('.highlightLine15', 60000)
+          .waitForElementPresent('.highlightLine16', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(
               'function _sendLogPayload(bytes memory payload) private view {') !== -1,
@@ -153,7 +153,6 @@ function runTests (browser: NightwatchBrowser) {
     .clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
     .click('[data-path="folder1"]')
-    .click('[data-path="folder1"]') // click twice because remixd does not return nested folder details after update
     .waitForElementVisible('[data-path="folder1/contract1.sol"]')
     .waitForElementVisible('[data-path="folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
     .waitForElementNotPresent('[data-path="folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present

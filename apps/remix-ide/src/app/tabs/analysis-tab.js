@@ -39,7 +39,11 @@ class AnalysisTab extends ViewPlugin {
     }
   }
 
-  onActivation () {
+  async onActivation () {
+    const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
+    if (!isSolidityActive) {
+      await this.call('manager', 'activatePlugin', 'solidity')
+    }
     this.renderComponent()
   }
 
