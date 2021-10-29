@@ -9,7 +9,7 @@ export interface ChevronProps {
 function Chevron (props: ChevronProps) {
   return (
     <>
-      { props.divElementRef.current && props.divElementRef.current.scrollHeight > props.divElementRef.current.clientHeight
+      { props.divElementRef.current && props.divElementRef.current.scrollHeight > 600
         ? <i className={props.cssRule}></i> : null }
     </>
   )
