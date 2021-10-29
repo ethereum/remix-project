@@ -128,6 +128,25 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+  },
+
+  'Should print hardhat logs': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .addFile('printHardhatlog.sol', { content: hardhatLog })
+      .clickLaunchIcon('solidity')
+      .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
+      .clickLaunchIcon('udapp')
+      .createContract('OwnerSet')
+      .pause(1000)
+      .journalChildIncludes('constructor')
+      .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
+      .pause(1000)
+      .journalChildIncludes('inside changeOwner')
+      .clickFunction('getOwner - call')
+      .pause(1000)
+      .journalChildIncludes('inside getOwner')
       .end()
   }
 }
@@ -238,3 +257,61 @@ const deployWithEthersJs = `
         console.log(e.message)
     }
 })()`
+
+const hardhatLog = `
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+import "hardhat/console.sol";
+
+/**
+ * @title Owner
+ * @dev Set & change owner
+ */
+contract OwnerTest {
+
+    address private owner;
+    
+    // event for EVM logging
+    event OwnerSet(address indexed oldOwner, address indexed newOwner);
+    
+    // modifier to check if caller is owner
+    modifier isOwner() {
+        // If the first argument of 'require' evaluates to 'false', execution terminates and all
+        // changes to the state and to Ether balances are reverted.
+        // This used to consume all gas in old EVM versions, but not anymore.
+        // It is often a good idea to use 'require' to check if functions are called correctly.
+        // As a second argument, you can also provide an explanation about what went wrong.
+        require(msg.sender == owner, "Caller is not owner");
+        _;
+    }
+    
+    /**
+     * @dev Set contract deployer as owner
+     */
+    constructor() {
+        console.log("constructor");
+        owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor
+        emit OwnerSet(address(0), owner);
+    }
+
+    /**
+     * @dev Change owner
+     * @param newOwner address of new owner
+     */
+    function changeOwner(address newOwner) public isOwner {
+        console.log("inside changeOwner");
+        emit OwnerSet(owner, newOwner);
+        owner = newOwner;
+    }
+
+    /**
+     * @dev Return owner address 
+     * @return address of owner
+     */
+    function getOwner() external view returns (address) {
+        console.log("inside getOwner");
+        return owner;
+    }
+}`
