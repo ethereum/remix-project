@@ -68,6 +68,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     commandHistoryIndex: 0
   })
 
+  const [logState, setLogState] = useState({
+    logIndex: 0,
+    htmlLogIndex: 0
+  })
+
   const [searchInput, setSearchInput] = useState('')
   const [showTableHash, setShowTableHash] = useState([])
 
@@ -84,12 +89,18 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    scriptRunnerDispatch({ type: 'html', payload: { message: logHtmlResponse } })
-  }, [logHtmlResponse])
+    if (logHtmlResponse.length > 0) {
+      scriptRunnerDispatch({ type: 'html', payload: { message: logHtmlResponse.slice(logState.htmlLogIndex) } })
+      setLogState(prevState => ({ ...prevState, htmlLogIndex: logHtmlResponse.length }))
+    }    
+  }, [logHtmlResponse.length])
 
   useEffect(() => {
-    scriptRunnerDispatch({ type: 'log', payload: { message: logResponse } })
-  }, [logResponse])
+    if (logResponse.length > 0) {
+      scriptRunnerDispatch({ type: 'log', payload: { message: logResponse.slice(logState.logIndex) } })
+      setLogState(prevState => ({ ...prevState, logIndex: logResponse.length }))
+    }
+  }, [logResponse.length])
 
   // events
   useEffect(() => {
