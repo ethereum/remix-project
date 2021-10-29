@@ -74,8 +74,8 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  getTestlibs() {
-    return { assertLibCode, accountsLibCode: this.testRunner.accountsLibCode}
+  getTestlibs () {
+    return { assertLibCode, accountsLibCode: this.testRunner.accountsLibCode }
   }
 
   async onActivation () {
