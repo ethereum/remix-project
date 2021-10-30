@@ -255,10 +255,10 @@ export const handleExpandPath = (paths: string[]) => {
   dispatch(setExpandPath(paths))
 }
 
-const packageGistFiles = (directory) => {
+const packageGistFiles = async (directory) => {
+  const workspaceProvider = plugin.fileProviders.workspace
+  const isFile = await workspaceProvider.isFile(directory)
   return new Promise((resolve, reject) => {
-    const workspaceProvider = plugin.fileProviders.workspace
-    const isFile = workspaceProvider.isFile(directory)
     const ret = {}
 
     if (isFile) {
