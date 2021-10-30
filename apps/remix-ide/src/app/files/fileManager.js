@@ -725,12 +725,12 @@ class FileManager extends Plugin {
     }
   }
 
-  syncEditor (path) {
+  async syncEditor (path) {
     var currentFile = this._deps.config.get('currentFile')
     if (path !== currentFile) return
     var provider = this.fileProviderOf(currentFile)
     if (provider) {
-      provider.get(currentFile, (error, content) => {
+      await provider.get(currentFile, (error, content) => {
         if (error) console.log(error)
         this.editor.setText(content)
       })
@@ -739,42 +739,37 @@ class FileManager extends Plugin {
     }
   }
 
-  setBatchFiles (filesSet, fileProvider, override, callback) {
+  async setBatchFiles (filesSet, fileProvider, override, callback) {
     const self = this
-    if (!fileProvider) fileProvider = 'browser'
+    if (!fileProvider) fileProvider = 'workspace'
     if (override === undefined) override = false
 
-    async.each(Object.keys(filesSet), async (file, callback) => {
+    for (const file of Object.keys(filesSet)) {
       if (override) {
-        try {
-          await self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
-        } catch (e) {
-          return callback(e.message || e)
-        }
-        self.syncEditor(fileProvider + file)
-        return callback()
-      }
-
-      helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
-        async (error, name) => {
-          if (error) {
-            modalDialogCustom.alert('Unexpected error loading the file ' + error)
-          } else if (helper.checkSpecialChars(name)) {
-            modalDialogCustom.alert('Special characters are not allowed')
-          } else {
-            try {
-              console.log('set ', fileProvider, name, filesSet[file].content)
-              await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
-            } catch (e) {
-              return callback(e.message || e)
-            }
-            self.syncEditor(fileProvider + name)
-          }
-          callback()
+        await self._deps.filesProviders[fileProvider].set(file, filesSet[file].content, (e) => {
+          if (e) callback(e.message || e)
         })
-    }, (error) => {
-      if (callback) callback(error)
-    })
+        await self.syncEditor(fileProvider + file)
+      } else {
+        helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
+          async (error, name) => {
+            if (error) {
+              modalDialogCustom.alert('Unexpected error loading the file ' + error)
+            } else if (helper.checkSpecialChars(name)) {
+              modalDialogCustom.alert('Special characters are not allowed')
+            } else {
+              try {
+                console.log('set ', fileProvider, name, filesSet[file].content)
+                await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+              } catch (e) {
+                return callback(e.message || e)
+              }
+              await self.syncEditor(fileProvider + name)
+            }
+            callback()
+          })
+      }
+    }x
   }
 
   currentWorkspace () {
