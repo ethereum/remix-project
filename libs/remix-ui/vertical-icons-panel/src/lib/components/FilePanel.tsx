@@ -1,6 +1,6 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect, useRef } from 'react'
 import Icon from './Icon'
 
 interface FilePanelProps {
@@ -11,6 +11,25 @@ interface FilePanelProps {
 }
 
 function FilePanel ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: FilePanelProps) {
+  const filePanelRef = useRef(null)
+  function onThemeChanged (themeType: any) {
+    const invert = themeType === 'dark' ? 1 : 0
+    // @ts-ignore
+    const active = filePanelRef.current && filePanelRef.current.querySelector('.active')
+    if (active) {
+      // @ts-ignore
+      const image = filePanelRef.current.querySelector('.remixui_image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
+  }
+
+  useEffect(() => {
+    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
+    themeModule.events.on('themeChanged', (theme: any) => {
+      onThemeChanged(theme.quality)
+    })
+  }, [])
+
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
@@ -20,7 +39,9 @@ function FilePanel ({ verticalIconsPlugin, itemContextAction, addActive, removeA
           .map(p => (
             <div id="fileExplorerIcons" key={
               verticalIconsPlugin.targetProfileForChange[p].displayName
-            } data-id="verticalIconsFileExplorerIcons">
+            } data-id="verticalIconsFileExplorerIcons"
+            ref={filePanelRef}
+            >
               <Icon
                 kind={verticalIconsPlugin.targetProfileForChange[p].kind}
                 displayName={
