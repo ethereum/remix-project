@@ -3,7 +3,7 @@
       "browser": true,
       "es6": true
   },
-  "extends": "../../../.eslintrc",
+  "extends": "../../../.eslintrc.json",
   "globals": {
       "Atomics": "readonly",
       "SharedArrayBuffer": "readonly"
