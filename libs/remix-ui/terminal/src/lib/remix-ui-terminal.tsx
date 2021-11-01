@@ -24,7 +24,7 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
-  const { call, _deps, on, config, event, gistHandler, logHtmlResponse, logResponse, version } = props.plugin
+  const { call, _deps, on, config, event, gistHandler, version } = props.plugin
   const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
@@ -68,11 +68,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     commandHistoryIndex: 0
   })
 
-  const [logState, setLogState] = useState({
-    logIndex: 0,
-    htmlLogIndex: 0
-  })
-
   const [searchInput, setSearchInput] = useState('')
   const [showTableHash, setShowTableHash] = useState([])
 
@@ -89,18 +84,15 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    if (logHtmlResponse.length > 0) {
-      scriptRunnerDispatch({ type: 'html', payload: { message: logHtmlResponse.slice(logState.htmlLogIndex) } })
-      setLogState(prevState => ({ ...prevState, htmlLogIndex: logHtmlResponse.length }))
-    }
-  }, [logHtmlResponse.length])
-
-  useEffect(() => {
-    if (logResponse.length > 0) {
-      scriptRunnerDispatch({ type: 'log', payload: { message: logResponse.slice(logState.logIndex) } })
-      setLogState(prevState => ({ ...prevState, logIndex: logResponse.length }))
-    }
-  }, [logResponse.length])
+    props.onReady({
+      logHtml: (html) => {
+        scriptRunnerDispatch({ type: 'html', payload: { message: [html.innerText] } })
+      },
+      log: (message) => {
+        scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
+      }
+    })
+  }, [])
 
   // events
   useEffect(() => {
@@ -126,7 +118,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [newstate.journalBlocks.length, logHtmlResponse.length, toaster])
+  }, [newstate.journalBlocks.length, toaster])
 
   function execute (file, cb) {
     function _execute (content, cb) {
