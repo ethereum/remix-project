@@ -7,7 +7,7 @@
     },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
-    ".eslintrc": "*",
+    ".eslintrc.json": "*",
     "nx.json": "*"
   },
   "npmScope": "remix-project",
@@ -156,14 +156,9 @@
     },
     "remix-ui-editor-context-view": {
       "tags": []
+    },
+    "remix-ui-run-tab": {
+      "tags": []
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   }
 }
