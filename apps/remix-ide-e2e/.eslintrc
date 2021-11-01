@@ -11,6 +11,6 @@
         }
       }
     ],
-    "extends": ["../../.eslintrc"],
+    "extends": ["../../.eslintrc.json"],
     "ignorePatterns": ["!**/*"]
 }
