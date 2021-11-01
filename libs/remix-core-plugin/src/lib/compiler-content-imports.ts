@@ -119,7 +119,7 @@ export class CompilerImports extends Plugin {
     if (url.indexOf('remix_tests.sol') !== -1 || url.indexOf('remix_accounts.sol') !== -1) {
       const { assertLibCode, accountsLibCode } = await this.call('solidityUnitTesting', 'getTestlibs')
       let content
-      if (url === 'remix_tests.sol') content =  assertLibCode
+      if (url === 'remix_tests.sol') content = assertLibCode
       else if (url === 'remix_accounts.sol') content = accountsLibCode
       const provider = await this.call('fileManager', 'getProviderOf', null)
       if (provider) provider.addExternal('.deps/remix-tests/' + url, content, url)
