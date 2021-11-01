@@ -1,5 +1,5 @@
 { 
-    "extends": "../../.eslintrc", 
+    "extends": "../../.eslintrc.json", 
     "rules": {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/prefer-namespace-keyword": "off",

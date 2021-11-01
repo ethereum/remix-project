@@ -1,1 +1,1 @@
-{ "extends": "../../../.eslintrc", "rules": {}, "ignorePatterns": ["!**/*"] }
+{ "extends": "../../../.eslintrc.json", "rules": {}, "ignorePatterns": ["!**/*"] }
