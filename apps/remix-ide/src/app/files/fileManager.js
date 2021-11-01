@@ -1,7 +1,6 @@
 'use strict'
 
 import yo from 'yo-yo'
-import async from 'async'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 const EventEmitter = require('events')
@@ -769,7 +768,7 @@ class FileManager extends Plugin {
             callback()
           })
       }
-    }x
+    }
   }
 
   currentWorkspace () {
