@@ -17,11 +17,7 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
-
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
-
-
-
 const isElectron = require('is-electron')
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
@@ -155,10 +151,7 @@ class App {
     registry.put({ api: self._components.filesProviders.localhost, name: 'fileproviders/localhost' })
     self._components.filesProviders.workspace = new WorkspaceFileProvider()
     registry.put({ api: self._components.filesProviders.workspace, name: 'fileproviders/workspace' })
-
     registry.put({ api: self._components.filesProviders, name: 'fileproviders' })
-
-
   }
 
   init () {
