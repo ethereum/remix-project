@@ -53,6 +53,8 @@ export class VerticalIcons extends Plugin<any, any> {
   targetProfileForChange: any
   targetProfileForRemoval: any
   registry: registry
+  keys: string[]
+  types: string[]
   renderComponent(): void
   linkContent(profile: any): void
   unlinkContent(profile: any): void
