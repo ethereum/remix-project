@@ -18,26 +18,7 @@ function PluginManager ({ verticalIconsPlugin, itemContextAction, addActive, rem
         .filter(p => p === 'pluginManager')
         .map(p => (
           <Icon
-            kind={
-              verticalIconsPlugin.targetProfileForChange[p].kind
-            }
-            displayName={
-              verticalIconsPlugin.targetProfileForChange[p]
-                .displayName
-            }
-            documentation={
-              verticalIconsPlugin.targetProfileForChange[p]
-                .documentation
-            }
-            icon={
-              verticalIconsPlugin.targetProfileForChange[p].icon
-            }
-            name={
-              verticalIconsPlugin.targetProfileForChange[p].name
-            }
-            tooltip={
-              verticalIconsPlugin.targetProfileForChange[p].tooltip
-            }
+            profile={verticalIconsPlugin.targetProfileForChange[p]}
             verticalIconPlugin={verticalIconsPlugin}
             contextMenuAction={itemContextAction}
             addActive={addActive}
