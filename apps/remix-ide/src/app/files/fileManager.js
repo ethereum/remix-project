@@ -140,7 +140,7 @@ class FileManager extends Plugin {
   refresh () {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    provider.event.emit('rootFolderChanged')
+    provider.event.emit('rootFolderChanged', provider.workspace || '/')
   }
 
   /**
@@ -456,7 +456,7 @@ class FileManager extends Plugin {
     return this._deps.config.get('currentFile')
   }
 
-  closeAllFiles () {
+  async closeAllFiles () {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
     this.events.emit('filesAllClosed')
@@ -465,7 +465,7 @@ class FileManager extends Plugin {
     }
   }
 
-  closeFile (name) {
+  async closeFile (name) {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
@@ -506,7 +506,8 @@ class FileManager extends Plugin {
   async setFileContent (path, content) {
     if (this.currentRequest) {
       const canCall = await this.askUserPermission('writeFile', '')
-      if (canCall) {
+      const required = this.appManager.isRequired(this.currentRequest.from)
+      if (canCall && !required) {
         // inform the user about modification after permission is granted and even if permission was saved before
         toaster(yo`
           <div>
@@ -615,6 +616,7 @@ class FileManager extends Plugin {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     } else {
+      file = this.normalize(file)
       this.saveCurrentFile()
       const resolved = this.getPathFromUrl(file)
       file = resolved.file

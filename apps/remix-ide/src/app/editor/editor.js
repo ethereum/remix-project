@@ -1,200 +1,95 @@
 'use strict'
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
-const yo = require('yo-yo')
-const csjs = require('csjs-inject')
-const ace = require('brace')
-
-const globalRegistry = require('../../global/registry')
-const SourceHighlighters = require('./SourceHighlighters')
-
-const Range = ace.acequire('ace/range').Range
-require('brace/ext/language_tools')
-require('brace/ext/searchbox')
-const langTools = ace.acequire('ace/ext/language_tools')
-require('ace-mode-solidity/build/remix-ide/mode-solidity')
-require('ace-mode-move/build/remix-ide/mode-move')
-require('ace-mode-zokrates')
-require('ace-mode-lexon')
-require('brace/mode/javascript')
-require('brace/mode/python')
-require('brace/mode/json')
-require('brace/mode/rust')
-require('brace/theme/chrome') // for all light themes
-require('brace/theme/chaos') // for all dark themes
-require('../../assets/js/editor/darkTheme') // a custom one for remix 'Dark' theme
-
-const css = csjs`
-  .ace-editor {
-    width     : 100%;
-  }
-`
-document.head.appendChild(yo`
-  <style>
-    .ace-tm .ace_gutter,
-    .ace-tm .ace_gutter-active-line,
-    .ace-tm .ace_marker-layer .ace_active-line {
-        background-color: var(--secondary);
-    }
-    .ace_gutter-cell.ace_breakpoint{
-      background-color: var(--secondary);
-    }
-  </style>
-`)
 
 const profile = {
   displayName: 'Editor',
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'discardHighlightAt', 'clearAnnotations', 'addAnnotation', 'gotoLine']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine']
 }
 
 class Editor extends Plugin {
-  constructor (opts = {}, themeModule) {
+  constructor () {
     super(profile)
-    // Dependancies
-    this._components = {}
-    this._components.registry = globalRegistry
-    this._deps = {
-      config: this._components.registry.get('config').api
-    }
 
     this._themes = {
-      light: 'chrome',
-      dark: 'chaos',
-      remixDark: 'remixDark'
+      light: 'light',
+      dark: 'vs-dark',
+      remixDark: 'remix-dark'
     }
-    themeModule.events.on('themeChanged', (theme) => {
-      this.setTheme(theme.name === 'Dark' ? 'remixDark' : theme.quality)
-    })
 
     // Init
     this.event = new EventManager()
     this.sessions = {}
-    this.sourceAnnotationsPerFile = []
+    this.sourceAnnotationsPerFile = {}
+    this.markerPerFile = {}
     this.readOnlySessions = {}
     this.previousInput = ''
     this.saveTimeout = null
-    this.sourceHighlighters = new SourceHighlighters()
-    this.emptySession = this._createSession('')
+    this.emptySession = null
     this.modes = {
-      sol: 'ace/mode/solidity',
-      yul: 'ace/mode/solidity',
-      mvir: 'ace/mode/move',
-      js: 'ace/mode/javascript',
-      py: 'ace/mode/python',
-      vy: 'ace/mode/python',
-      zok: 'ace/mode/zokrates',
-      lex: 'ace/mode/lexon',
-      txt: 'ace/mode/text',
-      json: 'ace/mode/json',
-      abi: 'ace/mode/json',
-      rs: 'ace/mode/rust'
+      sol: 'sol',
+      yul: 'sol',
+      mvir: 'move',
+      js: 'javascript',
+      py: 'python',
+      vy: 'python',
+      zok: 'zokrates',
+      lex: 'lexon',
+      txt: 'text',
+      json: 'json',
+      abi: 'json',
+      rs: 'rust'
     }
 
-    // Editor Setup
-    const el = yo`<div id="input" data-id="editorInput"></div>`
-    this.editor = ace.edit(el)
+    this.activated = false
 
-    ace.acequire('ace/ext/language_tools')
+    this.events = {
+      onBreakPointAdded: (file, line) => this.triggerEvent('breakpointAdded', [file, line]),
+      onBreakPointCleared: (file, line) => this.triggerEvent('breakpointCleared', [file, line]),
+      onDidChangeContent: (file) => this._onChange(file),
+      onEditorMounted: () => this.triggerEvent('editorMounted', [])
+    }
 
-    // Unmap ctrl-l & cmd-l
-    this.editor.commands.bindKeys({
-      'ctrl-L': null,
-      'Command-L': null
-    })
+    // to be implemented by the react component
+    this.api = {}
+  }
 
-    // shortcuts for "Ctrl-"" and "Ctrl+"" to increase/decrease font size of the editor
-    this.editor.commands.addCommand({
-      name: 'increasefontsizeEqual',
-      bindKey: { win: 'Ctrl-=', mac: 'Command-=' },
-      exec: (editor) => {
-        this.editorFontSize(1)
-      },
-      readOnly: true
-    })
+  render () {
+    if (this.el) return this.el
 
-    this.editor.commands.addCommand({
-      name: 'increasefontsizePlus',
-      bindKey: { win: 'Ctrl-+', mac: 'Command-+' },
-      exec: (editor) => {
-        this.editorFontSize(1)
-      },
-      readOnly: true
-    })
-
-    this.editor.commands.addCommand({
-      name: 'decreasefontsize',
-      bindKey: { win: 'Ctrl--', mac: 'Command--' },
-      exec: (editor) => {
-        this.editorFontSize(-1)
-      },
-      readOnly: true
-    })
-
-    this.editor.setShowPrintMargin(false)
-    this.editor.resize(true)
-
-    this.editor.setOptions({
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true
-    })
-
-    el.className += ' ' + css['ace-editor']
-    el.editor = this.editor // required to access the editor during tests
-    this.render = () => el
-
-    // Completer for editor
-    const flowCompleter = {
-      getCompletions: (editor, session, pos, prefix, callback) => {
-        // @TODO add here other propositions
+    this.el = document.createElement('div')
+    this.el.setAttribute('id', 'editorView')
+    this.el.currentContent = () => this.currentContent() // used by e2e test
+    this.el.setCurrentContent = (value) => {
+      if (this.sessions[this.currentFile]) {
+        this.sessions[this.currentFile].setValue(value)
+        this._onChange(this.currentFile)
       }
     }
-    langTools.addCompleter(flowCompleter)
+    this.el.gotoLine = (line) => this.gotoLine(line, 0)
+    return this.el
+  }
 
-    // zoom with Ctrl+wheel
-    window.addEventListener('wheel', (e) => {
-      if (e.ctrlKey && Math.abs(e.wheelY) > 5) {
-        this.editorFontSize(e.wheelY > 0 ? 1 : -1)
-      }
-    })
-
-    // EVENTS LISTENERS
-
-    // Gutter Mouse down
-    this.editor.on('guttermousedown', e => {
-      const target = e.domEvent.target
-      if (target.className.indexOf('ace_gutter-cell') === -1) {
-        return
-      }
-      const row = e.getDocumentPosition().row
-      const breakpoints = e.editor.session.getBreakpoints()
-      for (const k in breakpoints) {
-        if (k === row.toString()) {
-          this.triggerEvent('breakpointCleared', [this.currentSession, row])
-          e.editor.session.clearBreakpoint(row)
-          e.stop()
-          return
-        }
-      }
-      this.setBreakpoint(row)
-      this.triggerEvent('breakpointAdded', [this.currentSession, row])
-      e.stop()
-    })
-
-    // Do setup on initialisation here
-    this.editor.on('changeSession', () => {
-      this._onChange()
-      this.triggerEvent('sessionSwitched', [])
-      this.editor.getSession().on('change', () => {
-        this._onChange()
-        this.sourceHighlighters.discardAllHighlights()
-        this.triggerEvent('contentChanged', [])
-      })
-    })
+  renderComponent () {
+    ReactDOM.render(
+      <EditorUI
+        editorAPI={this.api}
+        theme={this.currentTheme}
+        currentFile={this.currentFile}
+        sourceAnnotationsPerFile={this.sourceAnnotationsPerFile}
+        markerPerFile={this.markerPerFile}
+        events={this.events}
+        plugin={this}
+      />
+      , this.el)
   }
 
   triggerEvent (name, params) {
@@ -203,14 +98,25 @@ class Editor extends Plugin {
   }
 
   onActivation () {
+    this.activated = true
     this.on('sidePanel', 'focusChanged', (name) => {
-      this.sourceHighlighters.hideHighlightsExcept(name)
-      this.keepAnnotationsFor(name)
+      this.keepDecorationsFor(name, 'sourceAnnotationsPerFile')
+      this.keepDecorationsFor(name, 'markerPerFile')
     })
     this.on('sidePanel', 'pluginDisabled', (name) => {
-      this.sourceHighlighters.discardHighlight(name)
-      this.clearAllAnnotationsFor(name)
+      this.clearAllDecorationsFor(name)
     })
+
+    const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
+    this.on('theme', 'themeChanged', (theme) => {
+      this.currentTheme = translateTheme(theme)
+      this.renderComponent()
+    })
+    this.call('theme', 'currentTheme', (theme) => {
+      this.currentTheme = translateTheme(theme)
+      this.renderComponent()
+    })
+    this.renderComponent()
   }
 
   onDeactivation () {
@@ -218,28 +124,12 @@ class Editor extends Plugin {
     this.off('sidePanel', 'pluginDisabled')
   }
 
-  highlight (position, filePath, hexColor) {
-    const { from } = this.currentRequest
-    this.sourceHighlighters.highlight(position, filePath, hexColor, from)
-  }
-
-  discardHighlight () {
-    const { from } = this.currentRequest
-    this.sourceHighlighters.discardHighlight(from)
-  }
-
-  discardHighlightAt (line, filePath) {
-    const { from } = this.currentRequest
-    this.sourceHighlighters.discardHighlightAt(line, filePath, from)
-  }
-
-  setTheme (type) {
-    this.editor.setTheme('ace/theme/' + this._themes[type])
-  }
-
-  _onChange () {
-    const currentFile = this._deps.config.get('currentFile')
+  async _onChange (file) {
+    const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
+      return
+    }
+    if (currentFile !== file) {
       return
     }
     const input = this.get(currentFile)
@@ -257,16 +147,17 @@ class Editor extends Plugin {
     if (this.saveTimeout) {
       window.clearTimeout(this.saveTimeout)
     }
+    this.triggerEvent('contentChanged', [])
+
     this.saveTimeout = window.setTimeout(() => {
       this.triggerEvent('requiringToSaveCurrentfile', [])
     }, 5000)
   }
 
   _switchSession (path) {
-    this.currentSession = path
-    this.editor.setSession(this.sessions[this.currentSession])
-    this.editor.setReadOnly(this.readOnlySessions[this.currentSession])
-    this.editor.focus()
+    this.triggerEvent('sessionSwitched', [])
+    this.currentFile = path
+    this.renderComponent()
   }
 
   /**
@@ -283,17 +174,27 @@ class Editor extends Plugin {
   }
 
   /**
-   * Create an Ace session
+   * Create an editor session
+   * @param {string} path path of the file
    * @param {string} content Content of the file to open
-   * @param {string} mode Ace Mode for this file [Default is `text`]
+   * @param {string} mode Mode for this file [Default is `text`]
    */
-  _createSession (content, mode) {
-    const s = new ace.EditSession(content)
-    s.setMode(mode || 'ace/mode/text')
-    s.setUndoManager(new ace.UndoManager())
-    s.setTabSize(4)
-    s.setUseSoftTabs(true)
-    return s
+  _createSession (path, content, mode) {
+    if (!this.activated) return
+    this.emit('addModel', content, mode, path, false)
+    return {
+      path,
+      language: mode,
+      setValue: (content) => {
+        this.emit('setValue', path, content)
+      },
+      getValue: () => {
+        return this.api.getValue(path, content)
+      },
+      dispose: () => {
+        this.emit('disposeModel', path)
+      }
+    }
   }
 
   /**
@@ -301,36 +202,16 @@ class Editor extends Plugin {
    * @param {string} string
    */
   find (string) {
-    return this.editor.find(string)
+    return this.api.findMatches(this.currentFile, string)
   }
 
   /**
    * Display an Empty read-only session
    */
   displayEmptyReadOnlySession () {
-    this.currentSession = null
-    this.editor.setSession(this.emptySession)
-    this.editor.setReadOnly(true)
-  }
-
-  /**
-   * Sets a breakpoint on the row number
-   * @param {number} row Line index of the breakpoint
-   * @param {string} className Class of the breakpoint
-   */
-  setBreakpoint (row, className) {
-    this.editor.session.setBreakpoint(row, className)
-  }
-
-  /**
-   * Increment the font size (in pixels) for the editor text.
-   * @param {number} incr The amount of pixels to add to the font.
-   */
-  editorFontSize (incr) {
-    const newSize = this.editor.getFontSize() + incr
-    if (newSize >= 6) {
-      this.editor.setFontSize(newSize)
-    }
+    if (!this.activated) return
+    this.currentFile = null
+    this.emit('addModel', '', 'text', '_blank', true)
   }
 
   /**
@@ -338,8 +219,8 @@ class Editor extends Plugin {
    * @param {string} text New text to be place.
    */
   setText (text) {
-    if (this.currentSession && this.sessions[this.currentSession]) {
-      this.sessions[this.currentSession].setValue(text)
+    if (this.currentFile && this.sessions[this.currentFile]) {
+      this.sessions[this.currentFile].setValue(text)
     }
   }
 
@@ -356,7 +237,7 @@ class Editor extends Plugin {
        - URL not prepended with the file explorer. We assume (as it is in the whole app, that this is a "browser" URL
     */
     if (!this.sessions[path]) {
-      const session = this._createSession(content, this._getMode(path))
+      const session = this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
       this.readOnlySessions[path] = false
     } else if (this.sessions[path].getValue() !== content) {
@@ -372,7 +253,7 @@ class Editor extends Plugin {
    */
   openReadOnly (path, content) {
     if (!this.sessions[path]) {
-      const session = this._createSession(content, this._getMode(path))
+      const session = this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
       this.readOnlySessions[path] = true
     }
@@ -394,8 +275,8 @@ class Editor extends Plugin {
    * @return {String} content of the file referenced by @arg path
    */
   get (path) {
-    if (!path || this.currentSession === path) {
-      return this.editor.getValue()
+    if (!path || this.currentFile === path) {
+      return this.api.getValue(path)
     } else if (this.sessions[path]) {
       return this.sessions[path].getValue()
     }
@@ -407,29 +288,23 @@ class Editor extends Plugin {
    * @return {String} path of the current session
    */
   current () {
-    if (this.editor.getSession() === this.emptySession) {
-      return
-    }
-    return this.currentSession
+    return this.currentFile
   }
 
   /**
    * The position of the cursor
    */
   getCursorPosition () {
-    return this.editor.session.doc.positionToIndex(
-      this.editor.getCursorPosition(),
-      0
-    )
+    return this.api.getCursorPosition()
   }
 
   /**
    * Remove the current session from the list of sessions.
    */
   discardCurrentSession () {
-    if (this.sessions[this.currentSession]) {
-      delete this.sessions[this.currentSession]
-      this.currentSession = null
+    if (this.sessions[this.currentFile]) {
+      delete this.sessions[this.currentFile]
+      this.currentFile = null
     }
   }
 
@@ -438,8 +313,23 @@ class Editor extends Plugin {
    * @param {string} path
    */
   discard (path) {
-    if (this.sessions[path]) delete this.sessions[path]
-    if (this.currentSession === path) this.currentSession = null
+    if (this.sessions[path]) {
+      this.sessions[path].dispose()
+      delete this.sessions[path]
+    }
+    if (this.currentFile === path) this.currentFile = null
+  }
+
+  /**
+   * Increment the font size (in pixels) for the editor text.
+   * @param {number} incr The amount of pixels to add to the font.
+   */
+  editorFontSize (incr) {
+    if (!this.activated) return
+    const newSize = this.api.getFontSize() + incr
+    if (newSize >= 6) {
+      this.emit('setFontSize', newSize)
+    }
   }
 
   /**
@@ -447,64 +337,32 @@ class Editor extends Plugin {
    * @param {boolean} useWrapMode Enable (or disable) wrap mode
    */
   resize (useWrapMode) {
-    this.editor.resize()
-    const session = this.editor.getSession()
-    session.setUseWrapMode(useWrapMode)
-    if (session.getUseWrapMode()) {
-      const characterWidth = this.editor.renderer.characterWidth
-      const contentWidth = this.editor.container.ownerDocument.getElementsByClassName(
-        'ace_scroller'
-      )[0].clientWidth
-
-      if (contentWidth > 0) {
-        session.setWrapLimit(parseInt(contentWidth / characterWidth, 10))
-      }
-    }
+    if (!this.activated) return
+    this.emit('setWordWrap', useWrapMode)
   }
 
   /**
-   * Adds a new marker to the given `Range`.
-   * @param {*} lineColumnPos
-   * @param {string} source Path of the session to add the mark on.
-   * @param {string} cssClass css to apply to the mark.
+   * Moves the cursor and focus to the specified line and column number
+   * @param {number} line
+   * @param {number} col
    */
-  addMarker (lineColumnPos, source, cssClass) {
-    const currentRange = new Range(
-      lineColumnPos.start.line,
-      lineColumnPos.start.column,
-      lineColumnPos.end.line,
-      lineColumnPos.end.column
-    )
-    if (this.sessions[source]) {
-      return this.sessions[source].addMarker(currentRange, cssClass)
-    }
-    return null
+  gotoLine (line, col) {
+    if (!this.activated) return
+    this.emit('focus')
+    this.emit('revealLine', line + 1, col)
   }
 
   /**
    * Scrolls to a line. If center is true, it puts the line in middle of screen (or attempts to).
    * @param {number} line The line to scroll to
-   * @param {boolean} center If true
-   * @param {boolean} animate If true animates scrolling
-   * @param {Function} callback Function to be called when the animation has finished
    */
-  scrollToLine (line, center, animate, callback) {
-    this.editor.scrollToLine(line, center, animate, callback)
+  scrollToLine (line) {
+    if (!this.activated) return
+    this.emit('revealLine', line + 1, 0)
   }
 
   /**
-   * Remove a marker from the session
-   * @param {string} markerId Id of the marker
-   * @param {string} source Path of the session
-   */
-  removeMarker (markerId, source) {
-    if (this.sessions[source]) {
-      this.sessions[source].removeMarker(markerId)
-    }
-  }
-
-  /**
-   * Clears all the annotations for the given @arg filePath and @arg plugin, if none is given, the current sesssion is used.
+   * Clears all the decorations for the given @arg filePath and @arg plugin, if none is given, the current sesssion is used.
    * An annotation has the following shape:
       column: -1
       row: -1
@@ -512,34 +370,49 @@ class Editor extends Plugin {
       type: "warning"
    * @param {String} filePath
    * @param {String} plugin
+   * @param {String} typeOfDecoration
    */
-  clearAnnotationsByPlugin (filePath, plugin) {
+  clearDecorationsByPlugin (filePath, plugin, typeOfDecoration) {
     if (filePath && !this.sessions[filePath]) throw new Error('file not found' + filePath)
-    const session = this.sessions[filePath] || this.editor.getSession()
-    const path = filePath || this.currentSession
+    const path = filePath || this.currentFile
 
-    const currentAnnotations = this.sourceAnnotationsPerFile[path]
+    const currentAnnotations = this[typeOfDecoration][path]
     if (!currentAnnotations) return
 
     const newAnnotations = []
     for (const annotation of currentAnnotations) {
       if (annotation.from !== plugin) newAnnotations.push(annotation)
     }
-    this.sourceAnnotationsPerFile[path] = newAnnotations
 
-    this._setAnnotations(session, path)
+    this[typeOfDecoration][path] = newAnnotations
+    this.renderComponent()
   }
 
-  keepAnnotationsFor (name) {
-    if (!this.currentSession) return
-    if (!this.sourceAnnotationsPerFile[this.currentSession]) return
+  keepDecorationsFor (name, typeOfDecoration) {
+    if (!this.currentFile) return
+    if (!this[typeOfDecoration][this.currentFile]) return
 
-    const annotations = this.sourceAnnotationsPerFile[this.currentSession]
+    const annotations = this[typeOfDecoration][this.currentFile]
     for (const annotation of annotations) {
       annotation.hide = annotation.from !== name
     }
+    this.renderComponent()
+  }
 
-    this._setAnnotations(this.editor.getSession(), this.currentSession)
+  /**
+   * Clears all the decorations and for all the sessions for the given @arg plugin
+   * An annotation has the following shape:
+      column: -1
+      row: -1
+      text: "browser/Untitled1.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.↵"
+      type: "warning"
+   * @param {String} filePath
+   */
+  clearAllDecorationsFor (plugin) {
+    for (const session in this.sessions) {
+      this.clearDecorationsByPlugin(session, plugin, 'sourceAnnotationsPerFile')
+      this.clearDecorationsByPlugin(session, plugin, 'markerPerFile')
+    }
   }
 
   /**
@@ -553,23 +426,23 @@ class Editor extends Plugin {
    * @param {String} plugin
    */
   clearAnnotations (filePath) {
+    filePath = filePath || this.currentFile
     const { from } = this.currentRequest
-    this.clearAnnotationsByPlugin(filePath, from)
+    this.clearDecorationsByPlugin(filePath, from, 'sourceAnnotationsPerFile')
   }
 
-  /**
-   * Clears all the annotations and for all the sessions for the given @arg plugin
-   * An annotation has the following shape:
-      column: -1
-      row: -1
-      text: "browser/Untitled1.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.↵"
-      type: "warning"
-   * @param {String} filePath
-   */
-  clearAllAnnotationsFor (plugin) {
-    for (const session in this.sessions) {
-      this.clearAnnotationsByPlugin(session, plugin)
-    }
+  async addDecoration (decoration, filePath, typeOfDecoration) {
+    if (!filePath) return
+    filePath = await this.call('fileManager', 'getPathFromUrl', filePath)
+    filePath = filePath.file
+    if (!this.sessions[filePath]) throw new Error('file not found' + filePath)
+    const path = filePath || this.currentFile
+
+    const { from } = this.currentRequest
+    if (!this[typeOfDecoration][path]) this[typeOfDecoration][path] = []
+    decoration.from = from
+    this[typeOfDecoration][path].push(decoration)
+    this.renderComponent()
   }
 
   /**
@@ -582,32 +455,25 @@ class Editor extends Plugin {
    * @param {Object} annotation
    * @param {String} filePath
    */
-  addAnnotation (annotation, filePath) {
-    if (filePath && !this.sessions[filePath]) throw new Error('file not found' + filePath)
-    const session = this.sessions[filePath] || this.editor.getSession()
-    const path = filePath || this.currentSession
+  async addAnnotation (annotation, filePath) {
+    filePath = filePath || this.currentFile
+    await this.addDecoration(annotation, filePath, 'sourceAnnotationsPerFile')
+  }
 
+  async highlight (position, filePath, highlightColor, opt = { focus: true }) {
+    filePath = filePath || this.currentFile
+    if (opt.focus) {
+      await this.call('fileManager', 'open', filePath)
+      this.scrollToLine(position.start.line)
+    }
+    await this.addDecoration({ position }, filePath, 'markerPerFile')
+  }
+
+  discardHighlight () {
     const { from } = this.currentRequest
-    if (!this.sourceAnnotationsPerFile[path]) this.sourceAnnotationsPerFile[path] = []
-    annotation.from = from
-    this.sourceAnnotationsPerFile[path].push(annotation)
-
-    this._setAnnotations(session, path)
-  }
-
-  _setAnnotations (session, path) {
-    const annotations = this.sourceAnnotationsPerFile[path]
-    session.setAnnotations(annotations.filter((element) => !element.hide))
-  }
-
-  /**
-   * Moves the cursor and focus to the specified line and column number
-   * @param {number} line
-   * @param {number} col
-   */
-  gotoLine (line, col) {
-    this.editor.focus()
-    this.editor.gotoLine(line + 1, col - 1, true)
+    for (const session in this.sessions) {
+      this.clearDecorationsByPlugin(session, from, 'markerPerFile')
+    }
   }
 }
 
