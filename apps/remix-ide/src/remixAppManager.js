@@ -155,6 +155,10 @@ export class RemixAppManager extends PluginManager {
       pattern: [],
       sticky: true
     })
+    //await this.call('filePanel', 'deleteWorkspace', `default_workspace`)
+    console.log("----------------------------------------------")
+    await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
+    await this.call('fileManager', 'setFile', `one/two/files.js` ,"test")
   }
 }
 
