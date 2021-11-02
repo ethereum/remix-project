@@ -1,0 +1,63 @@
+.remix-ui-tabs {
+    display: -webkit-box; 
+    max-height: 42px
+}
+.remix-ui-tabs li {
+    display: inline-block;
+}
+.title-tabs {
+    padding: inherit;
+    align-items: center;
+    padding-right: 8px;
+    padding-left: 2px;
+    cursor: default;
+    /*to make it unselectable*/
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
+    vertical-align: middle;
+}
+.tab:hover .close-tabs{
+    visibility: visible
+}
+.active .close-tabs {
+    visibility: visible
+}
+.close-tabs {
+    visibility: hidden;
+    padding-top: 4px;
+    font-size: medium;
+}
+.iconImage {
+    width: 16px;
+    height: 16px;
+}
+.active {
+    border: 1px solid transparent;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+.tab-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    max-width: 1000px;
+}
+.left-icon {
+    width: 70px;
+    height: 49px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tab-scroll::-webkit-scrollbar {
+    display: none;
+}
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+.tab-scroll {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}

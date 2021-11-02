@@ -75,8 +75,6 @@ class Editor extends Plugin {
       }
     }
     this.el.gotoLine = (line) => this.gotoLine(line, 0)
-
-    this.renderComponent()
     return this.el
   }
 
@@ -118,6 +116,7 @@ class Editor extends Plugin {
       this.currentTheme = translateTheme(theme)
       this.renderComponent()
     })
+    this.renderComponent()
   }
 
   onDeactivation () {

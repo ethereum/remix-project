@@ -63,9 +63,6 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .assert.containsText('div[title="default_workspace/contracts/3_Ballot.sol"]', '3_Ballot.sol')
-      .click('span[class^=dropdownCaret]')
-      .click('#homeItem')
-      .assert.containsText('div[title="home"]', 'Home')
       .end()
   }
 }

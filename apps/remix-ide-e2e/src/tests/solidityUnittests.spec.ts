@@ -32,9 +32,10 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
-      .waitForElementPresent('*[title="tests/simple_storage_test.sol"]')
+      .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
       .clickLaunchIcon('filePanel')
-      .pause(10000)
+      .waitForElementPresent('[data-id="treeViewDivtreeViewItemtests"]')
+      .click('[data-id="treeViewDivtreeViewItemtests"]')
       .openFile('tests/simple_storage_test.sol')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
@@ -93,7 +94,7 @@ module.exports = {
   'Should fail on compilation, open file on error click, not disappear error': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close"]')
+      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close-tabs"]')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')
@@ -101,12 +102,12 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified', 120000)
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 120000)
-      .click('*[data-id="tests/compilationError_test.sol"]')
+      .click('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
       .pause(1000)
       .getEditorValue((content) => browser.assert.ok(content.indexOf('contract failOnCompilation {') !== -1))
       // Verify that compilation error is still present after a file is opened
       // usually, tests result is cleared on opening a new file
-      .verify.elementPresent('*[data-id="tests/compilationError_test.sol"]')
+      .verify.elementPresent('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
@@ -164,10 +165,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
-      .pause(5000)
-      .waitForElementPresent('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
@@ -193,8 +193,17 @@ module.exports = {
   },
 
   'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
+
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .perform((done) => {
+        if (runtimeBrowser !== 'chrome') {
+          browser.clickLaunchIcon('filePanel')
+            .waitForElementVisible('[data-id="treeViewLitreeViewItemtests"]')
+        }
+        done()
+      })
       .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
       .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
