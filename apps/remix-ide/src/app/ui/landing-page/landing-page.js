@@ -255,12 +255,12 @@ export class LandingPage extends ViewPlugin {
           contentImport.import(
             target,
             (loadingMsg) => { tooltip(loadingMsg) },
-            (error, content, cleanUrl, type, url) => {
+            async (error, content, cleanUrl, type, url) => {
               if (error) {
                 modalDialogCustom.alert(title, error.message || error)
               } else {
                 try {
-                  fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
+                  await fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
                   this.verticalIcons.select('filePanel')
                 } catch (e) {
                   modalDialogCustom.alert(title, e.message)

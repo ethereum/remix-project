@@ -21,8 +21,8 @@ export default function publish (storage, fileProvider, fileManager, contract) {
             })}</div>`
             modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
           }
-        }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-          fileProvider.addExternal('swarm/' + item.hash, item.content)
+        }, async (item) => { // triggered each time there's a new verified publish (means hash correspond)
+          await fileProvider.addExternal('swarm/' + item.hash, item.content)
         })
       } else {
         publishOnIpfs(contract, fileManager, function (err, uploaded) {
@@ -38,8 +38,8 @@ export default function publish (storage, fileProvider, fileManager, contract) {
             })}</div>`
             modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
           }
-        }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-          fileProvider.addExternal('ipfs/' + item.hash, item.content)
+        }, async (item) => { // triggered each time there's a new verified publish (means hash correspond)
+          await fileProvider.addExternal('ipfs/' + item.hash, item.content)
         })
       }
     }

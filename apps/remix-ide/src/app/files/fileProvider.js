@@ -1,6 +1,7 @@
 'use strict'
 
 import { CompilerImports } from '@remix-project/core-plugin'
+import { ConsoleLogs } from 'libs/remix-lib/src/helpers/hhconsoleSigs'
 const EventManager = require('events')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const tooltip = require('../ui/tooltip')
@@ -57,11 +58,11 @@ class FileProvider {
           this.getNormalizedName(value),
           true,
           (loadingMsg) => { tooltip(loadingMsg) },
-          (error, content, cleanUrl, type, url) => {
+          async (error, content, cleanUrl, type, url) => {
             if (error) {
               modalDialogCustom.alert(error)
             } else {
-              this.addExternal(type + '/' + cleanUrl, content, url)
+              await this.addExternal(type + '/' + cleanUrl, content, url)
             }
           }
         )
@@ -134,9 +135,11 @@ class FileProvider {
       if (!await window.remixFileSystem.exists(currentCheck)) {
         try {
           await window.remixFileSystem.mkdir(currentCheck)
+          console.log('folder add', currentCheck, this._normalizePath(currentCheck))
           this.event.emit('folderAdded', this._normalizePath(currentCheck))
+          console.log("folderd added")
         } catch (error) {
-
+          console.log(error)
         }
       }
     }
@@ -144,9 +147,9 @@ class FileProvider {
   }
 
   // this will not add a folder as readonly but keep the original url to be able to restore it later
-  addExternal (path, content, url) {
+  async addExternal (path, content, url) {
     if (url) this.addNormalizedName(path, url)
-    return this.set(path, content)
+    return await this.set(path, content)
   }
 
   isReadOnly (path) {
@@ -277,18 +280,21 @@ class FileProvider {
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
+      console.log('res dir', path)
       const files = await window.remixFileSystem.readdir(path)
       const ret = {}
-
+      console.log(files)
       if (files) {
         for (let element of files) {
           path = path.replace(/^\/|\/$/g, '') // remove first and last slash
           element = element.replace(/^\/|\/$/g, '') // remove first and last slash
           const absPath = (path === '/' ? '' : path) + '/' + element
+          console.log("stat ", absPath, await window.remixFileSystem.stat(absPath))
           ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: (await window.remixFileSystem.stat(absPath)).isDirectory() }
           // ^ ret does not accept path starting with '/'
         }
       }
+      console.log("return", ret)
       if (cb) cb(null, ret)
       return ret
     } catch (error) {
