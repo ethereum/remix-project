@@ -33,6 +33,8 @@ export class VerticalIcons extends Plugin {
     this.targetProfileForChange = {}
     this.targetProfileForRemoval = {}
     this.registry = globalRegistry
+    this.keys = ['succeed', 'edited', 'none', 'loading', 'failed']
+    this.types = ['error', 'warning', 'success', 'info', '']
   }
 
   renderComponent () {
@@ -62,19 +64,19 @@ export class VerticalIcons extends Plugin {
 
   listenOnStatus (profile) {
     // the list of supported keys. 'none' will remove the status
-    const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
-    const types = ['error', 'warning', 'success', 'info', '']
-    const fn = (status) => {
-      if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
-      if (status.key === undefined) throw new Error('status key should be defined')
+    // const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
+    // const types = ['error', 'warning', 'success', 'info', '']
+    // const fn = (status) => {
+    //   if (!this.types.includes(status.type) && status.type) throw new Error(`type should be ${this.keys.join()}`)
+    //   if (status.key === undefined) throw new Error('status key should be defined')
 
-      if (typeof status.key === 'string' && (!keys.includes(status.key))) {
-        throw new Error('key should contain either number or ' + keys.join())
-      }
-      this.setIconStatus(profile.name, status)
-    }
-    this.iconStatus[profile.name] = fn
-    this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
+    //   if (typeof status.key === 'string' && (!this.keys.includes(status.key))) {
+    //     throw new Error('key should contain either number or ' + this.keys.join())
+    //   }
+    //   this.setIconStatus(profile.name, status)
+    // }
+    // this.iconStatus[profile.name] = fn
+    // this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
   }
 
   /**
@@ -84,6 +86,7 @@ export class VerticalIcons extends Plugin {
    */
   resolveClasses (key, type) {
     let classes = 'remixui_status'
+
     switch (key) {
       case 'succeed':
         classes += ' fas fa-check-circle text-' + type + ' ' + 'remixui_statusCheck'
@@ -111,6 +114,8 @@ export class VerticalIcons extends Plugin {
    */
   setIconStatus (name, status) {
     const el = this.icons[name]
+    // eslint-disable-next-line no-debugger
+    debugger
     if (!el) return
     const statusEl = el.querySelector('i')
     if (statusEl) {
