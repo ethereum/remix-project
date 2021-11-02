@@ -4,7 +4,7 @@ import init from '../helpers/init'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
+    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', true)
   },
 
   'Should execution a simple console command': function (browser: NightwatchBrowser) {
@@ -137,10 +137,13 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
-      .createContract('OwnerSet')
+      .selectContract('OwnerTest')
+      .createContract('')
       .pause(1000)
       .journalChildIncludes('constructor')
+      .pause(5000)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
+      .clickInstance(0)
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
       .pause(1000)
       .journalChildIncludes('inside changeOwner')
