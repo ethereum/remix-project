@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
@@ -19,10 +19,19 @@ export interface RemixUiHomeTabProps {
   registry: any
 }
 
+const loadingInitialState = {
+  tooltip: '',
+  showModalDialog: false,
+  importSource: ''
+}
+
+const loadingReducer = (state = loadingInitialState, action) => {
+  return {...state, tooltip: action.tooltip, showModalDialog: false, importSource: ''}
+}
+
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const { plugin, registry } = props
   const [state, setState] = useState<{
-    showBasicMigration: boolean,
     themeQuality: { filter: string, name: string },
     showMediaPanel: 'none' | 'twitter' | 'medium',
     showModalDialog: boolean,
@@ -30,7 +39,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     importSource: string,
     toasterMsg: string
   }>({
-    showBasicMigration: false,
     themeQuality: registry.get('themeModule').api.currentTheme().quality === 'dark' ? themes.dark : themes.light,
     showMediaPanel: 'none',
     showModalDialog: false,
@@ -38,6 +46,32 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     importSource: '',
     toasterMsg: ''
   })
+
+  const processLoading = () => {
+    const contentImport = plugin.contentImport
+    const fileProviders = registry.get('fileproviders').api
+    contentImport.import(
+      state.importSource,
+      (loadingMsg) => dispatch({tooltip: loadingMsg}),
+      (error, content, cleanUrl, type, url) => {
+        if (error) {
+          toast(error.message || error)
+        } else {
+          try {
+            fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
+            plugin.call('menuicons', 'select', 'filePanel')
+          } catch (e) {
+            toast(e.message)
+          }
+        }
+      }
+    )
+    setState(prevState => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  const [state1, dispatch] = useReducer(loadingReducer, loadingInitialState)
 
   const playRemi = async () => {
     remiAudioEl.current.play()
@@ -135,7 +169,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
-    console.log('showFullMessage')
     setState(prevState => {
       return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem , examples: examples } }
     })
@@ -144,31 +177,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const hideFullMessage = () => { //eslint-disable-line
     setState(prevState => {
       return { ...prevState, showModalDialog: false, importSource: '' }
-    })
-  }
-
-  const processLoading = () => {
-    const contentImport = plugin.contentImport
-    const fileProviders = registry.get('fileproviders').api
-    contentImport.import(
-      state.importSource,
-      (loadingMsg) => { setState(prevState => { return { ...prevState, tooltip: loadingMsg } }) },
-      (error, content, cleanUrl, type, url) => {
-        if (error) {
-          toast(error.message || error)
-        } else {
-          try {
-            fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
-            plugin.call('menuicons', 'select', 'filePanel')
-          } catch (e) {
-            toast(e.message)
-
-          }
-        }
-      }
-    )
-    setState(prevState => {
-      return { ...prevState, showModalDialog: false }
     })
   }
 
@@ -182,12 +190,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         okLabel='Import'
         hide={ !state.showModalDialog }
         handleHide={ () => hideFullMessage() }
-        okFn={ () => {
-          processLoading()
-          setState(prevState => {
-            return { ...prevState, importSource: '' }
-          })}
-        }
+        okFn={ () => processLoading() }
       >
         <div className="p-2 user-select-auto">
           { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
