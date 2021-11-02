@@ -33,7 +33,13 @@ class WorkspaceFileProvider extends FileProvider {
   removePrefix (path) {
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
-    if (path.startsWith(this.workspace)) return path.replace(this.workspace, this.workspacesPath + '/' + this.workspace)
+    const splitPath = path.split('/')
+
+    if (splitPath[0] === this.workspace) {
+      splitPath[0] = this.workspacesPath + '/' + this.workspace
+      path = splitPath.join('/')
+      return path
+    }
     path = super.removePrefix(path)
     let ret = this.workspacesPath + '/' + this.workspace + '/' + (path === '/' ? '' : path)
 
