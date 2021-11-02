@@ -5,7 +5,7 @@ import EventEmitter from 'events'
   Checks if any child elements of journal (console) contains a matching value.
 */
 class JournalChildIncludes extends EventEmitter {
-  command (this: NightwatchBrowser, val: string): NightwatchBrowser {
+  command (this: NightwatchBrowser, val: string, opts = { shouldHaveOnlyOneOccurence: false }): NightwatchBrowser {
     let isTextFound = false
     const browser = this.api
     let occurence = 0
@@ -25,7 +25,7 @@ class JournalChildIncludes extends EventEmitter {
     })
     browser.perform(() => {
       browser.assert.ok(isTextFound, isTextFound ? `<*[data-id="terminalJournal"]> contains ${val}.` : `${val} not found in <*[data-id="terminalJournal"]> div:last-child>`)
-      browser.assert.ok(occurence === 1, `${occurence} occurence found of "${val}"`)
+      if (opts.shouldHaveOnlyOneOccurence) browser.assert.ok(occurence === 1, `${occurence} occurence found of "${val}"`)
       this.emit('complete')
     })
     return this
