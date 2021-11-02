@@ -140,16 +140,16 @@ module.exports = {
       .selectContract('OwnerTest')
       .createContract('')
       .pause(1000)
-      .journalChildIncludes('constructor')
+      .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
       .pause(5000)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickInstance(0)
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
       .pause(1000)
-      .journalChildIncludes('inside changeOwner')
+      .journalChildIncludes('inside changeOwner', { shouldHaveOnlyOneOccurence: true })
       .clickFunction('getOwner - call')
       .pause(1000)
-      .journalChildIncludes('inside getOwner')
+      .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
       .end()
   }
 }
