@@ -84,7 +84,7 @@ module.exports = class TestTab extends ViewPlugin {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
     await this.testRunner.init()
-    const provider = await this.fileManager.getProviderOf()
+    const provider = await this.fileManager.currentFileProvider()
     if (provider) {
       provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
       provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
