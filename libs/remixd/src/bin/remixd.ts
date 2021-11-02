@@ -148,7 +148,7 @@ function errorHandler (error: any, service: string) {
     const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/3367e019335746b73288e3710af2922d4c8ef5a3/origins.json'
 
     try {
-      const { data } = await Axios.get(gistUrl)
+      const { data } = (await Axios.get(gistUrl)) as { data: any }
 
       try {
         await writeJSON(path.resolve(path.join(__dirname, '..', 'origins.json')), { data })
@@ -156,7 +156,8 @@ function errorHandler (error: any, service: string) {
         console.error(e)
       }
 
-      return data.includes(origin) ? data.includes(origin) : data.includes(domain)
+      const dataArray:string[] = data
+      return dataArray.includes(origin) ? dataArray.includes(origin) : dataArray.includes(domain)
     } catch (e) {
       try {
         // eslint-disable-next-line

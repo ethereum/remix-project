@@ -50,11 +50,11 @@ module.exports = {
 
   'Toggles Terminal': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="terminalContainer"]')
-      .assert.visible('div[data-id="terminalContainerDisplay"]')
+      .assert.elementPresent('div[data-id="terminalContainerDisplay"]')
       .click('i[data-id="terminalToggleIcon"]')
       .checkElementStyle('div[data-id="terminalToggleMenu"]', 'height', '35px')
       .click('i[data-id="terminalToggleIcon"]')
-      .assert.visible('div[data-id="terminalContainerDisplay"]')
+      .assert.elementPresent('div[data-id="terminalContainerDisplay"]')
   },
 
   'Switch Tabs using tabs icon': function (browser: NightwatchBrowser) {
@@ -63,9 +63,6 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .assert.containsText('div[title="default_workspace/contracts/3_Ballot.sol"]', '3_Ballot.sol')
-      .click('span[class^=dropdownCaret]')
-      .click('#homeItem')
-      .assert.containsText('div[title="home"]', 'Home')
       .end()
   }
 }

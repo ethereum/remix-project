@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react' // eslint-disable-line no-use-before-define
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
@@ -52,7 +52,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
     setMethods(Array.isArray(storagePlugin.methods) ? storagePlugin.methods.join(',') : storagePlugin.methods)
     setType(storagePlugin.type)
     setDisplayName(storagePlugin.displayName)
-    setCanactivate(Array.isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate)
+    setCanactivate(Array.isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate || '')
   }, [])
 
   const handleModalOkClick = async () => {
@@ -110,7 +110,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setName(e.target.value)}
-            value={ name}
+            value={ name || '' }
             id="plugin-name"
             data-id="localPluginName"
             placeholder="Should be camelCase" />
@@ -120,7 +120,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setDisplayName(e.target.value)}
-            value={ displayName }
+            value={ displayName || '' }
             id="plugin-displayname"
             data-id="localPluginDisplayName"
             placeholder="Name in the header" />
@@ -130,7 +130,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setMethods(e.target.value)}
-            value={ methods }
+            value={ methods || '' }
             id="plugin-methods"
             data-id="localPluginMethods"
             placeholder="Methods" />
@@ -140,7 +140,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setCanactivate(e.target.value)}
-            value={ canactivate }
+            value={ canactivate || '' }
             id="plugin-canactivate"
             data-id="localPluginCanActivate"
             placeholder="Plugin names" />
@@ -151,7 +151,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
           <input
             className="form-control"
             onChange={e => setUrl(e.target.value)}
-            value={ url }
+            value={ url || '' }
             id="plugin-url"
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />

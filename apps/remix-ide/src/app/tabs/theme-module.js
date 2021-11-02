@@ -21,7 +21,7 @@ const themes = [
 const profile = {
   name: 'theme',
   events: ['themeChanged'],
-  methods: ['switchTheme', 'getThemes', 'currentTheme'],
+  methods: ['switchTheme', 'getThemes', 'currentTheme', 'fixInvert'],
   version: packageJson.version,
   kind: 'theme'
 }

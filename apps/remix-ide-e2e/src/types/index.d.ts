@@ -1,6 +1,6 @@
 // Merge custom command types with nightwatch types
-
-import { NightwatchBrowser } from 'nightwatch'
+/* eslint-disable no-use-before-define */
+import { NightwatchBrowser } from 'nightwatch' // eslint-disable-line @typescript-eslint/no-unused-vars
 
 declare module 'nightwatch' {
     export interface NightwatchCustomCommands {
@@ -27,9 +27,9 @@ declare module 'nightwatch' {
         debugTransaction(index: number): NightwatchBrowser,
         checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser,
         openFile(name: string): NightwatchBrowser,
-        editorScroll(direction: 'up' | 'down', numberOfTimes: number): NightwatchBrowser,
         renamePath(path: string, newFileName: string, renamedPath: string): NightwatchBrowser,
         rightClick(cssSelector: string): NightwatchBrowser,
+        scrollToLine(line: number): NightwatchBrowser,
         waitForElementContainsText(id: string, value: string, timeout?: number): NightwatchBrowser,
         getModalBody(callback: (value: string, cb: VoidFunction) => void): NightwatchBrowser,
         modalFooterCancelClick(): NightwatchBrowser,
@@ -57,6 +57,8 @@ declare module 'nightwatch' {
         checkAnnotationsNotPresent(type: string): NightwatchBrowser
         getLastTransactionHash(callback: (hash: string) => void)
         currentWorkspaceIs(name: string): NightwatchBrowser
+        addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile): NightwatchBrowser
+        acceptAndRemember (this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

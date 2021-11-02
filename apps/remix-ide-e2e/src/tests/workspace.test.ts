@@ -19,7 +19,7 @@ module.exports = {
     browser
       .pause(5000)
       .refresh()
-      .pause(2000)
+      .pause(10000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content doesn\'t include Ballot contract')
       })
@@ -35,19 +35,26 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > span')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .pause(1000)
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > span')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .pause(2000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
@@ -59,10 +66,15 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextRename"]')['value'] = 'workspace_name_renamed' })
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
+      .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
+      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
@@ -70,8 +82,8 @@ module.exports = {
     browser
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
-      .waitForElementVisible('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .end()
   },

@@ -32,9 +32,10 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
-      .waitForElementPresent('*[title="tests/simple_storage_test.sol"]')
+      .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
       .clickLaunchIcon('filePanel')
-      .pause(10000)
+      .waitForElementPresent('[data-id="treeViewDivtreeViewItemtests"]')
+      .click('[data-id="treeViewDivtreeViewItemtests"]')
       .openFile('tests/simple_storage_test.sol')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
@@ -93,7 +94,7 @@ module.exports = {
   'Should fail on compilation, open file on error click, not disappear error': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close"]')
+      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close-tabs"]')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')
@@ -101,12 +102,12 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified', 120000)
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 120000)
-      .click('*[data-id="tests/compilationError_test.sol"]')
+      .click('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
       .pause(1000)
       .getEditorValue((content) => browser.assert.ok(content.indexOf('contract failOnCompilation {') !== -1))
       // Verify that compilation error is still present after a file is opened
       // usually, tests result is cleared on opening a new file
-      .verify.elementPresent('*[data-id="tests/compilationError_test.sol"]')
+      .verify.elementPresent('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
@@ -164,8 +165,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
-      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
-      .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
@@ -181,6 +183,7 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
+      .pause(2000)
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
@@ -190,8 +193,17 @@ module.exports = {
   },
 
   'Solidity Unit tests with hardhat console log': function (browser: NightwatchBrowser) {
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
+
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .perform((done) => {
+        if (runtimeBrowser !== 'chrome') {
+          browser.clickLaunchIcon('filePanel')
+            .waitForElementVisible('[data-id="treeViewLitreeViewItemtests"]')
+        }
+        done()
+      })
       .addFile('tests/hhLogs_test.sol', sources[0]['tests/hhLogs_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
       .waitForElementVisible('*[id="singleTesttests/4_Ballot_test.sol"]', 60000)
@@ -201,13 +213,13 @@ module.exports = {
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/hhLogs_test.sol', 60000)
-      .assert.containsText('#journal > div:nth-child(3) > span > div', 'Before all:')
-      .assert.containsText('#journal > div:nth-child(3) > span > div', 'Inside beforeAll')
-      .assert.containsText('#journal > div:nth-child(4) > span > div', 'Check sender:')
-      .assert.containsText('#journal > div:nth-child(4) > span > div', 'msg.sender is 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
-      .assert.containsText('#journal > div:nth-child(5) > span > div', 'Check int logs:')
-      .assert.containsText('#journal > div:nth-child(5) > span > div', '10 20')
-      .assert.containsText('#journal > div:nth-child(5) > span > div', 'Number is 25')
+      .assert.containsText('#journal > div:nth-child(2) > span', 'Before all:')
+      .assert.containsText('#journal > div:nth-child(2) > span', 'Inside beforeAll')
+      .assert.containsText('#journal > div:nth-child(3) > span', 'Check sender:')
+      .assert.containsText('#journal > div:nth-child(3) > span', 'msg.sender is 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
+      .assert.containsText('#journal > div:nth-child(4) > span', 'Check int logs:')
+      .assert.containsText('#journal > div:nth-child(4) > span', '10 20')
+      .assert.containsText('#journal > div:nth-child(4) > span', 'Number is 25')
       .openFile('tests/hhLogs_test.sol')
       .removeFile('tests/hhLogs_test.sol', 'workspace_new')
   },
@@ -223,13 +235,13 @@ module.exports = {
       .pause(2000)
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedLog_test.sol', 60000)
-      .assert.containsText('#journal > div:nth-child(6) > span > div', 'Check winning proposal:')
-      .assert.containsText('#journal > div:nth-child(6) > span > div', 'Inside checkWinningProposal')
+      .assert.containsText('#journal > div:nth-child(5) > span', 'Check winning proposal:')
+      .assert.containsText('#journal > div:nth-child(5) > span', 'Inside checkWinningProposal')
       .openFile('tests/ballotFailedLog_test.sol')
       .removeFile('tests/ballotFailedLog_test.sol', 'workspace_new')
   },
 
-  'Debug failed test using debugger': function (browser: NightwatchBrowser) {
+  'Debug tests using debugger': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
@@ -239,21 +251,50 @@ module.exports = {
       .click('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/ballotFailedDebug_test.sol', 60000)
-      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal failed', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal passed', 60000)
+      .waitForElementContainsText('#solidityUnittestsOutput', '✘ Check winning proposal again', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
-      .click('.fa-bug')
+      .click('#Check_winning_proposal_failed')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '235' }) // It only moves slider to 235 but vm traces are not updated
+      .execute(function () { document.getElementById('slider')['value'] = '315' }) // It only moves slider to 315 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposal()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
-      .pause(2000)
-      // Should be uncommented while fixing https://github.com/ethereum/remix-project/issues/1644
-      // .checkVariableDebug('soliditylocals', locals)
+      .pause(1000)
+      .checkVariableDebug('soliditylocals', locals)
+      .clickLaunchIcon('solidityUnitTesting')
+      .scrollAndClick('#Check_winning_proposal_passed')
+      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '1450' })
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
+      .pause(1000)
+      .clickLaunchIcon('solidityUnitTesting')
+      .scrollAndClick('#Check_winning_proposal_again')
+      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '1150' })
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
+      .pause(1000)
+      .clickLaunchIcon('solidityUnitTesting')
+      .scrollAndClick('#Check_winnin_proposal_with_return_value')
+      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '320' })
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')
@@ -269,6 +310,7 @@ module.exports = {
       .scrollAndClick('[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]')
       .pause(2000)
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
+      .pause(5000)
       .clickLaunchIcon('solidityUnitTesting')
       .scrollAndClick('#runTestsTabRunAction')
       .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
@@ -458,7 +500,7 @@ const sources = [
     },
     'tests/deployError_test.sol': {
       content: `
-      pragma solidity ^0.7.0;
+      pragma solidity ^0.8.0;
 
       contract failingDeploy {
           constructor() {
@@ -469,7 +511,7 @@ const sources = [
     },
     'tests/methodFailure_test.sol': {
       content: `
-      pragma solidity ^0.7.0;
+      pragma solidity ^0.8.0;
 
       contract methodfailure {
         function add(uint a, uint b) public {
@@ -496,9 +538,18 @@ const sources = [
               ballotToTest = new Ballot(proposalNames);
           }
           
-          function checkWinningProposal () public {
-              ballotToTest.vote(1); // This will revert the transaction
+          function checkWinningProposalFailed () public {
+              ballotToTest.vote(1);
               Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
+          }
+          
+          function checkWinningProposalPassed () public {
+              ballotToTest.vote(0);
+              Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
+          }
+          
+          function checkWinningProposalAgain () public {
+              Assert.equal(ballotToTest.winningProposal(), uint(1), "proposal at index 0 should be the winning proposal");
           }
           
           function checkWinninProposalWithReturnValue () public view returns (bool) {
@@ -558,7 +609,7 @@ const sources = [
     }
   }
 ]
-/*
+
 const locals = {
   sender: {
     value: {
@@ -586,4 +637,3 @@ const locals = {
     type: 'uint256'
   }
 }
-*/

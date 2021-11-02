@@ -115,16 +115,22 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
 
   async onActivation () {
     super.onActivation()
-    this.call('filePanel', 'registerContextMenuItem', {
-      id: 'solidity',
-      name: 'compileFile',
-      label: 'Compile',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: []
+    this.on('filePanel', 'workspaceInitializationCompleted', () => {
+      this.call('filePanel', 'registerContextMenuItem', {
+        id: 'solidity',
+        name: 'compileFile',
+        label: 'Compile',
+        type: [],
+        extension: ['.sol'],
+        path: [],
+        pattern: []
+      })
     })
-    this.currentFile = await this.call('fileManager', 'file')
+    try {
+      this.currentFile = await this.call('fileManager', 'file')
+    } catch (error) {
+      if (error.message !== 'Error: No such file or directory No file selected') throw error
+    }
   }
 
   getCompilerParameters () {
