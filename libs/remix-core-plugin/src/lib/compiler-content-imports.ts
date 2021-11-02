@@ -97,7 +97,7 @@ export class CompilerImports extends Plugin {
           try {
             const provider = await this.call('fileManager', 'getProviderOf', null)
             const path = targetPath || type + '/' + cleanUrl
-            if (provider) provider.addExternal('.deps/' + path, content, url)
+            if (provider) await provider.addExternal('.deps/' + path, content, url)
           } catch (err) {
             console.error(err)
           }
