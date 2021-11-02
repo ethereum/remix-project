@@ -3,7 +3,8 @@
     "rules": {
         "standard/no-callback-literal": "off",
         "no-unused-vars": "off",
-        "dot-notation": "off"
+        "dot-notation": "off",
+        "no-use-before-define": "off"
     }, 
     "env": {
         "browser": true,

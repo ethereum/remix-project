@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export interface ModalDialogProps {
   id?: string
   title?: string,
@@ -8,7 +9,7 @@ export interface ModalDialogProps {
   cancelFn?: () => void,
   modalClass?: string,
   showCancelIcon?: boolean,
-  hide: boolean,
+  hide?: boolean,
   handleHide: (hideState?: boolean) => void,
   children?: React.ReactNode
 }

@@ -88,9 +88,6 @@
     "remix-ui-toaster": {
       "tags": []
     },
-    "remix-ui-file-explorer": {
-      "tags": []
-    },
     "debugger": {
       "tags": []
     },
@@ -121,10 +118,22 @@
     "remix-ui-renderer": {
       "tags": []
     },
+    "remix-ui-terminal": {
+      "tags": []
+    },
     "solidity-compiler": {
       "tags": []
     },
     "remix-ide-e2e-src-local-plugin": {
+      "tags": []
+    },
+    "remix-ui-editor": {
+      "tags": []
+    },
+    "remix-ui-helper": {
+      "tags": []
+    },
+    "remix-ui-tabs": {
       "tags": []
     }
   },

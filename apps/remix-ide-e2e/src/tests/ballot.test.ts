@@ -56,8 +56,7 @@ module.exports = {
       .waitForElementVisible('#stepdetail')
       .goToVMTraceStep(144)
       .pause(2000)
-      // Should be uncommented while fixing https://github.com/ethereum/remix-project/issues/1644
-      // .checkVariableDebug('soliditystate', stateCheck)
+      .checkVariableDebug('soliditystate', stateCheck)
       .checkVariableDebug('soliditylocals', localsCheck)
   },
 
@@ -82,11 +81,20 @@ module.exports = {
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
+      .openFile('Untitled.sol')
+      .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
+      .execute(function () {
+        const env: any = document.getElementById('selectExEnvOptions')
+        return env.value
+      }, [], function (result) {
+        console.log({ result })
+        browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
+      })
       .clickLaunchIcon('solidity')
-      .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
+      .pause(2000)
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
@@ -117,7 +125,7 @@ const localsCheck = {
     type: 'address'
   }
 }
-/*
+
 const stateCheck = {
   chairperson: {
     value: '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
@@ -175,8 +183,6 @@ const stateCheck = {
     immutable: false
   }
 }
-*/
-
 const ballotABI = `[
 {
   "inputs": [

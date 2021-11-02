@@ -1,10 +1,6 @@
 
 import type { CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts' // eslint-disable-line
 
-export interface DebuggerUIProps {
-    debuggerAPI: IDebuggerApi
-}
-
 export interface LineColumnLocation {
     start: {
         line: number, column: number
@@ -67,4 +63,8 @@ export interface IDebuggerApi {
     getDebugWeb3: () => any // returns an instance of web3.js, if applicable (mainet, goerli, ...) it returns a reference to a node from devops (so we are sure debug endpoint is available)
     web3: () => any // returns an instance of web3.js
     showMessage (title: string, message: string): void
+}
+
+export interface DebuggerUIProps {
+    debuggerAPI: IDebuggerApi
 }

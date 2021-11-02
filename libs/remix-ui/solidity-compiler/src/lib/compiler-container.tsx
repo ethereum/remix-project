@@ -23,6 +23,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
+    matomoAutocompileOnce: true,
     optimize: false,
     compileTimeout: null,
     timeout: 300,
@@ -69,7 +70,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const optimize = params.optimize
         const runs = params.runs as string
         const evmVersion = params.evmVersion
-
         return {
           ...prevState,
           hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
@@ -135,6 +135,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }
   }, [configurationSettings])
 
+  const _retrieveVersion = (version?) => {
+    if (!version) version = state.selectedVersion
+    if (version === 'builtin') version = state.defaultVersion
+    return semver.coerce(version) ? semver.coerce(version).version : ''
+  }
+
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   const fetchAllVersion = async (callback) => {
     let selectedVersion, allVersionsWasm, isURL
@@ -198,6 +204,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const _setCompilerVersionFromPragma = (filename: string) => {
     if (!state.allversions) return
     api.readFile(filename).then(data => {
+      if (!data) return
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
@@ -281,7 +288,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', 'idle')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
-    _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
+    if (!state.autoCompile || (state.autoCompile && state.matomoAutocompileOnce)) {
+      _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
+      if (state.autoCompile && state.matomoAutocompileOnce) {
+        setState(prevState => {
+          return { ...prevState, matomoAutocompileOnce: false }
+        })
+      }
+    }
   }
 
   const scheduleCompilation = () => {
@@ -303,12 +317,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     _setCompilerVersionFromPragma(currentFile)
     compileTabLogic.runCompiler(hhCompilation)
-  }
-
-  const _retrieveVersion = (version?) => {
-    if (!version) version = state.selectedVersion
-    if (version === 'builtin') version = state.defaultVersion
-    return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
   const _updateVersionSelector = (version, customUrl = '') => {
@@ -384,7 +392,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const handleLoadVersion = (value) => {
     setState(prevState => {
-      return { ...prevState, selectedVersion: value }
+      return { ...prevState, selectedVersion: value, matomoAutocompileOnce: true }
     })
     updateCurrentVersion(value)
     _updateVersionSelector(value)
@@ -405,7 +413,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     api.setAppParameter('autoCompile', checked)
     checked && compile()
     setState(prevState => {
-      return { ...prevState, autoCompile: checked }
+      return { ...prevState, autoCompile: checked, matomoAutocompileOnce: state.matomoAutocompileOnce || checked }
     })
   }
 
@@ -533,7 +541,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <option data-id={state.evmVersion === 'default' ? 'selected' : ''} value="default">compiler default</option>
               <option data-id={state.evmVersion === 'london' ? 'selected' : ''} value="london">london</option>
               <option data-id={state.evmVersion === 'berlin' ? 'selected' : ''} value="berlin">berlin</option>
-              <option data-id={state.evmVersion === 'muirGlacier' ? 'selected' : ''} value="muirGlacier">muirGlacier</option>
               <option data-id={state.evmVersion === 'istanbul' ? 'selected' : ''} value="istanbul">istanbul</option>
               <option data-id={state.evmVersion === 'petersburg' ? 'selected' : ''} value="petersburg">petersburg</option>
               <option data-id={state.evmVersion === 'constantinople' ? 'selected' : ''} value="constantinople">constantinople</option>

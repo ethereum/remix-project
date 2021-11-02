@@ -28,7 +28,6 @@ module.exports = {
 
   'Deploy Ballot': function (browser: NightwatchBrowser) {
     browser.pause(500)
-      .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
       .setValue('input[placeholder="uint8 _numProposals"]', '2')
@@ -77,11 +76,13 @@ module.exports = {
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
+      .openFile('Untitled.sol')
+      .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
       .clickLaunchIcon('solidity')
-      .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
+      .pause(2000)
       .setValue('input[placeholder="uint8 _numProposals"]', '2')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
