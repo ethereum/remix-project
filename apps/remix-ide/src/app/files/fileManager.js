@@ -612,11 +612,11 @@ class FileManager extends Plugin {
   }
 
   async openFile (file) {
-    file = this.normalize(file)
     if (!file) {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     } else {
+      file = this.normalize(file)
       this.saveCurrentFile()
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
