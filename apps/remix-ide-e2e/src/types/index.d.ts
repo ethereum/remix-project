@@ -23,7 +23,7 @@ declare module 'nightwatch' {
         journalLastChildIncludes(val: string): NightwatchBrowser,
         executeScript(script: string): NightwatchBrowser,
         clearEditableContent(cssSelector: string): NightwatchBrowser,
-        journalChildIncludes(val: string): NightwatchBrowser,
+        journalChildIncludes(val: string, opts = { shouldHaveOnlyOneOccurence: boolean }): NightwatchBrowser,
         debugTransaction(index: number): NightwatchBrowser,
         checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser,
         openFile(name: string): NightwatchBrowser,
