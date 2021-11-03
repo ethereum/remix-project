@@ -97,7 +97,7 @@ class Editor extends Plugin {
     this.emit(name, ...params) // plugin stack
   }
 
-  onActivation () {
+  async onActivation () {
     this.activated = true
     this.on('sidePanel', 'focusChanged', (name) => {
       this.keepDecorationsFor(name, 'sourceAnnotationsPerFile')
@@ -112,10 +112,11 @@ class Editor extends Plugin {
       this.currentTheme = translateTheme(theme)
       this.renderComponent()
     })
-    this.call('theme', 'currentTheme', (theme) => {
-      this.currentTheme = translateTheme(theme)
-      this.renderComponent()
-    })
+    try {
+      this.currentTheme = translateTheme(await this.call('theme', 'currentTheme'))
+    } catch (e) {
+      console.log('unable to select the theme ' + e.message)
+    }
     this.renderComponent()
   }
 
