@@ -103,7 +103,7 @@ export class SidePanel extends AbstractPanel {
 
   addView (profile, view) {
     super.addView(profile, view)
-    this.verticalIcons.linkContent(profile)
+    setTimeout(() => this.verticalIcons.linkContent(profile), 60000)
   }
 
   /**
