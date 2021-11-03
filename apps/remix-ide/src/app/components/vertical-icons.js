@@ -66,17 +66,19 @@ export class VerticalIcons extends Plugin {
     // the list of supported keys. 'none' will remove the status
     // const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
     // const types = ['error', 'warning', 'success', 'info', '']
-    // const fn = (status) => {
-    //   if (!this.types.includes(status.type) && status.type) throw new Error(`type should be ${this.keys.join()}`)
-    //   if (status.key === undefined) throw new Error('status key should be defined')
+    const fn = (status) => {
+      if (!this.types.includes(status.type) && status.type) throw new Error(`type should be ${this.keys.join()}`)
+      if (status.key === undefined) throw new Error('status key should be defined')
 
-    //   if (typeof status.key === 'string' && (!this.keys.includes(status.key))) {
-    //     throw new Error('key should contain either number or ' + this.keys.join())
-    //   }
-    //   this.setIconStatus(profile.name, status)
-    // }
-    // this.iconStatus[profile.name] = fn
-    // this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
+      if (typeof status.key === 'string' && (!this.keys.includes(status.key))) {
+        throw new Error('key should contain either number or ' + this.keys.join())
+      }
+      this.setIconStatus(profile.name, status)
+    }
+    this.iconStatus[profile.name] = fn
+    this.on(profile.name, 'statusChanged', () => {
+      console.log('caught statusChanged in react!')
+    })
   }
 
   /**
@@ -114,8 +116,6 @@ export class VerticalIcons extends Plugin {
    */
   setIconStatus (name, status) {
     const el = this.icons[name]
-    // eslint-disable-next-line no-debugger
-    debugger
     if (!el) return
     const statusEl = el.querySelector('i')
     if (statusEl) {
