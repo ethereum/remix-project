@@ -213,6 +213,12 @@ export const EditorUI = (props: EditorUIProps) => {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
+      editor.updateOptions({ fontSize: editor.getOption(42).fontSize + 1 })
+    })
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
+      editor.updateOptions({ fontSize: editor.getOption(42).fontSize - 1 })
+    })
   }
 
   function handleEditorWillMount (monaco) {
