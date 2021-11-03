@@ -156,6 +156,38 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     </div>
   `
 
+  // Verify smart contract on Etherscan UI
+  const verifySourceCodeOnEtherscan = yo`
+    <div class="d-flex flex-column">
+      <div class="d-flex flex-row justify-content-between mt-2">
+        <div class="py-2 border-top d-flex justify-content-start flex-grow-1">
+          Verify your Source Code on Etherscan
+        </div>
+        <a
+          href="https://medium.com/etherscan-blog/verifying-contracts-on-etherscan-f995ab772327"
+          title="check out docs for smart contract verification"
+          target="_blank"
+        >
+          <i aria-hidden="true" class="fas fa-info my-2 mr-1"></i>
+        </a>
+      </div>
+      <div class="d-flex flex-column align-items-start">
+        <div class="d-flex justify-content-end w-100 align-items-center">
+          <button class="${css.instanceButton} p-0 w-50 btn border-warning text-warning" title="Verify contract on etherscan." onclick=${() => verifyContract()}>Verify Contract</button>
+        </div>
+      </div>
+      <div>
+        ${llIError}
+      </div>
+    </div>
+  `
+  function verifyContract () {
+    /**
+     * Integrate into Etherscan Plugin
+     */
+    window.open("https://etherscan.io/verifyContract", '_blank').focus();
+  }
+
   function sendData () {
     function setLLIError (text) {
       llIError.innerText = text
