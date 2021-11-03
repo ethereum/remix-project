@@ -114,7 +114,7 @@ export class RemixClient extends PluginClient {
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          infuraId: '83d4d660ce3546299cbe048ed95b6fad',
+          infuraId: '66e95624569c4b47a67648448e32126e',
           bridge: 'https://wallet-connect-bridge.dyn.plugin.remixproject.org:8080/'
         }
       },
@@ -134,7 +134,7 @@ export class RemixClient extends PluginClient {
       mewconnect: {
         package: MewConnect, // required
         options: {
-          infuraId: "83d4d660ce3546299cbe048ed95b6fad" // required
+          infuraId: "66e95624569c4b47a67648448e32126e" // required
         }
       }
       /*,
