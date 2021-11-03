@@ -17,7 +17,7 @@ export type IconStatusActionType = {
    * @param {String} key
    * @param {String} type
    */
-function resolveClasses (key: string, type: string) {
+export function resolveClasses (key: string, type: string) {
   let classes = 'remixui_status'
 
   switch (key) {
@@ -43,7 +43,7 @@ function resolveClasses (key: string, type: string) {
 export function iconStatusReducer (state, action: IconStatusActionType) {
   const { type, payload } = action
   if (type === 'success') {
-
+    
   }
   return defaultState
 }

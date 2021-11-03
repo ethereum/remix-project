@@ -5,17 +5,11 @@ import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import * as helper from '../../../../../../apps/remix-ide/src/lib/helper'
+// import * as helper from '../../../../../../apps/remix-ide/src/lib/helper'
 import { defaultState, iconStatusReducer } from '../reducers/iconReducers'
 
   interface IconProps {
     verticalIconPlugin: VerticalIcons
-    // kind: string
-    // name: string
-    // icon: string
-    // displayName: string
-    // tooltip: string
-    // documentation: string
     profile: any
     contextMenuAction: (evt: any, profileName: string, documentation: string) => void
     addActive: (profileName: string) => void
@@ -73,58 +67,42 @@ function Icon ({
    * @param {Object} status
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function setIconStatus (name: string) {
-    if (!iconRef.current) return
-    const statusEl = iconRef.current.querySelector('i')
-    if (statusEl) {
-      iconRef.current.removeChild(statusEl) // need to eject component instead of removing?
-    }
-    if (status.key === 'none') return // remove status
+  // function setIconStatus (name: string, status: any) {
+  //   if (!iconRef.current) return
+  //   const statusEl = iconRef.current.querySelector('i')
+  //   if (statusEl) {
+  //     iconRef.current.removeChild(statusEl) // need to eject component instead of removing?
+  //   }
+  //   if (status.key === 'none') return // remove status
 
-    let text = ''
-    let key = ''
-    if (typeof status.key === 'number') {
-      key = status.key.toString()
-      text = key
-    } else key = helper.checkSpecialChars(status.key) ? '' : status.key
+  //   let text = ''
+  //   let key = ''
+  //   if (typeof status.key === 'number') {
+  //     key = status.key.toString()
+  //     text = key
+  //   } else key = helper.checkSpecialChars(status.key) ? '' : status.key
 
-    let type = ''
-    if (status.type === 'error') {
-      type = 'danger' // to use with bootstrap
-    } else type = helper.checkSpecialChars(status.type) ? '' : status.type
-    const title = helper.checkSpecialChars(status.title) ? '' : status.title
+  //   let type = ''
+  //   if (status.type === 'error') {
+  //     type = 'danger' // to use with bootstrap
+  //   } else type = helper.checkSpecialChars(status.type) ? '' : status.type
+  //   const title = helper.checkSpecialChars(status.title) ? '' : status.title
 
-    const icon = document.createElement('i')
-    icon.title = title
-    // icon.className = resolveClasses(key, type)
-    icon.ariaHidden = 'true'
-    const innerText = document.createTextNode(text)
-    icon.appendChild(innerText)
-    iconRef.current!.appendChild(icon)
-    iconRef.current.classList.add('remixui_icon')
-  }
-
-  function setErrorStatus () {
-    if (!verticalIconPlugin.types.includes(status.type) && status.type) throw new Error(`type should be ${verticalIconPlugin.keys.join()}`)
-    if (status.key === undefined) throw new Error('status key should be defined')
-    if (typeof status.key === 'string' && (!verticalIconPlugin.keys.includes(status.key))) {
-      throw new Error('key should contain either number or ' + verticalIconPlugin.keys.join())
-    }
-    setIconStatus(profile.name)
-  }
-  function listenOnStatus () {
-    // verticalIconPlugin.iconStatus[profile.name] = setErrorStatus // { profileName: profile.name, errorStatus: setErrorStatus } ?
-    verticalIconPlugin.on(profile.name, 'statusChanged', dispatchIconStatus({ type: 'success', payload: { } }))
-  }
+  //   const icon = document.createElement('i')
+  //   icon.title = title
+  //   // icon.className = resolveClasses(key, type)
+  //   icon.ariaHidden = 'true'
+  //   const innerText = document.createTextNode(text)
+  //   icon.appendChild(innerText)
+  //   iconRef.current!.appendChild(icon)
+  //   iconRef.current.classList.add('remixui_icon')
+  // }
 
   useEffect(() => {
-    listenOnStatus()
-    return () => {
-      console.log('just listened for status change ', { profile })
-      addEventListener('statusChanged', (e) => {
-        console.log('statusChanged just happend for this icon and this is its payload ', e)
-      })
-    }
+    console.log('profile.name: ', profile.name)
+    verticalIconPlugin.on(profile.name, 'statusChanged', () => {
+      console.log('caught statusChanged in react! icon.tsx')
+    })
   }, [])
 
   return (
@@ -156,6 +134,15 @@ function Icon ({
       >
         <img className="remixui_image" src={icon} alt={name} />
       </div>
+      {/* { status && status.profileName.length
+        ? <i
+          title={status.title}
+          className={resolveClasses(status.key as string, status.type)}
+          aria-hidden="true"
+        >
+          {status.text}
+        </i> : null
+      } */}
       {showContext ? (
         <VerticalIconsContextMenu
           pageX={pageX}
