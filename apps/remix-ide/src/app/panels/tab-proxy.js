@@ -191,13 +191,6 @@ export class TabProxy extends Plugin {
     }
   }
 
-  switchToActiveTab () {
-    const active = this.tabsApi.active()
-    if (active && this._handlers[active]) {
-      this.switchTab(active)
-    }
-  }
-
   renameTab (oldName, newName) {
     this.addTab(newName, '', () => {
       this.fileManager.open(newName)
@@ -271,10 +264,14 @@ export class TabProxy extends Plugin {
 
   removeTab (name) {
     delete this._handlers[name]
-    this.switchToActiveTab()
-    this.loadedTabs = this.loadedTabs.filter(tab => tab.name !== name)
+    let previous = null
+    this.loadedTabs = this.loadedTabs.filter((tab, index) => {
+      if (tab.name === name) previous = this.loadedTabs[index - 1]
+      return tab.name !== name
+    })
     this.renderComponent()
     this.updateImgStyles()
+    if (previous) this.switchTab(previous.name) 
   }
 
   addHandler (type, fn) {
