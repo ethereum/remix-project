@@ -82,8 +82,6 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.editor.setTheme(props.theme)
   }, [props.theme])
 
-  if (monacoRef.current) monacoRef.current.editor.setTheme(props.theme)
-
   const setAnnotationsbyFile = (uri) => {
     if (props.sourceAnnotationsPerFile[uri]) {
       const model = editorModelsState[uri]?.model
@@ -220,10 +218,10 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const lightColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
-    const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
-    const darkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()
-    const grayColor = window.getComputedStyle(document.documentElement).getPropertyValue('--gray-dark').trim()
+    const lightColor = '#2a2c3f'
+    const infoColor = '#086CB5'
+    const darkColor = '#222336'
+    const grayColor = '#343a40'
     monaco.editor.defineTheme('remix-dark', {
       base: 'vs-dark',
       inherit: true, // can also be false to completely replace the builtin rules
