@@ -77,9 +77,34 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
+  const defineAndSetDarkTheme = (monaco) => {
+    // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
+    const lightColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
+    const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
+    const darkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()
+    const grayColor = window.getComputedStyle(document.documentElement).getPropertyValue('--gray-dark').trim()
+    monaco.editor.defineTheme('remix-dark', {
+      base: 'vs-dark',
+      inherit: true, // can also be false to completely replace the builtin rules
+      rules: [{ background: darkColor.replace('#', '') }],
+      colors: {
+        'editor.background': darkColor,
+        'editorSuggestWidget.background': lightColor,
+        'editorSuggestWidget.selectedBackground': lightColor,
+        'editorSuggestWidget.highlightForeground': infoColor,
+        'editor.lineHighlightBorder': lightColor,
+        'editor.lineHighlightBackground': grayColor,
+        'editorGutter.background': lightColor
+      }
+    })
+    monacoRef.current.editor.setTheme('remix-dark')
+  }
+
   useEffect(() => {
     if (!monacoRef.current) return
-    monacoRef.current.editor.setTheme(props.theme)
+    if (props.theme === 'remix-dark') {
+      defineAndSetDarkTheme(monacoRef.current)
+    } else monacoRef.current.editor.setTheme(props.theme)
   }, [props.theme])
 
   const setAnnotationsbyFile = (uri) => {
@@ -205,7 +230,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorDidMount (editor) {
     editorRef.current = editor
-    monacoRef.current.editor.setTheme(props.theme)
+    if (props.theme === 'remix-dark') {
+      defineAndSetDarkTheme(monacoRef.current)
+    } else monacoRef.current.editor.setTheme(props.theme)
     reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
@@ -223,25 +250,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
-    // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const lightColor = '#2a2c3f'
-    const infoColor = '#086CB5'
-    const darkColor = '#222336'
-    const grayColor = '#343a40'
-    monaco.editor.defineTheme('remix-dark', {
-      base: 'vs-dark',
-      inherit: true, // can also be false to completely replace the builtin rules
-      rules: [{ background: darkColor.replace('#', '') }],
-      colors: {
-        'editor.background': darkColor,
-        'editorSuggestWidget.background': lightColor,
-        'editorSuggestWidget.selectedBackground': lightColor,
-        'editorSuggestWidget.highlightForeground': infoColor,
-        'editor.lineHighlightBorder': lightColor,
-        'editor.lineHighlightBackground': grayColor,
-        'editorGutter.background': lightColor
-      }
-    })
   }
 
   return (
