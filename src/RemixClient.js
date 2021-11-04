@@ -7,11 +7,12 @@ import {
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
 import Authereum from "authereum";
-import Web3Modal from "web3modal";
+import Web3Modal, { local } from "web3modal";
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 import EventManager from "events"
 
+export const INFURA_ID_KEY = 'walletconnect-infura-id'
 
 export class RemixClient extends PluginClient {
   provider
@@ -21,19 +22,6 @@ export class RemixClient extends PluginClient {
     this.methods = ["sendAsync"];
     this.internalEvents = new EventManager()
     this.onload()
-    this.web3Modal = new Web3Modal({
-      providerOptions: this.getProviderOptions() // required
-    });
-  }
-
-  async init() {
-    const currentTheme = await this.call('theme', 'currentTheme')
-    this.web3Modal.updateTheme(currentTheme.quality)
-
-    this.on('theme', 'themeChanged', (theme) => {
-      this.web3Modal.updateTheme(theme.quality)
-    })
-
   }
 
   /**
@@ -42,6 +30,9 @@ export class RemixClient extends PluginClient {
   async onConnect() {
 
     try {
+      this.web3Modal = new Web3Modal({
+        providerOptions: this.getProviderOptions() // required
+      })
       this.provider = await this.web3Modal.connect();
     } catch (e) {
       console.error("Could not get a wallet connection", e);
@@ -85,14 +76,17 @@ export class RemixClient extends PluginClient {
     else if (id === 42) networkName = "Kovan";
     else networkName = "Custom";
     return networkName
+  }
 
+  getInfuraId () {
+    return localStorage.getItem(INFURA_ID_KEY)
   }
 
   /**
    * Disconnect wallet button pressed.
    */
   async onDisconnect() {
-
+    this.web3Modal = null
     // TODO: Which providers have close method?
     if (this.provider && this.provider.close) {
       await this.provider.close();
@@ -106,7 +100,6 @@ export class RemixClient extends PluginClient {
     } else {
       this.internalEvents.emit('disconnect')
     }
-
   }
 
   getProviderOptions() {
@@ -114,7 +107,7 @@ export class RemixClient extends PluginClient {
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          infuraId: '66e95624569c4b47a67648448e32126e',
+          infuraId: this.getInfuraId(),
           bridge: 'https://wallet-connect-bridge.dyn.plugin.remixproject.org:8080/'
         }
       },
@@ -134,7 +127,7 @@ export class RemixClient extends PluginClient {
       mewconnect: {
         package: MewConnect, // required
         options: {
-          infuraId: "66e95624569c4b47a67648448e32126e" // required
+          infuraId: this.getInfuraId() // required
         }
       }
       /*,
