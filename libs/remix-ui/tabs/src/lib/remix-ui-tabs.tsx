@@ -33,7 +33,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
-    const classNameTab = 'nav-item nav-link tab' + (index === currentIndexRef.current ? ' active' : '')
+    const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     return (
       <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
         {tab.icon ? (<img className="my-1 mr-1 iconImage" src={tab.icon} />) : (<i className={classNameImg}></i>)}
@@ -62,14 +62,13 @@ export const TabsUI = (props: TabsUIProps) => {
   }, [])
 
   return (
-    <div className="remix-ui-tabs header nav nav-tabs">
-      <div className="d-flex flex-row justify-content-center align-items-center left-icon">
-        <span data-id="tabProxyZoomOut" className="btn btn-sm px-1 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
-        <span data-id="tabProxyZoomIn" className="btn btn-sm px-1 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
-        <i className="d-flex flex-row justify-content-center align-items-center far fa-sliders-v px-1" title="press F1 when focusing the editor to show advanced configuration settings"></i>
+    <div className="remix-ui-tabs border-0 header nav-tabs">
+      <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-2">
+        <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
+        <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
       </div>
       <Tabs className="tab-scroll" selectedIndex={selectedIndex} onSelect={index => { props.onSelect(index); currentIndexRef.current = index; setSelectedIndex(index) }} >
-        <TabList>{props.tabs.map((tab, i) => <Tab key={tab.name}>{renderTab(tab, i)}</Tab>)}</TabList>
+        <TabList className="d-flex flex-row justify-content-center align-items-center">{props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}</TabList>
         {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
       </Tabs>
     </div>
