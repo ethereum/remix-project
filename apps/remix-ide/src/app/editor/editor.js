@@ -108,7 +108,7 @@ class Editor extends Plugin {
     })
 
     const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
-    this.on('theme', 'themeChanged', (theme) => {
+    this.on('theme', 'themeLoaded', (theme) => {
       this.currentTheme = translateTheme(theme)
       this.renderComponent()
     })

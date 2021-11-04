@@ -63,10 +63,10 @@ export class ThemeModule extends Plugin {
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
       const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
-      theme.addEventListener('load', () => {
+      document.head.insertBefore(theme, document.head.firstChild)
+      document.getElementById('theme-link').addEventListener('load', () => {
         if (callback) callback()
       })
-      document.head.insertBefore(theme, document.head.firstChild)
     }
   }
 
@@ -82,7 +82,13 @@ export class ThemeModule extends Plugin {
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
-    document.getElementById('theme-link').setAttribute('href', nextTheme.url)
+    document.getElementById('theme-link').remove()
+    const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+    theme.addEventListener('load', () => {
+      this.emit('themeLoaded', nextTheme)
+      this.events.emit('themeLoaded', nextTheme)
+    })
+    document.head.insertBefore(theme, document.head.firstChild)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
     // TODO: Only keep `this.emit` (issue#2210)
