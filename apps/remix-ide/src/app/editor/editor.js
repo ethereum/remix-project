@@ -147,7 +147,6 @@ class Editor extends Plugin {
     if (this.saveTimeout) {
       window.clearTimeout(this.saveTimeout)
     }
-    
 
     this.saveTimeout = window.setTimeout(() => {
       this.triggerEvent('contentChanged', [])

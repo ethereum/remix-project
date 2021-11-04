@@ -655,17 +655,15 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       const _path = splitPath(state, payload.path)
       let prevFiles = _.get(files, _path)
 
-      if(!prevFiles){
-        var object = {}, o = object;
-        for(let pa of _path) {
-            o = o[pa] = {};
-            if(pa !== _path[0])
-            o = o['child'] = {}
+      if (!prevFiles) {
+        var object = {}; var o = object
+        for (const pa of _path) {
+          o = o[pa] = {}
+          if (pa !== _path[0]) { o = o.child = {} }
         }
         files = _.defaultsDeep(files, object)
         prevFiles = _.get(files, _path)
       }
-
 
       if (prevFiles) {
         prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
