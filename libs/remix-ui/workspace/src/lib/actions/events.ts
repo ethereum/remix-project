@@ -140,21 +140,18 @@ const fileAdded = async (filePath: string) => {
 }
 
 const folderAdded = async (folderPath: string) => {
-  console.log('folder add event', folderPath)
   const provider = plugin.fileManager.currentFileProvider()
   let path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
 
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
-      console.log('resolve', JSON.stringify(fileTree))
       resolve(fileTree)
     })
   })
 
   promise.then((files) => {
     folderPath = folderPath.replace(/^\/+/, '')
-    console.log('folderd add success', path, folderPath, JSON.stringify(files))
     dispatch(folderAddedSuccess(path, folderPath, files))
   }).catch((error) => {
     console.error(error)
