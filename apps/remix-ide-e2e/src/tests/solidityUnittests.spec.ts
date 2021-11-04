@@ -94,7 +94,7 @@ module.exports = {
   'Should fail on compilation, open file on error click, not disappear error': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close"]')
+      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close-tabs"]')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')
@@ -102,12 +102,12 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified', 120000)
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 120000)
-      .click('*[data-id="tests/compilationError_test.sol"]')
+      .click('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
       .pause(1000)
       .getEditorValue((content) => browser.assert.ok(content.indexOf('contract failOnCompilation {') !== -1))
       // Verify that compilation error is still present after a file is opened
       // usually, tests result is cleared on opening a new file
-      .verify.elementPresent('*[data-id="tests/compilationError_test.sol"]')
+      .verify.elementPresent('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {

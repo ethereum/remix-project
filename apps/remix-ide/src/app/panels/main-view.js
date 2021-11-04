@@ -54,7 +54,7 @@ export class MainView {
       fileManager: self._components.registry.get('filemanager').api
     }
 
-    self.tabProxy = new TabProxy(self.fileManager, self.editor, self.appManager)
+    self.tabProxy = new TabProxy(self.fileManager, self.editor)
     /*
       We listen here on event from the tab component to display / hide the editor and mainpanel
       depending on the content that should be displayed

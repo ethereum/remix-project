@@ -231,7 +231,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           files: state.mode === 'localhost' ? fetchWorkspaceDirectoryContent(state, payload) : state.localhost.files,
           isRequestingWorkspace: false,
           isSuccessfulWorkspace: true,
-          error: null
+          error: null,
+          sharedFolder: null
         }
       }
     }
