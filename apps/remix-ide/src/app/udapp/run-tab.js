@@ -1,3 +1,6 @@
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 
@@ -47,6 +50,11 @@ export class RunTab extends ViewPlugin {
     this.networkModule = networkModule
     this.fileProvider = fileProvider
     this.setupEvents()
+    this.el = document.createElement('div')
+  }
+
+  onActivation () {
+    this.renderComponent()
   }
 
   setupEvents () {
@@ -102,21 +110,6 @@ export class RunTab extends ViewPlugin {
 
   pendingTransactionsCount () {
     return this.blockchain.pendingTransactionsCount()
-  }
-
-  renderContainer () {
-    this.container = yo`<div class="${css.runTabView} run-tab" id="runTabView" data-id="runTabView"></div>`
-
-    var el = yo`
-    <div class="list-group list-group-flush">
-      ${this.settingsUI.render()}
-      ${this.contractDropdownUI.render()}
-      ${this.recorderCard.render()}
-      ${this.instanceContainer}
-    </div>
-    `
-    this.container.appendChild(el)
-    return this.container
   }
 
   renderInstanceContainer () {
@@ -225,6 +218,7 @@ export class RunTab extends ViewPlugin {
   }
 
   render () {
+    return this.el
     this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
     this.blockchain.resetAndInit(this.config, {
       getAddress: (cb) => {
@@ -282,5 +276,11 @@ export class RunTab extends ViewPlugin {
     this.on('manager', 'pluginActivated', addPluginProvider.bind(this))
     this.on('manager', 'pluginDeactivated', removePluginProvider.bind(this))
     return this.renderContainer()
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <RunTabUI plugin={this} />
+      , this.el)
   }
 }

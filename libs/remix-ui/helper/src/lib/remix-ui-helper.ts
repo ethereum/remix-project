@@ -62,3 +62,7 @@ export const getPathIcon = (path: string) => {
                   ? 'fab fa-ethereum' : path.endsWith('.cairo')
                     ? 'fab fa-ethereum' : 'far fa-file' // TODO: add cairo icon
 }
+
+export const isNumeric = (value) => {
+  return /^\+?(0|[1-9]\d*)$/.test(value)
+}
