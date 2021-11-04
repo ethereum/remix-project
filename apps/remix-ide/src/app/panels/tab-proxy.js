@@ -271,7 +271,7 @@ export class TabProxy extends Plugin {
     })
     this.renderComponent()
     this.updateImgStyles()
-    if (previous) this.switchTab(previous.name) 
+    if (previous) this.switchTab(previous.name)
   }
 
   addHandler (type, fn) {
