@@ -1,7 +1,6 @@
 'use strict'
 
 import { CompilerImports } from '@remix-project/core-plugin'
-import { ConsoleLogs } from 'libs/remix-lib/src/helpers/hhconsoleSigs'
 const EventManager = require('events')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const tooltip = require('../ui/tooltip')
@@ -109,20 +108,21 @@ class FileProvider {
       return null
     }
 
-    await this.createDir(path.substr(0, path.lastIndexOf('/')))
-    try {
-      await window.remixFileSystem.writeFile(unprefixedpath, content, 'utf8')
-    } catch (e) {
-      if (cb) cb(e)
-      return false
-    }
-    if (!exists) {
-      this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
-    } else {
-      this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
-    }
-    if (cb) cb()
-    return true
+    await this.createDir(path.substr(0, path.lastIndexOf('/')), async () => {
+      try {
+        await window.remixFileSystem.writeFile(unprefixedpath, content, 'utf8')
+      } catch (e) {
+        if (cb) cb(e)
+        return false
+      }
+      if (!exists) {
+        this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
+      } else {
+        this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
+      }
+      if (cb) cb()
+      return true
+    })
   }
 
   async createDir (path, cb) {
@@ -135,13 +135,15 @@ class FileProvider {
       if (!await window.remixFileSystem.exists(currentCheck)) {
         try {
           await window.remixFileSystem.mkdir(currentCheck)
-          console.log('folder add', currentCheck, this._normalizePath(currentCheck))
-          this.event.emit('folderAdded', this._normalizePath(currentCheck))
-          console.log("folderd added")
         } catch (error) {
           console.log(error)
         }
       }
+    }
+    currentCheck = ''
+    for (const value of paths) {
+      currentCheck = currentCheck + '/' + value
+      this.event.emit('folderAdded', this._normalizePath(currentCheck))
     }
     if (cb) cb()
   }
@@ -280,21 +282,17 @@ class FileProvider {
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
-      console.log('res dir', path)
       const files = await window.remixFileSystem.readdir(path)
       const ret = {}
-      console.log(files)
       if (files) {
         for (let element of files) {
           path = path.replace(/^\/|\/$/g, '') // remove first and last slash
           element = element.replace(/^\/|\/$/g, '') // remove first and last slash
           const absPath = (path === '/' ? '' : path) + '/' + element
-          console.log("stat ", absPath, await window.remixFileSystem.stat(absPath))
           ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: (await window.remixFileSystem.stat(absPath)).isDirectory() }
           // ^ ret does not accept path starting with '/'
         }
       }
-      console.log("return", ret)
       if (cb) cb(null, ret)
       return ret
     } catch (error) {

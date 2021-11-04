@@ -422,6 +422,9 @@ export class LandingPage extends ViewPlugin {
         }, 1000)
       }
     }
+    const setDemoFile = async () => {
+    }
+
     const onAcceptDownloadn = async () => {
       await downloadFiles()
       const el = document.getElementById('modal-dialog')
@@ -472,6 +475,9 @@ export class LandingPage extends ViewPlugin {
           <div class="d-flex justify-content-between">
             <div class="d-flex flex-column">
               <div class="border-bottom d-flex justify-content-between clearfix py-3 mb-4">
+
+                <div class="${css.text} pr-1" onclick=${async () => setDemoFile()}>SETFILE</div>
+
                 <div class="mx-4 w-100 d-flex">
                   ${img}
                   <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>

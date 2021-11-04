@@ -331,8 +331,7 @@ class FileManager extends Plugin {
         throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
       }
       const provider = this.fileProviderOf(path)
-
-      return provider.createDir(path)
+      return await provider.createDir(path)
     } catch (e) {
       throw new Error(e)
     }
@@ -621,26 +620,26 @@ class FileManager extends Plugin {
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
-      await (() => {
-        return new Promise((resolve, reject) => {
-          provider.get(file, (error, content) => {
-            if (error) {
-              console.log(error)
-              reject(error)
+
+      return new Promise((resolve, reject) => {
+        provider.get(file, (error, content) => {
+          console.log('get file content', file, content)
+          if (error) {
+            console.log(error)
+            reject(error)
+          } else {
+            if (provider.isReadOnly(file)) {
+              this.editor.openReadOnly(file, content)
             } else {
-              if (provider.isReadOnly(file)) {
-                this.editor.openReadOnly(file, content)
-              } else {
-                this.editor.open(file, content)
-              }
-              // TODO: Only keep `this.emit` (issue#2210)
-              this.emit('currentFileChanged', file)
-              this.events.emit('currentFileChanged', file)
-              resolve()
+              this.editor.open(file, content)
             }
-          })
+            // TODO: Only keep `this.emit` (issue#2210)
+            this.emit('currentFileChanged', file)
+            this.events.emit('currentFileChanged', file)
+            resolve()
+          }
         })
-      })()
+      })
     }
   }
 
