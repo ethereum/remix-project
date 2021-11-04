@@ -776,8 +776,8 @@
       }
     },
     "remix-ui-plugin-manager": {
-     "root": "libs/remix-ui/plugin-manager",
-      "sourceRoot": "libs/remix-ui/plugin-manager/src", 
+      "root": "libs/remix-ui/plugin-manager",
+      "sourceRoot": "libs/remix-ui/plugin-manager/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1045,6 +1045,21 @@
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/helper/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/remix-ui/helper/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-tabs": {
+      "root": "libs/remix-ui/tabs",
+      "sourceRoot": "libs/remix-ui/tabs/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/tabs/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/tabs/**/*"]
           }
         }
       }

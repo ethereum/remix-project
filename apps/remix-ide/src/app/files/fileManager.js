@@ -139,7 +139,7 @@ class FileManager extends Plugin {
   refresh () {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    provider.event.emit('rootFolderChanged')
+    provider.event.emit('rootFolderChanged', provider.workspace || '/')
   }
 
   /**
@@ -609,11 +609,11 @@ class FileManager extends Plugin {
   }
 
   async openFile (file) {
-    file = this.normalize(file)
     if (!file) {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     } else {
+      file = this.normalize(file)
       await this.saveCurrentFile()
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
