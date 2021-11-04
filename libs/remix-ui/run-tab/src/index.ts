@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-run-tab';
+export * from './lib/run-tab'
