@@ -141,7 +141,7 @@ const fileAdded = async (filePath: string) => {
 
 const folderAdded = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
-  let path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
+  const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
 
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
