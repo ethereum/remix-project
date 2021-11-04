@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import { RemixClient } from './RemixClient'
+import '@fortawesome/fontawesome-free/css/all.css'
+import { RemixClient, INFURA_ID_KEY } from './RemixClient'
 const p = new RemixClient()
 function App() {
 
@@ -22,7 +23,6 @@ function App() {
     for(const account of accounts){
       document.getElementById('accounts').innerHTML += `<li className="list-group-item">${account}</li>`
     }
-    
   })
 
   p.internalEvents.on('chainChanged', (chain) => {
@@ -37,7 +37,11 @@ function App() {
   })
   return (
     <div className="App">
-      <div className="btn-group-vertical mt-5 w-25" role="group"> 
+      <div className="btn-group-vertical mt-5 w-25" role="group">
+        <div class="text-center w-100">
+          <i class="fas fa-info-circle mr-2 bg-light" title="Wallet connect reuire an infura id in order to make request to the network."/><a target="_blank" href="https://infura.io/dashboard/ethereum">infura settings</a>
+          <input onChange={(e) => { localStorage.setItem(INFURA_ID_KEY, e.target.value)}} id="input-infura-id" placeholder="Infura Id" className="mt-2 mb-2 ml-2"></input>          
+        </div>
         <button id="connectbtn" type="button" onClick={openModal} className="btn btn-primary">Connect to a wallet</button>
         <button id="disconnectbtn" type="button" onClick={disconnect} className="btn btn-primary mt-2">Disconnect</button>
       </div>
