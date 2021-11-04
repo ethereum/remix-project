@@ -190,10 +190,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     })
   }
 
-  useEffect(() => {
-    console.log(JSON.stringify(fs.browser.files))
-  },[JSON.stringify(fs.browser.files).length])
-
   const value = {
     fs,
     modal,

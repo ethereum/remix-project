@@ -4,7 +4,7 @@ import init from '../helpers/init'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://localhost:8080?plugins=solidity,udapp', false)
+    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
   },
 
   'Should execution a simple console command': function (browser: NightwatchBrowser) {
@@ -34,7 +34,6 @@ module.exports = {
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
-      .openFile('asyncAwait.js')
       .executeScript('remix.execute("asyncAwait.js")')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Waiting Promise', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - ', 60000)
@@ -44,8 +43,6 @@ module.exports = {
   'Call Remix File Manager from a script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
-      .openFile('asyncAwaitWithFileManagerAccess.js')
-      .pause(5000)
       .executeScript('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
@@ -109,12 +106,12 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
-      .openFile('deployWithEthersJs.js')
+      // .openFile('deployWithEthersJs.js')
       .pause(1000)
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
-      .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
+      .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
       .executeScript('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
