@@ -17,7 +17,7 @@ module.exports = {
 
   'Test Success Import': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled1.sol', sources[1]['Untitled1.sol'])
-      .addFile('Untitled2.sol', sources[1]['Untitled2.sol'])
+      .addFile('Untitled2.sol', sources[1]['Untitled2.sol']).pause(4000)
       .openFile('Untitled1.sol')
       .verifyContracts(['test6', 'test4', 'test5'])
       .pause(1000)
