@@ -656,7 +656,7 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       let prevFiles = _.get(files, _path)
 
       if (!prevFiles) {
-        var object = {}; var o = object
+        const object = {}; let o = object
         for (const pa of _path) {
           o = o[pa] = {}
         }
