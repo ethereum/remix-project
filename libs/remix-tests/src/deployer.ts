@@ -11,18 +11,12 @@ import { compilationInterface } from './types'
  * @param callback Callback
  */
 
-export function deployAll (compileResult: compilationInterface, web3: Web3, withDoubleGas: boolean, deployCb, callback) {
+export function deployAll (compileResult: compilationInterface, web3: Web3, testsAccounts, withDoubleGas: boolean, deployCb, callback) {
   const compiledObject = {}
   const contracts = {}
-  let accounts: string[] = []
+  let accounts: string[] = testsAccounts
 
   async.waterfall([
-    function getAccountList (next) {
-      web3.eth.getAccounts((_err, _accounts) => {
-        accounts = _accounts
-        next()
-      })
-    },
     function getContractData (next) {
       for (const contractFile in compileResult) {
         for (const contractName in compileResult[contractFile]) {
