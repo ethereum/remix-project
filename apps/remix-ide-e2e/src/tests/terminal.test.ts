@@ -4,7 +4,7 @@ import init from '../helpers/init'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
+    init(browser, done, 'http://localhost:8080?plugins=solidity,udapp', false)
   },
 
   'Should execution a simple console command': function (browser: NightwatchBrowser) {
