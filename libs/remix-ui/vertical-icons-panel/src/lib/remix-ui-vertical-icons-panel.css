@@ -11,6 +11,10 @@
     fill: var(--primary);
   }
   .remixui_icons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
   }
   .remixui_icon {
     cursor: pointer;
@@ -35,7 +39,8 @@
     padding: 4px;
   }
   .remixui_icon[title='Settings'] {
-    position: absolute;
+    order: 5;
+    align-self: center;
     bottom: 0;
   }
   .remixui_status {
