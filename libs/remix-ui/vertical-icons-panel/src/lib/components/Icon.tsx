@@ -6,15 +6,47 @@ import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // import * as helper from '../../../../../../apps/remix-ide/src/lib/helper'
-import { defaultState, iconStatusReducer } from '../reducers/iconReducers'
+import Badge from './Badge'
+import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
 
   interface IconProps {
     verticalIconPlugin: VerticalIcons
-    profile: any
+    profile: IconProfile
     contextMenuAction: (evt: any, profileName: string, documentation: string) => void
     addActive: (profileName: string) => void
     removeActive: () => void
   }
+
+export interface IconStatus {
+    key: string
+    title: string
+    type: string
+  }
+
+export interface BadgeStatus extends IconStatus {
+    text: string
+  }
+
+export interface IconProfile {
+    description: string
+    displayName: string
+    documentation: string
+    events: any[]
+    icon: string
+    kind: string
+    location: string
+    methods: string[]
+    name: string
+    version: string
+    tooltip?: string
+  }
+
+const initialState = {
+  text: '',
+  key: '',
+  title: '',
+  type: ''
+}
 
 function Icon ({
   profile,
@@ -39,8 +71,8 @@ function Icon ({
   const [showContext, setShowContext] = useState(false)
   const [canDeactivate] = useState(false)
   const iconRef = useRef<any>(null)
+  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [status, dispatchIconStatus] = useReducer(iconStatusReducer, defaultState)
 
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
     const deactivationState = verticalIconPlugin.appManager
@@ -59,49 +91,10 @@ function Icon ({
     setShowContext(false)
   }
 
-  /**
-   * Set a new status for the @arg name
-   * keys = ['succeed', 'edited', 'none', 'loading', 'failed']
-   * types = ['error', 'warning', 'success', 'info', '']
-   * @param {String} name
-   * @param {Object} status
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // function setIconStatus (name: string, status: any) {
-  //   if (!iconRef.current) return
-  //   const statusEl = iconRef.current.querySelector('i')
-  //   if (statusEl) {
-  //     iconRef.current.removeChild(statusEl) // need to eject component instead of removing?
-  //   }
-  //   if (status.key === 'none') return // remove status
-
-  //   let text = ''
-  //   let key = ''
-  //   if (typeof status.key === 'number') {
-  //     key = status.key.toString()
-  //     text = key
-  //   } else key = helper.checkSpecialChars(status.key) ? '' : status.key
-
-  //   let type = ''
-  //   if (status.type === 'error') {
-  //     type = 'danger' // to use with bootstrap
-  //   } else type = helper.checkSpecialChars(status.type) ? '' : status.type
-  //   const title = helper.checkSpecialChars(status.title) ? '' : status.title
-
-  //   const icon = document.createElement('i')
-  //   icon.title = title
-  //   // icon.className = resolveClasses(key, type)
-  //   icon.ariaHidden = 'true'
-  //   const innerText = document.createTextNode(text)
-  //   icon.appendChild(innerText)
-  //   iconRef.current!.appendChild(icon)
-  //   iconRef.current.classList.add('remixui_icon')
-  // }
-
   useEffect(() => {
-    console.log('profile.name: ', profile.name)
-    verticalIconPlugin.on(profile.name, 'statusChanged', () => {
-      console.log('caught statusChanged in react! icon.tsx')
+    verticalIconPlugin.on(profile.name, 'statusChanged', (iconStatus: IconStatus) => {
+      const action: IconBadgeReducerAction = { type: profile.name, payload: { status: iconStatus, ref: iconRef } }
+      dispatchStatusUpdate(action)
     })
   }, [])
 
@@ -134,15 +127,16 @@ function Icon ({
       >
         <img className="remixui_image" src={icon} alt={name} />
       </div>
-      {/* { status && status.profileName.length
-        ? <i
-          title={status.title}
-          className={resolveClasses(status.key as string, status.type)}
-          aria-hidden="true"
-        >
-          {status.text}
-        </i> : null
-      } */}
+      {
+        verticalIconPlugin.keys.includes(badgeStatus.key) ? (
+          <Badge
+            iconRef={iconRef}
+            verticalIconPlugin={verticalIconPlugin}
+            profile={profile}
+            badgeStatus={badgeStatus}
+          />
+        ) : null
+      }
       {showContext ? (
         <VerticalIconsContextMenu
           pageX={pageX}
