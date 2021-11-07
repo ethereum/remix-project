@@ -95,10 +95,10 @@ export function RemixUiVerticalIconsPanel ({
 
   return (
     <div id="iconsP" className="h-100">
-      <div className="remixui_icons" ref={iconPanelRef}>
+      <div className="remixui_icons d-flex flex-column vh-100" ref={iconPanelRef}>
+        <Home verticalIconPlugin={verticalIconsPlugin} />
         <div className={scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
           ? 'remixui_default-icons-container remixui_requiredSection' : 'remixui_requiredSection'}>
-          <Home verticalIconPlugin={verticalIconsPlugin} />
           <RequiredSection
             verticalIconsPlugin={verticalIconsPlugin}
             addActive={addActive}
