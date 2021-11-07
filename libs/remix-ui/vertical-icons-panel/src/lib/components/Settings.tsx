@@ -33,7 +33,7 @@ function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addA
     })
   }, [])
   return (
-    <div id="settingsIcons" data-id="vertialIconsSettingsIcons" ref={settingsRef}>
+    <div id="settingsIcons" className="remixui_settings flex-grow-0" data-id="vertialIconsSettingsIcons" ref={settingsRef}>
       <Chevron
         divElementRef={scrollableRef}
         cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}

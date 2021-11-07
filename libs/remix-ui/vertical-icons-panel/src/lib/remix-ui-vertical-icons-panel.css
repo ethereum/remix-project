@@ -1,8 +1,7 @@
 .remixui_homeIcon {
-    display: block;
+    /* display: block; */
     width: 42px;
     height: 42px;
-    margin-bottom: 20px;
     cursor: pointer;
   }
   .remixui_homeIcon svg path {
@@ -40,9 +39,9 @@
     bottom: 0;
   }
   .remixui_status {
-    position: absolute;
+    /* position: relative;
     bottom: 0;
-    right: 0;
+    right: 0; */
   }
   .remixui_statusCheck {
     font-size: 1.2em;
@@ -83,7 +82,8 @@
     -ms-overflow-style: none;
   }
   .remixui_scrollable-container {
-    height: 550px;
+    flex-basis: 510px;
+    flex-grow: 2;
     /* border-bottom: 3px solid #3f4455; */
   }
   .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
@@ -100,12 +100,12 @@
   }
 
   .remixui_settings {
-    height: 30px;
+    flex-basis: 50px;
   }
 
   .remixui_requiredSection {
-    min-height: 180px;
-    max-height: 330px;
+    flex-basis: 180px;
+    flex-grow: 1;
   }
 
   #menuitems {
