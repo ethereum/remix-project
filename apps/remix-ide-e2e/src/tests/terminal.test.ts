@@ -23,14 +23,6 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '', 60000)
   },
 
-  'Should display auto-complete menu': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="terminalCli"]')
-      .click('*[data-id="terminalCli"]')
-      .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
-      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
-  },
-
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
@@ -125,7 +117,13 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
-      .end()
+  },
+  'Should display auto-complete menu': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="terminalCli"]')
+      .click('*[data-id="terminalCli"]')
+      .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
+      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]').end()
   }
 }
 
