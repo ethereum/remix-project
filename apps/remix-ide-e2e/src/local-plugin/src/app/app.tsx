@@ -21,7 +21,7 @@ import './app.css'
 const client = new RemixPlugin()
 
 function App () {
-  const [payload, setPayload] = useState<string>('["one/two/three/four/file.js","content"]')
+  const [payload, setPayload] = useState<string>('')
   const [log, setLog] = useState<any>()
   const [started, setStarted] = useState<boolean>(false)
   const [events, setEvents] = useState<any>()
