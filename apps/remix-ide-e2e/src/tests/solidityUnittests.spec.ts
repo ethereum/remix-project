@@ -13,7 +13,7 @@ module.exports = {
     return sources
   },
 
-  'Should launch solidity unit test plugin': function (browser: NightwatchBrowser) {
+  'Should launch solidity unit test plugin and create test files in FE': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('simple_storage.sol', sources[0]['simple_storage.sol'])
@@ -23,6 +23,15 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SOLIDITY UNIT TESTING')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
+      .openFile('.deps/remix-tests/remix_tests.sol')
+      // remix_test.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
+      .openFile('.deps/remix-tests/remix_accounts.sol')
+      // remix_accounts.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library TestsAccounts {') !== -1))
   },
 
   'Should generate test file': function (browser: NightwatchBrowser) {
