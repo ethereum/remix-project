@@ -141,18 +141,20 @@ class RecorderUI extends Plugin {
     )
   }
 
-  saveScenario (promptCb, cb) {
+  async saveScenario (promptCb, cb) {
     var txJSON = JSON.stringify(this.recorder.getAll(), null, 2)
     var path = this.fileManager.currentPath()
-    promptCb(path, input => {
+    promptCb(path, async input => {
       var fileProvider = this.fileManager.fileProviderOf(path)
       if (!fileProvider) return
       var newFile = path + '/' + input
-      helper.createNonClashingName(newFile, fileProvider, async (error, newFile) => {
-        if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
-        if (!await fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
+      try {
+        newFile = await helper.createNonClashingNameAsync(newFile, this.fileManager)
+        await fileProvider.set(newFile, txJSON)
         await this.fileManager.open(newFile)
-      })
+      } catch (error) {
+        if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
+      }
     })
   }
 }
