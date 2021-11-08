@@ -44,9 +44,10 @@
     bottom: 0;
   }
   .remixui_status {
-    /* position: relative;
+    /* position: relative; */
     bottom: 0;
-    right: 0; */
+    right: 0;
+    align-self: flex-end;
   }
   .remixui_statusCheck {
     font-size: 1.2em;

@@ -5,9 +5,6 @@ import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-// import * as helper from '../../../../../../apps/remix-ide/src/lib/helper'
-import Badge from './Badge'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
 
   interface IconProps {
     verticalIconPlugin: VerticalIcons
@@ -41,13 +38,6 @@ export interface IconProfile {
     tooltip?: string
   }
 
-const initialState = {
-  text: '',
-  key: '',
-  title: '',
-  type: ''
-}
-
 function Icon ({
   profile,
   verticalIconPlugin,
@@ -71,7 +61,6 @@ function Icon ({
   const [showContext, setShowContext] = useState(false)
   const [canDeactivate] = useState(false)
   const iconRef = useRef<any>(null)
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
@@ -90,13 +79,6 @@ function Icon ({
   function closeContextMenu () {
     setShowContext(false)
   }
-
-  useEffect(() => {
-    verticalIconPlugin.on(profile.name, 'statusChanged', (iconStatus: IconStatus) => {
-      const action: IconBadgeReducerAction = { type: profile.name, payload: { status: iconStatus, ref: iconRef } }
-      dispatchStatusUpdate(action)
-    })
-  }, [])
 
   return (
     <Fragment>
@@ -127,16 +109,7 @@ function Icon ({
       >
         <img className="remixui_image" src={icon} alt={name} />
       </div>
-      {
-        verticalIconPlugin.keys.includes(badgeStatus.key) ? (
-          <Badge
-            iconRef={iconRef}
-            verticalIconPlugin={verticalIconPlugin}
-            profile={profile}
-            badgeStatus={badgeStatus}
-          />
-        ) : null
-      }
+
       {showContext ? (
         <VerticalIconsContextMenu
           pageX={pageX}
