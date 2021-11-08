@@ -79,7 +79,7 @@ export class ThemeModule extends Plugin {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
     const next = themeName || this.active // Name
-    if (themeName === this.active) return
+    if (next === this.active) return
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
