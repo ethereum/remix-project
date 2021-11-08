@@ -34,3 +34,7 @@ export interface ContractDropdownProps {
 export interface RecorderProps {
 
 }
+
+export interface InstanceContainerProps {
+
+}
