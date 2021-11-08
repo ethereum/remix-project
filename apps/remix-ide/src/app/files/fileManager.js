@@ -540,7 +540,7 @@ class FileManager extends Plugin {
   _saveAsCopy (path, content) {
     const fileProvider = this.fileProviderOf(path)
     if (fileProvider) {
-      helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
+      helper.createNonClashingNameAsync(path, this, '', (error, copyName) => {
         if (error) {
           copyName = path + '.' + this.currentRequest.from
         }

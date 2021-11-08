@@ -35,7 +35,6 @@ module.exports = {
       .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
       .clickLaunchIcon('filePanel')
       .waitForElementPresent('[data-id="treeViewDivtreeViewItemtests"]')
-      .click('[data-id="treeViewDivtreeViewItemtests"]')
       .openFile('tests/simple_storage_test.sol')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
