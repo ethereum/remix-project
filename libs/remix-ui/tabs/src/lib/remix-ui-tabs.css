@@ -1,6 +1,6 @@
 .remix-ui-tabs {
     display: -webkit-box; 
-    max-height: 42px
+    max-height: 2.15rem;
 }
 .remix-ui-tabs li {
     display: inline-block;
@@ -28,12 +28,11 @@
 }
 .close-tabs {
     visibility: hidden;
-    padding-top: 4px;
     font-size: medium;
 }
 .iconImage {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
 }
 .active {
     border: 1px solid transparent;
@@ -44,11 +43,6 @@
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    max-width: 1000px;
-}
-.left-icon {
-    width: 70px;
-    height: 49px;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
