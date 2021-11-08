@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import Editor from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
-import { language, conf } from './syntax'
+import { language } from './syntax'
 
 import './remix-ui-editor.css'
 
@@ -257,7 +257,7 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
     // Register a new language
-    monacoRef.current.languages.register({ id: 'remix-solidity' });
+    monacoRef.current.languages.register({ id: 'remix-solidity' })
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language)
   }
