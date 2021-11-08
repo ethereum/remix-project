@@ -139,6 +139,7 @@ module.exports = {
       .click('[for="autoCompile"]')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
+      .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
       .createContract('')
       .pause(1000)
