@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const conf = {
   comments: {
     lineComment: '//',
