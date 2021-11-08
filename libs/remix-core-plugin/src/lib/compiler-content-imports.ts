@@ -118,14 +118,6 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath, testRunner = null) {
-    if (url.indexOf('remix_tests.sol') !== -1 || url.indexOf('remix_accounts.sol') !== -1) {
-      let content
-      if (url === 'remix_tests.sol') content = assertLibCode
-      else if (url === 'remix_accounts.sol' && testRunner) content = testRunner.accountsLibCode
-      const provider = await this.call('fileManager', 'getProviderOf', null)
-      if (provider) provider.addExternal('.deps/remix-tests/' + url, content, url)
-      return content
-    }
     try {
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {

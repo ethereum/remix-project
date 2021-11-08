@@ -78,17 +78,21 @@ module.exports = class TestTab extends ViewPlugin {
     return { assertLibCode, accountsLibCode: this.testRunner.accountsLibCode }
   }
 
+  async createTestLibs () {
+    const provider = await this.fileManager.currentFileProvider()
+    if (provider) {
+      provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
+      provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
+    }
+  }
+
   async onActivation () {
     const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
     await this.testRunner.init()
-    const provider = await this.fileManager.currentFileProvider()
-    if (provider) {
-      provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
-      provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
-    }
+    await this.createTestLibs()
     this.updateRunAction()
   }
 
@@ -118,6 +122,10 @@ module.exports = class TestTab extends ViewPlugin {
 
     this.on('filePanel', 'setWorkspace', async () => {
       this.setCurrentPath(this.defaultPath)
+    })
+
+    this.on('filePanel', 'workspaceCreated', async () => {
+      this.createTestLibs()
     })
 
     this.testRunner.event.on('compilationFinished', (success, data, source) => {
