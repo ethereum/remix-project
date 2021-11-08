@@ -14,7 +14,7 @@ import { compilationInterface } from './types'
 export function deployAll (compileResult: compilationInterface, web3: Web3, testsAccounts, withDoubleGas: boolean, deployCb, callback) {
   const compiledObject = {}
   const contracts = {}
-  let accounts: string[] = testsAccounts
+  const accounts: string[] = testsAccounts
 
   async.waterfall([
     function getContractData (next) {
