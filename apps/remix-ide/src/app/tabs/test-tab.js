@@ -559,7 +559,7 @@ module.exports = class TestTab extends ViewPlugin {
           this.updateFinalResult(error, result, testFilePath)
           callback(error)
         }, (url, cb) => {
-          return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+          return this.contentImport.resolveAndSave(url, null, this.testRunner).then((result) => cb(null, result)).catch((error) => cb(error.message))
         }, { testFilePath }
       )
     }).catch((error) => {
