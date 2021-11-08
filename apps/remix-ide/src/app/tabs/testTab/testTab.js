@@ -32,7 +32,7 @@ class TestTabLogic {
     return res
   }
 
-  generateTestFile () {
+  async generateTestFile () {
     let fileName = this.fileManager.currentFile()
     const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
     if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'
@@ -40,12 +40,13 @@ class TestTabLogic {
     if (!fileProvider) return
     const splittedFileName = fileName.split('/')
     const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
-    helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', async (error, newFile) => {
-      if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-      if (!await fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
-      await this.fileManager.open(newFile)
+    try {
+      const newFile = await helper.createNonClashingNameAsync(fileNameToImport, this.fileManager, '_test')
+      if (!await fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))) { await this.fileManager.open(newFile) }
       await this.fileManager.syncEditor(newFile)
-    })
+    } catch (error) {
+      return modalDialogCustom.alert('Failed to create test file ' + fileNameToImport + ' ' + error)
+    }
   }
 
   dirList (path) {
