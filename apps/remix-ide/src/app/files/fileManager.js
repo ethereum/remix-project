@@ -749,23 +749,19 @@ class FileManager extends Plugin {
         })
         await self.syncEditor(fileProvider + file)
       } else {
-        helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
-          async (error, name) => {
-            if (error) {
-              modalDialogCustom.alert('Unexpected error loading the file ' + error)
-            } else if (helper.checkSpecialChars(name)) {
-              modalDialogCustom.alert('Special characters are not allowed')
-            } else {
-              try {
-                console.log('set ', fileProvider, name, filesSet[file].content)
-                await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
-              } catch (e) {
-                return callback(e.message || e)
-              }
-              await self.syncEditor(fileProvider + name)
-            }
-            callback()
-          })
+        try {
+          const name = await helper.createNonClashingNameAsync(file, self)
+          if (helper.checkSpecialChars(name)) {
+            modalDialogCustom.alert('Special characters are not allowed')
+          } else {
+            await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            await self.syncEditor(fileProvider + name)
+          }
+        } catch (error) {
+          modalDialogCustom.alert('Unexpected error loading the file ' + error)
+          return callback(error.message || error)
+        }
+        callback()
       }
     }
   }
