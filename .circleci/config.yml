@@ -76,11 +76,11 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
-          command: npm run selenium-install
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: npm run selenium
-          background: false
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
           path: ./reports/tests
@@ -110,11 +110,11 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
-          command: npm run selenium-install
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: npm run selenium
-          background: false
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
           path: ./reports/tests
