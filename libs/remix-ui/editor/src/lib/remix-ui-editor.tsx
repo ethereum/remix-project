@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import Editor from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
+import { language, conf } from './syntax'
 
 import './remix-ui-editor.css'
 
@@ -86,7 +87,10 @@ export const EditorUI = (props: EditorUIProps) => {
     monaco.editor.defineTheme('remix-dark', {
       base: 'vs-dark',
       inherit: true, // can also be false to completely replace the builtin rules
-      rules: [{ background: darkColor.replace('#', '') }],
+      rules: [
+        { background: darkColor.replace('#', '') },
+        { token: 'keyword.external', foreground: infoColor }
+      ],
       colors: {
         'editor.background': darkColor,
         'editorSuggestWidget.background': lightColor,
@@ -160,8 +164,10 @@ export const EditorUI = (props: EditorUIProps) => {
   useEffect(() => {
     if (!editorRef.current) return
     currentFileRef.current = props.currentFile
-    editorRef.current.setModel(editorModelsState[props.currentFile].model)
+    const file = editorModelsState[props.currentFile]
+    editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+    if (file.language === 'sol') monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     setAnnotationsbyFile(props.currentFile)
     setMarkerbyFile(props.currentFile)
   }, [props.currentFile])
@@ -250,6 +256,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
+    // Register a new language
+    monacoRef.current.languages.register({ id: 'remix-solidity' });
+    // Register a tokens provider for the language
+    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language)
   }
 
   return (
