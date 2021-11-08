@@ -63,10 +63,10 @@ export class ThemeModule extends Plugin {
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
       const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
-      document.head.insertBefore(theme, document.head.firstChild)
-      document.getElementById('theme-link').addEventListener('load', () => {
+      theme.addEventListener('load', () => {
         if (callback) callback()
       })
+      document.head.insertBefore(theme, document.head.firstChild)
     }
   }
 
