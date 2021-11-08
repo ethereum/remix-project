@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import helper from 'apps/remix-ide/src/lib/helper'
 import { BadgeStatus, IconStatus } from '../components/Icon'
-import React from 'react'
+import React, { MutableRefObject } from 'react'
+import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 
 export type IconBadgeReducerAction = {
   readonly type: string
@@ -24,11 +25,7 @@ export type IconBadgeReducerAction = {
    */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // if (!ref.current) return
-function setIconStatus (name: string, status: IconStatus, ref: React.MutableRefObject<any>) {
-  const statusEl = ref.current.querySelector('i')
-  if (statusEl) {
-    ref.current.removeChild(statusEl) // need to eject component instead of removing?
-  }
+function setIconStatus (name: string, status: IconStatus) {
   if (status.key === 'none') return { ...status, text: '' } // remove status
 
   let text = ''
@@ -42,19 +39,18 @@ function setIconStatus (name: string, status: IconStatus, ref: React.MutableRefO
   let thisType = ''
   if (status.type === 'error') {
     thisType = 'danger' // to use with bootstrap
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } else thisType = helper.checkSpecialChars(status.type) ? '' : status.type!
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const title = helper.checkSpecialChars(status.title) ? '' : status.title
-  // ref.current.classList.add('remixui_icon')
+  console.log(`new status for ${name} is :`, { title, type: thisType, key, text })
   return { title, type: thisType, key, text }
 }
 
 export function iconBadgeReducer (state: BadgeStatus, action: IconBadgeReducerAction) {
-  const status = setIconStatus(action.type, action.payload.status, action.payload.ref)
-  if (action.type.length > 0) {
-    console.log(`from reducer of ${action.type} :`, { status })
-    return status
+  const { status, ref, verticalIconPlugin } = action.payload
+  if (Object.keys(verticalIconPlugin.targetProfileForChange).includes(action.type)) {
+    const setStatus = setIconStatus(action.type, status)
+    console.log(`from reducer of ${action.type} :`, { setStatus })
+    return setStatus
   }
   return state
 }
