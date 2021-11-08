@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react'
 import { ContractDropdownUI } from './components/contractDropdownUI'
+import { InstanceContainerUI } from './components/instanceContainerUI'
 import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
 import './css/run-tab.css'
@@ -19,7 +20,7 @@ export function RunTabUI (props: RunTabProps) {
         <SettingsUI selectExEnv={selectExEnv} updateExEnv={updateExEnv} />
         <ContractDropdownUI exEnvironment={selectExEnv} />
         <RecorderUI />
-        {/* ${this.instanceContainer} */}
+        <InstanceContainerUI />
       </div>
     </div>
   )
