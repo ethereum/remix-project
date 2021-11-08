@@ -37,12 +37,11 @@ const showTable = (opts, showTableHash) => {
   const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   return (
     <table className={`txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`} id='txTable' data-id={`txLoggerTable${opts.hash}`}>
-      <tbody>
-        <tr className='tr'>
+      <tbody>{ opts.status !== undefined ? (<tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}>status</td>
           <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
-        </tr>
-        {opts.hash ? (<tr className='tr'>
+        </tr>) : null }
+        {opts.hash && !opts.isCall ? (<tr className='tr'>
           <td className='td' data-shared={`key_${opts.hash}`}>transaction hash</td>
           <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
             <CopyToClipboard content={opts.hash}/>
