@@ -1,6 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
+import { UnitTestRunner, assertLibCode } from '@remix-project/remix-tests'
 
 const profile = {
   name: 'contentImport',
@@ -12,6 +13,7 @@ const profile = {
 export class CompilerImports extends Plugin {
   previouslyHandled: {}
   urlResolver: any
+  testRunner: any
   constructor () {
     super(profile)
     this.urlResolver = new RemixURLResolver()
@@ -117,10 +119,13 @@ export class CompilerImports extends Plugin {
     */
   async resolveAndSave (url, targetPath) {
     if (url.indexOf('remix_tests.sol') !== -1 || url.indexOf('remix_accounts.sol') !== -1) {
-      const { assertLibCode, accountsLibCode } = await this.call('solidityUnitTesting', 'getTestlibs')
       let content
       if (url === 'remix_tests.sol') content = assertLibCode
-      else if (url === 'remix_accounts.sol') content = accountsLibCode
+      else if (url === 'remix_accounts.sol') {
+        this.testRunner = new UnitTestRunner()
+        await this.testRunner.init()
+        content = this.testRunner.accountsLibCode
+      }
       const provider = await this.call('fileManager', 'getProviderOf', null)
       if (provider) provider.addExternal('.deps/remix-tests/' + url, content, url)
       return content
