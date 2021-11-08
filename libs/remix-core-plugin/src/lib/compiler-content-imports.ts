@@ -1,7 +1,6 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
-import { assertLibCode } from '@remix-project/remix-tests'
 
 const profile = {
   name: 'contentImport',
