@@ -13,11 +13,6 @@ export function SettingsUI (props: SettingsProps) {
   //   this.event = new EventManager()
   //   this._components = {}
 
-  //   this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
-  //     if (!lookupOnly) this.el.querySelector('#value').value = 0
-  //     if (error) return
-  //     this.updateAccountBalances()
-  //   })
   //   this._components = {
   //     registry: globalRegistry,
   //     networkModule: networkModule
@@ -35,20 +30,6 @@ export function SettingsUI (props: SettingsProps) {
 
   //   this.accountListCallId = 0
   //   this.loadedAccounts = {}
-  // }
-
-  // updateAccountBalances () {
-  //   if (!this.el) return
-  //   var accounts = $(this.el.querySelector('#txorigin')).children('option')
-  //   accounts.each((index, account) => {
-  //     this.blockchain.getBalanceInEther(account.value, (err, balance) => {
-  //       if (err) return
-  //       const updated = helper.shortenAddress(account.value, balance)
-  //       if (updated !== account.innerText) { // check if the balance has been updated and update UI accordingly.
-  //         account.innerText = updated
-  //       }
-  //     })
-  //   })
   // }
 
   // setExecutionContext (context) {
