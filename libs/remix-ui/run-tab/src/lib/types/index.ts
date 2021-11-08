@@ -30,3 +30,7 @@ export interface ValueProps {
 export interface ContractDropdownProps {
   exEnvironment: string
 }
+
+export interface RecorderProps {
+
+}
