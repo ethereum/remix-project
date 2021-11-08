@@ -76,9 +76,7 @@ export class VerticalIcons extends Plugin {
     //   this.setIconStatus(profile.name, status)
     // }
     // this.iconStatus[profile.name] = fn
-    // this.on(profile.name, 'statusChanged', () => {
-    //   console.log('caught statusChanged in react!')
-    // })
+    // this.on(profile.name, this.iconStatus[profile.name])
   }
 
   /**

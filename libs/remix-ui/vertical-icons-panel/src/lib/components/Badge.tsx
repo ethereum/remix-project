@@ -7,15 +7,12 @@ import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeR
 import { BadgeStatus, IconProfile, IconStatus } from './Icon'
 
 interface BadgeProps {
-  verticalIconPlugin: VerticalIcons
-  iconRef: React.MutableRefObject<any>
-  profile: IconProfile,
   badgeStatus: BadgeStatus
 }
 
 // eslint-disable-next-line no-undef
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Badge ({ iconRef, verticalIconPlugin, profile, badgeStatus }: BadgeProps) {
+function Badge ({ badgeStatus }: BadgeProps) {
   /**
    * resolve a classes list for @arg key
    * @param {Object} key
@@ -43,14 +40,28 @@ function Badge ({ iconRef, verticalIconPlugin, profile, badgeStatus }: BadgeProp
     return classes
   }
 
+  function checkStatusKeyValue (value: any, type: string) {
+    if (value === 'succeed' || value === 'edited' || value === 'loading' || value === 'failed' ||
+      typeof value === 'number' || type === 'warning' || type === 'error' || type === 'success' || type === 'info' || type === 'danger') {
+      return true
+    }
+    return false
+  }
+
   return (
-    <i
-      title={badgeStatus.title}
-      className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)} remixui_status`}
-      aria-hidden="true"
-    >
-      {badgeStatus.text}
-    </i>
+    <Fragment>
+      {
+        badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
+          <i
+            title={badgeStatus.title}
+            className={resolveClasses(badgeStatus.key, badgeStatus.type!)}
+            aria-hidden="true"
+          >
+            {badgeStatus.text}
+          </i>
+        ) : null
+      }
+    </Fragment>
   )
 }
 
