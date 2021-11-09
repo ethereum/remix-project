@@ -623,7 +623,6 @@ class FileManager extends Plugin {
 
       return new Promise((resolve, reject) => {
         provider.get(file, (error, content) => {
-          console.log('get file content', file, content)
           if (error) {
             console.log(error)
             reject(error)
