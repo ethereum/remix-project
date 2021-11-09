@@ -24,5 +24,6 @@ export const LISTEN_ON_NETWORK = 'listenOnNetWork'
 export const CMD_HISTORY = 'cmdHistory'
 
 export interface RemixUiTerminalProps {
-    plugin: any
+    plugin: any,
+    onReady: (api: any) => void
 }

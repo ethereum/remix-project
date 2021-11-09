@@ -79,10 +79,17 @@ export class ThemeModule extends Plugin {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
     const next = themeName || this.active // Name
+    if (next === this.active) return
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
-    document.getElementById('theme-link').setAttribute('href', nextTheme.url)
+    document.getElementById('theme-link').remove()
+    const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+    theme.addEventListener('load', () => {
+      this.emit('themeLoaded', nextTheme)
+      this.events.emit('themeLoaded', nextTheme)
+    })
+    document.head.insertBefore(theme, document.head.firstChild)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
     // TODO: Only keep `this.emit` (issue#2210)
