@@ -69,12 +69,12 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(workspacePath)
           return
         }
-        this.addTab(workspacePath, '', () => {
-          this.fileManager.open(file)
+        this.addTab(workspacePath, '', async () => {
+          await this.fileManager.open(file)
           this.event.emit('openFile', file)
         },
         () => {
-          this.fileManager.closeFile(file)
+          await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
         })
         this.tabsApi.activateTab(workspacePath)
@@ -85,12 +85,12 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(path)
           return
         }
-        this.addTab(path, '', () => {
-          this.fileManager.open(file)
+        this.addTab(path, '', async () => {
+          await this.fileManager.open(file)
           this.event.emit('openFile', file)
         },
         () => {
-          this.fileManager.closeFile(file)
+          await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
         })
         this.tabsApi.activateTab(path)
@@ -192,12 +192,12 @@ export class TabProxy extends Plugin {
   }
 
   renameTab (oldName, newName) {
-    this.addTab(newName, '', () => {
-      this.fileManager.open(newName)
+    this.addTab(newName, '', async () => {
+      await this.fileManager.open(newName)
       this.event.emit('openFile', newName)
     },
     () => {
-      this.fileManager.closeFile(newName)
+      await this.fileManager.closeFile(newName)
       this.event.emit('closeFile', newName)
     })
     this.removeTab(oldName)
