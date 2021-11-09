@@ -5,6 +5,7 @@ import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
+import Badge from './Badge'
 
   interface IconProps {
     verticalIconPlugin: VerticalIcons
@@ -12,6 +13,7 @@ import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical
     contextMenuAction: (evt: any, profileName: string, documentation: string) => void
     addActive: (profileName: string) => void
     removeActive: () => void
+    badgeStatus?: BadgeStatus
   }
 
 export interface IconStatus {
@@ -43,7 +45,9 @@ function Icon ({
   verticalIconPlugin,
   contextMenuAction,
   addActive,
-  removeActive
+  removeActive,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  badgeStatus
 }: IconProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { tooltip, displayName, name, kind, icon, documentation } = profile
@@ -108,8 +112,10 @@ function Icon ({
         ref={iconRef}
       >
         <img className="remixui_image" src={icon} alt={name} />
+        <Badge
+          badgeStatus={badgeStatus!}
+        />
       </div>
-
       {showContext ? (
         <VerticalIconsContextMenu
           pageX={pageX}

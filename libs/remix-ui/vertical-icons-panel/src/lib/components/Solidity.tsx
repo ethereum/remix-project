@@ -2,7 +2,7 @@ import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, useEffect, useReducer } from 'react'
 import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-import Badge from './Badge'
+// import Badge from './Badge'
 import Icon, { IconStatus } from './Icon'
 
 interface SolidityProps {
@@ -26,7 +26,6 @@ function Solidity ({ verticalIconsPlugin, itemContextAction, addActive, removeAc
       const action: IconBadgeReducerAction = { type: 'solidity', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
       dispatchStatusUpdate(action)
     })
-    console.log('solidity icon useEffect handled no issues')
   }, [])
   return (
     <Fragment>
@@ -47,15 +46,8 @@ function Solidity ({ verticalIconsPlugin, itemContextAction, addActive, removeAc
                 key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
                 }
+                badgeStatus={badgeStatus}
               />
-              {
-                badgeStatus && verticalIconsPlugin.keys.includes(badgeStatus.key) &&
-                  verticalIconsPlugin.types.includes(badgeStatus.type) ? (
-                    <Badge
-                      badgeStatus={badgeStatus}
-                    />
-                  ) : null
-              }
             </div>
           ))
         : null}
