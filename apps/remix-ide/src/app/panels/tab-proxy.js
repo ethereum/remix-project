@@ -73,7 +73,7 @@ export class TabProxy extends Plugin {
           await this.fileManager.open(file)
           this.event.emit('openFile', file)
         },
-        () => {
+        async () => {
           await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
         })
@@ -89,7 +89,7 @@ export class TabProxy extends Plugin {
           await this.fileManager.open(file)
           this.event.emit('openFile', file)
         },
-        () => {
+        async () => {
           await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
         })
@@ -196,7 +196,7 @@ export class TabProxy extends Plugin {
       await this.fileManager.open(newName)
       this.event.emit('openFile', newName)
     },
-    () => {
+    async () => {
       await this.fileManager.closeFile(newName)
       this.event.emit('closeFile', newName)
     })
