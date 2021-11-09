@@ -263,7 +263,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
     }
     const name = `${targetFolder}/${file.name}`
 
-    if (await workspaceProvider.exists(name)) {
+    if (!await workspaceProvider.exists(name)) {
       loadFile(name)
     } else {
       dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
