@@ -526,8 +526,8 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.readFile(testFilePath).then((content) => {
       const runningTests = {}
       runningTests[testFilePath] = { content }
-      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = urlFromVersion(currentVersion)
+      const { currentVersion, evmVersion, optimize, runs, isUrl } = this.compileTab.getCurrentCompilerConfig()
+      const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
@@ -553,6 +553,7 @@ module.exports = class TestTab extends ViewPlugin {
         }, { testFilePath }
       )
     }).catch((error) => {
+      console.log('error in runTest-->', error)
       if (error) return // eslint-disable-line
     })
   }
