@@ -49,7 +49,7 @@ function Badge ({ badgeStatus }: BadgeProps) {
   }
 
   return (
-    <Fragment>
+    <>
       {
         badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
           <i
@@ -61,7 +61,7 @@ function Badge ({ badgeStatus }: BadgeProps) {
           </i>
         ) : null
       }
-    </Fragment>
+    </>
   )
 }
 
