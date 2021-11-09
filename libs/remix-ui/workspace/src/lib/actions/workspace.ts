@@ -246,11 +246,12 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         if (checkSpecialChars(file.name)) {
           return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => {}))
         }
-        const success = await workspaceProvider.set(name, event.target.result)
-
-        if (!success) {
+        try {
+          await workspaceProvider.set(name, event.target.result)
+        } catch (error) {
           return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => {}))
         }
+
         const config = plugin.registry.get('config').api
         const editor = plugin.registry.get('editor').api
 
