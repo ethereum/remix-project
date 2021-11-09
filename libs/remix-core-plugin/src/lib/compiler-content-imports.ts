@@ -12,7 +12,6 @@ const profile = {
 export class CompilerImports extends Plugin {
   previouslyHandled: {}
   urlResolver: any
-  testRunner: any
   constructor () {
     super(profile)
     this.urlResolver = new RemixURLResolver()
@@ -116,7 +115,7 @@ export class CompilerImports extends Plugin {
     * @param {String} targetPath - (optional) internal path where the content should be saved to
     * @returns {Promise} - string content
     */
-  async resolveAndSave (url, targetPath, testRunner = null) {
+  async resolveAndSave (url, targetPath) {
     try {
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
