@@ -97,7 +97,7 @@ class Editor extends Plugin {
     this.emit(name, ...params) // plugin stack
   }
 
-  onActivation () {
+  async onActivation () {
     this.activated = true
     this.on('sidePanel', 'focusChanged', (name) => {
       this.keepDecorationsFor(name, 'sourceAnnotationsPerFile')
@@ -108,14 +108,15 @@ class Editor extends Plugin {
     })
 
     const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
-    this.on('theme', 'themeChanged', (theme) => {
+    this.on('theme', 'themeLoaded', (theme) => {
       this.currentTheme = translateTheme(theme)
       this.renderComponent()
     })
-    this.call('theme', 'currentTheme', (theme) => {
-      this.currentTheme = translateTheme(theme)
-      this.renderComponent()
-    })
+    try {
+      this.currentTheme = translateTheme(await this.call('theme', 'currentTheme'))
+    } catch (e) {
+      console.log('unable to select the theme ' + e.message)
+    }
     this.renderComponent()
   }
 
