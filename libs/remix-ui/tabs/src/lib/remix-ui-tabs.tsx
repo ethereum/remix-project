@@ -35,10 +35,10 @@ export const TabsUI = (props: TabsUIProps) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     return (
-      <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
+      <div onClick={() => { props.onSelect(index); currentIndexRef.current = index; setSelectedIndex(index) }} ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
         {tab.icon ? (<img className="my-1 mr-1 iconImage" src={tab.icon} />) : (<i className={classNameImg}></i>)}
         <span className="title-tabs">{tab.title}</span>
-        <span className="close-tabs" onClick={() => props.onClose(index)}>
+        <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
           <i className="text-dark fas fa-times"></i>
         </span>
       </div>
@@ -71,7 +71,6 @@ export const TabsUI = (props: TabsUIProps) => {
         <Tabs
           className="tab-scroll"
           selectedIndex={selectedIndex}
-          onSelect={index => { props.onSelect(index); currentIndexRef.current = index; setSelectedIndex(index) }}
         >
           <TabList className="d-flex flex-row justify-content-center align-items-center">
             {props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}
