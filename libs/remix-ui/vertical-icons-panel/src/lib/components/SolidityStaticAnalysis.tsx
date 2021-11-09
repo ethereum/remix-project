@@ -2,7 +2,7 @@ import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, useEffect, useReducer } from 'react'
 import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-import Badge from './Badge'
+// import Badge from './Badge'
 import Icon, { IconStatus } from './Icon'
 
 interface SolidityStaticAnalysisProps {
@@ -34,7 +34,7 @@ function SolidityStaticAnalysis ({ verticalIconsPlugin, itemContextAction, addAc
         ? Object.keys(verticalIconsPlugin.targetProfileForChange)
           .filter(p => p === 'solidityStaticAnalysis')
           .map(p => (
-            <div id="analysisIcons" key={
+            <div id="analysisIcons" className="remixui_iconContainer" key={
               verticalIconsPlugin.targetProfileForChange[p].displayName
             }>
               <Icon
@@ -46,15 +46,8 @@ function SolidityStaticAnalysis ({ verticalIconsPlugin, itemContextAction, addAc
                 key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
                 }
+                badgeStatus={badgeStatus}
               />
-              {
-                badgeStatus && verticalIconsPlugin.keys.includes(badgeStatus.key) &&
-                  verticalIconsPlugin.types.includes(badgeStatus.type) ? (
-                    <Badge
-                      badgeStatus={badgeStatus}
-                    />
-                  ) : null
-              }
             </div>
           ))
         : null}
