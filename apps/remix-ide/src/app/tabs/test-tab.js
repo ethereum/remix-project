@@ -571,7 +571,6 @@ module.exports = class TestTab extends ViewPlugin {
         }, { testFilePath }
       )
     }).catch((error) => {
-      console.log('error in runTest-->', error)
       if (error) return // eslint-disable-line
     })
   }
