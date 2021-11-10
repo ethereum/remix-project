@@ -9,7 +9,7 @@ jobs:
   lint:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -37,7 +37,7 @@ jobs:
   remix-libs:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -59,7 +59,7 @@ jobs:
   remix-ide-chrome-1:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -90,7 +90,7 @@ jobs:
   remix-ide-chrome-2:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -122,7 +122,7 @@ jobs:
   remix-ide-firefox-1:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -153,7 +153,7 @@ jobs:
   remix-ide-firefox-2:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -185,7 +185,7 @@ jobs:
   remix-ide-run-deploy:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -216,7 +216,7 @@ jobs:
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -247,7 +247,7 @@ jobs:
   deploy-remix-live:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -275,7 +275,7 @@ jobs:
   publish:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -301,7 +301,7 @@ jobs:
   deploy-remix-alpha:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -329,7 +329,7 @@ jobs:
   deploy-remix-beta:
     docker:
       # specify the version you desire here
-      - image: cimg/node:17.1.0-browsers
+      - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
