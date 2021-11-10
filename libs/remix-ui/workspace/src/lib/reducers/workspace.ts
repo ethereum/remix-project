@@ -504,11 +504,11 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          contextMenu: state.mode === 'browser' ? addContextMenuItem(state, payload) : state.browser.contextMenu
+          contextMenu: addContextMenuItem(state, payload)
         },
         localhost: {
           ...state.localhost,
-          contextMenu: state.mode === 'localhost' ? addContextMenuItem(state, payload) : state.localhost.contextMenu
+          contextMenu: addContextMenuItem(state, payload)
         }
       }
     }
@@ -520,11 +520,11 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          contextMenu: state.mode === 'browser' ? removeContextMenuItem(state, payload) : state.browser.contextMenu
+          contextMenu: removeContextMenuItem(state, payload)
         },
         localhost: {
           ...state.localhost,
-          contextMenu: state.mode === 'localhost' ? removeContextMenuItem(state, payload) : state.localhost.contextMenu
+          contextMenu: removeContextMenuItem(state, payload)
         }
       }
     }
