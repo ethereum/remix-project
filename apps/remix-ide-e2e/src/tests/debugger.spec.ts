@@ -12,16 +12,17 @@ module.exports = {
     return sources
   },
 
-  'Should launch debugger': !function (browser: NightwatchBrowser) {
+  'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
+      .clearConsole()
   },
 
-  'Should debug failing transaction': !function (browser: NightwatchBrowser) {
+  'Should debug failing transaction': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
@@ -29,14 +30,14 @@ module.exports = {
       .scrollAndClick('*[title="string name, uint256 goal"]')
       .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
       .click('*[data-id="createProject - transact (not payable)"]')
-      .debugTransaction(1)
+      .debugTransaction(0)
       .pause(2000)
       .scrollAndClick('*[data-id="solidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'toast', 60000)
       .waitForElementContainsText('*[data-id="solidityLocals"]', '999', 60000)
   },
 
-  'Should debug transaction using slider': !function (browser: NightwatchBrowser) {
+  'Should debug transaction using slider': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
       // eslint-disable-next-line dot-notation
@@ -48,7 +49,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
   },
 
-  'Should step back and forward transaction': !function (browser: NightwatchBrowser) {
+  'Should step back and forward transaction': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
@@ -61,7 +62,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n51', 60000)
   },
 
-  'Should jump through breakpoints': !function (browser: NightwatchBrowser) {
+  'Should jump through breakpoints': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .execute(() => {
         (window as any).addRemixBreakpoint(11)
@@ -80,15 +81,17 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n352', 60000)
   },
 
-  'Should display solidity imported code while debugging github import': !function (browser: NightwatchBrowser) {
+  'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
     browser
+      .clearConsole()
+      .clearTransactions()
       .clickLaunchIcon('solidity')
       .testContracts('externalImport.sol', sources[1]['externalImport.sol'], ['ERC20'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
       .selectContract('ERC20')
       .createContract('"tokenName", "symbol"')
-      .debugTransaction(2)
+      .debugTransaction(0)
       .pause(2000)
       .waitForElementVisible('#stepdetail')
       .goToVMTraceStep(10)
@@ -101,13 +104,14 @@ module.exports = {
       })
   },
 
-  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2': !function (browser: NightwatchBrowser) {
+  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2': function (browser: NightwatchBrowser) {
     /*
       localVariable_step266_ABIEncoder and localVariable_step717_ABIEncoder
       still contains unwanted values (related to decoding calldata types)
       This is still an issue @todo(https://github.com/ethereum/remix-project/issues/481), so this test will fail when this issue is fixed
     */
     browser
+      .clearConsole().clearTransactions()
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
       .clickLaunchIcon('filePanel')
@@ -116,9 +120,10 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectContract('test')
       .createContract('')
-      .clickInstance(2)
+      .clearConsole()
+      .clickInstance(0)
       .clickFunction('test1 - transact (not payable)', { types: 'bytes userData', values: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4' })
-      .debugTransaction(4)
+      .debugTransaction(0)
       .pause(2000)
       .waitForElementVisible('#stepdetail')
       .goToVMTraceStep(261)
@@ -138,11 +143,10 @@ module.exports = {
       .goToVMTraceStep(717)
       .pause(5000)
       .checkVariableDebug('soliditylocals', localVariable_step717_ABIEncoder) // all locals should be initiaed
-      .clickLaunchIcon('udapp')
-      .clickInstance(2)
+      .clearTransactions()
   },
 
-  'Should load more solidity locals array': !function (browser: NightwatchBrowser) {
+  'Should load more solidity locals array': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
@@ -155,10 +159,10 @@ module.exports = {
       .clickFunction('t - transact (not payable)')
       .pause(2000)
       .debugTransaction(0)
-      .waitForElementVisible('*[data-id="slider"]')
+      .waitForElementVisible('*[data-id="slider"]').pause(2000)
       // .setValue('*[data-id="slider"]', '5000') // Like this, setValue doesn't work properly for input type = range
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '7450' }) // It only moves slider to 7450 but vm traces are not updated
+      .execute(function () { document.getElementById('slider')['value'] = '7450' }).pause(10000) // It only moves slider to 7450 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(3).fill(browser.Keys.RIGHT_ARROW)) // This will press NEXT 3 times and will update the trace details
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
@@ -167,7 +171,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="solidityLocals"]', '9: 9 uint256', 60000)
       .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
       .clearTransactions()
-      .clearConsole()
+      .clearConsole().pause(2000)
   },
 
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
@@ -192,7 +196,7 @@ module.exports = {
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
 
-  'Should call the debugger api: getTrace': !function (browser: NightwatchBrowser) {
+  'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
@@ -200,7 +204,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
 
-  'Should call the debugger api: debug': !function (browser: NightwatchBrowser) {
+  'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
       .executeScript('remix.exeCurrent()')
