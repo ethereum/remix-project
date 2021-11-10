@@ -7,7 +7,7 @@ var async = require('async')
 var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
-var { UnitTestRunner } = require('@remix-project/remix-tests')
+var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
 const _paq = window._paq = window._paq || []
 
@@ -16,7 +16,7 @@ const TestTabLogic = require('./testTab/testTab')
 const profile = {
   name: 'solidityUnitTesting',
   displayName: 'Solidity unit testing',
-  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath'],
+  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath', 'getTestlibs'],
   events: [],
   icon: 'assets/img/unitTesting.webp',
   description: 'Fast tool to generate unit tests for your contracts',
@@ -42,7 +42,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.areTestsRunning = false
     this.defaultPath = 'tests'
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
-    this.allFilesInvolved = []
+    this.allFilesInvolved = ['.deps/remix-tests/remix_tests.sol', '.deps/remix-tests/remix_accounts.sol']
     this.isDebugging = false
     this.currentErrors = []
 
@@ -74,11 +74,25 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  getTestlibs () {
+    return { assertLibCode, accountsLibCode: this.testRunner.accountsLibCode }
+  }
+
+  async createTestLibs () {
+    const provider = await this.fileManager.currentFileProvider()
+    if (provider) {
+      provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
+      provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
+    }
+  }
+
   async onActivation () {
     const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
+    await this.testRunner.init()
+    await this.createTestLibs()
     this.updateRunAction()
   }
 
@@ -110,9 +124,13 @@ module.exports = class TestTab extends ViewPlugin {
       this.setCurrentPath(this.defaultPath)
     })
 
+    this.on('filePanel', 'workspaceCreated', async () => {
+      this.createTestLibs()
+    })
+
     this.testRunner.event.on('compilationFinished', (success, data, source) => {
       if (success) {
-        this.allFilesInvolved = Object.keys(data.sources)
+        this.allFilesInvolved.push(...Object.keys(data.sources))
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
         this.emit('compilationFinished', source.target, source, 'soljson', data)
@@ -526,8 +544,8 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.readFile(testFilePath).then((content) => {
       const runningTests = {}
       runningTests[testFilePath] = { content }
-      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = urlFromVersion(currentVersion)
+      const { currentVersion, evmVersion, optimize, runs, isUrl } = this.compileTab.getCurrentCompilerConfig()
+      const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
