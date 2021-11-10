@@ -56,6 +56,7 @@ class ContractDropdownUI {
       }
       this.exEnvironment = this.blockchain.getProvider()
       this.networkName = network.name
+      this.networkId = network.id
 
       const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
 
@@ -309,10 +310,10 @@ class ContractDropdownUI {
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
-        _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName])
+        _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName, this.networkId])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       } else {
-        _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName])
+        _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName, this.networkId])
       }
     }
 
@@ -346,7 +347,7 @@ class ContractDropdownUI {
   }
 
   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName])
+    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName, this.networkId])
     const { statusCb } = callbacks
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
