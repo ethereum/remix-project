@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-solidity-unit-testing';
+export * from './lib/solidity-unit-testing';
