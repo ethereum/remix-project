@@ -218,7 +218,6 @@ export class TabProxy extends Plugin {
 
         if (index === -1) {
           title = formatPath.join('/')
-          const titleLength = formatPath.length
           this.loadedTabs.push({
             id: name,
             name,
