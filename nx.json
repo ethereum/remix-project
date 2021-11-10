@@ -145,19 +145,12 @@
     "remix-ui-tabs": {
       "tags": []
     },
-    "remix-ui-theme-module": {
+    "remix-ui-theme-module": {},
+    "remix-ui-solidity-unit-testing": {
       "tags": []
     },
     "remix-ui-editor-context-view": {
       "tags": []
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   }
 }
