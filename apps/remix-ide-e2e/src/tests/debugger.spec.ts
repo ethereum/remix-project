@@ -12,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Should launch debugger': function (browser: NightwatchBrowser) {
+  'Should launch debugger': !function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
@@ -21,7 +21,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
   },
 
-  'Should debug failing transaction': function (browser: NightwatchBrowser) {
+  'Should debug failing transaction': !function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
@@ -36,7 +36,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="solidityLocals"]', '999', 60000)
   },
 
-  'Should debug transaction using slider': function (browser: NightwatchBrowser) {
+  'Should debug transaction using slider': !function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
       // eslint-disable-next-line dot-notation
@@ -48,7 +48,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
   },
 
-  'Should step back and forward transaction': function (browser: NightwatchBrowser) {
+  'Should step back and forward transaction': !function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
@@ -61,7 +61,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n51', 60000)
   },
 
-  'Should jump through breakpoints': function (browser: NightwatchBrowser) {
+  'Should jump through breakpoints': !function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .execute(() => {
         (window as any).addRemixBreakpoint(11)
@@ -80,7 +80,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n352', 60000)
   },
 
-  'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
+  'Should display solidity imported code while debugging github import': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .testContracts('externalImport.sol', sources[1]['externalImport.sol'], ['ERC20'])
@@ -101,7 +101,7 @@ module.exports = {
       })
   },
 
-  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2': function (browser: NightwatchBrowser) {
+  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2': !function (browser: NightwatchBrowser) {
     /*
       localVariable_step266_ABIEncoder and localVariable_step717_ABIEncoder
       still contains unwanted values (related to decoding calldata types)
@@ -142,7 +142,7 @@ module.exports = {
       .clickInstance(2)
   },
 
-  'Should load more solidity locals array': function (browser: NightwatchBrowser) {
+  'Should load more solidity locals array': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
@@ -150,10 +150,11 @@ module.exports = {
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 40000)
       .createContract('')
       .pause(2000)
-      .clickInstance(3)
+      .clearConsole()
+      .clickInstance(0)
       .clickFunction('t - transact (not payable)')
       .pause(2000)
-      .debugTransaction(6)
+      .debugTransaction(0)
       .waitForElementVisible('*[data-id="slider"]')
       // .setValue('*[data-id="slider"]', '5000') // Like this, setValue doesn't work properly for input type = range
       // eslint-disable-next-line dot-notation
@@ -162,8 +163,11 @@ module.exports = {
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
       .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
+      .waitForElementVisible('*[data-id="solidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', '9: 9 uint256', 60000)
       .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
+      .clearTransactions()
+      .clearConsole()
   },
 
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
@@ -173,9 +177,10 @@ module.exports = {
       .testContracts('withGeneratedSources.sol', sources[4]['withGeneratedSources.sol'], ['A'])
       .clickLaunchIcon('udapp')
       .createContract('')
-      .clickInstance(4)
+      .clearConsole()
+      .clickInstance(0)
       .clickFunction('f - transact (not payable)', { types: 'uint256[] ', values: '[]' })
-      .debugTransaction(8)
+      .debugTransaction(0)
       .pause(2000)
       .click('*[data-id="debuggerTransactionStartButton"]') // stop debugging
       .click('*[data-id="debugGeneratedSourcesLabel"]') // select debug with generated sources
@@ -187,7 +192,7 @@ module.exports = {
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
 
-  'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
+  'Should call the debugger api: getTrace': !function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
@@ -195,7 +200,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
 
-  'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
+  'Should call the debugger api: debug': !function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
       .executeScript('remix.exeCurrent()')
