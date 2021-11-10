@@ -69,9 +69,13 @@
       "@remix-ui/tabs": ["libs/remix-ui/tabs/src/index.ts"],
       "@remix-ui/helper": ["libs/remix-ui/helper/src/index.ts"],
       "@remix-ui/app": ["libs/remix-ui/app/src/index.ts"],
+
       "@remix-ui/vertical-icons-panel": ["libs/remix-ui/vertical-icons-panel/src/index.ts"],
       "@remix-ui/theme-module": ["libs/remix-ui/theme-module/src/index.ts"],
-      "@remix-ui/editor-context-view": ["libs/remix-ui/editor-context-view/src/index.ts"]
+      "@remix-ui/editor-context-view": ["libs/remix-ui/editor-context-view/src/index.ts"],
+      "@remix-ui/solidity-unit-testing": [
+        "libs/remix-ui/solidity-unit-testing/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
