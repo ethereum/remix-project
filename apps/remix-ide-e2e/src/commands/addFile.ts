@@ -30,7 +30,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
           // .pause(2000)
           .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
-          .setEditorValue(content.content).pause(10000)
+          .setEditorValue(content.content).pause(2000)
           // .pause(1000)
           .perform(function () {
             done()
