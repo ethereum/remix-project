@@ -71,7 +71,7 @@ export const TabsUI = (props: TabsUIProps) => {
           className="tab-scroll"
           selectedIndex={selectedIndex}
         >
-          <TabList className="d-flex flex-row justify-content-center align-items-center">
+          <TabList className="d-flex flex-row align-items-center">
             {props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}
           </TabList>
           {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
