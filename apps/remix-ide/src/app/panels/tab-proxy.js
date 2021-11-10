@@ -218,6 +218,7 @@ export class TabProxy extends Plugin {
 
         if (index === -1) {
           title = formatPath.join('/')
+          const titleLength = formatPath.length
           this.loadedTabs.push({
             id: name,
             name,
@@ -226,6 +227,25 @@ export class TabProxy extends Plugin {
             tooltip: name,
             iconClass: helper.getPathIcon(name)
           })
+          formatPath.shift()
+          if (formatPath.length > 0) {
+            const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
+            
+            if (index > -1) {
+              const duplicateTabName = this.loadedTabs[index].name
+              const duplicateTabPath = duplicateTabName.split('/')
+              const duplicateTabFormatPath = [...duplicateTabPath].reverse()
+              const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
+              this.loadedTabs[index] = {
+                id: duplicateTabName,
+                name: duplicateTabName,
+                title: duplicateTabTitle,
+                icon,
+                tooltip: duplicateTabName,
+                iconClass: helper.getPathIcon(duplicateTabName)
+              }
+            }
+          }
           break
         }
       }
