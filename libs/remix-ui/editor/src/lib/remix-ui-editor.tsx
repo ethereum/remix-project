@@ -82,14 +82,87 @@ export const EditorUI = (props: EditorUIProps) => {
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
     const lightColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
     const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
+
+    const blueColor = window.getComputedStyle(document.documentElement).getPropertyValue('--blue').trim()
+    const successColor = window.getComputedStyle(document.documentElement).getPropertyValue('--success').trim()
+    const warningColor = window.getComputedStyle(document.documentElement).getPropertyValue('--warning').trim()
+    const yellowColor = window.getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim()
+    const pinkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()
+    const orangeColor = window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
+    const purpleColor = window.getComputedStyle(document.documentElement).getPropertyValue('--purple').trim()
+    const dangerColor = window.getComputedStyle(document.documentElement).getPropertyValue('--danger').trim()
+
     const darkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()
     const grayColor = window.getComputedStyle(document.documentElement).getPropertyValue('--gray-dark').trim()
+
     monaco.editor.defineTheme('remix-dark', {
       base: 'vs-dark',
       inherit: true, // can also be false to completely replace the builtin rules
       rules: [
         { background: darkColor.replace('#', '') },
-        { token: 'keyword.external', foreground: infoColor }
+
+        // global variables
+        { token: 'keyword.abi', foreground: blueColor },
+        { token: 'keyword.block', foreground: blueColor },
+        { token: 'keyword.bytes', foreground: blueColor },
+        { token: 'keyword.msg', foreground: blueColor },
+        { token: 'keyword.tx', foreground: blueColor },
+
+        // global functions
+        { token: 'keyword.assert', foreground: blueColor },
+        { token: 'keyword.require', foreground: blueColor },
+        { token: 'keyword.revert', foreground: blueColor },
+        { token: 'keyword.blockhash', foreground: blueColor },
+        { token: 'keyword.keccak256', foreground: blueColor },
+        { token: 'keyword.sha256', foreground: blueColor },
+        { token: 'keyword.ripemd160', foreground: blueColor },
+        { token: 'keyword.ecrecover', foreground: blueColor },
+        { token: 'keyword.addmod', foreground: blueColor },
+        { token: 'keyword.mulmod', foreground: blueColor },
+        { token: 'keyword.selfdestruct', foreground: blueColor },
+        { token: 'keyword.type ', foreground: blueColor },
+        { token: 'keyword.gasleft', foreground: blueColor },
+
+        // specials
+        { token: 'keyword.super', foreground: infoColor },
+        { token: 'keyword.this', foreground: infoColor },
+
+        // for state variables
+        { token: 'keyword.constants', foreground: warningColor },
+        { token: 'keyword.override', foreground: warningColor },
+        { token: 'keyword.immutable', foreground: warningColor },
+
+        // data location
+        { token: 'keyword.memory', foreground: orangeColor },
+        { token: 'keyword.storage', foreground: orangeColor },
+        { token: 'keyword.calldata', foreground: orangeColor },
+
+        // // forf functions and modifiers
+        { token: 'keyword.virtual', foreground: purpleColor },
+
+        // // for Events
+        { token: 'keyword.indexed', foreground: yellowColor },
+        { token: 'keyword.anonymous', foreground: yellowColor },
+
+        // // for functions
+        { token: 'keyword.external', foreground: successColor },
+        { token: 'keyword.internal', foreground: successColor },
+        { token: 'keyword.private', foreground: successColor },
+        { token: 'keyword.public', foreground: successColor },
+        { token: 'keyword.view', foreground: successColor },
+        { token: 'keyword.pure', foreground: successColor },
+        { token: 'keyword.payable', foreground: successColor },
+        { token: 'keyword.nonpayable', foreground: successColor },
+
+        // Errors
+        { token: 'keyword.Error', foreground: dangerColor },
+        { token: 'keyword.Panic', foreground: dangerColor },
+
+        // special functions
+        { token: 'keyword.fallback', foreground: pinkColor },
+        { token: 'keyword.receive', foreground: pinkColor },
+        { token: 'keyword.constructor', foreground: pinkColor }
+
       ],
       colors: {
         'editor.background': darkColor,
