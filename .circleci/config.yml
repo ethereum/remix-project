@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  lint:
+  lint-libs:
     docker:
       # specify the version you desire here
       - image: circleci/node:14.17.6-browsers
@@ -25,13 +25,46 @@ jobs:
       - run:
           name: Remix Libs Linting
           command: npm run lint:libs
+  lint-ide:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - run: npm install
       - run:
           name: Remix IDE Linting
           command: npm run lint
+  lint-e2e:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - run: npm install
       - run:
           name: Remix IDE e2e Linting
           command: npm run lint remix-ide-e2e
-
   remix-libs:
     docker:
       # specify the version you desire here
@@ -369,31 +402,49 @@ workflows:
   version: 2
   build_all:
     jobs:
-      - lint
+      - lint-ide
+      - lint-libs
+      - lint-e2e
       - remix-libs:
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - remix-ide-plugin-api:
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - remix-ide-chrome-1:          
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - remix-ide-chrome-2:          
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - remix-ide-firefox-1:          
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - remix-ide-firefox-2:          
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - remix-ide-run-deploy:          
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - publish:
           requires:
-            - lint
+            - lint-ide
+            - lint-e2e
+            - lint-libs
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome-1
