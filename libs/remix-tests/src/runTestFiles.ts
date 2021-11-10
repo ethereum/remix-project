@@ -61,13 +61,13 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       for (const filename in asts) {
         if (filename.endsWith('_test.sol')) { sourceASTs[filename] = asts[filename].ast }
       }
-      deployAll(compilationResult, web3, false, null, (err, contracts) => {
+      deployAll(compilationResult, web3, accounts, false, null, (err, contracts) => {
         if (err) {
           // If contract deployment fails because of 'Out of Gas' error, try again with double gas
           // This is temporary, should be removed when remix-tests will have a dedicated UI to
           // accept deployment params from UI
           if (err.message.includes('The contract code couldn\'t be stored, please check your gas limit')) {
-            deployAll(compilationResult, web3, true, null, (error, contracts) => {
+            deployAll(compilationResult, web3, accounts, true, null, (error, contracts) => {
               if (error) next([{ message: 'contract deployment failed after trying twice: ' + error.message, severity: 'error' }]) // IDE expects errors in array
               else next(null, compilationResult, contracts)
             })
