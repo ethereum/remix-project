@@ -4,6 +4,7 @@ import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language } from './syntax'
 
 import './remix-ui-editor.css'
+import { constants } from 'os'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -88,7 +89,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const warningColor = window.getComputedStyle(document.documentElement).getPropertyValue('--warning').trim()
     const yellowColor = window.getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim()
     const pinkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()
-    const orangeColor = window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
+    const primaryColor = window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
     const purpleColor = window.getComputedStyle(document.documentElement).getPropertyValue('--purple').trim()
     const dangerColor = window.getComputedStyle(document.documentElement).getPropertyValue('--danger').trim()
 
@@ -133,9 +134,9 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.immutable', foreground: warningColor },
 
         // data location
-        { token: 'keyword.memory', foreground: orangeColor },
-        { token: 'keyword.storage', foreground: orangeColor },
-        { token: 'keyword.calldata', foreground: orangeColor },
+        { token: 'keyword.memory', foreground: primaryColor },
+        { token: 'keyword.storage', foreground: primaryColor },
+        { token: 'keyword.calldata', foreground: primaryColor },
 
         // // forf functions and modifiers
         { token: 'keyword.virtual', foreground: purpleColor },
