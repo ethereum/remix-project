@@ -82,9 +82,7 @@ export class DebuggerStepManager {
       }
 
       const jumpOutDisabled = (step === this.traceManager.findStepOut(step))
-      setTimeout(() => {
-        this.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
-      }, 100)
+      this.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
     })
   }
 
