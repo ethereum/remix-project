@@ -4,10 +4,7 @@ import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 
-const $ = require('jquery')
 const yo = require('yo-yo')
-const ethJSUtil = require('ethereumjs-util')
-const Web3 = require('web3')
 const EventManager = require('../../lib/events')
 const Card = require('../ui/card')
 
@@ -220,33 +217,6 @@ export class RunTab extends ViewPlugin {
   render () {
     return this.el
     this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
-    this.blockchain.resetAndInit(this.config, {
-      getAddress: (cb) => {
-        cb(null, $('#txorigin').val())
-      },
-      getValue: (cb) => {
-        try {
-          const number = document.querySelector('#value').value
-          const select = document.getElementById('unit')
-          const index = select.selectedIndex
-          const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          let unit = 'ether' // default
-          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-            unit = selectedUnit
-          }
-          cb(null, Web3.utils.toWei(number, unit))
-        } catch (e) {
-          cb(e)
-        }
-      },
-      getGasLimit: (cb) => {
-        try {
-          cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
-        } catch (e) {
-          cb(e.message)
-        }
-      }
-    })
     this.renderInstanceContainer()
     this.renderSettings()
     this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
