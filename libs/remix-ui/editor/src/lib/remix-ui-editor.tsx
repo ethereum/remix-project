@@ -4,7 +4,6 @@ import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language } from './syntax'
 
 import './remix-ui-editor.css'
-import { constants } from 'os'
 
 type cursorPosition = {
   startLineNumber: number,
