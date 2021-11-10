@@ -536,11 +536,11 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         browser: {
           ...state.browser,
-          expandPath: state.mode === 'browser' ? payload : state.browser.expandPath
+          expandPath: payload
         },
         localhost: {
           ...state.localhost,
-          expandPath: state.mode === 'localhost' ? payload : state.localhost.expandPath
+          expandPath: payload
         }
       }
     }
