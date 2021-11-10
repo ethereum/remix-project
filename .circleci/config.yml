@@ -79,7 +79,7 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: selenium start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
@@ -111,7 +111,7 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: selenium start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
@@ -142,7 +142,7 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: selenium start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
       - store_test_results:
@@ -174,7 +174,7 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: selenium start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
@@ -205,7 +205,7 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: selenium start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
@@ -237,7 +237,7 @@ jobs:
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: selenium start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
