@@ -423,8 +423,9 @@ export class LandingPage extends ViewPlugin {
       }
     }
     const setDemoFile = async () => {
-      await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
-      await this.call('fileManager', 'setFile', 'tests/one/two/three/four/file.js', 'neihjiehjiheiheihiehiehiheiheihi')
+      // await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
+      // await this.call('fileManager', 'setFile', 'tests/one/two/three/four/file.js', 'neihjiehjiheiheihiehiehiheiheihi')
+      await this.call('fileManager', 'refresh')
     }
 
     const onAcceptDownloadn = async () => {
