@@ -24,7 +24,7 @@ export function RunTabUI (props: RunTabProps) {
   return (
     <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
       <div className="list-group list-group-flush">
-        <SettingsUI selectExEnv={selectExEnv} updateExEnv={updateExEnv} />
+        <SettingsUI selectExEnv={selectExEnv} updateExEnv={updateExEnv} accounts={runTab.accounts} />
         <ContractDropdownUI exEnvironment={selectExEnv} />
         <RecorderUI />
         <InstanceContainerUI />

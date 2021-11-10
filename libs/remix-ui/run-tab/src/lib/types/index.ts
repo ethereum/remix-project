@@ -4,7 +4,13 @@ export interface RunTabProps {
 
 export interface SettingsProps {
   selectExEnv: string,
-  updateExEnv: (env: string) => void
+  updateExEnv: (env: string) => void,
+  accounts: {
+    loadedAccounts: Record<string, any>,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  }
 }
 
 export interface EnvironmentProps {
@@ -16,7 +22,13 @@ export interface NetworkProps {
 }
 
 export interface AccountProps {
-  selectExEnv: string
+  selectExEnv: string,
+  accounts: {
+    loadedAccounts: Record<string, any>,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  }
 }
 
 export interface GasPriceProps {
