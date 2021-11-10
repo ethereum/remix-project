@@ -248,8 +248,8 @@ module.exports = class TestTab extends ViewPlugin {
   async startDebug (txHash, web3) {
     this.isDebugging = true
     if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
-    this.call('menuicons', 'select', 'debugger')
-    this.call('debugger', 'debug', txHash, web3)
+    await this.call('menuicons', 'select', 'debugger')
+    setTimeout(async () => { await this.call('debugger', 'debug', txHash, web3) }, 500)
   }
 
   printHHLogs (logsArr, testName) {
@@ -276,7 +276,7 @@ module.exports = class TestTab extends ViewPlugin {
     let debugBtn = yo``
     if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
       const { web3, debugTxHash } = result
-      debugBtn = yo`<div id=${result.value.replaceAll(' ', '_')} class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${() => this.startDebug(debugTxHash, web3)}>
+      debugBtn = yo`<div id=${result.value.replaceAll(' ', '_')} class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${async () => this.startDebug(debugTxHash, web3)}>
         <i class="fas fa-bug"></i>
       </div>`
       debugBtn.style.cursor = 'pointer'
