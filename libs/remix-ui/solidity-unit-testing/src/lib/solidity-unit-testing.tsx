@@ -1,11 +1,9 @@
 import './remix-ui-solidity-unit-testing.module.css';
 
 /* eslint-disable-next-line */
-export interface RemixUiSolidityUnitTestingProps {}
+export interface SolidityUnitTestingProps {}
 
-export function RemixUiSolidityUnitTesting(
-  props: RemixUiSolidityUnitTestingProps
-) {
+export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
   return (
     <div>
       <h1>Welcome to remix-ui-solidity-unit-testing!</h1>
@@ -13,4 +11,4 @@ export function RemixUiSolidityUnitTesting(
   );
 }
 
-export default RemixUiSolidityUnitTesting;
+export default SolidityUnitTesting
