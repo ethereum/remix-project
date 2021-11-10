@@ -2,12 +2,14 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.2.3
 jobs:
   lint:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -35,7 +37,7 @@ jobs:
   remix-libs:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -57,7 +59,7 @@ jobs:
   remix-ide-chrome-1:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -71,15 +73,13 @@ jobs:
 
     parallelism: 12
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-      - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
@@ -90,7 +90,7 @@ jobs:
   remix-ide-chrome-2:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -104,16 +104,14 @@ jobs:
 
     parallelism: 12
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - run: npm install
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
       - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-      - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
@@ -124,7 +122,7 @@ jobs:
   remix-ide-firefox-1:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -138,15 +136,13 @@ jobs:
 
     parallelism: 12
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
-      - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
       - store_test_results:
@@ -157,7 +153,7 @@ jobs:
   remix-ide-firefox-2:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -171,16 +167,14 @@ jobs:
 
     parallelism: 12
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - run: npm install
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
       - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
-      - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
@@ -191,7 +185,7 @@ jobs:
   remix-ide-run-deploy:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -205,15 +199,13 @@ jobs:
     working_directory: ~/remix-project
 
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-      - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
@@ -224,7 +216,7 @@ jobs:
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -238,16 +230,14 @@ jobs:
     working_directory: ~/remix-project
 
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-      - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
@@ -257,7 +247,7 @@ jobs:
   deploy-remix-live:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -285,7 +275,7 @@ jobs:
   publish:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -311,7 +301,7 @@ jobs:
   deploy-remix-alpha:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -339,7 +329,7 @@ jobs:
   deploy-remix-beta:
     docker:
       # specify the version you desire here
-      - image: circleci/node:14.17.6-browsers
+      - image: cimg/node:17.1.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
