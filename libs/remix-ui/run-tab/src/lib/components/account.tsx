@@ -1,42 +1,17 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 
 export function AccountUI (props: AccountProps) {
+  const accounts = Object.keys(props.accounts.loadedAccounts)
   const [selectedAccount, setSelectedAccount] = useState<string>('')
   const plusBtn = useRef(null)
   const plusTitle = useRef(null)
 
-  // // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
-  // async fillAccountsList () {
-  //   this.accountListCallId++
-  //   const callid = this.accountListCallId
-  //   const txOrigin = this.el.querySelector('#txorigin')
-  //   let accounts = []
-  //   try {
-  //     accounts = await this.blockchain.getAccounts()
-  //   } catch (e) {
-  //     addTooltip(`Cannot get account list: ${e}`)
-  //   }
-  //   if (!accounts) accounts = []
-  //   if (this.accountListCallId > callid) return
-  //   this.accountListCallId++
-  //   for (const loadedaddress in this.loadedAccounts) {
-  //     if (accounts.indexOf(loadedaddress) === -1) {
-  //       txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
-  //       delete this.loadedAccounts[loadedaddress]
-  //     }
-  //   }
-  //   for (const i in accounts) {
-  //     const address = accounts[i]
-  //     if (!this.loadedAccounts[address]) {
-  //       txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
-  //       this.loadedAccounts[address] = 1
-  //     }
-  //   }
-  //   txOrigin.setAttribute('value', accounts[0])
-  // }
+  useEffect(() => {
+    if (!selectedAccount && accounts.length > 0) setSelectedAccount(accounts[0])
+  }, [accounts, selectedAccount])
 
   const updatePlusButton = () => {
     // enable/disable + button
@@ -140,7 +115,11 @@ export function AccountUI (props: AccountProps) {
         </span>
       </label>
       <div className="udapp_account">
-        <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { setSelectedAccount(e.target.value) }}></select>
+        <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { setSelectedAccount(e.target.value) }}>
+          {
+            Object.keys(props.accounts.loadedAccounts).map((value) => <option value={value}>{ value }</option>)
+          }
+        </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard content={selectedAccount} direction='top' /></div>
         <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage} title="Sign a message using this account key"></i>
       </div>

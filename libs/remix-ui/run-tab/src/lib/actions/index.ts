@@ -1,5 +1,7 @@
-import { shortenAddress } from '@remix-ui/helper'
 import React from 'react'
+import { shortenAddress } from '@remix-ui/helper'
+import * as ethJSUtil from 'ethereumjs-util'
+import Web3 from 'web3'
 import { fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess } from './payload'
 
 let plugin, dispatch: React.Dispatch<any>
@@ -9,11 +11,10 @@ export const initSettingsTab = (udapp) => async (reducerDispatch: React.Dispatch
     plugin = udapp
     dispatch = reducerDispatch
     setupEvents()
+
     setInterval(() => {
       fillAccountsList()
     }, 1000)
-
-    fillAccountsList()
   }
 }
 
@@ -28,20 +29,48 @@ const setupEvents = () => {
     updateAccountBalances()
   })
 
-  const updateAccountBalances = () => {
-    // const accounts = $(this.el.querySelector('#txorigin')).children('option')
+  plugin.blockchain.resetAndInit(plugin.config, {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        const number = document.querySelector('#value').value
+        const select = document.getElementById('unit')
+        const index = select.selectedIndex
+        const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        let unit = 'ether' // default
+        if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+          unit = selectedUnit
+        }
+        cb(null, Web3.utils.toWei(number, unit))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      try {
+        cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
+      } catch (e) {
+        cb(e.message)
+      }
+    }
+  })
+}
 
-    // accounts.each((index, account) => {
-    //   plugin.blockchain.getBalanceInEther(account.value, (err, balance) => {
-    //     if (err) return
-    //     const updated = shortenAddress(account.value, balance)
+const updateAccountBalances = () => {
+  // const accounts = $(this.el.querySelector('#txorigin')).children('option')
 
-    //     if (updated !== account.innerText) { // check if the balance has been updated and update UI accordingly.
-    //       account.innerText = updated
-    //     }
-    //   })
-    // })
-  }
+  // accounts.each((index, account) => {
+  //   plugin.blockchain.getBalanceInEther(account.value, (err, balance) => {
+  //     if (err) return
+  //     const updated = shortenAddress(account.value, balance)
+
+  //     if (updated !== account.innerText) { // check if the balance has been updated and update UI accordingly.
+  //       account.innerText = updated
+  //     }
+  //   })
+  // })
 }
 
 const fillAccountsList = async () => {

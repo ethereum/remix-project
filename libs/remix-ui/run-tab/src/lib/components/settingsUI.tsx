@@ -129,7 +129,7 @@ export function SettingsUI (props: SettingsProps) {
     <div className="udapp_settings">
       <EnvironmentUI updateExEnv={props.updateExEnv} />
       <NetworkUI />
-      <AccountUI selectExEnv={props.selectExEnv} />
+      <AccountUI selectExEnv={props.selectExEnv} accounts={props.accounts} />
       <GasPriceUI />
       <ValueUI />
     </div>
