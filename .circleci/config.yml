@@ -76,10 +76,10 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
@@ -110,10 +110,10 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
@@ -210,10 +210,10 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
@@ -244,10 +244,10 @@ jobs:
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.45 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
