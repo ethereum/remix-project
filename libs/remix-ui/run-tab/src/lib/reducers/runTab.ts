@@ -8,7 +8,7 @@ export interface RunTabState {
     loadedAccounts: Record<string, any>,
     isRequesting: boolean,
     isSuccessful: boolean,
-    error: null
+    error: string
   }
 }
 
