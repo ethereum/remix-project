@@ -1,6 +1,6 @@
 /* eslint-disable */
 module.exports = {
-  version: '4.0.0',
+  version: '3.8.1',
   baseURL: 'https://selenium-release.storage.googleapis.com',
   drivers: {
     chrome: {
