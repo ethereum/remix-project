@@ -21,7 +21,7 @@ module.exports = {
       .refresh()
       .waitForElementVisible('#editorView', 30000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content doesn\'t include Ballot contract')
+        browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content includes Ballot contract')
       })
   },
 
