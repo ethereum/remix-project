@@ -13,7 +13,7 @@ module.exports = {
     return sources
   },
 
-  'Should launch solidity unit test plugin': function (browser: NightwatchBrowser) {
+  'Should launch solidity unit test plugin and create test files in FE': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('simple_storage.sol', sources[0]['simple_storage.sol'])
@@ -23,6 +23,15 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SOLIDITY UNIT TESTING')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
+      .openFile('.deps/remix-tests/remix_tests.sol')
+      // remix_test.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
+      .openFile('.deps/remix-tests/remix_accounts.sol')
+      // remix_accounts.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library TestsAccounts {') !== -1))
   },
 
   'Should generate test file': function (browser: NightwatchBrowser) {
@@ -149,7 +158,7 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
   },
 
-  'Changing current path when workspace changed': function (browser: NightwatchBrowser) {
+  'Changing current path when workspace changed and checking test files creation': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('settings')
@@ -167,6 +176,14 @@ module.exports = {
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
       .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
       .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
+      .openFile('.deps/remix-tests/remix_tests.sol')
+      // remix_test.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
+      .openFile('.deps/remix-tests/remix_accounts.sol')
+      // remix_accounts.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library TestsAccounts {') !== -1))
       // end of creating
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
@@ -277,6 +294,8 @@ module.exports = {
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
+      // remix_test.sol should be opened in editor
+      .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
       .pause(5000)
       .clickLaunchIcon('solidityUnitTesting').pause(2000)
       .scrollAndClick('#Check_winning_proposal_again')
