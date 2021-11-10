@@ -227,22 +227,6 @@ export class TabProxy extends Plugin {
             tooltip: name,
             iconClass: helper.getPathIcon(name)
           })
-          formatPath.shift()
-          if (formatPath.length > 0) {
-            const duplicateTabName = this.loadedTabs.find(({ title }) => title === formatPath.join('/')).name
-            const duplicateTabPath = duplicateTabName.split('/')
-            const duplicateTabFormatPath = [...duplicateTabPath].reverse()
-            const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
-
-            this.loadedTabs.push({
-              id: duplicateTabName,
-              name: duplicateTabName,
-              title: duplicateTabTitle,
-              icon,
-              tooltip: duplicateTabName,
-              iconClass: helper.getPathIcon(duplicateTabName)
-            })
-          }
           break
         }
       }
