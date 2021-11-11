@@ -6,6 +6,34 @@ version: 2.1
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    steps:
+      - browser-tools/install-browser-tools
+      - checkout
+      - run: npm install
+      - run: npm run downloadsolc_assets
+      - run: npx nx build remix-ide --with-deps
+      - run: npx nx build remix-ide-e2e-src-local-plugin
+      - run: mkdir persist && zip -r persist/dist.zip dist
+      - persist_to_workspace:
+          root: .
+          paths:
+            - 'persist'
+      
   lint:
     docker:
       # specify the version you desire here
@@ -74,9 +102,9 @@ jobs:
     parallelism: 12
     steps:
       - browser-tools/install-browser-tools
-      - checkout
-      - run: npm install
-      - run: npx nx build remix-ide --with-deps
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -359,15 +387,32 @@ workflows:
   version: 2
   build_all:
     jobs:
+      - build
       - lint
-      - remix-libs
-      - remix-ide-plugin-api
-      - remix-ide-chrome-1
-      - remix-ide-chrome-2
-      - remix-ide-firefox-1
-      - remix-ide-firefox-2
-      - remix-ide-run-deploy
-      - publish
+      - remix-libs:
+          requires:
+            - build
+      - remix-ide-plugin-api:
+          requires:
+            - build
+      - remix-ide-chrome-1:
+          requires:
+            - build
+      - remix-ide-chrome-2:
+          requires:
+            - build
+      - remix-ide-firefox-1:
+          requires:
+            - build
+      - remix-ide-firefox-2:
+          requires:
+            - build
+      - remix-ide-run-deploy:
+          requires:
+            - build
+      - publish:
+          requires:
+            - build
       - deploy-remix-live:          
           requires:
             - lint
