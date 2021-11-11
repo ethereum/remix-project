@@ -88,7 +88,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const warningColor = window.getComputedStyle(document.documentElement).getPropertyValue('--warning').trim()
     const yellowColor = window.getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim()
     const pinkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()
-    const primaryColor = window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
+    const locationColor = '#9e7e08'
     const purpleColor = window.getComputedStyle(document.documentElement).getPropertyValue('--purple').trim()
     const dangerColor = window.getComputedStyle(document.documentElement).getPropertyValue('--danger').trim()
 
@@ -133,9 +133,9 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.immutable', foreground: warningColor },
 
         // data location
-        { token: 'keyword.memory', foreground: primaryColor },
-        { token: 'keyword.storage', foreground: primaryColor },
-        { token: 'keyword.calldata', foreground: primaryColor },
+        { token: 'keyword.memory', foreground: locationColor },
+        { token: 'keyword.storage', foreground: locationColor },
+        { token: 'keyword.calldata', foreground: locationColor },
 
         // // forf functions and modifiers
         { token: 'keyword.virtual', foreground: purpleColor },
