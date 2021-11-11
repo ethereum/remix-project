@@ -62,6 +62,7 @@ function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
 
       }}
       ref={menuRef}
+      tabIndex={1}
     >
       <ul id="menuitems">
         <MenuForLinks
