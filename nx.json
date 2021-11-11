@@ -146,7 +146,7 @@
       "tags": []
     },
     "remix-ui-theme-module": {},
-    "remix-ui-solidity-unit-testing": {
+    "solidity-unit-testing": {
       "tags": []
     },
     "remix-ui-editor-context-view": {

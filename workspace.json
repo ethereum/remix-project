@@ -1179,6 +1179,7 @@
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
+
           }
         }
       }
@@ -1189,10 +1190,13 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/remix-ui/solidity-unit-testing/**/*.{ts,tsx,js,jsx}"
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/solidity-unit-testing/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/solidity-unit-testing/**/*"
             ]
           }
         }
@@ -1248,5 +1252,6 @@
     }
   },
   "defaultProject": "remix-ide"
+  }
 }
 
