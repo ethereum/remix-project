@@ -12,13 +12,13 @@ function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
   return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
 }
 
-function writeTestAccountsContract (accounts: string[]) {
+export function writeTestAccountsContract (accounts: string[]) {
   const testAccountContract = require('../sol/tests_accounts.sol')
   let body = `address[${accounts.length}] memory accounts;`
   if (!accounts.length) body += ';'
   else {
     accounts.map((address, index) => {
-      body += `\naccounts[${index}] = ${address};\n`
+      body += `\n\t\taccounts[${index}] = ${address};\n`
     })
   }
   return testAccountContract.replace('>accounts<', body)
@@ -172,14 +172,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  */
 export function compileContractSources (sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb): void {
   let compiler
-  const accounts: string[] = opts.accounts || []
   const filepath = opts.testFilePath || ''
-  // Iterate over sources keys. Inject test libraries. Inject test library import statements.
-  if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
-    sources['tests.sol'] = { content: require('../sol/tests.sol.js') }
-    sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
-    sources['remix_accounts.sol'] = { content: writeTestAccountsContract(accounts) }
-  }
   const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
   const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
