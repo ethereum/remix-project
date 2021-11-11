@@ -24,17 +24,22 @@ jobs:
     steps:
       - browser-tools/install-browser-tools
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run: npm install
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: mkdir persist && zip -r persist/dist.zip dist
-      - run: zip -r persist/apps.zip apps
       - persist_to_workspace:
           root: .
           paths:
             - 'persist'
-      
   lint:
     docker:
       # specify the version you desire here
@@ -103,11 +108,18 @@ jobs:
     parallelism: 12
     steps:
       - browser-tools/install-browser-tools
+      - checkout
       - attach_workspace:
             at: .
-      - run: unzip ./persist/dist.zip ./
-      - run: unzip ./persist/apps.zip ./
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run: npm install
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
