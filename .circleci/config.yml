@@ -121,9 +121,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm run downloadsolc_assets
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar --config=/home/circleci/remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
@@ -156,9 +157,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm run downloadsolc_assets
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar --config=/home/circleci/remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
@@ -191,9 +193,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm run downloadsolc_assets
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar --config=/home/circleci/remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
       - store_test_results:
@@ -226,9 +229,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm run downloadsolc_assets
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar --config=/home/circleci/remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
@@ -261,9 +265,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm run downloadsolc_assets
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar --config=/home/circleci/remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
@@ -296,9 +301,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm run downloadsolc_assets
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar --config=/home/circleci/remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
