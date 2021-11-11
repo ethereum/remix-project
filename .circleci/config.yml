@@ -157,7 +157,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -193,7 +192,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -229,7 +227,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -265,7 +262,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -301,7 +297,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -332,7 +327,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run: npm run downloadsolc_assets
       - run: npm run build:production
       - run: 
@@ -364,7 +358,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run: npm run downloadsolc_assets
       - run: npm run build:production
       - run: ./apps/remix-ide/ci/copy_resources.sh     
@@ -392,7 +385,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run: npm run downloadsolc_assets
       - run: npm run build:production
       - run: 
@@ -423,7 +415,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run: npm run build:libs
       - run: npm run downloadsolc_assets
       - run: npm run build:production
