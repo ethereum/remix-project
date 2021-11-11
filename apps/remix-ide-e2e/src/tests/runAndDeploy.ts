@@ -31,12 +31,12 @@ module.exports = {
   },
 
   'Should sign message using account key': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="settingsRemixRunSignMsg"]')
+    browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
       .click('select[id="selectExEnvOptions"] option[value="vm-berlin"]')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)
-      .waitForElementPresent('*[data-id="modalDialogCustomPromptText"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 12000)
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'Remix is cool!')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
