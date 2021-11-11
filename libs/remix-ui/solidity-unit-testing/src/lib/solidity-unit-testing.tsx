@@ -1,13 +1,15 @@
 import React, { useState } from 'react' // eslint-disable-line
 
+import './css/style.css'
+
 /* eslint-disable-next-line */
 export interface SolidityUnitTestingProps {}
 
 export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
   console.log('props---->', props)
   return (
-    <div className="${css.testTabView} px-2" id="testView">
-        <div className="${css.infoBox}">
+    <div className="px-2" id="testView">
+        <div className="infoBox">
           <p className="text-lg"> Test your smart contract in Solidity.</p>
           <p> Select directory to load and generate test files.</p>
           <label>Test directory:</label>
@@ -19,7 +21,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
             </div>
           </div> */}
         </div>
-        {/* <div className="${css.tests}">          
+        {/* <div>          
           <div className="d-flex p-2">
            ${this.updateGenerateFileAction()}
            ${this.infoButton()}
