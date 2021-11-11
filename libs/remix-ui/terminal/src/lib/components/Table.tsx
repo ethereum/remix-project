@@ -36,125 +36,219 @@ const showTable = (opts, showTableHash) => {
   }
   const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   return (
-    <table className={`txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`} id='txTable' data-id={`txLoggerTable${opts.hash}`}>
+    <table
+      className={`txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`}
+      id="txTable"
+      data-id={`txLoggerTable${opts.hash}`}
+    >
       <tbody>
-        <tr className='tr'>
-          <td className='td' data-shared={`key_${opts.hash}`}>status</td>
-          <td className='td' data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
-        </tr>
-        {opts.hash ? (<tr className='tr'>
-          <td className='td' data-shared={`key_${opts.hash}`}>transaction hash</td>
-          <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
-            <CopyToClipboard content={opts.hash}/>
-          </td>
-        </tr>) : null }
-        {
-          opts.contractAddress ? (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}>contract address</td>
-              <td className='td' data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.contractAddress}
-                <CopyToClipboard content={opts.contractAddress}/>
-              </td>
-            </tr>
-          ) : null
-        }
-        {
-          opts.from ? (
-            <tr className='tr'>
-              <td className='td tableTitle' data-shared={`key_${opts.hash}`}>from</td>
-              <td className='td' data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.from}
-                <CopyToClipboard content={opts.from}/>
-              </td>
-            </tr>
-          ) : null
-        }
-        {
-          opts.to ? (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}>to</td>
-              <td className='td' data-id={`txLoggerTableTo${opts.hash}`} data-shared={`pair_${opts.hash}`}>{toHash}
-                <CopyToClipboard content={data.to ? data.to : toHash}/>
-              </td>
-            </tr>
-          ) : null
-        }
-        {
-          opts.gas ? (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}>gas</td>
-              <td className='td' data-id={`txLoggerTableGas${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.gas} gas
-                <CopyToClipboard content={opts.gas}/>
-              </td>
-            </tr>
-          ) : null
-        }
-        {
-          opts.transactionCost ? (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}>transaction cost</td>
-              <td className='td' data-id={`txLoggerTableTransactionCost${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.transactionCost} gas {callWarning}
-                <CopyToClipboard content={opts.transactionCost}/>
-              </td>
-            </tr>
-          ) : null
-        }
-        {
-          opts.executionCost ? (
-            <tr className='tr'>
-              <td className='td' data-shared={`key_${opts.hash}`}>execution cost</td>
-              <td className='td' data-id={`txLoggerTableExecutionHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.executionCost} gas {callWarning}
-                <CopyToClipboard content={opts.executionCost}/>
-              </td>
-            </tr>
-          ) : null
-        }
+        {opts.status !== undefined ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              status
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableStatus${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >{`${opts.status} ${msg}`}</td>
+          </tr>
+        ) : null}
+        {opts.hash && !opts.isCall ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              transaction hash
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.hash}
+              <CopyToClipboard content={opts.hash} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.contractAddress ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              contract address
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableContractAddress${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.contractAddress}
+              <CopyToClipboard content={opts.contractAddress} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.from ? (
+          <tr className="tr">
+            <td className="td tableTitle" data-shared={`key_${opts.hash}`}>
+              from
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableFrom${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.from}
+              <CopyToClipboard content={opts.from} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.to ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              to
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableTo${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {toHash}
+              <CopyToClipboard content={data.to ? data.to : toHash} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.gas ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              gas
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableGas${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.gas} gas
+              <CopyToClipboard content={opts.gas} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.transactionCost ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              transaction cost
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableTransactionCost${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.transactionCost} gas {callWarning}
+              <CopyToClipboard content={opts.transactionCost} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.executionCost ? (
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              execution cost
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableExecutionHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.executionCost} gas {callWarning}
+              <CopyToClipboard content={opts.executionCost} />
+            </td>
+          </tr>
+        ) : null}
         {opts.hash ? (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}>hash</td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts.hash}
-              <CopyToClipboard content={opts.hash}/>
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              hash
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.hash}
+              <CopyToClipboard content={opts.hash} />
             </td>
           </tr>
         ) : null}
         {opts.input ? (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}>input</td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{helper.shortenHexData(opts.input)}
-              <CopyToClipboard content={opts.input}/>
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              input
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {helper.shortenHexData(opts.input)}
+              <CopyToClipboard content={opts.input} />
             </td>
           </tr>
         ) : null}
         {opts['decoded input'] ? (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}>decoded input</td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded input'].trim()}
-              <CopyToClipboard content={opts['decoded input']}/>
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              decoded input
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts['decoded input'].trim()}
+              <CopyToClipboard content={opts['decoded input']} />
             </td>
           </tr>
         ) : null}
         {opts['decoded output'] ? (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}>decoded output</td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{opts['decoded output']}
-              <CopyToClipboard content={opts['decoded output']}/>
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              decoded output
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts['decoded output']}
+              <CopyToClipboard content={opts['decoded output']} />
             </td>
           </tr>
         ) : null}
         {opts.logs ? (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}>logs</td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              logs
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
               {JSON.stringify(stringified, null, '\t')}
-              <CopyToClipboard content={JSON.stringify(stringified, null, '\t')}/>
-              <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')}/>
+              <CopyToClipboard
+                content={JSON.stringify(stringified, null, '\t')}
+              />
+              <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')} />
             </td>
           </tr>
         ) : null}
         {opts.val ? (
-          <tr className='tr'>
-            <td className='td' data-shared={`key_${opts.hash}`}>val</td>
-            <td className='td' data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>{val} wei
-              <CopyToClipboard content={`${val} wei`}/>
+          <tr className="tr">
+            <td className="td" data-shared={`key_${opts.hash}`}>
+              val
+            </td>
+            <td
+              className="td"
+              data-id={`txLoggerTableHash${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {val} wei
+              <CopyToClipboard content={`${val} wei`} />
             </td>
           </tr>
         ) : null}

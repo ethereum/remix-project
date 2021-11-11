@@ -12,7 +12,7 @@ const Context = ({ opts, blockchain }) => {
   const val = data.value
   let hash = data.hash ? helper.shortenHexData(data.hash) : ''
   const input = data.input ? helper.shortenHexData(data.input) : ''
-  const logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
+  const logs = opts.logs && opts.logs.decoded && opts.logs.decoded.length ? opts.logs.decoded.length : 0
   const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
