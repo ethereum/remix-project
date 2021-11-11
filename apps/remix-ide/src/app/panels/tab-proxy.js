@@ -230,7 +230,6 @@ export class TabProxy extends Plugin {
           formatPath.shift()
           if (formatPath.length > 0) {
             const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
-            
             if (index > -1) {
               const duplicateTabName = this.loadedTabs[index].name
               const duplicateTabPath = duplicateTabName.split('/')
