@@ -360,32 +360,17 @@ workflows:
   build_all:
     jobs:
       - lint
-      - remix-libs:
-          requires:
-            - lint
-      - remix-ide-plugin-api:
-          requires:
-            - lint
-      - remix-ide-chrome-1:          
-          requires:
-            - lint
-      - remix-ide-chrome-2:          
-          requires:
-            - lint
-      - remix-ide-firefox-1:          
-          requires:
-            - lint
-      - remix-ide-firefox-2:          
-          requires:
-            - lint
-      - remix-ide-run-deploy:          
-          requires:
-            - lint
-      - publish:
-          requires:
-            - lint
+      - remix-libs
+      - remix-ide-plugin-api
+      - remix-ide-chrome-1
+      - remix-ide-chrome-2
+      - remix-ide-firefox-1
+      - remix-ide-firefox-2
+      - remix-ide-run-deploy
+      - publish
       - deploy-remix-live:          
           requires:
+            - lint
             - remix-ide-chrome-1
             - remix-ide-chrome-2
             - remix-ide-firefox-1
@@ -397,6 +382,7 @@ workflows:
               only: remix_live
       - deploy-remix-alpha:          
           requires:
+            - lint
             - remix-ide-chrome-1
             - remix-ide-chrome-2
             - remix-ide-firefox-1
@@ -408,6 +394,7 @@ workflows:
               only: master
       - deploy-remix-beta:          
           requires:
+            - lint
             - remix-ide-chrome-1
             - remix-ide-chrome-2
             - remix-ide-firefox-1
