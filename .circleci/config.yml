@@ -112,7 +112,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 200
+    parallelism: 20
     steps:
       - browser-tools/install-browser-tools
       - checkout
@@ -147,7 +147,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 200
+    parallelism: 20
     steps:
       - browser-tools/install-browser-tools
       - checkout
@@ -182,7 +182,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 200
+    parallelism: 20
     steps:
       - browser-tools/install-browser-tools
       - checkout
@@ -217,7 +217,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 200
+    parallelism: 20
     steps:
       - browser-tools/install-browser-tools
       - checkout
