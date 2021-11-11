@@ -86,8 +86,6 @@ class Terminal extends Plugin {
       this.call('menuicons', 'select', 'debugger')
       this.call('debugger', 'debug', hash)
     })
-    this.logHtmlResponse = []
-    this.logResponse = []
   }
 
   onActivation () {
@@ -102,23 +100,11 @@ class Terminal extends Plugin {
   }
 
   logHtml (html) {
-    this.logHtmlResponse.push(html.innerText)
-    this.renderComponent()
-    this.resetLogHtml()
-  }
-
-  resetLogHtml () {
-    this.logHtmlResponse = []
+    this.terminalApi.logHtml(html)
   }
 
   log (message) {
-    this.logResponse.push(message)
-    this.renderComponent()
-    this.resetLog()
-  }
-
-  resetLog () {
-    this.logResponse = []
+    this.terminalApi.log(message)
   }
 
   render () {
@@ -126,9 +112,11 @@ class Terminal extends Plugin {
   }
 
   renderComponent () {
+    const onReady = (api) => { this.terminalApi = api }
     ReactDOM.render(
       <RemixUiTerminal
-        plugin = {this}
+        plugin={this}
+        onReady={onReady}
       />,
       this.element
     )
