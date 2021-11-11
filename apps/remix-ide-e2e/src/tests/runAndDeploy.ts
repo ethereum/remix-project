@@ -41,19 +41,19 @@ module.exports = {
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .modalFooterOKClick()
-      .waitForElementPresent('*[data-id="modalDialogContainer"]', 12000)
+      .waitForElementVisible('*[data-id="modalDialogContainer"]', 12000)
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .modalFooterOKClick()
   },
 
   'Should deploy contract on JavascriptVM': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
-      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]', 45000)
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 45000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .testFunction('last', {
