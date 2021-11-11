@@ -57,6 +57,9 @@ jobs:
 
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Remix Libs Linting
           command: npm run lint:libs
@@ -90,7 +93,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run: npm run build:libs
       - run: cd dist/libs/remix-tests && npm install
       - run: npm run test:libs
@@ -120,7 +122,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -438,7 +439,9 @@ workflows:
   build_all:
     jobs:
       - build
-      - lint
+      - lint:
+          requires:
+            - build
       - remix-libs:
           requires:
             - build
