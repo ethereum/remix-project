@@ -41,6 +41,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
     rootFolderChanged(path)
   })
+
+  plugin.on('fileManager', 'rootFolderChanged', async (path: string) => {
+    rootFolderChanged(path)
+  })
 }
 
 export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Dispatch<any>) => {
