@@ -1,3 +1,8 @@
+/* global */
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
+
 import { ViewPlugin } from '@remixproject/engine-web'
 import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
@@ -94,6 +99,7 @@ module.exports = class TestTab extends ViewPlugin {
     await this.testRunner.init()
     await this.createTestLibs()
     this.updateRunAction()
+    this.renderComponent()
   }
 
   onDeactivation () {
@@ -790,6 +796,16 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   render () {
+    return this.element
+  }
+  
+  renderComponent () {
+    ReactDOM.render(
+      <SolidityUnitTesting api={this}/>
+      , this.element)
+  }
+  
+  render2 () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
