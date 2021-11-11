@@ -6,6 +6,61 @@ import './css/style.css'
 export interface SolidityUnitTestingProps {}
 
 export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
+
+  const [defaultPath, setDefaultPath] = useState('tests')
+
+  const handleTestDirInput = async (e:any) => {
+    console.log('handleTestDirInput--e-->', e)
+
+  //   let testDirInput = this.trimTestDirInput(this.inputPath.value)
+  //   testDirInput = removeMultipleSlashes(testDirInput)
+  //   if (testDirInput !== '/') testDirInput = removeTrailingSlashes(testDirInput)
+  //   if (e.key === 'Enter') {
+  //     this.inputPath.value = testDirInput
+  //     if (await this.testTabLogic.pathExists(testDirInput)) {
+  //       this.testTabLogic.setCurrentPath(testDirInput)
+  //       this.updateForNewCurrent()
+  //       return
+  //     }
+  //   }
+
+  //   if (testDirInput) {
+  //     if (testDirInput.endsWith('/') && testDirInput !== '/') {
+  //       testDirInput = removeTrailingSlashes(testDirInput)
+  //       if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
+  //         this.createTestFolder.disabled = true
+  //         this.updateGenerateFileAction().disabled = true
+  //       }
+  //       this.updateDirList(testDirInput)
+  //     } else {
+  //       // If there is no matching folder in the workspace with entered text, enable Create button
+  //       if (await this.testTabLogic.pathExists(testDirInput)) {
+  //         this.createTestFolder.disabled = true
+  //         this.updateGenerateFileAction().disabled = false
+  //       } else {
+  //         // Enable Create button
+  //         this.createTestFolder.disabled = false
+  //         // Disable Generate button because dir does not exist
+  //         this.updateGenerateFileAction().disabled = true
+  //       }
+  //     }
+  //   } else {
+  //     this.updateDirList('/')
+  //   }
+  }
+
+  const handleEnter = async(e:any) => {
+    console.log('handleTestDirInput --e-->', e)
+
+    // this.inputPath.value = removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
+    // if (this.createTestFolder.disabled) {
+    //   if (await this.testTabLogic.pathExists(this.inputPath.value)) {
+    //     this.testTabLogic.setCurrentPath(this.inputPath.value)
+    //     this.updateForNewCurrent()
+    //   }
+    // }
+  }
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -13,13 +68,24 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
           <p className="text-lg"> Test your smart contract in Solidity.</p>
           <p> Select directory to load and generate test files.</p>
           <label>Test directory:</label>
-          {/* <div>
+          <div>
             <div className="d-flex p-2">
-              ${this.inputPath}
-              ${this.createTestFolder}
-              ${this.uiPathList}
+            <input
+              placeholder={defaultPath}
+              list="utPathList"
+              className="inputFolder custom-select"
+              id="utPath"
+              data-id="uiPathInput"
+              name="utPath"
+              title="Press 'Enter' to change the path for test files."
+              style= {{ backgroundImage: "var(--primary)"}}
+              onKeyUp= {handleTestDirInput}
+              onChange={handleEnter}
+            />
+              {/* ${this.createTestFolder}
+              ${this.uiPathList} */}
             </div>
-          </div> */}
+          </div>
         </div>
         {/* <div>          
           <div className="d-flex p-2">
