@@ -191,13 +191,6 @@ export class TabProxy extends Plugin {
     }
   }
 
-  switchToActiveTab () {
-    const active = this.tabsApi.active()
-    if (active && this._handlers[active]) {
-      this.switchTab(active)
-    }
-  }
-
   renameTab (oldName, newName) {
     this.addTab(newName, '', () => {
       this.fileManager.open(newName)
@@ -236,19 +229,21 @@ export class TabProxy extends Plugin {
           })
           formatPath.shift()
           if (formatPath.length > 0) {
-            const duplicateTabName = this.loadedTabs.find(({ title }) => title === formatPath.join('/')).name
-            const duplicateTabPath = duplicateTabName.split('/')
-            const duplicateTabFormatPath = [...duplicateTabPath].reverse()
-            const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
-
-            this.loadedTabs.push({
-              id: duplicateTabName,
-              name: duplicateTabName,
-              title: duplicateTabTitle,
-              icon,
-              tooltip: duplicateTabName,
-              iconClass: helper.getPathIcon(duplicateTabName)
-            })
+            const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
+            if (index > -1) {
+              const duplicateTabName = this.loadedTabs[index].name
+              const duplicateTabPath = duplicateTabName.split('/')
+              const duplicateTabFormatPath = [...duplicateTabPath].reverse()
+              const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
+              this.loadedTabs[index] = {
+                id: duplicateTabName,
+                name: duplicateTabName,
+                title: duplicateTabTitle,
+                icon,
+                tooltip: duplicateTabName,
+                iconClass: helper.getPathIcon(duplicateTabName)
+              }
+            }
           }
           break
         }
@@ -271,10 +266,14 @@ export class TabProxy extends Plugin {
 
   removeTab (name) {
     delete this._handlers[name]
-    this.switchToActiveTab()
-    this.loadedTabs = this.loadedTabs.filter(tab => tab.name !== name)
+    let previous = null
+    this.loadedTabs = this.loadedTabs.filter((tab, index) => {
+      if (tab.name === name) previous = this.loadedTabs[index - 1]
+      return tab.name !== name
+    })
     this.renderComponent()
     this.updateImgStyles()
+    if (previous) this.switchTab(previous.name)
   }
 
   addHandler (type, fn) {
@@ -309,8 +308,13 @@ export class TabProxy extends Plugin {
   }
 
   renderTabsbar () {
+    window.React = React
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.src = 'assets/js/react-tabs.production.min.js'
+    document.head.appendChild(script)
+    script.addEventListener('load', () => this.renderComponent())
     this.el = document.createElement('div')
-    this.renderComponent()
     return this.el
   }
 }
