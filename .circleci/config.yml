@@ -22,7 +22,6 @@ jobs:
     working_directory: ~/remix-project
 
     steps:
-      - browser-tools/install-browser-tools
       - checkout
       - restore_cache:
           keys:
