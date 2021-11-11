@@ -81,6 +81,7 @@ function Icon ({
     setShowContext(true)
   }
   function closeContextMenu () {
+    console.log('watch me!!!')
     setShowContext(false)
   }
 
@@ -106,7 +107,6 @@ function Icon ({
           e.stopPropagation()
           handleContextMenu(e)
         }}
-        onBlur={closeContextMenu}
         data-id={`verticalIconsKind${name}`}
         id={`verticalIconsKind${name}`}
         ref={iconRef}

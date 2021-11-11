@@ -72,6 +72,9 @@
     z-index: 1000;
     box-shadow: 0 0 4px var(--dark);
   }
+  .remixui_verticalIconContextcontainer:focus {
+    outline: 0;
+  }
   .remixui_liitem {
     padding: 2px;
     padding-left: 6px;
