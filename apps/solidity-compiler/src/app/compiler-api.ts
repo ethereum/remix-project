@@ -143,12 +143,17 @@ export const CompilerApiMixin = (Base) => class extends Base {
   // This function is used for passing the compiler configuration to 'remix-tests'
   getCurrentCompilerConfig () {
     const compilerState = this.getCompilerState()
-    return {
+    let compilerDetails: any = {
       currentVersion: compilerState.currentVersion,
       evmVersion: compilerState.evmVersion,
       optimize: compilerState.optimize,
       runs: compilerState.runs
     }
+    if (this.data.loading) {
+      compilerDetails.currentVersion = this.data.loadingUrl
+      compilerDetails.isUrl = true
+    }
+    return compilerDetails
   }
 
   /**
@@ -193,8 +198,9 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onContentChanged) this.onContentChanged()
     })
 
-    this.data.eventHandlers.onLoadingCompiler = () => {
+    this.data.eventHandlers.onLoadingCompiler = (url) => {
       this.data.loading = true
+      this.data.loadingUrl = url
       this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
