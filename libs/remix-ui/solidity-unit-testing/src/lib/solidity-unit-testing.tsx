@@ -109,7 +109,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
             >
               Create
             </button>
-              {/* ${this.uiPathList} */}
+            <datalist id="utPathList"></datalist>
             </div>
           </div>
         </div>
