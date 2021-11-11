@@ -8,6 +8,7 @@ export interface SolidityUnitTestingProps {}
 export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
 
   const [defaultPath, setDefaultPath] = useState('tests')
+  const [disableCreateButton, setDisableCreateButton] = useState(true)
 
   const handleTestDirInput = async (e:any) => {
     console.log('handleTestDirInput--e-->', e)
@@ -61,6 +62,23 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // }
   }
 
+  const handleCreateFolder = () => {
+
+    console.log('handleTestDirInput')
+    // this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+    // let path = removeMultipleSlashes(this.inputPath.value)
+    // if (path !== '/') path = removeTrailingSlashes(path)
+    // if (this.inputPath.value === '') this.inputPath.value = this.defaultPath
+    // this.inputPath.value = path
+    // this.testTabLogic.generateTestFolder(this.inputPath.value)
+    // this.createTestFolder.disabled = true
+    // this.updateGenerateFileAction().disabled = false
+    // this.testTabLogic.setCurrentPath(this.inputPath.value)
+    // this.updateRunAction()
+    // this.updateForNewCurrent()
+    // this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
+  }
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -82,8 +100,16 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
               onKeyUp= {handleTestDirInput}
               onChange={handleEnter}
             />
-              {/* ${this.createTestFolder}
-              ${this.uiPathList} */}
+            <button
+              className="btn border ml-2"
+              data-id="testTabGenerateTestFolder"
+              title="Create a test folder"
+              disabled={disableCreateButton}
+              onClick={handleCreateFolder}
+            >
+              Create
+            </button>
+              {/* ${this.uiPathList} */}
             </div>
           </div>
         </div>
