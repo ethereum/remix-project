@@ -30,7 +30,7 @@ module.exports = {
       .validateValueInput('#value', 'dragon', '0')
   },
 
-  'Should sign message using account key': function (browser: NightwatchBrowser) {
+  'Should sign message using account key': !function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
       .click('select[id="selectExEnvOptions"] option[value="vm-berlin"]')
       .pause(2000)
