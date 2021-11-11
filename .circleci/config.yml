@@ -265,10 +265,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm run downloadsolc_assets
+      - run: npm run selenium-install
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          command: npm run selenium
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
