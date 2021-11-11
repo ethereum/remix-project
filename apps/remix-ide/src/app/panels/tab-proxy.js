@@ -308,13 +308,8 @@ export class TabProxy extends Plugin {
   }
 
   renderTabsbar () {
-    window.React = React
-    const script = document.createElement('script')
-    script.type = 'text/javascript'
-    script.src = 'assets/js/react-tabs.production.min.js'
-    document.head.appendChild(script)
-    script.addEventListener('load', () => this.renderComponent())
     this.el = document.createElement('div')
+    this.renderComponent()
     return this.el
   }
 }
