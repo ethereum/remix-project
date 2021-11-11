@@ -29,6 +29,7 @@ jobs:
       - run: npx nx build remix-ide --with-deps
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: mkdir persist && zip -r persist/dist.zip dist
+      - run: zip -r persist/apps.zip apps
       - persist_to_workspace:
           root: .
           paths:
@@ -104,7 +105,9 @@ jobs:
       - browser-tools/install-browser-tools
       - attach_workspace:
             at: .
-      - run: unzip ./persist/dist.zip
+      - run: unzip ./persist/dist.zip ./
+      - run: unzip ./persist/apps.zip ./
+      - run: npm install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
