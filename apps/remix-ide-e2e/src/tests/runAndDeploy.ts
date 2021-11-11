@@ -36,7 +36,7 @@ module.exports = {
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 12000)
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 120000)
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'Remix is cool!')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
