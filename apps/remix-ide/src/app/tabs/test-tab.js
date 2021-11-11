@@ -811,7 +811,7 @@ module.exports = class TestTab extends ViewPlugin {
   renderComponent () {
     console.log('renderComponent-start-->')
     ReactDOM.render(
-      <SolidityUnitTesting api={this}/>
+      <SolidityUnitTesting testTab={this}/>
       , this.element)
     console.log('renderComponent-end-->')
   }
