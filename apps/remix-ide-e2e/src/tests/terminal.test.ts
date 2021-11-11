@@ -114,7 +114,7 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
-      .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
+      .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
       .executeScript('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
