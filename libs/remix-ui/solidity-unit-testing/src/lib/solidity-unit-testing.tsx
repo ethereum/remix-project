@@ -10,6 +10,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
   const [defaultPath, setDefaultPath] = useState('tests')
   const [disableCreateButton, setDisableCreateButton] = useState(true)
   const [disableStopButton, setDisableStopButton] = useState(true)
+  const [checkSelectAll, setCheckSelectAll] = useState(true)
 
   const handleTestDirInput = async (e:any) => {
     console.log('handleTestDirInput--e-->', e)
@@ -153,6 +154,18 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // runBtn.setAttribute('disabled', 'disabled')
   }
 
+  const checkAll = (event: any) => {
+    console.log('checkAll --event-->', event)
+
+    // const checkBoxes = this._view.el.querySelectorAll('.singleTest')
+    // const checkboxesLabels = this._view.el.querySelectorAll('.singleTestLabel')
+    // // checks/unchecks all
+    // for (let i = 0; i < checkBoxes.length; i++) {
+    //   checkBoxes[i].checked = event.target.checked
+    //   this.toggleCheckbox(event.target.checked, checkboxesLabels[i].innerText)
+    // }
+  }
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -198,11 +211,20 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
             {updateRunAction()}
             <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
               <span className="fas fa-stop ml-2"></span>
-              <label className="${css.labelOnBtn} btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
+              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
             </button>
           </div>
-          {/* ${this.selectAll()}
-          ${this.updateTestFileList()} */}
+          <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
+            <input id="checkAllTests"
+              type="checkbox"
+              data-id="testTabCheckAllTests"
+              onClick={checkAll}
+              checked={checkSelectAll}
+              onChange={() => {}}
+            />
+            <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
+          </div>
+          {/* ${this.updateTestFileList()} */}
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
             {/* ${this.resultStatistics}
             ${this.testsExecutionStopped}
