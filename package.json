@@ -136,6 +136,7 @@
     ]
   },
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.16.0",
     "@erebos/bzz-node": "^0.13.0",
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/common": "^2.5.0",
