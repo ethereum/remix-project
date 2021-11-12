@@ -47,7 +47,7 @@ type sourceMarkerMap = {
 /* eslint-disable-next-line */
 export interface EditorUIProps {
   activated: boolean
-  theme: string
+  themeType: string
   currentFile: string
   sourceAnnotationsPerFile: sourceAnnotationMap
   markerPerFile: sourceMarkerMap
@@ -60,7 +60,7 @@ export interface EditorUIProps {
   plugin: {
     on: (plugin: string, event: string, listener: any) => void
   }
-  editorAPI:{
+  editorAPI: {
     findMatches: (uri: string, value: string) => any
     getFontSize: () => number,
     getValue: (uri: string) => string
@@ -78,28 +78,40 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
-  const defineAndSetDarkTheme = (monaco) => {
+  const formatColor = (name) => {
+    let color = window.getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+    if (color.length === 4) {
+      color = color.concat(color.substr(1))
+    }
+    return color
+  }
+  const defineAndSetTheme = (monaco) => {
+    const themeType = props.themeType === 'dark' ? 'vs-dark' : 'vs'
+    const themeName = props.themeType === 'dark' ? 'remix-dark' : 'remix-light'
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const lightColor = window.getComputedStyle(document.documentElement).getPropertyValue('--light').trim()
-    const infoColor = window.getComputedStyle(document.documentElement).getPropertyValue('--info').trim()
+    const lightColor = formatColor('--light')
+    const infoColor = formatColor('--info')
+    const darkColor = formatColor('--dark')
+    const secondaryColor = formatColor('--secondary')
+    const textColor = formatColor('--text') || darkColor
+    const textbackground = formatColor('--text-background') || lightColor
 
-    const blueColor = window.getComputedStyle(document.documentElement).getPropertyValue('--blue').trim()
-    const successColor = window.getComputedStyle(document.documentElement).getPropertyValue('--success').trim()
-    const warningColor = window.getComputedStyle(document.documentElement).getPropertyValue('--warning').trim()
-    const yellowColor = window.getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim()
-    const pinkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()
+
+    const blueColor = formatColor('--blue')
+    const successColor = formatColor('--success')
+    const warningColor = formatColor('--warning')
+    const yellowColor = formatColor('--yellow')
+    const pinkColor = formatColor('--pink')
     const locationColor = '#9e7e08'
-    const purpleColor = window.getComputedStyle(document.documentElement).getPropertyValue('--purple').trim()
-    const dangerColor = window.getComputedStyle(document.documentElement).getPropertyValue('--danger').trim()
+    const purpleColor = formatColor('--purple')
+    const dangerColor = formatColor('--danger')
 
-    const darkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()
-    const grayColor = window.getComputedStyle(document.documentElement).getPropertyValue('--gray-dark').trim()
-
-    monaco.editor.defineTheme('remix-dark', {
-      base: 'vs-dark',
+    monaco.editor.defineTheme(themeName, {
+      base: themeType,
       inherit: true, // can also be false to completely replace the builtin rules
       rules: [
         { background: darkColor.replace('#', '') },
+        { foreground: textColor.replace('#', '') },
 
         // global variables
         { token: 'keyword.abi', foreground: blueColor },
@@ -165,24 +177,24 @@ export const EditorUI = (props: EditorUIProps) => {
 
       ],
       colors: {
-        'editor.background': darkColor,
+        // see https://code.visualstudio.com/api/references/theme-color for more settings
+        'editor.background': textbackground,
         'editorSuggestWidget.background': lightColor,
         'editorSuggestWidget.selectedBackground': lightColor,
         'editorSuggestWidget.highlightForeground': infoColor,
-        'editor.lineHighlightBorder': lightColor,
-        'editor.lineHighlightBackground': grayColor,
-        'editorGutter.background': lightColor
+        'editor.lineHighlightBorder': secondaryColor,
+        'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
+        'editorGutter.background': lightColor,
+        'minimap.background': lightColor
       }
     })
-    monacoRef.current.editor.setTheme('remix-dark')
+    monacoRef.current.editor.setTheme(themeName)
   }
 
   useEffect(() => {
     if (!monacoRef.current) return
-    if (props.theme === 'remix-dark') {
-      defineAndSetDarkTheme(monacoRef.current)
-    } else monacoRef.current.editor.setTheme(props.theme)
-  }, [props.theme])
+    defineAndSetTheme(monacoRef.current)
+  })
 
   const setAnnotationsbyFile = (uri) => {
     if (props.sourceAnnotationsPerFile[uri]) {
@@ -307,11 +319,9 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  function handleEditorDidMount (editor) {
+  function handleEditorDidMount(editor) {
     editorRef.current = editor
-    if (props.theme === 'remix-dark') {
-      defineAndSetDarkTheme(monacoRef.current)
-    } else monacoRef.current.editor.setTheme(props.theme)
+    defineAndSetTheme(monacoRef.current)
     reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
@@ -327,7 +337,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
   }
 
-  function handleEditorWillMount (monaco) {
+  function handleEditorWillMount(monaco) {
     monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
@@ -343,7 +353,7 @@ export const EditorUI = (props: EditorUIProps) => {
       language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
       onMount={handleEditorDidMount}
       beforeMount={handleEditorWillMount}
-      options= { { glyphMargin: true } }
+      options={{ glyphMargin: true }}
     />
   )
 }
