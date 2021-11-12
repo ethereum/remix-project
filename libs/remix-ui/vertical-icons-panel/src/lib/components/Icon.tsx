@@ -81,7 +81,6 @@ function Icon ({
     setShowContext(true)
   }
   function closeContextMenu () {
-    console.log('watch me!!!')
     setShowContext(false)
   }
 
