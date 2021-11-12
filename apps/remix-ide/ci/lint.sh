@@ -13,7 +13,7 @@ KEYS=$(jq -r '.projects | keys' workspace.json  | tr -d '[],"')
     then
         echo ${row}
     fi
-done) | circleci tests split | { while read i;do echo $i; done }
+done) | circleci tests split | { while read i;do npm run lint $i; done }
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
