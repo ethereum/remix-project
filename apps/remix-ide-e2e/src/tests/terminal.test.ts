@@ -23,7 +23,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '', 60000)
   },
 
-  'Should display auto-complete menu': function (browser: NightwatchBrowser) {
+  'Should display auto-complete menu': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]')
       .click('*[data-id="terminalCli"]')
@@ -31,7 +31,7 @@ module.exports = {
       .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 
-  'Async/Await Script': !function (browser: NightwatchBrowser) {
+  'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
       .openFile('asyncAwait.js')
