@@ -9,6 +9,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
 
   const [defaultPath, setDefaultPath] = useState('tests')
   const [disableCreateButton, setDisableCreateButton] = useState(true)
+  const [disableStopButton, setDisableStopButton] = useState(true)
 
   const handleTestDirInput = async (e:any) => {
     console.log('handleTestDirInput--e-->', e)
@@ -140,6 +141,18 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // return this.runActionElement
   }
 
+  const stopTests = () => {
+
+    console.log('stopTests')
+    // this.hasBeenStopped = true
+    // const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
+    // stopBtnLabel.innerText = 'Stopping'
+    // const stopBtn = document.getElementById('runTestsTabStopAction')
+    // stopBtn.setAttribute('disabled', 'disabled')
+    // const runBtn = document.getElementById('runTestsTabRunAction')
+    // runBtn.setAttribute('disabled', 'disabled')
+  }
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -183,7 +196,10 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
           </div>
           <div className="d-flex p-2">
             {updateRunAction()}
-            {/* ${this.updateStopAction()} */}
+            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
+              <span className="fas fa-stop ml-2"></span>
+              <label className="${css.labelOnBtn} btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
+            </button>
           </div>
           {/* ${this.selectAll()}
           ${this.updateTestFileList()} */}
