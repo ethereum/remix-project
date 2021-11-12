@@ -1,20 +1,24 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState, useEffect, useReducer } from 'react'
-import { initSettingsTab } from './actions'
+import React, { useState, useEffect } from 'react'
+import { useRunTabPlugin } from './actions/custom'
 import { ContractDropdownUI } from './components/contractDropdownUI'
 import { InstanceContainerUI } from './components/instanceContainerUI'
 import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
 import './css/run-tab.css'
-import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import { RunTabProps } from './types'
 
 export function RunTabUI (props: RunTabProps) {
+  const { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee } = useRunTabPlugin(props.plugin)
   const [selectExEnv, setSelectExEnv] = useState<string>('')
-  const [runTab, runTabDispatch] = useReducer(runTabReducer, runTabInitialState)
 
   useEffect(() => {
-    initSettingsTab(props.plugin)(runTabDispatch)
+    setupEvents()
+
+    setInterval(() => {
+      fillAccountsList()
+    }, 1000)
+    fillAccountsList()
   }, [])
 
   const updateExEnv = (env: string) => {
@@ -24,7 +28,7 @@ export function RunTabUI (props: RunTabProps) {
   return (
     <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
       <div className="list-group list-group-flush">
-        <SettingsUI selectExEnv={selectExEnv} updateExEnv={updateExEnv} accounts={runTab.accounts} />
+        <SettingsUI selectExEnv={selectExEnv} updateExEnv={updateExEnv} accounts={runTab.accounts} setAccount={setAccount} setUnit={setUnit} sendValue={runTab.sendValue} sendUnit={runTab.sendUnit} gasLimit={runTab.gasLimit} setGasFee={setGasFee} />
         <ContractDropdownUI exEnvironment={selectExEnv} />
         <RecorderUI />
         <InstanceContainerUI />

@@ -8,17 +8,25 @@ export interface RunTabState {
     loadedAccounts: Record<string, any>,
     isRequesting: boolean,
     isSuccessful: boolean,
-    error: string
-  }
+    error: string,
+    selectedAccount: string
+  },
+  sendValue: string,
+  sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
+  gasLimit: number
 }
 
-export const runTabInitialState = {
+export const runTabInitialState: RunTabState = {
   accounts: {
     loadedAccounts: {},
     isRequesting: false,
     isSuccessful: false,
-    error: null
-  }
+    error: null,
+    selectedAccount: ''
+  },
+  sendValue: '0',
+  sendUnit: 'ether',
+  gasLimit: 3000000
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -61,6 +69,42 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         }
       }
     }
+    case 'SET_SEND_VALUE': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        sendValue: payload
+      }
+    }
+    case 'SET_SELECTED_ACCOUNT': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        accounts: {
+          ...state.accounts,
+          selectedAccount: payload
+        }
+      }
+    }
+    case 'SET_SEND_UNIT': {
+      const payload = action.payload as 'ether' | 'finney' | 'gwei' | 'wei'
+
+      return {
+        ...state,
+        sendUnit: payload
+      }
+    }
+
+    case 'SET_GAS_LIMIT': {
+      const payload = action.payload as number
+
+      return {
+        ...state,
+        gasLimit: payload
+      }
+    }
     default:
       return state
   }
@@ -68,23 +112,19 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
 // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
 const resolveAccountsList = async (state: RunTabState, accounts: string[]) => {
-  // const txOrigin = this.el.querySelector('#txorigin')
   const loadedAccounts = state.accounts.loadedAccounts
 
   if (!accounts) accounts = []
   for (const loadedaddress in loadedAccounts) {
     if (accounts.indexOf(loadedaddress) === -1) {
-      // txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
       delete loadedAccounts[loadedaddress]
     }
   }
   for (const i in accounts) {
     const address = accounts[i]
     if (!loadedAccounts[address]) {
-      // txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
       loadedAccounts[address] = 1
     }
   }
   return loadedAccounts
-  // txOrigin.setAttribute('value', accounts[0])
 }
