@@ -8,13 +8,15 @@ TEST_EXITCODE=0
 
 npm run build:e2e
 KEYS=$(jq -r '.projects | keys' workspace.json  | tr -d '[],"')
+# add .js to every key
+KEYS=$(echo $KEYS | sed 's/\(.*\)/\1.js/')
 TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js") 
 echo $TESTFILES
 TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js" | circleci tests split --split-by=timings)
 echo $TESTFILES
 TESTFILES=$(echo $KEYS | circleci tests split)
 echo $TESTFILES
-KETS = "test1.js test2.js"
+KEYS="test1.js test2.js"
 TESTFILES=$(echo $KEYS | circleci tests split)
 echo $TESTFILES
 
