@@ -320,7 +320,7 @@ module.exports = {
       .removeFile('tests/ballotFailedDebug_test.sol', 'workspace_new')
   },
 
-  'Basic Solidity Unit tests with local compiler': function (browser: NightwatchBrowser) {
+  'Basic Solidity Unit tests with local compiler': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('builtin')
