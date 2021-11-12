@@ -31,7 +31,7 @@ module.exports = {
       .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 
-  'Async/Await Script': function (browser: NightwatchBrowser) {
+  'Async/Await Script': !function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
       .openFile('asyncAwait.js')
