@@ -7,10 +7,17 @@ export interface SettingsProps {
   updateExEnv: (env: string) => void,
   accounts: {
     loadedAccounts: Record<string, any>,
+    selectedAccount: string,
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
-  }
+  },
+  setAccount: (account: string) => void,
+  setUnit: (unit: 'ether' | 'finney' | 'gwei' | 'wei') => void,
+  sendValue: string,
+  sendUnit: string,
+  gasLimit: number,
+  setGasFee: (value: number) => void
 }
 
 export interface EnvironmentProps {
@@ -25,18 +32,23 @@ export interface AccountProps {
   selectExEnv: string,
   accounts: {
     loadedAccounts: Record<string, any>,
+    selectedAccount: string,
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
-  }
+  },
+  setAccount: (account: string) => void
 }
 
 export interface GasPriceProps {
-
+  gasLimit: number,
+  setGasFee: (value: number) => void
 }
 
 export interface ValueProps {
-
+  setUnit: (unit: 'ether' | 'finney' | 'gwei' | 'wei') => void,
+  sendValue: string,
+  sendUnit: string
 }
 
 export interface ContractDropdownProps {
