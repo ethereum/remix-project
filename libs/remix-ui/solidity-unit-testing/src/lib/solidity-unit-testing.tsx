@@ -12,6 +12,8 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
   const [disableStopButton, setDisableStopButton] = useState(true)
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
+  const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
+  
 
   const handleTestDirInput = async (e:any) => {
     console.log('handleTestDirInput--e-->', e)
@@ -251,7 +253,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
             {resultStatistics}
             <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
-            {/* ${this.testsExecutionStoppedError} */}
+            <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
           </div>
           {/* ${this.testsOutput} */}
         </div>
