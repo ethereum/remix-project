@@ -6,7 +6,10 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-python parse_workspace.py
+python3 parse_workspace.py
+
+TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
+echo "$TESTFILES"
 
 npm run lint  || TEST_EXITCODE=1
 npm run lint:libs  || TEST_EXITCODE=1
