@@ -8,10 +8,8 @@ TEST_EXITCODE=0
 
 KEYS=$(jq -r '.projects | keys' workspace.json  | tr -d '[],"')
 
-for row in $KEYS; do
-    echo ${row}
-    echo "----"
-done
+TESTFILES=$($KEYS | circleci tests split)
+echo $TESTFILES
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
