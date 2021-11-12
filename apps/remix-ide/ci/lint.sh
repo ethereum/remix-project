@@ -8,13 +8,12 @@ TEST_EXITCODE=0
 
 KEYS=$(jq -r '.projects | keys | map(. + ".js") ' workspace.json  | tr -d '[],"')
 
-
 (for row in $KEYS; do
     if [ "$row" != "debugger" ]
     then
         echo ${row}
     fi
-done) | circleci tests split
+done) | circleci tests split | { while read i; do echo $i; done }
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
