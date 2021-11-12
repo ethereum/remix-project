@@ -179,6 +179,15 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // return this.testFilesListElement
   }
 
+  const createResultLabel = () => {
+    return (<span className='text-info h6'>Progress: none finished (of none)</span>)
+    // if (!this.data.selectedTests) return yo`<span></span>`
+    // const ready = this.readyTestsNumber ? `${this.readyTestsNumber}` : '0'
+    // return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
+  }
+
+  const [resultStatistics] = useState(createResultLabel())
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -239,8 +248,8 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
           </div>
           {updateTestFileList()}
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
-            {/* ${this.resultStatistics}
-            ${this.testsExecutionStopped}
+            {resultStatistics}
+            {/* ${this.testsExecutionStopped}
             ${this.testsExecutionStoppedError} */}
           </div>
           {/* ${this.testsOutput} */}
