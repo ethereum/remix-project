@@ -36,7 +36,6 @@ jobs:
       - run: git submodule update --recursive --init
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
-      - run: TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js") && echo $TESTFILES
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
