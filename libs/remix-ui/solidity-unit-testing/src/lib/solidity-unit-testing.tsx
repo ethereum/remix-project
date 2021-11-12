@@ -11,6 +11,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
   const [disableCreateButton, setDisableCreateButton] = useState(true)
   const [disableStopButton, setDisableStopButton] = useState(true)
   const [checkSelectAll, setCheckSelectAll] = useState(true)
+  const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
 
   const handleTestDirInput = async (e:any) => {
     console.log('handleTestDirInput--e-->', e)
@@ -249,8 +250,8 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
           {updateTestFileList()}
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
             {resultStatistics}
-            {/* ${this.testsExecutionStopped}
-            ${this.testsExecutionStoppedError} */}
+            <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
+            {/* ${this.testsExecutionStoppedError} */}
           </div>
           {/* ${this.testsOutput} */}
         </div>
