@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-// import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import { Tab, Tabs, TabList, TabPanel } from '../../react-tabs/src/index'
 import './remix-ui-tabs.css'
 
 /* eslint-disable-next-line */
@@ -17,10 +17,7 @@ export interface TabsUIApi {
     active: () => string
 }
 
-declare var ReactTabs: any
-
 export const TabsUI = (props: TabsUIProps) => {
-  const { Tab, Tabs, TabList, TabPanel } = ReactTabs
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
