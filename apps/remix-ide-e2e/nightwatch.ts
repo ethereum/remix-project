@@ -28,7 +28,10 @@ module.exports = {
       desiredCapabilities: {
         browserName: 'firefox',
         javascriptEnabled: true,
-        acceptSslCerts: true
+        acceptSslCerts: true,
+        'moz:firefoxOptions': {
+          args: ['-headless']
+        }
       },
       exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.spec.ts']
     },
@@ -39,7 +42,7 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless']
         }
       }
     },
@@ -50,25 +53,9 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen'],
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless'],
           extensions: [metamaskExtension]
         }
-      }
-    },
-
-    safari: {
-      desiredCapabilities: {
-        browserName: 'safari',
-        javascriptEnabled: true,
-        acceptSslCerts: true
-      }
-    },
-
-    ie: {
-      desiredCapabilities: {
-        browserName: 'internet explorer',
-        javascriptEnabled: true,
-        acceptSslCerts: true
       }
     },
 
@@ -76,7 +63,10 @@ module.exports = {
       desiredCapabilities: {
         browserName: 'firefox',
         javascriptEnabled: true,
-        acceptSslCerts: true
+        acceptSslCerts: true,
+        'moz:firefoxOptions': {
+          args: ['-headless']
+        }
       }
     }
   }
