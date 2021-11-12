@@ -52,12 +52,12 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          value="0"
+          value={props.sendValue}
           title="Enter the value and choose the unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}
         />
-        <select name="unit" className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit">
+        <select name="unit" value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
           <option data-unit="wei">Wei</option>
           <option data-unit="gwei">Gwei</option>
           <option data-unit="finney">Finney</option>
