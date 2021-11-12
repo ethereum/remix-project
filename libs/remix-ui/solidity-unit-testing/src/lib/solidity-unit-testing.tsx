@@ -5,7 +5,9 @@ import './css/style.css'
 /* eslint-disable-next-line */
 export interface SolidityUnitTestingProps {}
 
-export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
+export const SolidityUnitTesting = (props: any) => {
+
+  const {helper, testTab, testTabLogic} = props
 
   const [defaultPath, setDefaultPath] = useState('tests')
   const [disableCreateButton, setDisableCreateButton] = useState(true)
@@ -14,45 +16,88 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   
+  const [inputPathValue, setInputPathValue] = useState('')
+  
+  const trimTestDirInput = (input:string) => {
+    if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
+    else return input.trim()
+  }
+
+   const updateForNewCurrent = async (file = null) => {
+    // Ensure that when someone clicks on compilation error and that opens a new file
+    // Test result, which is compilation error in this case, is not cleared
+    // if (this.currentErrors) {
+    //   if (Array.isArray(this.currentErrors) && this.currentErrors.length > 0) {
+    //     const errFiles = this.currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file })
+    //     if (errFiles.includes(file)) return
+    //   } else if (this.currentErrors.sourceLocation && this.currentErrors.sourceLocation.file && this.currentErrors.sourceLocation.file === file) return
+    // }
+    // // if current file is changed while debugging and one of the files imported in test file are opened
+    // // do not clear the test results in SUT plugin
+    // if (this.isDebugging && this.allFilesInvolved.includes(file)) return
+    // this.data.allTests = []
+    // this.updateTestFileList()
+    // this.clearResults()
+    // this.updateGenerateFileAction()
+    // if (!this.areTestsRunning) this.updateRunAction(file)
+    // try {
+    //   await this.testTabLogic.getTests((error, tests) => {
+    //     if (error) return tooltip(error)
+    //     this.data.allTests = tests
+    //     this.data.selectedTests = [...this.data.allTests]
+    //     this.updateTestFileList(tests)
+    //     if (!this.testsOutput) return // eslint-disable-line
+    //   })
+    // } catch (e) {
+    //   console.log(e)
+    // }
+  }
+
+  const updateDirList = (path: string) => {
+    // for (const o of this.uiPathList.querySelectorAll('option')) o.remove()
+    // testTabLogic.dirList(path).then((options) => {
+    //   options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+    // })
+  }
 
   const handleTestDirInput = async (e:any) => {
     console.log('handleTestDirInput--e-->', e)
 
-  //   let testDirInput = this.trimTestDirInput(this.inputPath.value)
-  //   testDirInput = removeMultipleSlashes(testDirInput)
-  //   if (testDirInput !== '/') testDirInput = removeTrailingSlashes(testDirInput)
-  //   if (e.key === 'Enter') {
-  //     this.inputPath.value = testDirInput
-  //     if (await this.testTabLogic.pathExists(testDirInput)) {
-  //       this.testTabLogic.setCurrentPath(testDirInput)
-  //       this.updateForNewCurrent()
-  //       return
-  //     }
-  //   }
+    let testDirInput = trimTestDirInput(inputPathValue)
+    testDirInput = helper.removeMultipleSlashes(testDirInput)
+    if (testDirInput !== '/') testDirInput = helper.removeTrailingSlashes(testDirInput)
+    if (e.key === 'Enter') {
+      setInputPathValue(testDirInput)
+      if (await testTabLogic.pathExists(testDirInput)) {
+        testTabLogic.setCurrentPath(testDirInput)
+        updateForNewCurrent()
+        return
+      }
+    }
 
-  //   if (testDirInput) {
-  //     if (testDirInput.endsWith('/') && testDirInput !== '/') {
-  //       testDirInput = removeTrailingSlashes(testDirInput)
-  //       if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
-  //         this.createTestFolder.disabled = true
-  //         this.updateGenerateFileAction().disabled = true
-  //       }
-  //       this.updateDirList(testDirInput)
-  //     } else {
-  //       // If there is no matching folder in the workspace with entered text, enable Create button
-  //       if (await this.testTabLogic.pathExists(testDirInput)) {
-  //         this.createTestFolder.disabled = true
-  //         this.updateGenerateFileAction().disabled = false
-  //       } else {
-  //         // Enable Create button
-  //         this.createTestFolder.disabled = false
-  //         // Disable Generate button because dir does not exist
-  //         this.updateGenerateFileAction().disabled = true
-  //       }
-  //     }
-  //   } else {
-  //     this.updateDirList('/')
-  //   }
+    if (testDirInput) {
+      if (testDirInput.endsWith('/') && testDirInput !== '/') {
+        testDirInput = helper.removeTrailingSlashes(testDirInput)
+        if (testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
+          setDisableCreateButton(true)
+          // this.updateGenerateFileAction().disabled = true
+        }
+        updateDirList(testDirInput)
+      } else {
+        // If there is no matching folder in the workspace with entered text, enable Create button
+        if (await testTabLogic.pathExists(testDirInput)) {
+          setDisableCreateButton(true)
+          // this.updateGenerateFileAction().disabled = false
+        } else {
+          // Enable Create button
+          setDisableCreateButton(false)
+          // Disable Generate button because dir does not exist
+          // this.updateGenerateFileAction().disabled = true
+        }
+      }
+    } else {
+      updateDirList('/')
+    }
   }
 
   const handleEnter = async(e:any) => {
@@ -207,6 +252,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
               id="utPath"
               data-id="uiPathInput"
               name="utPath"
+              value={inputPathValue}
               title="Press 'Enter' to change the path for test files."
               style= {{ backgroundImage: "var(--primary)"}}
               onKeyUp= {handleTestDirInput}
