@@ -23,8 +23,7 @@ jobs:
 
     steps:
       - checkout
-      - run: TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
-      - run: echo $TESTFILES
+      - run: TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js") && echo $TESTFILES
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
