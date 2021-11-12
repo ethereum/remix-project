@@ -1,16 +1,16 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 
 export function AccountUI (props: AccountProps) {
-  const accounts = Object.keys(props.accounts.loadedAccounts)
-  const [selectedAccount, setSelectedAccount] = useState<string>('')
+  const { selectedAccount, loadedAccounts } = props.accounts
+  const accounts = Object.keys(loadedAccounts)
   const plusBtn = useRef(null)
   const plusTitle = useRef(null)
 
   useEffect(() => {
-    if (!selectedAccount && accounts.length > 0) setSelectedAccount(accounts[0])
+    if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
   }, [accounts, selectedAccount])
 
   const updatePlusButton = () => {
@@ -115,9 +115,9 @@ export function AccountUI (props: AccountProps) {
         </span>
       </label>
       <div className="udapp_account">
-        <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { setSelectedAccount(e.target.value) }}>
+        <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { props.setAccount(e.target.value) }}>
           {
-            Object.keys(props.accounts.loadedAccounts).map((value) => <option value={value}>{ value }</option>)
+            Object.keys(loadedAccounts).map((value) => <option value={value}>{ loadedAccounts[value] }</option>)
           }
         </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard content={selectedAccount} direction='top' /></div>
