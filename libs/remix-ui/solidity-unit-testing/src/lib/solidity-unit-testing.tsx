@@ -79,6 +79,61 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
   }
 
+  const updateGenerateFileAction = () => {
+    console.log('updateGenerateFileAction')
+    return (
+      <button
+        className="btn border w-50"
+        data-id="testTabGenerateTestFile"
+        title="Generate sample test file."
+      >
+        Generate
+      </button>)
+    // const el = yo`
+    //   <button
+    //     class="btn border w-50"
+    //     data-id="testTabGenerateTestFile"
+    //     title="Generate sample test file."
+    //     onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
+    //   >
+    //     Generate
+    //   </button>
+    // `
+    // if (!this.generateFileActionElement) {
+    //   this.generateFileActionElement = el
+    // } else {
+    //   yo.update(this.generateFileActionElement, el)
+    // }
+    // return this.generateFileActionElement
+  }
+
+  const updateRunAction = (currentFile: any) => {
+
+    console.log('updateRunAction --currentFile-->', currentFile)
+
+    // const el = yo`
+    //   <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
+    //     <span class="fas fa-play ml-2"></span>
+    //     <label class="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
+    //   </button>
+    // `
+    // const isSolidityActive = this.appManager.isActive('solidity')
+    // if (!isSolidityActive || !this.listTests().length) {
+    //   el.setAttribute('disabled', 'disabled')
+    //   if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
+    //     el.setAttribute('title', 'No solidity file selected')
+    //   } else {
+    //     el.setAttribute('title', 'The "Solidity Plugin" should be activated')
+    //   }
+    // }
+    // if (!this.runActionElement) {
+    //   this.runActionElement = el
+    // } else {
+    //   yo.update(this.runActionElement, el)
+    // }
+    // return this.runActionElement
+  }
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -113,24 +168,26 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
             </div>
           </div>
         </div>
-        {/* <div>          
+        <div>          
           <div className="d-flex p-2">
-           ${this.updateGenerateFileAction()}
-           ${this.infoButton()}
+            {updateGenerateFileAction()}
+            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+              <label className="btn p-1 ml-2 m-0">How to use...</label>
+            </a>
           </div>
           <div className="d-flex p-2">
-            ${this.updateRunAction()}
-            ${this.updateStopAction()}
+            {/* updateRunAction() */}
+            {/* ${this.updateStopAction()} */}
           </div>
-          ${this.selectAll()}
-          ${this.updateTestFileList()}
+          {/* ${this.selectAll()}
+          ${this.updateTestFileList()} */}
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
-            ${this.resultStatistics}
+            {/* ${this.resultStatistics}
             ${this.testsExecutionStopped}
-            ${this.testsExecutionStoppedError}
+            ${this.testsExecutionStoppedError} */}
           </div>
-          ${this.testsOutput}
-        </div> */}
+          {/* ${this.testsOutput} */}
+        </div>
       </div>
   )
 }
