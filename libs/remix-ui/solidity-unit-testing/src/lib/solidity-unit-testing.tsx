@@ -166,6 +166,19 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // }
   }
 
+  const updateTestFileList = (tests = []) => {
+    return (<div className="testList py-2 mt-0 border-bottom">No test file available</div>)
+    // const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
+    // const el = yo`<div class="${css.testList} py-2 mt-0 border-bottom">${testsMessage}</div>`
+    // if (!this.testFilesListElement) {
+    //   this.testFilesListElement = el
+    // } else {
+    //   yo.update(this.testFilesListElement, el)
+    // }
+    // this.updateRunAction()
+    // return this.testFilesListElement
+  }
+
   console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
@@ -224,7 +237,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
-          {/* ${this.updateTestFileList()} */}
+          {updateTestFileList()}
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
             {/* ${this.resultStatistics}
             ${this.testsExecutionStopped}
