@@ -6,14 +6,12 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-curl -s 'https://api.github.com/users/lambda' | jq -r '.name'
+KEYS=$(jq -r '.projects | keys' workspace.json  | tr -d '[],"')
 
-TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
-echo "$TESTFILES"
-
-npm run lint  || TEST_EXITCODE=1
-npm run lint:libs  || TEST_EXITCODE=1
-npm run lint remix-ide-e2e || TEST_EXITCODE=1
+for row in $KEYS; do
+    echo ${row}
+    echo "----"
+done
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
