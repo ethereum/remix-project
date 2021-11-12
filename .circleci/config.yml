@@ -64,12 +64,8 @@ jobs:
       - run:
           name: Remix Libs Linting
           command: npm run lint:libs
-      - run:
-          name: Remix IDE Linting
-          command: npm run lint
-      - run:
-          name: Remix IDE e2e Linting
-          command: npm run lint remix-ide-e2e
+                   npm run lint
+                   npm run lint remix-ide-e2e
 
   remix-libs:
     docker:
