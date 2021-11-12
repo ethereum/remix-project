@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 
 import { ViewPlugin } from '@remixproject/engine-web'
-import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
+import helper, { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { format } from 'util'
 var yo = require('yo-yo')
@@ -811,7 +811,7 @@ module.exports = class TestTab extends ViewPlugin {
   renderComponent () {
     console.log('renderComponent-start-->')
     ReactDOM.render(
-      <SolidityUnitTesting testTab={this}/>
+      <SolidityUnitTesting testTab={this} testTabLogic={this.testTabLogic} helper={helper} />
       , this.element)
     console.log('renderComponent-end-->')
   }
