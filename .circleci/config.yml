@@ -267,6 +267,8 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone install && npx selenium-standalone start
           background: true
+      - run: git submodule sync --recursive
+      - run: git submodule update --recursive --init
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
           path: ./reports/tests
