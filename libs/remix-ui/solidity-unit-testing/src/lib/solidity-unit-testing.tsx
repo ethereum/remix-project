@@ -107,9 +107,15 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
     // return this.generateFileActionElement
   }
 
-  const updateRunAction = (currentFile: any) => {
+  const updateRunAction = (currentFile = null) => {
 
     console.log('updateRunAction --currentFile-->', currentFile)
+
+    return (
+      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary">
+        <span className="fas fa-play ml-2"></span>
+         <label className="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
+      </button>)
 
     // const el = yo`
     //   <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
@@ -176,7 +182,7 @@ export const SolidityUnitTesting = (props: SolidityUnitTestingProps) => {
             </a>
           </div>
           <div className="d-flex p-2">
-            {/* updateRunAction() */}
+            {updateRunAction()}
             {/* ${this.updateStopAction()} */}
           </div>
           {/* ${this.selectAll()}
