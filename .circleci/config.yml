@@ -305,6 +305,7 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+
   deploy-remix-live:
     docker:
       # specify the version you desire here
@@ -353,6 +354,8 @@ jobs:
 
     steps:
       - checkout
+      - run: git submodule sync --recursive
+      - run: git submodule update --recursive --init
       - setup_remote_docker
       - restore_cache:
           keys:
