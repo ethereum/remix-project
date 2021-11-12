@@ -27,12 +27,12 @@ jobs:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: npm install
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - save_cache:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+      - run: git submodule sync --recursive
+      - run: git submodule update --recursive --init
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
       - run: npx nx build remix-ide-e2e-src-local-plugin
@@ -125,7 +125,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar 
+          command: npx selenium-standalone install && npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
@@ -160,7 +160,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar 
+          command: npx selenium-standalone install && npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
@@ -195,7 +195,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar 
+          command: npx selenium-standalone install && npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
       - store_test_results:
@@ -230,7 +230,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar 
+          command: npx selenium-standalone install && npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
@@ -265,7 +265,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          command: npx selenium-standalone install && npx selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
@@ -300,7 +300,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar 
+          command: npx selenium-standalone install && npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
