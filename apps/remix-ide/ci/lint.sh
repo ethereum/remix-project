@@ -6,7 +6,6 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-python3 parse_workspace.py
 curl -s 'https://api.github.com/users/lambda' | jq -r '.name'
 
 TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
