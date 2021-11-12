@@ -27,6 +27,8 @@ jobs:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: npm install
+      - run: git submodule sync --recursive
+      - run: git submodule update --recursive --init
       - save_cache:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
