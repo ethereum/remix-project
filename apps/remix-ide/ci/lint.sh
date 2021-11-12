@@ -12,8 +12,18 @@ TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js"
 echo $TESTFILES
 TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js" | circleci tests split --split-by=timings)
 echo $TESTFILES
-TESTFILES=$(echo $KEYS | circleci tests split --split-by=timings)
+TESTFILES=$(echo $KEYS | circleci tests split)
 echo $TESTFILES
+KETS = "test1.js test2.js"
+TESTFILES=$(echo $KEYS | circleci tests split)
+echo $TESTFILES
+
+for row in $TESTFILES; do
+    if [ "$row" != "debugger" ]
+    then
+        nx lint ${row} || TEST_EXITCODE=1
+    fi
+done
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
