@@ -12,6 +12,8 @@ TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js"
 echo $TESTFILES
 TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js" | circleci tests split --split-by=timings)
 echo $TESTFILES
+TESTFILES=$(echo $KEYS | circleci tests split --split-by=timings)
+echo $TESTFILES
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
