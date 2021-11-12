@@ -23,6 +23,7 @@ jobs:
 
     steps:
       - checkout
+      - run: curl -s 'https://api.github.com/users/lambda' | jq -r '.name'
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
