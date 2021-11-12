@@ -23,18 +23,9 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '', 60000)
   },
 
-  'Should display auto-complete menu': !function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="terminalCli"]')
-      .click('*[data-id="terminalCli"]')
-      .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
-      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
-  },
-
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
-      .openFile('asyncAwait.js')
       .executeScript('remix.execute("asyncAwait.js")')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Waiting Promise', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - ', 60000)
@@ -44,8 +35,6 @@ module.exports = {
   'Call Remix File Manager from a script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
-      .openFile('asyncAwaitWithFileManagerAccess.js')
-      .pause(5000)
       .executeScript('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
@@ -109,7 +98,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
-      .openFile('deployWithEthersJs.js')
+      // .openFile('deployWithEthersJs.js')
       .pause(1000)
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
@@ -153,7 +142,14 @@ module.exports = {
       .clickFunction('getOwner - call')
       .pause(1000)
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
-      .end()
+  },
+
+  'Should display auto-complete menu': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="terminalCli"]')
+      .click('*[data-id="terminalCli"]')
+      .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
+      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]').end()
   }
 }
 
