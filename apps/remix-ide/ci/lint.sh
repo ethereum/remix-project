@@ -7,9 +7,14 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 KEYS=$(jq -r '.projects | keys | map(. + ".js") ' workspace.json  | tr -d '[],"')
-# add .js to all elements in array KEYS
-TESTFILES=$(echo $KEYS | circleci tests split)
-echo $TESTFILES
+
+
+(for row in $KEYS; do
+    if [ "$row" != "debugger" ]
+    then
+        echo ${row}
+    fi
+done) | circleci tests split
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
