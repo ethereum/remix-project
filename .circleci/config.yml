@@ -63,10 +63,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Remix Libs Linting
-          command: npm run lint:libs
-                   npm run lint
-                   npm run lint remix-ide-e2e
-
+          command: ./apps/remix-ide/ci/lint.sh
   remix-libs:
     docker:
       # specify the version you desire here
