@@ -5,7 +5,7 @@ require('dotenv').config()
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
-    .pause(5000)
+    .pause(10000)
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
