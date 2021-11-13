@@ -21,7 +21,7 @@ const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugi
   const from = tx.from
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const txType = 'knownTx'
-  const options = { from, to, tx }
+  const options = { from, to, tx, logs }
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="log" onClick={(event) => txDetails(event, tx)}>

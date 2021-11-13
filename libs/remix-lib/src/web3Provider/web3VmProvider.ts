@@ -304,7 +304,9 @@ export class Web3VmProvider {
         nextKey: null
       })
     }
-    cb('unable to retrieve storage ' + txIndex + ' ' + address)
+    // Before https://github.com/ethereum/remix-project/pull/1703, it used to throw error as
+    // 'unable to retrieve storage ' + txIndex + ' ' + address
+    cb(null, { storage: {} })
   }
 
   getBlockNumber (cb) { cb(null, 'vm provider') }
