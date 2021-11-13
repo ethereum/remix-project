@@ -17,8 +17,9 @@ class FileProvider {
   }
 
   addNormalizedName (path, url) {
-    this.providerExternalsStorage.set(this.type + '/' + path, url)
-    this.providerExternalsStorage.set(this.reverseKey + url, this.type + '/' + path)
+    if (this.type) path = this.type + '/' + path
+    this.providerExternalsStorage.set(path, url)
+    this.providerExternalsStorage.set(this.reverseKey + url, path)
   }
 
   removeNormalizedName (path) {
