@@ -62,6 +62,8 @@
     "nightwatch_parallel": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome,firefox",
     "nightwatch_local_firefox": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=firefox",
     "nightwatch_local_chrome": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome",
+    "debugger_group_2": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_group_2.spec.js --env=chrome",
+    "debugger_group_1": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_group_1.spec.js --env=chrome",
     "nightwatch_local_ballot": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/ballot.test.js --env=chrome",
     "nightwatch_local_ballot_0_4_11": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/ballot_0_4_11.spec.js --env=chrome",
     "nightwatch_local_usingWorker": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/usingWebWorker.test.js --env=chrome",
