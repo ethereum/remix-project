@@ -42,7 +42,7 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless']
         }
       }
     },
