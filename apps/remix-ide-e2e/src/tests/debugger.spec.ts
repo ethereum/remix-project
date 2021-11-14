@@ -101,7 +101,7 @@ module.exports = {
       })
   },
 
-  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2 #group2': function (browser: NightwatchBrowser) {
+  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2 #group1': function (browser: NightwatchBrowser) {
     /*
       localVariable_step266_ABIEncoder and localVariable_step717_ABIEncoder
       still contains unwanted values (related to decoding calldata types)
@@ -142,7 +142,7 @@ module.exports = {
       .clickInstance(2)
   },
 
-  'Should load more solidity locals array #group2': function (browser: NightwatchBrowser) {
+  'Should load more solidity locals array #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
@@ -166,7 +166,7 @@ module.exports = {
       .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
   },
 
-  'Should debug using generated sources #group2': function (browser: NightwatchBrowser) {
+  'Should debug using generated sources #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .pause(2000)
@@ -187,7 +187,7 @@ module.exports = {
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
 
-  'Should call the debugger api: getTrace #group2': function (browser: NightwatchBrowser) {
+  'Should call the debugger api: getTrace #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
@@ -195,7 +195,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
 
-  'Should call the debugger api: debug #group2': function (browser: NightwatchBrowser) {
+  'Should call the debugger api: debug #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
       .executeScript('remix.exeCurrent()')
