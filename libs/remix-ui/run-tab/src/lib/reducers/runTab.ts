@@ -5,7 +5,7 @@ interface Action {
 
 export interface RunTabState {
   accounts: {
-    loadedAccounts: Record<string, any>,
+    loadedAccounts: Record<string, string>,
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string,
@@ -13,7 +13,23 @@ export interface RunTabState {
   },
   sendValue: string,
   sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
-  gasLimit: number
+  gasLimit: number,
+  selectExEnv: string,
+  personalMode: boolean,
+  networkName: string,
+  providers: {
+    providerList: {
+      id?: string,
+      dataId?: string,
+      title?: string,
+      value: string,
+      fork?: string
+      content: string
+    }[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  }
 }
 
 export const runTabInitialState: RunTabState = {
@@ -26,7 +42,43 @@ export const runTabInitialState: RunTabState = {
   },
   sendValue: '0',
   sendUnit: 'ether',
-  gasLimit: 3000000
+  gasLimit: 3000000,
+  selectExEnv: 'vm',
+  personalMode: false,
+  networkName: '',
+  providers: {
+    providerList: [{
+      id: 'vm-mode-london',
+      dataId: 'settingsVMLondonMode',
+      title: 'Execution environment does not connect to any node, everything is local and in memory only.',
+      value: 'vm-london',
+      fork: 'london',
+      content: 'JavaScript VM (London)'
+    }, {
+      id: 'vm-mode-berlin',
+      dataId: 'settingsVMBerlinMode',
+      title: 'Execution environment does not connect to any node, everything is local and in memory only.',
+      value: 'vm-berlin',
+      fork: 'berlin',
+      content: 'JavaScript VM (Berlin)'
+    }, {
+      id: 'injected-mode',
+      dataId: 'settingsInjectedMode',
+      title: 'Execution environment has been provided by Metamask or similar provider.',
+      value: 'injected',
+      content: 'Injected Web3'
+    }, {
+      id: 'web3-mode',
+      dataId: 'settingsWeb3Mode',
+      title: `Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+      If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.`,
+      value: 'web3',
+      content: 'Web3 Provider'
+    }],
+    isRequesting: false,
+    isSuccessful: false,
+    error: null
+  }
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -42,22 +94,24 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         }
       }
     }
+
     case 'FETCH_ACCOUNTS_LIST_SUCCESS': {
-      const payload: string[] = action.payload as string[]
+      const payload: Record<string, string> = action.payload
 
       return {
         ...state,
         accounts: {
           ...state.accounts,
-          loadedAccounts: resolveAccountsList(state, payload),
+          loadedAccounts: payload,
           isSuccessful: true,
           isRequesting: false,
           error: null
         }
       }
     }
+
     case 'FETCH_ACCOUNTS_LIST_FAILED': {
-      const payload = action.payload as string
+      const payload: string = action.payload
 
       return {
         ...state,
@@ -69,16 +123,18 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         }
       }
     }
+
     case 'SET_SEND_VALUE': {
-      const payload = action.payload as string
+      const payload: string = action.payload
 
       return {
         ...state,
         sendValue: payload
       }
     }
+
     case 'SET_SELECTED_ACCOUNT': {
-      const payload = action.payload as string
+      const payload: string = action.payload
 
       return {
         ...state,
@@ -88,8 +144,9 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         }
       }
     }
+
     case 'SET_SEND_UNIT': {
-      const payload = action.payload as 'ether' | 'finney' | 'gwei' | 'wei'
+      const payload: 'ether' | 'finney' | 'gwei' | 'wei' = action.payload
 
       return {
         ...state,
@@ -98,33 +155,107 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'SET_GAS_LIMIT': {
-      const payload = action.payload as number
+      const payload: number = action.payload
 
       return {
         ...state,
         gasLimit: payload
       }
     }
+
+    case 'SET_EXECUTION_ENVIRONMENT': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        selectExEnv: payload
+      }
+    }
+
+    case 'SET_PERSONAL_MODE': {
+      const payload: boolean = action.payload
+
+      return {
+        ...state,
+        personalMode: payload
+      }
+    }
+
+    case 'SET_NETWORK_NAME': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        networkName: payload
+      }
+    }
+
+    case 'FETCH_PROVIDER_LIST_REQUEST': {
+      return {
+        ...state,
+        providers: {
+          ...state.providers,
+          isRequesting: true,
+          isSuccessful: false,
+          error: null
+        }
+      }
+    }
+
+    case 'FETCH_PROVIDER_LIST_SUCCESS': {
+      const payload: Record<string, string> = action.payload
+
+      return {
+        ...state,
+        providers: {
+          ...state.providers,
+          providerList: payload,
+          isSuccessful: true,
+          isRequesting: false,
+          error: null
+        }
+      }
+    }
+
+    case 'FETCH_PROVIDER_LIST_FAILED': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        providers: {
+          ...state.providers,
+          isRequesting: false,
+          isSuccessful: false,
+          error: payload
+        }
+      }
+    }
+
+    case 'ADD_PROVIDER': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        providers: {
+          ...state.providers,
+          providerList: { ...state.providers.providerList, payload }
+        }
+      }
+    }
+
+    case 'REMOVE_PROVIDER': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        providers: {
+          ...state.providers,
+          providerList: delete state.providers.providerList[payload] ? state.providers.providerList : state.providers.providerList
+        }
+      }
+    }
+
     default:
       return state
   }
-}
-
-// TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
-const resolveAccountsList = async (state: RunTabState, accounts: string[]) => {
-  const loadedAccounts = state.accounts.loadedAccounts
-
-  if (!accounts) accounts = []
-  for (const loadedaddress in loadedAccounts) {
-    if (accounts.indexOf(loadedaddress) === -1) {
-      delete loadedAccounts[loadedaddress]
-    }
-  }
-  for (const i in accounts) {
-    const address = accounts[i]
-    if (!loadedAccounts[address]) {
-      loadedAccounts[address] = 1
-    }
-  }
-  return loadedAccounts
 }

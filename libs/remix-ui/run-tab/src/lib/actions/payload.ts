@@ -5,7 +5,7 @@ export const fetchAccountsListRequest = () => {
   }
 }
 
-export const fetchAccountsListSuccess = (accounts: string[]) => {
+export const fetchAccountsListSuccess = (accounts: Record<string, string>) => {
   return {
     type: 'FETCH_ACCOUNTS_LIST_SUCCESS',
     payload: accounts
@@ -44,5 +44,40 @@ export const setGasLimit = (gasLimit: number) => {
   return {
     type: 'SET_GAS_LIMIT',
     payload: gasLimit
+  }
+}
+
+export const setExecutionEnvironment = (executionEnvironment: string) => {
+  return {
+    type: 'SET_EXECUTION_ENVIRONMENT',
+    payload: executionEnvironment
+  }
+}
+
+export const setPersonalMode = (mode: boolean) => {
+  return {
+    type: 'SET_PERSONAL_MODE',
+    payload: mode
+  }
+}
+
+export const setNetworkName = (networkName: string) => {
+  return {
+    type: 'SET_NETWORK_NAME',
+    payload: networkName
+  }
+}
+
+export const addProvider = (provider: string) => {
+  return {
+    type: 'ADD_PROVIDER',
+    payload: provider
+  }
+}
+
+export const removeProvider = (provider: string) => {
+  return {
+    type: 'REMOVE_PROVIDER',
+    payload: provider
   }
 }
