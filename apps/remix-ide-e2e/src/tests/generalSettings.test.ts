@@ -147,7 +147,7 @@ const remixIdeThemes = {
   },
   light: {
     primary: '#007aa6',
-    secondary: '#a8b3bc',
+    secondary: '#b3bcc483',
     success: '#32ba89',
     info: '#007aa6',
     warning: '#c97539',
