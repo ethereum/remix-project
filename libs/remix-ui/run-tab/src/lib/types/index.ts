@@ -4,7 +4,6 @@ export interface RunTabProps {
 
 export interface SettingsProps {
   selectExEnv: string,
-  updateExEnv: (env: string) => void,
   accounts: {
     loadedAccounts: Record<string, any>,
     selectedAccount: string,
@@ -17,15 +16,19 @@ export interface SettingsProps {
   sendValue: string,
   sendUnit: string,
   gasLimit: number,
-  setGasFee: (value: number) => void
+  setGasFee: (value: number) => void,
+  setExecEnv: (env: string) => void,
+  personalMode: boolean,
+  networkName: string
 }
 
 export interface EnvironmentProps {
-  updateExEnv: (env: string) => void
+  setExecEnv: (env: string) => void,
+  selectedEnv: string
 }
 
 export interface NetworkProps {
-
+  networkName: string
 }
 
 export interface AccountProps {
@@ -37,7 +40,8 @@ export interface AccountProps {
     isSuccessful: boolean,
     error: string
   },
-  setAccount: (account: string) => void
+  setAccount: (account: string) => void,
+  personalMode: boolean
 }
 
 export interface GasPriceProps {
