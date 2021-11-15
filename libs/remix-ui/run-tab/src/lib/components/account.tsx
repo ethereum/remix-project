@@ -1,42 +1,58 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 
 export function AccountUI (props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
   const accounts = Object.keys(loadedAccounts)
-  const plusBtn = useRef(null)
-  const plusTitle = useRef(null)
+  const [plusOpt, setPlusOpt] = useState({
+    classList: '',
+    title: ''
+  })
 
   useEffect(() => {
     if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
   }, [accounts, selectedAccount])
 
-  const updatePlusButton = () => {
-    // enable/disable + button
+  useEffect(() => {
     switch (props.selectExEnv) {
       case 'injected':
-        plusBtn.current.classList.add('udapp_disableMouseEvents')
-        plusTitle.current.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
-
+        setPlusOpt({
+          classList: 'udapp_disableMouseEvents',
+          title: "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
+        })
         break
-      case 'vm':
-        plusBtn.current.classList.remove('udapp_disableMouseEvents')
-        plusTitle.current.title = 'Create a new account'
 
+      case 'vm':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
         break
 
       case 'web3':
-        this.onPersonalChange()
-
+        if (!props.personalMode) {
+          setPlusOpt({
+            classList: 'disableMouseEvents',
+            title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+          })
+        } else {
+          setPlusOpt({
+            classList: '',
+            title: 'Create a new account'
+          })
+        }
         break
-      default: {
-        plusBtn.current.classList.add('udapp_disableMouseEvents')
-        plusTitle.current.title = `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`
-      }
+
+      default:
+        setPlusOpt({
+          classList: 'disableMouseEvents',
+          title: `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`
+        })
     }
-  }
+    // this._deps.config.get('settings/personal-mode')
+  }, [props.selectExEnv, props.personalMode])
 
   const newAccount = () => {
     // dispatch createNewBlockchainAccount
@@ -110,14 +126,14 @@ export function AccountUI (props: AccountProps) {
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
         Account
-        <span ref={plusTitle} id="remixRunPlusWraper" title="Create a new account" onLoad={updatePlusButton}>
-          <i ref={plusBtn} id="remixRunPlus" className="fas fa-plus-circle udapp_icon" aria-hidden="true" onClick={newAccount}></i>
+        <span id="remixRunPlusWraper" title={plusOpt.title}>
+          <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
         </span>
       </label>
       <div className="udapp_account">
         <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { props.setAccount(e.target.value) }}>
           {
-            Object.keys(loadedAccounts).map((value) => <option value={value}>{ loadedAccounts[value] }</option>)
+            Object.keys(loadedAccounts).map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
           }
         </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard content={selectedAccount} direction='top' /></div>

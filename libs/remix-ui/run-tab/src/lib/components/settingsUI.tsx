@@ -77,25 +77,6 @@ export function SettingsUI (props: SettingsProps) {
   //   return provider === 'vm' ? provider + '-' + fork : provider
   // }
 
-  // setFinalContext () {
-  //   // set the final context. Cause it is possible that this is not the one we've originaly selected
-  //   this.selectExEnv.value = this._getProviderDropdownValue()
-  //   this.event.trigger('clearInstance', [])
-  //   this.updatePlusButton()
-  // }
-
-  // onPersonalChange () {
-  //   const plusBtn = document.getElementById('remixRunPlus')
-  //   const plusTitle = document.getElementById('remixRunPlusWraper')
-  //   if (!this._deps.config.get('settings/personal-mode')) {
-  //     plusBtn.classList.add(css.disableMouseEvents)
-  //     plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
-  //   } else {
-  //     plusBtn.classList.remove(css.disableMouseEvents)
-  //     plusTitle.title = 'Create a new account'
-  //   }
-  // }
-
   // getSelectedAccount () {
   //   return this.el.querySelector('#txorigin').selectedOptions[0].value
   // }
@@ -105,31 +86,10 @@ export function SettingsUI (props: SettingsProps) {
   // }
 
   return (
-  // this.blockchain.event.register('contextChanged', (context, silent) => {
-  //   this.setFinalContext()
-  // })
-
-  // this.blockchain.event.register('networkStatus', ({ error, network }) => {
-  //   if (error) {
-  //     this.netUI.innerHTML = 'can\'t detect network '
-  //     return
-  //   }
-  //   const networkProvider = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
-  //   this.netUI.innerHTML = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : ''
-  // })
-
-  // setInterval(() => {
-  //   this.fillAccountsList()
-  // }, 1000)
-
-  // this.el = el
-
-    // this.fillAccountsList()
-    // return el
     <div className="udapp_settings">
-      <EnvironmentUI updateExEnv={props.updateExEnv} />
-      <NetworkUI />
-      <AccountUI selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} />
+      <EnvironmentUI setExecEnv={props.setExecEnv} selectedEnv={props.selectExEnv} />
+      <NetworkUI networkName={props.networkName} />
+      <AccountUI personalMode={props.personalMode} selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} />
       <GasPriceUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
       <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} />
     </div>

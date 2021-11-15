@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useRunTabPlugin } from './actions/custom'
 import { ContractDropdownUI } from './components/contractDropdownUI'
 import { InstanceContainerUI } from './components/instanceContainerUI'
@@ -9,27 +9,27 @@ import './css/run-tab.css'
 import { RunTabProps } from './types'
 
 export function RunTabUI (props: RunTabProps) {
-  const { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee } = useRunTabPlugin(props.plugin)
-  const [selectExEnv, setSelectExEnv] = useState<string>('')
+  const { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee, addPluginProvider, removePluginProvider, setExecEnv, setExecutionContext } = useRunTabPlugin(props.plugin)
 
   useEffect(() => {
     setupEvents()
-
-    setInterval(() => {
+    // setInterval(() => {
+    //   fillAccountsList()
+    // }, 1000)
+    // fillAccountsList()
+    setTimeout(() => {
       fillAccountsList()
-    }, 1000)
-    fillAccountsList()
-  }, [])
+    }, 0)
 
-  const updateExEnv = (env: string) => {
-    setSelectExEnv(env)
-  }
+    props.plugin.on('manager', 'pluginActivated', addPluginProvider.bind(props.plugin))
+    props.plugin.on('manager', 'pluginDeactivated', removePluginProvider.bind(props.plugin))
+  }, [])
 
   return (
     <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
       <div className="list-group list-group-flush">
-        <SettingsUI selectExEnv={selectExEnv} updateExEnv={updateExEnv} accounts={runTab.accounts} setAccount={setAccount} setUnit={setUnit} sendValue={runTab.sendValue} sendUnit={runTab.sendUnit} gasLimit={runTab.gasLimit} setGasFee={setGasFee} />
-        <ContractDropdownUI exEnvironment={selectExEnv} />
+        <SettingsUI networkName={runTab.networkName} personalMode={runTab.personalMode} selectExEnv={runTab.selectExEnv} setExecEnv={setExecEnv} accounts={runTab.accounts} setAccount={setAccount} setUnit={setUnit} sendValue={runTab.sendValue} sendUnit={runTab.sendUnit} gasLimit={runTab.gasLimit} setGasFee={setGasFee} />
+        <ContractDropdownUI exEnvironment={runTab.selectExEnv} />
         <RecorderUI />
         <InstanceContainerUI />
       </div>

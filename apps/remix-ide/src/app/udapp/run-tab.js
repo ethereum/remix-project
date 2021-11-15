@@ -222,29 +222,6 @@ export class RunTab extends ViewPlugin {
     this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
     this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
     this.renderRecorderCard()
-
-    const addPluginProvider = (profile) => {
-      if (profile.kind === 'provider') {
-        ((profile, app) => {
-          const web3Provider = {
-            async sendAsync (payload, callback) {
-              try {
-                const result = await app.call(profile.name, 'sendAsync', payload)
-                callback(null, result)
-              } catch (e) {
-                callback(e)
-              }
-            }
-          }
-          app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
-        })(profile, this)
-      }
-    }
-    const removePluginProvider = (profile) => {
-      if (profile.kind === 'provider') this.blockchain.removeProvider(profile.displayName)
-    }
-    this.on('manager', 'pluginActivated', addPluginProvider.bind(this))
-    this.on('manager', 'pluginDeactivated', removePluginProvider.bind(this))
     return this.renderContainer()
   }
 
