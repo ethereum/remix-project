@@ -11,6 +11,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   const [defaultPath, setDefaultPath] = useState('tests')
   const [disableCreateButton, setDisableCreateButton] = useState(true)
+  const [disableGenerateButton, setDisableGenerateButton] = useState(false)
   const [disableStopButton, setDisableStopButton] = useState(true)
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
@@ -80,6 +81,7 @@ export const SolidityUnitTesting = (props: any) => {
         testDirInput = helper.removeTrailingSlashes(testDirInput)
         if (testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
           setDisableCreateButton(true)
+          setDisableGenerateButton(true)
           // this.updateGenerateFileAction().disabled = true
         }
         updateDirList(testDirInput)
@@ -87,11 +89,13 @@ export const SolidityUnitTesting = (props: any) => {
         // If there is no matching folder in the workspace with entered text, enable Create button
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
+          setDisableGenerateButton(false)
           // this.updateGenerateFileAction().disabled = false
         } else {
           // Enable Create button
           setDisableCreateButton(false)
           // Disable Generate button because dir does not exist
+          setDisableGenerateButton(true)
           // this.updateGenerateFileAction().disabled = true
         }
       }
@@ -129,16 +133,16 @@ export const SolidityUnitTesting = (props: any) => {
     // this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
   }
 
-  const updateGenerateFileAction = () => {
-    console.log('updateGenerateFileAction')
-    return (
-      <button
-        className="btn border w-50"
-        data-id="testTabGenerateTestFile"
-        title="Generate sample test file."
-      >
-        Generate
-      </button>)
+  // const updateGenerateFileAction = () => {
+  //   console.log('updateGenerateFileAction')
+  //   return (
+  //     <button
+  //       className="btn border w-50"
+  //       data-id="testTabGenerateTestFile"
+  //       title="Generate sample test file."
+  //     >
+  //       Generate
+  //     </button>)
     // const el = yo`
     //   <button
     //     class="btn border w-50"
@@ -155,7 +159,7 @@ export const SolidityUnitTesting = (props: any) => {
     //   yo.update(this.generateFileActionElement, el)
     // }
     // return this.generateFileActionElement
-  }
+  // }
 
   const updateRunAction = (currentFile = null) => {
 
@@ -273,7 +277,15 @@ export const SolidityUnitTesting = (props: any) => {
         </div>
         <div>          
           <div className="d-flex p-2">
-            {updateGenerateFileAction()}
+            <button
+              className="btn border w-50"
+              data-id="testTabGenerateTestFile"
+              title="Generate sample test file."
+              disabled={disableGenerateButton}
+              onClick={testTabLogic.generateTestFile}
+            >
+              Generate
+            </button>
             <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
               <label className="btn p-1 ml-2 m-0">How to use...</label>
             </a>
