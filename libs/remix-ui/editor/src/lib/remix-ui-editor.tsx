@@ -96,7 +96,6 @@ export const EditorUI = (props: EditorUIProps) => {
     const textColor = formatColor('--text') || darkColor
     const textbackground = formatColor('--text-background') || lightColor
 
-
     const blueColor = formatColor('--blue')
     const successColor = formatColor('--success')
     const warningColor = formatColor('--warning')
@@ -319,7 +318,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  function handleEditorDidMount(editor) {
+  function handleEditorDidMount (editor) {
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
     reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
@@ -337,7 +336,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
   }
 
-  function handleEditorWillMount(monaco) {
+  function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
