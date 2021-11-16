@@ -72,8 +72,6 @@ jobs:
     parallelism: 12
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run:
@@ -107,8 +105,6 @@ jobs:
     parallelism: 12
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
@@ -143,8 +139,6 @@ jobs:
     parallelism: 12
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run:
@@ -178,8 +172,6 @@ jobs:
     parallelism: 12
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide --with-deps
@@ -214,8 +206,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run:
@@ -249,8 +239,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npx nx build remix-ide --with-deps
       - run: npx nx build remix-ide-e2e-src-local-plugin
@@ -285,8 +273,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npm run downloadsolc_assets
       - run: npm run build:production
@@ -315,8 +301,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - setup_remote_docker
       - run: npm install
       - run: npm run downloadsolc_assets
@@ -343,8 +327,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npm run downloadsolc_assets
       - run: npm run build:production
@@ -373,8 +355,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --recursive --init
       - run: npm install
       - run: npm run build:libs
       - run: npm run downloadsolc_assets
