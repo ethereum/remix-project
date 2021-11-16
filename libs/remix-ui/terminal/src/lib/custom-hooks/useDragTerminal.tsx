@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 
-export const useDragTerminal = (offsetHeight: number) => {
-    const [isOpen, setIsOpen] = useState(true)
+export const useDragTerminal = (minHeight: number, defaultPosition: number) => {
+    const [isOpen, setIsOpen] = useState(defaultPosition > minHeight)
     const [lastYPosition, setLastYPosition] = useState(0)
-    const [terminalPosition, setTerminalPosition] = useState(offsetHeight)
+    const [terminalPosition, setTerminalPosition] = useState(defaultPosition)
     // Used to save position of the terminal when it is closed
-    const [lastTerminalPosition, setLastTerminalPosition] = useState(offsetHeight)
+    const [lastTerminalPosition, setLastTerminalPosition] = useState(defaultPosition)
     const [isDragging, setIsDragging] = useState(false)
 
     const handleDraggingStart = (event: React.MouseEvent) => {
@@ -31,7 +31,7 @@ export const useDragTerminal = (offsetHeight: number) => {
         setIsDragging(false)
 
         // Check terminal position to determine if it should be open or closed
-        setIsOpen(terminalPosition > offsetHeight)
+        setIsOpen(terminalPosition > minHeight)
     }
 
     const handleToggleTerminal = (event: React.MouseEvent<HTMLElement>) => {
@@ -41,9 +41,9 @@ export const useDragTerminal = (offsetHeight: number) => {
         if(isOpen) {
             setLastTerminalPosition(terminalPosition)
             setLastYPosition(0)
-            setTerminalPosition(offsetHeight)
+            setTerminalPosition(minHeight)
         } else {
-            setTerminalPosition(lastTerminalPosition)
+            setTerminalPosition(lastTerminalPosition <= minHeight ? 323 : lastTerminalPosition)
         }
 
         setIsOpen(!isOpen)
@@ -63,7 +63,7 @@ export const useDragTerminal = (offsetHeight: number) => {
     // Reset terminal position
     useEffect(() => {
         if(!terminalPosition){
-            setTerminalPosition(offsetHeight)
+            setTerminalPosition(defaultPosition)
         }
     }, [terminalPosition, setTerminalPosition])
 
