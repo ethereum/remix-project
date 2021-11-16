@@ -10,6 +10,29 @@ export function useRunTabPlugin (plugin) {
   const [runTab, dispatch] = React.useReducer(runTabReducer, runTabInitialState)
 
   const setupEvents = () => {
+    plugin.blockchain.resetAndInit(plugin.config, {
+      getAddress: (cb) => {
+        cb(null, runTab.accounts.selectedAccount)
+      },
+      getValue: (cb) => {
+        try {
+          const number = runTab.sendValue
+          const unit = runTab.sendUnit
+
+          cb(null, Web3.utils.toWei(number, unit))
+        } catch (e) {
+          cb(e)
+        }
+      },
+      getGasLimit: (cb) => {
+        try {
+          cb(null, '0x' + new ethJSUtil.BN(runTab.gasLimit, 10).toString(16))
+        } catch (e) {
+          cb(e.message)
+        }
+      }
+    })
+  
     plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
       plugin.emit('newTransaction', tx, receipt)
     })
@@ -39,29 +62,16 @@ export function useRunTabPlugin (plugin) {
 
     plugin.blockchain.event.register('addProvider', provider => addExternalProvider(provider))
     plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(name))
+    plugin.on('manager', 'pluginActivated', addPluginProvider.bind(plugin))
+    plugin.on('manager', 'pluginDeactivated', removePluginProvider.bind(plugin))
 
-    plugin.blockchain.resetAndInit(plugin.config, {
-      getAddress: (cb) => {
-        cb(null, runTab.accounts.selectedAccount)
-      },
-      getValue: (cb) => {
-        try {
-          const number = runTab.sendValue
-          const unit = runTab.sendUnit
-
-          cb(null, Web3.utils.toWei(number, unit))
-        } catch (e) {
-          cb(e)
-        }
-      },
-      getGasLimit: (cb) => {
-        try {
-          cb(null, '0x' + new ethJSUtil.BN(runTab.gasLimit, 10).toString(16))
-        } catch (e) {
-          cb(e.message)
-        }
-      }
-    })
+    // setInterval(() => {
+    //   fillAccountsList()
+    // }, 1000)
+    // fillAccountsList()
+    setTimeout(() => {
+      fillAccountsList()
+    }, 0)
   }
 
   const updateAccountBalances = () => {
@@ -183,5 +193,5 @@ export function useRunTabPlugin (plugin) {
     }, setFinalContext())
   }
 
-  return { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee, addPluginProvider, removePluginProvider, setExecEnv, setFinalContext, setExecutionContext }
+  return { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee, setExecEnv, setFinalContext, setExecutionContext }
 }

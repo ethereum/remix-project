@@ -87,7 +87,7 @@ export function SettingsUI (props: SettingsProps) {
 
   return (
     <div className="udapp_settings">
-      <EnvironmentUI setExecEnv={props.setExecEnv} selectedEnv={props.selectExEnv} />
+      <EnvironmentUI setExecEnv={props.setExecEnv} selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
       <NetworkUI networkName={props.networkName} />
       <AccountUI personalMode={props.personalMode} selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} />
       <GasPriceUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
