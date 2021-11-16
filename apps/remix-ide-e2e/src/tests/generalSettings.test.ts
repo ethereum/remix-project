@@ -63,7 +63,7 @@ module.exports = {
       .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 
-  'Should load dark theme #group2': function (browser: NightwatchBrowser) {
+  'Should load dark theme #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelDark"]')
       .pause(2000)
@@ -75,7 +75,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.dark.danger)
   },
 
-  'Should load light theme #group2': function (browser: NightwatchBrowser) {
+  'Should load light theme #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelLight"]')
       .pause(2000)
@@ -87,7 +87,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.light.danger)
   },
 
-  'Should load Cerulean theme #group2': function (browser: NightwatchBrowser) {
+  'Should load Cerulean theme #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelCerulean"]')
       .pause(5000)
@@ -99,7 +99,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.curelean.danger)
   },
 
-  'Should load Flatly theme #group2': function (browser: NightwatchBrowser) {
+  'Should load Flatly theme #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelFlatly"]')
       .pause(2000)
@@ -111,7 +111,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.flatly.danger)
   },
 
-  'Should load Spacelab theme #group2': function (browser) {
+  'Should load Spacelab theme #group1': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelSpacelab"]')
       .pause(2000)
@@ -123,7 +123,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.spacelab.danger)
   },
 
-  'Should load Cyborg theme #group2': function (browser) {
+  'Should load Cyborg theme #group1': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelCyborg"]')
       .pause(2000)
