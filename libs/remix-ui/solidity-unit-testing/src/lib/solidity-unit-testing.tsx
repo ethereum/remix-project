@@ -1,4 +1,4 @@
-import React, { useState } from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 
 import './css/style.css'
 
@@ -16,6 +16,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
+  const [pathOptions, setPathOptions] = useState([])
   
   const [inputPathValue, setInputPathValue] = useState('')
   
@@ -55,13 +56,12 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateDirList = (path: string) => {
-    // for (const o of this.uiPathList.querySelectorAll('option')) o.remove()
-    // testTabLogic.dirList(path).then((options) => {
-    //   options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-    // })
+    testTabLogic.dirList(path).then((options: any) => {
+      setPathOptions(options)
+    })
   }
 
-  const handleTestDirInput = async (e:any) => {
+  const handleTestDirInput = async (e: any) => {
     console.log('handleTestDirInput--e-->', e)
 
     let testDirInput = trimTestDirInput(inputPathValue)
@@ -82,7 +82,6 @@ export const SolidityUnitTesting = (props: any) => {
         if (testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(true)
-          // this.updateGenerateFileAction().disabled = true
         }
         updateDirList(testDirInput)
       } else {
@@ -90,13 +89,11 @@ export const SolidityUnitTesting = (props: any) => {
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          // this.updateGenerateFileAction().disabled = false
         } else {
           // Enable Create button
           setDisableCreateButton(false)
           // Disable Generate button because dir does not exist
           setDisableGenerateButton(true)
-          // this.updateGenerateFileAction().disabled = true
         }
       }
     } else {
@@ -105,7 +102,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const handleEnter = async(e:any) => {
-    console.log('handleTestDirInput --e-->', e)
+    console.log('handleEnter --e-->', e)
 
     // this.inputPath.value = removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
     // if (this.createTestFolder.disabled) {
@@ -118,7 +115,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   const handleCreateFolder = () => {
 
-    console.log('handleTestDirInput')
+    console.log('handleCreateFolder')
     // this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
     // let path = removeMultipleSlashes(this.inputPath.value)
     // if (path !== '/') path = removeTrailingSlashes(path)
@@ -271,7 +268,12 @@ export const SolidityUnitTesting = (props: any) => {
             >
               Create
             </button>
-            <datalist id="utPathList"></datalist>
+            <datalist id="utPathList">{
+              pathOptions.map(function (path) {
+                return <option key={path} >{path}</option>
+              })
+              }
+            </datalist>
             </div>
           </div>
         </div>
