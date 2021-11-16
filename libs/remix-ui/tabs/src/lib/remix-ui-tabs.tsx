@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import { Tab, Tabs, TabList, TabPanel } from '../../react-tabs/src/index'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 
 /* eslint-disable-next-line */
