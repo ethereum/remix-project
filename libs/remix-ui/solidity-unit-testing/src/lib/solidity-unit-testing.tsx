@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
 
 import './css/style.css'
 
@@ -18,7 +18,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   const [pathOptions, setPathOptions] = useState([])
   
-  const [inputPathValue, setInputPathValue] = useState('')
+  const [inputPathValue, setInputPathValue] = useState('tests')
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -54,6 +54,10 @@ export const SolidityUnitTesting = (props: any) => {
     //   console.log(e)
     // }
   }
+
+  useEffect(() => {
+    updateDirList('/')
+  }, [])
 
   const updateDirList = (path: string) => {
     testTabLogic.dirList(path).then((options: any) => {
@@ -103,14 +107,15 @@ export const SolidityUnitTesting = (props: any) => {
 
   const handleEnter = async(e:any) => {
     console.log('handleEnter --e-->', e)
-
-    // this.inputPath.value = removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
-    // if (this.createTestFolder.disabled) {
-    //   if (await this.testTabLogic.pathExists(this.inputPath.value)) {
-    //     this.testTabLogic.setCurrentPath(this.inputPath.value)
-    //     this.updateForNewCurrent()
-    //   }
-    // }
+    let inputPath = e.target.value
+    inputPath = helper.removeMultipleSlashes(trimTestDirInput(inputPath))
+    setInputPathValue(inputPath)
+    if (disableCreateButton) {
+      if (await testTabLogic.pathExists(inputPath)) {
+        testTabLogic.setCurrentPath(inputPath)
+        // this.updateForNewCurrent()
+      }
+    }
   }
 
   const handleCreateFolder = () => {
@@ -246,6 +251,12 @@ export const SolidityUnitTesting = (props: any) => {
           <label>Test directory:</label>
           <div>
             <div className="d-flex p-2">
+            <datalist id="utPathList">{
+              pathOptions.map(function (path) {
+                return <option key={path}>{path}</option>
+              })
+              }
+            </datalist>
             <input
               placeholder={defaultPath}
               list="utPathList"
@@ -268,12 +279,6 @@ export const SolidityUnitTesting = (props: any) => {
             >
               Create
             </button>
-            <datalist id="utPathList">{
-              pathOptions.map(function (path) {
-                return <option key={path} >{path}</option>
-              })
-              }
-            </datalist>
             </div>
           </div>
         </div>
