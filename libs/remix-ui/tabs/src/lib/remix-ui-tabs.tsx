@@ -53,11 +53,29 @@ export const TabsUI = (props: TabsUIProps) => {
     currentIndexRef.current = index
     setSelectedIndex(index)
   }
+  const scrollToNextTab = (event) => {
+    const next = event.deltaY > 0
+    let scrollTo = currentIndexRef.current
+    if (next) {
+      if (currentIndexRef.current < props.tabs.length - 1) {
+        scrollTo = currentIndexRef.current + 1
+        tabsRef.current[scrollTo].scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    } else {
+      if (currentIndexRef.current > 0) {
+        scrollTo = currentIndexRef.current - 1
+        tabsRef.current[scrollTo].scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }
+  }
+
   useEffect(() => {
     props.onReady({
       activateTab,
       active
     })
+    window.addEventListener('wheel', scrollToNextTab)
+    return () => { window.removeEventListener('wheel', scrollToNextTab) }
   }, [])
 
   return (
