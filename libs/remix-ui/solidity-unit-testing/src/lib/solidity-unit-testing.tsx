@@ -16,7 +16,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
-  const [pathOptions, setPathOptions] = useState([])
+  const [pathOptions, setPathOptions] = useState([''])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
   
@@ -118,21 +118,25 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const handleCreateFolder = () => {
+  const handleCreateFolder = (e:any) => {
 
     console.log('handleCreateFolder')
-    // this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
-    // let path = removeMultipleSlashes(this.inputPath.value)
-    // if (path !== '/') path = removeTrailingSlashes(path)
-    // if (this.inputPath.value === '') this.inputPath.value = this.defaultPath
-    // this.inputPath.value = path
-    // this.testTabLogic.generateTestFolder(this.inputPath.value)
-    // this.createTestFolder.disabled = true
-    // this.updateGenerateFileAction().disabled = false
-    // this.testTabLogic.setCurrentPath(this.inputPath.value)
+    let inputPath = e.target.value
+    inputPath = trimTestDirInput(inputPath)
+    let path = helper.removeMultipleSlashes(inputPath)
+    if (path !== '/') path = helper.removeTrailingSlashes(path)
+    if (inputPath === '') inputPath = defaultPath
+    setInputPathValue(path)
+    testTabLogic.generateTestFolder(inputPath)
+    setDisableCreateButton(true)
+    setDisableGenerateButton(false)
+    testTabLogic.setCurrentPath(inputPath)
+    console.log('path-->', path)
+    console.log('inputPath-->', inputPath)
     // this.updateRunAction()
     // this.updateForNewCurrent()
-    // this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
+    pathOptions.push(inputPath)
+    setPathOptions(pathOptions)
   }
 
   // const updateGenerateFileAction = () => {
