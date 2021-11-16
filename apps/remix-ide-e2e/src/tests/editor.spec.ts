@@ -83,7 +83,7 @@ module.exports = {
     */
   },
 
-  'Should highlight source code #group2': function (browser: NightwatchBrowser) {
+  'Should highlight source code #group1': function (browser: NightwatchBrowser) {
     // include all files here because switching between plugins in side-panel removes highlight
     browser
       .addFile('sourcehighlight.js', sourcehighlightScript)
@@ -115,7 +115,7 @@ module.exports = {
       .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
-  'Should remove all highlights from source code #group2': function (browser: NightwatchBrowser) {
+  'Should remove all highlights from source code #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .click('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .pause(2000)
