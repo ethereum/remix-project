@@ -8,7 +8,8 @@ import * as test from './#file'
 import buildGroupTest from '../helpers/buildgrouptest'
 const group = '#groupname'
 
-module.exports = buildGroupTest(group, test)`
+module.exports = buildGroupTest(group, test)
+`
 
 fs.readdirSync(testFolder).forEach(file => {
   if (!file.includes('group')) {
@@ -20,7 +21,7 @@ fs.readdirSync(testFolder).forEach(file => {
         const rewrite = source.replace('#groupname', group).replace('#file', file.replace('.ts', ''))
         const extension = file.split('.')
         extension.shift()
-        const filename = `${testFolder}${file}_${group}.${extension.join('.')}`
+        const filename = `${testFolder}${file.split('.').shift()}_${group}.${extension.join('.')}`
         fs.writeFileSync(filename, rewrite)
       })
     }

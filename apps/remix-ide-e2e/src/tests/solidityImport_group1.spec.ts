@@ -1,5 +1,5 @@
 'use strict'
-import * as test from './editor.spec'
+import * as test from './solidityImport.spec'
 import buildGroupTest from '../helpers/buildgrouptest'
 const group = 'group1'
 
