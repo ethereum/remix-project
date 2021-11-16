@@ -4,6 +4,8 @@ export const useDragTerminal = (offsetHeight: number) => {
     const [isOpen, setIsOpen] = useState(true)
     const [lastYPosition, setLastYPosition] = useState(0)
     const [terminalPosition, setTerminalPosition] = useState(offsetHeight)
+    // Used to save position of the terminal when it is closed
+    const [lastTerminalPosition, setLastTerminalPosition] = useState(offsetHeight)
     const [isDragging, setIsDragging] = useState(false)
 
     const handleDraggingStart = (event: React.MouseEvent) => {
@@ -35,6 +37,14 @@ export const useDragTerminal = (offsetHeight: number) => {
     const handleToggleTerminal = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault()
         event.stopPropagation()
+
+        if(isOpen) {
+            setLastTerminalPosition(terminalPosition)
+            setLastYPosition(0)
+            setTerminalPosition(offsetHeight)
+        } else {
+            setTerminalPosition(lastTerminalPosition)
+        }
 
         setIsOpen(!isOpen)
     }
