@@ -76,13 +76,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
 
+  const terminalMenuOffsetHeight = (terminalMenu.current && terminalMenu.current.offsetHeight) || 35
+  const terminalDefaultPosition = config.get('terminal-top-offset')
+
   const {
     isOpen,
     isDragging,
     terminalPosition,
     handleDraggingStart,
     handleToggleTerminal
-  } = useDragTerminal((terminalMenu.current && terminalMenu.current.offsetHeight) || 0)
+  } = useDragTerminal(terminalMenuOffsetHeight, terminalDefaultPosition)
 
   // Check open state
   useEffect(() => {
@@ -96,7 +99,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }, [isDragging])
 
   useEffect(() => {
-    event.trigger('resize', [terminalPosition + 32])
+    event.trigger('resize', [terminalPosition])
   } , [terminalPosition])
 
   const scrollToBottom = () => {
