@@ -112,7 +112,6 @@ const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, 
   if (methodResult && typeof methodResult !== 'string') { methodResult = JSON.stringify(methodResult) }
   if (eventResult && typeof eventResult !== 'string') { eventResult = JSON.stringify(eventResult) }
   if (buttonText) {
-    console.log('this is buttonText in this test', buttonText)
     await clickButton(browser, buttonText)
   }
   await debugValues(browser, 'methods', methodResult)
