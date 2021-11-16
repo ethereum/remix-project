@@ -29,6 +29,14 @@ export interface RunTabState {
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
+  },
+  notification: {
+    title: string,
+    message: string,
+    actionOk: () => void,
+    actionCancel: (() => void) | null,
+    labelOk: string,
+    labelCancel: string
   }
 }
 
@@ -78,6 +86,14 @@ export const runTabInitialState: RunTabState = {
     isRequesting: false,
     isSuccessful: false,
     error: null
+  },
+  notification: {
+    title: '',
+    message: '',
+    actionOk: () => {},
+    actionCancel: () => {},
+    labelOk: '',
+    labelCancel: ''
   }
 }
 
@@ -203,7 +219,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'FETCH_PROVIDER_LIST_SUCCESS': {
-      const payload: Record<string, string> = action.payload
+      const payload: { id?: string, dataId?: string, title?: string, value: string, fork?: string, content: string }[] = action.payload
 
       return {
         ...state,
@@ -252,6 +268,29 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
           ...state.providers,
           providerList: delete state.providers.providerList[payload] ? state.providers.providerList : state.providers.providerList
         }
+      }
+    }
+
+    case 'DISPLAY_NOTIFICATION': {
+      const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
+
+      return {
+        ...state,
+        notification: {
+          title: payload.title,
+          message: payload.message,
+          actionOk: payload.actionOk || runTabInitialState.notification.actionOk,
+          actionCancel: payload.actionCancel || runTabInitialState.notification.actionCancel,
+          labelOk: payload.labelOk,
+          labelCancel: payload.labelCancel
+        }
+      }
+    }
+
+    case 'HIDE_NOTIFICATION': {
+      return {
+        ...state,
+        notification: runTabInitialState.notification
       }
     }
 

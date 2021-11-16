@@ -126,7 +126,7 @@ export class RunTab extends ViewPlugin {
         Currently you have no contract instances to interact with.
       </span>`
 
-    this.event.register('clearInstance', () => {
+    this.event.register('clearInstance', () => { // setFinalContext calls this
       this.instanceContainer.innerHTML = '' // clear the instances list
       this.instanceContainer.appendChild(instanceContainerTitle)
       this.instanceContainer.appendChild(this.noInstancesText)
