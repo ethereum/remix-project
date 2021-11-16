@@ -19,12 +19,40 @@ export interface SettingsProps {
   setGasFee: (value: number) => void,
   setExecEnv: (env: string) => void,
   personalMode: boolean,
-  networkName: string
+  networkName: string,
+  providers: {
+    providerList: {
+      id?: string,
+      dataId?: string,
+      title?: string,
+      value: string,
+      fork?: string
+      content: string
+    }[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  setExecutionContext: (executionContext: { context: string, fork: string }) => void
 }
 
 export interface EnvironmentProps {
   setExecEnv: (env: string) => void,
-  selectedEnv: string
+  selectedEnv: string,
+  providers: {
+    providerList: {
+      id?: string,
+      dataId?: string,
+      title?: string,
+      value: string,
+      fork?: string
+      content: string
+    }[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  setExecutionContext: (executionContext: { context: string, fork: string }) => void
 }
 
 export interface NetworkProps {
@@ -65,4 +93,15 @@ export interface RecorderProps {
 
 export interface InstanceContainerProps {
 
+}
+
+export interface Modal {
+  hide?: boolean
+  title: string
+  // eslint-disable-next-line no-undef
+  message: string | JSX.Element
+  okLabel: string
+  okFn: () => void
+  cancelLabel: string
+  cancelFn: () => void
 }

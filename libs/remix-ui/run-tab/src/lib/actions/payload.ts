@@ -81,3 +81,16 @@ export const removeProvider = (provider: string) => {
     payload: provider
   }
 }
+
+export const displayNotification = (title: string, message: string, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
+  return {
+    type: 'DISPLAY_NOTIFICATION',
+    payload: { title, message, labelOk, labelCancel, actionOk, actionCancel }
+  }
+}
+
+export const hideNotification = () => {
+  return {
+    type: 'HIDE_NOTIFICATION'
+  }
+}
