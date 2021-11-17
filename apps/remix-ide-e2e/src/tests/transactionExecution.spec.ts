@@ -181,9 +181,8 @@ module.exports = {
   },
 
   'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal': function (browser: NightwatchBrowser) {
-    browser.testContracts('customError.sol', sources[5]['customErrorLib.sol'], ['D'])
+    browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
-      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(3)')
       .click('.instance:nth-of-type(3) > div > button')
