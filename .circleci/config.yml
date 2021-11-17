@@ -56,7 +56,7 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-    parallelism: 20
+    parallelism: 30
     steps:
       - checkout
       - restore_cache:
@@ -107,7 +107,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 30
     steps:
       - browser-tools/install-browser-tools
       - checkout
@@ -144,7 +144,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 30
     steps:
       - browser-tools/install-browser-tools
       - checkout
@@ -181,7 +181,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 30
     steps:
       - browser-tools/install-browser-tools
       - checkout
@@ -218,7 +218,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 30
     steps:
       - browser-tools/install-browser-tools
       - checkout
