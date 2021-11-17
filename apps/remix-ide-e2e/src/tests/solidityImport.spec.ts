@@ -65,7 +65,7 @@ module.exports = {
       .verifyContracts(['test11', 'ERC20'], { wait: 10000 })
   },
 
-  'Test switch to a github import from a solidity warning #group2': function (browser: NightwatchBrowser) {
+  'Test switch to a github import from a solidity warning #group3': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
       .clickLaunchIcon('filePanel')
@@ -81,7 +81,7 @@ module.exports = {
       })
   },
 
-  'Test NPM Import (with unpkg.com) #group2': function (browser: NightwatchBrowser) {
+  'Test NPM Import (with unpkg.com) #group3': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .clickLaunchIcon('filePanel')
