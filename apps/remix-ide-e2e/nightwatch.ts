@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/metamask.crx')
+// const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/metamask.crx')
 // const metamaskExtension = Buffer.from(crxFile).toString('base64')
 
 module.exports = {
