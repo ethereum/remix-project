@@ -21,8 +21,8 @@ export const TabsUI = (props: TabsUIProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
-  let mutex = false
-
+  const mutexScroll = useRef(false)
+  
   const tabs = useRef(props.tabs)
   const tabsScrollable = useRef(null)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
@@ -66,8 +66,8 @@ export const TabsUI = (props: TabsUIProps) => {
       rectTab.left < rectTabs.right
   }
   const scrollToNextTab = (event) => {
-    if (mutex) return
-    mutex = true
+    if (mutexScroll.current) return
+    mutexScroll.current = true
     const next = event.deltaY > 0
     if (next) {
       // scroll to previous
@@ -86,7 +86,7 @@ export const TabsUI = (props: TabsUIProps) => {
         console.log('scroll_P ', lastVisibleIndex)
       }
     }
-    mutex = false
+    mutexScroll.current = false
   }
 
   useEffect(() => {
