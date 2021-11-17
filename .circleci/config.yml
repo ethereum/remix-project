@@ -119,9 +119,10 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: git submodule sync --recursive
       - run: git submodule update --recursive --init
+      - run: selenium-install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone install && npx selenium-standalone start 
+          command: npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
       - store_test_results:
@@ -156,9 +157,10 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: git submodule sync --recursive
       - run: git submodule update --recursive --init
+      - run: selenium-install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone install && npx selenium-standalone start 
+          command: npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
       - store_test_results:
@@ -193,9 +195,10 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: git submodule sync --recursive
       - run: git submodule update --recursive --init
+      - run: selenium-install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone install && npx selenium-standalone start 
+          command: npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
       - store_test_results:
@@ -230,9 +233,10 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: git submodule sync --recursive
       - run: git submodule update --recursive --init
+      - run: selenium-install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone install && npx selenium-standalone start 
+          command: npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
@@ -267,9 +271,10 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: git submodule sync --recursive
       - run: git submodule update --recursive --init
+      - run: selenium-install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone install && npx selenium-standalone start
+          command: npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
@@ -302,9 +307,10 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
+      - run: selenium-install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone install && npx selenium-standalone start 
+          command: npx selenium-standalone start 
           background: true
       - run: git submodule sync --recursive
       - run: git submodule update --recursive --init
