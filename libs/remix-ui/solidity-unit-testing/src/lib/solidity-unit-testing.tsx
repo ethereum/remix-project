@@ -118,11 +118,8 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const handleCreateFolder = (e:any) => {
-
-    console.log('handleCreateFolder')
-    let inputPath = e.target.value
-    inputPath = trimTestDirInput(inputPath)
+  const handleCreateFolder = () => {
+    let inputPath = trimTestDirInput(inputPathValue)
     let path = helper.removeMultipleSlashes(inputPath)
     if (path !== '/') path = helper.removeTrailingSlashes(path)
     if (inputPath === '') inputPath = defaultPath
