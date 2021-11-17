@@ -47,6 +47,17 @@ module.exports = {
       }
     },
 
+    chromeDesktop: {
+      desiredCapabilities: {
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
+        'goog:chromeOptions': {
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox']
+        }
+      }
+    },
+
     'chrome-runAndDeploy': {
       desiredCapabilities: {
         browserName: 'chrome',
