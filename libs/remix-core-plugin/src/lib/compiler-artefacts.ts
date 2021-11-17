@@ -4,7 +4,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract' , 'getAllContractDatas'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas'],
   events: [],
   version: '0.0.1'
 }

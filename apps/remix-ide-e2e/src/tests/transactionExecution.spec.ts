@@ -200,7 +200,7 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param3 from library"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
       .end()
-  },
+  }
 }
 
 // @TODO test: bytes8[3][] type as input
