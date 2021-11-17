@@ -109,7 +109,8 @@ jobs:
 
     parallelism: 30
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - checkout
       - attach_workspace:
             at: .
@@ -147,7 +148,8 @@ jobs:
 
     parallelism: 30
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - checkout
       - attach_workspace:
             at: .
@@ -185,7 +187,8 @@ jobs:
 
     parallelism: 30
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-firefox
+      - browser-tools/install-geckodriver
       - checkout
       - attach_workspace:
             at: .
@@ -223,7 +226,8 @@ jobs:
 
     parallelism: 30
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-firefox
+      - browser-tools/install-geckodriver
       - checkout
       - attach_workspace:
             at: .
@@ -261,7 +265,8 @@ jobs:
     working_directory: ~/remix-project
 
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - checkout
       - attach_workspace:
             at: .
@@ -299,7 +304,8 @@ jobs:
     working_directory: ~/remix-project
 
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - checkout
       - attach_workspace:
             at: .
