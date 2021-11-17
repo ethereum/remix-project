@@ -21,7 +21,7 @@ export const TabsUI = (props: TabsUIProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
-  const mutexScroll = useRef(false)
+  const tabsElement = useRef(null)
   
   const tabs = useRef(props.tabs)
   const tabsScrollable = useRef(null)
@@ -57,36 +57,14 @@ export const TabsUI = (props: TabsUIProps) => {
     currentIndexRef.current = index
     setSelectedIndex(index)
   }
-  const isCompletelyVisible = (el) => {
-    const rectTab = el.getBoundingClientRect()
-    const rectTabs = tabsScrollable.current.getBoundingClientRect()
-    // Only completely visible elements return true:
-    return (rectTab.left >= 0) &&
-      rectTab.left > rectTabs.left &&
-      rectTab.left < rectTabs.right
-  }
-  const scrollToNextTab = (event) => {
-    if (mutexScroll.current) return
-    mutexScroll.current = true
-    const next = event.deltaY > 0
-    if (next) {
-      // scroll to previous
-      let firstVisibleIndex = Object.values(tabsRef.current).findIndex((element) => { return isCompletelyVisible(element) })
-      if (firstVisibleIndex > -1) {
-        if (firstVisibleIndex > 0) firstVisibleIndex -= 1
-        tabsRef.current[firstVisibleIndex].scrollIntoView({ behavior: 'smooth', block: 'center' })
-        console.log('scroll_N ', firstVisibleIndex)
-      }
-    } else {
-      // scroll to next
-      let lastVisibleIndex: number = props.tabs.length - 1 - Object.values(tabsRef.current).reverse().findIndex((element) => { return isCompletelyVisible(element) })
-      if (lastVisibleIndex > -1) {
-        if (lastVisibleIndex < props.tabs.length - 2) lastVisibleIndex += 1
-        tabsRef.current[lastVisibleIndex].scrollIntoView({ behavior: 'smooth', block: 'center' })
-        console.log('scroll_P ', lastVisibleIndex)
-      }
+
+  function transformScroll(event) {
+    if (!event.deltaY) {
+      return;
     }
-    mutexScroll.current = false
+  
+    event.currentTarget.scrollLeft += event.deltaY + event.deltaX;
+    event.preventDefault();
   }
 
   useEffect(() => {
@@ -94,8 +72,7 @@ export const TabsUI = (props: TabsUIProps) => {
       activateTab,
       active
     })
-    window.addEventListener('wheel', scrollToNextTab)
-    return () => { window.removeEventListener('wheel', scrollToNextTab) }
+    return () => { tabsElement.current.removeEventListener('wheel', transformScroll) }
   }, [])
 
   return (
@@ -108,6 +85,11 @@ export const TabsUI = (props: TabsUIProps) => {
         <Tabs
           className="tab-scroll"
           selectedIndex={selectedIndex}
+          domRef={(domEl) => {
+            if (tabsElement.current) return
+            tabsElement.current = domEl
+            tabsElement.current.addEventListener('wheel', transformScroll)
+          }}
         >
           <TabList className="d-flex flex-row align-items-center">
             {props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}
@@ -121,4 +103,3 @@ export const TabsUI = (props: TabsUIProps) => {
 }
 
 export default TabsUI
-//       { (props.tabs.length > 2 && (isCompletelyVisible(tabsRef.current[0]) || isCompletelyVisible(tabsRef.current[props.tabs.length - 1]))) &&
