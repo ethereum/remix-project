@@ -133,7 +133,7 @@ export function checkVMError (execResult, compiledContracts) {
                 for (const input of functionDesc.inputs) {
                   const inputKey = input.name || inputIndex
                   const v = decodedCustomErrorInputs[inputKey]
-    
+
                   decodedCustomErrorInputsClean[inputKey] = {
                     value: v.toString ? v.toString() : v
                   }
@@ -145,7 +145,7 @@ export function checkVMError (execResult, compiledContracts) {
                 break
               }
             }
-          }          
+          }
         }
       }
       if (decodedCustomErrorInputsClean) {
