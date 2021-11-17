@@ -12,6 +12,7 @@ docs/_build
 TODO
 soljson.js
 *~
+*_group*.*.ts
 
 
 # compiled output
