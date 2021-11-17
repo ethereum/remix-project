@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
+import { TestTabLogic } from './logic/testTabLogic'
 
 import './css/style.css'
 
@@ -7,7 +8,9 @@ export interface SolidityUnitTestingProps {}
 
 export const SolidityUnitTesting = (props: any) => {
 
-  const {helper, testTab, testTabLogic} = props
+  const {helper, testTab} = props
+
+  const testTabLogic = new TestTabLogic(testTab.fileManager, helper)
 
   const [defaultPath, setDefaultPath] = useState('tests')
   const [disableCreateButton, setDisableCreateButton] = useState(true)
@@ -290,7 +293,7 @@ export const SolidityUnitTesting = (props: any) => {
               data-id="testTabGenerateTestFile"
               title="Generate sample test file."
               disabled={disableGenerateButton}
-              onClick={testTabLogic.generateTestFile}
+              onClick={testTabLogic.generateTestFile.bind(testTabLogic)}
             >
               Generate
             </button>

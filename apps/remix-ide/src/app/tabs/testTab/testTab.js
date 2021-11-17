@@ -4,6 +4,7 @@ const remixPath = require('path')
 
 class TestTabLogic {
   constructor (fileManager) {
+    console.log('Inside TestTabLogic constructor---fileManager--->', fileManager)
     this.fileManager = fileManager
     this.currentPath = '/tests'
   }
@@ -33,6 +34,8 @@ class TestTabLogic {
   }
 
   generateTestFile () {
+    console.log('Inside generateTestFile-1-')
+    console.log('Inside generateTestFile---fileManager--->', this.fileManager)
     let fileName = this.fileManager.currentFile()
     const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
     if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'

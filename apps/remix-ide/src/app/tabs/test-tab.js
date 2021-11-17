@@ -587,21 +587,6 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  handleCreateFolder () {
-    this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
-    let path = removeMultipleSlashes(this.inputPath.value)
-    if (path !== '/') path = removeTrailingSlashes(path)
-    if (this.inputPath.value === '') this.inputPath.value = this.defaultPath
-    this.inputPath.value = path
-    this.testTabLogic.generateTestFolder(this.inputPath.value)
-    this.createTestFolder.disabled = true
-    this.updateGenerateFileAction().disabled = false
-    this.testTabLogic.setCurrentPath(this.inputPath.value)
-    this.updateRunAction()
-    this.updateForNewCurrent()
-    this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
-  }
-
   clearResults () {
     yo.update(this.resultStatistics, yo`<span></span>`)
     this.call('editor', 'clearAnnotations')
@@ -640,25 +625,6 @@ module.exports = class TestTab extends ViewPlugin {
     stopBtn.setAttribute('disabled', 'disabled')
     const runBtn = document.getElementById('runTestsTabRunAction')
     runBtn.setAttribute('disabled', 'disabled')
-  }
-
-  updateGenerateFileAction () {
-    const el = yo`
-      <button
-        class="btn border w-50"
-        data-id="testTabGenerateTestFile"
-        title="Generate sample test file."
-        onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
-      >
-        Generate
-      </button>
-    `
-    if (!this.generateFileActionElement) {
-      this.generateFileActionElement = el
-    } else {
-      yo.update(this.generateFileActionElement, el)
-    }
-    return this.generateFileActionElement
   }
 
   updateRunAction (currentFile) {
@@ -734,71 +700,12 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
-  updateDirList (path) {
-    for (const o of this.uiPathList.querySelectorAll('option')) o.remove()
-    this.testTabLogic.dirList(path).then((options) => {
-      options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-    })
-  }
-
-  trimTestDirInput (input) {
-    if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
-    else return input.trim()
-  }
 
   pathAdded (text) {
     for (const option of this.uiPathList.querySelectorAll('option')) {
       if (option.innerHTML === text) return true
     }
     return false
-  }
-
-  async handleTestDirInput (e) {
-    let testDirInput = this.trimTestDirInput(this.inputPath.value)
-    testDirInput = removeMultipleSlashes(testDirInput)
-    if (testDirInput !== '/') testDirInput = removeTrailingSlashes(testDirInput)
-    if (e.key === 'Enter') {
-      this.inputPath.value = testDirInput
-      if (await this.testTabLogic.pathExists(testDirInput)) {
-        this.testTabLogic.setCurrentPath(testDirInput)
-        this.updateForNewCurrent()
-        return
-      }
-    }
-
-    if (testDirInput) {
-      if (testDirInput.endsWith('/') && testDirInput !== '/') {
-        testDirInput = removeTrailingSlashes(testDirInput)
-        if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
-          this.createTestFolder.disabled = true
-          this.updateGenerateFileAction().disabled = true
-        }
-        this.updateDirList(testDirInput)
-      } else {
-        // If there is no matching folder in the workspace with entered text, enable Create button
-        if (await this.testTabLogic.pathExists(testDirInput)) {
-          this.createTestFolder.disabled = true
-          this.updateGenerateFileAction().disabled = false
-        } else {
-          // Enable Create button
-          this.createTestFolder.disabled = false
-          // Disable Generate button because dir does not exist
-          this.updateGenerateFileAction().disabled = true
-        }
-      }
-    } else {
-      this.updateDirList('/')
-    }
-  }
-
-  async handleEnter (e) {
-    this.inputPath.value = removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
-    if (this.createTestFolder.disabled) {
-      if (await this.testTabLogic.pathExists(this.inputPath.value)) {
-        this.testTabLogic.setCurrentPath(this.inputPath.value)
-        this.updateForNewCurrent()
-      }
-    }
   }
 
   render () {
@@ -811,7 +718,7 @@ module.exports = class TestTab extends ViewPlugin {
   renderComponent () {
     console.log('renderComponent-start-->')
     ReactDOM.render(
-      <SolidityUnitTesting testTab={this} testTabLogic={this.testTabLogic} helper={helper} />
+      <SolidityUnitTesting testTab={this} helper={helper} />
       , this.element)
     console.log('renderComponent-end-->')
   }
