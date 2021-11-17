@@ -24,7 +24,6 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabsElement = useRef(null)
   
   const tabs = useRef(props.tabs)
-  const tabsScrollable = useRef(null)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
   useEffect(() => {
@@ -77,7 +76,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs">
-      <div ref={tabsScrollable} className="d-flex flex-row" style={ { maxWidth: 'fit-content', width: '97%' } }>
+      <div className="d-flex flex-row" style={ { maxWidth: 'fit-content', width: '97%' } }>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-2">
           <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
           <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
