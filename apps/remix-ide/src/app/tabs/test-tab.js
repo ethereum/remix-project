@@ -61,7 +61,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   onActivationInternal () {
-    console.log('onActivationInternal---start->')
     this.testTabLogic = new TestTabLogic(this.fileManager)
     this.listenToEvents()
     this.call('filePanel', 'registerContextMenuItem', {
@@ -73,7 +72,6 @@ module.exports = class TestTab extends ViewPlugin {
       path: [],
       pattern: []
     })
-    console.log('onActivationInternal---end->')
   }
 
   async setTestFolderPath (event) {
@@ -95,7 +93,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async onActivation () {
-    console.log('onActivation--->')
     const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
@@ -106,7 +103,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   onDeactivation () {
-    console.log('onDeactivation--->')
     this.off('filePanel', 'newTestFileCreated')
     this.off('filePanel', 'setWorkspace')
     // 'currentFileChanged' event is added more than once
@@ -114,7 +110,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listenToEvents () {
-    console.log('listenToEvents--start-->')
     this.on('filePanel', 'newTestFileCreated', async file => {
       try {
         await this.testTabLogic.getTests((error, tests) => {
@@ -152,7 +147,6 @@ module.exports = class TestTab extends ViewPlugin {
     })
 
     this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
-    console.log('listenToEvents--end-->')
   }
 
   async updateForNewCurrent (file) {
@@ -709,18 +703,15 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   render () {
-    console.log('render--->')
     this.onActivationInternal()
     this.renderComponent()
     return this.element
   }
   
   renderComponent () {
-    console.log('renderComponent-start-->')
     ReactDOM.render(
       <SolidityUnitTesting testTab={this} helper={helper} />
       , this.element)
-    console.log('renderComponent-end-->')
   }
   
   render2 () {
