@@ -8,5 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - run: npm install
+     - run: ls
+     - run: pwd
      - run: nx build remix-ide --with-deps
      - run: node ./apps/remix-ide/ci/publishIpfs
