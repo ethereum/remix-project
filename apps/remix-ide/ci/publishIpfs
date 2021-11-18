@@ -3,7 +3,7 @@
 const IpfsHttpClient = require('ipfs-http-client')
 const { globSource } = IpfsHttpClient
 console.log('current folder', process.cwd())
-const folder = process.cwd() + '/temp_publish_docker';
+const folder = process.cwd() + '/dist/apps/remix-ide';
 
 (async () => {
   const host = 'ipfs.remixproject.org'
