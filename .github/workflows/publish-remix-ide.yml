@@ -13,6 +13,6 @@ jobs:
     if: ${{ github.event.label.name == 'publish' }}
     runs-on: ubuntu-latest
     steps:
-      run: npm install
-      run: nx build remix-ide --with-deps
-      run: node ./apps/remix-ide/ci/publishIpfs
+     - run: npm install
+     - run: nx build remix-ide --with-deps
+     - run: node ./apps/remix-ide/ci/publishIpfs
