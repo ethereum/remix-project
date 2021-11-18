@@ -37,7 +37,8 @@ export interface RunTabState {
     actionCancel: (() => void) | null,
     labelOk: string,
     labelCancel: string
-  }
+  },
+  externalEndpoint: string
 }
 
 export const runTabInitialState: RunTabState = {
@@ -94,7 +95,8 @@ export const runTabInitialState: RunTabState = {
     actionCancel: () => {},
     labelOk: '',
     labelCancel: ''
-  }
+  },
+  externalEndpoint: 'http://127.0.0.1:8545'
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -291,6 +293,15 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         notification: runTabInitialState.notification
+      }
+    }
+
+    case 'SET_EXTERNAL_WEB3_ENDPOINT': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        externalEndpoint: payload
       }
     }
 

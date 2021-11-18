@@ -46,6 +46,7 @@ export class RunTab extends ViewPlugin {
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
     this.fileProvider = fileProvider
+    this.REACT_API = {}
     this.setupEvents()
     this.el = document.createElement('div')
   }
@@ -229,5 +230,9 @@ export class RunTab extends ViewPlugin {
     ReactDOM.render(
       <RunTabUI plugin={this} />
       , this.el)
+  }
+
+  onReady (api) {
+    this.REACT_API = api
   }
 }

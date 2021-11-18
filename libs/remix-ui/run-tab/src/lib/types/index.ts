@@ -1,5 +1,13 @@
+import { RunTabState } from '../reducers/runTab'
+import { Blockchain } from './blockchain'
+
+export interface Udapp {
+  onReady: (api: RunTabState) => void,
+  REACT_API: RunTabState,
+  blockchain: Blockchain
+}
 export interface RunTabProps {
-  plugin: any
+  plugin: Udapp
 }
 
 export interface SettingsProps {
