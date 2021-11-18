@@ -19,6 +19,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
+  const [testsMessage, setTestsMessage] = useState('No test file available')
   const [pathOptions, setPathOptions] = useState([''])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
@@ -224,17 +225,17 @@ export const SolidityUnitTesting = (props: any) => {
     // }
   }
 
+  const listTests = () => {
+    console.log('listTests--->')
+    // if (!this.data.allTests || !this.data.allTests.length) return []
+    // return this.data.allTests.map(
+    //   testFile => this.createSingleTest(testFile)
+    // )
+  }
+
   const updateTestFileList = (tests = []) => {
-    return (<div className="testList py-2 mt-0 border-bottom">No test file available</div>)
-    // const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
-    // const el = yo`<div class="${css.testList} py-2 mt-0 border-bottom">${testsMessage}</div>`
-    // if (!this.testFilesListElement) {
-    //   this.testFilesListElement = el
-    // } else {
-    //   yo.update(this.testFilesListElement, el)
-    // }
-    // this.updateRunAction()
-    // return this.testFilesListElement
+    const testsMsg: any = (tests && tests.length) ? listTests() : 'No test file available'
+    setTestsMessage(testsMsg)
   }
 
   const createResultLabel = () => {
@@ -318,7 +319,7 @@ export const SolidityUnitTesting = (props: any) => {
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
-          {updateTestFileList()}
+          <div className="testList py-2 mt-0 border-bottom">{testsMessage}</div>
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
             {resultStatistics}
             <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
