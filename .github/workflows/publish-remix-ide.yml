@@ -7,6 +7,8 @@ jobs:
     if: ${{ github.event.label.name == 'publish' }}
     runs-on: ubuntu-latest
     steps:
+     - name: Checkout
+       uses: actions/checkout@v2
      - run: cd ..
      - run: npm install     
      - run: ls
