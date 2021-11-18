@@ -368,7 +368,7 @@ workflows:
       - remix-ide-chrome:
           requires:
             - build
-      - remix-ide-firefox-1:
+      - remix-ide-firefox:
           requires:
             - build
       - remix-ide-run-deploy:
