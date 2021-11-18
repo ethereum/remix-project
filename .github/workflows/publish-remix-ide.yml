@@ -9,9 +9,8 @@ jobs:
     steps:
      - name: Checkout
        uses: actions/checkout@v2
-     - run: cd ..
      - run: npm install     
      - run: ls
      - run: pwd
-     - run: nx build remix-ide --with-deps
+     - run: npm run build
      - run: node ./apps/remix-ide/ci/publishIpfs
