@@ -7,7 +7,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 npm run ganache-cli &
-npm run serve &
+npm run serve:production &
 
 sleep 5
 
