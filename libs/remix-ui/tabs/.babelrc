@@ -1,4 +1,4 @@
 {
-  "presets": [["@nrwl/web/babel", { "useBuiltIns": "usage" }]],
-  "plugins": ["@babel/plugin-proposal-class-properties"]
+  "presets": ["@nrwl/react/babel"],
+  "plugins": []
 }
