@@ -192,15 +192,12 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const stopTests = () => {
-
     console.log('stopTests')
-    // this.hasBeenStopped = true
-    // const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
-    // stopBtnLabel.innerText = 'Stopping'
-    // const stopBtn = document.getElementById('runTestsTabStopAction')
-    // stopBtn.setAttribute('disabled', 'disabled')
-    // const runBtn = document.getElementById('runTestsTabRunAction')
-    // runBtn.setAttribute('disabled', 'disabled')
+    setHasBeenStopped(true)
+    setStopButtonLabel('Stopping')
+    const stopBtn = document.getElementById('runTestsTabStopAction')
+    setDisableStopButton(true)
+    setDisableRunButton(true)
   }
 
   const toggleCheckbox = (eChecked: any, test:any) => {
