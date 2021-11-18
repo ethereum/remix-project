@@ -12,7 +12,11 @@ npx nx serve remix-ide-e2e-src-local-plugin &
 sleep 5
 
 npm run build:e2e
-npm run nightwatch_local_pluginApi || TEST_EXITCODE=1
+
+TESTFILES=$(grep -IRiL "disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "plugin_api" | sort | circleci tests split )
+for TESTFILE in $TESTFILES; do
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=chrome  || TEST_EXITCODE=1
+done
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
