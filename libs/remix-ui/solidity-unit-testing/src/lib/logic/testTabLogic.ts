@@ -39,7 +39,6 @@ export class TestTabLogic {
 
     generateTestFile () {
         console.log('Inside generateTestFile-1SUT-')
-        console.log('Inside generateTestFile---fileManager-SUT-->', this.fileManager)
         let fileName = this.fileManager.currentFile()
         const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
         if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'

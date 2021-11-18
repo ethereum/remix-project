@@ -21,7 +21,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   const [testsMessage, setTestsMessage] = useState('No test file available')
   const [pathOptions, setPathOptions] = useState([''])
-  const [allTests, setAllTests] = useState([])
+  let [allTests, setAllTests] = useState([])
   const [selectedTests, setSelectedTests] = useState([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
@@ -48,9 +48,10 @@ export const SolidityUnitTesting = (props: any) => {
     // this.clearResults()
     // if (!this.areTestsRunning) this.updateRunAction(file)
     try {
-      await testTabLogic.getTests((error: any, tests: any) => {
+      testTabLogic.getTests((error: any, tests: any) => {
         // if (error) return tooltip(error)
-        setAllTests(tests)
+        console.log('tests in updateForNewCurrent testTabLogic.getTests', tests)
+        allTests = tests
         setSelectedTests(tests)
         updateTestFileList(tests)
         // if (!this.testsOutput) return // eslint-disable-line
@@ -84,7 +85,6 @@ export const SolidityUnitTesting = (props: any) => {
         return
       }
     }
-
     if (testDirInput) {
       if (testDirInput.endsWith('/') && testDirInput !== '/') {
         testDirInput = helper.removeTrailingSlashes(testDirInput)
@@ -98,6 +98,8 @@ export const SolidityUnitTesting = (props: any) => {
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
+          testTabLogic.setCurrentPath(testDirInput)
+          updateForNewCurrent()
         } else {
           // Enable Create button
           setDisableCreateButton(false)
@@ -118,7 +120,7 @@ export const SolidityUnitTesting = (props: any) => {
     if (disableCreateButton) {
       if (await testTabLogic.pathExists(inputPath)) {
         testTabLogic.setCurrentPath(inputPath)
-        // this.updateForNewCurrent()
+        updateForNewCurrent()
       }
     }
   }
@@ -136,38 +138,10 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('path-->', path)
     console.log('inputPath-->', inputPath)
     // this.updateRunAction()
-    // this.updateForNewCurrent()
+    updateForNewCurrent()
     pathOptions.push(inputPath)
     setPathOptions(pathOptions)
   }
-
-  // const updateGenerateFileAction = () => {
-  //   console.log('updateGenerateFileAction')
-  //   return (
-  //     <button
-  //       className="btn border w-50"
-  //       data-id="testTabGenerateTestFile"
-  //       title="Generate sample test file."
-  //     >
-  //       Generate
-  //     </button>)
-    // const el = yo`
-    //   <button
-    //     class="btn border w-50"
-    //     data-id="testTabGenerateTestFile"
-    //     title="Generate sample test file."
-    //     onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
-    //   >
-    //     Generate
-    //   </button>
-    // `
-    // if (!this.generateFileActionElement) {
-    //   this.generateFileActionElement = el
-    // } else {
-    //   yo.update(this.generateFileActionElement, el)
-    // }
-    // return this.generateFileActionElement
-  // }
 
   const updateRunAction = (currentFile = null) => {
 
@@ -214,6 +188,31 @@ export const SolidityUnitTesting = (props: any) => {
     // runBtn.setAttribute('disabled', 'disabled')
   }
 
+  const toggleCheckbox = (eChecked: any, test:any) => {
+    console.log('toggleCheckbox--->', test)
+    // if (!this.data.selectedTests) {
+    //   this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
+    // }
+    // let selectedTests = this.data.selectedTests
+    // selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
+    // this.data.selectedTests = selectedTests
+    // const checkAll = this._view.el.querySelector('[id="checkAllTests"]')
+    // const runBtn = document.getElementById('runTestsTabRunAction')
+
+    // if (eChecked) {
+    //   checkAll.checked = true
+    //   const stopBtnInnerText = document.getElementById('runTestsTabStopAction').innerText
+    //   if ((this.readyTestsNumber === this.runningTestsNumber || this.hasBeenStopped) && stopBtnInnerText.trim() === 'Stop') {
+    //     runBtn.removeAttribute('disabled')
+    //     runBtn.setAttribute('title', 'Run tests')
+    //   }
+    // } else if (!selectedTests.length) {
+    //   checkAll.checked = false
+    //   runBtn.setAttribute('disabled', 'disabled')
+    //   runBtn.setAttribute('title', 'No test file selected')
+    // }
+  }
+
   const checkAll = (event: any) => {
     console.log('checkAll --event-->', event)
 
@@ -226,13 +225,13 @@ export const SolidityUnitTesting = (props: any) => {
     // }
   }
 
-  const createSingleTest = (testFile) => {
-    return yo`
-      <div class="d-flex align-items-center py-1">
-        <input class="singleTest" id="singleTest${testFile}" onchange=${(e) => this.toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked="true">
-        <label class="singleTestLabel text-nowrap pl-2 mb-0" for="singleTest${testFile}">${testFile}</label>
+  const createSingleTest = (testFile: string) => {
+    return (
+      <div className="d-flex align-items-center py-1">
+        <input className="singleTest" id="singleTest${testFile}" onChange={(e) => toggleCheckbox(e.target.checked, testFile)} type="checkbox"/>
+        <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor="singleTest${testFile}">{testFile}</label>
       </div>
-    `
+    )
   }
 
   const listTests = () => {
@@ -244,6 +243,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateTestFileList = (tests = []) => {
+    console.log('updateTestFileList--tests->', tests)
     const testsMsg: any = (tests && tests.length) ? listTests() : 'No test file available'
     setTestsMessage(testsMsg)
   }
@@ -257,7 +257,6 @@ export const SolidityUnitTesting = (props: any) => {
 
   const [resultStatistics] = useState(createResultLabel())
 
-  console.log('props---->', props)
   return (
     <div className="px-2" id="testView">
         <div className="infoBox">
