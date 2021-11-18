@@ -248,9 +248,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
       - run: npm run downloadsolc_assets
       - run: npm run build:production
       - run: ./apps/remix-ide/ci/copy_resources.sh     
@@ -319,6 +317,7 @@ workflows:
   build_all:
     jobs:
       - build
+      - publish
       - lint:
           requires:
             - build
@@ -332,9 +331,6 @@ workflows:
           requires:
             - build
       - remix-ide-firefox:
-          requires:
-            - build
-      - publish:
           requires:
             - build
       - deploy-remix-live:          
