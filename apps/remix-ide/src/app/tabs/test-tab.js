@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 
 import { ViewPlugin } from '@remixproject/engine-web'
-import helper, { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
+import helper from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { format } from 'util'
 var yo = require('yo-yo')
@@ -694,7 +694,6 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
-
   pathAdded (text) {
     for (const option of this.uiPathList.querySelectorAll('option')) {
       if (option.innerHTML === text) return true
@@ -707,13 +706,13 @@ module.exports = class TestTab extends ViewPlugin {
     this.renderComponent()
     return this.element
   }
-  
+
   renderComponent () {
     ReactDOM.render(
       <SolidityUnitTesting testTab={this} helper={helper} />
       , this.element)
   }
-  
+
   render2 () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
