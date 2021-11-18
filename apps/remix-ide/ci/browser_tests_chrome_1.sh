@@ -15,9 +15,9 @@ sleep 5
 
 npm run build:e2e
 
-TESTFILES=$(grep -IRiL "disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.test" | sort | xargs basename | circleci tests split --split-by=timings)
+TESTFILES=$(grep -IRiL "disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.test" | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/$TESTFILE --env=chrome  || TEST_EXITCODE=1
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=chrome  || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"
