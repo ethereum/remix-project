@@ -16,13 +16,15 @@ export const SolidityUnitTesting = (props: any) => {
   const [disableCreateButton, setDisableCreateButton] = useState(true)
   const [disableGenerateButton, setDisableGenerateButton] = useState(false)
   const [disableStopButton, setDisableStopButton] = useState(true)
+  const [disableRunButton, setDisableRunButton] = useState(false)
+  const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   const [testsMessage, setTestsMessage] = useState('No test file available')
   const [pathOptions, setPathOptions] = useState([''])
   let [allTests, setAllTests] = useState([])
-  const [selectedTests, setSelectedTests] = useState([])
+  let [selectedTests, setSelectedTests] = useState([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
   
@@ -44,6 +46,7 @@ export const SolidityUnitTesting = (props: any) => {
     // // do not clear the test results in SUT plugin
     // if (this.isDebugging && this.allFilesInvolved.includes(file)) return
     console.log('Inside updateForNewCurrent --allTests-->', allTests)
+    allTests = []
     updateTestFileList()
     // this.clearResults()
     // if (!this.areTestsRunning) this.updateRunAction(file)
@@ -52,6 +55,7 @@ export const SolidityUnitTesting = (props: any) => {
         // if (error) return tooltip(error)
         console.log('tests in updateForNewCurrent testTabLogic.getTests', tests)
         allTests = tests
+        selectedTests = [...allTests]
         setSelectedTests(tests)
         updateTestFileList(tests)
         // if (!this.testsOutput) return // eslint-disable-line
@@ -137,43 +141,47 @@ export const SolidityUnitTesting = (props: any) => {
     testTabLogic.setCurrentPath(inputPath)
     console.log('path-->', path)
     console.log('inputPath-->', inputPath)
-    // this.updateRunAction()
+    updateRunAction()
     updateForNewCurrent()
     pathOptions.push(inputPath)
     setPathOptions(pathOptions)
   }
 
-  const updateRunAction = (currentFile = null) => {
+  const runTests = () => {
+    console.log('runtests--->')
+    // this.areTestsRunning = true
+    // this.hasBeenStopped = false
+    // this.readyTestsNumber = 0
+    // this.runningTestsNumber = this.data.selectedTests.length
+    // const stopBtn = document.getElementById('runTestsTabStopAction')
+    // stopBtn.removeAttribute('disabled')
+    // const runBtn = document.getElementById('runTestsTabRunAction')
+    // runBtn.setAttribute('disabled', 'disabled')
+    // this.clearResults()
+    // yo.update(this.resultStatistics, this.createResultLabel())
+    // const tests = this.data.selectedTests
+    // if (!tests) return
+    // this.resultStatistics.hidden = tests.length === 0
+    // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
+    // async.eachOfSeries(tests, (value, key, callback) => {
+    //   if (this.hasBeenStopped) return
+    //   this.runTest(value, callback)
+    // })
+  }
+
+  const updateRunAction = (currentFile : any = null) => {
 
     console.log('updateRunAction --currentFile-->', currentFile)
-
-    return (
-      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary">
-        <span className="fas fa-play ml-2"></span>
-         <label className="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
-      </button>)
-
-    // const el = yo`
-    //   <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
-    //     <span class="fas fa-play ml-2"></span>
-    //     <label class="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
-    //   </button>
-    // `
     // const isSolidityActive = this.appManager.isActive('solidity')
-    // if (!isSolidityActive || !this.listTests().length) {
-    //   el.setAttribute('disabled', 'disabled')
-    //   if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
-    //     el.setAttribute('title', 'No solidity file selected')
-    //   } else {
-    //     el.setAttribute('title', 'The "Solidity Plugin" should be activated')
-    //   }
-    // }
-    // if (!this.runActionElement) {
-    //   this.runActionElement = el
-    // } else {
-    //   yo.update(this.runActionElement, el)
-    // }
-    // return this.runActionElement
+    const isSolidityActive = true
+    if (!isSolidityActive || !listTests().length) {
+      setDisableRunButton(true)
+      if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
+        setRunButtonTitle('No solidity file selected')
+      } else {
+        setRunButtonTitle('The "Solidity Plugin" should be activated')
+      }
+    }
   }
 
   const stopTests = () => {
@@ -226,9 +234,10 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const createSingleTest = (testFile: string) => {
+    const checked = true
     return (
       <div className="d-flex align-items-center py-1">
-        <input className="singleTest" id="singleTest${testFile}" onChange={(e) => toggleCheckbox(e.target.checked, testFile)} type="checkbox"/>
+        <input className="singleTest" id="singleTest${testFile}" onChange={(e) => toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked={checked}/>
         <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor="singleTest${testFile}">{testFile}</label>
       </div>
     )
@@ -312,7 +321,10 @@ export const SolidityUnitTesting = (props: any) => {
             </a>
           </div>
           <div className="d-flex p-2">
-            {updateRunAction()}
+            <button id="runTestsTabRunAction" title={runButtonTitle} data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
+              <span className="fas fa-play ml-2"></span>
+              <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
+            </button>
             <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
               <span className="fas fa-stop ml-2"></span>
               <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
