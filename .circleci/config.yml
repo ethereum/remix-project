@@ -317,7 +317,6 @@ workflows:
   build_all:
     jobs:
       - build
-      - publish
       - lint:
           requires:
             - build
