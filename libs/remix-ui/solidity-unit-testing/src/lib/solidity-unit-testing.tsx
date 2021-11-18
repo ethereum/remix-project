@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
 import { TestTabLogic } from './logic/testTabLogic'
+var async = require('async')
 
 import './css/style.css'
 
@@ -30,14 +31,27 @@ export const SolidityUnitTesting = (props: any) => {
   let [selectedTests, setSelectedTests] = useState([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
-  const [readyTestsNumber, setReadyTestsNumber] = useState(0)
-  const [runningTestsNumber, setRunningTestsNumber] = useState(0)
-  const [hasBeenStopped, setHasBeenStopped] = useState(false)
+
+  let [readyTestsNumber, setReadyTestsNumber] = useState(0)
+  let [runningTestsNumber, setRunningTestsNumber] = useState(0)
+  let [hasBeenStopped, setHasBeenStopped] = useState(false)
+  let [areTestsRunning, setAreTestsRunning] = useState(false)
+  
   
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
     else return input.trim()
+  }
+
+  const clearResults = () => {
+    console.log('clearResults--->')
+    // yo.update(this.resultStatistics, yo`<span></span>`)
+    // this.call('editor', 'clearAnnotations')
+    // this.testsOutput.innerHTML = ''
+    // this.testsOutput.hidden = true
+    // this.testsExecutionStopped.hidden = true
+    // this.testsExecutionStoppedError.hidden = true
   }
 
    const updateForNewCurrent = async (file = null) => {
@@ -55,8 +69,8 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('Inside updateForNewCurrent --allTests-->', allTests)
     allTests = []
     updateTestFileList()
-    // this.clearResults()
-    // if (!this.areTestsRunning) this.updateRunAction(file)
+    clearResults()
+    if (!areTestsRunning) updateRunAction(file)
     try {
       testTabLogic.getTests((error: any, tests: any) => {
         // if (error) return tooltip(error)
@@ -156,24 +170,22 @@ export const SolidityUnitTesting = (props: any) => {
 
   const runTests = () => {
     console.log('runtests--->')
-    // this.areTestsRunning = true
-    // this.hasBeenStopped = false
-    // this.readyTestsNumber = 0
-    // this.runningTestsNumber = this.data.selectedTests.length
-    // const stopBtn = document.getElementById('runTestsTabStopAction')
-    // stopBtn.removeAttribute('disabled')
-    // const runBtn = document.getElementById('runTestsTabRunAction')
-    // runBtn.setAttribute('disabled', 'disabled')
-    // this.clearResults()
+    areTestsRunning = true
+    hasBeenStopped = false
+    readyTestsNumber = 0
+    runningTestsNumber = selectedTests.length
+    setDisableStopButton(false)
+    setDisableRunButton(true)
+    clearResults()
     // yo.update(this.resultStatistics, this.createResultLabel())
-    // const tests = this.data.selectedTests
-    // if (!tests) return
+    const tests = selectedTests
+    if (!tests) return
     // this.resultStatistics.hidden = tests.length === 0
     // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
-    // async.eachOfSeries(tests, (value, key, callback) => {
-    //   if (this.hasBeenStopped) return
-    //   this.runTest(value, callback)
-    // })
+    async.eachOfSeries(tests, (value: any, key: any, callback: any) => {
+      if (hasBeenStopped) return
+      // runTest(value, callback)
+    })
   }
 
   const updateRunAction = (currentFile : any = null) => {
