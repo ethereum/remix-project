@@ -3,10 +3,11 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { shortenAddress } from '@remix-ui/helper'
-import { addProvider, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, removeProvider, setExecutionEnvironment, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
+import { addProvider, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
 import { runTabInitialState, runTabReducer } from '../reducers/runTab'
 
-export function useRunTabPlugin (plugin) {
+// eslint-disable-next-line no-undef
+export function useRunTabPlugin (plugin, executionContextModal: (executionContext: { context: string, fork: string }) => void) {
   const [runTab, dispatch] = React.useReducer(runTabReducer, runTabInitialState)
 
   const setupEvents = () => {
@@ -32,7 +33,7 @@ export function useRunTabPlugin (plugin) {
         }
       }
     })
-  
+
     plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
       plugin.emit('newTransaction', tx, receipt)
     })
@@ -180,18 +181,24 @@ export function useRunTabPlugin (plugin) {
     dispatch(removeProvider(name))
   }
 
+  const setProviderFromEndpoint = (executionContext: { context: string, fork: string }) => {
+    plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
+      // if (alertMsg) addTooltip(alertMsg)
+      setFinalContext()
+    })
+  }
+
   const setExecutionContext = (executionContext: { context: string, fork: string }) => {
     plugin.blockchain.changeExecutionContext(executionContext, () => {
-      // modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
-      //   this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
-      // if (alertMsg) addTooltip(alertMsg)
-      // setFinalContext()
-      // })
-      // }, this.setFinalContext.bind(this))
-    // }, (alertMsg) => {
+      executionContextModal(executionContext)
+    }, (alertMsg) => {
       // addTooltip(alertMsg)
     }, setFinalContext())
   }
 
-  return { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee, setExecEnv, setFinalContext, setExecutionContext }
+  const setWeb3Endpoint = (endpoint: string) => {
+    dispatch(setExternalEndpoint(endpoint))
+  }
+
+  return { runTab, setupEvents, fillAccountsList, setAccount, setUnit, setGasFee, setExecEnv, setFinalContext, setExecutionContext, setProviderFromEndpoint, setWeb3Endpoint }
 }
