@@ -94,3 +94,10 @@ export const hideNotification = () => {
     type: 'HIDE_NOTIFICATION'
   }
 }
+
+export const setExternalEndpoint = (endpoint: string) => {
+  return {
+    type: 'SET_EXTERNAL_WEB3_ENDPOINT',
+    payload: endpoint
+  }
+}
