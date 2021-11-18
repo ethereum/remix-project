@@ -179,7 +179,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
       - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
     working_directory: ~/remix-project
-    parallelism: 6
+    parallelism: 7
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver

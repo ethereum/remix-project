@@ -180,30 +180,30 @@ module.exports = {
 
   // FILESYSTEM
 
-  'Should get current workspace #group2': async function (browser: NightwatchBrowser) {
+  'Should get current workspace #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
 
-  'Should get current files #group2': async function (browser: NightwatchBrowser) {
+  'Should get current files #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
   },
-  'Should throw error on current file #group2': async function (browser: NightwatchBrowser) {
+  'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
   },
-  'Should open readme.txt #group2': async function (browser: NightwatchBrowser) {
+  'Should open readme.txt #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:open', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
   },
-  'Should have current file #group2': async function (browser: NightwatchBrowser) {
+  'Should have current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
   },
-  'Should create dir #group2': async function (browser: NightwatchBrowser) {
+  'Should create dir #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:mkdir', null, null, 'testdir')
     await clickAndCheckLog(browser, 'fileManager:readdir', 'testdir', null, '/')
   },
-  'Should get file #group2': async function (browser: NightwatchBrowser) {
+  'Should get file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getFile', 'REMIX EXAMPLE PROJECT', null, 'README.txt')
   },
-  'Should close all files #group2': async function (browser: NightwatchBrowser) {
+  'Should close all files #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:closeAllFiles', null, { event: 'noFileSelected', args: [] }, null)
   },
 
