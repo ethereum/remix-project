@@ -21,6 +21,8 @@ export const SolidityUnitTesting = (props: any) => {
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   const [testsMessage, setTestsMessage] = useState('No test file available')
   const [pathOptions, setPathOptions] = useState([''])
+  const [allTests, setAllTests] = useState([])
+  const [selectedTests, setSelectedTests] = useState([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
   
@@ -41,22 +43,21 @@ export const SolidityUnitTesting = (props: any) => {
     // // if current file is changed while debugging and one of the files imported in test file are opened
     // // do not clear the test results in SUT plugin
     // if (this.isDebugging && this.allFilesInvolved.includes(file)) return
-    // this.data.allTests = []
-    // this.updateTestFileList()
+    console.log('Inside updateForNewCurrent --allTests-->', allTests)
+    updateTestFileList()
     // this.clearResults()
-    // this.updateGenerateFileAction()
     // if (!this.areTestsRunning) this.updateRunAction(file)
-    // try {
-    //   await this.testTabLogic.getTests((error, tests) => {
-    //     if (error) return tooltip(error)
-    //     this.data.allTests = tests
-    //     this.data.selectedTests = [...this.data.allTests]
-    //     this.updateTestFileList(tests)
-    //     if (!this.testsOutput) return // eslint-disable-line
-    //   })
-    // } catch (e) {
-    //   console.log(e)
-    // }
+    try {
+      await testTabLogic.getTests((error: any, tests: any) => {
+        // if (error) return tooltip(error)
+        setAllTests(tests)
+        setSelectedTests(tests)
+        updateTestFileList(tests)
+        // if (!this.testsOutput) return // eslint-disable-line
+      })
+    } catch (e) {
+      console.log('error in updateForNewCurrent', e)
+    }
   }
 
   useEffect(() => {
@@ -225,12 +226,21 @@ export const SolidityUnitTesting = (props: any) => {
     // }
   }
 
+  const createSingleTest = (testFile) => {
+    return yo`
+      <div class="d-flex align-items-center py-1">
+        <input class="singleTest" id="singleTest${testFile}" onchange=${(e) => this.toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked="true">
+        <label class="singleTestLabel text-nowrap pl-2 mb-0" for="singleTest${testFile}">${testFile}</label>
+      </div>
+    `
+  }
+
   const listTests = () => {
-    console.log('listTests--->')
-    // if (!this.data.allTests || !this.data.allTests.length) return []
-    // return this.data.allTests.map(
-    //   testFile => this.createSingleTest(testFile)
-    // )
+    console.log('listTests--->', allTests)
+    if (!allTests || !allTests.length) return []
+    return allTests.map(
+      testFile => createSingleTest(testFile)
+    )
   }
 
   const updateTestFileList = (tests = []) => {
