@@ -56,7 +56,7 @@ module.exports = {
       .verifyContracts(['test10', 'ERC20'], { wait: 10000 })
   },
 
-  'Test Github Import - raw URL #group2': function (browser: NightwatchBrowser) {
+  'Test Github Import - raw URL #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
