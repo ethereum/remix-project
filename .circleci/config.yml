@@ -90,7 +90,7 @@ jobs:
       - run: cd dist/libs/remix-tests && npm install
       - run: npm run test:libs
 
-  remix-ide-chrome-1:
+  remix-ide-chrome:
     docker:
       # specify the version you desire here
       - image: cimg/node:14.17.6-browsers
@@ -105,7 +105,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 35
+    parallelism: 70
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
@@ -127,7 +127,7 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
-  remix-ide-chrome-2:
+  remix-ide-firefox:
     docker:
       # specify the version you desire here
       - image: cimg/node:14.17.6-browsers
@@ -142,44 +142,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 35
-    steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - checkout
-      - attach_workspace:
-            at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm run selenium-install
-      - run:
-          name: Start Selenium
-          command: npx selenium-standalone start 
-          background: true
-      - run: ./apps/remix-ide/ci/browser_tests_chrome_2.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
-  remix-ide-firefox-1:
-    docker:
-      # specify the version you desire here
-      - image: cimg/node:14.17.6-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-
-    parallelism: 35
+    parallelism: 70
     steps:
       - browser-tools/install-firefox
       - browser-tools/install-geckodriver
@@ -196,43 +159,6 @@ jobs:
           command: npx selenium-standalone start 
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
-  remix-ide-firefox-2:
-    docker:
-      # specify the version you desire here
-      - image: cimg/node:14.17.6-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-
-    parallelism: 35
-    steps:
-      - browser-tools/install-firefox
-      - browser-tools/install-geckodriver
-      - checkout
-      - attach_workspace:
-            at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm run selenium-install
-      - run:
-          name: Start Selenium
-          command: npx selenium-standalone start 
-          background: true
-      - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -439,16 +365,10 @@ workflows:
       - remix-ide-plugin-api:
           requires:
             - build
-      - remix-ide-chrome-1:
-          requires:
-            - build
-      - remix-ide-chrome-2:
+      - remix-ide-chrome:
           requires:
             - build
       - remix-ide-firefox-1:
-          requires:
-            - build
-      - remix-ide-firefox-2:
           requires:
             - build
       - remix-ide-run-deploy:
@@ -460,10 +380,9 @@ workflows:
       - deploy-remix-live:          
           requires:
             - lint
-            - remix-ide-chrome-1
-            - remix-ide-chrome-2
-            - remix-ide-firefox-1
-            - remix-ide-firefox-2
+            - remix-libs
+            - remix-ide-chrome
+            - remix-ide-firefox
             - remix-ide-run-deploy
             - remix-ide-plugin-api
           filters:
@@ -472,10 +391,9 @@ workflows:
       - deploy-remix-alpha:          
           requires:
             - lint
-            - remix-ide-chrome-1
-            - remix-ide-chrome-2
-            - remix-ide-firefox-1
-            - remix-ide-firefox-2
+            - remix-libs
+            - remix-ide-chrome
+            - remix-ide-firefox
             - remix-ide-run-deploy
             - remix-ide-plugin-api
           filters:
@@ -484,10 +402,9 @@ workflows:
       - deploy-remix-beta:          
           requires:
             - lint
-            - remix-ide-chrome-1
-            - remix-ide-chrome-2
-            - remix-ide-firefox-1
-            - remix-ide-firefox-2
+            - remix-libs
+            - remix-ide-chrome
+            - remix-ide-firefox
             - remix-ide-run-deploy
             - remix-ide-plugin-api
           filters:
