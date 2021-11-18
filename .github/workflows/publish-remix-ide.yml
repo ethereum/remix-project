@@ -2,12 +2,6 @@ name: remix-publish-action
 on:
   pull_request:
     types: [ labeled ]
-description: Publish Remix IDE
-inputs:
-  token:
-    description: 'GitHub auth token'
-    default: ${{ github.token }}
-author: yann@ethereum.org
 jobs:
   build:
     if: ${{ github.event.label.name == 'publish' }}
