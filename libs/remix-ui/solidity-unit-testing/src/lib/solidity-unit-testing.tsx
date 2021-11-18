@@ -18,15 +18,22 @@ export const SolidityUnitTesting = (props: any) => {
   const [disableStopButton, setDisableStopButton] = useState(true)
   const [disableRunButton, setDisableRunButton] = useState(false)
   const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
+  const [stopButtonLabel, setStopButtonLabel] = useState('Stop')
   const [checkSelectAll, setCheckSelectAll] = useState(true)
+  
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
+
   const [testsMessage, setTestsMessage] = useState('No test file available')
   const [pathOptions, setPathOptions] = useState([''])
   let [allTests, setAllTests] = useState([])
   let [selectedTests, setSelectedTests] = useState([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
+  const [readyTestsNumber, setReadyTestsNumber] = useState(0)
+  const [runningTestsNumber, setRunningTestsNumber] = useState(0)
+  const [hasBeenStopped, setHasBeenStopped] = useState(false)
+  
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -198,27 +205,23 @@ export const SolidityUnitTesting = (props: any) => {
 
   const toggleCheckbox = (eChecked: any, test:any) => {
     console.log('toggleCheckbox--->', test)
-    // if (!this.data.selectedTests) {
-    //   this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
-    // }
-    // let selectedTests = this.data.selectedTests
-    // selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
-    // this.data.selectedTests = selectedTests
-    // const checkAll = this._view.el.querySelector('[id="checkAllTests"]')
-    // const runBtn = document.getElementById('runTestsTabRunAction')
+    if (!selectedTests) {
+      // this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
+    }
+    let selectedTestsList: any = selectedTests
+    selectedTests = eChecked ? [...selectedTestsList, test] : selectedTestsList.filter((el:any) => el !== test)
 
-    // if (eChecked) {
-    //   checkAll.checked = true
-    //   const stopBtnInnerText = document.getElementById('runTestsTabStopAction').innerText
-    //   if ((this.readyTestsNumber === this.runningTestsNumber || this.hasBeenStopped) && stopBtnInnerText.trim() === 'Stop') {
-    //     runBtn.removeAttribute('disabled')
-    //     runBtn.setAttribute('title', 'Run tests')
-    //   }
-    // } else if (!selectedTests.length) {
-    //   checkAll.checked = false
-    //   runBtn.setAttribute('disabled', 'disabled')
-    //   runBtn.setAttribute('title', 'No test file selected')
-    // }
+    if (eChecked) {
+      setCheckSelectAll(true)
+      if ((readyTestsNumber === runningTestsNumber || hasBeenStopped) && stopButtonLabel.trim() === 'Stop') {
+        setDisableRunButton(false)
+        setRunButtonTitle('Run tests')
+      }
+    } else if (!selectedTests.length) {
+      setCheckSelectAll(false)
+      setDisableRunButton(true)
+      setRunButtonTitle('No test file selected')
+    }
   }
 
   const checkAll = (event: any) => {
@@ -327,7 +330,7 @@ export const SolidityUnitTesting = (props: any) => {
             </button>
             <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
               <span className="fas fa-stop ml-2"></span>
-              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
+              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
             </button>
           </div>
           <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
