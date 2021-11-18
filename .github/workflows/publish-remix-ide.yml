@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - run: npm install
+     - run: cd..
      - run: ls
      - run: pwd
      - run: nx build remix-ide --with-deps
