@@ -35,6 +35,7 @@ jobs:
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
+      - run: npm run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -86,7 +87,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm run build:libs
       - run: cd dist/libs/remix-tests && npm install
       - run: npm run test:libs
 
