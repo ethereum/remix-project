@@ -1,13 +1,7 @@
-import { RunTabState } from '../reducers/runTab'
-import { Blockchain } from './blockchain'
-
-export interface Udapp {
-  onReady: (api: RunTabState) => void,
-  REACT_API: RunTabState,
-  blockchain: Blockchain
-}
+/* eslint-disable no-undef */
+import { RunTab } from './run-tab'
 export interface RunTabProps {
-  plugin: Udapp
+  plugin: RunTab
 }
 
 export interface SettingsProps {
@@ -25,7 +19,7 @@ export interface SettingsProps {
   sendUnit: string,
   gasLimit: number,
   setGasFee: (value: number) => void,
-  setExecEnv: (env: string) => void,
+  setWeb3Endpoint: (endpoint: string) => void,
   personalMode: boolean,
   networkName: string,
   providers: {
@@ -41,11 +35,12 @@ export interface SettingsProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }) => void
+  setExecutionContext: (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => void,
+  externalEndpoint: string
 }
 
 export interface EnvironmentProps {
-  setExecEnv: (env: string) => void,
+  setWeb3Endpoint: (endpoint: string) => void,
   selectedEnv: string,
   providers: {
     providerList: {
@@ -60,7 +55,8 @@ export interface EnvironmentProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }) => void
+  setExecutionContext: (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => void,
+  externalEndpoint: string
 }
 
 export interface NetworkProps {

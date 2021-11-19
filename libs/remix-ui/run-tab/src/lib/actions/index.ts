@@ -3,12 +3,12 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { shortenAddress } from '@remix-ui/helper'
-import { addProvider, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
-import { Udapp } from '../types'
+import { addProvider, displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
+import { RunTab } from '../types/run-tab'
 
-let plugin: Udapp, dispatch: React.Dispatch<any>
+let plugin: RunTab, dispatch: React.Dispatch<any>
 
-export const initRunTab = (udapp: Udapp) => async (reducerDispatch: React.Dispatch<any>) => {
+export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
   setupEvents()
@@ -80,7 +80,7 @@ const setupEvents = () => {
 }
 
 const updateAccountBalances = () => {
-  const accounts = runTab.accounts.loadedAccounts
+  const accounts = plugin.REACT_API.accounts.loadedAccounts
 
   Object.keys(accounts).map((value) => {
     plugin.blockchain.getBalanceInEther(value, (err, balance) => {
@@ -119,15 +119,15 @@ const fillAccountsList = async () => {
   }
 }
 
-const setAccount = (account: string) => {
+export const setAccount = (account: string) => {
   dispatch(setSelectedAccount(account))
 }
 
-const setUnit = (unit: 'ether' | 'finney' | 'gwei' | 'wei') => {
+export const setUnit = (unit: 'ether' | 'finney' | 'gwei' | 'wei') => {
   dispatch(setSendUnit(unit))
 }
 
-const setGasFee = (value: number) => {
+export const setGasFee = (value: number) => {
   dispatch(setGasLimit(value))
 }
 
@@ -185,21 +185,20 @@ const removeExternalProvider = (name) => {
   dispatch(removeProvider(name))
 }
 
-const setProviderFromEndpoint = (executionContext: { context: string, fork: string }) => {
-  plugin.blockchain.setProviderFromEndpoint(runTab.externalEndpoint, executionContext, (alertMsg) => {
-    // if (alertMsg) addTooltip(alertMsg)
-    setFinalContext()
-  })
-}
-
-const setExecutionContext = (executionContext: { context: string, fork: string }) => {
+// eslint-disable-next-line no-undef
+export const setExecutionContext = (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => {
   plugin.blockchain.changeExecutionContext(executionContext, () => {
-    executionContextModal(executionContext)
+    dispatch(displayNotification('External node request', displayContent, 'OK', 'Cancel', () => {
+      plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
+        // if (alertMsg) addTooltip(alertMsg)
+        setFinalContext()
+      })
+    }, () => { setFinalContext() }))
   }, (alertMsg) => {
     // addTooltip(alertMsg)
   }, setFinalContext())
 }
 
-const setWeb3Endpoint = (endpoint: string) => {
+export const setWeb3Endpoint = (endpoint: string) => {
   dispatch(setExternalEndpoint(endpoint))
 }
