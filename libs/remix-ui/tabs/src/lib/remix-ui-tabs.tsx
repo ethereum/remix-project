@@ -22,14 +22,13 @@ export const TabsUI = (props: TabsUIProps) => {
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
-  
+
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
   useEffect(() => {
     if (props.tabs[selectedIndex]) {
       tabsRef.current[selectedIndex].scrollIntoView({ behavior: 'smooth', block: 'center' })
-      console.log("usesc")
     }
   }, [selectedIndex])
 
@@ -57,13 +56,13 @@ export const TabsUI = (props: TabsUIProps) => {
     setSelectedIndex(index)
   }
 
-  function transformScroll(event) {
+  const transformScroll = (event) => {
     if (!event.deltaY) {
-      return;
+      return
     }
-  
-    event.currentTarget.scrollLeft += event.deltaY + event.deltaX;
-    event.preventDefault();
+
+    event.currentTarget.scrollLeft += event.deltaY + event.deltaX
+    event.preventDefault()
   }
 
   useEffect(() => {
