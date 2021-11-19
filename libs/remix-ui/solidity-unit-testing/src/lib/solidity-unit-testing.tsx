@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
 import { TestTabLogic } from './logic/testTabLogic'
 var async = require('async')
+var ReactDOM = require('react-dom');
 
 import './css/style.css'
 
@@ -231,23 +232,24 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const checkAll = (event: any) => {
-    console.log('checkAll --event-->', event)
-
-    // const checkBoxes = this._view.el.querySelectorAll('.singleTest')
-    // const checkboxesLabels = this._view.el.querySelectorAll('.singleTestLabel')
-    // // checks/unchecks all
-    // for (let i = 0; i < checkBoxes.length; i++) {
-    //   checkBoxes[i].checked = event.target.checked
-    //   this.toggleCheckbox(event.target.checked, checkboxesLabels[i].innerText)
-    // }
+    console.log('checkAll --event.target.checked-->', event.target.checked)
+    const checkBoxes = document.getElementsByClassName('singleTest')
+    const checkboxesLabels = document.getElementsByClassName('singleTestLabel')
+    // checks/unchecks all
+    for (let i = 0; i < checkBoxes.length; i++) {
+      if(event.target.checked) checkBoxes[i].setAttribute('checked', 'checked')
+      else checkBoxes[i].removeAttribute('checked')
+      toggleCheckbox(event.target.checked, checkboxesLabels[i].innerHTML)
+    }
   }
 
   const createSingleTest = (testFile: string) => {
     const checked = true
+    const elemId = `singleTest${testFile}`
     return (
       <div className="d-flex align-items-center py-1">
-        <input className="singleTest" id="singleTest${testFile}" onChange={(e) => toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked={checked}/>
-        <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor="singleTest${testFile}">{testFile}</label>
+        <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked={checked}/>
+        <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFile}</label>
       </div>
     )
   }
