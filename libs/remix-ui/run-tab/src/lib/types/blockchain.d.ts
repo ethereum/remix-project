@@ -19,7 +19,7 @@ export class Blockchain extends Plugin<any, any> {
     providers: {};
     getCurrentProvider(): any;
     /** Return the list of accounts */
-    getAccounts(cb: any): any;
+    getAccounts(cb?: any): any;
     deployContractAndLibraries(selectedContract: any, args: any, contractMetadata: any, compilerContracts: any, callbacks: any, confirmationCb: any): void;
     deployContractWithLibrary(selectedContract: any, args: any, contractMetadata: any, compilerContracts: any, callbacks: any, confirmationCb: any): void;
     createContract(selectedContract: any, data: any, continueCb: any, promptCb: any, confirmationCb: any, finalCb: any): void;

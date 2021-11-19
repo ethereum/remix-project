@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export const fetchAccountsListRequest = () => {
   return {
     type: 'FETCH_ACCOUNTS_LIST_REQUEST',
@@ -82,7 +83,7 @@ export const removeProvider = (provider: string) => {
   }
 }
 
-export const displayNotification = (title: string, message: string, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
+export const displayNotification = (title: string, message: string | JSX.Element, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
   return {
     type: 'DISPLAY_NOTIFICATION',
     payload: { title, message, labelOk, labelCancel, actionOk, actionCancel }
