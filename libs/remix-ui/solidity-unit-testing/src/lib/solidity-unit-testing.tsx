@@ -47,11 +47,11 @@ export const SolidityUnitTesting = (props: any) => {
   const clearResults = () => {
     console.log('clearResults--->')
     // yo.update(this.resultStatistics, yo`<span></span>`)
-    // this.call('editor', 'clearAnnotations')
+    testTab.call('editor', 'clearAnnotations')
     // this.testsOutput.innerHTML = ''
     // this.testsOutput.hidden = true
-    // this.testsExecutionStopped.hidden = true
-    // this.testsExecutionStoppedError.hidden = true
+    setTestsExecutionStoppedHidden(true)
+    setTestsExecutionStoppedErrorHidden(true)
   }
 
    const updateForNewCurrent = async (file = null) => {
@@ -189,10 +189,8 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateRunAction = (currentFile : any = null) => {
-
     console.log('updateRunAction --currentFile-->', currentFile)
-    // const isSolidityActive = this.appManager.isActive('solidity')
-    const isSolidityActive = true
+    const isSolidityActive = testTab.appManager.isActive('solidity')
     if (!isSolidityActive || !listTests().length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
@@ -207,7 +205,6 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('stopTests')
     setHasBeenStopped(true)
     setStopButtonLabel('Stopping')
-    const stopBtn = document.getElementById('runTestsTabStopAction')
     setDisableStopButton(true)
     setDisableRunButton(true)
   }
