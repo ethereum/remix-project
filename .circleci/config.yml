@@ -121,7 +121,8 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
-      - run: ./apps/remix-ide/ci/browser_tests_chrome_1.sh
+      - run: export BROWSER="chrome" 
+      - run: ./apps/remix-ide/ci/browser_test.sh
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -158,7 +159,8 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
-      - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
+      - run: export BROWSER="firefox"    
+      - run: ./apps/remix-ide/ci/browser_test.sh
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
