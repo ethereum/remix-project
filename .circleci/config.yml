@@ -26,10 +26,10 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package.json" }}
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run: npm install
       - save_cache:
-          key: v1-deps-{{ checksum "package.json" }}
+          key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
       - run: npm run downloadsolc_assets
@@ -60,7 +60,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package.json" }}
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
       - run:
           name: Remix Libs Linting
           command: ./apps/remix-ide/ci/lint.sh
@@ -86,7 +87,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package.json" }}
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm i
       - run: cd dist/libs/remix-tests && npm install
       - run: npm run test:libs
 
@@ -115,7 +117,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package.json" }}
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
       - run: npm run selenium-install
       - run:
           name: Start Selenium
@@ -153,7 +156,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package.json" }}
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
       - run: npm run selenium-install
       - run:
           name: Start Selenium
@@ -191,7 +195,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package.json" }}
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
       - run: npm run selenium-install
       - run:
           name: Start Selenium
