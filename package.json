@@ -59,6 +59,7 @@
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
     "build:production": "NODE_ENV=production nx build remix-ide --skip-nx-cache",
     "serve:production": "npx http-server ./dist/apps/remix-ide",
+    "select_test": "sh apps/remix-ide-e2e/src/runtests.sh",
     "group_test": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/${npm_config_test}_group${npm_config_group}.test.js --env=${npm_config_env}",
     "nightwatch_parallel": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome,firefox",
     "nightwatch_local_firefox": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=firefox",

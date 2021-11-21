@@ -64,6 +64,14 @@ module.exports = {
       }
     },
 
+    firefoxDesktop: {
+      desiredCapabilities: {
+        browserName: 'firefox',
+        javascriptEnabled: true,
+        acceptSslCerts: true
+      }
+    },
+
     firefox: {
       desiredCapabilities: {
         browserName: 'firefox',
