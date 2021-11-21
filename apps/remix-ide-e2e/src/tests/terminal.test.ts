@@ -8,7 +8,7 @@ module.exports = {
     init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
   },
 
-  'Should execution a simple console command #group1': function (browser: NightwatchBrowser) {
+  'Should execution a simple console command #group1 #group999': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
       .executeScript('console.log(1 + 1)')
