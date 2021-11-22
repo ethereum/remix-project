@@ -249,21 +249,17 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const checkAll = (event: any) => {
-    console.log('checkAll --event.target.checked-->', event.target.checked)
-    const checkBoxes = document.getElementsByClassName('singleTest')
-    const checkboxesLabels = document.getElementsByClassName('singleTestLabel')
-    // checks/unchecks all
-    for (let i = 0; i < checkBoxes.length; i++) {
-      if(event.target.checked) checkBoxes[i].setAttribute('checked', 'checked')
-      else checkBoxes[i].removeAttribute('checked')
-      toggleCheckbox(event.target.checked, checkboxesLabels[i].innerHTML)
-    }
+    testFiles.forEach((testFileObj) =>  testFileObj.checked = event.target.checked)
+    setTestFiles(testFiles)
+    setCheckSelectAll(event.target.checked)
   }
 
   const updateTestFileList = () => {
     console.log('updateTestFileList--tests->', allTests)
-    if(allTests?.length) 
+    if(allTests?.length) {
       testFiles =  allTests.map((testFile) => { return {'fileName': testFile, 'checked': true }})
+      setCheckSelectAll(true)
+    }
     else 
       testFiles = []
     setTestFiles(testFiles)
@@ -360,7 +356,7 @@ export const SolidityUnitTesting = (props: any) => {
             const elemId = `singleTest${testFileObj.fileName}`
             return (
               <div className="d-flex align-items-center py-1">
-                <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, testFileObj.fileName)} type="checkbox" checked={testFileObj.fileName}/>
+                <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, testFileObj.fileName)} type="checkbox" checked={testFileObj.checked}/>
                 <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
               </div>
             )
