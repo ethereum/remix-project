@@ -38,7 +38,8 @@ export interface RunTabState {
     labelOk: string,
     labelCancel: string
   },
-  externalEndpoint: string
+  externalEndpoint: string,
+  popup: string
 }
 
 export const runTabInitialState: RunTabState = {
@@ -96,7 +97,8 @@ export const runTabInitialState: RunTabState = {
     labelOk: '',
     labelCancel: ''
   },
-  externalEndpoint: 'http://127.0.0.1:8545'
+  externalEndpoint: 'http://127.0.0.1:8545',
+  popup: ''
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -302,6 +304,22 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         externalEndpoint: payload
+      }
+    }
+
+    case 'DISPLAY_POPUP_MESSAGE': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        popup: payload
+      }
+    }
+
+    case 'HIDE_POPUP_MESSAGE': {
+      return {
+        ...state,
+        popup: ''
       }
     }
 

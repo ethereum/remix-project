@@ -102,3 +102,16 @@ export const setExternalEndpoint = (endpoint: string) => {
     payload: endpoint
   }
 }
+
+export const displayPopUp = (message: string) => {
+  return {
+    type: 'DISPLAY_POPUP_MESSAGE',
+    payload: message
+  }
+}
+
+export const hidePopUp = () => {
+  return {
+    type: 'HIDE_POPUP_MESSAGE'
+  }
+}

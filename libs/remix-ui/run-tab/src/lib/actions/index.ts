@@ -3,7 +3,7 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { shortenAddress } from '@remix-ui/helper'
-import { addProvider, displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
+import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, hidePopUp, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
 import { RunTab } from '../types/run-tab'
 
 let plugin: RunTab, dispatch: React.Dispatch<any>
@@ -115,7 +115,7 @@ const fillAccountsList = async () => {
       dispatch(fetchAccountsListFailed(e.message))
     })
   } catch (e) {
-    // addTooltip(`Cannot get account list: ${e}`)
+    dispatch(displayPopUp(`Cannot get account list: ${e}`))
   }
 }
 
@@ -158,7 +158,7 @@ const setFinalContext = () => {
   const value = _getProviderDropdownValue()
 
   setExecEnv(value)
-  // this.event.trigger('clearInstance', [])
+  // this.event.trigger('clearInstance', []) //check cleaIinstance event in run-tab.js
 }
 
 const _getProviderDropdownValue = (): string => {
@@ -178,7 +178,7 @@ const setNetworkNameFromProvider = (networkName: string) => {
 
 const addExternalProvider = (network) => {
   dispatch(addProvider(network))
-  // addTooltip(yo`<span><b>${network.name}</b> provider added</span>`)
+  dispatch(displayPopUp(`${network.name} provider added`))
 }
 
 const removeExternalProvider = (name) => {
@@ -190,15 +190,19 @@ export const setExecutionContext = (executionContext: { context: string, fork: s
   plugin.blockchain.changeExecutionContext(executionContext, () => {
     dispatch(displayNotification('External node request', displayContent, 'OK', 'Cancel', () => {
       plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
-        // if (alertMsg) addTooltip(alertMsg)
+        if (alertMsg) dispatch(displayPopUp(alertMsg))
         setFinalContext()
       })
     }, () => { setFinalContext() }))
   }, (alertMsg) => {
-    // addTooltip(alertMsg)
+    dispatch(displayPopUp(alertMsg))
   }, setFinalContext())
 }
 
 export const setWeb3Endpoint = (endpoint: string) => {
   dispatch(setExternalEndpoint(endpoint))
+}
+
+export const clearPopUp = async () => {
+  dispatch(hidePopUp())
 }
