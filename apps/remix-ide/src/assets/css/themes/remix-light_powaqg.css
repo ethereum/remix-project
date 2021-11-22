@@ -1,7 +1,7 @@
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
-  --purple: #6f42c1;
+  --purple: #d145a7;
   --pink: #e83e8c;
   --red: #dc3545;
   --orange: #fd7e14;
@@ -13,13 +13,14 @@
   --gray: #6c757d;
   --gray-dark: #343a40;
   --primary: #007aa6;
-  --secondary: #a8b3bc;
+  --secondary: #b3bcc483;
   --success: #32ba89;
   --info: #007aa6;
   --warning: #c97539;
   --danger: #b84040;
   --light: #fff;
   --dark: #f8fafe;
+  --text: #3b445e;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
