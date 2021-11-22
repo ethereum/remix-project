@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
 // import { TestTabLogic } from './logic/testTabLogic'
 var async = require('async')
-var ReactDOM = require('react-dom');
+import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 
 import './css/style.css'
 
@@ -42,6 +42,7 @@ export const SolidityUnitTesting = (props: any) => {
   let [runningTestsNumber, setRunningTestsNumber] = useState(0)
   let [hasBeenStopped, setHasBeenStopped] = useState(false)
   let [areTestsRunning, setAreTestsRunning] = useState(false)
+  let [isDebugging, setIsDebugging] = useState(false)
   
   
   
@@ -176,6 +177,234 @@ export const SolidityUnitTesting = (props: any) => {
     setPathOptions(pathOptions)
   }
 
+  const testCallback = (result, runningTests) => {
+    console.log('result---in testCallback->', result)
+    // this.testsOutput.hidden = false
+    // let debugBtn = yo``
+    // if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
+    //   const { web3, debugTxHash } = result
+    //   debugBtn = yo`<div id=${result.value.replaceAll(' ', '_')} class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${() => this.startDebug(debugTxHash, web3)}>
+    //     <i class="fas fa-bug"></i>
+    //   </div>`
+    //   debugBtn.style.cursor = 'pointer'
+    // }
+    // if (result.type === 'contract') {
+    //   this.testSuite = result.value
+    //   if (this.testSuites) {
+    //     this.testSuites.push(this.testSuite)
+    //   } else {
+    //     this.testSuites = [this.testSuite]
+    //   }
+    //   this.rawFileName = result.filename
+    //   this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
+    //   this.outputHeader = yo`
+    //     <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
+    //       <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
+    //     </div>
+    //   `
+    //   this.testsOutput.appendChild(this.outputHeader)
+    // } else if (result.type === 'testPass') {
+    //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+    //   this.testsOutput.appendChild(yo`
+    //     <div
+    //       id="${this.runningTestFileName}"
+    //       data-id="testTabSolidityUnitTestsOutputheader"
+    //       class="${css.testPass} ${css.testLog} bg-light mb-2 px-2 text-success border-0"
+    //       onclick=${() => this.discardHighlight()}
+    //     >
+    //       <div class="d-flex my-1 align-items-start justify-content-between">
+    //         <span style="margin-block: auto" > ✓ ${result.value}</span>
+    //         ${debugBtn}
+    //       </div>
+    //     </div>
+    //   `)
+    // } else if (result.type === 'testFailure') {
+    //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+    //   if (!result.assertMethod) {
+    //     this.testsOutput.appendChild(yo`
+    //     <div
+    //       class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
+    //       id="UTContext${result.context}"
+    //       onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
+    //     >
+    //       <div class="d-flex my-1 align-items-start justify-content-between">
+    //         <span> ✘ ${result.value}</span>
+    //         ${debugBtn}
+    //       </div>
+    //       <span class="text-dark">Error Message:</span>
+    //       <span class="pb-2 text-break">"${result.errMsg}"</span>
+    //     </div>
+    //   `)
+    //   } else {
+    //     const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
+    //     const method = result.assertMethod === 'ok' ? '' : result.assertMethod
+    //     const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
+    //     this.testsOutput.appendChild(yo`
+    //       <div
+    //         class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
+    //         id="UTContext${result.context}"
+    //         onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
+    //       >
+    //         <div class="d-flex my-1 align-items-start justify-content-between">  
+    //           <span> ✘ ${result.value}</span>
+    //           ${debugBtn}
+    //         </div> 
+    //         <span class="text-dark">Error Message:</span>
+    //         <span class="pb-2 text-break">"${result.errMsg}"</span>
+    //         <span class="text-dark">Assertion:</span>
+    //         <div class="d-flex flex-wrap">
+    //           <span>Expected value should be</span>
+    //           <div class="mx-1 font-weight-bold">${method}</div>
+    //           <div>${preposition} ${expected}</div>
+    //         </div>
+    //         <span class="text-dark">Received value:</span>
+    //         <span>${result.returned}</span>
+    //         <span class="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+    //       </div>
+    //     `)
+    //   }
+    // } else if (result.type === 'logOnly') {
+    //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+    // }
+  }
+
+  const resultsCallback = (_err, result, cb) => {
+    // total stats for the test
+    // result.passingNum
+    // result.failureNum
+    // result.timePassed
+    cb()
+  }
+
+  const updateFinalResult = (_errors, result, filename) => {
+    // ++this.readyTestsNumber
+    // this.testsOutput.hidden = false
+    // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
+    //   this.testCallback({ type: 'contract', filename })
+    //   this.currentErrors = _errors.errors
+    //   this.setHeader(false)
+    // }
+    // if (_errors && _errors.errors) {
+    //   _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity, errorType: err.type }))
+    // } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
+    //   _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity, errorType: err.type }))
+    // } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
+    //   // To track error like this: https://github.com/ethereum/remix/pull/1438
+    //   this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, { type: 'error' })
+    // }
+    // yo.update(this.resultStatistics, this.createResultLabel())
+    // if (result) {
+    //   const totalTime = parseFloat(result.totalTime).toFixed(2)
+
+    //   if (result.totalPassing > 0 && result.totalFailing > 0) {
+    //     this.testsOutput.appendChild(yo`
+    //       <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+    //         <span class="font-weight-bold">Result for ${filename}</span>
+    //         <span class="text-success">Passing: ${result.totalPassing}</span>
+    //         <span class="text-danger">Failing: ${result.totalFailing}</span>
+    //         <span>Total time: ${totalTime}s</span>
+    //       </div>
+    //     `)
+    //   } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
+    //     this.testsOutput.appendChild(yo`
+    //       <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+    //         <span class="font-weight-bold">Result for ${filename}</span>
+    //         <span class="text-success">Passing: ${result.totalPassing}</span>
+    //         <span>Total time: ${totalTime}s</span>
+    //       </div>
+    //     `)
+    //   } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
+    //     this.testsOutput.appendChild(yo`
+    //       <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+    //         <span class="font-weight-bold">Result for ${filename}</span>
+    //         <span class="text-danger">Failing: ${result.totalFailing}</span>
+    //         <span>Total time: ${totalTime}s</span>
+    //       </div>
+    //     `)
+    //   }
+    //   // fix for displaying right label for multiple tests (testsuites) in a single file
+    //   this.testSuites.forEach(testSuite => {
+    //     this.testSuite = testSuite
+    //     this.runningTestFileName = this.cleanFileName(filename, this.testSuite)
+    //     this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
+    //     this.setHeader(true)
+    //   })
+
+    //   result.errors.forEach((error, index) => {
+    //     this.testSuite = error.context
+    //     this.runningTestFileName = this.cleanFileName(filename, error.context)
+    //     this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
+    //     const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
+    //     if (!isFailingLabel) this.setHeader(false)
+    //   })
+    //   this.testsOutput.appendChild(yo`
+    //     <div>
+    //       <p class="text-info mb-2 border-top m-0"></p>
+    //     </div>
+    //   `)
+    // }
+    // if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
+    //   // if all tests has been through before stopping no need to print this.
+    //   this.testsExecutionStopped.hidden = false
+    // }
+    // if (_errors) this.testsExecutionStoppedError.hidden = false
+    // if (_errors || this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
+    //   // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
+    //   const stopBtn = document.getElementById('runTestsTabStopAction')
+    //   stopBtn.setAttribute('disabled', 'disabled')
+    //   const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
+    //   stopBtnLabel.innerText = 'Stop'
+    //   if (this.data.selectedTests.length !== 0) {
+    //     const runBtn = document.getElementById('runTestsTabRunAction')
+    //     runBtn.removeAttribute('disabled')
+    //   }
+    //   this.areTestsRunning = false
+    // }
+  }
+
+  const runTest = (testFilePath, callback) => {
+    console.log('runTest----->', testFilePath, hasBeenStopped)
+    isDebugging = false
+    if (hasBeenStopped) {
+      // this.updateFinalResult()
+      return
+    }
+    // this.resultStatistics.hidden = false
+    testTab.fileManager.readFile(testFilePath).then((content) => {
+      const runningTests = {}
+      runningTests[testFilePath] = { content }
+      const { currentVersion, evmVersion, optimize, runs, isUrl } = testTab.compileTab.getCurrentCompilerConfig()
+      const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
+      const compilerConfig = {
+        currentCompilerUrl,
+        evmVersion,
+        optimize,
+        usingWorker: canUseWorker(currentVersion),
+        runs
+      }
+      const deployCb = async (file, contractAddress) => {
+        const compilerData = await testTab.call('compilerArtefacts', 'getCompilerAbstract', file)
+        await testTab.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilerData)
+      }
+      testTab.testRunner.runTestSources(
+        runningTests,
+        compilerConfig,
+        (result) => testCallback(result, runningTests),
+        (_err, result, cb) => resultsCallback(_err, result, cb),
+        deployCb,
+        (error, result) => {
+          updateFinalResult(error, result, testFilePath)
+          callback(error)
+        }, (url, cb) => {
+          return testTab.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+        }, { testFilePath }
+      )
+    }).catch((error) => {
+      console.log('Error in runTest---->', error)
+      if (error) return // eslint-disable-line
+    })
+  }
+
   const runTests = () => {
     console.log('runtests--->')
     areTestsRunning = true
@@ -192,7 +421,7 @@ export const SolidityUnitTesting = (props: any) => {
     // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
     async.eachOfSeries(tests, (value: any, key: any, callback: any) => {
       if (hasBeenStopped) return
-      // runTest(value, callback)
+      runTest(value, callback)
     })
   }
 
@@ -230,8 +459,8 @@ export const SolidityUnitTesting = (props: any) => {
     setSelectedTests(selectedTests)
     if (eChecked) {
       setCheckSelectAll(true)
+      setDisableRunButton(false)
       if ((readyTestsNumber === runningTestsNumber || hasBeenStopped) && stopButtonLabel.trim() === 'Stop') {
-        setDisableRunButton(false)
         setRunButtonTitle('Run tests')
       }
     } else if (!selectedTests.length) {
