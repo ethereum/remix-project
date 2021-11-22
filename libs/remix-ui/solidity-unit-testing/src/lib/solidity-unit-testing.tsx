@@ -324,7 +324,10 @@ export const SolidityUnitTesting = (props: any) => {
               data-id="testTabGenerateTestFile"
               title="Generate sample test file."
               disabled={disableGenerateButton}
-              onClick={testTabLogic.generateTestFile.bind(testTabLogic)}
+              onClick={() => {
+                testTabLogic.generateTestFile()
+                updateForNewCurrent()
+              }}
             >
               Generate
             </button>
