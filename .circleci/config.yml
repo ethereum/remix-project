@@ -124,6 +124,7 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
+      - run: npm run downloadsolc_assets
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
       - store_test_results:
           path: ./reports/tests
@@ -162,6 +163,7 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
+      - run: npm run downloadsolc_assets
       - run: ./apps/remix-ide/ci/browser_test.sh firefox
       - store_test_results:
           path: ./reports/tests
@@ -200,6 +202,7 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
+      - run: npm run downloadsolc_assets
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
           path: ./reports/tests
