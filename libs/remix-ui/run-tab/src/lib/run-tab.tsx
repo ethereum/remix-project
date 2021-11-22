@@ -9,7 +9,7 @@ import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
 import { Modal, RunTabProps } from './types'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
-import { initRunTab, setAccount, setUnit, setGasFee, setExecutionContext, setWeb3Endpoint } from './actions'
+import { initRunTab, setAccount, setUnit, setGasFee, setExecutionContext, setWeb3Endpoint, clearPopUp } from './actions'
 import './css/run-tab.css'
 
 export function RunTabUI (props: RunTabProps) {
@@ -24,6 +24,8 @@ export function RunTabUI (props: RunTabProps) {
     cancelFn: () => {}
   })
   const [modals, setModals] = useState<Modal[]>([])
+  const [focusToaster, setFocusToaster] = useState<string>('')
+  const [toasters, setToasters] = useState<string[]>([])
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = { runTab }
 
@@ -62,6 +64,24 @@ export function RunTabUI (props: RunTabProps) {
     }
   }, [runTab.notification])
 
+  useEffect(() => {
+    if (toasters.length > 0) {
+      setFocusToaster(() => {
+        return toasters[0]
+      })
+      const toasterList = toasters.slice()
+
+      toasterList.shift()
+      setToasters(toasterList)
+    }
+  }, [toasters])
+
+  useEffect(() => {
+    if (runTab.popup) {
+      toast(runTab.popup)
+    }
+  }, [runTab.popup])
+
   // eslint-disable-next-line no-undef
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals(modals => {
@@ -73,6 +93,18 @@ export function RunTabUI (props: RunTabProps) {
   const handleHideModal = () => {
     setFocusModal(modal => {
       return { ...modal, hide: true, message: null }
+    })
+  }
+
+  const handleToaster = () => {
+    setFocusToaster('')
+    clearPopUp()
+  }
+
+  const toast = (toasterMsg: string) => {
+    setToasters(messages => {
+      messages.push(toasterMsg)
+      return [...messages]
     })
   }
 
@@ -101,7 +133,7 @@ export function RunTabUI (props: RunTabProps) {
         </div>
       </div>
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
-      {/* <Toaster message={focusToaster} handleHide={handleToaster} /> */}
+      <Toaster message={focusToaster} handleHide={handleToaster} />
     </Fragment>
   )
 }
