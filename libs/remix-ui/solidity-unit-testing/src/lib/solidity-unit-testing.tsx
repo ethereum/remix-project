@@ -27,16 +27,14 @@ export const SolidityUnitTesting = (props: any) => {
   const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
   const [stopButtonLabel, setStopButtonLabel] = useState('Stop')
   const [checkSelectAll, setCheckSelectAll] = useState(true)
-  const [checkSingleTest, setCheckSingleTest] = useState(true)
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
 
-  // const [testsMessage, setTestsMessage] = useState('No test file available')
-  var [testFiles, setTestFiles] = useState<TestObject[]>([])
+  let [testFiles, setTestFiles] = useState<TestObject[]>([])
   const [pathOptions, setPathOptions] = useState([''])
   let [allTests, setAllTests] = useState([])
-  let [selectedTests, setSelectedTests] = useState([])
+  let [selectedTests, setSelectedTests] = useState<string[]>([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
 
@@ -78,7 +76,7 @@ export const SolidityUnitTesting = (props: any) => {
     allTests = []
     updateTestFileList()
     clearResults()
-    if (!areTestsRunning) updateRunAction(file)
+    // if (!areTestsRunning) updateRunAction(file)
     try {
       testTabLogic.getTests((error: any, tests: any) => {
         // if (error) return tooltip(error)
@@ -201,7 +199,7 @@ export const SolidityUnitTesting = (props: any) => {
   const updateRunAction = (currentFile : any = null) => {
     console.log('updateRunAction --currentFile-->', currentFile)
     const isSolidityActive = testTab.appManager.isActive('solidity')
-    if (!isSolidityActive || !testFiles?.length) {
+    if (!isSolidityActive || !selectedTests?.length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         setRunButtonTitle('No solidity file selected')
@@ -219,22 +217,17 @@ export const SolidityUnitTesting = (props: any) => {
     setDisableRunButton(true)
   }
 
-  const toggleCheckbox = (eChecked: any, test:any) => {
-    console.log('toggleCheckbox--->', test, eChecked)
-    console.log('toggleCheckbox--selectedTests1->', selectedTests)
-    if (!selectedTests) {
-      // this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
-    }
-    let selectedTestsList: any = selectedTests
-    selectedTests = eChecked ? [...selectedTestsList, test] : selectedTestsList.filter((el:any) => el !== test)
-    setSelectedTests(selectedTests)
-    // console.log('toggleCheckbox--selectedTests2->', selectedTests)
+  const getCurrentSelectedTests = () => {
+    let selectedTestsList: TestObject[] = testFiles.filter(testFileObj => testFileObj.checked)
+    return selectedTestsList.map(testFileObj => testFileObj.fileName)
+  }
 
-    // const clickElem = document.getElementById(`singleTest${test}`)
-    // console.log('toggleCheckbox--clickElem->', clickElem, `singleTest${test}`)
-    // if(eChecked) clickElem?.setAttribute('checked', 'checked')
-    // else clickElem?.removeAttribute('checked')
-    
+  const toggleCheckbox = (eChecked: any, index:any) => {
+    testFiles[index].checked = eChecked
+    setTestFiles(testFiles)
+    selectedTests = getCurrentSelectedTests()
+    console.log('selectedTests----->', selectedTests)
+    setSelectedTests(selectedTests)
     if (eChecked) {
       setCheckSelectAll(true)
       if ((readyTestsNumber === runningTestsNumber || hasBeenStopped) && stopButtonLabel.trim() === 'Stop') {
@@ -245,13 +238,21 @@ export const SolidityUnitTesting = (props: any) => {
       setCheckSelectAll(false)
       setDisableRunButton(true)
       setRunButtonTitle('No test file selected')
-    }
+    } else setCheckSelectAll(false)
   }
 
   const checkAll = (event: any) => {
     testFiles.forEach((testFileObj) =>  testFileObj.checked = event.target.checked)
     setTestFiles(testFiles)
     setCheckSelectAll(event.target.checked)
+    if(event.target.checked) {
+      selectedTests = getCurrentSelectedTests()
+      setSelectedTests(selectedTests)
+      setDisableRunButton(false)
+    } else {
+      setSelectedTests([])
+      setDisableRunButton(true)
+    }
   }
 
   const updateTestFileList = () => {
@@ -351,12 +352,12 @@ export const SolidityUnitTesting = (props: any) => {
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
-          <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any) => {
+          <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any, index) => {
             console.log('testFileObj----->', testFileObj)
             const elemId = `singleTest${testFileObj.fileName}`
             return (
               <div className="d-flex align-items-center py-1">
-                <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, testFileObj.fileName)} type="checkbox" checked={testFileObj.checked}/>
+                <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked}/>
                 <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
               </div>
             )
