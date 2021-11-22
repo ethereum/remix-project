@@ -32,9 +32,10 @@ jobs:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+      - run: npm run downloadsolc_assets      
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
-      - run: npm run downloadsolc_assets_dist
+
       - run: npm run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
