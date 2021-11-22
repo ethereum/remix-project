@@ -261,10 +261,11 @@ export const SolidityUnitTesting = (props: any) => {
 
   const updateTestFileList = () => {
     console.log('updateTestFileList--tests->', allTests)
-    if(allTests?.length) {
+    if(allTests?.length) 
       testFiles =  allTests.map((testFile) => { return {'fileName': testFile, 'checked': true }})
-      setTestFiles(testFiles)
-    }
+    else 
+      testFiles = []
+    setTestFiles(testFiles)
   }
 
   const createResultLabel = () => {
