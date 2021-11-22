@@ -32,7 +32,6 @@ jobs:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-      - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: npm run downloadsolc_assets_dist
@@ -125,7 +124,6 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
-      - run: npm run downloadsolc_assets_dist
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
       - store_test_results:
           path: ./reports/tests
