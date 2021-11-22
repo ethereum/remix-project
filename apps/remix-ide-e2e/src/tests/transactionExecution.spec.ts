@@ -137,6 +137,7 @@ module.exports = {
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('*[data-id="deployAndRunClearInstances"]')
   },
 
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal': function (browser: NightwatchBrowser) {
@@ -144,8 +145,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(3)')
-      .click('.instance:nth-of-type(3) > div > button')
+      .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
@@ -158,6 +158,7 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
+      .click('*[data-id="deployAndRunClearInstances"]')
   },
 
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork': function (browser: NightwatchBrowser) {
@@ -165,8 +166,7 @@ module.exports = {
       .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description')
@@ -184,8 +184,7 @@ module.exports = {
     browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(3)')
-      .click('.instance:nth-of-type(3) > div > button')
+      .clickInstance(1)
       .clickFunction('h - transact (not payable)')
       .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
