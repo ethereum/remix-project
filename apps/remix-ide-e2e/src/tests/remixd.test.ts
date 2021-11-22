@@ -131,7 +131,7 @@ function startRemixd (browser: NightwatchBrowser) {
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 
-function runTests(browser: NightwatchBrowser) {
+function runTests (browser: NightwatchBrowser) {
   const browserName = browser.options.desiredCapabilities.browserName
   browser.clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
