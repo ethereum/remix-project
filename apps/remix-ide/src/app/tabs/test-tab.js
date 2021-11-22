@@ -2,6 +2,7 @@
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
+import { TestTabLogic } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 
 import { ViewPlugin } from '@remixproject/engine-web'
 import helper from '../../lib/helper'
@@ -16,7 +17,7 @@ var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
 const _paq = window._paq = window._paq || []
 
-const TestTabLogic = require('./testTab/testTab')
+// const TestTabLogic = require('./testTab/testTab')
 
 const profile = {
   name: 'solidityUnitTesting',
@@ -41,6 +42,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.appManager = appManager
     this.renderer = new Renderer(this)
     this.testRunner = new UnitTestRunner()
+    this.testTabLogic = new TestTabLogic(this.fileManager, helper)
     this.hasBeenStopped = false
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
@@ -61,7 +63,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   onActivationInternal () {
-    this.testTabLogic = new TestTabLogic(this.fileManager)
     this.listenToEvents()
     this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidityUnitTesting',
