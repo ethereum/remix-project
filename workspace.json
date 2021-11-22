@@ -1,5 +1,71 @@
 {
   "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "defaultProject": "remix-ide",
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    }
+  },
   "projects": {
     "remix-ide": {
       "root": "apps/remix-ide",
@@ -1068,87 +1134,79 @@
           }
         }
       }
+    },
+    "remix-ui-main-panel": {
+      "root": "libs/remix-ui/main-panel",
+      "sourceRoot": "libs/remix-ui/main-panel/src",
+      "projectType": "library",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/remix-ui/main-panel",
+            "tsConfig": "libs/remix-ui/main-panel/tsconfig.lib.json",
+            "project": "libs/remix-ui/main-panel/package.json",
+            "entryFile": "libs/remix-ui/main-panel/src/index.ts",
+            "external": ["react/jsx-runtime"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/remix-ui/main-panel/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/remix-ui/main-panel/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-abstract-panel": {
+      "root": "libs/remix-ui/abstract-panel",
+      "sourceRoot": "libs/remix-ui/abstract-panel/src",
+      "projectType": "library",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/remix-ui/abstract-panel",
+            "tsConfig": "libs/remix-ui/abstract-panel/tsconfig.lib.json",
+            "project": "libs/remix-ui/abstract-panel/package.json",
+            "entryFile": "libs/remix-ui/abstract-panel/src/index.ts",
+            "external": ["react/jsx-runtime"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/remix-ui/abstract-panel/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/remix-ui/abstract-panel/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
+      }
     }
   },
-  "remix-ui-editor": {
-    "root": "libs/remix-ui/editor",
-    "sourceRoot": "libs/remix-ui/editor/src",
-    "projectType": "library",
-    "schematics": {},
-    "architect": {
-      "lint": {
-        "builder": "@nrwl/linter:lint",
-        "options": {
-          "linter": "eslint",
-          "babel": true
-        },
-        "component": {
-          "style": "css"
-        },
-        "library": {
-          "style": "css",
-          "linter": "eslint"
-        }
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-      "@nrwl/web": {
-        "application": {
-          "linter": "eslint"
-        }
-      },
-      "@nrwl/node": {
-        "application": {
-          "linter": "eslint"
-        },
-        "library": {
-          "linter": "eslint"
-        }
-      }
-    },
-    "cli": {
-      "defaultCollection": "@nrwl/react"
-    },
-    "schematics": {
-      "@nrwl/workspace": {
-        "library": {
-          "linter": "eslint"
-        }
-      },
-      "@nrwl/cypress": {
-        "cypress-project": {
-          "linter": "eslint"
-        }
-      },
-      "@nrwl/react": {
-        "application": {
-          "style": "css",
-          "linter": "eslint",
-          "babel": true
-        },
-        "component": {
-          "style": "css"
-        },
-        "library": {
-          "style": "css",
-          "linter": "eslint"
-        }
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "defaultProject": "remix-ide"
+  "@nrwl/nx-plugin": {
+    "plugin": {
+      "linter": "eslint"
+    }
+  }
 }
