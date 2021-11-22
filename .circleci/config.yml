@@ -35,6 +35,7 @@ jobs:
       - run: npm run downloadsolc_assets
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
+      - run: npm run downloadsolc_assets_dist
       - run: npm run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
@@ -124,7 +125,7 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
-      - run: npm run downloadsolc_assets
+      - run: npm run downloadsolc_assets_dist
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
       - store_test_results:
           path: ./reports/tests
@@ -163,7 +164,7 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
-      - run: npm run downloadsolc_assets
+      - run: npm run downloadsolc_assets_dist
       - run: ./apps/remix-ide/ci/browser_test.sh firefox
       - store_test_results:
           path: ./reports/tests
@@ -202,7 +203,7 @@ jobs:
           name: Start Selenium
           command: npx selenium-standalone start 
           background: true
-      - run: npm run downloadsolc_assets
+      - run: npm run downloadsolc_assets_dist
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
           path: ./reports/tests

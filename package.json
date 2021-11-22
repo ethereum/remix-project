@@ -55,6 +55,7 @@
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='apps/remix-ide/src/assets/css/font-awesome.min.css' apps/remix-ide/src/assets/css/",
     "downloadsolc_assets": "wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js -O ./apps/remix-ide/src/assets/js/soljson.js && wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js -O ./apps/solidity-compiler/src/assets/js/soljson.js",
+    "downloadsolc_assets_dist": "wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js -O ./dist/apps/remix-ide/assets/js/soljson.js && wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js -O ./dist/apps/solidity-compiler/assets/js/soljson.js",
     "make-mock-compiler": "node apps/remix-ide/ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
     "build:production": "NODE_ENV=production nx build remix-ide --skip-nx-cache",
