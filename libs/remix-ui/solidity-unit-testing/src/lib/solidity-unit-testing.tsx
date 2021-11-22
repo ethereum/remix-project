@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
-import { TestTabLogic } from './logic/testTabLogic'
+// import { TestTabLogic } from './logic/testTabLogic'
 var async = require('async')
 var ReactDOM = require('react-dom');
 
@@ -17,7 +17,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   const {helper, testTab} = props
 
-  const testTabLogic = new TestTabLogic(testTab.fileManager, helper)
+  const { testTabLogic } = testTab
 
   const [defaultPath, setDefaultPath] = useState('tests')
   const [disableCreateButton, setDisableCreateButton] = useState(true)
@@ -106,13 +106,14 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const handleTestDirInput = async (e: any) => {
-    console.log('handleTestDirInput--e-->', e)
+    console.log('handleTestDirInput--e-->', e.target)
 
-    let testDirInput = trimTestDirInput(inputPathValue)
+    let testDirInput = trimTestDirInput(e.target.value)
+    console.log('handleTestDirInput--e-->', testDirInput)
     testDirInput = helper.removeMultipleSlashes(testDirInput)
     if (testDirInput !== '/') testDirInput = helper.removeTrailingSlashes(testDirInput)
+    setInputPathValue(testDirInput)
     if (e.key === 'Enter') {
-      setInputPathValue(testDirInput)
       if (await testTabLogic.pathExists(testDirInput)) {
         testTabLogic.setCurrentPath(testDirInput)
         updateForNewCurrent()
