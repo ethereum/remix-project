@@ -324,10 +324,12 @@ module.exports = {
       .removeFile('tests/ballotFailedDebug_test.sol', 'workspace_new')
   },
 
-  'Basic Solidity Unit tests with local compiler #group5': !function (browser: NightwatchBrowser) {
+  'Basic Solidity Unit tests with local compiler #group6': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('builtin')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentDeactivateButtonsolidityUnitTesting"]')
