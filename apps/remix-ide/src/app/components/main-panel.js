@@ -1,3 +1,7 @@
+/* global Node, requestAnimationFrame */   // eslint-disable-line
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom' // eslint-disable-line
+import { RemixUiMainPanel } from '@remix-ui/main-panel' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
@@ -22,6 +26,7 @@ const profile = {
 export class MainPanel extends AbstractPanel {
   constructor () {
     super(profile)
+    this.element = document.createElement('div')
   }
 
   focus (name) {
@@ -29,10 +34,24 @@ export class MainPanel extends AbstractPanel {
     super.focus(name)
   }
 
+  // onActivation () {
+  //   this.renderComponent()
+  // }
+
   render () {
+    // return this.element
     return yo`
       <div class=${css.pluginsContainer} data-id="mainPanelPluginsContainer" id='mainPanelPluginsContainer-id'>
         ${this.view}
       </div>`
   }
+
+  // renderComponent () {
+  //   ReactDOM.render(
+  //     <RemixUiMainPanel
+  //       plugin={this}
+  //     />,
+  //     this.element
+  //   )
+  // }
 }

@@ -87,9 +87,15 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     props.onReady({
       logHtml: (html) => {
         scriptRunnerDispatch({ type: 'html', payload: { message: [html.innerText] } })
+
+        setTimeout(() => {
+        }, 100)
       },
+
       log: (message) => {
-        scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
+        setTimeout(() => {
+          scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
+        }, 100)
       }
     })
   }, [])
