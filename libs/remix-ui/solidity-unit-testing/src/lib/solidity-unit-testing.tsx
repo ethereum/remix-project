@@ -22,11 +22,13 @@ export const SolidityUnitTesting = (props: any) => {
   const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
   const [stopButtonLabel, setStopButtonLabel] = useState('Stop')
   const [checkSelectAll, setCheckSelectAll] = useState(true)
+  const [checkSingleTest, setCheckSingleTest] = useState(true)
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
 
-  const [testsMessage, setTestsMessage] = useState('No test file available')
+  // const [testsMessage, setTestsMessage] = useState('No test file available')
+  var [testFiles, setTestFiles] = useState([{}])
   const [pathOptions, setPathOptions] = useState([''])
   let [allTests, setAllTests] = useState([])
   let [selectedTests, setSelectedTests] = useState([])
@@ -79,7 +81,7 @@ export const SolidityUnitTesting = (props: any) => {
         allTests = tests
         selectedTests = [...allTests]
         setSelectedTests(tests)
-        updateTestFileList(tests)
+        updateTestFileList()
         // if (!this.testsOutput) return // eslint-disable-line
       })
     } catch (e) {
@@ -192,7 +194,7 @@ export const SolidityUnitTesting = (props: any) => {
   const updateRunAction = (currentFile : any = null) => {
     console.log('updateRunAction --currentFile-->', currentFile)
     const isSolidityActive = testTab.appManager.isActive('solidity')
-    if (!isSolidityActive || !listTests().length) {
+    if (!isSolidityActive || !testFiles.length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         setRunButtonTitle('No solidity file selected')
@@ -211,13 +213,21 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const toggleCheckbox = (eChecked: any, test:any) => {
-    console.log('toggleCheckbox--->', test)
+    console.log('toggleCheckbox--->', test, eChecked)
+    console.log('toggleCheckbox--selectedTests1->', selectedTests)
     if (!selectedTests) {
       // this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
     }
     let selectedTestsList: any = selectedTests
     selectedTests = eChecked ? [...selectedTestsList, test] : selectedTestsList.filter((el:any) => el !== test)
+    setSelectedTests(selectedTests)
+    // console.log('toggleCheckbox--selectedTests2->', selectedTests)
 
+    // const clickElem = document.getElementById(`singleTest${test}`)
+    // console.log('toggleCheckbox--clickElem->', clickElem, `singleTest${test}`)
+    // if(eChecked) clickElem?.setAttribute('checked', 'checked')
+    // else clickElem?.removeAttribute('checked')
+    
     if (eChecked) {
       setCheckSelectAll(true)
       if ((readyTestsNumber === runningTestsNumber || hasBeenStopped) && stopButtonLabel.trim() === 'Stop') {
@@ -243,29 +253,12 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const createSingleTest = (testFile: string) => {
-    const checked = true
-    const elemId = `singleTest${testFile}`
-    return (
-      <div className="d-flex align-items-center py-1">
-        <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked={checked}/>
-        <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFile}</label>
-      </div>
-    )
-  }
-
-  const listTests = () => {
-    console.log('listTests--->', allTests)
-    if (!allTests || !allTests.length) return []
-    return allTests.map(
-      testFile => createSingleTest(testFile)
-    )
-  }
-
-  const updateTestFileList = (tests = []) => {
-    console.log('updateTestFileList--tests->', tests)
-    const testsMsg: any = (tests && tests.length) ? listTests() : 'No test file available'
-    setTestsMessage(testsMsg)
+  const updateTestFileList = () => {
+    console.log('updateTestFileList--tests->', allTests)
+    if(allTests?.length) {
+      testFiles =  allTests.map((testFile) => { return {'fileName': testFile, 'checked': true }})
+      setTestFiles(testFiles)
+    }
   }
 
   const createResultLabel = () => {
@@ -351,7 +344,17 @@ export const SolidityUnitTesting = (props: any) => {
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
-          <div className="testList py-2 mt-0 border-bottom">{testsMessage}</div>
+          <div className="testList py-2 mt-0 border-bottom">{testFiles.length ? testFiles.map((testFileObj: any) => {
+            console.log('testFileObj----->', testFileObj)
+            const elemId = `singleTest${testFileObj.fileName}`
+            return (
+              <div className="d-flex align-items-center py-1">
+                <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, testFileObj.fileName)} type="checkbox" checked={testFileObj.fileName}/>
+                <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
+              </div>
+            )
+          }) 
+          : "No test file available" } </div>
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
             {resultStatistics}
             <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
