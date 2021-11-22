@@ -8,6 +8,11 @@ import './css/style.css'
 /* eslint-disable-next-line */
 export interface SolidityUnitTestingProps {}
 
+interface TestObject {
+  fileName: string
+  checked: boolean
+}
+
 export const SolidityUnitTesting = (props: any) => {
 
   const {helper, testTab} = props
@@ -28,7 +33,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
 
   // const [testsMessage, setTestsMessage] = useState('No test file available')
-  var [testFiles, setTestFiles] = useState([{}])
+  var [testFiles, setTestFiles] = useState<TestObject[]>([])
   const [pathOptions, setPathOptions] = useState([''])
   let [allTests, setAllTests] = useState([])
   let [selectedTests, setSelectedTests] = useState([])
@@ -91,6 +96,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   useEffect(() => {
     updateDirList('/')
+    updateForNewCurrent()
   }, [])
 
   const updateDirList = (path: string) => {
@@ -194,7 +200,7 @@ export const SolidityUnitTesting = (props: any) => {
   const updateRunAction = (currentFile : any = null) => {
     console.log('updateRunAction --currentFile-->', currentFile)
     const isSolidityActive = testTab.appManager.isActive('solidity')
-    if (!isSolidityActive || !testFiles.length) {
+    if (!isSolidityActive || !testFiles?.length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         setRunButtonTitle('No solidity file selected')
@@ -344,7 +350,7 @@ export const SolidityUnitTesting = (props: any) => {
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
-          <div className="testList py-2 mt-0 border-bottom">{testFiles.length ? testFiles.map((testFileObj: any) => {
+          <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any) => {
             console.log('testFileObj----->', testFileObj)
             const elemId = `singleTest${testFileObj.fileName}`
             return (
