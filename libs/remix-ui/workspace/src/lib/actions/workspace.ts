@@ -261,7 +261,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
       fileReader.readAsText(file)
       cb && cb(null, true)
     }
-    const name = `${targetFolder}/${file.name}`
+    const name = targetFolder === '/' ? file.name : `${targetFolder}/${file.name}`
 
     workspaceProvider.exists(name).then(exist => {
       if (!exist) {
