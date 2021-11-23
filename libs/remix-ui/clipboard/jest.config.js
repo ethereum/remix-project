@@ -9,4 +9,4 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '../../../coverage/libs/remix-ui/clipboard'
-};
+}

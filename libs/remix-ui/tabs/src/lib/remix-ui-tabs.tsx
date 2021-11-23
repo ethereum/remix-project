@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-// import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 
 /* eslint-disable-next-line */
@@ -17,13 +17,12 @@ export interface TabsUIApi {
     active: () => string
 }
 
-declare var ReactTabs: any
-
 export const TabsUI = (props: TabsUIProps) => {
-  const { Tab, Tabs, TabList, TabPanel } = ReactTabs
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
+  const tabsElement = useRef(null)
+
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
@@ -56,11 +55,22 @@ export const TabsUI = (props: TabsUIProps) => {
     currentIndexRef.current = index
     setSelectedIndex(index)
   }
+
+  const transformScroll = (event) => {
+    if (!event.deltaY) {
+      return
+    }
+
+    event.currentTarget.scrollLeft += event.deltaY + event.deltaX
+    event.preventDefault()
+  }
+
   useEffect(() => {
     props.onReady({
       activateTab,
       active
     })
+    return () => { tabsElement.current.removeEventListener('wheel', transformScroll) }
   }, [])
 
   return (
@@ -73,8 +83,13 @@ export const TabsUI = (props: TabsUIProps) => {
         <Tabs
           className="tab-scroll"
           selectedIndex={selectedIndex}
+          domRef={(domEl) => {
+            if (tabsElement.current) return
+            tabsElement.current = domEl
+            tabsElement.current.addEventListener('wheel', transformScroll)
+          }}
         >
-          <TabList className="d-flex flex-row justify-content-center align-items-center">
+          <TabList className="d-flex flex-row align-items-center">
             {props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}
           </TabList>
           {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}

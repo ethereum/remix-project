@@ -3,6 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -10,7 +11,7 @@ module.exports = {
     return sources
   },
 
-  'Execute Simple Contract and Test Terminal': function (browser: NightwatchBrowser) {
+  'Execute Simple Contract and Test Terminal #group1': function (browser: NightwatchBrowser) {
     browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TestContract'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
@@ -41,7 +42,7 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
-  'Test Complex Return Values': function (browser: NightwatchBrowser) {
+  'Test Complex Return Values #group1': function (browser: NightwatchBrowser) {
     browser.testContracts('returnValues.sol', sources[1]['returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
@@ -86,7 +87,7 @@ module.exports = {
         }).click('*[data-id="deployAndRunClearInstances"]')
   },
 
-  'Test Complex Input Values': function (browser: NightwatchBrowser) {
+  'Test Complex Input Values #group2': function (browser: NightwatchBrowser) {
     browser.testContracts('inputValues.sol', sources[2]['inputValues.sol'], ['test'])
       .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
@@ -112,7 +113,7 @@ module.exports = {
         },
         logs: [
           {
-            from: '0x8c1eD7e19abAa9f23c476dA86Dc1577F1Ef401f5',
+            from: '0xd9145CCE52D386f254917e481eB44e9943F39138',
             topic: '0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f',
             event: 'event1',
             args: {
@@ -131,21 +132,21 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
-  'Should Compile and Deploy a contract which has an event declaring a function as parameter': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which has an event declaring a function as parameter #group2': function (browser: NightwatchBrowser) {
     browser.testContracts('eventFunctionInput.sol', sources[3]['eventFunctionInput.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('*[data-id="deployAndRunClearInstances"]')
   },
 
-  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(3)')
-      .click('.instance:nth-of-type(3) > div > button')
+      .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
@@ -158,15 +159,17 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
+      .click('*[data-id="deployAndRunClearInstances"]')
   },
 
-  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork #group3': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('udapp')
+      .clearTransactions()
       .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description')
@@ -177,6 +180,25 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param1"')
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
+      .journalLastChildIncludes('Debug the transaction to get more information.')
+  },
+
+  'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
+    browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
+      .clickLaunchIcon('udapp')
+      .click('#runTabView button[class^="instanceButton"]')
+      .clickInstance(1)
+      .clickFunction('h - transact (not payable)')
+      .pause(5000)
+      .journalLastChildIncludes('Error provided by the contract:')
+      .journalLastChildIncludes('CustomError : error description from library')
+      .journalLastChildIncludes('Parameters:')
+      .journalLastChildIncludes('"value": "48"')
+      .journalLastChildIncludes('"value": "46"')
+      .journalLastChildIncludes('"value": "error_string_from_library"')
+      .journalLastChildIncludes('"documentation": "param1 from library"')
+      .journalLastChildIncludes('"documentation": "param2 from library"')
+      .journalLastChildIncludes('"documentation": "param3 from library"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
       .end()
   }
@@ -279,6 +301,30 @@ contract C {
           function g() public {
               revert CustomError(2, 3, "error_string_2");
           }          
+      }`
+    }
+  },
+  {
+    'customErrorLib.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity ^0.8.7;
+      
+      library lib {
+          /// error description from library
+          /// @param a param1 from library
+          /// @param b param2 from library
+          /// @param c param3 from library
+          error CustomError(uint a, uint b, string c);
+          function set() public {
+              revert CustomError(48, 46, "error_string_from_library");
+          }      
+      }      
+      
+      contract D {
+          function h() public {
+              lib.set();
+          }      
       }`
     }
   }

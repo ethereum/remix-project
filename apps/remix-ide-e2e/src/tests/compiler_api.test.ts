@@ -9,6 +9,7 @@ const sources = [
 ]
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -17,7 +18,7 @@ module.exports = {
     return sources
   },
 
-  'Should compile using "compileWithParamaters" API': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParamaters" API #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompile.js', { content: jsCompile })
       .executeScript('remix.exeCurrent()')
@@ -25,7 +26,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should compile using "compileWithParamaters" API with optimization On': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParamaters" API with optimization On #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
       .executeScript('remix.exeCurrent()')
@@ -33,7 +34,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should compile using "compileWithParamaters" API with optimization off check default runs': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParamaters" API with optimization off check default runs #group3': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
       .executeScript('remix.exeCurrent()')
@@ -41,7 +42,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {
+  'Should update the compiler configuration with "setCompilerConfig" API #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_updateConfiguration.js', { content: updateConfiguration })
       .executeScript('remix.exeCurrent()')
@@ -50,7 +51,7 @@ module.exports = {
       .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
   },
 
-  'Should produce a stack too deep error': function (browser: NightwatchBrowser) {
+  'Should produce a stack too deep error #group5': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.1+commit.df193b15.js')
       .addFile('ContractStackLimit.sol', { content: contractStackLimit })

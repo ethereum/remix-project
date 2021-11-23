@@ -82,7 +82,7 @@ class Editor extends Plugin {
     ReactDOM.render(
       <EditorUI
         editorAPI={this.api}
-        theme={this.currentTheme}
+        themeType={this.currentThemeType}
         currentFile={this.currentFile}
         sourceAnnotationsPerFile={this.sourceAnnotationsPerFile}
         markerPerFile={this.markerPerFile}
@@ -107,13 +107,12 @@ class Editor extends Plugin {
       this.clearAllDecorationsFor(name)
     })
 
-    const translateTheme = (theme) => this._themes[theme.name === 'Dark' ? 'remixDark' : theme.quality]
     this.on('theme', 'themeLoaded', (theme) => {
-      this.currentTheme = translateTheme(theme)
+      this.currentThemeType = theme.quality
       this.renderComponent()
     })
     try {
-      this.currentTheme = translateTheme(await this.call('theme', 'currentTheme'))
+      this.currentThemeType = (await this.call('theme', 'currentTheme')).quality
     } catch (e) {
       console.log('unable to select the theme ' + e.message)
     }
