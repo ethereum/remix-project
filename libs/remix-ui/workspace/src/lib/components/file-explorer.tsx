@@ -169,9 +169,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const uploadFile = (target) => {
-    const parentFolder = getFocusedFolder()
+    let parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...props.expandPath, parentFolder])]
 
+    parentFolder = parentFolder === name ? '/' : parentFolder
     props.dispatchHandleExpandPath(expandPath)
     props.dispatchUploadFile(target, parentFolder)
   }
