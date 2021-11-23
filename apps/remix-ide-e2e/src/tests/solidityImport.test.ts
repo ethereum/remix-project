@@ -3,6 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -11,11 +12,11 @@ module.exports = {
     return sources
   },
 
-  'Test Simple Contract': function (browser: NightwatchBrowser) {
+  'Test Simple Contract #group1': function (browser: NightwatchBrowser) {
     browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['test1', 'test2'])
   },
 
-  'Test Success Import': function (browser: NightwatchBrowser) {
+  'Test Success Import #group1': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled1.sol', sources[1]['Untitled1.sol'])
       .addFile('Untitled2.sol', sources[1]['Untitled2.sol']).pause(4000)
       .openFile('Untitled1.sol')
@@ -23,13 +24,13 @@ module.exports = {
       .pause(1000)
   },
 
-  'Test Failed Import': function (browser: NightwatchBrowser) {
+  'Test Failed Import #group1': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled3.sol', sources[2]['Untitled3.sol'])
       .clickLaunchIcon('solidity')
       .assert.containsText('#compileTabView .error pre', 'not found Untitled11.sol')
   },
 
-  'Test Github Import - from master branch': function (browser: NightwatchBrowser) {
+  'Test Github Import - from master branch #group1': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .addFile('Untitled4.sol', sources[3]['Untitled4.sol'])
@@ -37,7 +38,7 @@ module.exports = {
       .verifyContracts(['test7', 'ERC20'], { wait: 10000 })
   },
 
-  'Test Github Import - from other branch': function (browser: NightwatchBrowser) {
+  'Test Github Import - from other branch #group2': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js') // switch back to 0.5.0 : release-v2.3.0 branch is not solidity 0.6 compliant
       .addFile('Untitled5.sol', sources[4]['Untitled5.sol'])
@@ -45,7 +46,7 @@ module.exports = {
       .verifyContracts(['test8', 'ERC20', 'SafeMath'], { wait: 10000 })
   },
 
-  'Test Github Import - no branch specified': function (browser: NightwatchBrowser) {
+  'Test Github Import - no branch specified #group2': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .clickLaunchIcon('filePanel')
@@ -55,7 +56,7 @@ module.exports = {
       .verifyContracts(['test10', 'ERC20'], { wait: 10000 })
   },
 
-  'Test Github Import - raw URL': function (browser: NightwatchBrowser) {
+  'Test Github Import - raw URL #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
@@ -64,7 +65,7 @@ module.exports = {
       .verifyContracts(['test11', 'ERC20'], { wait: 10000 })
   },
 
-  'Test switch to a github import from a solidity warning': function (browser: NightwatchBrowser) {
+  'Test switch to a github import from a solidity warning #group3': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
       .clickLaunchIcon('filePanel')
@@ -80,7 +81,7 @@ module.exports = {
       })
   },
 
-  'Test NPM Import (with unpkg.com)': function (browser: NightwatchBrowser) {
+  'Test NPM Import (with unpkg.com) #group3': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .clickLaunchIcon('filePanel')

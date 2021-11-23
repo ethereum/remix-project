@@ -310,10 +310,10 @@ class ContractDropdownUI {
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
-        _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName, this.networkId])
+        _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName + '_' + this.networkId])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       } else {
-        _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName, this.networkId])
+        _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName + '_' + this.networkId])
       }
     }
 
@@ -347,7 +347,7 @@ class ContractDropdownUI {
   }
 
   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName, this.networkId])
+    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName + '_' + this.networkId])
     const { statusCb } = callbacks
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)

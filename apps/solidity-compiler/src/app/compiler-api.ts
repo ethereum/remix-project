@@ -7,6 +7,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   contractMap: {
     file: string
   } | Record<string, any>
+
   compileErrors: any
   compileTabLogic: CompileTabLogic
   contractsDetails: Record<string, any>
@@ -29,7 +30,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       errorContainer: null,
       contractEl: null
     }
-    
+
     this.contractsDetails = {}
     this.data = {
       eventHandlers: {},
@@ -54,7 +55,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onLoadingCompiler) {
       this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
     }
-    
+
     if (this.data.eventHandlers.onCompilerLoaded) {
       this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
     }
@@ -62,7 +63,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onCompilationFinished) {
       this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     }
-    
+
     this.off('filePanel', 'setWorkspace')
 
     this.off('remixd', 'rootFolderChanged')
@@ -72,19 +73,19 @@ export const CompilerApiMixin = (Base) => class extends Base {
     if (this.data.eventHandlers.onStartingCompilation) {
       this.compileTabLogic.event.off('startingCompilation', this.data.eventHandlers.onStartingCompilation)
     }
-    
+
     if (this.data.eventHandlers.onRemoveAnnotations) {
       this.compileTabLogic.event.off('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
-    }    
+    }
 
     this.off('fileManager', 'currentFileChanged')
-    
-    this.off('fileManager', 'noFileSelected')    
-    
+
+    this.off('fileManager', 'noFileSelected')
+
     this.off('themeModule', 'themeChanged')
-    
+
     if (this.data.eventHandlers.onKeyDown) {
-      window.document.removeEventListener('keydown', this.data.eventHandlers.onKeyDown)  
+      window.document.removeEventListener('keydown', this.data.eventHandlers.onKeyDown)
     }
   }
 
@@ -99,7 +100,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   logToTerminal (content) {
     return this.call('terminal', 'log', content)
   }
-  
+
   getCompilationResult () {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
@@ -143,7 +144,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   // This function is used for passing the compiler configuration to 'remix-tests'
   getCurrentCompilerConfig () {
     const compilerState = this.getCompilerState()
-    let compilerDetails: any = {
+    const compilerDetails: any = {
       currentVersion: compilerState.currentVersion,
       evmVersion: compilerState.evmVersion,
       optimize: compilerState.optimize,
@@ -162,8 +163,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   setCompilerConfig (settings) {
-    this.configurationSettings = settings    
-  }  
+    this.configurationSettings = settings
+  }
 
   fileExists (fileName) {
     return this.call('fileManager', 'exists', fileName)
@@ -231,7 +232,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('editor', 'sessionSwitched', () => {
       if (this.onSessionSwitched) this.onSessionSwitched()
-    })    
+    })
 
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
     this.compileTabLogic.event.on('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
@@ -241,13 +242,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onCurrentFileChanged) this.onCurrentFileChanged(name)
     }
     this.on('fileManager', 'currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
-    
+
     this.data.eventHandlers.onNoFileSelected = () => {
       this.currentFile = ''
       if (this.onNoFileSelected) this.onNoFileSelected()
     }
     this.on('fileManager', 'noFileSelected', this.data.eventHandlers.onNoFileSelected)
-    
+
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       this.compileErrors = data
       if (success) {
@@ -288,7 +289,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       }
     }
     this.on('themeModule', 'themeChanged', this.data.eventHandlers.onThemeChanged)
-    
+
     // Run the compiler instead of trying to save the website
     this.data.eventHandlers.onKeyDown = (e) => {
       // ctrl+s or command+s
