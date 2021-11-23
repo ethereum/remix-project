@@ -27,13 +27,15 @@ export const SolidityUnitTesting = (props: any) => {
   const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
   const [stopButtonLabel, setStopButtonLabel] = useState('Stop')
   const [checkSelectAll, setCheckSelectAll] = useState(true)
+  const [testsOutput, setTestsOutput] = useState<Element[]>([])
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
+  
 
   let [testFiles, setTestFiles] = useState<TestObject[]>([])
   const [pathOptions, setPathOptions] = useState([''])
-  let [allTests, setAllTests] = useState([])
+  // let [allTests, setAllTests] = useState([])
   let [selectedTests, setSelectedTests] = useState<string[]>([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
@@ -44,7 +46,11 @@ export const SolidityUnitTesting = (props: any) => {
   let [areTestsRunning, setAreTestsRunning] = useState(false)
   let [isDebugging, setIsDebugging] = useState(false)
   
+  let allTests: any = []
   
+  let testSuite: any
+  let testSuites: any
+  let runningTestFileName: any
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -177,7 +183,11 @@ export const SolidityUnitTesting = (props: any) => {
     setPathOptions(pathOptions)
   }
 
-  const testCallback = (result, runningTests) => {
+  const cleanFileName = (fileName: any, testSuite: any) => {
+    return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') + testSuite : fileName
+  }
+
+  const testCallback = (result: any, runningTests: any) => {
     console.log('result---in testCallback->', result)
     // this.testsOutput.hidden = false
     // let debugBtn = yo``
@@ -188,37 +198,38 @@ export const SolidityUnitTesting = (props: any) => {
     //   </div>`
     //   debugBtn.style.cursor = 'pointer'
     // }
-    // if (result.type === 'contract') {
-    //   this.testSuite = result.value
-    //   if (this.testSuites) {
-    //     this.testSuites.push(this.testSuite)
-    //   } else {
-    //     this.testSuites = [this.testSuite]
-    //   }
-    //   this.rawFileName = result.filename
-    //   this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
-    //   this.outputHeader = yo`
-    //     <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
-    //       <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
-    //     </div>
-    //   `
-    //   this.testsOutput.appendChild(this.outputHeader)
-    // } else if (result.type === 'testPass') {
-    //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
-    //   this.testsOutput.appendChild(yo`
-    //     <div
-    //       id="${this.runningTestFileName}"
-    //       data-id="testTabSolidityUnitTestsOutputheader"
-    //       class="${css.testPass} ${css.testLog} bg-light mb-2 px-2 text-success border-0"
-    //       onclick=${() => this.discardHighlight()}
-    //     >
-    //       <div class="d-flex my-1 align-items-start justify-content-between">
-    //         <span style="margin-block: auto" > ✓ ${result.value}</span>
-    //         ${debugBtn}
-    //       </div>
-    //     </div>
-    //   `)
-    // } else if (result.type === 'testFailure') {
+    if (result.type === 'contract') {
+      var testSuite = result.value
+      if (testSuites) {
+        testSuites.push(testSuite)
+      } else {
+        testSuites = [testSuite]
+      }
+      runningTestFileName = cleanFileName(result.filename, testSuite)
+      const ContractCard: any = (
+        <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
+          <span className="font-weight-bold">{testSuite} ({result.filename})</span>
+        </div>
+      )
+      setTestsOutput(prevCards => ([...prevCards, ContractCard]))
+    } else if (result.type === 'testPass') {
+      // if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+      const testPassCard: any = (
+        <div
+          id={runningTestFileName}
+          data-id="testTabSolidityUnitTestsOutputheader"
+          className="testPass testLog bg-light mb-2 px-2 text-success border-0"
+          // onClick=${() => this.discardHighlight()}
+        >
+          <div className="d-flex my-1 align-items-start justify-content-between">
+            <span > ✓ {result.value}</span>
+             {/* ${debugBtn} */}
+           </div>
+        </div>
+      )
+      setTestsOutput(prevCards => ([...prevCards, testPassCard]))
+    } 
+    //else if (result.type === 'testFailure') {
     //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
     //   if (!result.assertMethod) {
     //     this.testsOutput.appendChild(yo`
@@ -268,7 +279,7 @@ export const SolidityUnitTesting = (props: any) => {
     // }
   }
 
-  const resultsCallback = (_err, result, cb) => {
+  const resultsCallback = (_err: any, result: any, cb: any) => {
     // total stats for the test
     // result.passingNum
     // result.failureNum
@@ -276,7 +287,8 @@ export const SolidityUnitTesting = (props: any) => {
     cb()
   }
 
-  const updateFinalResult = (_errors, result, filename) => {
+  const updateFinalResult = (_errors: any, result: any, filename: any) => {
+    console.log('result---in updateFinalResult->', result, filename)
     // ++this.readyTestsNumber
     // this.testsOutput.hidden = false
     // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
@@ -362,7 +374,7 @@ export const SolidityUnitTesting = (props: any) => {
     // }
   }
 
-  const runTest = (testFilePath, callback) => {
+  const runTest = (testFilePath: any, callback: any) => {
     console.log('runTest----->', testFilePath, hasBeenStopped)
     isDebugging = false
     if (hasBeenStopped) {
@@ -370,8 +382,8 @@ export const SolidityUnitTesting = (props: any) => {
       return
     }
     // this.resultStatistics.hidden = false
-    testTab.fileManager.readFile(testFilePath).then((content) => {
-      const runningTests = {}
+    testTab.fileManager.readFile(testFilePath).then((content: any) => {
+      const runningTests: any = {}
       runningTests[testFilePath] = { content }
       const { currentVersion, evmVersion, optimize, runs, isUrl } = testTab.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
@@ -382,24 +394,24 @@ export const SolidityUnitTesting = (props: any) => {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      const deployCb = async (file, contractAddress) => {
+      const deployCb = async (file: any, contractAddress: any) => {
         const compilerData = await testTab.call('compilerArtefacts', 'getCompilerAbstract', file)
         await testTab.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilerData)
       }
       testTab.testRunner.runTestSources(
         runningTests,
         compilerConfig,
-        (result) => testCallback(result, runningTests),
-        (_err, result, cb) => resultsCallback(_err, result, cb),
+        (result: any) => testCallback(result, runningTests),
+        (_err: any, result: any, cb: any) => resultsCallback(_err, result, cb),
         deployCb,
-        (error, result) => {
+        (error: any, result: any) => {
           updateFinalResult(error, result, testFilePath)
           callback(error)
-        }, (url, cb) => {
-          return testTab.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+        }, (url: any, cb: any) => {
+          return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: any) => cb(error.message))
         }, { testFilePath }
       )
-    }).catch((error) => {
+    }).catch((error: any) => {
       console.log('Error in runTest---->', error)
       if (error) return // eslint-disable-line
     })
@@ -412,7 +424,7 @@ export const SolidityUnitTesting = (props: any) => {
     readyTestsNumber = 0
     runningTestsNumber = selectedTests.length
     setDisableStopButton(false)
-    setDisableRunButton(true)
+    // setDisableRunButton(true)
     clearResults()
     // yo.update(this.resultStatistics, this.createResultLabel())
     const tests = selectedTests
@@ -487,7 +499,7 @@ export const SolidityUnitTesting = (props: any) => {
   const updateTestFileList = () => {
     console.log('updateTestFileList--tests->', allTests)
     if(allTests?.length) {
-      testFiles =  allTests.map((testFile) => { return {'fileName': testFile, 'checked': true }})
+      testFiles =  allTests.map((testFile: any) => { return {'fileName': testFile, 'checked': true }})
       setCheckSelectAll(true)
     }
     else 
@@ -597,7 +609,7 @@ export const SolidityUnitTesting = (props: any) => {
             <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
             <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
           </div>
-          {/* ${this.testsOutput} */}
+          <div>{testsOutput}</div>
         </div>
       </div>
   )
