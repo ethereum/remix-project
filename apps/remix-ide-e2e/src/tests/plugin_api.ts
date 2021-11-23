@@ -10,7 +10,7 @@ declare global {
 const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
-  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting'],
+  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp'],
   url: 'http://localhost:2020',
   location: 'sidePanel'
 }
@@ -127,8 +127,9 @@ const assertPluginIsActive = function (browser: NightwatchBrowser, id: string, s
 }
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080', false)
+    init(browser, done) // , 'http://localhost:8080', false)
   },
 
   afterEach: function (browser: NightwatchBrowser) {
@@ -144,13 +145,13 @@ module.exports = {
   },
 
   // UDAPP
-  'Should get accounts': async function (browser: NightwatchBrowser) {
+  'Should get accounts #group1': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
   },
 
   // context menu item
 
-  'Should create context menu item': async function (browser: NightwatchBrowser) {
+  'Should create context menu item #group1': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:registerContextMenuItem', null, null, {
       id: 'localPlugin',
       name: 'testCommand',
@@ -179,120 +180,120 @@ module.exports = {
 
   // FILESYSTEM
 
-  'Should get current workspace': async function (browser: NightwatchBrowser) {
+  'Should get current workspace #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
 
-  'Should get current files': async function (browser: NightwatchBrowser) {
+  'Should get current files #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
   },
-  'Should throw error on current file': async function (browser: NightwatchBrowser) {
+  'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
   },
-  'Should open readme.txt': async function (browser: NightwatchBrowser) {
+  'Should open readme.txt #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:open', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
   },
-  'Should have current file': async function (browser: NightwatchBrowser) {
+  'Should have current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
   },
-  'Should create dir': async function (browser: NightwatchBrowser) {
+  'Should create dir #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:mkdir', null, null, 'testdir')
     await clickAndCheckLog(browser, 'fileManager:readdir', 'testdir', null, '/')
   },
-  'Should get file': async function (browser: NightwatchBrowser) {
+  'Should get file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getFile', 'REMIX EXAMPLE PROJECT', null, 'README.txt')
   },
-  'Should close all files': async function (browser: NightwatchBrowser) {
+  'Should close all files #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:closeAllFiles', null, { event: 'noFileSelected', args: [] }, null)
   },
 
-  'Should switch to file': async function (browser: NightwatchBrowser) {
+  'Should switch to file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['contracts/1_Storage.sol'] }, 'contracts/1_Storage.sol')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'contracts/1_Storage.sol', null, null)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['README.txt'] }, 'README.txt')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
   },
-  'Should write to file': async function (browser: NightwatchBrowser) {
+  'Should write to file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileSaved', args: ['README.txt'] }, ['README.txt', 'test'])
     browser.pause(4000, async () => {
       await clickAndCheckLog(browser, 'fileManager:getFile', 'test', null, 'README.txt')
     })
   },
-  'Should set file': async function (browser: NightwatchBrowser) {
+  'Should set file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:setFile', null, { event: 'fileAdded', args: ['new.sol'] }, ['new.sol', 'test'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'new.sol')
   },
-  'Should write to new file': async function (browser: NightwatchBrowser) {
+  'Should write to new file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileAdded', args: ['testing.txt'] }, ['testing.txt', 'test'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'testing.txt')
   },
-  'Should rename file': async function (browser: NightwatchBrowser) {
+  'Should rename file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:rename', null, null, ['testing.txt', 'testrename.txt'])
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'testrename.txt')
   },
 
-  'Should create empty workspace': async function (browser: NightwatchBrowser) {
+  'Should create empty workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, ['emptyworkspace', true])
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'emptyworkspace', isLocalhost: false, absolutePath: '.workspaces/emptyworkspace' }, null, null)
     await clickAndCheckLog(browser, 'fileManager:readdir', {}, null, '/')
   },
-  'Should create workspace': async function (browser: NightwatchBrowser) {
+  'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
     await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
   },
-  'Should get all workspaces': async function (browser: NightwatchBrowser) {
+  'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['default_workspace', 'emptyworkspace', 'testspace'], null, null)
   },
-  'Should have set workspace event': async function (browser: NightwatchBrowser) {
+  'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
   },
-  'Should have event when switching workspace': async function (browser: NightwatchBrowser) {
+  'Should have event when switching workspace #group2': async function (browser: NightwatchBrowser) {
     // @ts-ignore
     browser.frameParent().useCss().clickLaunchIcon('filePanel').click('*[data-id="workspacesSelect"] option[value="default_workspace"]').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
       await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
     })
   },
 
-  'Should rename workspace': async function (browser: NightwatchBrowser) {
+  'Should rename workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
   },
-  'Should delete workspace': async function (browser: NightwatchBrowser) {
+  'Should delete workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:deleteWorkspace', null, null, ['testspace'])
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'newspace', 'renamed'], null, null)
   },
   // DGIT
-  'Should have changes on new workspace': async function (browser: NightwatchBrowser) {
+  'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
     await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], null, null)
   },
 
-  'Should stage contract': async function (browser: NightwatchBrowser) {
+  'Should stage contract #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
     await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 2], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], null, null)
   },
-  'Should commit changes': async function (browser: NightwatchBrowser) {
+  'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
     await clickAndCheckLog(browser, 'dGitProvider:log', 'commit-message', null, null)
   },
-  'Should have git log': async function (browser: NightwatchBrowser) {
+  'Should have git log #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:log', 'commit-message', null, null)
   },
-  'Should have branches': async function (browser: NightwatchBrowser) {
+  'Should have branches #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:branches', [{ name: 'main' }], null, null)
   },
   // resolver
-  'Should resolve url': async function (browser: NightwatchBrowser) {
+  'Should resolve url #group4': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'contentImport:resolve', '# Remix Project', null, 'https://github.com/ethereum/remix-project/blob/master/README.md')
   },
-  'Should resolve and save url': async function (browser: NightwatchBrowser) {
+  'Should resolve and save url #group4': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'contentImport:resolveAndSave', '# Remix Project', { event: 'fileAdded', args: ['.deps/github/ethereum/remix-project/README.md'] }, 'https://github.com/ethereum/remix-project/blob/master/README.md')
   },
   // UNIT TESTING
-  'Should activate solidityUnitTesting': async function (browser: NightwatchBrowser) {
+  'Should activate solidityUnitTesting #group5': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'manager:activatePlugin', null, null, 'solidityUnitTesting')
     browser.frameParent()
     assertPluginIsActive(browser, 'solidityUnitTesting', true)
@@ -301,11 +302,11 @@ module.exports = {
     await clickAndCheckLog(browser, 'manager:isActive', true, null, 'solidityUnitTesting')
   },
 
-  'Should test from path with solidityUnitTesting': async function (browser: NightwatchBrowser) {
+  'Should test from path with solidityUnitTesting #group5': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidityUnitTesting:testFromPath', '"totalPassing":2,"totalFailing":0', null, 'tests/4_Ballot_test.sol')
   },
 
-  'Should deactivate solidityUnitTesting': async function (browser: NightwatchBrowser) {
+  'Should deactivate solidityUnitTesting #group5': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'manager:deactivatePlugin', null, null, 'solidityUnitTesting')
     browser.frameParent()
     assertPluginIsActive(browser, 'solidityUnitTesting', false)
@@ -316,14 +317,14 @@ module.exports = {
 
   // COMPILER
 
-  'Should compile a file': async function (browser: NightwatchBrowser) {
+  'Should compile a file #group6': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidity:compile', null, null, 'contracts/1_Storage.sol')
     browser.pause(5000, async () => {
       await clickAndCheckLog(browser, 'solidity:compile', null, 'compilationFinished', null)
     })
   },
 
-  'Should get compilationresults': async function (browser: NightwatchBrowser) {
+  'Should get compilationresults #group6': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
   }
 }

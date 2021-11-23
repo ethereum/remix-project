@@ -3,7 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
-
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -12,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Should launch debugger': function (browser: NightwatchBrowser) {
+  'Should launch debugger #group1': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
@@ -22,7 +22,7 @@ module.exports = {
       .clearConsole()
   },
 
-  'Should debug failing transaction': function (browser: NightwatchBrowser) {
+  'Should debug failing transaction #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
@@ -37,7 +37,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="solidityLocals"]', '999', 60000)
   },
 
-  'Should debug transaction using slider': function (browser: NightwatchBrowser) {
+  'Should debug transaction using slider #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
       // eslint-disable-next-line dot-notation
@@ -49,7 +49,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
   },
 
-  'Should step back and forward transaction': function (browser: NightwatchBrowser) {
+  'Should step back and forward transaction #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
@@ -62,7 +62,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n51', 60000)
   },
 
-  'Should jump through breakpoints': function (browser: NightwatchBrowser) {
+  'Should jump through breakpoints #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .execute(() => {
         (window as any).addRemixBreakpoint(11)
@@ -81,7 +81,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n352', 60000)
   },
 
-  'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
+  'Should display solidity imported code while debugging github import #group2': function (browser: NightwatchBrowser) {
     browser
       .clearConsole()
       .clearTransactions()
@@ -104,7 +104,7 @@ module.exports = {
       })
   },
 
-  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2': function (browser: NightwatchBrowser) {
+  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2 #group2': function (browser: NightwatchBrowser) {
     /*
       localVariable_step266_ABIEncoder and localVariable_step717_ABIEncoder
       still contains unwanted values (related to decoding calldata types)
@@ -146,7 +146,7 @@ module.exports = {
       .clearTransactions()
   },
 
-  'Should load more solidity locals array': function (browser: NightwatchBrowser) {
+  'Should load more solidity locals array #group3': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
@@ -174,7 +174,7 @@ module.exports = {
       .clearConsole().pause(2000)
   },
 
-  'Should debug using generated sources': function (browser: NightwatchBrowser) {
+  'Should debug using generated sources #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .pause(2000)
@@ -195,16 +195,16 @@ module.exports = {
       })
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
-
-  'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
+  // depends on Should debug using generated sources
+  'Should call the debugger api: getTrace #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
       .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
-
-  'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
+  // depends on Should debug using generated sources
+  'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
       .executeScript('remix.exeCurrent()')
@@ -223,7 +223,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
-  'Should start debugging using remix debug nodes (rinkeby)': '' + function (browser: NightwatchBrowser) {
+  'Should start debugging using remix debug nodes (rinkeby) #group4': '' + function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
@@ -437,7 +437,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0x9341be49e911afe99bf1abc67cbcf36739d2e6470a08a69511c205a0737d7332')
+      const result = await remix.call('debugger', 'getTrace', '0x16be5c31014a7e1552d136f7ed7bc7788f3bb9e45e31b059df253173f2df31e7')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -446,7 +446,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0x9341be49e911afe99bf1abc67cbcf36739d2e6470a08a69511c205a0737d7332')
+      const result = await remix.call('debugger', 'debug', '0x16be5c31014a7e1552d136f7ed7bc7788f3bb9e45e31b059df253173f2df31e7')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
