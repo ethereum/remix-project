@@ -183,7 +183,7 @@ module.exports = {
       .journalLastChildIncludes('Debug the transaction to get more information.')
   },
 
-  'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
