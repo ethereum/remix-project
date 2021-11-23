@@ -186,17 +186,24 @@ export const SolidityUnitTesting = (props: any) => {
     return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') + testSuite : fileName
   }
 
+  const startDebug = async (txHash: any, web3: any) => {
+    // this.isDebugging = true
+    if (!await testTab.appManager.isActive('debugger')) await testTab.appManager.activatePlugin('debugger')
+    testTab.call('menuicons', 'select', 'debugger')
+    testTab.call('debugger', 'debug', txHash, web3)
+  }
+
   const testCallback = (result: any, runningTests: any) => {
     console.log('result---in testCallback->', result)
-    // this.testsOutput.hidden = false
-    // let debugBtn = yo``
-    // if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
-    //   const { web3, debugTxHash } = result
-    //   debugBtn = yo`<div id=${result.value.replaceAll(' ', '_')} class="btn border btn btn-sm ml-1" title="Start debugging" onclick=${() => this.startDebug(debugTxHash, web3)}>
-    //     <i class="fas fa-bug"></i>
-    //   </div>`
-    //   debugBtn.style.cursor = 'pointer'
-    // }
+    let debugBtn
+    if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
+      const { web3, debugTxHash } = result
+      debugBtn = (
+      <div id={result.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
+        <i className="fas fa-bug"></i>
+      </div>
+      )
+    }
     if (result.type === 'contract') {
       var testSuite = result.value
       if (testSuites) {
@@ -222,7 +229,7 @@ export const SolidityUnitTesting = (props: any) => {
         >
           <div className="d-flex my-1 align-items-start justify-content-between">
             <span > ✓ {result.value}</span>
-             {/* ${debugBtn} */}
+             {debugBtn}
            </div>
         </div>
       )
@@ -237,7 +244,7 @@ export const SolidityUnitTesting = (props: any) => {
         >
           <div className="d-flex my-1 align-items-start justify-content-between">
             <span> ✘ {result.value}</span>
-            {/* ${debugBtn} */}
+            {debugBtn}
           </div>
           <span className="text-dark">Error Message:</span>
           <span className="pb-2 text-break">"{result.errMsg}"</span>
@@ -254,7 +261,7 @@ export const SolidityUnitTesting = (props: any) => {
         >
           <div className="d-flex my-1 align-items-start justify-content-between">  
             <span> ✘ {result.value}</span>
-            {/* ${debugBtn} */}
+            {debugBtn}
           </div> 
           <span className="text-dark">Error Message:</span>
           <span className="pb-2 text-break">"{result.errMsg}"</span>
