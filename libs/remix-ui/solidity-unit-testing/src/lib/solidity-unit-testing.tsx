@@ -61,8 +61,7 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('clearResults--->')
     // yo.update(this.resultStatistics, yo`<span></span>`)
     testTab.call('editor', 'clearAnnotations')
-    // this.testsOutput.innerHTML = ''
-    // this.testsOutput.hidden = true
+    setTestsOutput([])
     setTestsExecutionStoppedHidden(true)
     setTestsExecutionStoppedErrorHidden(true)
   }
@@ -228,53 +227,53 @@ export const SolidityUnitTesting = (props: any) => {
         </div>
       )
       setTestsOutput(prevCards => ([...prevCards, testPassCard]))
+    } else if (result.type === 'testFailure') {
+      // if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+      if (!result.assertMethod) {
+        const testFailCard: any = (<div
+          className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+          id={"UTContext" + result.context}
+          // onClick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
+        >
+          <div className="d-flex my-1 align-items-start justify-content-between">
+            <span> ✘ {result.value}</span>
+            {/* ${debugBtn} */}
+          </div>
+          <span className="text-dark">Error Message:</span>
+          <span className="pb-2 text-break">"{result.errMsg}"</span>
+        </div>)
+        setTestsOutput(prevCards => ([...prevCards, testFailCard]))
+      } 
+      // else {
+      //   const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
+      //   const method = result.assertMethod === 'ok' ? '' : result.assertMethod
+      //   const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
+      //   this.testsOutput.appendChild(yo`
+      //     <div
+      //       class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
+      //       id="UTContext${result.context}"
+      //       onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
+      //     >
+      //       <div class="d-flex my-1 align-items-start justify-content-between">  
+      //         <span> ✘ ${result.value}</span>
+      //         ${debugBtn}
+      //       </div> 
+      //       <span class="text-dark">Error Message:</span>
+      //       <span class="pb-2 text-break">"${result.errMsg}"</span>
+      //       <span class="text-dark">Assertion:</span>
+      //       <div class="d-flex flex-wrap">
+      //         <span>Expected value should be</span>
+      //         <div class="mx-1 font-weight-bold">${method}</div>
+      //         <div>${preposition} ${expected}</div>
+      //       </div>
+      //       <span class="text-dark">Received value:</span>
+      //       <span>${result.returned}</span>
+      //       <span class="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+      //     </div>
+      //   `)
+      // }
     } 
-    //else if (result.type === 'testFailure') {
-    //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
-    //   if (!result.assertMethod) {
-    //     this.testsOutput.appendChild(yo`
-    //     <div
-    //       class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
-    //       id="UTContext${result.context}"
-    //       onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
-    //     >
-    //       <div class="d-flex my-1 align-items-start justify-content-between">
-    //         <span> ✘ ${result.value}</span>
-    //         ${debugBtn}
-    //       </div>
-    //       <span class="text-dark">Error Message:</span>
-    //       <span class="pb-2 text-break">"${result.errMsg}"</span>
-    //     </div>
-    //   `)
-    //   } else {
-    //     const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
-    //     const method = result.assertMethod === 'ok' ? '' : result.assertMethod
-    //     const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
-    //     this.testsOutput.appendChild(yo`
-    //       <div
-    //         class="bg-light mb-2 px-2 ${css.testLog} d-flex flex-column text-danger border-0"
-    //         id="UTContext${result.context}"
-    //         onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
-    //       >
-    //         <div class="d-flex my-1 align-items-start justify-content-between">  
-    //           <span> ✘ ${result.value}</span>
-    //           ${debugBtn}
-    //         </div> 
-    //         <span class="text-dark">Error Message:</span>
-    //         <span class="pb-2 text-break">"${result.errMsg}"</span>
-    //         <span class="text-dark">Assertion:</span>
-    //         <div class="d-flex flex-wrap">
-    //           <span>Expected value should be</span>
-    //           <div class="mx-1 font-weight-bold">${method}</div>
-    //           <div>${preposition} ${expected}</div>
-    //         </div>
-    //         <span class="text-dark">Received value:</span>
-    //         <span>${result.returned}</span>
-    //         <span class="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
-    //       </div>
-    //     `)
-    //   }
-    // } else if (result.type === 'logOnly') {
+    //else if (result.type === 'logOnly') {
     //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
     // }
   }
