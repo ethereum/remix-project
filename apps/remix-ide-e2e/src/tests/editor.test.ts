@@ -6,10 +6,10 @@ import init from '../helpers/init'
 module.exports = {
 
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done)
+    init(browser, done, 'http://127.0.0.1:8080', true)
   },
 
-  'Should zoom in editor ': function (browser: NightwatchBrowser) {
+  'Should zoom in editor #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
@@ -22,7 +22,7 @@ module.exports = {
       .checkElementStyle('.view-lines', 'font-size', '16px')
   },
 
-  'Should zoom out editor ': function (browser: NightwatchBrowser) {
+  'Should zoom out editor #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .checkElementStyle('.view-lines', 'font-size', '16px')
       .click('*[data-id="tabProxyZoomOut"]')
@@ -30,7 +30,7 @@ module.exports = {
       .checkElementStyle('.view-lines', 'font-size', '14px')
   },
 
-  'Should display compile error in editor ': function (browser: NightwatchBrowser) {
+  'Should display compile error in editor #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .setEditorValue(storageContractWithError + 'error')
       .pause(2000)
@@ -42,7 +42,7 @@ module.exports = {
       .checkAnnotations('fa-exclamation-square', 29) // error
   },
 
-  'Should minimize and maximize codeblock in editor ': '' + function (browser: NightwatchBrowser) {
+  'Should minimize and maximize codeblock in editor #group1': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .waitForElementVisible('.ace_open')
       .click('.ace_start:nth-of-type(1)')
@@ -51,7 +51,7 @@ module.exports = {
       .waitForElementVisible('.ace_open')
   },
 
-  'Should add breakpoint to editor ': function (browser: NightwatchBrowser) {
+  'Should add breakpoint to editor #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .waitForElementNotPresent('.margin-view-overlays .fa-circle')
       .execute(() => {
@@ -60,7 +60,7 @@ module.exports = {
       .waitForElementVisible('.margin-view-overlays .fa-circle')
   },
 
-  'Should load syntax highlighter for ace light theme': '' + function (browser: NightwatchBrowser) {
+  'Should load syntax highlighter for ace light theme #group1': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
       .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.light.comment)
@@ -68,7 +68,7 @@ module.exports = {
       .checkElementStyle('.ace_variable', 'color', aceThemes.light.variable)
   },
 
-  'Should load syntax highlighter for ace dark theme': '' + function (browser: NightwatchBrowser) {
+  'Should load syntax highlighter for ace dark theme #group1': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
       .click('*[data-id="verticalIconsKindsettings"]')
       .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
@@ -83,7 +83,7 @@ module.exports = {
     */
   },
 
-  'Should highlight source code ': function (browser: NightwatchBrowser) {
+  'Should highlight source code #group1': function (browser: NightwatchBrowser) {
     // include all files here because switching between plugins in side-panel removes highlight
     browser
       .addFile('sourcehighlight.js', sourcehighlightScript)
@@ -101,7 +101,7 @@ module.exports = {
       .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
-  'Should remove 1 highlight from source code': '' + function (browser: NightwatchBrowser) {
+  'Should remove 1 highlight from source code #group1': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
       .click('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
       .pause(2000)
@@ -115,7 +115,7 @@ module.exports = {
       .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
-  'Should remove all highlights from source code ': function (browser: NightwatchBrowser) {
+  'Should remove all highlights from source code #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .click('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .pause(2000)
@@ -126,6 +126,54 @@ module.exports = {
       .waitForElementNotPresent('.highlightLine33', 60000)
       .waitForElementNotPresent('.highlightLine41', 60000)
       .waitForElementNotPresent('.highlightLine51', 60000)
+  },
+
+  'Should display the context view #group2': function (browser: NightwatchBrowser) {
+    browser
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
+      .waitForElementVisible('#editorView')
+      .setEditorValue(storageContractWithError)
+      .pause(2000)
+      .execute(() => {
+        (document.getElementById('editorView') as any).gotoLine(17, 16)
+      }, [], () => {})
+      .waitForElementVisible('.contextview')
+      .waitForElementContainsText('.contextview .type', 'FunctionDefinition')
+      .waitForElementContainsText('.contextview .name', 'store')
+      .execute(() => {
+        (document.getElementById('editorView') as any).gotoLine(18, 12)
+      }, [], () => {})
+      .waitForElementContainsText('.contextview .type', 'uint256')
+      .waitForElementContainsText('.contextview .name', 'number')
+      .click('.contextview [data-action="previous"]') // declaration
+      .execute(() => {
+        return (document.getElementById('editorView') as any).getCursorPosition()
+      }, [], (result) => {
+        console.log('result', result)
+        browser.assert.equal(result.value, '180')
+      })
+      .click('.contextview [data-action="next"]') // back to the initial state
+      .execute(() => {
+        return (document.getElementById('editorView') as any).getCursorPosition()
+      }, [], (result) => {
+        console.log('result', result)
+        browser.assert.equal(result.value, '323')
+      })
+      .click('.contextview [data-action="next"]') // next reference
+      .execute(() => {
+        return (document.getElementById('editorView') as any).getCursorPosition()
+      }, [], (result) => {
+        console.log('result', result)
+        browser.assert.equal(result.value, '489')
+      })
+      .click('.contextview [data-action="gotoref"]') // back to the declaration
+      .execute(() => {
+        return (document.getElementById('editorView') as any).getCursorPosition()
+      }, [], (result) => {
+        console.log('result', result)
+        browser.assert.equal(result.value, '180')
+      })
       .end()
   }
 }
