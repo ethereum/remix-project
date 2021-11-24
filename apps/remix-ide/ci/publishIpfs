@@ -2,7 +2,6 @@
 
 const IpfsHttpClient = require('ipfs-http-client')
 const { globSource } = IpfsHttpClient
-console.log('current folder', process.cwd())
 const folder = process.cwd() + '/dist/apps/remix-ide';
 
 (async () => {
@@ -11,9 +10,7 @@ const folder = process.cwd() + '/dist/apps/remix-ide';
   try {
     let result = await ipfs.add(globSource(folder, { recursive: true}), { pin: false })
     const hash = result.cid.toString()
-    console.log('ipfs://' + hash)
-    console.log('https://ipfs.remixproject.org/ipfs/' + hash)
-    console.log('https://gateway.ipfs.io/ipfs/' + hash)
+    console.log(hash)
   } catch (e) {
     console.log(e)
   }
