@@ -318,7 +318,7 @@ class App {
     ])
 
     // LAYOUT & SYSTEM VIEWS
-    const appPanel = new MainPanel()
+    const appPanel = new MainPanel(registry.get('config').api)
     const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
     registry.put({ api: mainview, name: 'mainview' })
 

@@ -1,5 +1,9 @@
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import { RemixUiAbstractPanel } from '@remix-ui/abstract-panel' // eslint-disable-line
 import { EventEmitter } from 'events'
-import { HostPlugin } from '@remixproject/engine-web'
+const EventManager = require('../../lib/events')
+import { HostPlugin } from '@remixproject/engine-web' // eslint-disable-line
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 
@@ -31,11 +35,19 @@ export class AbstractPanel extends HostPlugin {
   constructor (profile) {
     super(profile)
     this.events = new EventEmitter()
+    this.event = new EventManager()
     this.contents = {}
     this.active = undefined
+    this.element = document.createElement('div')
+    this.element.setAttribute('id', 'plugins')
+    this.element.setAttribute('class', 'abstract-panel-plugins')
 
     // View where the plugin HTMLElement leaves
     this.view = yo`<div id="plugins" class="${css.plugins}"></div>`
+  }
+
+  onActivation () {
+    this.renderComponent()
   }
 
   /**
@@ -107,5 +119,14 @@ export class AbstractPanel extends HostPlugin {
 
   focus (name) {
     this.showContent(name)
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiAbstractPanel
+        plugin={this}
+      />,
+      this.element
+    )
   }
 }
