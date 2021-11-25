@@ -3,11 +3,12 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
 
-  'Should execute `file` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `file` api from file manager external api #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('file.js', { content: executeFile })
       .executeScript('remix.exeCurrent()')
@@ -15,7 +16,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'file.js', 60000)
   },
 
-  'Should execute `exists` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `exists` api from file manager external api #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('exists.js', { content: executeExists })
       .executeScript('remix.exeCurrent()')
@@ -23,14 +24,14 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'non-exists.js false', 60000)
   },
 
-  'Should execute `open` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `open` api from file manager external api #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('open.js', { content: executeOpen })
       .executeScript('remix.exeCurrent()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contracts/3_Ballot.sol', 60000)
   },
 
-  'Should execute `writeFile` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `writeFile` api from file manager external api #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('writeFile.js', { content: executeWriteFile })
       .executeScript('remix.exeCurrent()')
@@ -41,21 +42,23 @@ module.exports = {
       })
   },
 
-  'Should execute `readFile` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `readFile` api from file manager external api #group2': function (browser: NightwatchBrowser) {
     browser
+      .addFile('writeFile.js', { content: executeWriteFile })
+      .executeScript('remix.exeCurrent()')
       .addFile('readFile.js', { content: executeReadFile })
       .executeScript('remix.exeCurrent()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'pragma solidity ^0.6.0', 60000)
   },
 
-  'Should execute `copyFile` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `copyFile` api from file manager external api #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('copyFile.js', { content: executeCopyFile })
       .executeScript('remix.exeCurrent()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'pragma solidity >=0.7.0 <0.9.0;', 60000)
   },
 
-  'Should execute `rename` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `rename` api from file manager external api #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('renameFile.js', { content: executeRename })
       .executeScript('remix.exeCurrent()')
@@ -63,7 +66,7 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]', 60000)
   },
 
-  'Should execute `mkdir` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `mkdir` api from file manager external api #group3': function (browser: NightwatchBrowser) {
     browser
       .addFile('mkdirFile.js', { content: executeMkdir })
       .executeScript('remix.exeCurrent()')
@@ -71,7 +74,7 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemTest_Folder"]', 60000)
   },
 
-  'Should execute `readdir` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `readdir` api from file manager external api #group3': function (browser: NightwatchBrowser) {
     browser
       .addFile('readdirFile.js', { content: executeReaddir })
       .executeScript('remix.exeCurrent()')
@@ -79,8 +82,9 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'true', 5000)
   },
 
-  'Should execute `remove` api from file manager external api': function (browser: NightwatchBrowser) {
+  'Should execute `remove` api from file manager external api #group4': function (browser: NightwatchBrowser) {
     browser
+      .addFile('old_contract.sol', { content: 'test' })
       .addFile('removeFile.js', { content: executeRemove })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
@@ -88,12 +92,12 @@ module.exports = {
   },
 
   // TODO: Fix remove root directory prefix for browser and localhost
-  'Should execute `remove` api from file manager external api on a folder': function (browser: NightwatchBrowser) {
+  'Should execute `remove` api from file manager external api on a folder #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsRemoveFolder.js', { content: executeRemoveOnFolder })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemTest_Folder"]', 60000)
+      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemcontracts"]', 60000)
       .end()
   }
 }
@@ -196,7 +200,7 @@ const executeRemove = `
 
 const executeRemoveOnFolder = `(async () => {
   try {      
-      await remix.call('fileManager', 'remove', 'Test_Folder')
+      await remix.call('fileManager', 'remove', 'contracts')
   } catch (e) {
       console.log(e.message)
   }
