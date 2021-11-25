@@ -1086,6 +1086,21 @@
       }
     }
   },
+  "remix-ui-theme-module": {
+    "root": "libs/remix-ui/theme-module",
+    "sourceRoot": "libs/remix-ui/theme-module/src",
+    "projectType": "library",
+    "architect": {
+      "lint": {
+        "builder": "@nrwl/linter:lint",
+        "options": {
+          "linter": "eslint",
+          "tsConfig": ["libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"],
+          "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
+        }
+      }
+    }
+  },
   "remix-ui-editor": {
     "root": "libs/remix-ui/editor",
     "sourceRoot": "libs/remix-ui/editor/src",

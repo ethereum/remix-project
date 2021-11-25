@@ -188,6 +188,7 @@
     "react-dom": "^17.0.2",
     "react-draggable": "^4.4.4",
     "react-tabs": "^3.2.2",
+    "regenerator-runtime": "0.13.7",
     "selenium": "^2.20.0",
     "signale": "^1.4.0",
     "string-similarity": "^4.0.4",
