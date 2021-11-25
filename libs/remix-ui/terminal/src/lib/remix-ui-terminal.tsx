@@ -94,11 +94,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }, [isOpen])
 
   useEffect(() => {
-    leftRef.current.style.backgroundColor = isDragging ? '#007AA6' : ''
-    leftRef.current.style.border = isDragging ? '2px solid #007AA6' : ''
-  }, [isDragging])
-
-  useEffect(() => {
     event.trigger('resize', [terminalPosition])
   } , [terminalPosition])
 
@@ -431,7 +426,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel' ref={panelRef}>
       <div className="bar">
-        <div className="dragbarHorizontal" onMouseDown={handleDraggingStart} ref={leftRef}></div>
+        <div className={`dragbarHorizontal ${isDragging ? 'dragbarDragging' : ''}`} onMouseDown={handleDraggingStart} ref={leftRef}></div>
         <div className="menu border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
           <i className={`mx-2 toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
           <div className="mx-2 console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
