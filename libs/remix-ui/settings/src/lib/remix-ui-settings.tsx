@@ -177,14 +177,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}
       {gistToken()}
-      {/* <div className="border-top">
-        <div className="card-body pt-3 pb-2">
-          <h6 className="card-title">Themes Module</h6>
-          <div className="card-text themes-container">
-            {themes()}
-          </div>
-        </div>
-      </div> */}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
     </div>
   )
