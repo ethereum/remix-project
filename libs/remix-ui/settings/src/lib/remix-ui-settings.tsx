@@ -7,6 +7,8 @@ import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
+import { RemixUiThemeModule } from '@remix-ui/theme-module'
+import { ThemeModule } from 'libs/remix-ui/theme-module/types/theme-module'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -14,6 +16,7 @@ export interface RemixUiSettingsProps {
   editor: any,
    _deps: any,
    useMatomoAnalytics: boolean
+   themeModule: ThemeModule
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
@@ -155,6 +158,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     </div>
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const themes = () => {
     const themes = props._deps.themeModule.getThemes()
     if (themes) {
@@ -173,14 +177,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}
       {gistToken()}
-      <div className="border-top">
+      {/* <div className="border-top">
         <div className="card-body pt-3 pb-2">
-          <h6 className="card-title">Themes</h6>
+          <h6 className="card-title">Themes Module</h6>
           <div className="card-text themes-container">
             {themes()}
           </div>
         </div>
-      </div>
+      </div> */}
+      <RemixUiThemeModule themeModule={props._deps.themeModule} />
     </div>
   )
 }
