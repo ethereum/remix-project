@@ -2,6 +2,10 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
+import { RemixUiThemeModule } from '@remix-ui/theme-module'
+import ReactDOM from 'react-dom'
+// eslint-disable-next-line no-use-before-define
+import React from 'react'
 import yo from 'yo-yo'
 const _paq = window._paq = window._paq || []
 
@@ -33,6 +37,8 @@ export class ThemeModule extends Plugin {
     this._deps = {
       config: registry.get('config').api
     }
+    this.element = document.createElement('div')
+    this.element.setAttribute('id', 'themeModuleSection')
     this.themes = themes.reduce((acc, theme) => {
       theme.url = window.location.origin + window.location.pathname + theme.url
       return { ...acc, [theme.name]: theme }
@@ -43,6 +49,23 @@ export class ThemeModule extends Plugin {
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.active = queryTheme || currentTheme || 'Dark'
     this.forced = !!queryTheme
+  }
+
+  onActivation () {
+    this.renderComponent()
+  }
+
+  render () {
+    return this.element
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiThemeModule
+        themeModule={this}
+      />,
+      this.element
+    )
   }
 
   /** Return the active theme */
