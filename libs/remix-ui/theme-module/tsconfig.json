@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
