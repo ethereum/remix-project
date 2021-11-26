@@ -1,5 +1,6 @@
-import { ThemeModule } from '../../types/theme-module';
-import './remix-ui-theme-module.module.css';
+import React from 'react'
+import { ThemeModule } from '../../types/theme-module'
+import './remix-ui-theme-module.module.css'
 
 /* eslint-disable-next-line */
 export interface RemixUiThemeModuleProps {
