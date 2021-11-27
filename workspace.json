@@ -1140,31 +1140,12 @@
       "sourceRoot": "libs/remix-ui/main-panel/src",
       "projectType": "library",
       "architect": {
-        "build": {
-          "builder": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/libs/remix-ui/main-panel",
-            "tsConfig": "libs/remix-ui/main-panel/tsconfig.lib.json",
-            "project": "libs/remix-ui/main-panel/package.json",
-            "entryFile": "libs/remix-ui/main-panel/src/index.ts",
-            "external": ["react/jsx-runtime"],
-            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-            "assets": [
-              {
-                "glob": "libs/remix-ui/main-panel/README.md",
-                "input": ".",
-                "output": "."
-              }
-            ]
-          }
-        },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/remix-ui/main-panel/**/*.{ts,tsx,js,jsx}"
-            ]
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/main-panel/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/main-panel/**/*"]
           }
         }
       }
@@ -1174,31 +1155,12 @@
       "sourceRoot": "libs/remix-ui/abstract-panel/src",
       "projectType": "library",
       "architect": {
-        "build": {
-          "builder": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/libs/remix-ui/abstract-panel",
-            "tsConfig": "libs/remix-ui/abstract-panel/tsconfig.lib.json",
-            "project": "libs/remix-ui/abstract-panel/package.json",
-            "entryFile": "libs/remix-ui/abstract-panel/src/index.ts",
-            "external": ["react/jsx-runtime"],
-            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-            "assets": [
-              {
-                "glob": "libs/remix-ui/abstract-panel/README.md",
-                "input": ".",
-                "output": "."
-              }
-            ]
-          }
-        },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/remix-ui/abstract-panel/**/*.{ts,tsx,js,jsx}"
-            ]
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/abstract-panel/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/abstract-panel/**/*"]
           }
         }
       }
