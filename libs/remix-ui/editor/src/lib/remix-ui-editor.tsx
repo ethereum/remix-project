@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import Editor from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
 
@@ -43,6 +43,8 @@ type sourceAnnotationMap = {
 type sourceMarkerMap = {
   [key: string]: [sourceMarker];
 }
+
+loader.config({ paths: { vs: 'assets/monaco-editor/dev/vs' } })
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
