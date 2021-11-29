@@ -102,7 +102,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const yellowColor = formatColor('--yellow')
     const pinkColor = formatColor('--pink')
     const locationColor = '#9e7e08'
-    //const purpleColor = formatColor('--purple')
+    // const purpleColor = formatColor('--purple')
     const dangerColor = formatColor('--danger')
     const greenColor = formatColor('--green')
     const orangeColor = formatColor('--orange')
@@ -142,7 +142,6 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.this', foreground: infoColor },
         { token: 'keyword.virtual', foreground: infoColor },
 
-
         // for state variables
         { token: 'keyword.constants', foreground: grayColor },
         { token: 'keyword.override', foreground: grayColor },
@@ -152,7 +151,6 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.memory', foreground: locationColor },
         { token: 'keyword.storage', foreground: locationColor },
         { token: 'keyword.calldata', foreground: locationColor },
-
 
         // for Events
         { token: 'keyword.indexed', foreground: yellowColor },
