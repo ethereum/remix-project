@@ -44,7 +44,7 @@ type sourceMarkerMap = {
   [key: string]: [sourceMarker];
 }
 
-loader.config({ paths: { vs: 'assets/monaco-editor/dev/vs' } })
+loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
