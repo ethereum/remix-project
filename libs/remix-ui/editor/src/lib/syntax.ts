@@ -12,6 +12,7 @@ export const conf = {
   ],
   autoClosingPairs: [
     { open: '"', close: '"', notIn: ['string', 'comment'] },
+    { open: "'", close: "'", notIn: ['string', 'comment'] },
     { open: '{', close: '}', notIn: ['string', 'comment'] },
     { open: '[', close: ']', notIn: ['string', 'comment'] },
     { open: '(', close: ')', notIn: ['string', 'comment'] }
@@ -1224,7 +1225,6 @@ export const language = {
     'internal',
     'indexed',
     'anonymous',
-    'isOwner',
     'view',
     'pure',
     'inherited',

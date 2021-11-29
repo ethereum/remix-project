@@ -102,9 +102,11 @@ export const EditorUI = (props: EditorUIProps) => {
     const yellowColor = formatColor('--yellow')
     const pinkColor = formatColor('--pink')
     const locationColor = '#9e7e08'
-    const purpleColor = formatColor('--purple')
+    //const purpleColor = formatColor('--purple')
     const dangerColor = formatColor('--danger')
     const greenColor = formatColor('--green')
+    const orangeColor = formatColor('--orange')
+    const grayColor = formatColor('--gray')
 
     monaco.editor.defineTheme(themeName, {
       base: themeType,
@@ -138,19 +140,19 @@ export const EditorUI = (props: EditorUIProps) => {
         // specials
         { token: 'keyword.super', foreground: infoColor },
         { token: 'keyword.this', foreground: infoColor },
+        { token: 'keyword.virtual', foreground: infoColor },
+
 
         // for state variables
-        { token: 'keyword.constants', foreground: warningColor },
-        { token: 'keyword.override', foreground: warningColor },
-        { token: 'keyword.immutable', foreground: warningColor },
+        { token: 'keyword.constants', foreground: grayColor },
+        { token: 'keyword.override', foreground: grayColor },
+        { token: 'keyword.immutable', foreground: grayColor },
 
         // data location
         { token: 'keyword.memory', foreground: locationColor },
         { token: 'keyword.storage', foreground: locationColor },
         { token: 'keyword.calldata', foreground: locationColor },
 
-        // for functions and modifiers
-        { token: 'keyword.virtual', foreground: purpleColor },
 
         // for Events
         { token: 'keyword.indexed', foreground: yellowColor },
@@ -176,15 +178,23 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.constructor', foreground: pinkColor },
 
         // identifiers
-        { token: 'keyword.identifier', foreground: purpleColor },
-        { token: 'keyword.for', foreground: purpleColor },
-        { token: 'keyword.if', foreground: purpleColor },
-        { token: 'keyword.else', foreground: purpleColor },
-        { token: 'keyword.else', foreground: purpleColor },
-        { token: 'keyword.else', foreground: purpleColor },
+        { token: 'keyword.identifier', foreground: warningColor },
+        { token: 'keyword.for', foreground: warningColor },
+        { token: 'keyword.break', foreground: warningColor },
+        { token: 'keyword.continue', foreground: warningColor },
+        { token: 'keyword.while', foreground: warningColor },
+        { token: 'keyword.do', foreground: warningColor },
+
+        { token: 'keyword.if', foreground: yellowColor },
+        { token: 'keyword.else', foreground: yellowColor },
+
+        { token: 'keyword.throw', foreground: orangeColor },
+        { token: 'keyword.catch', foreground: orangeColor },
+        { token: 'keyword.try', foreground: orangeColor },
 
         // returns
-        { token: 'keyword.returns', foreground: greenColor }
+        { token: 'keyword.returns', foreground: greenColor },
+        { token: 'keyword.return', foreground: greenColor }
 
       ],
       colors: {
