@@ -60,8 +60,10 @@ function App() {
   const [salt, setSalt] = useState<string>('')
   const [depoyedAddress, setDeployedAddress] = useState<string | null>(null)
   const [isLoading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleParsing = async () => {
+    setError('')
     const filePath = await client.current.call('fileManager', 'getCurrentFile');
     const contractJson = await client.current.call('fileManager', 'readFile', filePath);
     const contract = json.parse(contractJson) as CompiledContract;
@@ -80,6 +82,7 @@ function App() {
     const initWeb3 = async () => {
       if (window.ethereum) {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x3' }], })
         window.web3 = new Web3(window.ethereum);
         window.web3.eth.getAccounts((_, result) => {
           setAccounts(result);
@@ -145,7 +148,13 @@ function App() {
             setDeployedAddress(res)
           })
       })
-      .catch((err: unknown) => console.log(err))
+      .catch((err: any) => {
+        if(err.code && err.code === 4001) {
+          setError(err.message)
+        }
+        resetState()
+        console.log(err)
+      })
   }
 
   const canDeploy = () => {
@@ -190,6 +199,7 @@ function App() {
       {contractToDeploy && canDeploy() ? <div role="button" className="button" onClick={handleVariableParsing}>deploy</div> : null}
       {isLoading ? 'Deploy in progress...' : null}
       {depoyedAddress ? <>Deployed address: <div className="address">{depoyedAddress}</div></> : null}
+      {error ? <div className="error">{error}</div> : null}
     </div>  
   )
 }
