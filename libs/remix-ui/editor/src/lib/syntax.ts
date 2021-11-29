@@ -1269,8 +1269,6 @@ export const language = {
     'if',
     'else',
     'for',
-    'else',
-    'for',
     'while',
     'do',
     'break',

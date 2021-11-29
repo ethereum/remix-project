@@ -104,6 +104,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const locationColor = '#9e7e08'
     const purpleColor = formatColor('--purple')
     const dangerColor = formatColor('--danger')
+    const greenColor = formatColor('--green')
 
     monaco.editor.defineTheme(themeName, {
       base: themeType,
@@ -148,14 +149,14 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.storage', foreground: locationColor },
         { token: 'keyword.calldata', foreground: locationColor },
 
-        // // forf functions and modifiers
+        // for functions and modifiers
         { token: 'keyword.virtual', foreground: purpleColor },
 
-        // // for Events
+        // for Events
         { token: 'keyword.indexed', foreground: yellowColor },
         { token: 'keyword.anonymous', foreground: yellowColor },
 
-        // // for functions
+        // for functions
         { token: 'keyword.external', foreground: successColor },
         { token: 'keyword.internal', foreground: successColor },
         { token: 'keyword.private', foreground: successColor },
@@ -172,7 +173,18 @@ export const EditorUI = (props: EditorUIProps) => {
         // special functions
         { token: 'keyword.fallback', foreground: pinkColor },
         { token: 'keyword.receive', foreground: pinkColor },
-        { token: 'keyword.constructor', foreground: pinkColor }
+        { token: 'keyword.constructor', foreground: pinkColor },
+
+        // identifiers
+        { token: 'keyword.identifier', foreground: purpleColor },
+        { token: 'keyword.for', foreground: purpleColor },
+        { token: 'keyword.if', foreground: purpleColor },
+        { token: 'keyword.else', foreground: purpleColor },
+        { token: 'keyword.else', foreground: purpleColor },
+        { token: 'keyword.else', foreground: purpleColor },
+
+        // returns
+        { token: 'keyword.returns', foreground: greenColor }
 
       ],
       colors: {
