@@ -149,7 +149,7 @@ function App() {
           })
       })
       .catch((err: any) => {
-        if(err.code && err.code === 4001) {
+        if(err.code && err.code === 4001) { // From metamask docs, error thrown when user denies access to account
           setError(err.message)
         }
         resetState()
