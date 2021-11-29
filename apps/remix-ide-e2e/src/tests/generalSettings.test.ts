@@ -7,7 +7,7 @@ module.exports = {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
 
-  'Should display settings menu': function (browser: NightwatchBrowser) {
+  'Should display settings menu ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
@@ -15,7 +15,7 @@ module.exports = {
       .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
   },
 
-  'Should activate `generate contract metadata`': function (browser) {
+  'Should activate `generate contract metadata` ': function (browser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
       .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
@@ -35,7 +35,7 @@ module.exports = {
       })
   },
 
-  'Should add new github access token': function (browser: NightwatchBrowser) {
+  'Should add new github access token ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="verticalIconsKindsettings"]')
       .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
@@ -45,7 +45,7 @@ module.exports = {
       .pause(3000)
   },
 
-  'Should copy github access token to clipboard': function (browser: NightwatchBrowser) {
+  'Should copy github access token to clipboard ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="copyToClipboardCopyIcon"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
@@ -54,7 +54,7 @@ module.exports = {
       // .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
   },
 
-  'Should remove github access token': function (browser: NightwatchBrowser) {
+  'Should remove github access token ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .pause(1000)
       .click('*[data-id="settingsTabRemoveGistToken"]')
@@ -63,7 +63,7 @@ module.exports = {
       .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 
-  'Should load dark theme': function (browser: NightwatchBrowser) {
+  'Should load dark theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelDark"]')
       .pause(2000)
@@ -75,7 +75,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.dark.danger)
   },
 
-  'Should load light theme': function (browser: NightwatchBrowser) {
+  'Should load light theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelLight"]')
       .pause(2000)
@@ -87,7 +87,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.light.danger)
   },
 
-  'Should load Cerulean theme': function (browser: NightwatchBrowser) {
+  'Should load Cerulean theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelCerulean"]')
       .pause(5000)
@@ -99,7 +99,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.curelean.danger)
   },
 
-  'Should load Flatly theme': function (browser: NightwatchBrowser) {
+  'Should load Flatly theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelFlatly"]')
       .pause(2000)
@@ -111,7 +111,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.flatly.danger)
   },
 
-  'Should load Spacelab theme': function (browser) {
+  'Should load Spacelab theme ': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelSpacelab"]')
       .pause(2000)
@@ -123,7 +123,7 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.spacelab.danger)
   },
 
-  'Should load Cyborg theme': function (browser) {
+  'Should load Cyborg theme ': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="settingsTabThemeLabelCyborg"]')
       .pause(2000)
