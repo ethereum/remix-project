@@ -505,11 +505,10 @@ class App {
             }
           }
         }).catch(console.error)
-      } else {
-        // activate solidity plugin
-        appManager.activatePlugin(['solidity', 'udapp'])
       }
     })
+    // activate solidity plugin
+    appManager.activatePlugin(['solidity', 'udapp'])
 
     // Load and start the service who manager layout and frame
     const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
