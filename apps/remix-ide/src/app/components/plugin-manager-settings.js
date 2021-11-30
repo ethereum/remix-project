@@ -86,7 +86,6 @@ export class PluginManagerSettings {
     yo.update(this.currentSetting, this.settings())
   }
 
-
   render () {
     return yo`
     <footer class="bg-light ${css.permissions} remix-bg-opacity">
