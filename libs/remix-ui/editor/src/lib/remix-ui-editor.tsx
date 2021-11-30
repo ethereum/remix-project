@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import Editor from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
 
@@ -43,6 +43,8 @@ type sourceAnnotationMap = {
 type sourceMarkerMap = {
   [key: string]: [sourceMarker];
 }
+
+loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
@@ -288,7 +290,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getFontSize = () => {
     if (!editorRef.current) return
-    return editorRef.current.getOption(42).fontSize
+    return editorRef.current.getOption(43).fontSize
   }
 
   (window as any).addRemixBreakpoint = (position) => { // make it available from e2e testing...
@@ -329,10 +331,10 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
-      editor.updateOptions({ fontSize: editor.getOption(42).fontSize + 1 })
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
-      editor.updateOptions({ fontSize: editor.getOption(42).fontSize - 1 })
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
   }
 
