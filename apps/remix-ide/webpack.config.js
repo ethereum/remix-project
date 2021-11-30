@@ -24,8 +24,6 @@ module.exports = config => {
       })
     ]
   }
-  console.log(webpackConfig)
-  console.log(nxWebpackConfig)
 
   if (process.env.NODE_ENV === 'production') {
     return {
