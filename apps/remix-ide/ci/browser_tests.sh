@@ -22,7 +22,7 @@ setupRemixd
 sleep 5
 
 npm run nightwatch_parallel || TEST_EXITCODE=1
-TESTFILES=$(circleci tests glob "./apps/remix-ide/test-browser/tests/**/*.test.js" | circleci tests split --split-by=timings)
+TESTFILES=$(circleci tests glob "./apps/remix-ide/test-browser/tests/**/*.test.js" | circleci tests split )
 for TESTFILE in $TESTFILES; do
     ./node_modules/.bin/nightwatch --config ./apps/remix-ide/nightwatch.js --env chrome $TESTFILE || TEST_EXITCODE=1
 done
