@@ -16,11 +16,16 @@ module.exports = config => {
       child_process: 'empty'
     },
     plugins: [
-      new CopyWebpackPlugin([
-        { from: "node_modules/monaco-editor/min/vs/", to: "assets/js/monaco-editor/vs" },
-      ]),
+      ...nxWebpackConfig.plugins,
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: "../../../node_modules/monaco-editor/dev/vs/", to: "assets/js/monaco-editor/dev/vs" },
+        ].filter(Boolean)
+      })
     ]
   }
+  console.log(webpackConfig)
+  console.log(nxWebpackConfig)
 
   if (process.env.NODE_ENV === 'production') {
     return {
