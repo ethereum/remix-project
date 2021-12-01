@@ -4,31 +4,6 @@ import { RemixUiAbstractPanel } from '@remix-ui/abstract-panel' // eslint-disabl
 import { EventEmitter } from 'events'
 const EventManager = require('../../lib/events')
 import { HostPlugin } from '@remixproject/engine-web' // eslint-disable-line
-const csjs = require('csjs-inject')
-const yo = require('yo-yo')
-
-const css = csjs`
-  .plugins        {
-    height: 100%;
-  }
-  .plugItIn       {
-    display        : none;
-    height         : 100%;
-  }
-  .plugItIn > div {
-    overflow-y     : auto;
-    overflow-x     : hidden;
-    height         : 100%;
-    width          : 100%;
-  }
-  .plugItIn.active     {
-    display        : block;
-  }
-  .pluginsContainer {
-    height         : 100%;
-    overflow-y     : hidden;
-  }
-`
 
 /** Abstract class used for hosting the view of a plugin */
 export class AbstractPanel extends HostPlugin {
@@ -41,51 +16,21 @@ export class AbstractPanel extends HostPlugin {
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'plugins')
     this.element.setAttribute('class', 'abstract-panel-plugins')
-
-    // View where the plugin HTMLElement leaves
-    this.view = yo`<div id="plugins" class="${css.plugins}"></div>`
   }
 
   onActivation () {
     this.renderComponent()
   }
 
-  /**
-   * Add the plugin to the panel
-   * @param {String} name the name of the plugin
-   * @param {HTMLElement} content the HTMLContent of the plugin
-   */
-  add (view, name) {
-    if (this.contents[name]) throw new Error(`Plugin ${name} already rendered`)
+  addView (profile, view) {
+    if (this.contents[profile.name]) throw new Error(`Plugin ${profile.name} already rendered`)
     view.style.height = '100%'
     view.style.width = '100%'
     view.style.border = '0'
-
-    const isIframe = view.tagName === 'IFRAME'
-    view.style.display = isIframe ? 'none' : 'block'
-    const loading = isIframe ? yo`
-      <div class="d-flex justify-content-center align-items-center">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>  
-    ` : ''
-    this.contents[name] = yo`<div class="${css.plugItIn}" >${view}${loading}</div>`
-
-    if (view.tagName === 'IFRAME') {
-      view.addEventListener('load', () => {
-        if (this.contents[name].contains(loading)) {
-          this.contents[name].removeChild(loading)
-        }
-        view.style.display = 'block'
-      })
-    }
-    this.contents[name].style.display = 'none'
-    this.view.appendChild(this.contents[name])
-  }
-
-  addView (profile, view) {
-    this.add(view, profile.name)
+    this.contents[profile.name] = view
+    this.showContent(profile.name)
+    this.element.appendChild(this.contents[profile.name])
+    this.renderComponent()
   }
 
   removeView (profile) {
@@ -101,6 +46,7 @@ export class AbstractPanel extends HostPlugin {
     delete this.contents[name]
     if (el) el.parentElement.removeChild(el)
     if (name === this.active) this.active = undefined
+    this.renderComponent()
   }
 
   /**
@@ -113,8 +59,10 @@ export class AbstractPanel extends HostPlugin {
     if (this.active) {
       this.contents[this.active].style.display = 'none'
     }
+
     this.contents[name].style.display = 'flex'
     this.active = name
+    this.renderComponent()
   }
 
   focus (name) {

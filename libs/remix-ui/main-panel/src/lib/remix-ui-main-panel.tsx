@@ -18,7 +18,7 @@ export const RemixUiMainPanel = (props: RemixUiMainPanelProps) =>  {
 
 
   return (
-    <div className="plugItIn_2byTty" style={{ display: "block" }} data-id="mainPanelPluginsContainer" id='mainPanelPluginsContainer-id'>
+    <div className="plugItIn pluginsContainer" style={{ display: "block" }} data-id="mainPanelPluginsContainer" id='mainPanelPluginsContainer-id'>
     <div data-id="landingPageHomeContainer" className="homeContainer d-flex" style={{ height: "100%", width: "100%", border: "0px", display: "block" }}>
             <div className="mainContent_2A2Ew bg-light">
           <div className="d-flex justify-content-between">
