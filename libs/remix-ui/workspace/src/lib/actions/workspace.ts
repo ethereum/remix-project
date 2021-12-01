@@ -211,8 +211,8 @@ const deleteWorkspaceFromProvider = async (workspaceName: string) => {
 export const switchToWorkspace = async (name: string) => {
   await plugin.fileManager.closeAllFiles()
   if (name === LOCALHOST) {
+    await plugin.call('fileManager', 'setMode', 'localhost')
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
-
     if (!isActive) await plugin.call('manager', 'activatePlugin', 'remixd')
     dispatch(setMode('localhost'))
     plugin.emit('setWorkspace', { name: null, isLocalhost: true })
@@ -221,8 +221,8 @@ export const switchToWorkspace = async (name: string) => {
     plugin.setWorkspace({ name: null, isLocalhost: false })
     dispatch(setCurrentWorkspace(null))
   } else {
+    await plugin.call('fileManager', 'setMode', 'bropwser')
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
-
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     plugin.setWorkspace({ name, isLocalhost: false })
