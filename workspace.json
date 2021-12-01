@@ -456,16 +456,6 @@
             "main": "libs/remixd/src/index.ts",
             "assets": ["libs/remixd/*.md", "libs/remixd/src/origins.json"]
           }
-        },
-        "serve": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "SERVE_SCRIPT='chmod +x dist/libs/remixd/src/bin/remixd.js; dist/libs/remixd/src/bin/remixd.js '; if [ {args.folder} != undefined ]; then SERVE_SCRIPT=${SERVE_SCRIPT}' -s {args.folder}'; fi; if [ {args.remixide} != undefined ]; then SERVE_SCRIPT=${SERVE_SCRIPT}' --remix-ide {args.remixide}'; fi; eval $SERVE_SCRIPT;"
-              }
-            ]
-          }
         }
       }
     },
