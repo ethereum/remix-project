@@ -23,10 +23,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [, dispatch] = useReducer(settingReducer, initialState)
   const [state, dispatchToast] = useReducer(toastReducer, toastInitialState)
   const [tokenValue, setTokenValue] = useState('')
-  const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
-    props._deps.themeModule.switchTheme()
     const token = props.config.get('settings/gist-access-token')
     if (token === undefined) {
       props.config.set('settings/generate-contract-metadata', true)
@@ -35,7 +33,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (token) {
       setTokenValue(token)
     }
-  }, [themeName, state.message])
+  }, [state.message])
 
   useEffect(() => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
@@ -67,10 +65,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     useMatomoAnalytics(props.config, event.target.checked, dispatch)
   }
 
-  const onswitchTheme = (event, name) => {
-    props._deps.themeModule.switchTheme(name)
-    setThemeName(name)
-  }
+  // const onswitchTheme = (event, name) => {
+  //   props._deps.themeModule.switchTheme(name)
+  //   setThemeName(name)
+  // }
 
   const getTextClass = (key) => {
     if (props.config.get(key)) {
@@ -159,18 +157,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   )
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const themes = () => {
-    const themes = props._deps.themeModule.getThemes()
-    if (themes) {
-      return themes.map((aTheme, index) => (
-        <div className="radio custom-control custom-radio mb-1 form-check" key={index}>
-          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name }/>
-          <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${aTheme.name}`} htmlFor={aTheme.name}>{aTheme.name} ({aTheme.quality})</label>
-        </div>
-      )
-      )
-    }
-  }
+  // const themes = () => {
+  //   const themes = props._deps.themeModule.getThemes()
+  //   if (themes) {
+  //     return themes.map((aTheme, index) => (
+  //       <div className="radio custom-control custom-radio mb-1 form-check" key={index}>
+  //         <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name }/>
+  //         <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${aTheme.name}`} htmlFor={aTheme.name}>{aTheme.name} ({aTheme.quality})</label>
+  //       </div>
+  //     )
+  //     )
+  //   }
+  // }
 
   return (
     <div>
