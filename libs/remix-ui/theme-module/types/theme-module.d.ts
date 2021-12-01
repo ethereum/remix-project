@@ -2,6 +2,7 @@ import { Plugin } from "@remixproject/engine/lib/abstract";
 import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class ThemeModule extends Plugin<any, any> {
+    currentThemeState: Record<string, unknown>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(registry: any);
     events: EventEmitter;
@@ -11,9 +12,9 @@ export class ThemeModule extends Plugin<any, any> {
     };
     element: HTMLDivElement;
     // eslint-disable-next-line @typescript-eslint/ban-types
-    themes: {};
+    themes: {[key: string]: Theme};
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    active: any;
+    active: string;
     forced: boolean;
     render(): HTMLDivElement;
     renderComponent(): void;
@@ -22,7 +23,7 @@ export class ThemeModule extends Plugin<any, any> {
     currentTheme(): any;
     /** Returns all themes as an array */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getThemes(): any[];
+    getThemes(): Theme[];
     /**
      * Init the theme
      */
@@ -40,3 +41,5 @@ export class ThemeModule extends Plugin<any, any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fixInvert(image?: any): void;
 }
+
+interface Theme { name: string, quality: string, url: string }

@@ -47,6 +47,7 @@ export class ThemeModule extends Plugin {
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
     currentTheme = this.themes[currentTheme] ? currentTheme : null
+    this.currentThemeState = { queryTheme, currentTheme }
     this.active = queryTheme || currentTheme || 'Dark'
     this.forced = !!queryTheme
   }
@@ -81,7 +82,7 @@ export class ThemeModule extends Plugin {
   /**
    * Init the theme
    */
-  initTheme (callback) {
+  initTheme (callback) { // callback is setTimeOut in app.js which is always passed
     if (this.active) {
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
