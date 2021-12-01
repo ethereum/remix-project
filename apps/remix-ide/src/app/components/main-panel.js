@@ -16,13 +16,15 @@ const profile = {
 export class MainPanel extends AbstractPanel {
   constructor (config) {
     super(profile)
-    this.element = document.createElement('div')
+    this.mainelement = document.createElement('div')
+    this.element.setAttribute('class', 'mainPanelPluginsContainer')
     this.config = config
   }
 
   focus (name) {
     this.emit('focusChanged', name)
     super.focus(name)
+    this.renderComponent()
   }
 
   onActivation () {
@@ -38,7 +40,7 @@ export class MainPanel extends AbstractPanel {
       <RemixUiMainPanel
         plugin={this}
       />,
-      this.element
+      this.mainelement
     )
   }
 }

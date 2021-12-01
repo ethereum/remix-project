@@ -149,7 +149,7 @@ export class SidePanel extends AbstractPanel {
       <section class="${css.panel} plugin-manager">
         ${this.header}
         <div class="${css.pluginsContainer}">
-          ${this.view}
+          ${this.element}
         </div>
       </section>`
   }
