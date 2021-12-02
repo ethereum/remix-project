@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react' // eslint-disable-lin
 // import { TestTabLogic } from './logic/testTabLogic'
 var async = require('async')
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
+import { format } from 'util'
 
 import './css/style.css'
 
@@ -26,6 +27,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [disableRunButton, setDisableRunButton] = useState(false)
   const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
   const [stopButtonLabel, setStopButtonLabel] = useState('Stop')
+
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
   
@@ -193,6 +195,25 @@ export const SolidityUnitTesting = (props: any) => {
     testTab.call('debugger', 'debug', txHash, web3)
   }
 
+  const printHHLogs = (logsArr: any, testName: any) => {
+    let finalLogs = `<b>${testName}:</b>\n`
+    for (const log of logsArr) {
+      let formattedLog
+      // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+      // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+      // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+      // We check first arg to determine if 'util.format' is needed
+      if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+        formattedLog = format(log[0], ...log.slice(1))
+      } else {
+        formattedLog = log.join(' ')
+      }
+      finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
+    }
+    // _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
+    testTab.call('terminal', 'log', { type: 'info', value: finalLogs })
+  }
+
   const testCallback = (result: any, runningTests: any) => {
     console.log('result---in testCallback->', result)
     let debugBtn
@@ -219,7 +240,7 @@ export const SolidityUnitTesting = (props: any) => {
       )
       setTestsOutput(prevCards => ([...prevCards, ContractCard]))
     } else if (result.type === 'testPass') {
-      // if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+      if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
       const testPassCard: any = (
         <div
           id={runningTestFileName}
@@ -235,7 +256,7 @@ export const SolidityUnitTesting = (props: any) => {
       )
       setTestsOutput(prevCards => ([...prevCards, testPassCard]))
     } else if (result.type === 'testFailure') {
-      // if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
+      if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
       if (!result.assertMethod) {
         const testFailCard1: any = (<div
           className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
@@ -277,10 +298,9 @@ export const SolidityUnitTesting = (props: any) => {
         </div>)
         setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
       }
-    } 
-    //else if (result.type === 'logOnly') {
-    //   if (result.hhLogs && result.hhLogs.length) this.printHHLogs(result.hhLogs, result.value)
-    // }
+    } else if (result.type === 'logOnly') {
+      if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+    }
   }
 
   const resultsCallback = (_err: any, result: any, cb: any) => {
