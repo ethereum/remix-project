@@ -212,6 +212,7 @@ export const switchToWorkspace = async (name: string) => {
   await plugin.fileManager.closeAllFiles()
   if (name === LOCALHOST) {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
+    
     if (!isActive) await plugin.call('manager', 'activatePlugin', 'remixd')
     dispatch(setMode('localhost'))
     plugin.emit('setWorkspace', { name: null, isLocalhost: true })
@@ -221,6 +222,7 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setCurrentWorkspace(null))
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
+    
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     plugin.setWorkspace({ name, isLocalhost: false })
