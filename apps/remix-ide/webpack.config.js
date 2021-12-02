@@ -1,7 +1,6 @@
 const nxWebpack = require('@nrwl/react/plugins/webpack')
 const TerserPlugin = require('terser-webpack-plugin')
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
@@ -19,7 +18,7 @@ module.exports = config => {
       ...nxWebpackConfig.plugins,
       new CopyWebpackPlugin({
         patterns: [
-          { from: "../../../node_modules/monaco-editor/dev/vs/", to: "assets/js/monaco-editor/dev/vs" },
+          { from: '../../../node_modules/monaco-editor/dev/vs/', to: 'assets/js/monaco-editor/dev/vs' }
         ].filter(Boolean)
       })
     ]
