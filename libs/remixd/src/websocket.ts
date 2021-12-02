@@ -66,7 +66,7 @@ function originIsAllowed (origin: string, self: WebSocket): boolean {
   } else {
     try {
       // eslint-disable-next-line
-      const origins = require('./origins.json')
+      const origins = require('../origins.json')
       const domain = getDomain(origin)
       const { data } = origins
 
