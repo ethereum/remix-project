@@ -127,6 +127,7 @@ export function Workspace () {
               </label>
               <span className="remixui_menu">
                 <span
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspaceCreate'
                   data-id='workspaceCreate'
                   onClick={(e) => {
