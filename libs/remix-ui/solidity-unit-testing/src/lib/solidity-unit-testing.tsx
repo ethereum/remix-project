@@ -214,6 +214,10 @@ export const SolidityUnitTesting = (props: any) => {
     testTab.call('terminal', 'log', { type: 'info', value: finalLogs })
   }
 
+  const discardHighlight = async () => {
+    await testTab.call('editor', 'discardHighlight')
+  }
+
   const highlightLocation = async (location: any, runningTests: any, fileName: any) => {
     if (location) {
       var split = location.split(':')
@@ -264,7 +268,7 @@ export const SolidityUnitTesting = (props: any) => {
           id={runningTestFileName}
           data-id="testTabSolidityUnitTestsOutputheader"
           className="testPass testLog bg-light mb-2 px-2 text-success border-0"
-          // onClick=${() => this.discardHighlight()}
+          onClick={() => discardHighlight()}
         >
           <div className="d-flex my-1 align-items-start justify-content-between">
             <span > ✓ {result.value}</span>
