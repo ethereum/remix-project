@@ -214,6 +214,24 @@ export const SolidityUnitTesting = (props: any) => {
     testTab.call('terminal', 'log', { type: 'info', value: finalLogs })
   }
 
+  const highlightLocation = async (location: any, runningTests: any, fileName: any) => {
+    if (location) {
+      var split = location.split(':')
+      var file = split[2]
+      location = {
+        start: parseInt(split[0]),
+        length: parseInt(split[1])
+      }
+      location = testTab.offsetToLineColumnConverter.offsetToLineColumnWithContent(
+        location,
+        parseInt(file),
+        runningTests[fileName].content
+      )
+      await testTab.call('editor', 'discardHighlight')
+      await testTab.call('editor', 'highlight', location, fileName, '', { focus: true })
+    }
+  }
+
   const testCallback = (result: any, runningTests: any) => {
     console.log('result---in testCallback->', result)
     let debugBtn
@@ -261,7 +279,7 @@ export const SolidityUnitTesting = (props: any) => {
         const testFailCard1: any = (<div
           className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
           id={"UTContext" + result.context}
-          // onClick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
+          onClick={() => highlightLocation(result.location, runningTests, result.filename)}
         >
           <div className="d-flex my-1 align-items-start justify-content-between">
             <span> ✘ {result.value}</span>
@@ -278,7 +296,7 @@ export const SolidityUnitTesting = (props: any) => {
         const testFailCard2: any = (<div
           className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
           id="UTContext${result.context}"
-          // onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
+          onClick={() => highlightLocation(result.location, runningTests, result.filename)}
         >
           <div className="d-flex my-1 align-items-start justify-content-between">  
             <span> ✘ {result.value}</span>
