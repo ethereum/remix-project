@@ -334,12 +334,12 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'ROOT_FOLDER_CHANGED': {
       const payload = action.payload as string
-
       return {
         ...state,
         localhost: {
           ...state.localhost,
-          sharedFolder: payload
+          sharedFolder: payload,
+          files: []
         }
       }
     }
@@ -673,9 +673,9 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
     }
   } else {
     if (payload.path === state.mode || payload.path === '/') {
-      const files = normalize(payload.fileTree, payload.path, payload.type)
+      let files = normalize(payload.fileTree, payload.path, payload.type)
 
-      // files = _.merge(files, state[state.mode].files[state.mode])
+      files = _.merge(files, state[state.mode].files[state.mode])
       if (deletePath) delete files[deletePath]
       return { [state.mode]: files }
     } else {
