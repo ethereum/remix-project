@@ -339,7 +339,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         ...state,
         localhost: {
           ...state.localhost,
-          sharedFolder: payload
+          sharedFolder: payload,
+          files: null
         }
       }
     }
