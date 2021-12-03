@@ -10,6 +10,7 @@ export interface RemixUiThemeModuleProps {
 
 export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
   const [themeName, setThemeName] = useState('')
+  const themeRef = useRef<any>(null)
 
   useEffect(() => {
     themeModule.switchTheme()
@@ -20,22 +21,27 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
     const linkRef = useRef<any>(null)
     function initTheme (callback: () => void) {
       // const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
-    if (themeModule.active) {
-      setNextTheme(themeModule.themes[themeModule.active]) // Theme
-      document.documentElement.style.setProperty('--theme', nextTheme.quality)
+      if (themeModule.active) {
+        setNextTheme(themeModule.themes[themeModule.active]) // Theme
+        document.documentElement.style.setProperty('--theme', nextTheme.quality)
+      }
     }
-  }
-  useEffect(() => {
-    const callback = () => {
-      setTimeout(() => {
-        document.body.removeChild(self._view.splashScreen)
-        self._view.el.style.visibility = 'visible'
-      }, 1500)
-    addEventListener('load', () => {
+    useEffect(() => {
+      const shell = document.querySelector('div[data-id="remixIDE"]') as any
+      const splashScreen = document.querySelector('div[data-id="remixIDESplash"]') as Node
+      const callback = () => {
+        // setTimeout(() => {
+        //   document.body.removeChild(splashScreen)
+        //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        //   shell!.style.visibility = 'visible'
+        // }, 1500)
+      }
+      document.addEventListener('load', () => {
         if (callback) callback()
       })
       document.head.insertBefore(linkRef.current, document.head.firstChild)
-  }, [])
+    }, [])
+
     return (
       <link rel="stylesheet" href={nextTheme.url} ref={linkRef} id="theme-link"/>
     )
