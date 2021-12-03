@@ -131,7 +131,7 @@ class App {
     self._components = {}
     self._view = {}
     self._view.splashScreen = yo`
-      <div class=${css.centered}>
+      <div class=${css.centered} data-id="remixIDESplash">
         ${basicLogo()}
         <div class="info-secondary" style="text-align:center">
           REMIX IDE
@@ -243,6 +243,9 @@ class App {
     // ----------------- theme service ---------------------------------
     const themeModule = new ThemeModule(registry)
     registry.put({ api: themeModule, name: 'themeModule' })
+    console.log('what is self._view in app.js? ', { self })
+    const elmt = self._view.el
+    console.log('what is self._view.el in app.js? ', { elmt })
     themeModule.initTheme(() => {
       setTimeout(() => {
         document.body.removeChild(self._view.splashScreen)
