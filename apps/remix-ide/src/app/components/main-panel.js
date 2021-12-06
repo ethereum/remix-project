@@ -17,7 +17,7 @@ export class MainPanel extends AbstractPanel {
   constructor (config) {
     super(profile)
     this.mainelement = document.createElement('div')
-    this.element.setAttribute('class', 'mainPanelPluginsContainer')
+    this.mainelement.setAttribute('class', 'mainPanelPluginsContainer')
     this.config = config
   }
 
@@ -32,7 +32,7 @@ export class MainPanel extends AbstractPanel {
   }
 
   render () {
-    return this.element
+    return this.mainelement
   }
 
   renderComponent () {

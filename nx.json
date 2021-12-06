@@ -144,6 +144,9 @@
     },
     "remix-ui-abstract-panel": {
       "tags": []
+    },
+    "remix-ui-side-panel": {
+      "tags": []
     }
   },
   "targetDependencies": {

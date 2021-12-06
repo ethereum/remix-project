@@ -22,13 +22,14 @@ export function RemixUiAbstractPanel(props: RemixUiAbstractPanelProps) {
         view.addEventListener('load', () => {
           setLoading(true)
         })
-        setLoading(false)
+       
       })
+      setLoading(false)
     }
   , [loading])
 
   return (
-    <div id="plugins" className="plugins">
+    <div id="plugins">
       {
         Object.keys(props.plugin.contents).map((key: string, index: number) => {
           
@@ -37,7 +38,7 @@ export function RemixUiAbstractPanel(props: RemixUiAbstractPanelProps) {
           console.log({ plugin: plugin.id, active: props.plugin.active })
 
           return (
-            <div className="plugItIn" key={ index }>
+            <div key={ index }>
               {loading && (
                  <div className="d-flex justify-content-center align-items-center">
                  <div className="spinner-border" role="status">
