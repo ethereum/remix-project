@@ -46,7 +46,7 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
   const renderHeader =  () => {
     getProfile()
    return (
-    <header className="remix-ui-side-panel-swapitHeader" style={{
+    <header className="swapitHeader" style={{
     display: 'flex',
     alignItems: "center",
     padding: '16px 24px 15px',
@@ -61,13 +61,8 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
 
 
   return (
-            <section>
+            <section style={{height: "100%"}}>
               {renderHeader()}
-              <div className="pluginsContainer" style={{
-                    height: "100%",
-                    overflowY: "auto"
-              }}>
-              </div>
             </section>
   );
 }
