@@ -14,6 +14,13 @@ interface TestObject {
   checked: boolean
 }
 
+interface TestSummary {
+  filename: string
+  passed: number
+  failed: number
+  timeTaken: any
+}
+
 export const SolidityUnitTesting = (props: any) => {
 
   const {helper, testTab} = props
@@ -30,6 +37,8 @@ export const SolidityUnitTesting = (props: any) => {
 
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
+  let [testsSummary, setTestsSummary] = useState<TestSummary>()
+  const [testsSummaryHidden, setTestsSummaryHidden] = useState(true)
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
@@ -335,8 +344,8 @@ export const SolidityUnitTesting = (props: any) => {
 
   const updateFinalResult = (_errors: any, result: any, filename: any) => {
     console.log('result---in updateFinalResult->', result, filename)
-    // ++this.readyTestsNumber
-    // this.testsOutput.hidden = false
+    ++readyTestsNumber
+    setTestsSummaryHidden(false)
     // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
     //   this.testCallback({ type: 'contract', filename })
     //   this.currentErrors = _errors.errors
@@ -351,55 +360,57 @@ export const SolidityUnitTesting = (props: any) => {
     //   this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, { type: 'error' })
     // }
     // yo.update(this.resultStatistics, this.createResultLabel())
-    // if (result) {
-    //   const totalTime = parseFloat(result.totalTime).toFixed(2)
+    if (result) {
+      const totalTime = parseFloat(result.totalTime).toFixed(2)
+      testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime }
+      setTestsSummary(testsSummary)
 
-    //   if (result.totalPassing > 0 && result.totalFailing > 0) {
-    //     this.testsOutput.appendChild(yo`
-    //       <div class="d-flex alert-secondary mb-3 p-3 flex-column">
-    //         <span class="font-weight-bold">Result for ${filename}</span>
-    //         <span class="text-success">Passing: ${result.totalPassing}</span>
-    //         <span class="text-danger">Failing: ${result.totalFailing}</span>
-    //         <span>Total time: ${totalTime}s</span>
-    //       </div>
-    //     `)
-    //   } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
-    //     this.testsOutput.appendChild(yo`
-    //       <div class="d-flex alert-secondary mb-3 p-3 flex-column">
-    //         <span class="font-weight-bold">Result for ${filename}</span>
-    //         <span class="text-success">Passing: ${result.totalPassing}</span>
-    //         <span>Total time: ${totalTime}s</span>
-    //       </div>
-    //     `)
-    //   } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
-    //     this.testsOutput.appendChild(yo`
-    //       <div class="d-flex alert-secondary mb-3 p-3 flex-column">
-    //         <span class="font-weight-bold">Result for ${filename}</span>
-    //         <span class="text-danger">Failing: ${result.totalFailing}</span>
-    //         <span>Total time: ${totalTime}s</span>
-    //       </div>
-    //     `)
-    //   }
-    //   // fix for displaying right label for multiple tests (testsuites) in a single file
-    //   this.testSuites.forEach(testSuite => {
-    //     this.testSuite = testSuite
-    //     this.runningTestFileName = this.cleanFileName(filename, this.testSuite)
-    //     this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
-    //     this.setHeader(true)
-    //   })
+      // if (result.totalPassing > 0 && result.totalFailing > 0) {
+      //   this.testsOutput.appendChild(yo`
+      //     <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+      //       <span class="font-weight-bold">Result for ${filename}</span>
+      //       <span class="text-success">Passing: ${result.totalPassing}</span>
+      //       <span class="text-danger">Failing: ${result.totalFailing}</span>
+      //       <span>Total time: ${totalTime}s</span>
+      //     </div>
+      //   `)
+      // } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
+      //   this.testsOutput.appendChild(yo`
+      //     <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+      //       <span class="font-weight-bold">Result for ${filename}</span>
+      //       <span class="text-success">Passing: ${result.totalPassing}</span>
+      //       <span>Total time: ${totalTime}s</span>
+      //     </div>
+      //   `)
+      // } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
+      //   this.testsOutput.appendChild(yo`
+      //     <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+      //       <span class="font-weight-bold">Result for ${filename}</span>
+      //       <span class="text-danger">Failing: ${result.totalFailing}</span>
+      //       <span>Total time: ${totalTime}s</span>
+      //     </div>
+      //   `)
+      }
+      // fix for displaying right label for multiple tests (testsuites) in a single file
+      // this.testSuites.forEach(testSuite => {
+      //   this.testSuite = testSuite
+      //   this.runningTestFileName = this.cleanFileName(filename, this.testSuite)
+      //   this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
+      //   this.setHeader(true)
+      // })
 
-    //   result.errors.forEach((error, index) => {
-    //     this.testSuite = error.context
-    //     this.runningTestFileName = this.cleanFileName(filename, error.context)
-    //     this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
-    //     const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
-    //     if (!isFailingLabel) this.setHeader(false)
-    //   })
-    //   this.testsOutput.appendChild(yo`
-    //     <div>
-    //       <p class="text-info mb-2 border-top m-0"></p>
-    //     </div>
-    //   `)
+      // result.errors.forEach((error, index) => {
+      //   this.testSuite = error.context
+      //   this.runningTestFileName = this.cleanFileName(filename, error.context)
+      //   this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
+      //   const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
+      //   if (!isFailingLabel) this.setHeader(false)
+      // })
+      // this.testsOutput.appendChild(yo`
+      //   <div>
+      //     <p class="text-info mb-2 border-top m-0"></p>
+      //   </div>
+      // `)
     // }
     // if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
     //   // if all tests has been through before stopping no need to print this.
@@ -656,6 +667,12 @@ export const SolidityUnitTesting = (props: any) => {
             <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
           </div>
           <div>{testsOutput}</div>
+          <div className="d-flex alert-secondary mb-3 p-3 flex-column" hidden={testsSummaryHidden}>
+            <span className="font-weight-bold">{testsSummary && testsSummary.filename ? `Result for ${testsSummary.filename}` : ''}</span>
+            <span className="text-success">{testsSummary && testsSummary.passed >= 0 ? `Passed: ${testsSummary.passed}` : ''}</span>
+            <span className="text-danger">{testsSummary && testsSummary.failed >= 0 ? `Failed: ${testsSummary.failed}` : ''}</span>
+            <span>{testsSummary && testsSummary.timeTaken ? `Time Taken: ${testsSummary.timeTaken}` : ''}</span>
+          </div>
         </div>
       </div>
   )
