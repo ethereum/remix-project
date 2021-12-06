@@ -14,7 +14,6 @@ export class AbstractPanel extends HostPlugin {
     this.contents = {}
     this.active = undefined
     this.element = document.createElement('div')
-    this.element.setAttribute('style', 'height: 100%; width: 100%; border: 0;')
   }
 
   onActivation () {
@@ -23,7 +22,6 @@ export class AbstractPanel extends HostPlugin {
 
   addView (profile, view) {
     if (this.contents[profile.name]) throw new Error(`Plugin ${profile.name} already rendered`)
-    // view.style.height = '90%' // makde external plugins full height
     view.style.width = '100%'
     view.style.border = '0'
     this.contents[profile.name] = view

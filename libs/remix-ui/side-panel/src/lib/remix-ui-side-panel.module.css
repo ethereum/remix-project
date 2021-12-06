@@ -16,7 +16,7 @@
     padding-left: 6px;
     font-size: 14px;
   }
-  .remix-ui-side-panel-swapitHeader {
+  .swapitHeader {
     display: flex;
     align-items: center;
     padding: 16px 24px 15px;
@@ -40,4 +40,9 @@
     margin-left: 5px;
     text-transform: lowercase;
     cursor: default;
+  }
+
+  iframe {
+    height: 100%;
+    overflow-y: scroll;
   }
