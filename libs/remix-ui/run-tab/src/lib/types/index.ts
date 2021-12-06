@@ -39,7 +39,10 @@ export interface SettingsProps {
   externalEndpoint: string,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
-  setMatchPassphrase: (passphrase: string) => void
+  setMatchPassphrase: (passphrase: string) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  tooltip: (toasterMsg: string) => void,
+  signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void
 }
 
 export interface EnvironmentProps {
@@ -79,7 +82,10 @@ export interface AccountProps {
   personalMode: boolean,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
-  setMatchPassphrase: (passphrase: string) => void
+  setMatchPassphrase: (passphrase: string) => void,
+  tooltip: (toasterMsg: string) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void
 }
 
 export interface GasPriceProps {
