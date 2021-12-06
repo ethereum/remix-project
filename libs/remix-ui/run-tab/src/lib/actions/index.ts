@@ -219,8 +219,10 @@ export const createNewBlockchainAccount = async (cbMessage: JSX.Element) => {
         if (plugin.REACT_API.passphrase === plugin.REACT_API.matchPassphrase) {
           cb(plugin.REACT_API.passphrase)
         } else {
-          return dispatch(displayNotification('Error', 'Passphase does not match', 'OK', null))
+          dispatch(displayNotification('Error', 'Passphase does not match', 'OK', null))
         }
+        setPassphrase('')
+        setMatchPassphrase('')
       }, () => {}))
     },
     async (error, address) => {
@@ -239,4 +241,14 @@ export const setPassphrasePrompt = (passphrase: string) => {
 
 export const setMatchPassphrasePrompt = (passphrase: string) => {
   dispatch(setMatchPassphrase(passphrase))
+}
+
+// eslint-disable-next-line no-undef
+export const signMessageWithAddress = (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
+  plugin.blockchain.signMessage(message, account, passphrase, (err, msgHash, signedData) => {
+    if (err) {
+      return displayPopUp(err)
+    }
+    dispatch(displayNotification('Signed Message', modalContent(msgHash, signedData), 'OK', null, () => {}, null))
+  })
 }
