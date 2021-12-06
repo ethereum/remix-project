@@ -14,13 +14,13 @@
   .plugItIn.active     {
     display        : block;
   }
-  /* .pluginsContainer {
+  .pluginsContainer {
     height         : 100%;
     overflow-y     : hidden;
-  } */
+  }
 
-  .pluginsContainer {
+  /* .pluginsContainer {
     height: 100%;
     display: flex;
     overflow-y: hidden;
-  }
+  } */

@@ -1,53 +1,56 @@
+import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
+import ReactDOM from 'react-dom' // eslint-disable-line
+import { RemixUiSidePanel } from '@remix-ui/side-panel' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-const csjs = require('csjs-inject')
+// const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 
-const css = csjs`
-  .panel {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    flex: auto;
-  }
-  .swapitTitle {
-    margin: 0;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .swapitTitle i{
-    padding-left: 6px;
-    font-size: 14px;
-  }
-  .swapitHeader {
-    display: flex;
-    align-items: center;
-    padding: 16px 24px 15px;
-    justify-content: space-between;
-  }
-  .icons i {
-    height: 80%;
-    cursor: pointer;
-  }
-  .pluginsContainer {
-    height: 100%;
-    overflow-y: auto;
-  }
-  .titleInfo {
-    padding-left: 10px;
-  }
-  .versionBadge {
-    background-color: var(--light);
-    padding: 0 7px;
-    font-weight: bolder;
-    margin-left: 5px;
-    text-transform: lowercase;
-    cursor: default;
-  }
-`
+// const css = csjs`
+//   .panel {
+//     width: 100%;
+//     height: 100%;
+//     display: flex;
+//     flex-direction: column;
+//     flex: auto;
+//   }
+//   .swapitTitle {
+//     margin: 0;
+//     text-transform: uppercase;
+//     white-space: nowrap;
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//   }
+//   .swapitTitle i{
+//     padding-left: 6px;
+//     font-size: 14px;
+//   }
+//   .swapitHeader {
+//     display: flex;
+//     align-items: center;
+//     padding: 16px 24px 15px;
+//     justify-content: space-between;
+//   }
+//   .icons i {
+//     height: 80%;
+//     cursor: pointer;
+//   }
+//   .pluginsContainer {
+//     height: 100%;
+//     overflow-y: auto;
+//   }
+//   .titleInfo {
+//     padding-left: 10px;
+//   }
+//   .versionBadge {
+//     background-color: var(--light);
+//     padding: 0 7px;
+//     font-weight: bolder;
+//     margin-left: 5px;
+//     text-transform: lowercase;
+//     cursor: default;
+//   }
+// `
 
 const sidePanel = {
   name: 'sidePanel',
@@ -63,7 +66,9 @@ export class SidePanel extends AbstractPanel {
     super(sidePanel)
     this.appManager = appManager
     this.header = yo`<header></header>`
-    this.renderHeader()
+    // this.renderHeader()
+    this.sideelement = document.createElement('div')
+    this.sideelement.setAttribute('class', 'plugins-container')
     this.verticalIcons = verticalIcons
 
     // Toggle content
@@ -90,6 +95,10 @@ export class SidePanel extends AbstractPanel {
     })
   }
 
+  onActivation () {
+    this.renderComponent()
+  }
+
   focus (name) {
     this.emit('focusChanged', name)
     super.focus(name)
@@ -104,6 +113,7 @@ export class SidePanel extends AbstractPanel {
   addView (profile, view) {
     super.addView(profile, view)
     this.verticalIcons.linkContent(profile)
+    this.renderComponent()
   }
 
   /**
@@ -112,45 +122,57 @@ export class SidePanel extends AbstractPanel {
    */
   async showContent (name) {
     super.showContent(name)
-    this.renderHeader()
+    // this.renderHeader()
     this.emit('focusChanged', name)
+    this.renderComponent()
   }
 
   /** The header of the side panel */
-  async renderHeader () {
-    let name = ' - '
-    let docLink = ''
-    let versionWarning
-    if (this.active) {
-      const profile = await this.appManager.getProfile(this.active)
-      name = profile.displayName ? profile.displayName : profile.name
-      docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
-      if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
-        versionWarning = yo`<small title="Version Alpha" class="badge-light ${css.versionBadge}">alpha</small>`
-      }
-      // Beta
-      if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
-        versionWarning = yo`<small title="Version Beta" class="badge-light ${css.versionBadge}">beta</small>`
-      }
-    }
+  // async renderHeader () {
+  //   let name = ' - '
+  //   let docLink = ''
+  //   let versionWarning
+  //   if (this.active) {
+  //     const profile = await this.appManager.getProfile(this.active)
+  //     name = profile.displayName ? profile.displayName : profile.name
+  //     docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
+  //     if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
+  //       versionWarning = yo`<small title="Version Alpha" class="badge-light ${css.versionBadge}">alpha</small>`
+  //     }
+  //     // Beta
+  //     if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
+  //       versionWarning = yo`<small title="Version Beta" class="badge-light ${css.versionBadge}">beta</small>`
+  //     }
+  //   }
 
-    const header = yo`
-      <header class="${css.swapitHeader}">
-        <h6 class="${css.swapitTitle}" data-id="sidePanelSwapitTitle">${name}</h6>
-        ${docLink}
-        ${versionWarning}
-      </header>
-    `
-    yo.update(this.header, header)
-  }
+  //   const header = yo`
+  //     <header class="${css.swapitHeader}">
+  //       <h6 class="${css.swapitTitle}" data-id="sidePanelSwapitTitle">${name}</h6>
+  //       ${docLink}
+  //       ${versionWarning}
+  //     </header>
+  //   `
+  //   yo.update(this.header, header)
+  //   this.renderComponent()
+  // }
 
   render () {
-    return yo`
-      <section class="${css.panel} plugin-manager">
-        ${this.header}
-        <div class="${css.pluginsContainer}">
-          ${this.element}
-        </div>
-      </section>`
+    return this.element
+    // return yo`
+    //   <section class="${css.panel} plugin-manager">
+    //     ${this.header}
+    //     <div class="${css.pluginsContainer}">
+    //       ${this.element}
+    //     </div>
+    //   </section>`
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiSidePanel
+        plugin={this}
+      />,
+      this.sideelement
+    )
   }
 }
