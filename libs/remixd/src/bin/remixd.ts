@@ -151,7 +151,7 @@ function errorHandler (error: any, service: string) {
       const { data } = (await Axios.get(gistUrl)) as { data: any }
 
       try {
-        await writeJSON(path.resolve(path.join(__dirname, '..', 'origins.json')), { data })
+        await writeJSON(path.resolve(path.join(__dirname, '../..', 'origins.json')), { data })
       } catch (e) {
         console.error(e)
       }
@@ -161,7 +161,7 @@ function errorHandler (error: any, service: string) {
     } catch (e) {
       try {
         // eslint-disable-next-line
-        const origins = require('../origins.json')
+        const origins = require('../../origins.json')
         const { data } = origins
 
         return data.includes(origin) ? data.includes(origin) : data.includes(domain)

@@ -334,12 +334,12 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'ROOT_FOLDER_CHANGED': {
       const payload = action.payload as string
-
       return {
         ...state,
         localhost: {
           ...state.localhost,
-          sharedFolder: payload
+          sharedFolder: payload,
+          files: {}
         }
       }
     }

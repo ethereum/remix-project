@@ -1,8 +1,3 @@
-import * as fs from 'fs'
-
-const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/metamask.crx')
-const metamaskExtension = Buffer.from(crxFile).toString('base64')
-
 module.exports = {
   src_folders: ['dist/apps/remix-ide-e2e/src/tests'],
   output_folder: './reports/tests',
@@ -28,7 +23,10 @@ module.exports = {
       desiredCapabilities: {
         browserName: 'firefox',
         javascriptEnabled: true,
-        acceptSslCerts: true
+        acceptSslCerts: true,
+        'moz:firefoxOptions': {
+          args: ['-headless']
+        }
       },
       exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.spec.ts']
     },
@@ -39,7 +37,18 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
+        }
+      }
+    },
+
+    chromeDesktop: {
+      desiredCapabilities: {
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
+        'goog:chromeOptions': {
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox']
         }
       }
     },
@@ -50,23 +59,14 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen'],
-          extensions: [metamaskExtension]
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
         }
       }
     },
 
-    safari: {
+    firefoxDesktop: {
       desiredCapabilities: {
-        browserName: 'safari',
-        javascriptEnabled: true,
-        acceptSslCerts: true
-      }
-    },
-
-    ie: {
-      desiredCapabilities: {
-        browserName: 'internet explorer',
+        browserName: 'firefox',
         javascriptEnabled: true,
         acceptSslCerts: true
       }
@@ -76,7 +76,10 @@ module.exports = {
       desiredCapabilities: {
         browserName: 'firefox',
         javascriptEnabled: true,
-        acceptSslCerts: true
+        acceptSslCerts: true,
+        'moz:firefoxOptions': {
+          args: ['-headless']
+        }
       }
     }
   }
