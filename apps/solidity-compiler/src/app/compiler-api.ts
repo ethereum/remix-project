@@ -293,7 +293,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     // Run the compiler instead of trying to save the website
     this.data.eventHandlers.onKeyDown = (e) => {
       // ctrl+s or command+s
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
         this.compileTabLogic.runCompiler(this.getAppParameter('hardhat-compilation'))
       }
