@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import Editor from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
-import { language } from './syntax'
+import { language, conf } from './syntax'
 
 import './remix-ui-editor.css'
 
@@ -43,6 +43,8 @@ type sourceAnnotationMap = {
 type sourceMarkerMap = {
   [key: string]: [sourceMarker];
 }
+
+loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
@@ -102,8 +104,11 @@ export const EditorUI = (props: EditorUIProps) => {
     const yellowColor = formatColor('--yellow')
     const pinkColor = formatColor('--pink')
     const locationColor = '#9e7e08'
-    const purpleColor = formatColor('--purple')
+    // const purpleColor = formatColor('--purple')
     const dangerColor = formatColor('--danger')
+    const greenColor = formatColor('--green')
+    const orangeColor = formatColor('--orange')
+    const grayColor = formatColor('--gray')
 
     monaco.editor.defineTheme(themeName, {
       base: themeType,
@@ -137,25 +142,23 @@ export const EditorUI = (props: EditorUIProps) => {
         // specials
         { token: 'keyword.super', foreground: infoColor },
         { token: 'keyword.this', foreground: infoColor },
+        { token: 'keyword.virtual', foreground: infoColor },
 
         // for state variables
-        { token: 'keyword.constants', foreground: warningColor },
-        { token: 'keyword.override', foreground: warningColor },
-        { token: 'keyword.immutable', foreground: warningColor },
+        { token: 'keyword.constants', foreground: grayColor },
+        { token: 'keyword.override', foreground: grayColor },
+        { token: 'keyword.immutable', foreground: grayColor },
 
         // data location
         { token: 'keyword.memory', foreground: locationColor },
         { token: 'keyword.storage', foreground: locationColor },
         { token: 'keyword.calldata', foreground: locationColor },
 
-        // // forf functions and modifiers
-        { token: 'keyword.virtual', foreground: purpleColor },
-
-        // // for Events
+        // for Events
         { token: 'keyword.indexed', foreground: yellowColor },
         { token: 'keyword.anonymous', foreground: yellowColor },
 
-        // // for functions
+        // for functions
         { token: 'keyword.external', foreground: successColor },
         { token: 'keyword.internal', foreground: successColor },
         { token: 'keyword.private', foreground: successColor },
@@ -172,7 +175,26 @@ export const EditorUI = (props: EditorUIProps) => {
         // special functions
         { token: 'keyword.fallback', foreground: pinkColor },
         { token: 'keyword.receive', foreground: pinkColor },
-        { token: 'keyword.constructor', foreground: pinkColor }
+        { token: 'keyword.constructor', foreground: pinkColor },
+
+        // identifiers
+        { token: 'keyword.identifier', foreground: warningColor },
+        { token: 'keyword.for', foreground: warningColor },
+        { token: 'keyword.break', foreground: warningColor },
+        { token: 'keyword.continue', foreground: warningColor },
+        { token: 'keyword.while', foreground: warningColor },
+        { token: 'keyword.do', foreground: warningColor },
+
+        { token: 'keyword.if', foreground: yellowColor },
+        { token: 'keyword.else', foreground: yellowColor },
+
+        { token: 'keyword.throw', foreground: orangeColor },
+        { token: 'keyword.catch', foreground: orangeColor },
+        { token: 'keyword.try', foreground: orangeColor },
+
+        // returns
+        { token: 'keyword.returns', foreground: greenColor },
+        { token: 'keyword.return', foreground: greenColor }
 
       ],
       colors: {
@@ -288,7 +310,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getFontSize = () => {
     if (!editorRef.current) return
-    return editorRef.current.getOption(42).fontSize
+    return editorRef.current.getOption(43).fontSize
   }
 
   (window as any).addRemixBreakpoint = (position) => { // make it available from e2e testing...
@@ -329,10 +351,10 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
-      editor.updateOptions({ fontSize: editor.getOption(42).fontSize + 1 })
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
-      editor.updateOptions({ fontSize: editor.getOption(42).fontSize - 1 })
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
   }
 
@@ -342,6 +364,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language)
+    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', conf)
   }
 
   return (
