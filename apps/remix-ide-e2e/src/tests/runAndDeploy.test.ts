@@ -6,7 +6,7 @@ const passphrase = process.env.account_passphrase
 const password = process.env.account_password
 
 module.exports = {
-
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -15,14 +15,14 @@ module.exports = {
     return sources
   },
 
-  'Should load run and deploy tab': function (browser: NightwatchBrowser) {
+  'Should load run and deploy tab #group1 #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
   },
 
-  'Should load run and deploy tab and check value validation': function (browser: NightwatchBrowser) {
+  'Should load run and deploy tab and check value validation #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
       .validateValueInput('#value', '0000', '0')
@@ -30,30 +30,30 @@ module.exports = {
       .validateValueInput('#value', 'dragon', '0')
   },
 
-  'Should sign message using account key': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="settingsRemixRunSignMsg"]')
+  'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
       .click('select[id="selectExEnvOptions"] option[value="vm-berlin"]')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)
-      .waitForElementPresent('*[data-id="modalDialogCustomPromptText"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 120000)
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'Remix is cool!')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .modalFooterOKClick()
-      .waitForElementPresent('*[data-id="modalDialogContainer"]', 12000)
+      .waitForElementVisible('*[data-id="modalDialogContainer"]', 12000)
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .modalFooterOKClick()
   },
 
-  'Should deploy contract on JavascriptVM': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+  'Should deploy contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
-      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]', 45000)
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 45000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .testFunction('last', {
@@ -61,7 +61,7 @@ module.exports = {
       })
   },
 
-  'Should run low level interaction (fallback function)': function (browser: NightwatchBrowser) {
+  'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
       .click('*[data-id="universalDappUiTitleExpander"]')

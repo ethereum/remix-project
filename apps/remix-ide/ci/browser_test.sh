@@ -7,7 +7,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 npm run ganache-cli &
-npm run serve &
+npm run serve:production &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 npm run remixd &
 
@@ -15,9 +15,9 @@ sleep 5
 
 npm run build:e2e
 
-TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.spec.js" | circleci tests split --split-by=timings)
+TESTFILES=$(grep -IRiL "disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=chrome  || TEST_EXITCODE=1
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=$1  || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"

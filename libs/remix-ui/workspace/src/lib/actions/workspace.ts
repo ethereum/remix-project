@@ -223,7 +223,7 @@ export const switchToWorkspace = async (name: string) => {
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
-    if (isActive) plugin.call('manager', 'deactivatePlugin', 'remixd')
+    if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     plugin.setWorkspace({ name, isLocalhost: false })
     dispatch(setMode('browser'))
@@ -261,7 +261,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
       fileReader.readAsText(file)
       cb && cb(null, true)
     }
-    const name = `${targetFolder}/${file.name}`
+    const name = targetFolder === '/' ? file.name : `${targetFolder}/${file.name}`
 
     workspaceProvider.exists(name).then(exist => {
       if (!exist) {
