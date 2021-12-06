@@ -202,6 +202,7 @@ element.style {
     bottom           : 1em;
     border-width     : 4px;
     left             : 2em;
+    overflow-y: scroll;
   }
 
   .autoCompleteItem {
