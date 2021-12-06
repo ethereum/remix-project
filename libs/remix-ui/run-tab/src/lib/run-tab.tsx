@@ -9,7 +9,7 @@ import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
 import { Modal, RunTabProps } from './types'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
-import { initRunTab, setAccount, setUnit, setGasFee, setExecutionContext, setWeb3Endpoint, clearPopUp } from './actions'
+import { initRunTab, setAccount, setUnit, setGasFee, setExecutionContext, setWeb3Endpoint, clearPopUp, createNewBlockchainAccount, setPassphrasePrompt, setMatchPassphrasePrompt } from './actions'
 import './css/run-tab.css'
 
 export function RunTabUI (props: RunTabProps) {
@@ -126,7 +126,11 @@ export function RunTabUI (props: RunTabProps) {
             gasLimit={runTab.gasLimit}
             setGasFee={setGasFee}
             providers={runTab.providers}
-            setExecutionContext={setExecutionContext} />
+            setExecutionContext={setExecutionContext}
+            createNewBlockchainAccount={createNewBlockchainAccount}
+            setPassphrase={setPassphrasePrompt}
+            setMatchPassphrase={setMatchPassphrasePrompt}
+          />
           <ContractDropdownUI exEnvironment={runTab.selectExEnv} />
           <RecorderUI />
           <InstanceContainerUI />
