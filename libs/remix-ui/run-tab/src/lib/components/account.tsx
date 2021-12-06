@@ -55,24 +55,7 @@ export function AccountUI (props: AccountProps) {
   }, [props.selectExEnv, props.personalMode])
 
   const newAccount = () => {
-    // dispatch createNewBlockchainAccount
-    // this.blockchain.newAccount(
-    //   '',
-    //   (cb) => {
-    //     modalDialogCustom.promptPassphraseCreation((error, passphrase) => {
-    //       if (error) {
-    //         return modalDialogCustom.alert(error)
-    //       }
-    //       cb(passphrase)
-    //     }, () => {})
-    //   },
-    //   (error, address) => {
-    //     if (error) {
-    //       return addTooltip('Cannot create an account: ' + error)
-    //     }
-    //     addTooltip(`account ${address} created`)
-    //   }
-    // )
+    props.createNewBlockchainAccount(passphrasePrompt())
   }
 
   const signMessage = () => {
@@ -120,6 +103,27 @@ export function AccountUI (props: AccountProps) {
   //     }
   //     promptCb()
   //   })
+  }
+
+  const handlePassphrase = (e) => {
+    props.setPassphrase(e.target.value)
+  }
+
+  const handleMatchPassphrase = (e) => {
+    props.setMatchPassphrase(e.target.value)
+  }
+
+  const passphrasePrompt = () => {
+    return (
+      <div> Please provide a Passphrase for the account creation
+        <div>
+          <input id="prompt1" type="password" name='prompt_text' style={{ width: '100%' }} onInput={handlePassphrase} />
+          <br />
+          <br />
+          <input id="prompt2" type="password" name='prompt_text' style={{ width: '100%' }} onInput={handleMatchPassphrase} />
+        </div>
+      </div>
+    )
   }
 
   return (
