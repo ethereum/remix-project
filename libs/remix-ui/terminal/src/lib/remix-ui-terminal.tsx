@@ -361,12 +361,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-
   const handleClickSelect = (item: string) => {
     const result: string = getKeyOf(item) as string || getValueOf(item) as string
     setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: result }))
     inputEl.current.focus()
-
   }
 
   const handleSelect = (event) => {
