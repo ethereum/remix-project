@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-tests",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Tool to test Solidity smart contracts",
   "main": "src/index.js",
   "types": "./src/index.d.ts",
@@ -39,9 +39,9 @@
     "@ethereumjs/common": "^2.5.0",
     "@ethereumjs/tx": "^3.3.2",
     "@ethereumjs/vm": "^5.5.3",
-    "@remix-project/remix-lib": "^0.5.8",
-    "@remix-project/remix-simulator": "^0.2.8",
-    "@remix-project/remix-solidity": "^0.4.8",
+    "@remix-project/remix-lib": "^0.5.9",
+    "@remix-project/remix-simulator": "^0.2.9",
+    "@remix-project/remix-solidity": "^0.4.9",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.0",
     "axios": ">=0.21.1",
@@ -51,6 +51,7 @@
     "commander": "^2.13.0",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
+    "ethjs-util": "^0.1.6",
     "express-ws": "^4.0.0",
     "merge": "^1.2.0",
     "signale": "^1.4.0",
@@ -77,5 +78,5 @@
     "typescript": "^3.3.1"
   },
   "typings": "src/index.d.ts",
-  "gitHead": "13f961dadacea374de4d79a70b1aa4acf243b18b"
+  "gitHead": "8c5ee47b5a7d05ebd435ff9d443b57ea439eaf78"
 }
