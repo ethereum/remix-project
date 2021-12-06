@@ -55,7 +55,7 @@ export const runTabInitialState: RunTabState = {
   sendValue: '0',
   sendUnit: 'ether',
   gasLimit: 3000000,
-  selectExEnv: 'vm',
+  selectExEnv: 'vm-london',
   personalMode: false,
   networkName: '',
   providers: {

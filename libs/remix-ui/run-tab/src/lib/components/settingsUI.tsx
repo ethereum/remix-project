@@ -89,7 +89,7 @@ export function SettingsUI (props: SettingsProps) {
     <div className="udapp_settings">
       <EnvironmentUI setWeb3Endpoint={props.setWeb3Endpoint} selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} externalEndpoint={props.externalEndpoint} />
       <NetworkUI networkName={props.networkName} />
-      <AccountUI personalMode={props.personalMode} selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} createNewBlockchainAccount={props.createNewBlockchainAccount} setPassphrase={props.setPassphrase} setMatchPassphrase={props.setMatchPassphrase} />
+      <AccountUI personalMode={props.personalMode} selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} createNewBlockchainAccount={props.createNewBlockchainAccount} setPassphrase={props.setPassphrase} setMatchPassphrase={props.setMatchPassphrase} tooltip={props.tooltip} modal={props.modal} signMessageWithAddress={props.signMessageWithAddress} />
       <GasPriceUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
       <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} />
     </div>
