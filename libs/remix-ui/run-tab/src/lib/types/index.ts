@@ -36,7 +36,10 @@ export interface SettingsProps {
     error: string
   },
   setExecutionContext: (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => void,
-  externalEndpoint: string
+  externalEndpoint: string,
+  createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
+  setPassphrase: (passphrase: string) => void,
+  setMatchPassphrase: (passphrase: string) => void
 }
 
 export interface EnvironmentProps {
@@ -73,7 +76,10 @@ export interface AccountProps {
     error: string
   },
   setAccount: (account: string) => void,
-  personalMode: boolean
+  personalMode: boolean,
+  createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
+  setPassphrase: (passphrase: string) => void,
+  setMatchPassphrase: (passphrase: string) => void
 }
 
 export interface GasPriceProps {

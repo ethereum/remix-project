@@ -39,7 +39,9 @@ export interface RunTabState {
     labelCancel: string
   },
   externalEndpoint: string,
-  popup: string
+  popup: string,
+  passphrase: string,
+  matchPassphrase: string
 }
 
 export const runTabInitialState: RunTabState = {
@@ -98,7 +100,9 @@ export const runTabInitialState: RunTabState = {
     labelCancel: ''
   },
   externalEndpoint: 'http://127.0.0.1:8545',
-  popup: ''
+  popup: '',
+  passphrase: '',
+  matchPassphrase: ''
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -320,6 +324,24 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         popup: ''
+      }
+    }
+
+    case 'SET_PASSPHRASE': {
+      const passphrase: string = action.payload
+
+      return {
+        ...state,
+        passphrase
+      }
+    }
+
+    case 'SET_MATCH_PASSPHRASE': {
+      const passphrase: string = action.payload
+
+      return {
+        ...state,
+        matchPassphrase: passphrase
       }
     }
 

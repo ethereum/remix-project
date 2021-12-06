@@ -3,7 +3,7 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { shortenAddress } from '@remix-ui/helper'
-import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, hidePopUp, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setNetworkName, setSelectedAccount, setSendUnit, setSendValue } from './payload'
+import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, hidePopUp, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setMatchPassphrase, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue } from './payload'
 import { RunTab } from '../types/run-tab'
 
 let plugin: RunTab, dispatch: React.Dispatch<any>
@@ -74,8 +74,8 @@ const setupEvents = () => {
   //   fillAccountsList()
   // }, 1000)
   // fillAccountsList()
-  setTimeout(() => {
-    fillAccountsList()
+  setTimeout(async () => {
+    await fillAccountsList()
   }, 0)
 }
 
@@ -98,18 +98,21 @@ const fillAccountsList = async () => {
     dispatch(fetchAccountsListRequest())
     const promise = plugin.blockchain.getAccounts()
 
-    promise.then((accounts: string[]) => {
+    promise.then(async (accounts: string[]) => {
       const loadedAccounts = {}
 
       if (!accounts) accounts = []
-      accounts.forEach((account) => {
-        plugin.blockchain.getBalanceInEther(account, (err, balance) => {
-          if (err) return
-          const updated = shortenAddress(account, balance)
+      await (Promise as any).allSettled(accounts.map((account) => {
+        return new Promise((resolve, reject) => {
+          plugin.blockchain.getBalanceInEther(account, (err, balance) => {
+            if (err) return reject(err)
+            const updated = shortenAddress(account, balance)
 
-          loadedAccounts[account] = updated
+            loadedAccounts[account] = updated
+            resolve(account)
+          })
         })
-      })
+      }))
       dispatch(fetchAccountsListSuccess(loadedAccounts))
     }).catch((e) => {
       dispatch(fetchAccountsListFailed(e.message))
@@ -205,4 +208,35 @@ export const setWeb3Endpoint = (endpoint: string) => {
 
 export const clearPopUp = async () => {
   dispatch(hidePopUp())
+}
+
+// eslint-disable-next-line no-undef
+export const createNewBlockchainAccount = async (cbMessage: JSX.Element) => {
+  plugin.blockchain.newAccount(
+    '',
+    (cb) => {
+      dispatch(displayNotification('Enter Passphrase', cbMessage, 'OK', 'Cancel', async () => {
+        if (plugin.REACT_API.passphrase === plugin.REACT_API.matchPassphrase) {
+          cb(plugin.REACT_API.passphrase)
+        } else {
+          return dispatch(displayNotification('Error', 'Passphase does not match', 'OK', null))
+        }
+      }, () => {}))
+    },
+    async (error, address) => {
+      if (error) {
+        return dispatch(displayPopUp('Cannot create an account: ' + error))
+      }
+      dispatch(displayPopUp(`account ${address} created`))
+      await fillAccountsList()
+    }
+  )
+}
+
+export const setPassphrasePrompt = (passphrase: string) => {
+  dispatch(setPassphrase(passphrase))
+}
+
+export const setMatchPassphrasePrompt = (passphrase: string) => {
+  dispatch(setMatchPassphrase(passphrase))
 }

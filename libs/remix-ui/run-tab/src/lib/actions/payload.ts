@@ -115,3 +115,17 @@ export const hidePopUp = () => {
     type: 'HIDE_POPUP_MESSAGE'
   }
 }
+
+export const setPassphrase = (passphrase: string) => {
+  return {
+    type: 'SET_PASSPHRASE',
+    payload: passphrase
+  }
+}
+
+export const setMatchPassphrase = (passphrase: string) => {
+  return {
+    type: 'SET_MATCH_PASSPHRASE',
+    payload: passphrase
+  }
+}
