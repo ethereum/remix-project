@@ -10,6 +10,8 @@ export function AccountUI (props: AccountProps) {
     classList: '',
     title: ''
   })
+  const [message, setMessage] = useState('')
+  const [signPassphrase, setSignPassphrase] = useState('')
 
   useEffect(() => {
     if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
@@ -24,7 +26,14 @@ export function AccountUI (props: AccountProps) {
         })
         break
 
-      case 'vm':
+      case 'vm-london':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
+      case 'vm-berlin':
         setPlusOpt({
           classList: '',
           title: 'Create a new account'
@@ -55,54 +64,25 @@ export function AccountUI (props: AccountProps) {
   }, [props.selectExEnv, props.personalMode])
 
   const newAccount = () => {
-    props.createNewBlockchainAccount(passphrasePrompt())
+    props.createNewBlockchainAccount(passphraseCreationPrompt())
   }
 
   const signMessage = () => {
-    // dispatch signMessageWithBlockchainAccounts
-  //   this.blockchain.getAccounts((err, accounts) => {
-  //     if (err) {
-  //       return addTooltip(`Cannot get account list: ${err}`)
-  //     }
+    if (!accounts[0]) {
+      return props.tooltip('Account list is empty, please make sure the current provider is properly connected to remix')
+    }
 
-    //     var signMessageDialog = { title: 'Sign a message', text: 'Enter a message to sign', inputvalue: 'Message to sign' }
-    //     var $txOrigin = this.el.querySelector('#txorigin')
-    //     if (!$txOrigin.selectedOptions[0] && (this.blockchain.isInjectedWeb3() || this.blockchain.isWeb3Provider())) {
-    //       return addTooltip('Account list is empty, please make sure the current provider is properly connected to remix')
-    //     }
+    if (props.selectExEnv !== 'vm-london' && props.selectExEnv !== 'vm-berlin' && props.selectExEnv !== 'injected') {
+      return props.modal('Passphrase to sign a message', passphrasePrompt(), 'OK', () => {
+        props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
+          props.signMessageWithAddress(selectedAccount, message, signedMessagePrompt, signPassphrase)
+        }, 'Cancel', null)
+      }, 'Cancel', null)
+    }
 
-    //     var account = $txOrigin.selectedOptions[0].value
-
-    //     var promptCb = (passphrase) => {
-    //       const modal = modalDialogCustom.promptMulti(signMessageDialog, (message) => {
-    //         this.blockchain.signMessage(message, account, passphrase, (err, msgHash, signedData) => {
-    //           if (err) {
-    //             return addTooltip(err)
-    //           }
-    //           modal.hide()
-    //           modalDialogCustom.alert(yo`
-    //             <div>
-    //               <b>hash:</b><br>
-    //               <span id="remixRunSignMsgHash" data-id="settingsRemixRunSignMsgHash">${msgHash}</span>
-    //               <br><b>signature:</b><br>
-    //               <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">${signedData}</span>
-    //             </div>
-    //           `)
-    //         })
-    //       }, false)
-    //     }
-
-  //     if (this.blockchain.isWeb3Provider()) {
-  //       return modalDialogCustom.promptPassphrase(
-  //         'Passphrase to sign a message',
-  //         'Enter your passphrase for this account to sign the message',
-  //         '',
-  //         promptCb,
-  //         false
-  //       )
-  //     }
-  //     promptCb()
-  //   })
+    props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
+      props.signMessageWithAddress(selectedAccount, message, signedMessagePrompt)
+    }, 'Cancel', null)
   }
 
   const handlePassphrase = (e) => {
@@ -113,7 +93,15 @@ export function AccountUI (props: AccountProps) {
     props.setMatchPassphrase(e.target.value)
   }
 
-  const passphrasePrompt = () => {
+  const handleMessageInput = (e) => {
+    setMessage(e.target.value)
+  }
+
+  const handleSignPassphrase = (e) => {
+    setSignPassphrase(e.target.value)
+  }
+
+  const passphraseCreationPrompt = () => {
     return (
       <div> Please provide a Passphrase for the account creation
         <div>
@@ -122,6 +110,45 @@ export function AccountUI (props: AccountProps) {
           <br />
           <input id="prompt2" type="password" name='prompt_text' style={{ width: '100%' }} onInput={handleMatchPassphrase} />
         </div>
+      </div>
+    )
+  }
+
+  const passphrasePrompt = () => {
+    return (
+      <div> Enter your passphrase for this account to sign the message
+        <div>
+          <input id="prompt_text" type="password" name='prompt_text' className="form-control" style={{ width: '100%' }} onInput={handleSignPassphrase} data-id='modalDialogCustomPromptText' defaultValue={signPassphrase} />
+        </div>
+      </div>
+    )
+  }
+
+  const signMessagePrompt = () => {
+    return (
+      <div> Enter a message to sign
+        <div>
+          <textarea
+            id="prompt_text"
+            data-id="modalDialogCustomPromptText"
+            style={{ width: '100%' }}
+            rows={4}
+            cols={50}
+            onInput={handleMessageInput}
+            defaultValue={message}
+          ></textarea>
+        </div>
+      </div>
+    )
+  }
+
+  const signedMessagePrompt = (msgHash: string, signedData: string) => {
+    return (
+      <div>
+        <b>hash:</b><br />
+        <span id="remixRunSignMsgHash" data-id="settingsRemixRunSignMsgHash">{msgHash}</span>
+        <br /><b>signature:</b><br />
+        <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">{signedData}</span>
       </div>
     )
   }
@@ -137,7 +164,7 @@ export function AccountUI (props: AccountProps) {
       <div className="udapp_account">
         <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { props.setAccount(e.target.value) }}>
           {
-            Object.keys(loadedAccounts).map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
+            accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
           }
         </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard content={selectedAccount} direction='top' /></div>
