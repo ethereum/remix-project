@@ -42,3 +42,14 @@ input::placeholder {
 .address {
   overflow-x: scroll;
 }
+
+select {
+  margin: 1em 0;
+  width: 100%;
+  border: 1px solid white;
+  color: white;
+  background-color: transparent;
+  text-align: center;
+  cursor: pointer;
+  padding: 0.5em
+}

@@ -5,13 +5,43 @@ import { PluginClient } from '@remixproject/plugin'
 import { CompiledContract, ABIDescription, BytecodeObject } from '@remixproject/plugin-api'
 import { json } from 'starknet'
 import factoryContract from './factory.json'
+import detectEthereumProvider from '@metamask/detect-provider';
+
 
 import { useEffect, useRef, useState } from 'react'
 
 import './App.css'
 
+const networks = [
+  {
+    chainId: '0x1',
+    chainDecimal: 1,
+    name: 'Ethereum Main Network (Mainnet)'
+  },
+  {
+    chainId: '0x3',
+    chainDecimal: 3,
+    name: 'Ropsten Test Network'
+  },
+  {
+    chainId: '0x4',
+    chainDecimal: 4,
+    name: 'Rinkeby Test Network'
+  },
+  {
+    chainId: '0x5',
+    chainDecimal: 5,
+    name: 'Goerli Test Network'
+  },
+  {
+    chainId: '0x2a',
+    chainDecimal: 42,
+    name: 'Kovan Test Network'
+  },
+]
+
 declare global {
-  interface Window { ethereum: any; web3: Web3 }
+  interface Window { web3: Web3 }
 }
 
 type ABIParameter = {
@@ -41,7 +71,6 @@ const getHint = (str: string) => {
 }
 
 const arrayify = (str: string) => str.split(',').map(s => s.trim())
-
 const makeHex = (str: string) => window.web3.utils.asciiToHex(str)
 
 const encodeBytes = (params: string | string[]) => {
@@ -53,6 +82,8 @@ const encodeBytes = (params: string | string[]) => {
 
 function App() {
   const client = useRef(createClient(new PluginClient()))
+  const metamaskNetowrk = useRef<null | number>(null);
+  const provider = useRef<any>(null);
   const [constructorInput, setConstructorInput] = useState<ABIDescription | null>(null)
   const [contractToDeploy, setContract] = useState<unknown>(null)
   const [customInput, setCustomInput] = useState<VariableType>({})
@@ -60,7 +91,8 @@ function App() {
   const [salt, setSalt] = useState<string>('')
   const [depoyedAddress, setDeployedAddress] = useState<string | null>(null)
   const [isLoading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState<number>(0);
 
   const handleParsing = async () => {
     setError('')
@@ -80,12 +112,30 @@ function App() {
 
   useEffect(() => {
     const initWeb3 = async () => {
-      if (window.ethereum) {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        // await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x3' }], })
-        window.web3 = new Web3(window.ethereum);
+      provider.current = await detectEthereumProvider();
+      if (provider.current) {
+        await provider.current.request({ method: 'eth_requestAccounts' });
+
+        window.web3 = new Web3(provider.current);
         window.web3.eth.getAccounts((_, result) => {
           setAccounts(result);
+        });
+      
+        window.web3.eth.net.getId((_, chainId) => {
+          metamaskNetowrk.current = chainId
+        })
+
+        const selectedNetwork = networks.find(n => n.chainDecimal === metamaskNetowrk.current)
+        if(selectedNetwork && metamaskNetowrk.current) {
+          setSelectedNetwork(metamaskNetowrk.current)
+        }
+      
+        provider.current.on('networkChanged', (networkDecimalId: string) => {
+          const parsed = parseInt(networkDecimalId);
+          const networkToChange = networks.find(n => n.chainDecimal === parsed);
+          if(networkToChange) {
+            setSelectedNetwork(parsed)
+          }
         });
       }
     }
@@ -109,6 +159,7 @@ function App() {
     setCustomInput({})
     setSalt('')
     setLoading(false)
+    setSelectedNetwork(metamaskNetowrk.current || 0)
   }
 
   const handleVariableParsing = () => {
@@ -131,11 +182,12 @@ function App() {
     })
     const types = encodedValues.map(({ type }) => type)
     const values = encodedValues.map(({ params }) => params)
+  
     const encodedParams = window.web3.eth.abi.encodeParameters(types, values).substring(2)
 
     const ctr = contractToDeploy as CompiledContractJSON
     const toDeploy = ctr.data.bytecode.object + encodedParams
-
+  
     const contract = new window.web3.eth.Contract(factoryContract.abi as AbiItem[], '0x56434E34E7771aa9680d09220Fe5d4D5c305323a');
     setLoading(true)
     contract.methods.deploy(`0x${toDeploy}`, salt)
@@ -153,7 +205,7 @@ function App() {
           setError(err.message)
         }
         resetState()
-        console.log(err)
+
       })
   }
 
@@ -169,6 +221,20 @@ function App() {
     } 
 
     return !!salt
+  }
+
+  const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedNetwork(parseInt(e.target.value));
+    const net = networks.find(n => n.chainDecimal === parseInt(e.target.value));
+
+    try {
+      await provider.current.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: net?.chainId }], })
+    } catch (err: any) {
+      if(err.code && err.code === 4001) { // From metamask docs, error thrown when user denies access to account
+        setError(err.message)
+      }
+      resetState()
+    }
   }
 
   return (
@@ -196,7 +262,14 @@ function App() {
         </>
       ): null}
 
-      {contractToDeploy && canDeploy() ? <div role="button" className="button" onClick={handleVariableParsing}>deploy</div> : null}
+      {contractToDeploy && canDeploy() ? (
+        <>
+        <select value={selectedNetwork} onChange={handleNetworkChange}>
+          {networks.map(n => <option key={n.chainId} value={n.chainDecimal}>{n.name}</option>)}
+        </select>
+        <div role="button" className="button" onClick={handleVariableParsing}>deploy</div>
+        </>
+      ) : null}
       {isLoading ? 'Deploy in progress...' : null}
       {depoyedAddress ? <>Deployed address: <div className="address">{depoyedAddress}</div></> : null}
       {error ? <div className="error">{error}</div> : null}
