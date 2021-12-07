@@ -82,7 +82,6 @@ const encodeBytes = (params: string | string[]) => {
 
 function App() {
   const client = useRef(createClient(new PluginClient()))
-  const metamaskNetowrk = useRef<null | number>(null);
   const provider = useRef<any>(null);
   const [constructorInput, setConstructorInput] = useState<ABIDescription | null>(null)
   const [contractToDeploy, setContract] = useState<unknown>(null)
@@ -120,14 +119,11 @@ function App() {
         window.web3.eth.getAccounts((_, result) => {
           setAccounts(result);
         });
-      
-        window.web3.eth.net.getId((_, chainId) => {
-          metamaskNetowrk.current = chainId
-        })
+        const currentSelected = parseInt(provider.current.networkVersion);
+        const selectedNetwork = networks.find(n => n.chainDecimal === currentSelected);
 
-        const selectedNetwork = networks.find(n => n.chainDecimal === metamaskNetowrk.current)
-        if(selectedNetwork && metamaskNetowrk.current) {
-          setSelectedNetwork(metamaskNetowrk.current)
+        if(selectedNetwork) {
+          setSelectedNetwork(currentSelected)
         }
       
         provider.current.on('networkChanged', (networkDecimalId: string) => {
@@ -159,7 +155,7 @@ function App() {
     setCustomInput({})
     setSalt('')
     setLoading(false)
-    setSelectedNetwork(metamaskNetowrk.current || 0)
+    setSelectedNetwork(parseInt(provider.current.networkVersion))
   }
 
   const handleVariableParsing = () => {
