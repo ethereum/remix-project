@@ -58,13 +58,11 @@ const defaultThemes = [
 ];
 
 export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
-  const [themeName, setThemeName] = useState('');
-  const [themes, _] = useState<Theme[]>(defaultThemes);
-  const themeRef = useRef<any>(null);
+  const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
       themeModule.switchTheme()
-  }, [themeName, themeModule]);
+  }, [themeName, themeModule])
 
   return (
     <div className="border-top">
@@ -102,7 +100,7 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default RemixUiThemeModule;
