@@ -27,6 +27,11 @@ export class MainPanel extends AbstractPanel {
     this.renderComponent()
   }
 
+  addView (profile, view) {
+    super.addView(profile, view)
+    view.style.height = '100%'
+  }
+
   onActivation () {
     this.renderComponent()
   }

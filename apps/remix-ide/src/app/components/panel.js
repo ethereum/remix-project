@@ -22,15 +22,16 @@ export class AbstractPanel extends HostPlugin {
 
   addView (profile, view) {
     if (this.contents[profile.name]) throw new Error(`Plugin ${profile.name} already rendered`)
-    view.style.width = '100%'
     view.style.border = '0'
     this.contents[profile.name] = view
-    this.showContent(profile.name)
+    this.contents[profile.name].style.display = 'none'
     this.element.appendChild(this.contents[profile.name])
     this.renderComponent()
   }
 
   removeView (profile) {
+    this.emit('pluginDisabled', profile.name)
+    this.verticalIcons.unlinkContent(profile)
     this.remove(profile.name)
   }
 
@@ -54,9 +55,10 @@ export class AbstractPanel extends HostPlugin {
     if (!this.contents[name]) throw new Error(`Plugin ${name} is not yet activated`)
     // hiding the current view and display the `moduleName`
     if (this.active) {
+      console.log({ active: this.active, name }, 'first')
       this.contents[this.active].style.display = 'none'
     }
-
+    console.log({ active: this.active, name }, 'second')
     this.contents[name].style.display = 'flex'
     this.active = name
     this.renderComponent()
