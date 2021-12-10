@@ -41,8 +41,7 @@
     text-transform: lowercase;
     cursor: default;
   }
-
   iframe {
     height: 100%;
-    overflow-y: scroll;
   }
+
