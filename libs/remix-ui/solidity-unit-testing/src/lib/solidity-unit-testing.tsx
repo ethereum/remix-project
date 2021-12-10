@@ -62,6 +62,11 @@ export const SolidityUnitTesting = (props: any) => {
   let testSuite: any
   let testSuites: any
   let runningTestFileName: any
+
+
+
+
+  let [testsResultByFilename, setTestsResultByFilename] = useState<Record<string, any>>({})
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -245,93 +250,248 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
+  const showTestsResult = () => {
+    setTestsOutput([])
+    let filenames = Object.keys(testsResultByFilename)
+    for(const filename of filenames) {
+      const fileTestsResult = testsResultByFilename[filename]
+      const contracts = Object.keys(fileTestsResult)
+      for(const contract of contracts) {
+        if(contract && contract !== 'summary') {
+          runningTestFileName = cleanFileName(filename, contract)
+          // show contract and file name
+          const ContractCard: any = (
+            <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
+              <span className="font-weight-bold">{contract} ({filename})</span>
+            </div>
+          )
+          setTestsOutput(prevCards => ([...prevCards, ContractCard]))
+          // show tests
+          const tests = fileTestsResult[contract]
+          if (tests?.length) {
+            for(const test of tests) {
+              if (test.type === 'testPass') {
+                if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                const testPassCard: any = (
+                  <div
+                    id={runningTestFileName}
+                    data-id="testTabSolidityUnitTestsOutputheader"
+                    className="testPass testLog bg-light mb-2 px-2 text-success border-0"
+                    onClick={() => discardHighlight()}
+                  >
+                    <div className="d-flex my-1 align-items-start justify-content-between">
+                      <span > ✓ {test.value}</span>
+                        {/* {debugBtn} */}
+                      </div>
+                  </div>
+                )
+                setTestsOutput(prevCards => ([...prevCards, testPassCard]))
+              }
+            }
+          }
+        }
+      }
+      // show testsSummary
+    }
+  //   let debugBtn
+  //   if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
+  //     const { web3, debugTxHash } = result
+  //     debugBtn = (
+  //     <div id={result.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
+  //       <i className="fas fa-bug"></i>
+  //     </div>
+  //     )
+  //   }
+  //   if (result.type === 'contract') {
+  //     var testSuite = result.value
+  //     if (testSuites) {
+  //       testSuites.push(testSuite)
+  //     } else {
+  //       testSuites = [testSuite]
+  //     }
+  //     runningTestFileName = cleanFileName(result.filename, testSuite)
+  //     const ContractCard: any = (
+  //       <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
+  //         <span className="font-weight-bold">{testSuite} ({result.filename})</span>
+  //       </div>
+  //     )
+  //     setTestsOutput(prevCards => ([...prevCards, ContractCard]))
+  //   } else if (result.type === 'testPass') {
+  //     if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+  //     const testPassCard: any = (
+  //       <div
+  //         id={runningTestFileName}
+  //         data-id="testTabSolidityUnitTestsOutputheader"
+  //         className="testPass testLog bg-light mb-2 px-2 text-success border-0"
+  //         onClick={() => discardHighlight()}
+  //       >
+  //         <div className="d-flex my-1 align-items-start justify-content-between">
+  //           <span > ✓ {result.value}</span>
+  //            {debugBtn}
+  //          </div>
+  //       </div>
+  //     )
+  //     setTestsOutput(prevCards => ([...prevCards, testPassCard]))
+  //   } else if (result.type === 'testFailure') {
+  //     if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+  //     if (!result.assertMethod) {
+  //       const testFailCard1: any = (<div
+  //         className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+  //         id={"UTContext" + result.context}
+  //         onClick={() => highlightLocation(result.location, runningTests, result.filename)}
+  //       >
+  //         <div className="d-flex my-1 align-items-start justify-content-between">
+  //           <span> ✘ {result.value}</span>
+  //           {debugBtn}
+  //         </div>
+  //         <span className="text-dark">Error Message:</span>
+  //         <span className="pb-2 text-break">"{result.errMsg}"</span>
+  //       </div>)
+  //       setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
+  //     } else {
+  //       const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
+  //       const method = result.assertMethod === 'ok' ? '' : result.assertMethod
+  //       const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
+  //       const testFailCard2: any = (<div
+  //         className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+  //         id="UTContext${result.context}"
+  //         onClick={() => highlightLocation(result.location, runningTests, result.filename)}
+  //       >
+  //         <div className="d-flex my-1 align-items-start justify-content-between">  
+  //           <span> ✘ {result.value}</span>
+  //           {debugBtn}
+  //         </div> 
+  //         <span className="text-dark">Error Message:</span>
+  //         <span className="pb-2 text-break">"{result.errMsg}"</span>
+  //         <span className="text-dark">Assertion:</span>
+  //         <div className="d-flex flex-wrap">
+  //           <span>Expected value should be</span>
+  //           <div className="mx-1 font-weight-bold">{method}</div>
+  //           <div>{preposition} {expected}</div>
+  //         </div>
+  //         <span className="text-dark">Received value:</span>
+  //         <span>{result.returned}</span>
+  //         <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+  //       </div>)
+  //       setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
+  //     }
+  //   } else if (result.type === 'logOnly') {
+  //     if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+  //   }
+  }
+
+  // const testCallback = (result: any, runningTests: any) => {
+  //   console.log('result--------------in testCallback->', result)
+  //   console.log('testsResultByFilename--------============------in testCallback->', testsResultByFilename)
+  //   if(result.filename) {
+  //     if(!testsResultByFilename[result.filename]) {
+  //       testsResultByFilename[result.filename] = {}
+  //       testsResultByFilename[result.filename][contract]['tests'] = []
+  //       testsResultByFilename[result.filename]['summary'] = {}
+  //     }
+  //     testsResultByFilename[result.filename]['tests'].push(result)
+  //   }
+  // }
+
   const testCallback = (result: any, runningTests: any) => {
-    console.log('result---in testCallback->', result)
-    let debugBtn
-    if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
-      const { web3, debugTxHash } = result
-      debugBtn = (
-      <div id={result.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-        <i className="fas fa-bug"></i>
-      </div>
-      )
-    }
-    if (result.type === 'contract') {
-      var testSuite = result.value
-      if (testSuites) {
-        testSuites.push(testSuite)
-      } else {
-        testSuites = [testSuite]
+    console.log('result--------------in testCallback->', result)
+    console.log('testsResultByFilename--------============------in testCallback->', testsResultByFilename)
+    if(result.filename) {
+      if(!testsResultByFilename[result.filename]) {
+        testsResultByFilename[result.filename] = {}
+        testsResultByFilename[result.filename]['summary'] = {}
       }
-      runningTestFileName = cleanFileName(result.filename, testSuite)
-      const ContractCard: any = (
-        <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
-          <span className="font-weight-bold">{testSuite} ({result.filename})</span>
-        </div>
-      )
-      setTestsOutput(prevCards => ([...prevCards, ContractCard]))
-    } else if (result.type === 'testPass') {
-      if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
-      const testPassCard: any = (
-        <div
-          id={runningTestFileName}
-          data-id="testTabSolidityUnitTestsOutputheader"
-          className="testPass testLog bg-light mb-2 px-2 text-success border-0"
-          onClick={() => discardHighlight()}
-        >
-          <div className="d-flex my-1 align-items-start justify-content-between">
-            <span > ✓ {result.value}</span>
-             {debugBtn}
-           </div>
-        </div>
-      )
-      setTestsOutput(prevCards => ([...prevCards, testPassCard]))
-    } else if (result.type === 'testFailure') {
-      if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
-      if (!result.assertMethod) {
-        const testFailCard1: any = (<div
-          className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-          id={"UTContext" + result.context}
-          onClick={() => highlightLocation(result.location, runningTests, result.filename)}
-        >
-          <div className="d-flex my-1 align-items-start justify-content-between">
-            <span> ✘ {result.value}</span>
-            {debugBtn}
-          </div>
-          <span className="text-dark">Error Message:</span>
-          <span className="pb-2 text-break">"{result.errMsg}"</span>
-        </div>)
-        setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
-      } else {
-        const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
-        const method = result.assertMethod === 'ok' ? '' : result.assertMethod
-        const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
-        const testFailCard2: any = (<div
-          className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-          id="UTContext${result.context}"
-          onClick={() => highlightLocation(result.location, runningTests, result.filename)}
-        >
-          <div className="d-flex my-1 align-items-start justify-content-between">  
-            <span> ✘ {result.value}</span>
-            {debugBtn}
-          </div> 
-          <span className="text-dark">Error Message:</span>
-          <span className="pb-2 text-break">"{result.errMsg}"</span>
-          <span className="text-dark">Assertion:</span>
-          <div className="d-flex flex-wrap">
-            <span>Expected value should be</span>
-            <div className="mx-1 font-weight-bold">{method}</div>
-            <div>{preposition} {expected}</div>
-          </div>
-          <span className="text-dark">Received value:</span>
-          <span>{result.returned}</span>
-          <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
-        </div>)
-        setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
-      }
-    } else if (result.type === 'logOnly') {
-      if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+      if(result.type === 'contract') {
+        testsResultByFilename[result.filename][result.value] = []
+      } else 
+        testsResultByFilename[result.filename][result.context].push(result)
+      showTestsResult()
     }
+    // let debugBtn
+    // if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
+    //   const { web3, debugTxHash } = result
+    //   debugBtn = (
+    //   <div id={result.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
+    //     <i className="fas fa-bug"></i>
+    //   </div>
+    //   )
+    // }
+    // if (result.type === 'contract') {
+    //   var testSuite = result.value
+    //   if (testSuites) {
+    //     testSuites.push(testSuite)
+    //   } else {
+    //     testSuites = [testSuite]
+    //   }
+    //   runningTestFileName = cleanFileName(result.filename, testSuite)
+    //   const ContractCard: any = (
+    //     <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
+    //       <span className="font-weight-bold">{testSuite} ({result.filename})</span>
+    //     </div>
+    //   )
+    //   setTestsOutput(prevCards => ([...prevCards, ContractCard]))
+    // } else if (result.type === 'testPass') {
+    //   if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+    //   const testPassCard: any = (
+    //     <div
+    //       id={runningTestFileName}
+    //       data-id="testTabSolidityUnitTestsOutputheader"
+    //       className="testPass testLog bg-light mb-2 px-2 text-success border-0"
+    //       onClick={() => discardHighlight()}
+    //     >
+    //       <div className="d-flex my-1 align-items-start justify-content-between">
+    //         <span > ✓ {result.value}</span>
+    //          {debugBtn}
+    //        </div>
+    //     </div>
+    //   )
+    //   setTestsOutput(prevCards => ([...prevCards, testPassCard]))
+    // } else if (result.type === 'testFailure') {
+    //   if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+    //   if (!result.assertMethod) {
+    //     const testFailCard1: any = (<div
+    //       className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+    //       id={"UTContext" + result.context}
+    //       onClick={() => highlightLocation(result.location, runningTests, result.filename)}
+    //     >
+    //       <div className="d-flex my-1 align-items-start justify-content-between">
+    //         <span> ✘ {result.value}</span>
+    //         {debugBtn}
+    //       </div>
+    //       <span className="text-dark">Error Message:</span>
+    //       <span className="pb-2 text-break">"{result.errMsg}"</span>
+    //     </div>)
+    //     setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
+    //   } else {
+    //     const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
+    //     const method = result.assertMethod === 'ok' ? '' : result.assertMethod
+    //     const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
+    //     const testFailCard2: any = (<div
+    //       className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+    //       id="UTContext${result.context}"
+    //       onClick={() => highlightLocation(result.location, runningTests, result.filename)}
+    //     >
+    //       <div className="d-flex my-1 align-items-start justify-content-between">  
+    //         <span> ✘ {result.value}</span>
+    //         {debugBtn}
+    //       </div> 
+    //       <span className="text-dark">Error Message:</span>
+    //       <span className="pb-2 text-break">"{result.errMsg}"</span>
+    //       <span className="text-dark">Assertion:</span>
+    //       <div className="d-flex flex-wrap">
+    //         <span>Expected value should be</span>
+    //         <div className="mx-1 font-weight-bold">{method}</div>
+    //         <div>{preposition} {expected}</div>
+    //       </div>
+    //       <span className="text-dark">Received value:</span>
+    //       <span>{result.returned}</span>
+    //       <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+    //     </div>)
+    //     setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
+    //   }
+    // } else if (result.type === 'logOnly') {
+    //   if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+    // }
   }
 
   const resultsCallback = (_err: any, result: any, cb: any) => {
@@ -343,7 +503,8 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateFinalResult = (_errors: any, result: any, filename: any) => {
-    console.log('result---in updateFinalResult->', result, filename)
+    console.log('result---------------------------in updateFinalResult->', result, filename)
+    console.log('testsResultByFilename---------------------------in updateFinalResult->', testsResultByFilename)
     ++readyTestsNumber
     setTestsSummaryHidden('visible')
     // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
@@ -363,7 +524,8 @@ export const SolidityUnitTesting = (props: any) => {
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
       testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime }
-      setTestsSummary(testsSummary)
+      testsResultByFilename[filename]['summary']= testsSummary
+      // setTestsSummary(testsSummary)
       }
       // fix for displaying right label for multiple tests (testsuites) in a single file
       // this.testSuites.forEach(testSuite => {
@@ -459,6 +621,7 @@ export const SolidityUnitTesting = (props: any) => {
     clearResults()
     // yo.update(this.resultStatistics, this.createResultLabel())
     const tests = selectedTests
+    console.log('tests--in runTests----------------->', tests)
     if (!tests) return
     // this.resultStatistics.hidden = tests.length === 0
     // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
@@ -641,12 +804,12 @@ export const SolidityUnitTesting = (props: any) => {
             <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
           </div>
           <div>{testsOutput}</div>
-          <div className="d-flex alert-secondary mb-3 p-3 flex-column" style= {{visibility: testsSummaryHidden} as CSSProperties }>
+          {/* <div className="d-flex alert-secondary mb-3 p-3 flex-column" style= {{visibility: testsSummaryHidden} as CSSProperties }>
             <span className="font-weight-bold">{testsSummary && testsSummary.filename ? `Result for ${testsSummary.filename}` : ''}</span>
             <span className="text-success">{testsSummary && testsSummary.passed >= 0 ? `Passed: ${testsSummary.passed}` : ''}</span>
             <span className="text-danger">{testsSummary && testsSummary.failed >= 0 ? `Failed: ${testsSummary.failed}` : ''}</span>
             <span>{testsSummary && testsSummary.timeTaken ? `Time Taken: ${testsSummary.timeTaken}` : ''}</span>
-          </div>
+          </div> */}
         </div>
       </div>
   )
