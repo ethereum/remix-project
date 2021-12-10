@@ -233,6 +233,8 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const highlightLocation = async (location: any, runningTests: any, fileName: any) => {
+    console.log('Inside highlightLocation---runningTests-->', runningTests)
+    console.log('Inside highlightLocation---fileName-->', fileName)
     if (location) {
       var split = location.split(':')
       var file = split[2]
@@ -250,7 +252,8 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const showTestsResult = () => {
+  const showTestsResult = (runningTests: any) => {
+    console.log('runningTests---->', runningTests)
     setTestsOutput([])
     let filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
@@ -284,6 +287,7 @@ export const SolidityUnitTesting = (props: any) => {
             setTestsOutput(prevCards => ([...prevCards, ContractCard]))
             // show tests
             for(const test of tests) {
+              console.log('test---->', test)
               if (test.type === 'testPass') {
                 if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
                 const testPassCard: any = (
@@ -306,7 +310,7 @@ export const SolidityUnitTesting = (props: any) => {
                       const testFailCard1: any = (<div
                         className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
                         id={"UTContext" + test.context}
-                        // onClick={() => highlightLocation(test.location, runningTests, test.filename)}
+                        onClick={() => highlightLocation(test.location, runningTests, test.filename)}
                       >
                         <div className="d-flex my-1 align-items-start justify-content-between">
                           <span> ✘ {test.value}</span>
@@ -322,8 +326,8 @@ export const SolidityUnitTesting = (props: any) => {
                       const expected = test.assertMethod === 'ok' ? '\'true\'' : test.expected
                       const testFailCard2: any = (<div
                         className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-                        id="UTContext${result.context}"
-                        // onClick={() => highlightLocation(result.location, runningTests, result.filename)}
+                        id={"UTContext" + test.context}
+                        onClick={() => highlightLocation(test.location, runningTests, test.filename)}
                       >
                         <div className="d-flex my-1 align-items-start justify-content-between">  
                           <span> ✘ {test.value}</span>
@@ -383,7 +387,7 @@ export const SolidityUnitTesting = (props: any) => {
         testsResultByFilename[result.filename][result.value] = []
       } else 
         testsResultByFilename[result.filename][result.context].push(result)
-      showTestsResult()
+      showTestsResult(runningTests)
     }
   }
 
