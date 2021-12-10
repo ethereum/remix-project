@@ -63,66 +63,8 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
   const themeRef = useRef<any>(null);
 
   useEffect(() => {
-    themeModule.switchTheme();
+      themeModule.switchTheme()
   }, [themeName, themeModule]);
-  /**
-   * Change the current theme
-   * @param {string} [themeName] - The name of the theme
-   */
-  function switchTheme(themeName: string) {
-    if (themeName && !Object.keys(themes).includes(themeName)) {
-      throw new Error(`Theme ${themeName} doesn't exist`);
-    }
-    const next = themeName || this.active; // Name
-    if (next === this.active) return;
-    themeModule._paq.push(['trackEvent', 'themeModule', 'switchTo', next]);
-    const nextTheme = themeModule.themes[next]; // Theme
-    if (!themeModule.forced)
-      themeModule._deps.config.set('settings/theme', next);
-    document.getElementById('theme-link').remove();
-    const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`;
-    theme.addEventListener('load', () => {
-      themeModule.emit('themeLoaded', nextTheme);
-      themeModule.events.emit('themeLoaded', nextTheme);
-    });
-    document.head.insertBefore(theme, document.head.firstChild);
-    document.documentElement.style.setProperty('--theme', nextTheme.quality);
-    if (themeName) themeModule.active = themeName;
-    // TODO: Only keep `this.emit` (issue#2210)
-    themeModule.emit('themeChanged', nextTheme);
-    themeModule.events.emit('themeChanged', nextTheme);
-  }
-
-  function ThemeHead() {
-    const [nextTheme, setNextTheme] = useState<any>();
-    const linkRef = useRef<any>(null);
-    useEffect(() => {
-      const shell = document.querySelector('div[data-id="remixIDE"]') as any;
-      const splashScreen = document.querySelector(
-        'div[data-id="remixIDESplash"]'
-      ) as Node;
-      const callback = () => {
-        // setTimeout(() => {
-        //   document.body.removeChild(splashScreen)
-        //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        //   shell!.style.visibility = 'visible'
-        // }, 1500)
-      };
-      document.addEventListener('load', () => {
-        if (callback) callback();
-      });
-      document.head.insertBefore(linkRef.current, document.head.firstChild);
-    }, []);
-
-    return (
-      <link
-        rel="stylesheet"
-        href={nextTheme.url}
-        ref={linkRef}
-        id="theme-link"
-      />
-    );
-  }
 
   return (
     <div className="border-top">

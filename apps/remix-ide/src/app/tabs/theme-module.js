@@ -110,7 +110,10 @@ export class ThemeModule extends Plugin {
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').remove()
-    const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+    const theme = document.createElement('link')
+    theme.rel = 'stylesheet'
+    theme.id = 'theme-link'
+    theme.href = nextTheme.url
     theme.addEventListener('load', () => {
       this.emit('themeLoaded', nextTheme)
       this.events.emit('themeLoaded', nextTheme)
