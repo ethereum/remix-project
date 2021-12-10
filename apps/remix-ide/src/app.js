@@ -243,9 +243,6 @@ class App {
     // ----------------- theme service ---------------------------------
     const themeModule = new ThemeModule(registry)
     registry.put({ api: themeModule, name: 'themeModule' })
-    console.log('what is self._view in app.js? ', { self })
-    const elmt = self._view.el
-    console.log('what is self._view.el in app.js? ', { elmt })
     themeModule.initTheme(() => {
       setTimeout(() => {
         document.body.removeChild(self._view.splashScreen)
