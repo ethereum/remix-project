@@ -100,7 +100,34 @@ export interface ValueProps {
 }
 
 export interface ContractDropdownProps {
-  exEnvironment: string
+  exEnvironment: string,
+  contracts: {
+    contractList: {
+      name: string,
+      alias: string,
+      file: string
+    }[],
+    loadType: 'abi' | 'sol' | 'other',
+    currentFile: string,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  getSelectedContract: (contractName: string, compilerAtributeName: string) => {
+    name: string,
+    contract: string,
+    compiler: any,
+    abi: any,
+    bytecodeObject: any,
+    bytecodeLinkReferences: any,
+    object: any,
+    deployedBytecode: any,
+    getConstructorInterface: () => any,
+    getConstructorInputs: () => any,
+    isOverSizeLimit: () => boolean,
+    metadata: any
+  },
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
 }
 
 export interface RecorderProps {
@@ -120,4 +147,20 @@ export interface Modal {
   okFn: () => void
   cancelLabel: string
   cancelFn: () => void
+}
+
+export interface ContractGUIProps {
+  title?: string,
+  funcABI: {
+    name: string,
+    type: string,
+    inputs: { name: string, type: string }[],
+    stateMutability: string,
+    payable: boolean
+  },
+  inputs: any,
+  clickCallBack: (inputs: { name: string, type: string }[], input: string) => void,
+  widthClass?: string,
+  evmBC: any,
+  lookupOnly: boolean
 }
