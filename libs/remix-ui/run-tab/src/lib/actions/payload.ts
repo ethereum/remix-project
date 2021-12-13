@@ -129,3 +129,37 @@ export const setMatchPassphrase = (passphrase: string) => {
     payload: passphrase
   }
 }
+
+export const fetchContractListRequest = () => {
+  return {
+    type: 'FETCH_CONTRACT_LIST_REQUEST'
+  }
+}
+
+export const fetchContractListSuccess = (contracts: { name: string, alias: string, file: string }[]) => {
+  return {
+    type: 'FETCH_CONTRACT_LIST_SUCCESS',
+    payload: contracts
+  }
+}
+
+export const fetchContractListFailed = (error: string) => {
+  return {
+    type: 'FETCH_CONTRACT_LIST_FAILED',
+    payload: error
+  }
+}
+
+export const setLoadType = (type: 'abi' | 'sol' | 'other') => {
+  return {
+    type: 'SET_LOAD_TYPE',
+    payload: type
+  }
+}
+
+export const setCurrentFile = (file: string) => {
+  return {
+    type: 'SET_CURRENT_FILE',
+    payload: file
+  }
+}
