@@ -217,3 +217,283 @@
 .udapp_checkboxAlign {
   padding-top: 2px;
 }
+.udapp_instanceTitleContainer {
+  display: flex;
+  align-items: center;
+}
+.udapp_calldataInput{
+  height: 32px;
+}
+.udapp_title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  width: 100%;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: initial;
+  overflow: visible;
+  padding: 0 0 8px;
+  margin: 0;
+  background: none;
+  border: none;
+}
+.udapp_title button {
+  background: none;
+  border: none;
+}
+.udapp_titleLine {
+  display: flex;
+  align-items: baseline;
+}
+.udapp_titleText {
+  word-break: break-word;
+  width: 100%;
+  border: none;
+  overflow: hidden;
+}
+.udapp_spanTitleText {
+  line-height: 12px;
+  padding: 0;
+  font-size: 11px;
+  width:100%;
+  border: none;
+  background: none;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+.udapp_inputGroupText {
+  width: 100%;
+}
+.udapp_title .udapp_copy {
+  color: var(--primary);
+}
+.udapp_titleExpander {
+  padding: 5px 7px;
+}
+.udapp_nameNbuts {
+  display: contents;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.udapp_instance {
+  display: block;
+  flex-direction: column;
+  margin-bottom: 12px;
+  background: none;
+  border-radius: 2px;
+}
+.udapp_instance.udapp_hidesub {
+  border-bottom: 1px solid;
+}
+.udapp_instance.udapp_hidesub .udapp_title {
+    display: flex;
+}
+.udapp_instance.udapp_hidesub .udapp_udappClose {
+    display: flex;
+}
+.udapp_instance.udapp_hidesub > * {
+  display: none;
+}
+.udapp_methCaret {
+  min-width: 12px;
+  width: 12px;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 0.6;
+  vertical-align: middle;
+  padding: 0;
+}
+.udapp_cActionsWrapper {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0.25rem;
+  border-top-rightt-radius: 0;
+  border-bottom-right-radius: 0.25rem;
+  padding: 8px 10px 7px;
+}
+.udapp_group:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.udapp_buttonsContainer {
+  margin-top: 2%;
+  display: flex;
+  overflow: hidden;
+}
+.udapp_instanceButton {
+  height: 32px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.udapp_closeIcon {
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.udapp_udappClose {
+  display: flex;
+  justify-content: flex-end;
+}
+.udapp_contractProperty {
+  width:100%;
+}
+.udapp_contractProperty.udapp_hasArgs input {
+  padding: .36em;
+  border-radius: 5px;
+}
+.udapp_contractProperty .udapp_contractActionsContainerSingle input{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.udapp_contractProperty button {
+  min-width: 100px;
+  width: 100px;
+  margin:0;
+  word-break: inherit;
+}
+.udapp_contractProperty button:disabled {
+  cursor: not-allowed;
+  background-color: white;
+  border-color: lightgray;
+}
+.udapp_contractProperty.udapp_constant button {
+  min-width: 100px;
+  width: 100px;
+  margin:0;
+  word-break: inherit;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.udapp_contractProperty > .udapp_value {
+  box-sizing: border-box;
+  float: left;
+  align-self: center;
+  margin-left: 4px;
+}
+.udapp_contractActionsContainer {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.udapp_contractActionsContainerSingle {
+  display: flex;
+  width: 100%;
+}
+.udapp_contractActionsContainerSingle i {
+  line-height: 2;
+}
+.udapp_contractActionsContainerMulti {
+  display:none;
+  width: 100%;
+}
+.udapp_contractActionsContainerMultiInner {
+  width: 100%;
+  padding: 16px 8px 16px 14px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+.udapp_multiHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: bold;
+}
+.udapp_contractActionsContainerMultiInner .udapp_multiTitle {
+  padding-left: 10px;
+}
+.udapp_contractProperty .udapp_multiTitle {
+  padding: 0;
+  line-height: 16px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: default;
+}
+.udapp_contractProperty .udapp_contractActionsContainerMultiInner .udapp_multiArg label{
+  text-align: right;
+}
+.udapp_multiHeader .udapp_methCaret {
+  float: right;
+  margin-right: 0;
+}
+.udapp_contractProperty.udapp_constant .udapp_multiTitle {
+  display: inline-block;
+  width: 90%;
+  /* font-size: 10px; */
+  height: 25px;
+  padding-left: 20px;
+  font-weight: bold;
+  line-height: 25px;
+  cursor: default;
+}
+.udapp_multiArg {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.udapp_multiArg input{
+  padding: 5px;
+}
+.udapp_multiArg label {
+  width: auto;
+  padding: 0;
+  margin: 0 4px 0 0;
+  font-size: 10px;
+  line-height: 12px;
+  text-align: right;
+  word-break: initial;
+}
+.udapp_multiArg button {
+  max-width: 100px;
+  border-radius: 3px;
+  border-width: 1px;
+  width: inherit;
+}
+.udapp_multiHeader button {
+  display: inline-block;
+  width: 94%;
+}
+.udapp_hasArgs .udapp_multiArg input {
+  border-left: 1px solid #dddddd;
+  width: 67%;
+}
+.udapp_hasArgs input {
+  display: block;
+  height: 32px;
+  border: 1px solid #dddddd;
+  padding: .36em;
+  border-left: none;
+  padding: 8px 8px 8px 10px;
+  font-size: 10px !important;
+}
+.udapp_hasArgs button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+}
+.udapp_hasArgs .udapp_contractActionsContainerMulti button {
+  border-radius: 3px;
+}
+.udapp_contractActionsContainerMultiInner .udapp_multiArg i {
+  padding-right: 10px;
+}
+.udapp_hideWarningsContainer {
+  display: flex;
+  align-items: center;
+  margin-left: 2%
+}
+

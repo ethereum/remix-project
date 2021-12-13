@@ -41,7 +41,19 @@ export interface RunTabState {
   externalEndpoint: string,
   popup: string,
   passphrase: string,
-  matchPassphrase: string
+  matchPassphrase: string,
+  contracts: {
+    contractList: {
+      name: string,
+      alias: string,
+      file: string
+    }[],
+    loadType: 'abi' | 'sol' | 'other'
+    currentFile: string,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
 }
 
 export const runTabInitialState: RunTabState = {
@@ -102,7 +114,15 @@ export const runTabInitialState: RunTabState = {
   externalEndpoint: 'http://127.0.0.1:8545',
   popup: '',
   passphrase: '',
-  matchPassphrase: ''
+  matchPassphrase: '',
+  contracts: {
+    contractList: [],
+    loadType: 'other',
+    currentFile: '',
+    isRequesting: false,
+    isSuccessful: false,
+    error: null
+  }
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -342,6 +362,71 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         matchPassphrase: passphrase
+      }
+    }
+
+    case 'FETCH_CONTRACT_LIST_REQUEST': {
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          isRequesting: true,
+          isSuccessful: false,
+          error: null
+        }
+      }
+    }
+
+    case 'FETCH_CONTRACT_LIST_SUCCESS': {
+      const payload: { name: string, alias: string, file: string }[] = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          contractList: payload,
+          isSuccessful: true,
+          isRequesting: false,
+          error: null
+        }
+      }
+    }
+
+    case 'FETCH_CONTRACT_LIST_FAILED': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          isRequesting: false,
+          isSuccessful: false,
+          error: payload
+        }
+      }
+    }
+
+    case 'SET_LOAD_TYPE': {
+      const payload: 'abi' | 'sol' | 'other' = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          loadType: payload
+        }
+      }
+    }
+
+    case 'SET_CURRENT_FILE': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          currentFile: payload
+        }
       }
     }
 

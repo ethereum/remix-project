@@ -3,15 +3,31 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { shortenAddress } from '@remix-ui/helper'
-import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, hidePopUp, removeProvider, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setMatchPassphrase, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue } from './payload'
+import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeProvider, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setLoadType, setMatchPassphrase, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue } from './payload'
 import { RunTab } from '../types/run-tab'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import * as remixLib from '@remix-project/remix-lib'
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
 
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+const txHelper = remixLib.execution.txHelper
 let plugin: RunTab, dispatch: React.Dispatch<any>
 
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
   setupEvents()
+  // setInterval(() => {
+  //   fillAccountsList()
+  // }, 1000)
+  // fillAccountsList()
+  setTimeout(async () => {
+    await fillAccountsList()
+  }, 0)
 }
 
 const setupEvents = () => {
@@ -66,17 +82,40 @@ const setupEvents = () => {
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(provider))
+
   plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(name))
+
   plugin.on('manager', 'pluginActivated', addPluginProvider.bind(plugin))
+
   plugin.on('manager', 'pluginDeactivated', removePluginProvider.bind(plugin))
 
-  // setInterval(() => {
-  //   fillAccountsList()
-  // }, 1000)
-  // fillAccountsList()
-  setTimeout(async () => {
-    await fillAccountsList()
-  }, 0)
+  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data) =>
+    broadcastCompilationResult(file, source, languageVersion, data)
+  )
+  plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) =>
+    broadcastCompilationResult(file, source, languageVersion, data)
+  )
+  plugin.on('lexon', 'compilationFinished', (file, source, languageVersion, data) =>
+    broadcastCompilationResult(file, source, languageVersion, data)
+  )
+  plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) =>
+    broadcastCompilationResult(file, source, languageVersion, data)
+  )
+  plugin.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) =>
+    broadcastCompilationResult(file, source, languageVersion, data)
+  )
+  plugin.fileManager.events.on('currentFileChanged', (currentFile: string) => {
+    if (/.(.abi)$/.exec(currentFile)) {
+      dispatch(setLoadType('abi'))
+    } else if (/.(.sol)$/.exec(currentFile) ||
+        /.(.vy)$/.exec(currentFile) || // vyper
+        /.(.lex)$/.exec(currentFile) || // lexon
+        /.(.contract)$/.exec(currentFile)) {
+      dispatch(setLoadType('sol'))
+    } else {
+      dispatch(setLoadType('other'))
+    }
+  })
 }
 
 const updateAccountBalances = () => {
@@ -251,4 +290,93 @@ export const signMessageWithAddress = (account: string, message: string, modalCo
     }
     dispatch(displayNotification('Signed Message', modalContent(msgHash, signedData), 'OK', null, () => {}, null))
   })
+}
+
+const broadcastCompilationResult = (file, source, languageVersion, data) => {
+  // TODO check whether the tab is configured
+  const compiler = new CompilerAbstract(languageVersion, data, source)
+
+  plugin.compilersArtefacts[languageVersion] = compiler
+  plugin.compilersArtefacts.__last = compiler
+
+  const contracts = getCompiledContracts(compiler).map((contract) => {
+    return { name: languageVersion, alias: contract.name, file: contract.file }
+  })
+
+  dispatch(fetchContractListSuccess(contracts))
+  dispatch(setCurrentFile(file))
+  // this.enableAtAddress(success)
+  // this.enableContractNames(success)
+  // this.setInputParamsPlaceHolder()
+
+  // if (success) {
+  //   this.compFails.style.display = 'none'
+  // } else {
+  //   this.compFails.style.display = 'block'
+  // }
+}
+
+const loadContractFromAddress = (address, confirmCb, cb) => {
+  if (/.(.abi)$/.exec(plugin.config.get('currentFile'))) {
+    confirmCb(() => {
+      let abi
+      try {
+        abi = JSON.parse(plugin.editor.currentContent())
+      } catch (e) {
+        // return cb('Failed to parse the current file as JSON ABI.')
+      }
+      _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithABI'])
+      cb(null, 'abi', abi)
+    })
+  } else {
+    _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithArtifacts'])
+    cb(null, 'instance')
+  }
+}
+
+const getCompiledContracts = (compiler) => {
+  const contracts = []
+
+  compiler.visitContracts((contract) => {
+    contracts.push(contract)
+  })
+  return contracts
+}
+
+export const getSelectedContract = (contractName: string, compilerAtributeName: string) => {
+  if (!contractName) return null
+  const compiler = plugin.compilersArtefacts[compilerAtributeName]
+
+  if (!compiler) return null
+
+  const contract = compiler.getContract(contractName)
+
+  return {
+    name: contractName,
+    contract: contract,
+    compiler: compiler,
+    abi: contract.object.abi,
+    bytecodeObject: contract.object.evm.bytecode.object,
+    bytecodeLinkReferences: contract.object.evm.bytecode.linkReferences,
+    object: contract.object,
+    deployedBytecode: contract.object.evm.deployedBytecode,
+    getConstructorInterface: () => {
+      return txHelper.getConstructorInterface(contract.object.abi)
+    },
+    getConstructorInputs: () => {
+      const constructorInteface = txHelper.getConstructorInterface(contract.object.abi)
+
+      return txHelper.inputParametersDeclarationToString(constructorInteface.inputs)
+    },
+    isOverSizeLimit: () => {
+      const deployedBytecode = contract.object.evm.deployedBytecode
+
+      return (deployedBytecode && deployedBytecode.object.length / 2 > 24576)
+    },
+    metadata: contract.object.metadata
+  }
+}
+
+const getCompilerContracts = () => {
+  return plugin.compilersArtefacts.__last.getData().contracts
 }
