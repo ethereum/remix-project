@@ -62,6 +62,7 @@ export const SolidityUnitTesting = (props: any) => {
   let testSuite: any
   let testSuites: any
   let runningTestFileName: any
+  let runningTests: any
 
 
 
@@ -252,7 +253,7 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const showTestsResult = (runningTests: any) => {
+  const showTestsResult = () => {
     console.log('runningTests---->', runningTests)
     setTestsOutput([])
     let filenames = Object.keys(testsResultByFilename)
@@ -289,7 +290,7 @@ export const SolidityUnitTesting = (props: any) => {
             for(const test of tests) {
               console.log('test---->', test)
               if (test.type === 'testPass') {
-                if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                // if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
                 const testPassCard: any = (
                   <div
                     id={runningTestFileName}
@@ -353,16 +354,26 @@ export const SolidityUnitTesting = (props: any) => {
             }
           } else {
             // show only contract and file name
-            const ContractCard: any = (
+            const contractCard: any = (
               <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
                 <span className="font-weight-bold">{contract} ({filename})</span>
               </div>
             )
-            setTestsOutput(prevCards => ([...prevCards, ContractCard]))
+            setTestsOutput(prevCards => ([...prevCards, contractCard]))
           }
         }
       }
-      // show testsSummary
+      // show summary
+      const testSummary = fileTestsResult['summary']
+      if (testSummary && testSummary.filename) {
+        const summaryCard: any = (<div className="d-flex alert-secondary mb-3 p-3 flex-column">
+          <span className="font-weight-bold">Result for {testSummary.filename}</span>
+          <span className="text-success">Passed: {testSummary.passed}</span>
+          <span className="text-danger">Failed: {testSummary.failed}</span>
+          <span>Time Taken: {testSummary.timeTaken}s</span>
+        </div>)
+        setTestsOutput(prevCards => ([...prevCards, summaryCard]))
+      }
     }
   //   let debugBtn
   //   if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
@@ -378,6 +389,7 @@ export const SolidityUnitTesting = (props: any) => {
   const testCallback = (result: any, runningTests: any) => {
     console.log('result--------------in testCallback->', result)
     console.log('testsResultByFilename--------============------in testCallback->', testsResultByFilename)
+    runningTests = runningTests
     if(result.filename) {
       if(!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
@@ -387,7 +399,7 @@ export const SolidityUnitTesting = (props: any) => {
         testsResultByFilename[result.filename][result.value] = []
       } else 
         testsResultByFilename[result.filename][result.context].push(result)
-      showTestsResult(runningTests)
+      showTestsResult()
     }
   }
 
@@ -422,6 +434,7 @@ export const SolidityUnitTesting = (props: any) => {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
       testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime }
       testsResultByFilename[filename]['summary']= testsSummary
+      showTestsResult()
       // setTestsSummary(testsSummary)
       }
       // fix for displaying right label for multiple tests (testsuites) in a single file
