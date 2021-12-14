@@ -1063,8 +1063,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/theme-module/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/theme-module/**/*"]
+            "tsConfig": ["libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
           }
         }
       }
