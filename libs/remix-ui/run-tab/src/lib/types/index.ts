@@ -42,7 +42,8 @@ export interface SettingsProps {
   setMatchPassphrase: (passphrase: string) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   tooltip: (toasterMsg: string) => void,
-  signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void
+  signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
+  passphrase: string
 }
 
 export interface EnvironmentProps {
@@ -85,7 +86,8 @@ export interface AccountProps {
   setMatchPassphrase: (passphrase: string) => void,
   tooltip: (toasterMsg: string) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
-  signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void
+  signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
+  passphrase: string
 }
 
 export interface GasPriceProps {
@@ -127,7 +129,10 @@ export interface ContractDropdownProps {
     isOverSizeLimit: () => boolean,
     metadata: any
   },
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  passphrase: string,
+  setPassphrase: (passphrase: string) => void,
+  createInstance: (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element) => void
 }
 
 export interface RecorderProps {
