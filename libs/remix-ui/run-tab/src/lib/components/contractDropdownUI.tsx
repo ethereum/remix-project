@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { ContractDropdownProps } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
+import { PassphrasePrompt } from './passphrase'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [networkName, setNetworkName] = useState<string>('')
@@ -133,85 +134,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-
-    // var continueCb = (error, continueTxExecution, cancelCb) => {
-    //   if (error) {
-    //     var msg = typeof error !== 'string' ? error.message : error
-    //     modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-    //     The transaction execution will likely fail. Do you want to force sending? <br>
-    //     ${msg}
-    //     </div>`,
-    //     {
-    //       label: 'Send Transaction',
-    //       fn: () => {
-    //         continueTxExecution()
-    //       }
-    //     }, {
-    //       label: 'Cancel Transaction',
-    //       fn: () => {
-    //         cancelCb()
-    //       }
-    //     })
-    //   } else {
-    //     continueTxExecution()
-    //   }
-    // }
-
-    // const self = this
-
-    // var promptCb = (okCb, cancelCb) => {
-    //   modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-    // }
-
-    // var statusCb = (msg) => {
-    //   return this.logCallback(msg)
-    // }
-
-    // var finalCb = (error, contractObject, address) => {
-    //   self.event.trigger('clearInstance')
-
-    //   if (error) {
-    //     return this.logCallback(error)
-    //   }
-    //   self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
-
-    //   const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
-    //   self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
-    //   if (self.ipfsCheckedState) {
-    //     _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName + '_' + this.networkId])
-    //     publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
-    //   } else {
-    //     _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName + '_' + this.networkId])
-    //   }
-    // }
-
-    // let contractMetadata
-    // try {
-    //   contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
-    // } catch (error) {
-    //   return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
-    // }
-
-    // const compilerContracts = this.dropdownLogic.getCompilerContracts()
-    // const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
-
-    // if (selectedContract.isOverSizeLimit()) {
-    //   return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
-    //   More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
-    //   </div>`,
-    //   {
-    //     label: 'Force Send',
-    //     fn: () => {
-    //       this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
-    //     }
-    //   }, {
-    //     label: 'Cancel',
-    //     fn: () => {
-    //       this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
-    //     }
-    //   })
-    // }
-    // this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+    props.createInstance(gasEstimationPrompt, passphrasePrompt, logBuilder)
   }
 
   //   listenToContextChange () {
@@ -361,6 +284,22 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   //     return confirmationCb
   //   }
+
+  const gasEstimationPrompt = (msg: string) => {
+    return (
+      <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
+        ${msg}
+      </div>
+    )
+  }
+
+  const logBuilder = (msg: string) => {
+    return <pre>{msg}</pre>
+  }
+
+  const passphrasePrompt = (message: string) => {
+    return <PassphrasePrompt message={message} setPassphrase={props.setPassphrase} defaultValue={props.passphrase} />
+  }
 
   const atAddressChanged = (event) => {
     const value = event.target.value
