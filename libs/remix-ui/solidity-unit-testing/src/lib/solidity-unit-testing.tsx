@@ -289,6 +289,15 @@ export const SolidityUnitTesting = (props: any) => {
             // show tests
             for(const test of tests) {
               console.log('test---->', test)
+              let debugBtn
+              if (test.debugTxHash) {
+                const { web3, debugTxHash } = test
+                debugBtn = (
+                <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
+                  <i className="fas fa-bug"></i>
+                </div>
+                )
+              } 
               if (test.type === 'testPass') {
                 // if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
                 const testPassCard: any = (
@@ -300,7 +309,7 @@ export const SolidityUnitTesting = (props: any) => {
                   >
                     <div className="d-flex my-1 align-items-start justify-content-between">
                       <span > ✓ {test.value}</span>
-                        {/* {debugBtn} */}
+                        {debugBtn}
                       </div>
                   </div>
                 )
@@ -315,7 +324,7 @@ export const SolidityUnitTesting = (props: any) => {
                       >
                         <div className="d-flex my-1 align-items-start justify-content-between">
                           <span> ✘ {test.value}</span>
-                          {/* {debugBtn} */}
+                          {debugBtn}
                         </div>
                         <span className="text-dark">Error Message:</span>
                         <span className="pb-2 text-break">"{test.errMsg}"</span>
@@ -332,7 +341,7 @@ export const SolidityUnitTesting = (props: any) => {
                       >
                         <div className="d-flex my-1 align-items-start justify-content-between">  
                           <span> ✘ {test.value}</span>
-                          {/* {debugBtn} */}
+                          {debugBtn}
                         </div> 
                         <span className="text-dark">Error Message:</span>
                         <span className="pb-2 text-break">"{test.errMsg}"</span>
@@ -374,16 +383,7 @@ export const SolidityUnitTesting = (props: any) => {
         </div>)
         setTestsOutput(prevCards => ([...prevCards, summaryCard]))
       }
-    }
-  //   let debugBtn
-  //   if ((result.type === 'testPass' || result.type === 'testFailure') && result.debugTxHash) {
-  //     const { web3, debugTxHash } = result
-  //     debugBtn = (
-  //     <div id={result.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-  //       <i className="fas fa-bug"></i>
-  //     </div>
-  //     )
-  //   }    
+    }   
   }
 
   const testCallback = (result: any, runningTests: any) => {
