@@ -5,16 +5,13 @@ import './remix-app.css'
 interface IRemixAppUi {
   app: any
 }
-export const RemixApp = (props: IRemixAppUi) => {
+
+const RemixApp = (props: IRemixAppUi) => {
   const [visible, setVisible] = useState<boolean>(false)
   const sidePanelRef = useRef(null)
   const mainPanelRef = useRef(null)
   const iconPanelRef = useRef(null)
   const hiddenPanelRef = useRef(null)
-
-  useEffect(() => {
-
-  })
 
   useEffect(() => {
     console.log('mounting app')
