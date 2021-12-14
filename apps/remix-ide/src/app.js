@@ -91,7 +91,6 @@ const css = csjs`
     flex-direction     : row-reverse;
     width              : 320px;
     overflow           : auto;
-    padding-bottom: 20px;
   }
   .highlightcode       {
     position           : absolute;
