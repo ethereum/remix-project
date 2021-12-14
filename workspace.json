@@ -1060,10 +1060,11 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/remix-ui/vertical-icons-panel/**/*.{ts,tsx,js,jsx}"
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/theme-module/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/theme-module/**/*"]
             ]
           }
         }
