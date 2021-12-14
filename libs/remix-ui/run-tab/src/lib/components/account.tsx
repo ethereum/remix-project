@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
+import { PassphrasePrompt } from './passphrase'
 
 export function AccountUI (props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
@@ -11,7 +12,6 @@ export function AccountUI (props: AccountProps) {
     title: ''
   })
   const [message, setMessage] = useState('')
-  const [signPassphrase, setSignPassphrase] = useState('')
 
   useEffect(() => {
     if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
@@ -73,11 +73,18 @@ export function AccountUI (props: AccountProps) {
     }
 
     if (props.selectExEnv !== 'vm-london' && props.selectExEnv !== 'vm-berlin' && props.selectExEnv !== 'injected') {
-      return props.modal('Passphrase to sign a message', passphrasePrompt(), 'OK', () => {
-        props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
-          props.signMessageWithAddress(selectedAccount, message, signedMessagePrompt, signPassphrase)
-        }, 'Cancel', null)
-      }, 'Cancel', null)
+      return props.modal('Passphrase to sign a message',
+        <PassphrasePrompt
+          message='Enter your passphrase for this account to sign the message'
+          setPassphrase={props.setPassphrase}
+        />, 'OK', () => {
+          props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
+            props.signMessageWithAddress(selectedAccount, message, signedMessagePrompt, props.passphrase)
+            props.setPassphrase('')
+          }, 'Cancel', null)
+        }, 'Cancel', () => {
+          props.setPassphrase('')
+        })
     }
 
     props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
@@ -97,10 +104,6 @@ export function AccountUI (props: AccountProps) {
     setMessage(e.target.value)
   }
 
-  const handleSignPassphrase = (e) => {
-    setSignPassphrase(e.target.value)
-  }
-
   const passphraseCreationPrompt = () => {
     return (
       <div> Please provide a Passphrase for the account creation
@@ -109,16 +112,6 @@ export function AccountUI (props: AccountProps) {
           <br />
           <br />
           <input id="prompt2" type="password" name='prompt_text' style={{ width: '100%' }} onInput={handleMatchPassphrase} />
-        </div>
-      </div>
-    )
-  }
-
-  const passphrasePrompt = () => {
-    return (
-      <div> Enter your passphrase for this account to sign the message
-        <div>
-          <input id="prompt_text" type="password" name='prompt_text' className="form-control" style={{ width: '100%' }} onInput={handleSignPassphrase} data-id='modalDialogCustomPromptText' defaultValue={signPassphrase} />
         </div>
       </div>
     )

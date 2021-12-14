@@ -41,7 +41,6 @@ export class RunTab extends ViewPlugin {
     this.blockchain = blockchain
     this.fileManager = fileManager
     this.editor = editor
-    this.logCallback = (msg) => { this.call('terminal', 'logHtml', yo`<pre>${msg}</pre>`) }
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
