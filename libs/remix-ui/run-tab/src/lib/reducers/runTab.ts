@@ -54,6 +54,7 @@ export interface RunTabState {
     isSuccessful: boolean,
     error: string
   },
+  ipfsChecked: boolean
 }
 
 export const runTabInitialState: RunTabState = {
@@ -122,7 +123,8 @@ export const runTabInitialState: RunTabState = {
     isRequesting: false,
     isSuccessful: false,
     error: null
-  }
+  },
+  ipfsChecked: false
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -427,6 +429,15 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
           ...state.contracts,
           currentFile: payload
         }
+      }
+    }
+
+    case 'SET_IPFS_CHECKED_STATE': {
+      const payload: boolean = action.payload
+
+      return {
+        ...state,
+        ipfsChecked: payload
       }
     }
 

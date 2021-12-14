@@ -414,7 +414,6 @@ class Blockchain extends Plugin {
     const self = this
     waterfall([
       function getGasLimit (next) {
-        console.log('called: ', self.transactionContextAPI.gasLimit())
         if (self.transactionContextAPI.getGasLimit) {
           return self.transactionContextAPI.getGasLimit(next)
         }

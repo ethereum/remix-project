@@ -2,7 +2,7 @@
 import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
-import { shortenAddress } from '@remix-ui/helper'
+import { addressToString, shortenAddress } from '@remix-ui/helper'
 import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeProvider, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setLoadType, setMatchPassphrase, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
@@ -379,4 +379,84 @@ export const getSelectedContract = (contractName: string, compilerAtributeName: 
 
 const getCompilerContracts = () => {
   return plugin.compilersArtefacts.__last.getData().contracts
+}
+
+// eslint-disable-next-line no-undef
+const terminalLogger = (view: JSX.Element) => {
+  plugin.call('terminal', 'logHtml', view)
+}
+
+// eslint-disable-next-line no-undef
+export const createInstance = (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element) => {
+  const continueCb = (error, continueTxExecution, cancelCb) => {
+    if (error) {
+      const msg = typeof error !== 'string' ? error.message : error
+
+      dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
+        continueTxExecution()
+      }, () => {
+        cancelCb()
+      }))
+    } else {
+      continueTxExecution()
+    }
+  }
+
+  const promptCb = (okCb, cancelCb) => {
+    dispatch(displayNotification('Passphrase requested', passphrasePrompt('Personal mode is enabled. Please provide passphrase of account'), 'OK', 'Cancel', okCb, cancelCb))
+  }
+
+  const statusCb = (msg: string) => {
+    const log = logBuilder(msg)
+
+    return terminalLogger(log)
+  }
+
+  const finalCb = (error, contractObject, address) => {
+    plugin.event.trigger('clearInstance')
+    if (error) {
+      const log = logBuilder(error)
+
+      return terminalLogger(log)
+    }
+    plugin.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+
+    const data = plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+
+    plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    if (self.ipfsCheckedState) {
+      _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName])
+      publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
+    } else {
+      _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
+    }
+  }
+
+      // let contractMetadata
+      // try {
+      //   contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
+      // } catch (error) {
+      //   return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+      // }
+
+      // const compilerContracts = this.dropdownLogic.getCompilerContracts()
+      // const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
+
+      // if (selectedContract.isOverSizeLimit()) {
+      //   return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
+      //   More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
+      //   </div>`,
+      //   {
+      //     label: 'Force Send',
+      //     fn: () => {
+      //       this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+      //     }
+      //   }, {
+      //     label: 'Cancel',
+      //     fn: () => {
+      //       this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
+      //     }
+      //   })
+      // }
+      // this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
 }

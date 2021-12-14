@@ -163,3 +163,9 @@ export const setCurrentFile = (file: string) => {
     payload: file
   }
 }
+export const setIpfsCheckedState = (state: boolean) => {
+  return {
+    type: 'SET_IPFS_CHECKED_STATE',
+    payload: state
+  }
+}
