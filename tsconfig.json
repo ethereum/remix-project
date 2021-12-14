@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "jsx": "react",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
