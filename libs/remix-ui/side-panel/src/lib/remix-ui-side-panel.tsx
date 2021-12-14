@@ -46,9 +46,14 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
    return (
     <header style={{
       display: 'flex',
-      alignItems: 'center',
-      padding: '16px 24px 15px',
-      justifyContent: 'space-between'
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '10px',
+    position: 'sticky',
+    top: 0,
+    zIndex: 2,
+    marginBottom: '0px',
+    boxSizing: 'inherit',
     }}>
     <h6 className="swapitTitle" data-id="sidePanelSwapitTitle">{name}</h6>
     {dockLink ? (<a href={profileDocsLink} className="titleInfo" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>) : ''}

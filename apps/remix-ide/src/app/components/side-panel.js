@@ -2,10 +2,8 @@ import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import ReactDOM from 'react-dom' // eslint-disable-line
 import { RemixUiSidePanel } from '@remix-ui/side-panel' // eslint-disable-line
-import { RemixUiAbstractPanel } from '@remix-ui/abstract-panel'
 import * as packageJson from '../../../../../package.json'
 // const csjs = require('csjs-inject')
-const yo = require('yo-yo')
 
 const sidePanel = {
   name: 'sidePanel',
@@ -20,7 +18,6 @@ export class SidePanel extends AbstractPanel {
   constructor (appManager, verticalIcons) {
     super(sidePanel)
     this.appManager = appManager
-    this.header = yo`<header></header>`
     this.sideelement = this.element
     // this.sideelement.setAttribute('class', 'panel')
     this.verticalIcons = verticalIcons
