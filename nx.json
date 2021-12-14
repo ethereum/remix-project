@@ -130,6 +130,9 @@
     "remix-ui-editor": {
       "tags": []
     },
+    "remix-ui-app": {
+      "tags": []
+    },
     "remix-ui-helper": {
       "tags": []
     },
