@@ -304,4 +304,4 @@ class AppComponent {
   }
 }
 
-module.exports = AppComponent
+export default AppComponent
