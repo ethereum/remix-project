@@ -55,10 +55,8 @@ export class AbstractPanel extends HostPlugin {
     if (!this.contents[name]) throw new Error(`Plugin ${name} is not yet activated`)
     // hiding the current view and display the `moduleName`
     if (this.active) {
-      console.log({ active: this.active, name }, 'first')
       this.contents[this.active].style.display = 'none'
     }
-    console.log({ active: this.active, name }, 'second')
     this.contents[name].style.display = 'flex'
     this.active = name
     this.renderComponent()
