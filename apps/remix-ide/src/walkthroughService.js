@@ -47,6 +47,8 @@ export class WalkthroughService {
           }
         }).start()
         localStorage.setItem('hadTour_initial', true)
+      } else {
+        console.log('had walkthrough')
       }
     })
   }

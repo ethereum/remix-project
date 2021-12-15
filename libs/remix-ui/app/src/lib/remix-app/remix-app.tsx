@@ -1,13 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { ModalDialog } from '@remix-ui/modal-dialog'
-import './remix-app.css'
-
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import './style/remix-app.css'
+import RemixSplashScreen from './modals/splashscreen'
+import MatomoDialog from './modals/matomo'
+import AlertModal from './modals/alert'
+import AppContext from './context/context'
 interface IRemixAppUi {
   app: any
 }
 
 const RemixApp = (props: IRemixAppUi) => {
-  const [visible, setVisible] = useState<boolean>(false)
+  const [appReady, setAppReady] = useState<boolean>(false)
   const sidePanelRef = useRef(null)
   const mainPanelRef = useRef(null)
   const iconPanelRef = useRef(null)
@@ -35,9 +37,15 @@ const RemixApp = (props: IRemixAppUi) => {
         hiddenPanelRef.current.appendChild(props.app.hiddenPanel.render())
       }
     }
+    async function activateApp () {
+      props.app.themeModule.initTheme(() => {
+        setAppReady(true)
+        props.app.activate()
+      })
+    }
     if (props.app) {
       console.log('app', props.app)
-      props.app.activate()
+      activateApp()
     }
   }, [])
 
@@ -48,33 +56,19 @@ const RemixApp = (props: IRemixAppUi) => {
     hiddenPanel: <div ref={hiddenPanelRef}></div>
   }
 
-  const handleModalOkClick = async () => {
-
-  }
-
-  const closeModal = async () => {
-
-  }
-
   return (
-    <>
-      <div className='remixIDE' hidden={false} data-id="remixIDE">
+    <AppContext.Provider value={{ settings: props.app.settings, registry: props.app.registry, startWalkthroughService: props.app.startWalkthroughService }}>
+      <RemixSplashScreen hide={appReady}></RemixSplashScreen>
+      <AlertModal></AlertModal>
+      <MatomoDialog hide={!appReady}></MatomoDialog>
+
+      <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
         {components.iconPanel}
         {components.sidePanel}
         {components.mainPanel}
       </div>
-      <ModalDialog
-        handleHide={closeModal}
-        id="pluginManagerLocalPluginModalDialog"
-        hide={!visible}
-        title="Modal"
-        okLabel="OK"
-        okFn={ handleModalOkClick }
-        cancelLabel="Cancel"
-        cancelFn={closeModal}
-      >test</ModalDialog>
       {components.hiddenPanel}
-    </>
+    </AppContext.Provider>
 
   )
 }

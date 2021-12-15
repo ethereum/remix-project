@@ -5,6 +5,7 @@ import AppComponent from './app-component'
 
 const appComponent = new AppComponent()
 appComponent.run()
+
 function App () {
   return <>
     <RemixApp app={appComponent}></RemixApp>
