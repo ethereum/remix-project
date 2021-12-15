@@ -86,17 +86,9 @@ class AppComponent {
     self.engine = new RemixEngine()
     self.engine.register(appManager)
 
-    const queryParams = new QueryParams()
-    const params = queryParams.get()
-    self.startWalkthroughService = () => {
-      console.log('start walkthrough')
-      const walkthroughService = new WalkthroughService(localStorage)
-      if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
-        walkthroughService.start()
-      }
-    }
-
-    self.startWalkthroughService()
+    // const queryParams = new QueryParams()
+    // const params = queryParams.get()
+    self.walkthroughService = new WalkthroughService(localStorage)
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
     // workaround for Electron support

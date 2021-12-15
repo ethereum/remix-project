@@ -1,7 +1,10 @@
+import { ViewPlugin } from '@remixproject/engine-web'
+
 const introJs = require('intro.js')
 
-export class WalkthroughService {
+export class WalkthroughService extends ViewPlugin {
   constructor (params) {
+    super()
     this.params = params
   }
 
@@ -51,8 +54,5 @@ export class WalkthroughService {
         console.log('had walkthrough')
       }
     })
-  }
-
-  startFeatureTour () {
   }
 }
