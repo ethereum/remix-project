@@ -26,7 +26,7 @@ const loadingInitialState = {
 }
 
 const loadingReducer = (state = loadingInitialState, action) => {
-  return {...state, tooltip: action.tooltip, showModalDialog: false, importSource: ''}
+  return { ...state, tooltip: action.tooltip, showModalDialog: false, importSource: '' }
 }
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
@@ -42,7 +42,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     themeQuality: registry.get('themeModule').api.currentTheme().quality === 'dark' ? themes.dark : themes.light,
     showMediaPanel: 'none',
     showModalDialog: false,
-    modalInfo: { title: '', loadItem: '', examples: []},
+    modalInfo: { title: '', loadItem: '', examples: [] },
     importSource: '',
     toasterMsg: ''
   })
@@ -52,7 +52,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     const fileProviders = registry.get('fileproviders').api
     contentImport.import(
       state.importSource,
-      (loadingMsg) => dispatch({tooltip: loadingMsg}),
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
       (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
@@ -170,7 +170,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
     setState(prevState => {
-      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem , examples: examples } }
+      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples } }
     })
   }
 
