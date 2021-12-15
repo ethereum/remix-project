@@ -49,7 +49,7 @@ export const SolidityUnitTesting = (props: any) => {
   let allTests: any = []
 
   let runningTestFileName: any
-  let runningTests: any = {}
+  let filesContent: any = {}
 
   let testsResultByFilename:Record<string, any> = {}
   
@@ -212,9 +212,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const highlightLocation = async (location: any, fileName: any) => {
-    console.log('Inside highlightLocation---runningTests-->', runningTests)
-    console.log('Inside highlightLocation---fileName-->', fileName)
-    console.log('Inside highlightLocation---location-->', location)
     if (location) {
       var split = location.split(':')
       var file = split[2]
@@ -225,7 +222,7 @@ export const SolidityUnitTesting = (props: any) => {
       location = testTab.offsetToLineColumnConverter.offsetToLineColumnWithContent(
         location,
         parseInt(file),
-        runningTests[fileName].content
+        filesContent[fileName].content
       )
       await testTab.call('editor', 'discardHighlight')
       await testTab.call('editor', 'highlight', location, fileName, '', { focus: true })
@@ -233,7 +230,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const showTestsResult = () => {
-    console.log('runningTests---->', runningTests)
+    console.log('filesContent---->', filesContent)
     let filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
@@ -466,8 +463,9 @@ export const SolidityUnitTesting = (props: any) => {
     }
     // this.resultStatistics.hidden = false
     testTab.fileManager.readFile(testFilePath).then((content: any) => {
-      runningTests = {}
+      const runningTests: any = {}
       runningTests[testFilePath] = { content }
+      filesContent[testFilePath] = { content }
       const { currentVersion, evmVersion, optimize, runs, isUrl } = testTab.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
       const compilerConfig = {
