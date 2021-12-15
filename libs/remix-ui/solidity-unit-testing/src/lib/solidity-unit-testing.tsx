@@ -37,7 +37,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
-  let [testsSummary, setTestsSummary] = useState<TestSummary>()
+  // let [testsSummary, setTestsSummary] = useState<TestSummary>()
   const [testsSummaryHidden, setTestsSummaryHidden] = useState('hidden')
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
@@ -255,7 +255,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   const showTestsResult = () => {
     console.log('runningTests---->', runningTests)
-    setTestsOutput([])
+    // setTestsOutput([])
     let filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
@@ -285,81 +285,90 @@ export const SolidityUnitTesting = (props: any) => {
                 {label}<span className="font-weight-bold">{contract} ({filename})</span>
               </div>
             )
-            setTestsOutput(prevCards => ([...prevCards, ContractCard]))
+            setTestsOutput(prevCards => {
+              const index = prevCards.findIndex((card: any) => card.props.id === runningTestFileName)
+              prevCards[index] = ContractCard
+              return prevCards
+            })
             // show tests
             for(const test of tests) {
               console.log('test---->', test)
-              let debugBtn
-              if (test.debugTxHash) {
-                const { web3, debugTxHash } = test
-                debugBtn = (
-                <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-                  <i className="fas fa-bug"></i>
-                </div>
-                )
-              } 
-              if (test.type === 'testPass') {
-                if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
-                const testPassCard: any = (
-                  <div
-                    id={runningTestFileName}
-                    data-id="testTabSolidityUnitTestsOutputheader"
-                    className="testPass testLog bg-light mb-2 px-2 text-success border-0"
-                    onClick={() => discardHighlight()}
-                  >
-                    <div className="d-flex my-1 align-items-start justify-content-between">
-                      <span > ✓ {test.value}</span>
-                        {debugBtn}
-                      </div>
+              if(!test.rendered) {
+                let debugBtn
+                if (test.debugTxHash) {
+                  const { web3, debugTxHash } = test
+                  debugBtn = (
+                  <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
+                    <i className="fas fa-bug"></i>
                   </div>
-                )
-                setTestsOutput(prevCards => ([...prevCards, testPassCard]))
-              } else if (test.type === 'testFailure') {
-                    if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
-                    if (!test.assertMethod) {
-                      const testFailCard1: any = (<div
-                        className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-                        id={"UTContext" + test.context}
-                        onClick={() => highlightLocation(test.location, runningTests, test.filename)}
-                      >
-                        <div className="d-flex my-1 align-items-start justify-content-between">
-                          <span> ✘ {test.value}</span>
+                  )
+                } 
+                if (test.type === 'testPass') {
+                  if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                  const testPassCard: any = (
+                    <div
+                      id={runningTestFileName}
+                      data-id="testTabSolidityUnitTestsOutputheader"
+                      className="testPass testLog bg-light mb-2 px-2 text-success border-0"
+                      onClick={() => discardHighlight()}
+                    >
+                      <div className="d-flex my-1 align-items-start justify-content-between">
+                        <span > ✓ {test.value}</span>
                           {debugBtn}
                         </div>
-                        <span className="text-dark">Error Message:</span>
-                        <span className="pb-2 text-break">"{test.errMsg}"</span>
-                      </div>)
-                      setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
-                    } else {
-                      const preposition = test.assertMethod === 'equal' || test.assertMethod === 'notEqual' ? 'to' : ''
-                      const method = test.assertMethod === 'ok' ? '' : test.assertMethod
-                      const expected = test.assertMethod === 'ok' ? '\'true\'' : test.expected
-                      const testFailCard2: any = (<div
-                        className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-                        id={"UTContext" + test.context}
-                        onClick={() => highlightLocation(test.location, runningTests, test.filename)}
-                      >
-                        <div className="d-flex my-1 align-items-start justify-content-between">  
-                          <span> ✘ {test.value}</span>
-                          {debugBtn}
-                        </div> 
-                        <span className="text-dark">Error Message:</span>
-                        <span className="pb-2 text-break">"{test.errMsg}"</span>
-                        <span className="text-dark">Assertion:</span>
-                        <div className="d-flex flex-wrap">
-                          <span>Expected value should be</span>
-                          <div className="mx-1 font-weight-bold">{method}</div>
-                          <div>{preposition} {expected}</div>
-                        </div>
-                        <span className="text-dark">Received value:</span>
-                        <span>{test.returned}</span>
-                        <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
-                      </div>)
-                      setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
+                    </div>
+                  )
+                  setTestsOutput(prevCards => ([...prevCards, testPassCard]))
+                  test.rendered = true
+                } else if (test.type === 'testFailure') {
+                      if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                      if (!test.assertMethod) {
+                        const testFailCard1: any = (<div
+                          className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+                          id={"UTContext" + test.context}
+                          onClick={() => highlightLocation(test.location, runningTests, test.filename)}
+                        >
+                          <div className="d-flex my-1 align-items-start justify-content-between">
+                            <span> ✘ {test.value}</span>
+                            {debugBtn}
+                          </div>
+                          <span className="text-dark">Error Message:</span>
+                          <span className="pb-2 text-break">"{test.errMsg}"</span>
+                        </div>)
+                        setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
+                      } else {
+                        const preposition = test.assertMethod === 'equal' || test.assertMethod === 'notEqual' ? 'to' : ''
+                        const method = test.assertMethod === 'ok' ? '' : test.assertMethod
+                        const expected = test.assertMethod === 'ok' ? '\'true\'' : test.expected
+                        const testFailCard2: any = (<div
+                          className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+                          id={"UTContext" + test.context}
+                          onClick={() => highlightLocation(test.location, runningTests, test.filename)}
+                        >
+                          <div className="d-flex my-1 align-items-start justify-content-between">  
+                            <span> ✘ {test.value}</span>
+                            {debugBtn}
+                          </div> 
+                          <span className="text-dark">Error Message:</span>
+                          <span className="pb-2 text-break">"{test.errMsg}"</span>
+                          <span className="text-dark">Assertion:</span>
+                          <div className="d-flex flex-wrap">
+                            <span>Expected value should be</span>
+                            <div className="mx-1 font-weight-bold">{method}</div>
+                            <div>{preposition} {expected}</div>
+                          </div>
+                          <span className="text-dark">Received value:</span>
+                          <span>{test.returned}</span>
+                          <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+                        </div>)
+                        setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
+                      }
+                      test.rendered = true
+                    } else if (test.type === 'logOnly') {
+                      if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                      test.rendered = true
                     }
-                  } else if (test.type === 'logOnly') {
-                    if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
-                  }
+              }
             }
           } else {
             // show only contract and file name
@@ -374,7 +383,7 @@ export const SolidityUnitTesting = (props: any) => {
       }
       // show summary
       const testSummary = fileTestsResult['summary']
-      if (testSummary && testSummary.filename) {
+      if (testSummary && testSummary.filename && !testSummary.rendered) {
         const summaryCard: any = (<div className="d-flex alert-secondary mb-3 p-3 flex-column">
           <span className="font-weight-bold">Result for {testSummary.filename}</span>
           <span className="text-success">Passed: {testSummary.passed}</span>
@@ -382,6 +391,7 @@ export const SolidityUnitTesting = (props: any) => {
           <span>Time Taken: {testSummary.timeTaken}s</span>
         </div>)
         setTestsOutput(prevCards => ([...prevCards, summaryCard]))
+        fileTestsResult['summary']['rendered'] = true
       }
     }   
   }
@@ -397,8 +407,11 @@ export const SolidityUnitTesting = (props: any) => {
       }
       if(result.type === 'contract') {
         testsResultByFilename[result.filename][result.value] = []
-      } else 
+      } else {
+        // Set that this test is not rendered on UI
+        result.rendered = false
         testsResultByFilename[result.filename][result.context].push(result)
+      }
       showTestsResult()
     }
   }
@@ -432,7 +445,7 @@ export const SolidityUnitTesting = (props: any) => {
     // yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
-      testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime }
+      const testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime, rendered: false }
       testsResultByFilename[filename]['summary']= testsSummary
       showTestsResult()
       // setTestsSummary(testsSummary)
