@@ -4,16 +4,10 @@ import AppContext from '../context/context'
 const _paq = window._paq = window._paq || []
 
 const MatomoDialog = (props) => {
-  const { settings, registry } = useContext(AppContext)
+  const { settings, showMatamo, appManager } = useContext(AppContext)
   const [visible, setVisible] = useState<boolean>(props.hide)
   useEffect(() => {
-    const matomoDomains = {
-      'remix-alpha.ethereum.org': 27,
-      'remix-beta.ethereum.org': 25,
-      'remix.ethereum.org': 23,
-      localhost: 24
-    }
-    if (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics')) {
+    if (showMatamo) {
       setVisible(true)
     } else {
       setVisible(false)
@@ -22,9 +16,11 @@ const MatomoDialog = (props) => {
   const declineModal = async () => {
     settings.updateMatomoAnalyticsChoice(false)
     _paq.push(['optUserOut'])
+    appManager.call('walkthrough', 'start')
     setVisible(false)
   }
   const hideModal = async () => {
+    console.log('handle hide')
     setVisible(false)
   }
   const handleModalOkClick = async () => {
@@ -32,6 +28,7 @@ const MatomoDialog = (props) => {
     // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
     document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     settings.updateMatomoAnalyticsChoice(true)
+    appManager.call('walkthrough', 'start')
     setVisible(false)
   }
   return (<ModalDialog
