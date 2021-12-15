@@ -299,7 +299,7 @@ export const SolidityUnitTesting = (props: any) => {
                 )
               } 
               if (test.type === 'testPass') {
-                // if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
                 const testPassCard: any = (
                   <div
                     id={runningTestFileName}
@@ -315,7 +315,7 @@ export const SolidityUnitTesting = (props: any) => {
                 )
                 setTestsOutput(prevCards => ([...prevCards, testPassCard]))
               } else if (test.type === 'testFailure') {
-                    // if (result.hhLogs && result.hhLogs.length) printHHLogs(result.hhLogs, result.value)
+                    if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
                     if (!test.assertMethod) {
                       const testFailCard1: any = (<div
                         className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
@@ -358,7 +358,7 @@ export const SolidityUnitTesting = (props: any) => {
                       setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
                     }
                   } else if (test.type === 'logOnly') {
-                    // if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+                    if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
                   }
             }
           } else {
