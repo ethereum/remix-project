@@ -4,7 +4,7 @@ import AppContext from '../context/context'
 const _paq = window._paq = window._paq || []
 
 const MatomoDialog = (props) => {
-  const { settings, registry, startWalkthroughService } = useContext(AppContext)
+  const { settings, registry } = useContext(AppContext)
   const [visible, setVisible] = useState<boolean>(props.hide)
   useEffect(() => {
     const matomoDomains = {
