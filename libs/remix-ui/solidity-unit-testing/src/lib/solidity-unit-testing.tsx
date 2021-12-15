@@ -14,13 +14,6 @@ interface TestObject {
   checked: boolean
 }
 
-interface TestSummary {
-  filename: string
-  passed: number
-  failed: number
-  timeTaken: any
-}
-
 export const SolidityUnitTesting = (props: any) => {
 
   const {helper, testTab} = props
@@ -37,16 +30,12 @@ export const SolidityUnitTesting = (props: any) => {
 
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
-  // let [testsSummary, setTestsSummary] = useState<TestSummary>()
-  const [testsSummaryHidden, setTestsSummaryHidden] = useState('hidden')
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   
-
   let [testFiles, setTestFiles] = useState<TestObject[]>([])
   const [pathOptions, setPathOptions] = useState([''])
-  // let [allTests, setAllTests] = useState([])
   let [selectedTests, setSelectedTests] = useState<string[]>([])
   
   const [inputPathValue, setInputPathValue] = useState('tests')
@@ -58,16 +47,11 @@ export const SolidityUnitTesting = (props: any) => {
   let [isDebugging, setIsDebugging] = useState(false)
   
   let allTests: any = []
-  
-  let testSuite: any
-  let testSuites: any
+
   let runningTestFileName: any
-  let runningTests: any
+  let runningTests: any = {}
 
-
-
-
-  let [testsResultByFilename, setTestsResultByFilename] = useState<Record<string, any>>({})
+  let testsResultByFilename:Record<string, any> = {}
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -127,10 +111,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const handleTestDirInput = async (e: any) => {
-    console.log('handleTestDirInput--e-->', e.target)
-
     let testDirInput = trimTestDirInput(e.target.value)
-    console.log('handleTestDirInput--e-->', testDirInput)
     testDirInput = helper.removeMultipleSlashes(testDirInput)
     if (testDirInput !== '/') testDirInput = helper.removeTrailingSlashes(testDirInput)
     setInputPathValue(testDirInput)
@@ -169,7 +150,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const handleEnter = async(e:any) => {
-    console.log('handleEnter --e-->', e)
     let inputPath = e.target.value
     inputPath = helper.removeMultipleSlashes(trimTestDirInput(inputPath))
     setInputPathValue(inputPath)
@@ -191,8 +171,6 @@ export const SolidityUnitTesting = (props: any) => {
     setDisableCreateButton(true)
     setDisableGenerateButton(false)
     testTabLogic.setCurrentPath(inputPath)
-    console.log('path-->', path)
-    console.log('inputPath-->', inputPath)
     updateRunAction()
     updateForNewCurrent()
     pathOptions.push(inputPath)
@@ -233,9 +211,10 @@ export const SolidityUnitTesting = (props: any) => {
     await testTab.call('editor', 'discardHighlight')
   }
 
-  const highlightLocation = async (location: any, runningTests: any, fileName: any) => {
+  const highlightLocation = async (location: any, fileName: any) => {
     console.log('Inside highlightLocation---runningTests-->', runningTests)
     console.log('Inside highlightLocation---fileName-->', fileName)
+    console.log('Inside highlightLocation---location-->', location)
     if (location) {
       var split = location.split(':')
       var file = split[2]
@@ -255,7 +234,6 @@ export const SolidityUnitTesting = (props: any) => {
 
   const showTestsResult = () => {
     console.log('runningTests---->', runningTests)
-    // setTestsOutput([])
     let filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
@@ -292,7 +270,6 @@ export const SolidityUnitTesting = (props: any) => {
             })
             // show tests
             for(const test of tests) {
-              console.log('test---->', test)
               if(!test.rendered) {
                 let debugBtn
                 if (test.debugTxHash) {
@@ -326,7 +303,7 @@ export const SolidityUnitTesting = (props: any) => {
                         const testFailCard1: any = (<div
                           className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
                           id={"UTContext" + test.context}
-                          onClick={() => highlightLocation(test.location, runningTests, test.filename)}
+                          onClick={() => highlightLocation(test.location, test.filename)}
                         >
                           <div className="d-flex my-1 align-items-start justify-content-between">
                             <span> ✘ {test.value}</span>
@@ -343,7 +320,7 @@ export const SolidityUnitTesting = (props: any) => {
                         const testFailCard2: any = (<div
                           className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
                           id={"UTContext" + test.context}
-                          onClick={() => highlightLocation(test.location, runningTests, test.filename)}
+                          onClick={() => highlightLocation(test.location, test.filename)}
                         >
                           <div className="d-flex my-1 align-items-start justify-content-between">  
                             <span> ✘ {test.value}</span>
@@ -396,10 +373,9 @@ export const SolidityUnitTesting = (props: any) => {
     }   
   }
 
-  const testCallback = (result: any, runningTests: any) => {
+  const testCallback = (result: any) => {
     console.log('result--------------in testCallback->', result)
     console.log('testsResultByFilename--------============------in testCallback->', testsResultByFilename)
-    runningTests = runningTests
     if(result.filename) {
       if(!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
@@ -428,7 +404,6 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('result---------------------------in updateFinalResult->', result, filename)
     console.log('testsResultByFilename---------------------------in updateFinalResult->', testsResultByFilename)
     ++readyTestsNumber
-    setTestsSummaryHidden('visible')
     // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
     //   this.testCallback({ type: 'contract', filename })
     //   this.currentErrors = _errors.errors
@@ -448,15 +423,7 @@ export const SolidityUnitTesting = (props: any) => {
       const testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime, rendered: false }
       testsResultByFilename[filename]['summary']= testsSummary
       showTestsResult()
-      // setTestsSummary(testsSummary)
       }
-      // fix for displaying right label for multiple tests (testsuites) in a single file
-      // this.testSuites.forEach(testSuite => {
-      //   this.testSuite = testSuite
-      //   this.runningTestFileName = this.cleanFileName(filename, this.testSuite)
-      //   this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
-      //   this.setHeader(true)
-      // })
 
       // result.errors.forEach((error, index) => {
       //   this.testSuite = error.context
@@ -499,7 +466,7 @@ export const SolidityUnitTesting = (props: any) => {
     }
     // this.resultStatistics.hidden = false
     testTab.fileManager.readFile(testFilePath).then((content: any) => {
-      const runningTests: any = {}
+      runningTests = {}
       runningTests[testFilePath] = { content }
       const { currentVersion, evmVersion, optimize, runs, isUrl } = testTab.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
@@ -517,7 +484,7 @@ export const SolidityUnitTesting = (props: any) => {
       testTab.testRunner.runTestSources(
         runningTests,
         compilerConfig,
-        (result: any) => testCallback(result, runningTests),
+        (result: any) => testCallback(result),
         (_err: any, result: any, cb: any) => resultsCallback(_err, result, cb),
         deployCb,
         (error: any, result: any) => {
@@ -528,7 +495,7 @@ export const SolidityUnitTesting = (props: any) => {
         }, { testFilePath }
       )
     }).catch((error: any) => {
-      console.log('Error in runTest---->', error)
+      console.log(error)
       if (error) return // eslint-disable-line
     })
   }
@@ -555,7 +522,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateRunAction = (currentFile : any = null) => {
-    console.log('updateRunAction --currentFile-->', currentFile)
     const isSolidityActive = testTab.appManager.isActive('solidity')
     if (!isSolidityActive || !selectedTests?.length) {
       setDisableRunButton(true)
@@ -568,7 +534,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const stopTests = () => {
-    console.log('stopTests')
     setHasBeenStopped(true)
     setStopButtonLabel('Stopping')
     setDisableStopButton(true)
@@ -584,7 +549,6 @@ export const SolidityUnitTesting = (props: any) => {
     testFiles[index].checked = eChecked
     setTestFiles(testFiles)
     selectedTests = getCurrentSelectedTests()
-    console.log('selectedTests----->', selectedTests)
     setSelectedTests(selectedTests)
     if (eChecked) {
       setCheckSelectAll(true)
@@ -614,7 +578,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateTestFileList = () => {
-    console.log('updateTestFileList--tests->', allTests)
     if(allTests?.length) {
       testFiles =  allTests.map((testFile: any) => { return {'fileName': testFile, 'checked': true }})
       setCheckSelectAll(true)
@@ -727,12 +690,6 @@ export const SolidityUnitTesting = (props: any) => {
             <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
           </div>
           <div>{testsOutput}</div>
-          {/* <div className="d-flex alert-secondary mb-3 p-3 flex-column" style= {{visibility: testsSummaryHidden} as CSSProperties }>
-            <span className="font-weight-bold">{testsSummary && testsSummary.filename ? `Result for ${testsSummary.filename}` : ''}</span>
-            <span className="text-success">{testsSummary && testsSummary.passed >= 0 ? `Passed: ${testsSummary.passed}` : ''}</span>
-            <span className="text-danger">{testsSummary && testsSummary.failed >= 0 ? `Failed: ${testsSummary.failed}` : ''}</span>
-            <span>{testsSummary && testsSummary.timeTaken ? `Time Taken: ${testsSummary.timeTaken}` : ''}</span>
-          </div> */}
         </div>
       </div>
   )
