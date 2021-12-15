@@ -86,9 +86,13 @@ class AppComponent {
     self.engine = new RemixEngine()
     self.engine.register(appManager)
 
-    // const queryParams = new QueryParams()
-    // const params = queryParams.get()
-    self.walkthroughService = new WalkthroughService(localStorage)
+    const matomoDomains = {
+      'remix-alpha.ethereum.org': 27,
+      'remix-beta.ethereum.org': 25,
+      'remix.ethereum.org': 23
+    }
+    self.showMatamo = (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics'))
+    self.walkthroughService = new WalkthroughService(appManager, self.showMatamo)
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
     // workaround for Electron support
@@ -169,7 +173,8 @@ class AppComponent {
       web3Provider,
       fetchAndCompile,
       dGitProvider,
-      hardhatProvider
+      hardhatProvider,
+      self.walkthroughService
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -240,8 +245,6 @@ class AppComponent {
       filePanel.hardhatHandle,
       filePanel.slitherHandle
     ])
-
-
   }
 
   async activate () {
@@ -266,6 +269,8 @@ class AppComponent {
     await self.appManager.activatePlugin(['home'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+    await self.appManager.activatePlugin(['settings'])
+    await self.appManager.activatePlugin(['walkthrough'])
 
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()
