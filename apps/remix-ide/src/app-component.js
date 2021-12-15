@@ -11,6 +11,7 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
+import { FramingService } from './framingService'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -54,6 +55,7 @@ class AppComponent {
     const self = this
     self.appManager = new RemixAppManager({})
     self._components = {}
+    self.registry = registry
     // setup storage
     const configStorage = new Storage('config-v0.8:')
 
@@ -84,16 +86,32 @@ class AppComponent {
     self.engine = new RemixEngine()
     self.engine.register(appManager)
 
+    const queryParams = new QueryParams()
+    const params = queryParams.get()
+    self.startWalkthroughService = () => {
+      console.log('start walkthrough')
+      const walkthroughService = new WalkthroughService(localStorage)
+      if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
+        walkthroughService.start()
+      }
+    }
+
+    self.startWalkthroughService()
+
+    const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
+    // workaround for Electron support
+    if (!isElectron() && !hosts.includes(window.location.host)) {
+      // Oops! Accidentally trigger refresh or bookmark.
+      window.onbeforeunload = function () {
+        return 'Are you sure you want to leave?'
+      }
+    }
+
     // SERVICES
     // ----------------- theme service ---------------------------------
-    const themeModule = new ThemeModule(registry)
-    registry.put({ api: themeModule, name: 'themeModule' })
-    themeModule.initTheme(() => {
-      setTimeout(() => {
-        // document.body.removeChild(self._view.splashScreen)
-        // self._view.el.style.visibility = 'visible'
-      }, 1500)
-    })
+    self.themeModule = new ThemeModule(registry)
+    registry.put({ api: self.themeModule, name: 'themeModule' })
+
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
     registry.put({ api: editor, name: 'editor' })
@@ -147,7 +165,7 @@ class AppComponent {
     self.engine.register([
       blockchain,
       contentImport,
-      themeModule,
+      self.themeModule,
       editor,
       fileManager,
       compilerMetadataGenerator,
@@ -179,7 +197,7 @@ class AppComponent {
     const pluginManagerComponent = new PluginManagerComponent(appManager, self.engine)
     const filePanel = new FilePanel(appManager)
     const landingPage = new LandingPage(appManager, self.menuicons, fileManager, filePanel, contentImport)
-    const settings = new SettingsTab(
+    self.settings = new SettingsTab(
       registry.get('config').api,
       editor,
       appManager
@@ -192,7 +210,7 @@ class AppComponent {
       self.sidePanel,
       filePanel,
       pluginManagerComponent,
-      settings
+      self.settings
     ])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
@@ -230,6 +248,8 @@ class AppComponent {
       filePanel.hardhatHandle,
       filePanel.slitherHandle
     ])
+
+
   }
 
   async activate () {
@@ -258,15 +278,6 @@ class AppComponent {
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()
     })
-
-    const startWalkthroughService = () => {
-      const walkthroughService = new WalkthroughService(localStorage)
-      if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
-        walkthroughService.start()
-      }
-    }
-
-    startWalkthroughService()
 
     await self.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
@@ -301,6 +312,11 @@ class AppComponent {
     })
     // activate solidity plugin
     self.appManager.activatePlugin(['solidity', 'udapp'])
+    // Load and start the service who manager layout and frame
+    const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, this._components.resizeFeature)
+
+    if (params.embed) framingService.embed()
+    framingService.start(params)
   }
 }
 
