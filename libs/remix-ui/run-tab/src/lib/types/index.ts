@@ -101,6 +101,21 @@ export interface ValueProps {
   sendUnit: string
 }
 
+export interface ContractData {
+  name: string,
+  contract: any,
+  compiler: any,
+  abi: any,
+  bytecodeObject: any,
+  bytecodeLinkReferences: any,
+  object: any,
+  deployedBytecode: any,
+  getConstructorInterface: () => any,
+  getConstructorInputs: () => any,
+  isOverSizeLimit: () => boolean,
+  metadata: any
+}
+
 export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
@@ -115,24 +130,21 @@ export interface ContractDropdownProps {
     isSuccessful: boolean,
     error: string
   },
-  getSelectedContract: (contractName: string, compilerAtributeName: string) => {
-    name: string,
-    contract: string,
-    compiler: any,
-    abi: any,
-    bytecodeObject: any,
-    bytecodeLinkReferences: any,
-    object: any,
-    deployedBytecode: any,
-    getConstructorInterface: () => any,
-    getConstructorInputs: () => any,
-    isOverSizeLimit: () => boolean,
-    metadata: any
-  },
+  getSelectedContract: (contractName: string, compilerAtributeName: string) => ContractData,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,
   setPassphrase: (passphrase: string) => void,
-  createInstance: (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element) => void
+  createInstance: (selectedContract: ContractData, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element, publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void) => void,
+  ipfsCheckedState: boolean,
+  setIpfsCheckedState: (value: boolean) => void,
+  publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void,
+  updateBaseFeePerGas: (baseFee: string) => void,
+  updateGasPriceStatus: (status: boolean) => void,
+  updateConfirmSettings: (confirmation: boolean) => void,
+  updateMaxFee: (fee: string) => void,
+  updateMaxPriorityFee: (fee: string) => void,
+  updateGasPrice: (price: string) => void,
+  updateTxFeeContent: (content: string) => void
 }
 
 export interface RecorderProps {

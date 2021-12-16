@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
-import { ContractDropdownProps } from '../types'
+import { ContractData, ContractDropdownProps } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { PassphrasePrompt } from './passphrase'
@@ -14,7 +14,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     display: '',
     content: ''
   })
-  const [ipfsCheckedState, setIpfsCheckedState] = useState<boolean>(false)
   const [atAddressOptions, setAtAddressOptions] = useState<{title: string, disabled: boolean}>({
     title: 'address of contract',
     disabled: true
@@ -26,19 +25,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   })
   const [selectedContract, setSelectedContract] = useState<string>('')
   const [compFails, setCompFails] = useState<'none' | 'block'>('none')
-  const [loadedContractData, setLoadedContractData] = useState<{
-    name: string,
-    contract: string,
-    compiler: any,
-    abi: any,
-    bytecodeObject: any,
-    bytecodeLinkReferences: any,
-    object: any,
-    deployedBytecode: any,
-    getConstructorInterface: () => any,
-    getConstructorInputs: () => any,
-    isOverSizeLimit: () => boolean,
-    metadata: any}>(null)
+  const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const { contractList, loadType, currentFile } = props.contracts
 
   useEffect(() => {
@@ -46,7 +33,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     const savedConfig = window.localStorage.getItem(`ipfs/${props.exEnvironment}/${networkName}`)
     const isCheckedIPFS = savedConfig === 'true' ? true : false // eslint-disable-line
 
-    if (isCheckedIPFS) setIpfsCheckedState(true)
+    if (isCheckedIPFS) props.setIpfsCheckedState(true)
     setAbiLabel({
       display: 'none',
       content: 'ABI file selected'
@@ -134,7 +121,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(gasEstimationPrompt, passphrasePrompt, logBuilder)
+    props.createInstance(loadedContractData, gasEstimationPrompt, passphrasePrompt, logBuilder, props.publishToStorage)
   }
 
   //   listenToContextChange () {
@@ -285,22 +272,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   //     return confirmationCb
   //   }
 
-  const gasEstimationPrompt = (msg: string) => {
-    return (
-      <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
-        ${msg}
-      </div>
-    )
-  }
-
-  const logBuilder = (msg: string) => {
-    return <pre>{msg}</pre>
-  }
-
-  const passphrasePrompt = (message: string) => {
-    return <PassphrasePrompt message={message} setPassphrase={props.setPassphrase} defaultValue={props.passphrase} />
-  }
-
   const atAddressChanged = (event) => {
     const value = event.target.value
 
@@ -349,14 +320,34 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }
 
   const handleCheckedIPFS = () => {
-    setIpfsCheckedState(!ipfsCheckedState)
-    window.localStorage.setItem(`ipfs/${props.exEnvironment}/${networkName}`, ipfsCheckedState.toString())
+    props.setIpfsCheckedState(!props.ipfsCheckedState)
+    window.localStorage.setItem(`ipfs/${props.exEnvironment}/${networkName}`, props.ipfsCheckedState.toString())
   }
 
   const handleContractChange = (e) => {
     const value = e.target.value
 
     setSelectedContract(value)
+  }
+
+  const gasEstimationPrompt = (msg: string) => {
+    return (
+      <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
+        ${msg}
+      </div>
+    )
+  }
+
+  const logBuilder = (msg: string) => {
+    return <pre>{msg}</pre>
+  }
+
+  const passphrasePrompt = (message: string) => {
+    return <PassphrasePrompt message={message} setPassphrase={props.setPassphrase} defaultValue={props.passphrase} />
+  }
+
+  const mainnetPrompt = () => {
+    
   }
 
   return (
@@ -383,7 +374,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                   className="form-check-input custom-control-input"
                   type="checkbox"
                   onChange={handleCheckedIPFS}
-                  checked={ipfsCheckedState}
+                  checked={props.ipfsCheckedState}
                 />
                 <label
                   htmlFor="deployAndRunPublishToIPFS"

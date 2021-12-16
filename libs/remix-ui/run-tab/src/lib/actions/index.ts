@@ -3,10 +3,11 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { addressToString, shortenAddress } from '@remix-ui/helper'
-import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeProvider, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setLoadType, setMatchPassphrase, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue } from './payload'
+import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
+import { ContractData } from '../types'
 declare global {
   interface Window {
     _paq: any
@@ -386,8 +387,33 @@ const terminalLogger = (view: JSX.Element) => {
   plugin.call('terminal', 'logHtml', view)
 }
 
+const getConfirmationCb = () => {
+  // this code is the same as in recorder.js. TODO need to be refactored out
+  const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+    if (network.name !== 'Main') {
+      return continueTxExecution(null)
+    }
+    const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
+    const content = confirmDialog(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
+
+    dispatch(displayNotification('Confirm transaction', content, 'Confirm', 'Cancel', () => {
+      plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+      // TODO: check if this is check is still valid given the refactor
+      if (!content.gasPriceStatus) {
+        cancelCb('Given transaction fee is not correct')
+      } else {
+        continueTxExecution(content.txFee)
+      }
+    }, () => {
+      return cancelCb('Transaction canceled by user.')
+    }))
+  }
+
+  return confirmationCb
+}
+
 // eslint-disable-next-line no-undef
-export const createInstance = (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element) => {
+export const createInstance = async (selectedContract: ContractData, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element, publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void) => {
   const continueCb = (error, continueTxExecution, cancelCb) => {
     if (error) {
       const msg = typeof error !== 'string' ? error.message : error
@@ -424,23 +450,23 @@ export const createInstance = (gasEstimationPrompt: (msg: string) => JSX.Element
     const data = plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
-    if (self.ipfsCheckedState) {
-      _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName])
-      publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
+    if (plugin.REACT_API.ipfsChecked) {
+      _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', plugin.REACT_API.networkName])
+      publishToStorage('ipfs', selectedContract)
     } else {
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
   }
 
-      // let contractMetadata
-      // try {
-      //   contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
-      // } catch (error) {
-      //   return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
-      // }
+  let contractMetadata
+  try {
+    contractMetadata = await plugin.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
+  } catch (error) {
+    return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+  }
 
-      // const compilerContracts = this.dropdownLogic.getCompilerContracts()
-      // const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
+  const compilerContracts = getCompilerContracts()
+  const confirmationCb = getConfirmationCb(mainnetPrompt)
 
       // if (selectedContract.isOverSizeLimit()) {
       //   return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
@@ -459,4 +485,46 @@ export const createInstance = (gasEstimationPrompt: (msg: string) => JSX.Element
       //   })
       // }
       // this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+}
+
+const deployContract = (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
+  _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName + '_' + this.networkId])
+  const { statusCb } = callbacks
+  if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
+    return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+  }
+  if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+  this.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+}
+
+export const setCheckIpfs = (value: boolean) => {
+  dispatch(setIpfsCheckedState(value))
+}
+
+export const updateGasPriceStatus = (status: boolean) => {
+  dispatch(setGasPriceStatus(status))
+}
+
+export const updateConfirmSettings = (confirmation: boolean) => {
+  dispatch(setConfirmSettings(confirmation))
+}
+
+export const updateMaxFee = (fee: string) => {
+  dispatch(setMaxFee(fee))
+}
+
+export const updateMaxPriorityFee = (fee: string) => {
+  dispatch(setMaxPriorityFee(fee))
+}
+
+export const updateBaseFeePerGas = (baseFee: string) => {
+  dispatch(setBaseFeePerGas(baseFee))
+}
+
+export const updateGasPrice = (price: string) => {
+  dispatch(setGasPrice(price))
+}
+
+export const updateTxFeeContent = (content: string) => {
+  dispatch(setTxFeeContent(content))
 }

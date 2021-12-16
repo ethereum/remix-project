@@ -54,7 +54,13 @@ export interface RunTabState {
     isSuccessful: boolean,
     error: string
   },
-  ipfsChecked: boolean
+  ipfsChecked: boolean,
+  gasPriceStatus: boolean,
+  confirmSettings: boolean,
+  maxFee: string,
+  maxPriorityFee: string,
+  baseFeePerGas: string,
+  txFeeContent: string
 }
 
 export const runTabInitialState: RunTabState = {
@@ -124,7 +130,13 @@ export const runTabInitialState: RunTabState = {
     isSuccessful: false,
     error: null
   },
-  ipfsChecked: false
+  ipfsChecked: false,
+  gasPriceStatus: false,
+  confirmSettings: false,
+  maxFee: '',
+  maxPriorityFee: '',
+  baseFeePerGas: '',
+  txFeeContent: ''
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -438,6 +450,69 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         ipfsChecked: payload
+      }
+    }
+
+    case 'SET_GAS_PRICE_STATUS': {
+      const payload: boolean = action.payload
+
+      return {
+        ...state,
+        gasPriceStatus: payload
+      }
+    }
+
+    case 'SET_CONFIRM_SETTINGS': {
+      const payload: boolean = action.payload
+
+      return {
+        ...state,
+        confirmSettings: payload
+      }
+    }
+
+    case 'SET_MAX_FEE': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        maxFee: payload
+      }
+    }
+
+    case 'SET_MAX_PRIORITY_FEE': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        maxPriorityFee: payload
+      }
+    }
+
+    case 'SET_BASE_FEE_PER_GAS': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        baseFeePerGas: payload
+      }
+    }
+
+    case 'SET_GAS_PRICE': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        gasPrice: payload
+      }
+    }
+
+    case 'SET_TX_FEE_CONTENT': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        txFeeContent: payload
       }
     }
 
