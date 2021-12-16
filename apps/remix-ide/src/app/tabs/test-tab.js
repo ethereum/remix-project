@@ -196,62 +196,6 @@ module.exports = class TestTab extends ViewPlugin {
     )
   }
 
-  toggleCheckbox (eChecked, test) {
-    if (!this.data.selectedTests) {
-      this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
-    }
-    let selectedTests = this.data.selectedTests
-    selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
-    this.data.selectedTests = selectedTests
-    const checkAll = this._view.el.querySelector('[id="checkAllTests"]')
-    const runBtn = document.getElementById('runTestsTabRunAction')
-
-    if (eChecked) {
-      checkAll.checked = true
-      const stopBtnInnerText = document.getElementById('runTestsTabStopAction').innerText
-      if ((this.readyTestsNumber === this.runningTestsNumber || this.hasBeenStopped) && stopBtnInnerText.trim() === 'Stop') {
-        runBtn.removeAttribute('disabled')
-        runBtn.setAttribute('title', 'Run tests')
-      }
-    } else if (!selectedTests.length) {
-      checkAll.checked = false
-      runBtn.setAttribute('disabled', 'disabled')
-      runBtn.setAttribute('title', 'No test file selected')
-    }
-  }
-
-  checkAll (event) {
-    const checkBoxes = this._view.el.querySelectorAll('.singleTest')
-    const checkboxesLabels = this._view.el.querySelectorAll('.singleTestLabel')
-    // checks/unchecks all
-    for (let i = 0; i < checkBoxes.length; i++) {
-      checkBoxes[i].checked = event.target.checked
-      this.toggleCheckbox(event.target.checked, checkboxesLabels[i].innerText)
-    }
-  }
-
-  async discardHighlight () {
-    await this.call('editor', 'discardHighlight')
-  }
-
-  async highlightLocation (location, runningTests, fileName) {
-    if (location) {
-      var split = location.split(':')
-      var file = split[2]
-      location = {
-        start: parseInt(split[0]),
-        length: parseInt(split[1])
-      }
-      location = this.offsetToLineColumnConverter.offsetToLineColumnWithContent(
-        location,
-        parseInt(file),
-        runningTests[fileName].content
-      )
-      await this.call('editor', 'discardHighlight')
-      await this.call('editor', 'highlight', location, fileName, '', { focus: true })
-    }
-  }
-
   async startDebug (txHash, web3) {
     this.isDebugging = true
     if (!await this.appManager.isActive('debugger')) await this.appManager.activatePlugin('debugger')
