@@ -169,3 +169,52 @@ export const setIpfsCheckedState = (state: boolean) => {
     payload: state
   }
 }
+
+export const setGasPriceStatus = (status: boolean) => {
+  return {
+    type: 'SET_GAS_PRICE_STATUS',
+    payload: status
+  }
+}
+
+export const setConfirmSettings = (confirmation: boolean) => {
+  return {
+    type: 'SET_CONFIRM_SETTINGS',
+    payload: confirmation
+  }
+}
+
+export const setMaxFee = (fee: string) => {
+  return {
+    type: 'SET_MAX_FEE',
+    payload: fee
+  }
+}
+
+export const setMaxPriorityFee = (fee: string) => {
+  return {
+    type: 'SET_MAX_PRIORITY_FEE',
+    payload: fee
+  }
+}
+
+export const setBaseFeePerGas = (baseFee: string) => {
+  return {
+    type: 'SET_BASE_FEE_PER_GAS',
+    payload: baseFee
+  }
+}
+
+export const setGasPrice = (price: string) => {
+  return {
+    type: 'SET_GAS_PRICE',
+    payload: price
+  }
+}
+
+export const setTxFeeContent = (content: string) => {
+  return {
+    type: 'SET_TX_FEE_CONTENT',
+    payload: content
+  }
+}
