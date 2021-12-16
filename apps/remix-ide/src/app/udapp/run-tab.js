@@ -234,4 +234,12 @@ export class RunTab extends ViewPlugin {
   onReady (api) {
     this.REACT_API = api
   }
+
+  writeFile (fileName, content) {
+    return this.call('fileManager', 'writeFile', fileName, content)
+  }
+
+  readFile (fileName) {
+    return this.call('fileManager', 'readFile', fileName)
+  }
 }

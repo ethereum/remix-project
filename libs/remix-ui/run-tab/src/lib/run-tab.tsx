@@ -7,10 +7,23 @@ import { ContractDropdownUI } from './components/contractDropdownUI'
 import { InstanceContainerUI } from './components/instanceContainerUI'
 import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
-import { Modal, RunTabProps } from './types'
+import { ContractData, Modal, RunTabProps } from './types'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
-import { initRunTab, setAccount, setUnit, setGasFee, setExecutionContext, setWeb3Endpoint, clearPopUp, createNewBlockchainAccount, setPassphrasePrompt, setMatchPassphrasePrompt, signMessageWithAddress, getSelectedContract, createInstance } from './actions'
+import {
+  initRunTab, setAccount,
+  setUnit, setGasFee,
+  setExecutionContext, setWeb3Endpoint,
+  clearPopUp, createNewBlockchainAccount,
+  setPassphrasePrompt, setMatchPassphrasePrompt,
+  signMessageWithAddress, getSelectedContract,
+  createInstance, setCheckIpfs,
+  updateBaseFeePerGas, updateConfirmSettings,
+  updateGasPrice, updateGasPriceStatus,
+  updateMaxFee, updateMaxPriorityFee,
+  updateTxFeeContent
+} from './actions'
 import './css/run-tab.css'
+import { PublishToStorage } from '@remix-ui/publish-to-storage'
 
 export function RunTabUI (props: RunTabProps) {
   const { plugin } = props
@@ -26,6 +39,13 @@ export function RunTabUI (props: RunTabProps) {
   const [modals, setModals] = useState<Modal[]>([])
   const [focusToaster, setFocusToaster] = useState<string>('')
   const [toasters, setToasters] = useState<string[]>([])
+  const [publishData, setPublishData] = useState<{
+    storage: 'ipfs' | 'swarm',
+    contract: ContractData
+  }>({
+    storage: null,
+    contract: null
+  })
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = { runTab }
 
@@ -108,6 +128,20 @@ export function RunTabUI (props: RunTabProps) {
     })
   }
 
+  const resetStorage = () => {
+    setPublishData({
+      storage: null,
+      contract: null
+    })
+  }
+
+  const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
+    setPublishData({
+      storage,
+      contract
+    })
+  }
+
   return (
     <Fragment>
       <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
@@ -143,6 +177,16 @@ export function RunTabUI (props: RunTabProps) {
             passphrase={runTab.passphrase}
             setPassphrase={setPassphrasePrompt}
             createInstance={createInstance}
+            ipfsCheckedState={runTab.ipfsChecked}
+            setIpfsCheckedState={setCheckIpfs}
+            publishToStorage={publishToStorage}
+            updateBaseFeePerGas={updateBaseFeePerGas}
+            updateConfirmSettings={updateConfirmSettings}
+            updateGasPrice={updateGasPrice}
+            updateGasPriceStatus={updateGasPriceStatus}
+            updateMaxFee={updateMaxFee}
+            updateMaxPriorityFee={updateMaxPriorityFee}
+            updateTxFeeContent={updateTxFeeContent}
           />
           <RecorderUI />
           <InstanceContainerUI />
@@ -150,6 +194,7 @@ export function RunTabUI (props: RunTabProps) {
       </div>
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
+      <PublishToStorage api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
     </Fragment>
   )
 }
