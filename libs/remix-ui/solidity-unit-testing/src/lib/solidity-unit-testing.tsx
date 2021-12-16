@@ -32,6 +32,7 @@ export const SolidityUnitTesting = (props: any) => {
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
   
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
+  const [progressBarHidden, setProgressBarHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   
   let [testFiles, setTestFiles] = useState<TestObject[]>([])
@@ -60,7 +61,7 @@ export const SolidityUnitTesting = (props: any) => {
 
   const clearResults = () => {
     console.log('clearResults--->')
-    // yo.update(this.resultStatistics, yo`<span></span>`)
+    setProgressBarHidden(true)
     testTab.call('editor', 'clearAnnotations')
     setTestsOutput([])
     setTestsExecutionStoppedHidden(true)
@@ -401,6 +402,7 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('result---------------------------in updateFinalResult->', result, filename)
     console.log('testsResultByFilename---------------------------in updateFinalResult->', testsResultByFilename)
     ++readyTestsNumber
+    setReadyTestsNumber(readyTestsNumber)
     // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
     //   this.testCallback({ type: 'contract', filename })
     //   this.currentErrors = _errors.errors
@@ -414,7 +416,6 @@ export const SolidityUnitTesting = (props: any) => {
     //   // To track error like this: https://github.com/ethereum/remix/pull/1438
     //   this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, { type: 'error' })
     // }
-    // yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
       const testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime, rendered: false }
@@ -461,7 +462,6 @@ export const SolidityUnitTesting = (props: any) => {
       // this.updateFinalResult()
       return
     }
-    // this.resultStatistics.hidden = false
     testTab.fileManager.readFile(testFilePath).then((content: any) => {
       const runningTests: any = {}
       runningTests[testFilePath] = { content }
@@ -503,15 +503,16 @@ export const SolidityUnitTesting = (props: any) => {
     areTestsRunning = true
     hasBeenStopped = false
     readyTestsNumber = 0
+    setReadyTestsNumber(readyTestsNumber)
     runningTestsNumber = selectedTests.length
+    setRunningTestsNumber(runningTestsNumber)
     setDisableStopButton(false)
-    // setDisableRunButton(true)
     clearResults()
-    // yo.update(this.resultStatistics, this.createResultLabel())
+    setProgressBarHidden(false)
     const tests = selectedTests
     console.log('tests--in runTests----------------->', tests)
-    if (!tests) return
-    // this.resultStatistics.hidden = tests.length === 0
+    if (!tests || !tests.length) return
+    else setProgressBarHidden(false)
     // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
     async.eachOfSeries(tests, (value: any, key: any, callback: any) => {
       if (hasBeenStopped) return
@@ -584,15 +585,6 @@ export const SolidityUnitTesting = (props: any) => {
       testFiles = []
     setTestFiles(testFiles)
   }
-
-  const createResultLabel = () => {
-    return (<span className='text-info h6'>Progress: none finished (of none)</span>)
-    // if (!this.data.selectedTests) return yo`<span></span>`
-    // const ready = this.readyTestsNumber ? `${this.readyTestsNumber}` : '0'
-    // return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
-  }
-
-  const [resultStatistics] = useState(createResultLabel())
 
   return (
     <div className="px-2" id="testView">
@@ -683,7 +675,7 @@ export const SolidityUnitTesting = (props: any) => {
           }) 
           : "No test file available" } </div>
           <div className="align-items-start flex-column mt-2 mx-3 mb-0">
-            {resultStatistics}
+            <span className='text-info h6' hidden={progressBarHidden}>Progress: {readyTestsNumber} finished (of {runningTestsNumber})</span>
             <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
             <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
           </div>
