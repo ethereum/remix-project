@@ -22,7 +22,14 @@ export class AbstractPanel extends HostPlugin {
 
   addView (profile, view) {
     if (this.contents[profile.name]) throw new Error(`Plugin ${profile.name} already rendered`)
+    view.style.height = '100%'
+    view.style.width = '100%'
     view.style.border = '0'
+
+    if (view.tagName === 'IFRAME') {
+      view.style.display = 'block'
+    }
+
     this.contents[profile.name] = view
     this.contents[profile.name].style.display = 'none'
     this.element.appendChild(this.contents[profile.name])
@@ -57,9 +64,12 @@ export class AbstractPanel extends HostPlugin {
     if (this.active) {
       this.contents[this.active].style.display = 'none'
     }
+    console.log({ name, active: this.active, contents: this.contents })
     this.contents[name].style.display = 'flex'
+    this.contents[name].style.paddingTop = '20%'
+    this.contents[name].style.flexDirection = 'column'
+
     this.active = name
-    this.renderComponent()
   }
 
   focus (name) {
