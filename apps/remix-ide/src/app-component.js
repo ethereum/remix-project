@@ -147,10 +147,10 @@ class AppComponent {
       { appManager, blockchain },
       {
         getPosition: (event) => {
-          var limitUp = 36
-          var limitDown = 20
-          var height = window.innerHeight
-          var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
+          const limitUp = 36
+          const limitDown = 20
+          const height = window.innerHeight
+          let newpos = (event.pageY < limitUp) ? limitUp : event.pageY
           newpos = (newpos < height - limitDown) ? newpos : height - limitDown
           return height - newpos
         }
