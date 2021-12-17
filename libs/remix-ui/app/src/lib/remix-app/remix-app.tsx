@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
-import './style/reflect/styles.css'
 import RemixSplashScreen from './modals/splashscreen'
 import MatomoDialog from './modals/matomo'
 import AlertModal from './modals/alert'
