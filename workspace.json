@@ -1007,6 +1007,23 @@
         }
       }
     },
+    "remix-ui-home-tab": {
+      "root": "libs/remix-ui/home-tab",
+      "sourceRoot": "libs/remix-ui/home-tab/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/home-tab/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/home-tab/**/*"]
+          }
+
+        }
+      }
+    },
     "remix-ui-editor": {
       "root": "libs/remix-ui/editor",
       "sourceRoot": "libs/remix-ui/editor/src",
