@@ -346,9 +346,11 @@ export const SolidityUnitTesting = (props: any) => {
       for(const contract of contracts) {
         if(contract && contract !== 'summary') {
           runningTestFileName = cleanFileName(filename, contract)
-          const tests = fileTestsResult[contract]
+          const { tests, errors} = fileTestsResult[contract]
           if (tests?.length) {
             renderTests(tests, contract, filename)
+          } else if (errors) {
+            console.log('errors---->', errors)
           } else {
             // show only contract and file name
             const contractCard: any = (
@@ -384,11 +386,12 @@ export const SolidityUnitTesting = (props: any) => {
         testsResultByFilename[result.filename]['summary'] = {}
       }
       if(result.type === 'contract') {
-        testsResultByFilename[result.filename][result.value] = []
+        testsResultByFilename[result.filename][result.value]= {}
+        testsResultByFilename[result.filename][result.value].tests = []
       } else {
         // Set that this test is not rendered on UI
         result.rendered = false
-        testsResultByFilename[result.filename][result.context].push(result)
+        testsResultByFilename[result.filename][result.context]['tests'].push(result)
       }
       showTestsResult()
     }
@@ -425,7 +428,9 @@ export const SolidityUnitTesting = (props: any) => {
       const testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime, rendered: false }
       testsResultByFilename[filename]['summary']= testsSummary
       showTestsResult()
-      }
+    } else if (_errors) {
+      testsResultByFilename[filename]['errors'] = _errors
+    }
 
       // result.errors.forEach((error, index) => {
       //   this.testSuite = error.context
