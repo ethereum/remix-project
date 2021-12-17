@@ -6,6 +6,7 @@ import MatomoDialog from './modals/matomo'
 import AlertModal from './modals/alert'
 import AppContext from './context/context'
 import Draggable from 'react-draggable'
+import DragBar from './dragbar/dragbar'
 interface IRemixAppUi {
   app: any
 }
@@ -65,7 +66,7 @@ const RemixApp = (props: IRemixAppUi) => {
     })
     props.app.sidePanel.events.on('showing', () => {
       console.log('showing')
-      setHideSidePanel(true)
+      setHideSidePanel(false)
     })
   }
 
@@ -77,25 +78,6 @@ const RemixApp = (props: IRemixAppUi) => {
     hiddenPanel: <div ref={hiddenPanelRef}></div>
   }
 
-  function stopDragSidePanel (e: MouseEvent, data: any) {
-    console.log(data)
-    setDragState(false)
-    sidePanelRef.current.style.width = (320 + data.x) + 'px'
-    console.log(sidePanelRef.current.offsetWidth)
-    if ((320 + data.x) < 250) {
-      setHideSidePanel(true)
-      setDragBarPos(41 - 360)
-    } else {
-      setHideSidePanel(false)
-      setDragBarPos(sidePanelRef.current.offsetWidth - 320)
-    }
-  }
-
-  function startDragSidePanel (e: MouseEvent, data: any) {
-    console.log('start')
-    setDragState(true)
-  }
-
   return (
     <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager }}>
       <RemixSplashScreen hide={appReady}></RemixSplashScreen>
@@ -105,9 +87,7 @@ const RemixApp = (props: IRemixAppUi) => {
       <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
         {components.iconPanel}
         {components.sidePanel}
-        <Draggable position={{ x: dragBarPos, y: 0 }} onStart={startDragSidePanel} onStop={stopDragSidePanel} axis="x">
-          <div className={`dragbar ${dragState ? 'ondrag' : ''}`}></div>
-        </Draggable>
+        <DragBar refObject={sidePanelRef} setHideStatus={setHideSidePanel}></DragBar>
         {components.mainPanel}
 
       </div>
