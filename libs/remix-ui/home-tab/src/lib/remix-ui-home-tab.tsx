@@ -26,7 +26,7 @@ const loadingInitialState = {
 }
 
 const loadingReducer = (state = loadingInitialState, action) => {
-  return {...state, tooltip: action.tooltip, showModalDialog: false, importSource: ''}
+  return { ...state, tooltip: action.tooltip, showModalDialog: false, importSource: '' }
 }
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
@@ -42,7 +42,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     themeQuality: registry.get('themeModule').api.currentTheme().quality === 'dark' ? themes.dark : themes.light,
     showMediaPanel: 'none',
     showModalDialog: false,
-    modalInfo: { title: '', loadItem: '', examples: []},
+    modalInfo: { title: '', loadItem: '', examples: [] },
     importSource: '',
     toasterMsg: ''
   })
@@ -52,7 +52,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     const fileProviders = registry.get('fileproviders').api
     contentImport.import(
       state.importSource,
-      (loadingMsg) => dispatch({tooltip: loadingMsg}),
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
       (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
@@ -71,7 +71,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     })
   }
 
-  const [state1, dispatch] = useReducer(loadingReducer, loadingInitialState)
+  const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
 
   const playRemi = async () => {
     remiAudioEl.current.play()
@@ -170,7 +170,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
     setState(prevState => {
-      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem , examples: examples } }
+      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples } }
     })
   }
 
@@ -205,9 +205,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             ref={inputValue}
             type='text'
             name='prompt_text'
-            id='prompt_text'
-            className="w-100 form-control"
-            data-id="modalDialogCustomPromptText"
+            id='inputPrompt_text'
+            className="w-100 mt-1 form-control"
+            data-id="importModalDialogCustomPromptText"
             value={state.importSource}
             onInput={(e) => {
               setState(prevState => {
@@ -219,7 +219,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
-        <div className="border-bottom d-flex justify-content-between mr-4 py-3 mb-4">
+        <div className="border-bottom d-flex justify-content-between mr-4 pb-3 mb-3">
           <div className="mx-4 my-4 d-flex">
             <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
           </div>
@@ -257,13 +257,13 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file-alt"></i>
-                  <label className="ml-1 remixui_labelIt remixui_bigLabelSize} remixui_text">
+                  <span className="ml-1 remixui_labelIt remixui_bigLabelSize} remixui_text">
                     Open Files
                     <input title="open file" type="file" onChange={(event) => {
                       event.stopPropagation()
                       uploadFile(event.target)
                     }} multiple />
-                  </label>
+                  </span>
                 </p>
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
