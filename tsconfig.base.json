@@ -65,6 +65,7 @@
       "@remix-ui/terminal": ["libs/remix-ui/terminal/src/index.ts"],
       "@remix-ui/plugin-manager": ["libs/remix-ui/plugin-manager/src/index.ts"],
       "@remix-ui/editor": ["libs/remix-ui/editor/src/index.ts"],
+      "@remix-project/remix-ui/home-tab": ["libs/remix-ui/home-tab/src/index.ts"],
       "@remix-ui/tabs": ["libs/remix-ui/tabs/src/index.ts"],
       "@remix-ui/helper": ["libs/remix-ui/helper/src/index.ts"],
       "@remix-ui/app": ["libs/remix-ui/app/src/index.ts"],
