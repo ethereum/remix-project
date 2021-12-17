@@ -1,5 +1,4 @@
 'use strict'
-import PanelsResize from './lib/panels-resize'
 import { RunTab, makeUdapp } from './app/udapp'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
