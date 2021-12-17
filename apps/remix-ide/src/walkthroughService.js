@@ -15,14 +15,12 @@ export class WalkthroughService extends Plugin {
     super(profile)
     appManager.event.on('activate', (plugin) => {
       if (plugin.name === 'udapp' && !showMatamo) {
-        console.log('start')
         this.start()
       }
     })
   }
 
   start () {
-    console.log('start')
     if (!localStorage.getItem('hadTour_initial')) {
       introJs().setOptions({
         steps: [{
@@ -63,8 +61,6 @@ export class WalkthroughService extends Plugin {
         }
       }).start()
       localStorage.setItem('hadTour_initial', true)
-    } else {
-      console.log('had walkthrough')
     }
   }
 }

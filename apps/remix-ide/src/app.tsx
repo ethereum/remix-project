@@ -8,7 +8,9 @@ appComponent.run()
 
 function App () {
   return <>
-    <RemixApp app={appComponent}></RemixApp>
+    <React.StrictMode>
+      <RemixApp app={appComponent}></RemixApp>
+    </React.StrictMode>
   </>
 }
 
