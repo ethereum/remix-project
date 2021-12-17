@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, CSSProperties } from 'react' // esl
 // import { TestTabLogic } from './logic/testTabLogic'
 var async = require('async')
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
+import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { format } from 'util'
 
 import './css/style.css'
@@ -344,13 +345,11 @@ export const SolidityUnitTesting = (props: any) => {
       const fileTestsResult = testsResultByFilename[filename]
       const contracts = Object.keys(fileTestsResult)
       for(const contract of contracts) {
-        if(contract && contract !== 'summary') {
+        if(contract && contract !== 'summary' && contract !== 'errors') {
           runningTestFileName = cleanFileName(filename, contract)
-          const { tests, errors} = fileTestsResult[contract]
+          const tests = fileTestsResult[contract]
           if (tests?.length) {
             renderTests(tests, contract, filename)
-          } else if (errors) {
-            console.log('errors---->', errors)
           } else {
             // show only contract and file name
             const contractCard: any = (
@@ -360,6 +359,24 @@ export const SolidityUnitTesting = (props: any) => {
             )
             setTestsOutput(prevCards => ([...prevCards, contractCard]))
           }
+        } else if (contract === 'errors' && fileTestsResult['errors']) {
+          const errors = fileTestsResult['errors']
+          console.log('errors---->', errors)
+          if (errors && errors.errors) {
+            errors.errors.forEach((err: any) => {
+              const errorCard: any = <Renderer message={err.formattedMessage  || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
+              setTestsOutput(prevCards => ([...prevCards, errorCard]))
+            })
+          } else if (errors && Array.isArray(errors) && (errors[0].message || errors[0].formattedMessage)) {
+            errors.forEach((err) => {
+              const errorCard: any = <Renderer message={err.formattedMessage  || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
+              setTestsOutput(prevCards => ([...prevCards, errorCard]))
+            })
+          } else if (errors && !errors.errors && !Array.isArray(errors)) {
+            // To track error like this: https://github.com/ethereum/remix/pull/1438
+            const errorCard: any = <Renderer message={errors.formattedMessage || errors.message} plugin={testTab} opt={{ type: 'error' }} />
+            setTestsOutput(prevCards => ([...prevCards, errorCard]))
+          } 
         }
       }
       // show summary
@@ -387,11 +404,11 @@ export const SolidityUnitTesting = (props: any) => {
       }
       if(result.type === 'contract') {
         testsResultByFilename[result.filename][result.value]= {}
-        testsResultByFilename[result.filename][result.value].tests = []
+        testsResultByFilename[result.filename][result.value] = []
       } else {
         // Set that this test is not rendered on UI
         result.rendered = false
-        testsResultByFilename[result.filename][result.context]['tests'].push(result)
+        testsResultByFilename[result.filename][result.context].push(result)
       }
       showTestsResult()
     }
@@ -429,7 +446,11 @@ export const SolidityUnitTesting = (props: any) => {
       testsResultByFilename[filename]['summary']= testsSummary
       showTestsResult()
     } else if (_errors) {
+      if(!testsResultByFilename[filename]) {
+        testsResultByFilename[filename] = {}
+      }
       testsResultByFilename[filename]['errors'] = _errors
+      showTestsResult()
     }
 
       // result.errors.forEach((error, index) => {
