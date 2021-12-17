@@ -52,10 +52,10 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
-      .executeScript('web3.eth.getAccounts()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '","', 60000)
+      // .executeScript('web3.eth.getAccounts()')
+      // .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
+      // .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
+      // .waitForElementContainsText('*[data-id="terminalJournal"]', '","', 60000)
   },
 
   'Call Remix File Resolver (external URL) from a script #group3': function (browser: NightwatchBrowser) {

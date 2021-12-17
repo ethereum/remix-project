@@ -37,7 +37,7 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--verbose']
         }
       }
     },
