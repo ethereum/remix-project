@@ -18,8 +18,9 @@ export class SidePanel extends AbstractPanel {
   constructor (appManager, verticalIcons) {
     super(sidePanel)
     this.appManager = appManager
-    this.sideelement = this.element
-    // this.sideelement.setAttribute('class', 'panel')
+    // this.sideelement = this.element
+    this.sideelement = document.createElement('div')
+    this.element = this.sideelement
     this.verticalIcons = verticalIcons
 
     // Toggle content

@@ -46,14 +46,9 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
    return (
     <header style={{
       display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
-    padding: '10px',
-    position: 'sticky',
-    top: 0,
-    zIndex: 2,
-    marginBottom: '0px',
-    boxSizing: 'inherit',
+    padding: '16px 24px 15px',
+    justifyContent: 'space-between',
     }}>
     <h6 className="swapitTitle" data-id="sidePanelSwapitTitle">{name}</h6>
     {dockLink ? (<a href={profileDocsLink} className="titleInfo" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>) : ''}
@@ -65,7 +60,13 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
 
 
   return (
-            <section style={{ position:'sticky' }}>
+            <section style={{
+              position: "fixed",
+              height: "50px",
+              width: "320px",
+              backgroundColor: "var(--light)",
+              zIndex: "999",
+            }} >
               {renderHeader()}
             </section>
   );
