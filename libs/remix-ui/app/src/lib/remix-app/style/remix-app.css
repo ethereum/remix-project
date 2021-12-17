@@ -69,28 +69,3 @@ pre {
 .splash {
   text-align: center;
 }
-
-.dragbar           {
-  display            : block;
-  height             : 100%;
-  position           : absolute;
-  left: 367px;
-  top: 0px;
-  width: 0.3em;
-  z-index: 9999;
-}
-
-.overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  display: block;
-  z-index: 9998;
-}
-
-.dragbar:hover, .dragbar.ondrag{
-  background-color: var(--secondary);
-  cursor:col-resize;
-}

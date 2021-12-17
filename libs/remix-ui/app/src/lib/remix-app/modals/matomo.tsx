@@ -20,7 +20,6 @@ const MatomoDialog = (props) => {
     setVisible(false)
   }
   const hideModal = async () => {
-    console.log('handle hide')
     setVisible(false)
   }
   const handleModalOkClick = async () => {
