@@ -1,4 +1,5 @@
 'use strict'
+import PanelsResize from './lib/panels-resize'
 import { RunTab, makeUdapp } from './app/udapp'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
@@ -191,6 +192,7 @@ class AppComponent {
     self.menuicons = new VerticalIcons(appManager)
     self.sidePanel = new SidePanel(appManager, self.menuicons)
     self.hiddenPanel = new HiddenPanel()
+
     const pluginManagerComponent = new PluginManagerComponent(appManager, self.engine)
     const filePanel = new FilePanel(appManager)
     const landingPage = new LandingPage(appManager, self.menuicons, fileManager, filePanel, contentImport)
@@ -310,7 +312,7 @@ class AppComponent {
     // activate solidity plugin
     self.appManager.activatePlugin(['solidity', 'udapp'])
     // Load and start the service who manager layout and frame
-    const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, this._components.resizeFeature)
+    const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, null)
 
     if (params.embed) framingService.embed()
     framingService.start(params)
