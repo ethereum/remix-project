@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 export const fetchAccountsListRequest = () => {
   return {
     type: 'FETCH_ACCOUNTS_LIST_REQUEST',

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { RunTab } from './run-tab'
 export interface RunTabProps {
   plugin: RunTab
@@ -116,6 +115,20 @@ export interface ContractData {
   metadata: any
 }
 
+export interface Tx {
+  from: string,
+  to: string,
+  data: string,
+  gas: string
+}
+
+export interface Network {
+  name: string,
+  lastBlock: {
+    baseFeePerGas: string
+  }
+}
+
 export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
@@ -134,7 +147,21 @@ export interface ContractDropdownProps {
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,
   setPassphrase: (passphrase: string) => void,
-  createInstance: (selectedContract: ContractData, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element, publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void) => void,
+  createInstance: (selectedContract: ContractData,
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  passphrasePrompt: (msg: string) => JSX.Element,
+  logBuilder: (msg: string) => JSX.Element,
+  publishToStorage: (storage: 'ipfs' | 'swarm',
+  contract: ContractData) => void,
+  mainnetPrompt: (
+    tx: Tx, network:
+    Network, amount: string,
+    gasEstimation: string,
+    gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+    determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
+    ) => JSX.Element,
+  isOverSizePrompt: () => JSX.Element,
+  args) => void,
   ipfsCheckedState: boolean,
   setIpfsCheckedState: (value: boolean) => void,
   publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void,
@@ -144,7 +171,8 @@ export interface ContractDropdownProps {
   updateMaxFee: (fee: string) => void,
   updateMaxPriorityFee: (fee: string) => void,
   updateGasPrice: (price: string) => void,
-  updateTxFeeContent: (content: string) => void
+  updateTxFeeContent: (content: string) => void,
+  txFeeContent: string
 }
 
 export interface RecorderProps {
@@ -180,4 +208,20 @@ export interface ContractGUIProps {
   widthClass?: string,
   evmBC: any,
   lookupOnly: boolean
+}
+export interface MainnetProps {
+  network: Network,
+  tx: Tx,
+  amount: string,
+  gasEstimation: string,
+  setNewGasPrice: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+  updateGasPriceStatus: (status: boolean) => void,
+  updateConfirmSettings: (confirmation: boolean) => void,
+  updateMaxFee: (fee: string) => void,
+  updateBaseFeePerGas: (fee: string) => void,
+  init: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void,
+  setTxFeeContent: (content: string) => void,
+  updateGasPrice: (price: string) => void,
+  updateMaxPriorityFee: (fee: string) => void
+  txFeeContent: string
 }

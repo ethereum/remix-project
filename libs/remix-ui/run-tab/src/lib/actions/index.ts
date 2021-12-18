@@ -7,7 +7,7 @@ import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractData } from '../types'
+import { ContractData, Network, Tx } from '../types'
 declare global {
   interface Window {
     _paq: any
@@ -228,7 +228,6 @@ const removeExternalProvider = (name) => {
   dispatch(removeProvider(name))
 }
 
-// eslint-disable-next-line no-undef
 export const setExecutionContext = (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => {
   plugin.blockchain.changeExecutionContext(executionContext, () => {
     dispatch(displayNotification('External node request', displayContent, 'OK', 'Cancel', () => {
@@ -250,7 +249,6 @@ export const clearPopUp = async () => {
   dispatch(hidePopUp())
 }
 
-// eslint-disable-next-line no-undef
 export const createNewBlockchainAccount = async (cbMessage: JSX.Element) => {
   plugin.blockchain.newAccount(
     '',
@@ -283,7 +281,6 @@ export const setMatchPassphrasePrompt = (passphrase: string) => {
   dispatch(setMatchPassphrase(passphrase))
 }
 
-// eslint-disable-next-line no-undef
 export const signMessageWithAddress = (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
   plugin.blockchain.signMessage(message, account, passphrase, (err, msgHash, signedData) => {
     if (err) {
@@ -382,27 +379,32 @@ const getCompilerContracts = () => {
   return plugin.compilersArtefacts.__last.getData().contracts
 }
 
-// eslint-disable-next-line no-undef
 const terminalLogger = (view: JSX.Element) => {
   plugin.call('terminal', 'logHtml', view)
 }
 
-const getConfirmationCb = () => {
+const getConfirmationCb = (confirmDialogContent: (
+  tx: Tx, network:
+  Network, amount: string,
+  gasEstimation: string,
+  gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+  determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
+  ) => JSX.Element) => {
   // this code is the same as in recorder.js. TODO need to be refactored out
   const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
     if (network.name !== 'Main') {
       return continueTxExecution(null)
     }
     const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
-    const content = confirmDialog(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
+    const content = confirmDialogContent(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
 
     dispatch(displayNotification('Confirm transaction', content, 'Confirm', 'Cancel', () => {
-      plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+      plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', plugin.REACT_API.confirmSettings)
       // TODO: check if this is check is still valid given the refactor
-      if (!content.gasPriceStatus) {
+      if (!plugin.REACT_API.gasPriceStatus) {
         cancelCb('Given transaction fee is not correct')
       } else {
-        continueTxExecution(content.txFee)
+        continueTxExecution({ maxFee: plugin.REACT_API.maxFee, maxPriorityFee: plugin.REACT_API.maxPriorityFee, baseFeePerGas: plugin.REACT_API.baseFeePerGas, gasPrice: plugin.REACT_API.gasPrice })
       }
     }, () => {
       return cancelCb('Transaction canceled by user.')
@@ -412,8 +414,22 @@ const getConfirmationCb = () => {
   return confirmationCb
 }
 
-// eslint-disable-next-line no-undef
-export const createInstance = async (selectedContract: ContractData, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, logBuilder: (msg: string) => JSX.Element, publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void) => {
+export const createInstance = async (
+  selectedContract: ContractData,
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  passphrasePrompt: (msg: string) => JSX.Element,
+  logBuilder: (msg: string) => JSX.Element,
+  publishToStorage: (storage: 'ipfs' | 'swarm',
+  contract: ContractData) => void,
+  mainnetPrompt: (
+    tx: Tx, network:
+    Network, amount: string,
+    gasEstimation: string,
+    gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+    determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
+    ) => JSX.Element,
+  isOverSizePrompt: () => JSX.Element,
+  args) => {
   const continueCb = (error, continueTxExecution, cancelCb) => {
     if (error) {
       const msg = typeof error !== 'string' ? error.message : error
@@ -468,33 +484,27 @@ export const createInstance = async (selectedContract: ContractData, gasEstimati
   const compilerContracts = getCompilerContracts()
   const confirmationCb = getConfirmationCb(mainnetPrompt)
 
-      // if (selectedContract.isOverSizeLimit()) {
-      //   return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
-      //   More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
-      //   </div>`,
-      //   {
-      //     label: 'Force Send',
-      //     fn: () => {
-      //       this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
-      //     }
-      //   }, {
-      //     label: 'Cancel',
-      //     fn: () => {
-      //       this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
-      //     }
-      //   })
-      // }
-      // this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+  if (selectedContract.isOverSizeLimit()) {
+    return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(), 'Force Send', 'Cancel', () => {
+      deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+    }, () => {
+      const log = logBuilder(`creation of ${selectedContract.name} canceled by user.`)
+
+      return terminalLogger(log)
+    }))
+  }
+  deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
 }
 
 const deployContract = (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
-  _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName + '_' + this.networkId])
+  _paq.push(['trackEvent', 'udapp', 'DeployContractTo', plugin.REACT_API.networkName])
   const { statusCb } = callbacks
+
   if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-    return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+    return plugin.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
   }
   if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-  this.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+  plugin.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
 }
 
 export const setCheckIpfs = (value: boolean) => {

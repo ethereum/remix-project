@@ -170,7 +170,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     })
   }
 
-  // eslint-disable-next-line no-undef
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals(modals => {
       modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
