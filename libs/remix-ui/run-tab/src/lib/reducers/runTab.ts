@@ -60,7 +60,8 @@ export interface RunTabState {
   maxFee: string,
   maxPriorityFee: string,
   baseFeePerGas: string,
-  txFeeContent: string
+  txFeeContent: string,
+  gasPrice: string
 }
 
 export const runTabInitialState: RunTabState = {
@@ -134,9 +135,10 @@ export const runTabInitialState: RunTabState = {
   gasPriceStatus: false,
   confirmSettings: false,
   maxFee: '',
-  maxPriorityFee: '',
+  maxPriorityFee: '1',
   baseFeePerGas: '',
-  txFeeContent: ''
+  txFeeContent: '',
+  gasPrice: ''
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {

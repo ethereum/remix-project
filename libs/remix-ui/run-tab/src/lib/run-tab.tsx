@@ -102,7 +102,6 @@ export function RunTabUI (props: RunTabProps) {
     }
   }, [runTab.popup])
 
-  // eslint-disable-next-line no-undef
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals(modals => {
       modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
@@ -187,6 +186,7 @@ export function RunTabUI (props: RunTabProps) {
             updateMaxFee={updateMaxFee}
             updateMaxPriorityFee={updateMaxPriorityFee}
             updateTxFeeContent={updateTxFeeContent}
+            txFeeContent={runTab.txFeeContent}
           />
           <RecorderUI />
           <InstanceContainerUI />
