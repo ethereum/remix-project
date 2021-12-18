@@ -31,5 +31,8 @@
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     }
-  ]
+  ],
+  "globals": {
+    "JSX": true
+  }
 }

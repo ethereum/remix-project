@@ -1,9 +1,10 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
-import { ContractData, ContractDropdownProps } from '../types'
+import { ContractData, ContractDropdownProps, Network, Tx } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { PassphrasePrompt } from './passphrase'
+import { MainnetPrompt } from './mainnet'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [networkName, setNetworkName] = useState<string>('')
@@ -121,7 +122,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(loadedContractData, gasEstimationPrompt, passphrasePrompt, logBuilder, props.publishToStorage)
+    props.createInstance(loadedContractData, gasEstimationPrompt, passphrasePrompt, logBuilder, props.publishToStorage, mainnetPrompt, isOverSizePrompt, args)
   }
 
   //   listenToContextChange () {
@@ -346,8 +347,31 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     return <PassphrasePrompt message={message} setPassphrase={props.setPassphrase} defaultValue={props.passphrase} />
   }
 
-  const mainnetPrompt = () => {
-    
+  const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
+    return <MainnetPrompt
+      init={determineGasPrice}
+      network={network}
+      tx={tx}
+      amount={amount}
+      gasEstimation={gasEstimation}
+      setNewGasPrice={gasFees}
+      updateBaseFeePerGas={props.updateBaseFeePerGas}
+      updateConfirmSettings={props.updateConfirmSettings}
+      updateGasPrice={props.updateGasPrice}
+      updateGasPriceStatus={props.updateGasPriceStatus}
+      updateMaxFee={props.updateMaxFee}
+      updateMaxPriorityFee={props.updateMaxPriorityFee}
+      setTxFeeContent={props.updateTxFeeContent}
+      txFeeContent={props.txFeeContent}
+    />
+  }
+
+  const isOverSizePrompt = () => {
+    return (
+      <div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br />
+      More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
+      </div>
+    )
   }
 
   return (
