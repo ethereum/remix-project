@@ -85,13 +85,13 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
-      .execute(function () {
-        const env: any = document.getElementById('selectExEnvOptions')
-        return env.value
-      }, [], function (result) {
-        console.log({ result })
-        browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
-      })
+      // .execute(function () {
+      //   const env: any = document.getElementById('selectExEnvOptions')
+      //   return env.value
+      // }, [], function (result) {
+      //   console.log({ result })
+      //   browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
+      // })
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
