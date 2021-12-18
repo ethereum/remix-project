@@ -72,16 +72,13 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
-      .waitForElementVisible('button[data-id="landingPageImportFromGistButton"]')
-      .pause(1000)
-      .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')
+      .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="modalDialogModalTitle"]')
       .assert.containsText('*[data-id="modalDialogModalTitle"]', 'Load a Gist')
       .waitForElementVisible('*[data-id="modalDialogModalBody"]')
       .assert.containsText('*[data-id="modalDialogModalBody"]', 'Enter the ID of the Gist or URL you would like to load.')
       .pause(5000)
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 60000)
+      // .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 60000)
       .modalFooterCancelClick()
   },
 
