@@ -1,20 +1,28 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import Web3 from 'web3'
 import { MainnetProps } from '../types'
 
 export function MainnetPrompt (props: MainnetProps) {
+  const [baseFee, setBaseFee] = useState<string>('')
+
   useEffect(() => {
     props.init((txFeeText, gasPriceValue, gasPriceStatus) => {
       if (txFeeText) props.setTxFeeContent(txFeeText)
       if (gasPriceValue) onGasPriceChange(gasPriceValue)
-      if (props.network && props.network.lastBlock && props.network.lastBlock.baseFeePerGas) onMaxFeeChange(Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei'))
+      if (props.network && props.network.lastBlock && props.network.lastBlock.baseFeePerGas) {
+        const baseFee = Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei')
+
+        setBaseFee(baseFee)
+        onMaxFeeChange(baseFee)
+      }
       if (gasPriceStatus !== undefined) props.updateGasPriceStatus(gasPriceStatus)
     })
   }, [])
 
   const onMaxFeeChange = (value: string) => {
+    console.log('value: ', value)
     const maxFee = value
     // @ts-ignore
     if (parseInt(props.network.lastBlock.baseFeePerGas, 16) > Web3.utils.toWei(maxFee, 'Gwei')) {
@@ -92,14 +100,14 @@ export function MainnetPrompt (props: MainnetProps) {
               <div className="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
                 <div className='d-flex'>
                   <span className="text-dark mr-2 text-nowrap">Max Priority fee:</span>
-                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} value="1" id='maxpriorityfee' onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)} />
+                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxpriorityfee' onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)} defaultValue={props.maxPriorityFee} />
                   <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
                 </div>
               </div>
               <div className="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
                 <div className='d-flex'>
                   <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei')} Gwei):</span>
-                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} />
+                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} defaultValue={baseFee} />
                   <span>Gwei</span>
                   <span className="text-dark ml-2"></span>
                 </div>
