@@ -18,9 +18,7 @@ export class SidePanel extends AbstractPanel {
   constructor (appManager, verticalIcons) {
     super(sidePanel)
     this.appManager = appManager
-    // this.sideelement = this.element
     this.sideelement = document.createElement('div')
-    this.element = this.sideelement
     this.verticalIcons = verticalIcons
 
     // Toggle content
@@ -60,6 +58,7 @@ export class SidePanel extends AbstractPanel {
     super.removeView(profile)
     this.emit('pluginDisabled', profile.name)
     this.verticalIcons.unlinkContent(profile)
+    this.renderComponent()
   }
 
   addView (profile, view) {
@@ -84,7 +83,7 @@ export class SidePanel extends AbstractPanel {
   renderComponent () {
     ReactDOM.render(
       <RemixUiSidePanel
-        plugin={this}
+        plugin={this} contents={this.contents}
       />
       ,
       this.sideelement

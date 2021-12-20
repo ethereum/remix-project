@@ -5,6 +5,7 @@ import './remix-ui-side-panel.module.css';
 /* eslint-disable-next-line */
 export interface RemixUiSidePanelProps {
   plugin: any
+  contents: any
 }
 
 export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
@@ -68,6 +69,9 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
               zIndex: "999",
             }} >
               {renderHeader()}
+              <div className="pluginsContainer">
+                {props.contents}
+              </div>
             </section>
   );
 }

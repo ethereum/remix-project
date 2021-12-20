@@ -1,6 +1,4 @@
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
-import { RemixUiAbstractPanel } from '@remix-ui/abstract-panel' // eslint-disable-line
 import { EventEmitter } from 'events'
 const EventManager = require('../../lib/events')
 import { HostPlugin } from '@remixproject/engine-web' // eslint-disable-line
@@ -13,11 +11,6 @@ export class AbstractPanel extends HostPlugin {
     this.event = new EventManager()
     this.contents = {}
     this.active = undefined
-    this.element = document.createElement('div')
-  }
-
-  onActivation () {
-    this.renderComponent()
   }
 
   addView (profile, view) {
@@ -32,8 +25,6 @@ export class AbstractPanel extends HostPlugin {
 
     this.contents[profile.name] = view
     this.contents[profile.name].style.display = 'none'
-    this.element.appendChild(this.contents[profile.name])
-    this.renderComponent()
   }
 
   removeView (profile) {
@@ -49,9 +40,7 @@ export class AbstractPanel extends HostPlugin {
   remove (name) {
     const el = this.contents[name]
     delete this.contents[name]
-    if (el) el.parentElement.removeChild(el)
     if (name === this.active) this.active = undefined
-    this.renderComponent()
   }
 
   /**
@@ -64,7 +53,6 @@ export class AbstractPanel extends HostPlugin {
     if (this.active) {
       this.contents[this.active].style.display = 'none'
     }
-    console.log({ name, active: this.active, contents: this.contents })
     this.contents[name].style.display = 'flex'
     this.contents[name].style.paddingTop = '20%'
     this.contents[name].style.flexDirection = 'column'
@@ -74,14 +62,5 @@ export class AbstractPanel extends HostPlugin {
 
   focus (name) {
     this.showContent(name)
-  }
-
-  renderComponent () {
-    ReactDOM.render(
-      <RemixUiAbstractPanel
-        plugin={this}
-      />,
-      this.element
-    )
   }
 }

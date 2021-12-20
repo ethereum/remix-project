@@ -1,7 +1,7 @@
+import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import * as packageJson from '../../../../../package.json'
 const csjs = require('csjs-inject')
-const yo = require('yo-yo')
 
 const css = csjs`
   .pluginsContainer {
@@ -20,12 +20,20 @@ const profile = {
 export class HiddenPanel extends AbstractPanel {
   constructor () {
     super(profile)
+    this.container = document.createElement('div')
   }
 
   render () {
-    return yo`
-      <div class=${css.pluginsContainer}>
-        ${this.view}
-      </div>`
+    return this.container
+  }
+
+  renderComponent () {
+    return ReactDOM.render(
+      <div class={css.pluginsContainer}>
+        {this.element}
+      </div>
+      ,
+      this.container
+    )
   }
 }
