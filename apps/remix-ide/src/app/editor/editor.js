@@ -155,6 +155,7 @@ class Editor extends Plugin {
   }
 
   _switchSession (path) {
+    if (path === this.currentFile) return
     this.triggerEvent('sessionSwitched', [])
     this.currentFile = path
     this.renderComponent()

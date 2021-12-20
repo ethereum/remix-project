@@ -2,12 +2,12 @@
 :root {
   --blue: #007aa6;
   --indigo: #6610f2;
-  --purple: #6f42c1;
-  --pink: #e83e8c;
+  --purple: #9e77f6;
+  --pink: #f38abb;
   --red: #b84040;
-  --orange: #c97539;
+  --orange: #e46b15;
   --yellow: #ffc107;
-  --green: #32ba89;
+  --green: #219451;
   --teal: #20c997;
   --cyan: #355f7d;
   --white: #fff;
@@ -5651,7 +5651,7 @@ button.bg-success:hover {
   background-color: #27926b !important;
 }
 .bg-info {
-  background-color: #355f7d !important;
+  background-color: #274458 !important;
 }
 a.bg-info:focus,
 a.bg-info:hover,
