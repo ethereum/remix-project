@@ -363,6 +363,8 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       updateMaxPriorityFee={props.updateMaxPriorityFee}
       setTxFeeContent={props.updateTxFeeContent}
       txFeeContent={props.txFeeContent}
+      maxFee={props.maxFee}
+      maxPriorityFee={props.maxPriorityFee}
     />
   }
 
