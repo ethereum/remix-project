@@ -22,8 +22,9 @@ Also that unit testing and e2e for new feaures have been included.
 After being quality checked, the project is ready to be deployed. 
 The release manager is still responsible for ensuring a project is rolled out smoothly and efficiently.
 
+# Release Manager Role:
 
-# Responsibilities
+## Responsibilities overview:
 
  - Planning release windows and the overall release lifecycle.
  - Managing risks that may affect release scope.
@@ -31,14 +32,15 @@ The release manager is still responsible for ensuring a project is rolled out sm
  - Ensure releases are delivered within requirements.
  - Manage relationships and coordinate projects.
 
-# Miscellaneous
+## Detailed Responsibilities:
 
+ - Lead the daily standup meeting.
+ - 10 minutes or more are reserved at the end of the daily standup meeting where the release manager update the team on the opened PRs (PRs which aim to be delivered in the planned release). 
  - Regular check for new filed issues, identify those that requires to be published (included in the release)
  - In some really specific situation, it could be required to deploy intermediate releases (e.g critical bug fixes).
  - Planning, refinement, retrospective meetings have to be organized by the release manager and any other required meetings.
  - Release manager should feel free to implement new techniques and put their own finger print to their release, this could potentially benefit upcoming releases.
 
+## Assignments:
 
-# Release Management Role
-
-Aniket, Liana, David, Rob, Filip
+Aniket, Liana, David, Rob, Filip, Yann
