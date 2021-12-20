@@ -68,8 +68,7 @@ export class RunTab extends ViewPlugin {
           selectedAccount: this.settingsUI.getSelectedAccount(),
           selectedEnvMode: this.blockchain.getProvider(),
           networkEnvironment: this.container.querySelector('*[data-id="settingsNetworkEnv"]').textContent
-        }
-        )
+        })
       }
     })
   }

@@ -60,7 +60,7 @@ const setupEvents = () => {
   })
 
   plugin.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
-    if (!lookupOnly) dispatch(setSendValue(0))
+    if (!lookupOnly) dispatch(setSendValue('0'))
     if (error) return
     updateAccountBalances()
   })
