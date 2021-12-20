@@ -86,7 +86,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   useEffect(() => {
     props.onReady({
       logHtml: (html) => {
-        scriptRunnerDispatch({ type: 'html', payload: { message: [html.innerText] } })
+        scriptRunnerDispatch({ type: 'html', payload: { message: [html ? html.innerText ? html.innerText : html : null] } })
       },
 
       log: (message) => {
@@ -483,7 +483,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 })
               } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
-                  if (typeof msg === 'object') {
+                  if (React.isValidElement(msg)) {
+                    return (
+                      <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg }</span></div>
+                    )
+                  } else if (typeof msg === 'object') {
                     return (
                       <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
                     )

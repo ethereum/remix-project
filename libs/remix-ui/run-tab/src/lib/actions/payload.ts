@@ -19,7 +19,7 @@ export const fetchAccountsListFailed = (error: string) => {
   }
 }
 
-export const setSendValue = (value: number) => {
+export const setSendValue = (value: string) => {
   return {
     type: 'SET_SEND_VALUE',
     payload: value

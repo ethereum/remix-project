@@ -172,7 +172,9 @@ export interface ContractDropdownProps {
   updateMaxPriorityFee: (fee: string) => void,
   updateGasPrice: (price: string) => void,
   updateTxFeeContent: (content: string) => void,
-  txFeeContent: string
+  txFeeContent: string,
+  maxFee: string,
+  maxPriorityFee: string
 }
 
 export interface RecorderProps {
@@ -223,5 +225,7 @@ export interface MainnetProps {
   setTxFeeContent: (content: string) => void,
   updateGasPrice: (price: string) => void,
   updateMaxPriorityFee: (fee: string) => void
-  txFeeContent: string
+  txFeeContent: string,
+  maxFee: string,
+  maxPriorityFee: string
 }

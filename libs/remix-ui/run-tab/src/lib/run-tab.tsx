@@ -187,6 +187,8 @@ export function RunTabUI (props: RunTabProps) {
             updateMaxPriorityFee={updateMaxPriorityFee}
             updateTxFeeContent={updateTxFeeContent}
             txFeeContent={runTab.txFeeContent}
+            maxFee={runTab.maxFee}
+            maxPriorityFee={runTab.maxPriorityFee}
           />
           <RecorderUI />
           <InstanceContainerUI />

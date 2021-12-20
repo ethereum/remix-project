@@ -16,6 +16,7 @@ export class TxRunnerWeb3 {
   }
 
   _executeTx (tx, network, txFee, api, promptCb, callback) {
+    console.log('tx: ', tx)
     if (network && network.lastBlock && network.lastBlock.baseFeePerGas) {
       // the sending stack (web3.js / metamask need to have the type defined)
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
@@ -57,6 +58,7 @@ export class TxRunnerWeb3 {
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
+          console.log(receipt, tx, receipt['transactionHash'])
           resolve({
             receipt,
             tx,
@@ -79,6 +81,9 @@ export class TxRunnerWeb3 {
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
     }
+
+    console.log('data: ', data)
+    console.log('args: ', args)
 
     return this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
@@ -112,10 +117,17 @@ export class TxRunnerWeb3 {
           }
 
           if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+            console.log('tx: ', tx)
+            console.log('network: ', network)
+            console.log('this._api: ', this._api)
             return this._executeTx(tx, network, null, this._api, promptCb, callback)
           }
 
           confirmCb(network, tx, tx['gas'], (txFee) => {
+            console.log('tx: ', tx)
+            console.log('network: ', network)
+            console.log('txFee: ', txFee)
+            console.log('this._api: ', this._api)
             return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
           }, (error) => {
             callback(error)
