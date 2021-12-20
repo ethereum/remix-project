@@ -3,7 +3,9 @@
 import React, {
   Fragment,
   useEffect,
-  useRef
+  useReducer,
+  useRef,
+  useState
 } from 'react'
 
 import './remix-ui-vertical-icons-panel.css'
@@ -12,17 +14,48 @@ import { VerticalIcons } from '../../types/vertical-icons-panel'
 import Home from './components/Home'
 import Settings from './components/Settings'
 import { RequiredSection } from './components/RequiredSection'
+import { verticalScrollReducer } from './reducers/verticalScrollReducer'
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: VerticalIcons
 }
 
 let scrollHeight: any
 
+const initialState = {
+  scrollHeight: 0,
+  clientHeight: 0,
+  scrollState: false
+}
+
 export function RemixUiVerticalIconsPanel ({
   verticalIconsPlugin
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
+  const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer,initialState)
+
+  useEffect(() => {
+    const evaluateScrollability = (evt: any) => {
+      console.log('resize event answered by dispatch!')
+      dispatchScrollAction({
+      type: 'resize',
+      payload: {
+        scrollHeight: document.querySelector('#remixuiScrollable')?.scrollHeight,
+        clientHeight: document.querySelector('#remixuiScrollable')?.clientHeight,
+        scrollState: false
+      }
+    })
+    }
+    addEventListener('resize', evaluateScrollability)
+
+    return () => {
+      removeEventListener('resize', evaluateScrollability)
+    }
+  })
+
+  useEffect(() => {
+    addEventListener('activate', ()  => console.log('activate called now'))
+  })
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
@@ -51,6 +84,7 @@ export function RemixUiVerticalIconsPanel ({
   }
 
   function addActive (name: string) {
+    console.log('addactive has been called now.')
     if (name === 'home') return
     const themeType = verticalIconsPlugin.registry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
