@@ -21,6 +21,10 @@ export class MainPanel extends AbstractPanel {
     this.config = config
   }
 
+  onActivation () {
+    this.renderComponent()
+  }
+
   focus (name) {
     this.emit('focusChanged', name)
     super.focus(name)
@@ -30,6 +34,12 @@ export class MainPanel extends AbstractPanel {
   addView (profile, view) {
     super.addView(profile, view)
     view.style.height = '100%'
+    this.renderComponent()
+  }
+
+  removeView (profile) {
+    super.removeView(profile)
+    this.renderComponent()
   }
 
   onActivation () {
@@ -43,7 +53,7 @@ export class MainPanel extends AbstractPanel {
   renderComponent () {
     ReactDOM.render(
       <RemixUiMainPanel
-        plugin={this}
+        plugin={this} contents={this.contents}
       />,
       this.mainelement
     )
