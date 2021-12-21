@@ -1,3 +1,5 @@
+import { ContractData } from '../types'
+
 interface Action {
   type: string
   payload: any
@@ -61,7 +63,15 @@ export interface RunTabState {
   maxPriorityFee: string,
   baseFeePerGas: string,
   txFeeContent: string,
-  gasPrice: string
+  gasPrice: string,
+  instances: {
+    instanceList: {
+      contractData: ContractData,
+      address: string,
+      name: string
+    }[],
+    error: string
+  }
 }
 
 export const runTabInitialState: RunTabState = {
@@ -138,7 +148,11 @@ export const runTabInitialState: RunTabState = {
   maxPriorityFee: '1',
   baseFeePerGas: '',
   txFeeContent: '',
-  gasPrice: ''
+  gasPrice: '',
+  instances: {
+    instanceList: [],
+    error: null
+  }
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -515,6 +529,40 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         txFeeContent: payload
+      }
+    }
+
+    case 'ADD_INSTANCE': {
+      const payload: { contractData: ContractData, address: string, name: string } = action.payload
+
+      return {
+        ...state,
+        instances: {
+          ...state.instances,
+          instanceList: [...state.instances.instanceList, payload]
+        }
+      }
+    }
+
+    case 'REMOVE_INSTANCE': {
+      const payload: number = action.payload
+
+      return {
+        ...state,
+        instances: {
+          ...state.instances,
+          instanceList: state.instances.instanceList.filter((instance, index) => index !== payload)
+        }
+      }
+    }
+
+    case 'CLEAR_INSTANCES': {
+      return {
+        ...state,
+        instances: {
+          instanceList: [],
+          error: null
+        }
       }
     }
 
