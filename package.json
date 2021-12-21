@@ -87,6 +87,7 @@
     "nightwatch_local_fileExplorer": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/fileExplorer.test.js --env=chrome",
     "nightwatch_local_debugger": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.test.js --env=chrome",
     "nightwatch_local_editor": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/editor.test.js --env=chrome",
+    "nightwatch_local_importFromGithub": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/importFromGithub.test.js --env=chrome",
     "nightwatch_local_compiler": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/compiler_api.test.js --env=chrome",
     "nightwatch_local_txListener": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/txListener.test.js --env=chrome",
     "nightwatch_local_fileManager": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/fileManager_api.test.js --env=chrome",
