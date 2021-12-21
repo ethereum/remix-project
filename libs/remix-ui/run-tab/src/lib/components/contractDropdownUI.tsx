@@ -145,134 +145,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   //     })
   //   }
 
-  //   async createInstance (selectedContract, args) {
-  //     if (selectedContract.bytecodeObject.length === 0) {
-  //       return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
-  //     }
-
-  //     var continueCb = (error, continueTxExecution, cancelCb) => {
-  //       if (error) {
-  //         var msg = typeof error !== 'string' ? error.message : error
-  //         modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-  //         The transaction execution will likely fail. Do you want to force sending? <br>
-  //         ${msg}
-  //         </div>`,
-  //         {
-  //           label: 'Send Transaction',
-  //           fn: () => {
-  //             continueTxExecution()
-  //           }
-  //         }, {
-  //           label: 'Cancel Transaction',
-  //           fn: () => {
-  //             cancelCb()
-  //           }
-  //         })
-  //       } else {
-  //         continueTxExecution()
-  //       }
-  //     }
-
-  //     const self = this
-
-  //     var promptCb = (okCb, cancelCb) => {
-  //       modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-  //     }
-
-  //     var statusCb = (msg) => {
-  //       return this.logCallback(msg)
-  //     }
-
-  //     var finalCb = (error, contractObject, address) => {
-  //       self.event.trigger('clearInstance')
-
-  //       if (error) {
-  //         return this.logCallback(error)
-  //       }
-  //       self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
-
-  //       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
-  //       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
-  //       if (self.ipfsCheckedState) {
-  //         _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName])
-  //         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
-  //       } else {
-  //         _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName])
-  //       }
-  //     }
-
-  //     let contractMetadata
-  //     try {
-  //       contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
-  //     } catch (error) {
-  //       return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
-  //     }
-
-  //     const compilerContracts = this.dropdownLogic.getCompilerContracts()
-  //     const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
-
-  //     if (selectedContract.isOverSizeLimit()) {
-  //       return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
-  //       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
-  //       </div>`,
-  //       {
-  //         label: 'Force Send',
-  //         fn: () => {
-  //           this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
-  //         }
-  //       }, {
-  //         label: 'Cancel',
-  //         fn: () => {
-  //           this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
-  //         }
-  //       })
-  //     }
-  //     this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
-  //   }
-
-  //   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-  //     _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName])
-  //     const { statusCb } = callbacks
-  //     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-  //       return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
-  //     }
-  //     if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-  //     this.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
-  //   }
-
-  //   getConfirmationCb (modalDialog, confirmDialog) {
-  //     // this code is the same as in recorder.js. TODO need to be refactored out
-  //     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-  //       if (network.name !== 'Main') {
-  //         return continueTxExecution(null)
-  //       }
-  //       const amount = this.blockchain.fromWei(tx.value, true, 'ether')
-  //       const content = confirmDialog(tx, network, amount, gasEstimation, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice.bind(this.blockchain))
-
-  //       modalDialog('Confirm transaction', content,
-  //         {
-  //           label: 'Confirm',
-  //           fn: () => {
-  //             this.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-  //             // TODO: check if this is check is still valid given the refactor
-  //             if (!content.gasPriceStatus) {
-  //               cancelCb('Given transaction fee is not correct')
-  //             } else {
-  //               continueTxExecution(content.txFee)
-  //             }
-  //           }
-  //         }, {
-  //           label: 'Cancel',
-  //           fn: () => {
-  //             return cancelCb('Transaction canceled by user.')
-  //           }
-  //         }
-  //       )
-  //     }
-
-  //     return confirmationCb
-  //   }
-
   const atAddressChanged = (event) => {
     const value = event.target.value
 
@@ -291,33 +163,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const loadFromAddress = () => {
     // trigger dispatchLoadAddress
-    // this.event.trigger('clearInstance')
-
-    // let address = this.atAddressButtonInput.value
-    // if (!ethJSUtil.isValidChecksumAddress(address)) {
-    //   addTooltip(yo`
-    //     <span>
-    //       It seems you are not using a checksumed address.
-    //       <br>A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
-    //       <br>Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
-    //     </span>`)
-    //   address = ethJSUtil.toChecksumAddress(address)
-    // }
-    // this.dropdownLogic.loadContractFromAddress(address,
-    //   (cb) => {
-    //     modalDialogCustom.confirm('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, cb)
-    //   },
-    //   (error, loadType, abi) => {
-    //     if (error) {
-    //       return modalDialogCustom.alert(error)
-    //     }
-    //     if (loadType === 'abi') {
-    //       return this.event.trigger('newContractABIAdded', [abi, address])
-    //     }
-    //     var selectedContract = this.getSelectedContract()
-    //     this.event.trigger('newContractInstanceAdded', [selectedContract.object, address, this.selectContractNames.value])
-    //   }
-    // )
   }
 
   const handleCheckedIPFS = () => {
@@ -427,7 +272,5 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         </div>
       </div>
     </div>
-    // this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
-    // this.setInputParamsPlaceHolder()
   )
 }

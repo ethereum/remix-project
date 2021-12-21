@@ -1,3 +1,5 @@
+import { ContractData } from '../types'
+
 export const fetchAccountsListRequest = () => {
   return {
     type: 'FETCH_ACCOUNTS_LIST_REQUEST',
@@ -215,5 +217,25 @@ export const setTxFeeContent = (content: string) => {
   return {
     type: 'SET_TX_FEE_CONTENT',
     payload: content
+  }
+}
+
+export const addNewInstance = (instance: { contractData: ContractData, address: string, name: string }) => {
+  return {
+    type: 'ADD_INSTANCE',
+    payload: instance
+  }
+}
+
+export const removeExistingInstance = (index: number) => {
+  return {
+    type: 'REMOVE_INSTANCE',
+    payload: index
+  }
+}
+
+export const clearAllInstances = () => {
+  return {
+    type: 'CLEAR_INSTANCES'
   }
 }
