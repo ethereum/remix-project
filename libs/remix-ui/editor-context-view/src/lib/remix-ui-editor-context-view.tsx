@@ -3,15 +3,21 @@ import { sourceMappingDecoder } from '@remix-project/remix-debug'
 
 import './remix-ui-editor-context-view.css';
 
+export type onContextListenerChangedListener = (nodes: Array<astNode>) => void
+
 /* eslint-disable-next-line */
 export interface RemixUiEditorContextViewProps {
   hide: boolean,
-  contextualListener: any,
   gotoLine: (line: number, column: number) => void,
   openFile: (fileName: string) => void,
   getLastCompilationResult: () => any,
   offsetToLineColumn: (position: any, file: any, sources: any, asts: any) => any,
   getCurrentFileName: () => String
+  onContextListenerChanged: (listener: onContextListenerChangedListener) => void
+  referencesOf: (nodes: astNode) => Array<astNode>
+  getActiveHighlights: () => Array<astNode>
+  gasEstimation: (node: astNode) => gasEstimation
+  declarationOf: (node: astNode) => astNode
 }
 
 function isDefinition (node: any) {
@@ -23,7 +29,12 @@ function isDefinition (node: any) {
   node.nodeType === 'EventDefinition'
 }
 
-type astNode = {
+export type gasEstimationType = {
+  executionCost: string,
+  codeDepositCost: string
+}
+
+export type astNode = {
   name: string,
   id: number,
   children: Array<any>,
@@ -42,36 +53,50 @@ export function RemixUiEditorContextView(props: RemixUiEditorContextViewProps) {
     gotoLineDisableRef is used to temporarily disable the update of the view. 
     e.g when the user ask the component to "gotoLine" we don't want to rerender the component (but just to put the mouse on the desired line)
   */
-  const gotoLineDisableRef = useRef(false)
+  const referencesRef = useRef([])
+  const activeHighlightsRef = useRef([])
+  const currentNodeRef = useRef(null as nullableAstNode)
+  const gasEstimationRef = useRef({} as gasEstimationType)
+  const gotoLineDisableRef = useRef(false)  
   const [nodesState, setNode] = useState<Array<astNode>>([])
-  const contextualListener = props.contextualListener
-
+  
   useEffect(() => {
-    contextualListener.on('contextualListener', 'contextChanged', (nodes: Array<astNode>) => {      
+    props.onContextListenerChanged(async (nodes: Array<astNode>) => {      
       if (gotoLineDisableRef.current) {
         gotoLineDisableRef.current = false
         return
       }
       nodesRef.current = nodes
+      if (!props.hide && nodesRef.current && nodesRef.current.length) {
+        currentNodeRef.current = nodesRef.current[nodesRef.current.length - 1]
+        if (!isDefinition(currentNodeRef.current)) {
+          currentNodeRef.current = await props.declarationOf(currentNodeRef.current)
+        }
+      }
+      if (currentNodeRef.current) {
+        referencesRef.current = await props.referencesOf(currentNodeRef.current)
+        gasEstimationRef.current =  await props.gasEstimation(currentNodeRef.current)      
+      }
+      activeHighlightsRef.current = await props.getActiveHighlights()      
       setNode(nodes)
     })
   }, [])
 
   const _render = (node: nullableAstNode) => {
     if (!node) return (<div></div>)
-    let references = contextualListener.referencesOf(node)
+    let references = referencesRef.current
     const type = node.typeDescriptions && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.nodeType
-    references = `${references ? references.length : '0'} reference(s)`
+    let referencesCount = `${references ? references.length : '0'} reference(s)`
 
     let ref = 0
-    const nodes: Array<astNode> = contextualListener.getActiveHighlights()
+    const nodes: Array<astNode> = activeHighlightsRef.current
         
      /*
      * show gas estimation
      */
     const gasEstimation = () => {
       if (node.nodeType === 'FunctionDefinition') {
-        const result = contextualListener.gasEstimation(node)
+        const result: gasEstimationType = gasEstimationRef.current
         const executionCost = ' Execution cost: ' + result.executionCost + ' gas'
         const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
         const estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
@@ -134,24 +159,16 @@ export function RemixUiEditorContextView(props: RemixUiEditorContextViewProps) {
         <div title={type} className="type">{type}</div>
         <div title={node.name} className="name mr-2">{node.name}</div>
         <i className="fas fa-share jump" data-action='gotoref' aria-hidden="true" onClick={jumpTo}></i>
-        <span className="referencesnb">{references}</span>
+        <span className="referencesnb">{referencesCount}</span>
         <i data-action='previous' className="fas fa-chevron-up jump" aria-hidden="true" onClick={jump}></i>
         <i data-action='next' className="fas fa-chevron-down jump" aria-hidden="true" onClick={jump}></i>
       </div>
     )
-  }
-
-  let last: nullableAstNode = null
-  if (!props.hide && nodesRef.current && nodesRef.current.length) {
-    last = nodesRef.current[nodesRef.current.length - 1]
-    if (!isDefinition(last)) {
-      last = contextualListener.declarationOf(last)
-    }
-  }
+  }  
 
   return (
     !props.hide && <div className="container-context-view contextviewcontainer bg-light text-dark border-0 py-1">
-      {_render(last)}
+      {_render(currentNodeRef.current)}
     </div>
   );
 }
