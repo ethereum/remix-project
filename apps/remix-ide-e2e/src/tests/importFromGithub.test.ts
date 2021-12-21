@@ -20,12 +20,12 @@ module.exports = {
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
       .pause(1000)
       .scrollAndClick('button[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('*[data-id="modalDialogModalTitle"]')
-      .assert.containsText('*[data-id="modalDialogModalTitle"]', 'Import from Github')
-      .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Enter the github URL you would like to load.')
-      .waitForElementVisible('*[data-id="importModalDialogCustomPromptText"]')
-      .modalFooterCancelClick()
+      .waitForElementVisible('*[data-id="homeTabModalDialogModalTitle-react"]')
+      .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from Github')
+      .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the github URL you would like to load.')
+      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .refresh()
   },
 
   'Display Error Message For Invalid GitHub URL Modal': function (browser: NightwatchBrowser) {
@@ -33,12 +33,12 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('*[data-id="importModalDialogCustomPromptText"]')
-      .setValue('*[data-id="importModalDialogCustomPromptText"]', testData.invalidURL)
-      .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Not Found')
-      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .setValue('*[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
+      .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
+      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]') // submitted
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
   'Import From Github For Valid URL': function (browser: NightwatchBrowser) {
@@ -47,9 +47,10 @@ module.exports = {
       .clickLaunchIcon('settings')
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('*[data-id="importModalDialogCustomPromptText"]')
-      .setValue('*[data-id="importModalDialogCustomPromptText"]', testData.validURL)
-      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .setValue('*[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
+      .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
+      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
       .waitForElementVisible("div[title='default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol'")
       .end()
