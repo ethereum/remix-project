@@ -380,17 +380,16 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   return (
-    <div className="w-100 h-100 position-relative">
+    <div className="w-100 h-100 d-flex flex-column">
     <Editor
       width="100%"
-      height="100%"
       path={props.currentFile}
       language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
       onMount={handleEditorDidMount}
       beforeMount={handleEditorWillMount}
       options={{ glyphMargin: true }}
     />
-      <div className="contextview position-absolute">
+      <div className="contextview">
         <RemixUiEditorContextView
           hide={false}
           gotoLine={(line, column) => props.plugin.call('editor', 'gotoLine', line, column)}
