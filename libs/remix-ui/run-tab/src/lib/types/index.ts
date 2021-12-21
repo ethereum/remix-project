@@ -182,7 +182,15 @@ export interface RecorderProps {
 }
 
 export interface InstanceContainerProps {
-
+  instances: {
+    instanceList: {
+      contractData: ContractData,
+      address: string,
+      name: string
+    }[],
+    error: string
+  },
+  clearInstances: () => void
 }
 
 export interface Modal {
@@ -228,4 +236,12 @@ export interface MainnetProps {
   txFeeContent: string,
   maxFee: string,
   maxPriorityFee: string
+}
+
+export interface UdappProps {
+  instance: {
+    contractData: ContractData,
+    address: string,
+    name: string
+  }
 }
