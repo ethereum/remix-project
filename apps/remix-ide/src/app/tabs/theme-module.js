@@ -2,10 +2,6 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
-import ReactDOM from 'react-dom'
-// eslint-disable-next-line no-use-before-define
-import React from 'react'
-import yo from 'yo-yo'
 const _paq = window._paq = window._paq || []
 
 const themes = [
@@ -68,7 +64,11 @@ export class ThemeModule extends Plugin {
     if (this.active) {
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
-      const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+
+      const theme = document.createElement('link')
+      theme.setAttribute('rel', 'stylesheet')
+      theme.setAttribute('href', nextTheme.url)
+      theme.setAttribute('id', 'theme-link')
       theme.addEventListener('load', () => {
         if (callback) callback()
       })
@@ -91,9 +91,10 @@ export class ThemeModule extends Plugin {
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').remove()
     const theme = document.createElement('link')
-    theme.rel = 'stylesheet'
-    theme.id = 'theme-link'
-    theme.href = nextTheme.url
+
+    theme.setAttribute('rel', 'stylesheet')
+    theme.setAttribute('href', nextTheme.url)
+    theme.setAttribute('id', 'theme-link')
     theme.addEventListener('load', () => {
       this.emit('themeLoaded', nextTheme)
       this.events.emit('themeLoaded', nextTheme)
