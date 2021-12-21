@@ -16,7 +16,7 @@ export interface RemixUiEditorContextViewProps {
   onContextListenerChanged: (listener: onContextListenerChangedListener) => void
   referencesOf: (nodes: astNode) => Array<astNode>
   getActiveHighlights: () => Array<astNode>
-  gasEstimation: (node: astNode) => gasEstimation
+  gasEstimation: (node: astNode) => gasEstimationType
   declarationOf: (node: astNode) => astNode
 }
 
