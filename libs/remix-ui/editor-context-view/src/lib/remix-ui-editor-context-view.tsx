@@ -150,7 +150,7 @@ export function RemixUiEditorContextView(props: RemixUiEditorContextViewProps) {
   }
 
   return (
-    !props.hide && <div className="container-context-view contextviewcontainer bg-light text-dark border-0">
+    !props.hide && <div className="container-context-view contextviewcontainer bg-light text-dark border-0 py-1">
       {_render(last)}
     </div>
   );
