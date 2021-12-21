@@ -3,7 +3,7 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { addressToString, shortenAddress } from '@remix-ui/helper'
-import { addProvider, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
+import { addNewInstance, addProvider, clearAllInstances, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -201,7 +201,7 @@ const setFinalContext = () => {
   const value = _getProviderDropdownValue()
 
   setExecEnv(value)
-  // this.event.trigger('clearInstance', []) //check cleaIinstance event in run-tab.js
+  clearInstances()
 }
 
 const _getProviderDropdownValue = (): string => {
@@ -303,15 +303,6 @@ const broadcastCompilationResult = (file, source, languageVersion, data) => {
 
   dispatch(fetchContractListSuccess(contracts))
   dispatch(setCurrentFile(file))
-  // this.enableAtAddress(success)
-  // this.enableContractNames(success)
-  // this.setInputParamsPlaceHolder()
-
-  // if (success) {
-  //   this.compFails.style.display = 'none'
-  // } else {
-  //   this.compFails.style.display = 'block'
-  // }
 }
 
 const loadContractFromAddress = (address, confirmCb, cb) => {
@@ -455,13 +446,12 @@ export const createInstance = async (
   }
 
   const finalCb = (error, contractObject, address) => {
-    plugin.event.trigger('clearInstance')
     if (error) {
       const log = logBuilder(error)
 
       return terminalLogger(log)
     }
-    plugin.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+    addInstance({ contractData: contractObject, address, name: contractObject.name })
 
     const data = plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
@@ -537,4 +527,46 @@ export const updateGasPrice = (price: string) => {
 
 export const updateTxFeeContent = (content: string) => {
   dispatch(setTxFeeContent(content))
+}
+
+const addInstance = (instance: { contractData: ContractData, address: string, name: string }) => {
+  dispatch(addNewInstance(instance))
+}
+
+export const removeInstance = (index: number) => {
+  dispatch(removeExistingInstance(index))
+}
+
+export const clearInstances = () => {
+  dispatch(clearAllInstances())
+}
+
+const loadAddress = () => {
+  clearInstances()
+
+  // let address = this.atAddressButtonInput.value
+  // if (!ethJSUtil.isValidChecksumAddress(address)) {
+  //   addTooltip(yo`
+  //     <span>
+  //       It seems you are not using a checksumed address.
+  //       <br>A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
+  //       <br>Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
+  //     </span>`)
+  //   address = ethJSUtil.toChecksumAddress(address)
+  // }
+  // this.dropdownLogic.loadContractFromAddress(address,
+  //   (cb) => {
+  //     modalDialogCustom.confirm('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, cb)
+  //   },
+  //   (error, loadType, abi) => {
+  //     if (error) {
+  //       return modalDialogCustom.alert(error)
+  //     }
+  //     if (loadType === 'abi') {
+  //       return this.event.trigger('newContractABIAdded', [abi, address])
+  //     }
+  //     var selectedContract = this.getSelectedContract()
+  //     addInstance({ contractData: selectedContract.object, address, name: contractObject.name })
+  //   }
+  // )
 }
