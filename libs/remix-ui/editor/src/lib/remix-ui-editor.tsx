@@ -381,14 +381,14 @@ export const EditorUI = (props: EditorUIProps) => {
 
   return (
     <div className="w-100 h-100 d-flex flex-column">
-    <Editor
-      width="100%"
-      path={props.currentFile}
-      language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
-      onMount={handleEditorDidMount}
-      beforeMount={handleEditorWillMount}
-      options={{ glyphMargin: true }}
-    />
+      <Editor
+        width="100%"
+        path={props.currentFile}
+        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
+        onMount={handleEditorDidMount}
+        beforeMount={handleEditorWillMount}
+        options={{ glyphMargin: true }}
+      />
       <div className="contextview">
         <RemixUiEditorContextView
           hide={false}
