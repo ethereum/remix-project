@@ -1165,8 +1165,8 @@
       "plugin": {
         "linter": "eslint"
       }
-    },
-    "defaultProject": "remix-ide"
- }
+    }
+  },
+  "defaultProject": "remix-ide"
 }
 
