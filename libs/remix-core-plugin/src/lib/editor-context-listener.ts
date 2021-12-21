@@ -6,7 +6,7 @@ const { AstWalker } = require('@remix-project/remix-astwalker')
 
 const profile = {
   name: 'contextualListener',
-  methods: [],
+  methods: ['referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf'],
   events: [],
   version: '0.0.1'
 }
