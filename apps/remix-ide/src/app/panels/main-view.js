@@ -1,7 +1,3 @@
-
-import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
-
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 
@@ -67,7 +63,7 @@ export class MainView {
     })
     self.tabProxy.event.on('openFile', (file) => {
       self._view.editor.style.display = 'block'
-      self._view.mainPanel.style.display = 'none'      
+      self._view.mainPanel.style.display = 'none'
     })
     self.tabProxy.event.on('closeFile', (file) => {
     })
