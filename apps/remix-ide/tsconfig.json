@@ -5,7 +5,8 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "module": "es6",
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",

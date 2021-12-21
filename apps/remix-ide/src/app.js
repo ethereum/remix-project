@@ -1,13 +1,7 @@
 'use strict'
-import { basicLogo } from './app/ui/svgLogo'
-
 import { RunTab, makeUdapp } from './app/udapp'
-
-import PanelsResize from './lib/panels-resize'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
-import { FramingService } from './framingService'
-import { WalkthroughService } from './walkthroughService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
@@ -17,14 +11,16 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
+import { FramingService } from './framingService'
+
+import { WalkthroughService } from './walkthroughService'
 
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
 
 const isElectron = require('is-electron')
-const csjs = require('csjs-inject')
-const yo = require('yo-yo')
+
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
 
@@ -33,8 +29,7 @@ const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
 const HardhatProvider = require('./app/tabs/hardhat-provider')
 const Config = require('./config')
-const modalDialogCustom = require('./app/ui/modal-dialog-custom')
-const modalDialog = require('./app/ui/modaldialog')
+
 const FileManager = require('./app/files/fileManager')
 const FileProvider = require('./app/files/fileProvider')
 const DGitProvider = require('./app/files/dgitProvider')
@@ -54,92 +49,13 @@ const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const ContextualListener = require('./app/editor/contextualListener')
-const _paq = window._paq = window._paq || []
 
-const css = csjs`
-  html { box-sizing: border-box; }
-  *, *:before, *:after { box-sizing: inherit; }
-  body                 {
-    /* font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif; */
-    font-size          : .8rem;
-  }
-  pre {
-    overflow-x: auto;
-  }
-  .remixIDE            {
-    width              : 100vw;
-    height             : 100vh;
-    overflow           : hidden;
-    flex-direction     : row;
-    display            : flex;
-  }
-  .mainpanel           {
-    display            : flex;
-    flex-direction     : column;
-    overflow           : hidden;
-    flex               : 1;
-  }
-  .iconpanel           {
-    display            : flex;
-    flex-direction     : column;
-    overflow           : hidden;
-    width              : 50px;
-    user-select        : none;
-  }
-  .sidepanel           {
-    display            : flex;
-    flex-direction     : row-reverse;
-    width              : 320px;
-  }
-  .highlightcode       {
-    position           : absolute;
-    z-index            : 20;
-    background-color   : var(--info);
-  }
-  .highlightcode_fullLine {
-    position           : absolute;
-    z-index            : 20;
-    background-color   : var(--info);
-    opacity            : 0.5;
-  }
-  .centered {
-    position           : fixed;
-    top                : 20%;
-    left               : 45%;
-    width              : 200px;
-    height             : 200px;
-  }
-  .centered svg path {
-    fill: var(--secondary);
-  }
-  .centered svg polygon {
-    fill              : var(--secondary);
-  }
-  .onboarding {
-    color             : var(--text-info);
-    background-color  : var(--info);
-  }
-  .matomoBtn {
-    width              : 100px;
-  }
-`
-
-class App {
+class AppComponent {
   constructor (api = {}, events = {}, opts = {}) {
-    var self = this
+    const self = this
     self.appManager = new RemixAppManager({})
     self._components = {}
-    self._view = {}
-    self._view.splashScreen = yo`
-      <div class=${css.centered}>
-        ${basicLogo()}
-        <div class="info-secondary" style="text-align:center">
-          REMIX IDE
-        </div>
-      </div>
-    `
-    document.body.appendChild(self._view.splashScreen)
-
+    self.registry = registry
     // setup storage
     const configStorage = new Storage('config-v0.8:')
 
@@ -161,67 +77,22 @@ class App {
     migrateFileSystem(self._components.filesProviders.browser)
   }
 
-  init () {
-    this.run().catch(console.error)
-  }
-
-  render () {
-    var self = this
-    if (self._view.el) return self._view.el
-    // not resizable
-    self._view.iconpanel = yo`
-      <div id="icon-panel" data-id="remixIdeIconPanel" class="${css.iconpanel} bg-light">
-      ${''}
-      </div>
-    `
-
-    // center panel, resizable
-    self._view.sidepanel = yo`
-      <div id="side-panel" data-id="remixIdeSidePanel" style="min-width: 320px;" class="${css.sidepanel} border-right border-left">
-        ${''}
-      </div>
-    `
-
-    // handle the editor + terminal
-    self._view.mainpanel = yo`
-      <div id="main-panel" data-id="remixIdeMainPanel" class=${css.mainpanel}>
-        ${''}
-      </div>
-    `
-
-    self._components.resizeFeature = new PanelsResize(self._view.sidepanel)
-
-    self._view.el = yo`
-      <div style="visibility:hidden" class=${css.remixIDE} data-id="remixIDE">
-        ${self._view.iconpanel}
-        ${self._view.sidepanel}
-        ${self._components.resizeFeature.render()}
-        ${self._view.mainpanel}
-      </div>
-    `
-    return self._view.el
-  }
-
   async run () {
-    var self = this
+    const self = this
+    // APP_MANAGER
+    const appManager = self.appManager
+    const pluginLoader = self.appManager.pluginLoader
+    self.workspace = pluginLoader.get()
+    self.engine = new RemixEngine()
+    self.engine.register(appManager)
 
-    // check the origin and warn message
-    if (window.location.hostname === 'yann300.github.io') {
-      modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
-    } else if (window.location.hostname === 'remix-alpha.ethereum.org' ||
-    (window.location.hostname === 'ethereum.github.io' && window.location.pathname.indexOf('/remix-live-alpha') === 0)) {
-      modalDialogCustom.alert('Welcome to the Remix alpha instance. Please use it to try out latest features. But use preferably https://remix.ethereum.org for any production work.')
-    } else if (window.location.protocol.indexOf('http') === 0 &&
-    window.location.hostname !== 'remix.ethereum.org' &&
-    window.location.hostname !== 'localhost' &&
-    window.location.hostname !== '127.0.0.1') {
-      modalDialogCustom.alert(`The Remix IDE has moved to http://remix.ethereum.org.\n
-  This instance of Remix you are visiting WILL NOT BE UPDATED.\n
-  Please make a backup of your contracts and start using http://remix.ethereum.org`)
+    const matomoDomains = {
+      'remix-alpha.ethereum.org': 27,
+      'remix-beta.ethereum.org': 25,
+      'remix.ethereum.org': 23
     }
-    if (window.location.protocol.indexOf('https') === 0) {
-      toolTip('You are using an `https` connection. Please switch to `http` if you are using Remix against an `http Web3 provider` or allow Mixed Content in your browser.')
-    }
+    self.showMatamo = (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics'))
+    self.walkthroughService = new WalkthroughService(appManager, self.showMatamo)
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
     // workaround for Electron support
@@ -232,23 +103,11 @@ class App {
       }
     }
 
-    // APP_MANAGER
-    const appManager = self.appManager
-    const pluginLoader = appManager.pluginLoader
-    const workspace = pluginLoader.get()
-    const engine = new RemixEngine()
-    engine.register(appManager)
-
     // SERVICES
     // ----------------- theme service ---------------------------------
-    const themeModule = new ThemeModule(registry)
-    registry.put({ api: themeModule, name: 'themeModule' })
-    themeModule.initTheme(() => {
-      setTimeout(() => {
-        document.body.removeChild(self._view.splashScreen)
-        self._view.el.style.visibility = 'visible'
-      }, 1500)
-    })
+    self.themeModule = new ThemeModule(registry)
+    registry.put({ api: self.themeModule, name: 'themeModule' })
+
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
     registry.put({ api: editor, name: 'editor' })
@@ -288,10 +147,10 @@ class App {
       { appManager, blockchain },
       {
         getPosition: (event) => {
-          var limitUp = 36
-          var limitDown = 20
-          var height = window.innerHeight
-          var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
+          const limitUp = 36
+          const limitDown = 20
+          const height = window.innerHeight
+          let newpos = (event.pageY < limitUp) ? limitUp : event.pageY
           newpos = (newpos < height - limitDown) ? newpos : height - limitDown
           return height - newpos
         }
@@ -299,10 +158,10 @@ class App {
     )
     const contextualListener = new ContextualListener({ editor })
 
-    engine.register([
+    self.engine.register([
       blockchain,
       contentImport,
-      themeModule,
+      self.themeModule,
       editor,
       fileManager,
       compilerMetadataGenerator,
@@ -314,109 +173,43 @@ class App {
       web3Provider,
       fetchAndCompile,
       dGitProvider,
-      hardhatProvider
+      hardhatProvider,
+      self.walkthroughService
     ])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
-    registry.put({ api: mainview, name: 'mainview' })
+    self.mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
+    registry.put({ api: self.mainview, name: 'mainview' })
 
-    engine.register([
+    self.engine.register([
       appPanel,
-      mainview.tabProxy
+      self.mainview.tabProxy
     ])
 
     // those views depend on app_manager
-    const menuicons = new VerticalIcons(appManager)
-    const sidePanel = new SidePanel(appManager, menuicons)
-    const hiddenPanel = new HiddenPanel()
-    const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
+    self.menuicons = new VerticalIcons(appManager)
+    self.sidePanel = new SidePanel(appManager, self.menuicons)
+    self.hiddenPanel = new HiddenPanel()
+
+    const pluginManagerComponent = new PluginManagerComponent(appManager, self.engine)
     const filePanel = new FilePanel(appManager)
-    const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel, contentImport)
-    const settings = new SettingsTab(
+    const landingPage = new LandingPage(appManager, self.menuicons, fileManager, filePanel, contentImport)
+    self.settings = new SettingsTab(
       registry.get('config').api,
       editor,
       appManager
     )
 
-    // adding Views to the DOM
-    self._view.mainpanel.appendChild(mainview.render())
-    self._view.iconpanel.appendChild(menuicons.render())
-    self._view.sidepanel.appendChild(sidePanel.render())
-    document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
-
-    engine.register([
-      menuicons,
+    self.engine.register([
+      self.menuicons,
       landingPage,
-      hiddenPanel,
-      sidePanel,
+      self.hiddenPanel,
+      self.sidePanel,
       filePanel,
       pluginManagerComponent,
-      settings
+      self.settings
     ])
-
-    const queryParams = new QueryParams()
-    const params = queryParams.get()
-
-    const onAcceptMatomo = () => {
-      _paq.push(['forgetUserOptOut'])
-      // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
-      document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-      settings.updateMatomoAnalyticsChoice(true)
-      const el = document.getElementById('modal-dialog')
-      el.parentElement.removeChild(el)
-      startWalkthroughService()
-    }
-    const onDeclineMatomo = () => {
-      settings.updateMatomoAnalyticsChoice(false)
-      _paq.push(['optUserOut'])
-      const el = document.getElementById('modal-dialog')
-      el.parentElement.removeChild(el)
-      startWalkthroughService()
-    }
-
-    const startWalkthroughService = () => {
-      const walkthroughService = new WalkthroughService(localStorage)
-      if (!params.code && !params.url && !params.minimizeterminal && !params.gist && !params.minimizesidepanel) {
-        walkthroughService.start()
-      }
-    }
-
-    // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
-    const matomoDomains = {
-      'remix-alpha.ethereum.org': 27,
-      'remix-beta.ethereum.org': 25,
-      'remix.ethereum.org': 23
-    }
-    if (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics')) {
-      modalDialog(
-        'Help us to improve Remix IDE',
-        yo`
-        <div>
-          <p>An Opt-in version of <a href="https://matomo.org" target="_blank">Matomo</a>, an open source data analytics platform is being used to improve Remix IDE.</p>
-          <p>We realize that our users have sensitive information in their code and that their privacy - your privacy - must be protected.</p>
-          <p>All data collected through Matomo is stored on our own server - no data is ever given to third parties.  Our analytics reports are public: <a href="https://matomo.ethereum.org/index.php?module=MultiSites&action=index&idSite=23&period=day&date=yesterday" target="_blank">take a look</a>.</p>
-          <p>We do not collect nor store any personally identifiable information (PII).</p>
-          <p>For more info, see: <a href="https://medium.com/p/66ef69e14931/" target="_blank">Matomo Analyitcs on Remix iDE</a>.</p>
-          <p>You can change your choice in the Settings panel anytime.</p>
-          <div class="d-flex justify-content-around pt-3 border-top">
-            <button class="btn btn-primary ${css.matomoBtn}" onclick=${() => onAcceptMatomo()}>Sure</button>
-            <button class="btn btn-secondary ${css.matomoBtn}" onclick=${() => onDeclineMatomo()}>Decline</button>
-          </div>
-        </div>`,
-        {
-          label: '',
-          fn: null
-        },
-        {
-          label: '',
-          fn: null
-        }
-      )
-    } else {
-      startWalkthroughService()
-    }
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const compileTab = new CompileTab(registry.get('config').api, registry.get('filemanager').api)
@@ -428,7 +221,7 @@ class App {
       filePanel,
       registry.get('compilersartefacts').api,
       networkModule,
-      mainview,
+      self.mainview,
       registry.get('fileproviders/browser').api
     )
     const analysis = new AnalysisTab(registry)
@@ -442,7 +235,7 @@ class App {
       contentImport
     )
 
-    engine.register([
+    self.engine.register([
       compileTab,
       run,
       debug,
@@ -453,47 +246,55 @@ class App {
       filePanel.hardhatHandle,
       filePanel.slitherHandle
     ])
+  }
+
+  async activate () {
+    const queryParams = new QueryParams()
+    const params = queryParams.get()
+    const self = this
 
     if (isElectron()) {
-      appManager.activatePlugin('remixd')
+      self.appManager.activatePlugin('remixd')
     }
 
     try {
-      engine.register(await appManager.registeredPlugins())
+      self.engine.register(await self.appManager.registeredPlugins())
     } catch (e) {
       console.log('couldn\'t register iframe plugins', e.message)
     }
 
-    await appManager.activatePlugin(['editor'])
-    await appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
-    await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
-    await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
-    await appManager.activatePlugin(['home'])
-    await appManager.activatePlugin(['settings'])
-    await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+    await self.appManager.activatePlugin(['editor'])
+    await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
+    await self.appManager.activatePlugin(['home'])
+    await self.appManager.activatePlugin(['settings'])
+    await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+    await self.appManager.activatePlugin(['settings'])
+    await self.appManager.activatePlugin(['walkthrough'])
 
-    appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
-      await appManager.registerContextMenuItems()
+    self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      await self.appManager.registerContextMenuItems()
     })
-    await appManager.activatePlugin(['filePanel'])
+
+    await self.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
-    appManager.on('editor', 'editorMounted', () => {
-      if (Array.isArray(workspace)) {
-        appManager.activatePlugin(workspace).then(async () => {
+    self.appManager.on('editor', 'editorMounted', () => {
+      if (Array.isArray(self.workspace)) {
+        self.appManager.activatePlugin(self.workspace).then(async () => {
           try {
             if (params.deactivate) {
-              await appManager.deactivatePlugin(params.deactivate.split(','))
+              await self.appManager.deactivatePlugin(params.deactivate.split(','))
             }
           } catch (e) {
             console.log(e)
           }
-
           if (params.code) {
             // if code is given in url we focus on solidity plugin
-            menuicons.select('solidity')
+            self.menuicons.select('solidity')
           } else {
             // If plugins are loaded from the URL params, we focus on the last one.
-            if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+            if (self.appManager.pluginLoader.current === 'queryParams' && self.workspace.length > 0) self.menuicons.select(self.workspace[self.workspace.length - 1])
           }
 
           if (params.call) {
@@ -501,21 +302,20 @@ class App {
             if (callDetails.length > 1) {
               toolTip(`initiating ${callDetails[0]} ...`)
               // @todo(remove the timeout when activatePlugin is on 0.3.0)
-              appManager.call(...callDetails).catch(console.error)
+              self.appManager.call(...callDetails).catch(console.error)
             }
           }
         }).catch(console.error)
       }
     })
     // activate solidity plugin
-    appManager.activatePlugin(['solidity', 'udapp'])
-
+    self.appManager.activatePlugin(['solidity', 'udapp'])
     // Load and start the service who manager layout and frame
-    const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
+    const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, null)
 
     if (params.embed) framingService.embed()
     framingService.start(params)
   }
 }
 
-module.exports = App
+export default AppComponent
