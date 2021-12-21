@@ -186,6 +186,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   return (
     <>
       <ModalDialog
+        id='homeTab'
         title={ 'Import from ' + state.modalInfo.title }
         okLabel='Import'
         hide={ !state.showModalDialog }
@@ -207,7 +208,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             name='prompt_text'
             id='inputPrompt_text'
             className="w-100 mt-1 form-control"
-            data-id="importModalDialogCustomPromptText"
+            data-id="homeTabModalDialogCustomPromptText"
             value={state.importSource}
             onInput={(e) => {
               setState(prevState => {
