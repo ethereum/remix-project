@@ -51,6 +51,7 @@ git clone https://github.com/ethereum/remix-project.git
 ```bash
 cd remix-project
 npm install
+npm run build:libs // Build remix libs
 nx build
 nx serve
 ```
