@@ -1,11 +1,7 @@
-
-export interface Modal {
-    hide?: boolean
-    title: string
-    // eslint-disable-next-line no-undef
-    message: string | JSX.Element
-    okLabel: string
-    okFn: () => void
-    cancelLabel: string
-    cancelFn: () => void
-  }
+export const enum ModalTypes {
+    alert = 'alert',
+    confirm = 'confirm',
+    prompt = 'prompt',
+    password = 'password',
+    default = 'default',
+}

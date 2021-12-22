@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
-import AppContext from '../context/context'
+import { AppContext } from '../../context/context'
 const _paq = window._paq = window._paq || []
 
 const MatomoDialog = (props) => {

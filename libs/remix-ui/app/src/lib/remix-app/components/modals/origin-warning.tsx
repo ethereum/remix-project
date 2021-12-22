@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 
-const AlertModal = () => {
+const OriginWarning = () => {
   const [visible, setVisible] = useState<boolean>(true)
   const [content, setContent] = useState<string>('')
 
@@ -40,4 +40,4 @@ const AlertModal = () => {
     cancelFn={closeModal}>{content}</ModalDialog>)
 }
 
-export default AlertModal
+export default OriginWarning
