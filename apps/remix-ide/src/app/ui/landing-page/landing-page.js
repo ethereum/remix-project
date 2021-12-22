@@ -5,7 +5,6 @@ import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
 
-const globalRegistry = require('../../../global/registry')
 const GistHandler = require('../../../lib/gist-handler')
 
 const profile = {
@@ -43,7 +42,6 @@ export class LandingPage extends ViewPlugin {
     ReactDOM.render(
       <RemixUiHomeTab
         plugin={this}
-        registry={globalRegistry}
       />
       , this.el)
   }
