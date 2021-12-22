@@ -1,43 +1,48 @@
-import { actionTypes } from '../state/modals'
-import { Modal } from '../types'
+import { actionTypes, ModalAction } from '../actions/modals'
+import { ModalInitialState } from '../state/modals'
+import { AppModal, ModalState } from '../interface'
 
-interface Action {
-  type: string
-  payload: any
-}
-
-export interface ModalState {
-  modals: Modal[],
-  toasters: string[],
-  focusModal: Modal,
-  focusToaster: string
-}
-
-const ModalInitialState: ModalState = {
-  modals: [],
-  toasters: [],
-  focusModal: {
-    hide: true,
-    title: '',
-    message: '',
-    okLabel: '',
-    okFn: () => {},
-    cancelLabel: '',
-    cancelFn: () => {}
-  },
-  focusToaster: ''
-}
-
-export const modalReducer = (state: ModalState = ModalInitialState, action: Action) => {
+export const modalReducer = (state: ModalState = ModalInitialState, action: ModalAction) => {
+  console.log(action)
   switch (action.type) {
-    case actionTypes.setModal:
-      state.modals.push(action.payload)
+    case actionTypes.setModal: {
+      console.log('set modal', action, Date.now())
+      let modalList:AppModal[] = state.modals
+      modalList.push(action.payload)
+      if (state.modals.length === 1 && state.focusModal.hide === true) { // if it's the first one show it
+        const focusModal: AppModal = {
+          hide: false,
+          title: modalList[0].title,
+          message: modalList[0].message,
+          okLabel: modalList[0].okLabel,
+          okFn: modalList[0].okFn,
+          cancelLabel: modalList[0].cancelLabel,
+          cancelFn: modalList[0].cancelFn,
+          modalType: modalList[0].modalType,
+          defaultValue: modalList[0].defaultValue
+        }
+
+        modalList = modalList.slice()
+        modalList.shift()
+        return { ...state, modals: modalList, focusModal: focusModal }
+      }
+      return { ...state, modals: modalList }
+    }
+    case actionTypes.handleHideModal:
+      console.log('handle hid', JSON.stringify(state.modals))
+      state.focusModal = { ...state.focusModal, hide: true, message: null }
       return { ...state }
-  }
-  return {
-    modals: state.modals,
-    toasters: state.toasters,
-    focusModal: state.focusModal,
-    focusToaster: state.focusToaster
+
+    case actionTypes.setToast:
+      state.toasters.push(action.payload)
+      if (state.toasters.length > 0) {
+        const focus = state.toasters[0]
+        state.toasters.shift()
+        return { ...state, focusToaster: focus }
+      }
+      return { ...state }
+
+    case actionTypes.handleToaster:
+      return { ...state, focusToaster: '' }
   }
 }
