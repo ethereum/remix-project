@@ -102,6 +102,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   addView (profile, view) {
+    console.log('add view', profile)
     super.addView(profile, view)
     this.verticalIcons.linkContent(profile)
   }

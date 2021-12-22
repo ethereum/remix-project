@@ -19,6 +19,8 @@ import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, Fetch
 
 import migrateFileSystem from './migrateFileSystem'
 
+import { IframeReactPlugin } from '@remix-ui/app'
+
 const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
@@ -235,7 +237,32 @@ class AppComponent {
       contentImport
     )
 
+    const sp =
+    {
+      name: 'testplugin',
+      displayName: 'testplugin',
+      description: 'Solidity contract and metadata verification service',
+      version: '0.8.1',
+      methods: [
+        'fetch',
+        'fetchAndSave',
+        'fetchByNetwork',
+        'verify',
+        'verifyByNetwork'
+      ],
+      kind: 'none',
+      icon: 'https://github.com/sourcifyeth/assets/raw/master/logo-assets-png/sourcify_blue.png',
+      location: 'sidePanel',
+      url: 'https://dgit3remix.web.app/',
+      documentation: 'https://github.com/ethereum/sourcify',
+      canActivate: ['dGitProvider'],
+      targets: ['remix', 'vscode']
+    }
+
+    const testplugin = new IframeReactPlugin(sp)
+
     self.engine.register([
+      testplugin,
       compileTab,
       run,
       debug,
@@ -272,6 +299,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['walkthrough'])
+    await self.appManager.activatePlugin(['testplugin'])
 
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()

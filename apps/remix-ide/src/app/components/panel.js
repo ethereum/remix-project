@@ -73,6 +73,7 @@ export class AbstractPanel extends HostPlugin {
   }
 
   addView (profile, view) {
+    console.log('addView', profile, view)
     this.add(view, profile.name)
   }
 
