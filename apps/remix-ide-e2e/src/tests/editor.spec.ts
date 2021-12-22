@@ -9,7 +9,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should zoom in editor': function (browser: NightwatchBrowser) {
+  'Should zoom in editor ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
@@ -22,7 +22,7 @@ module.exports = {
       .checkElementStyle('.view-lines', 'font-size', '16px')
   },
 
-  'Should zoom out editor': function (browser: NightwatchBrowser) {
+  'Should zoom out editor ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .checkElementStyle('.view-lines', 'font-size', '16px')
       .click('*[data-id="tabProxyZoomOut"]')
@@ -30,7 +30,7 @@ module.exports = {
       .checkElementStyle('.view-lines', 'font-size', '14px')
   },
 
-  'Should display compile error in editor': function (browser: NightwatchBrowser) {
+  'Should display compile error in editor ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .setEditorValue(storageContractWithError + 'error')
       .pause(2000)
@@ -42,7 +42,7 @@ module.exports = {
       .checkAnnotations('fa-exclamation-square', 29) // error
   },
 
-  'Should minimize and maximize codeblock in editor': '' + function (browser: NightwatchBrowser) {
+  'Should minimize and maximize codeblock in editor ': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .waitForElementVisible('.ace_open')
       .click('.ace_start:nth-of-type(1)')
@@ -51,7 +51,7 @@ module.exports = {
       .waitForElementVisible('.ace_open')
   },
 
-  'Should add breakpoint to editor': function (browser: NightwatchBrowser) {
+  'Should add breakpoint to editor ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
       .waitForElementNotPresent('.margin-view-overlays .fa-circle')
       .execute(() => {
@@ -83,7 +83,7 @@ module.exports = {
     */
   },
 
-  'Should highlight source code': function (browser: NightwatchBrowser) {
+  'Should highlight source code ': function (browser: NightwatchBrowser) {
     // include all files here because switching between plugins in side-panel removes highlight
     browser
       .addFile('sourcehighlight.js', sourcehighlightScript)
@@ -115,7 +115,7 @@ module.exports = {
       .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
-  'Should remove all highlights from source code': function (browser: NightwatchBrowser) {
+  'Should remove all highlights from source code ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .click('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .pause(2000)

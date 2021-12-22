@@ -23,7 +23,7 @@ export function Workspace () {
       else setCurrentWorkspace(NO_WORKSPACE)
       global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
     } else if (global.fs.mode === 'localhost') {
-      // global.dispatchFetchWorkspaceDirectory('/')
+      global.dispatchFetchWorkspaceDirectory('/')
       setCurrentWorkspace(LOCALHOST)
     }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
@@ -127,6 +127,7 @@ export function Workspace () {
               </label>
               <span className="remixui_menu">
                 <span
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspaceCreate'
                   data-id='workspaceCreate'
                   onClick={(e) => {

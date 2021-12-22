@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable no-use-before-define */
+import React from 'react'
 
 import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
 
@@ -11,7 +12,7 @@ export const App = () => {
     <div>
       <SolidityCompiler api={remix} />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
