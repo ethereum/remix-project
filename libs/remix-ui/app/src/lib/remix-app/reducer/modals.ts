@@ -3,10 +3,8 @@ import { ModalInitialState } from '../state/modals'
 import { AppModal, ModalState } from '../interface'
 
 export const modalReducer = (state: ModalState = ModalInitialState, action: ModalAction) => {
-  console.log(action)
   switch (action.type) {
     case modalActionTypes.setModal: {
-      console.log('set modal', action, Date.now())
       let modalList:AppModal[] = state.modals
       modalList.push(action.payload)
       if (state.modals.length === 1 && state.focusModal.hide === true) { // if it's the first one show it
@@ -29,7 +27,6 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       return { ...state, modals: modalList }
     }
     case modalActionTypes.handleHideModal:
-      console.log('handle hid', JSON.stringify(state.modals))
       state.focusModal = { ...state.focusModal, hide: true, message: null }
       return { ...state }
 

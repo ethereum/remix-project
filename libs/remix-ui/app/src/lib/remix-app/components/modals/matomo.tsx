@@ -23,7 +23,6 @@ const MatomoDialog = (props) => {
 
   useEffect(() => {
     if (visible && showMatamo) {
-      console.log('show matomo')
       modal('Help us to improve Remix IDE', message(), 'Accept', handleModalOkClick, 'Decline', declineModal)
     }
   }, [visible])
