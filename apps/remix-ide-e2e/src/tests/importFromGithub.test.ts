@@ -36,11 +36,9 @@ module.exports = {
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .execute(() => {
-        // browser.setValue(query, content) is not working in this context for chrome.
-        // so we focus on it and use browser.keys()
         (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
       }, [], () => {})
-      .keys(testData.invalidURL)
+      .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]') // submitted
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
@@ -56,11 +54,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
       .clearValue('*[data-id="homeTabModalDialogCustomPromptText"]')
       .execute(() => {
-        // browser.setValue(query, content) is not working in this context for chrome.
-        // so we focus on it and use browser.keys()
         (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
       }, [], () => {})
-      .keys(testData.validURL)
+      .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
