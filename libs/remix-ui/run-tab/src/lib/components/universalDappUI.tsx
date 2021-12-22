@@ -1,79 +1,38 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { shortenAddress } from 'apps/remix-ide/src/lib/helper'
-import { UdappProps } from '../types'
+import { FuncABI, UdappProps } from '../types'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import * as remixLib from '@remix-project/remix-lib'
+import * as ethJSUtil from 'ethereumjs-util'
+import { ContractGUI } from './contractGUI'
+
+const txHelper = remixLib.execution.txHelper
 
 export function UniversalDappUI (props: UdappProps) {
-  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
-  // const self = this
-  // address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-  // address = ethJSUtil.toChecksumAddress(address)
-  // var instance = yo`<div class="instance run-instance border-dark ${css.instance} ${css.hidesub}" id="instance${address}" data-shared="universalDappUiInstance"></div>`
-  // const context = this.blockchain.context()
+  const [toggleExpander, setToggleExpander] = useState<boolean>(true)
+  const [contractABI, setContractABI] = useState<FuncABI[]>(null)
+  const [address, setAddress] = useState<string>('')
 
-  // var shortAddress = helper.shortenAddress(address)
-  // var title = yo`
-  //   <div class="${css.title} alert alert-secondary">
-  //     <button data-id="universalDappUiTitleExpander" class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}">
-  //       <i class="fas fa-angle-right" aria-hidden="true"></i>
-  //     </button>
-  //     <div class="input-group ${css.nameNbuts}">
-  //       <div class="${css.titleText} input-group-prepend">
-  //         <span class="input-group-text ${css.spanTitleText}">
-  //           ${contractName} at ${shortAddress} (${context})
-  //         </span>
-  //       </div>
-  //       <div class="btn-group">
-  //         <button class="btn p-1 btn-secondary">${copyToClipboard(() => address)}</button>
-  //       </div>
-  //     </div>
-  //   </div>
-  // `
+  useEffect(() => {
+    if (!props.abi) {
+      const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
 
-  // var close = yo`
-  //   <button
-  //     class="${css.udappClose} mr-1 p-1 btn btn-secondary align-items-center"
-  //     data-id="universalDappUiUdappClose"
-  //     onclick=${remove}
-  //     title="Remove from the list"
-  //   >
-  //     <i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i>
-  //   </button>`
-  // title.querySelector('.btn-group').appendChild(close)
+      setContractABI(abi)
+    } else {
+      setContractABI(props.abi)
+    }
+  }, [props.abi])
 
-  // var contractActionsWrapper = yo`
-  //   <div class="${css.cActionsWrapper}" data-id="universalDappUiContractActionWrapper">
-  //   </div>
-  // `
+  useEffect(() => {
+    if (props.instance.address) {
+      // @ts-ignore
+      let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
 
-  // function remove () {
-  //   instance.remove()
-  //   // @TODO perhaps add a callack here to warn the caller that the instance has been removed
-  // }
-
-  // function toggleClass (e) {
-  //   $(instance).toggleClass(`${css.hidesub} bg-light`)
-  //   // e.currentTarget.querySelector('i')
-  //   e.currentTarget.querySelector('i').classList.toggle('fa-angle-right')
-  //   e.currentTarget.querySelector('i').classList.toggle('fa-angle-down')
-  // }
-
-  // instance.appendChild(title)
-  // instance.appendChild(contractActionsWrapper)
-
-  // $.each(contractABI, (i, funABI) => {
-  //   if (funABI.type !== 'function') {
-  //     return
-  //   }
-  //   // @todo getData cannot be used with overloaded functions
-  //   contractActionsWrapper.appendChild(this.getCallButton({
-  //     funABI: funABI,
-  //     address: address,
-  //     contractABI: contractABI,
-  //     contractName: contractName,
-  //     contract
-  //   }))
-  // })
+      address = ethJSUtil.toChecksumAddress(address)
+      setAddress(address)
+    }
+  }, [props.instance.address])
 
   // const calldataInput = yo`
   //   <input id="deployAndRunLLTxCalldata" class="${css.calldataInput} form-control" title="The Calldata to send to fallback function of the contract.">
@@ -168,8 +127,49 @@ export function UniversalDappUI (props: UdappProps) {
     setToggleExpander(!toggleExpander)
   }
 
+  const remove = () => {
+    props.removeInstance(props.index)
+  }
+
+  const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues) => {
+    const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
+    const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
+
+    // const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
+
+    // const outputCb = (returnValue) => {
+    //   if (outputOverride) {
+    //     const decoded = decodeResponseToTreeView(returnValue, args.funABI)
+    //     outputOverride.innerHTML = ''
+    //     outputOverride.appendChild(decoded)
+    //   }
+    // }
+    // let callinfo = ''
+    // if (lookupOnly) callinfo = 'call'
+    // else if (args.funABI.type === 'fallback' || args.funABI.type === 'receive') callinfo = 'lowLevelInteracions'
+    // else callinfo = 'transact'
+
+    // _paq.push(['trackEvent', 'udapp', callinfo, this.blockchain.getCurrentNetworkStatus().network.name])
+    // const params = args.funABI.type !== 'fallback' ? inputsValues : ''
+    // this.blockchain.runOrCallContractMethod(
+    //   args.contractName,
+    //   args.contractABI,
+    //   args.funABI,
+    //   args.contract,
+    //   inputsValues,
+    //   args.address,
+    //   params,
+    //   lookupOnly,
+    //   logMsg,
+    //   this.logCallback,
+    //   outputCb,
+    //   callbacksInContext.confirmationCb.bind(callbacksInContext),
+    //   callbacksInContext.continueCb.bind(callbacksInContext),
+    //   callbacksInContext.promptCb.bind(callbacksInContext))
+  }
+
   return (
-    <div className={`udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : ''}`} id={`instance${props.instance.address}`} data-shared="universalDappUiInstance">
+    <div className={`udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : ''}`} id={`instance${address}`} data-shared="universalDappUiInstance">
       <div className="udapp_title alert alert-secondary">
         <button data-id="universalDappUiTitleExpander" className="btn udapp_titleExpander" onClick={toggleClass}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
@@ -177,13 +177,34 @@ export function UniversalDappUI (props: UdappProps) {
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
             <span className="input-group-text udapp_spanTitleText">
-              {props.instance.name} at {shortenAddress(props.instance)} ({context})
+              {props.instance.name} at {shortenAddress(address)} ({props.context})
             </span>
           </div>
           <div className="btn-group">
-            <button className="btn p-1 btn-secondary">${copyToClipboard(() => address)}</button>
+            <button className="btn p-1 btn-secondary"><CopyToClipboard content={address} /></button>
           </div>
         </div>
+        <button
+          className="udapp_udappClose mr-1 p-1 btn btn-secondary align-items-center"
+          data-id="universalDappUiUdappClose"
+          onClick={remove}
+          title="Remove from the list"
+        >
+          <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
+        {
+          contractABI && contractABI.map((funcABI) => {
+            if (funcABI.type !== 'function') return null
+            const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
+            const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
+
+            return <div className="udapp_value">
+              <ContractGUI funcABI={funcABI} clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => runTransaction(lookupOnly, funcABI, valArray, inputsValues)} inputs={props.instance.contractData.getConstructorInputs()} evmBC={props.instance.contractData.bytecodeObject} lookupOnly={lookupOnly} />
+            </div>
+          })
+        }
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import { InstanceContainerProps } from '../types'
+import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI (props: InstanceContainerProps) {
   const { instanceList } = props.instances
@@ -21,7 +22,10 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
         }
       </div>
       { instanceList.length > 0
-        ? <div></div>
+        ? <div> { props.instances.instanceList.map((instance, index) => {
+          return <UniversalDappUI instance={instance} context={props.getContext()} removeInstance={props.removeInstance} index={index} />
+        }) }
+        </div>
         : <span className="mx-2 mt-3 alert alert-warning" data-id="deployAndRunNoInstanceText" role="alert">
           Currently you have no contract instances to interact with.
         </span>

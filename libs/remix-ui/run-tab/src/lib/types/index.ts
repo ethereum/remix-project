@@ -100,11 +100,19 @@ export interface ValueProps {
   sendUnit: string
 }
 
+export interface FuncABI {
+  name: string,
+  type: string,
+  inputs: { name: string, type: string }[],
+  stateMutability: string,
+  payable: boolean,
+  constant: any
+}
 export interface ContractData {
   name: string,
   contract: any,
   compiler: any,
-  abi: any,
+  abi: FuncABI[],
   bytecodeObject: any,
   bytecodeLinkReferences: any,
   object: any,
@@ -190,7 +198,9 @@ export interface InstanceContainerProps {
     }[],
     error: string
   },
-  clearInstances: () => void
+  clearInstances: () => void,
+  removeInstance: (index: number) => void,
+  getContext: () => 'memory' | 'blockchain'
 }
 
 export interface Modal {
@@ -206,13 +216,7 @@ export interface Modal {
 
 export interface ContractGUIProps {
   title?: string,
-  funcABI: {
-    name: string,
-    type: string,
-    inputs: { name: string, type: string }[],
-    stateMutability: string,
-    payable: boolean
-  },
+  funcABI: FuncABI,
   inputs: any,
   clickCallBack: (inputs: { name: string, type: string }[], input: string) => void,
   widthClass?: string,
@@ -243,5 +247,9 @@ export interface UdappProps {
     contractData: ContractData,
     address: string,
     name: string
-  }
+  },
+  context: 'memory' | 'blockchain',
+  abi?: FuncABI[],
+  removeInstance: (index: number) => void,
+  index: number
 }

@@ -570,3 +570,7 @@ const loadAddress = () => {
   //   }
   // )
 }
+
+export const getContext = () => {
+  return plugin.blockchain.context()
+}
