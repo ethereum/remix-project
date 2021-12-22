@@ -35,6 +35,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .clearValue('*[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('*[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]') // submitted
@@ -49,6 +50,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .clearValue('*[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('*[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
