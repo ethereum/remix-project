@@ -232,21 +232,25 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const renderTests = (tests: any, contract: any, filename: any) => {
-    const index = tests.findIndex((test: any) => test.type === 'testFailure')
-    let label = (<div
-      className="alert-primary d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
-    >
-      Unknown
-    </div>)
+  const renderContract = (filename: any, contract: any, index: number, withoutLabel = false) => {
+    if (withoutLabel) {
+      const contractCard: any = (
+        <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
+          <span className="font-weight-bold">{contract ? contract: ''} ({filename})</span>
+        </div>
+      )
+      setTestsOutput(prevCards => ([...prevCards, contractCard]))
+      return
+    }
+    let label
     if (index > -1) label = (<div
-      className="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
+      className="alert-danger d-inline-block mb-1 mr-1 p-1 failed_{runningTestFileName}"
       title="At least one contract test failed"
     >
       FAIL
     </div>) 
     else label = (<div
-      className="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}"
+      className="alert-success d-inline-block mb-1 mr-1 p-1 passed_{runningTestFileName}"
       title="All contract tests passed"
     >
       PASS
@@ -262,6 +266,12 @@ export const SolidityUnitTesting = (props: any) => {
       prevCards[index] = ContractCard
       return prevCards
     })
+  }
+
+  const renderTests = (tests: any, contract: any, filename: any) => {
+    const index = tests.findIndex((test: any) => test.type === 'testFailure')
+    // show filename and contract
+    renderContract(filename, contract, index)
     // show tests
     for(const test of tests) {
       if(!test.rendered) {
@@ -357,12 +367,7 @@ export const SolidityUnitTesting = (props: any) => {
             renderTests(tests, contract, filename)
           } else {
             // show only contract and file name
-            const contractCard: any = (
-              <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
-                <span className="font-weight-bold">{contract ? contract: ''} ({filename})</span>
-              </div>
-            )
-            setTestsOutput(prevCards => ([...prevCards, contractCard]))
+            renderContract(filename, contract, -1, true)
           }
         } else if (contract === 'errors' && fileTestsResult['errors']) {
           const errors = fileTestsResult['errors']
@@ -433,13 +438,8 @@ export const SolidityUnitTesting = (props: any) => {
     ++readyTestsNumber
     setReadyTestsNumber(readyTestsNumber)
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
-      // testCallback({ type: 'contract', filename })
-      const contractCard: any = (
-        <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
-          <span className="font-weight-bold">({filename})</span>
-        </div>
-      )
-      setTestsOutput(prevCards => ([...prevCards, contractCard]))
+      // show only file name
+      renderContract(filename, null, -1, true)
       currentErrors = _errors.errors
       // this.setHeader(false)
     }
