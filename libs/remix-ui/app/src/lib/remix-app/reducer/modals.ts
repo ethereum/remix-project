@@ -1,11 +1,11 @@
-import { actionTypes, ModalAction } from '../actions/modals'
+import { modalActionTypes, ModalAction } from '../actions/modals'
 import { ModalInitialState } from '../state/modals'
 import { AppModal, ModalState } from '../interface'
 
 export const modalReducer = (state: ModalState = ModalInitialState, action: ModalAction) => {
   console.log(action)
   switch (action.type) {
-    case actionTypes.setModal: {
+    case modalActionTypes.setModal: {
       console.log('set modal', action, Date.now())
       let modalList:AppModal[] = state.modals
       modalList.push(action.payload)
@@ -28,12 +28,12 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       }
       return { ...state, modals: modalList }
     }
-    case actionTypes.handleHideModal:
+    case modalActionTypes.handleHideModal:
       console.log('handle hid', JSON.stringify(state.modals))
       state.focusModal = { ...state.focusModal, hide: true, message: null }
       return { ...state }
 
-    case actionTypes.setToast:
+    case modalActionTypes.setToast:
       state.toasters.push(action.payload)
       if (state.toasters.length > 0) {
         const focus = state.toasters[0]
@@ -42,7 +42,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       }
       return { ...state }
 
-    case actionTypes.handleToaster:
+    case modalActionTypes.handleToaster:
       return { ...state, focusToaster: '' }
   }
 }
