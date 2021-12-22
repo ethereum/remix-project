@@ -11,6 +11,6 @@
 }
 
 .contextview {
-    opacity             : 1;
-    position            : relative;
-  }
+    opacity: 1;
+    position: absolute;
+}
