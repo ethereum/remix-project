@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react' //eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
-const registry = require('../../../../../apps/remix-ide/src/global/registry')
 import './renderer.css'
+const registry = require('../../../../../apps/remix-ide/src/global/registry')
 interface RendererProps {
   message: any;
   opt?: any,
