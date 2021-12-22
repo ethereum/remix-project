@@ -45,10 +45,13 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           setState({ ...props })
           break
       }
+    } else {
+      setState({ ...props })
     }
   }, [props])
 
   return (
-    <ModalDialog id='appDialog' {...state} handleHide={props.handleHide} />)
+    <ModalDialog id='appDialog' {...state} handleHide={props.handleHide} />
+  )
 }
 export default ModalWrapper
