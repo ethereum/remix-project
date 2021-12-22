@@ -2,7 +2,6 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
-import yo from 'yo-yo'
 const _paq = window._paq = window._paq || []
 
 const themes = [
@@ -37,10 +36,12 @@ export class ThemeModule extends Plugin {
       theme.url = window.location.origin + window.location.pathname + theme.url
       return { ...acc, [theme.name]: theme }
     }, {})
+    this._paq = _paq
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
     currentTheme = this.themes[currentTheme] ? currentTheme : null
+    this.currentThemeState = { queryTheme, currentTheme }
     this.active = queryTheme || currentTheme || 'Dark'
     this.forced = !!queryTheme
   }
@@ -58,11 +59,16 @@ export class ThemeModule extends Plugin {
   /**
    * Init the theme
    */
-  initTheme (callback) {
+  initTheme (callback) { // callback is setTimeOut in app.js which is always passed
+    if (callback) this.initCallback = callback
     if (this.active) {
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
-      const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+
+      const theme = document.createElement('link')
+      theme.setAttribute('rel', 'stylesheet')
+      theme.setAttribute('href', nextTheme.url)
+      theme.setAttribute('id', 'theme-link')
       theme.addEventListener('load', () => {
         if (callback) callback()
       })
@@ -79,12 +85,16 @@ export class ThemeModule extends Plugin {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
     const next = themeName || this.active // Name
-    if (next === this.active) return
+    if (next === this.active) return // --> exit out of this method
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').remove()
-    const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+    const theme = document.createElement('link')
+
+    theme.setAttribute('rel', 'stylesheet')
+    theme.setAttribute('href', nextTheme.url)
+    theme.setAttribute('id', 'theme-link')
     theme.addEventListener('load', () => {
       this.emit('themeLoaded', nextTheme)
       this.events.emit('themeLoaded', nextTheme)

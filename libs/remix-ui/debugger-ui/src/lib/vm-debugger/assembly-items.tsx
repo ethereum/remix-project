@@ -98,7 +98,6 @@ export const AssemblyItems = ({ registerEvent }) => {
 
       const currentItem = codeView.children[index]
       if (currentItem) {
-        currentItem.style.setProperty('border-color', 'var(--warning)')
         currentItem.style.setProperty('border-style', 'dotted')
         currentItem.setAttribute('selected', 'selected')
       }

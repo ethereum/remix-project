@@ -67,11 +67,9 @@ export class FetchAndCompile extends Plugin {
       }
     }
 
-    let name = network.name.toLowerCase()
-    name = name === 'main' ? 'mainnet' : name // source-verifier api expect "mainnet" and not "main"
     let data
     try {
-      data = await this.call('source-verification', 'fetchByNetwork', contractAddress, name.toLowerCase())
+      data = await this.call('source-verification', 'fetchByNetwork', contractAddress, network.id)
     } catch (e) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
       this.unresolvedAddresses.push(contractAddress)
@@ -84,7 +82,7 @@ export class FetchAndCompile extends Plugin {
     }
 
     // set the solidity contract code using metadata
-    await this.call('fileManager', 'setFile', `${targetPath}/${name}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
+    await this.call('fileManager', 'setFile', `${targetPath}/${network.id}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
     const compilationTargets = {}
     for (let file in data.metadata.sources) {
       const urls = data.metadata.sources[file].urls
@@ -96,7 +94,7 @@ export class FetchAndCompile extends Plugin {
             // nothing to do, the compiler callback will handle those
           } else {
             file = file.replace('browser/', '') // should be fixed in the remix IDE end.
-            const path = `${targetPath}/${name}/${contractAddress}/${file}`
+            const path = `${targetPath}/${network.id}/${contractAddress}/${file}`
             await this.call('fileManager', 'setFile', path, source.content)
             compilationTargets[path] = { content: source.content }
           }

@@ -1,0 +1,27 @@
+name: remix-publish-action
+on:
+  pull_request:
+    types: [ labeled ]
+jobs:
+  build:
+    if: ${{ github.event.label.name == 'publish' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - run: npm install     
+      - run: ls
+      - run: pwd
+      - run: npm run downloadsolc_assets
+      - run: npm run build:production
+      - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
+      - uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            ipfs://${{ env.action_state }}
+            https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
+            https://gateway.ipfs.io/ipfs/${{ env.action_state }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
+          allow-repeats: false # This is the default
+

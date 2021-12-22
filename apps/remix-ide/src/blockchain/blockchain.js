@@ -524,7 +524,8 @@ class Blockchain extends Plugin {
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
-          const vmError = txExecution.checkVMError(execResult, args.data.contractABI, args.data.contract)
+          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
+          const vmError = txExecution.checkVMError(execResult, compiledContracts)
           if (vmError.error) {
             return cb(vmError.message)
           }

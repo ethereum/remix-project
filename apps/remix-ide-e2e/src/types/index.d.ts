@@ -59,6 +59,8 @@ declare module 'nightwatch' {
         currentWorkspaceIs(name: string): NightwatchBrowser
         addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile): NightwatchBrowser
         acceptAndRemember (this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
+        clearConsole (this: NightwatchBrowser): NightwatchBrowser
+        clearTransactions (this: NightwatchBrowser): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

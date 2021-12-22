@@ -281,8 +281,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const mousedown = (event: MouseEvent) => {
     setSeparatorYPosition(event.clientY)
-    leftRef.current.style.backgroundColor = '#007AA6'
-    leftRef.current.style.border = '2px solid #007AA6'
     setDragging(true)
   }
 
