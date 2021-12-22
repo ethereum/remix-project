@@ -1,6 +1,6 @@
 import { AppModal } from '../interface'
 
-export type ActionMap<M extends { [index: string]: any }> = {
+type ActionMap<M extends { [index: string]: any }> = {
     [Key in keyof M]: M[Key] extends undefined
       ? {
           type: Key;
@@ -11,7 +11,7 @@ export type ActionMap<M extends { [index: string]: any }> = {
         }
 }
 
-export const enum actionTypes {
+export const enum modalActionTypes {
   setModal = 'SET_MODAL',
   setToast = 'SET_TOAST',
   handleHideModal = 'HANDLE_HIDE_MODAL',
@@ -19,10 +19,10 @@ export const enum actionTypes {
 }
 
 type ModalPayload = {
-  [actionTypes.setModal]: AppModal
-  [actionTypes.handleHideModal]: any
-  [actionTypes.setToast]: string
-  [actionTypes.handleToaster]: any
+  [modalActionTypes.setModal]: AppModal
+  [modalActionTypes.handleHideModal]: any
+  [modalActionTypes.setToast]: string
+  [modalActionTypes.handleToaster]: any
 }
 
 export type ModalAction = ActionMap<ModalPayload>[keyof ActionMap<

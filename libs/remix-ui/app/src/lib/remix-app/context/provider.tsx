@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import { actionTypes } from '../actions/modals'
+import { modalActionTypes } from '../actions/modals'
 import { modalReducer } from '../reducer/modals'
 import { ModalInitialState } from '../state/modals'
 import { ModalTypes } from '../types'
@@ -10,7 +10,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
 
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: (value?:any) => void, cancelLabel?: string, cancelFn?: () => void, modalType?: ModalTypes, defaultValue?: string) => {
     dispatch({
-      type: actionTypes.setModal,
+      type: modalActionTypes.setModal,
       payload: { title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue }
     })
   }
@@ -21,21 +21,21 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
 
   const handleHideModal = () => {
     dispatch({
-      type: actionTypes.handleHideModal,
+      type: modalActionTypes.handleHideModal,
       payload: null
     })
   }
 
   const toast = (message: string) => {
     dispatch({
-      type: actionTypes.setToast,
+      type: modalActionTypes.setToast,
       payload: message
     })
   }
 
   const handleToaster = () => {
     dispatch({
-      type: actionTypes.handleToaster,
+      type: modalActionTypes.handleToaster,
       payload: null
     })
   }
