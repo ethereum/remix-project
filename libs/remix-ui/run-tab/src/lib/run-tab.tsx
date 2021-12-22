@@ -20,7 +20,8 @@ import {
   updateBaseFeePerGas, updateConfirmSettings,
   updateGasPrice, updateGasPriceStatus,
   updateMaxFee, updateMaxPriorityFee,
-  updateTxFeeContent, clearInstances
+  updateTxFeeContent, clearInstances,
+  removeInstance, getContext
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -191,7 +192,7 @@ export function RunTabUI (props: RunTabProps) {
             maxPriorityFee={runTab.maxPriorityFee}
           />
           <RecorderUI />
-          <InstanceContainerUI instances={runTab.instances} clearInstances={clearInstances} />
+          <InstanceContainerUI instances={runTab.instances} clearInstances={clearInstances} removeInstance={removeInstance} getContext={getContext} />
         </div>
       </div>
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
