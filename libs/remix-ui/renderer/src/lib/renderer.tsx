@@ -69,7 +69,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   }
 
   const addAnnotation = (file, error) => {
-    if (file === plugin.getAppParameter('currentFile')) {
+    if (file === plugin.call('app', 'getAppParameter', 'currentFile')) {
       plugin.call('editor', 'addAnnotation', error, file)
     }
   }
@@ -87,10 +87,10 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   }
 
   const _errorClick = async (errFile, errLine, errCol) => {
-    if (errFile !== plugin.getAppParameter('currentFile')) {
+    if (errFile !== plugin.call('app', 'getAppParameter', 'currentFile')) {
       // TODO: refactor with this._components.contextView.jumpTo
-      if (await plugin.fileExists(errFile)) {
-        plugin.open(errFile)
+      if (await plugin.call('fileManager', 'exists', errFile)) {
+        plugin.call('fileManager', 'open', errFile)
         plugin.call('editor', 'gotoLine', errLine, errCol)
       }
     } else {
