@@ -30,7 +30,6 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   }
 
   useEffect(() => {
-    console.log(props)
     if (props.modalType) {
       switch (props.modalType) {
         case ModalTypes.prompt:
