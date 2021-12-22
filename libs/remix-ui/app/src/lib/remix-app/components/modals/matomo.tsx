@@ -8,10 +8,6 @@ const MatomoDialog = (props) => {
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
 
-  useEffect(() => {
-
-  }, [])
-
   const message = () => {
     return (<><p>An Opt-in version of <a href="https://matomo.org" target="_blank" rel="noreferrer">Matomo</a>, an open source data analytics platform is being used to improve Remix IDE.</p>
       <p>We realize that our users have sensitive information in their code and that their privacy - your privacy - must be protected.</p>
