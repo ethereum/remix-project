@@ -15,8 +15,7 @@ const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 /* eslint-disable-next-line */
 export interface RemixUiHomeTabProps {
-  plugin: any,
-  registry: any
+  plugin: any
 }
 
 const loadingInitialState = {
@@ -30,7 +29,9 @@ const loadingReducer = (state = loadingInitialState, action) => {
 }
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
-  const { plugin, registry } = props
+  const { plugin } = props
+  let fileManager = plugin.fileManager
+  
   const [state, setState] = useState<{
     themeQuality: { filter: string, name: string },
     showMediaPanel: 'none' | 'twitter' | 'medium',
@@ -39,7 +40,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     importSource: string,
     toasterMsg: string
   }>({
-    themeQuality: registry.get('themeModule').api.currentTheme().quality === 'dark' ? themes.dark : themes.light,
+    themeQuality: themes.light,
     showMediaPanel: 'none',
     showModalDialog: false,
     modalInfo: { title: '', loadItem: '', examples: [] },
@@ -49,7 +50,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const processLoading = () => {
     const contentImport = plugin.contentImport
-    const fileProviders = registry.get('fileproviders').api
+    const workspace = fileManager.getProvider('workspace')
     contentImport.import(
       state.importSource,
       (loadingMsg) => dispatch({ tooltip: loadingMsg }),
@@ -58,7 +59,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           toast(error.message || error)
         } else {
           try {
-            fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
+            workspace.addExternal(type + '/' + cleanUrl, content, url)
             plugin.call('menuicons', 'select', 'filePanel')
           } catch (e) {
             toast(e.message)
@@ -81,7 +82,13 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const inputValue = useRef(null)
 
   useEffect(() => {
-    registry.get('themeModule').api.events.on('themeChanged', (theme) => {
+    plugin.call('theme', 'currentTheme').then((theme) => {
+      // update theme quality. To be used for for images
+      setState(prevState => {
+        return { ...prevState, themeQuality: theme.quality === 'dark' ? themes.dark : themes.light }
+      })
+    })
+    plugin.on('theme', 'themeChanged', (theme) => {
       // update theme quality. To be used for for images
       setState(prevState => {
         return { ...prevState, themeQuality: theme.quality === 'dark' ? themes.dark : themes.light }
@@ -129,7 +136,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.appManager.activatePlugin('remixd')
   }
   const importFromGist = () => {
-    plugin.gistHandler.loadFromGist({ gist: '' }, registry.get('filemanager').api)
+    plugin.gistHandler.loadFromGist({ gist: '' }, fileManager)
     plugin.verticalIcons.select('filePanel')
   }
   const switchToPreviousVersion = () => {
