@@ -54,7 +54,7 @@ const profile = {
   name: 'app',
   displayName: 'App',
   description: 'Application',
-  methods: []
+  methods: ['getAppParameter', 'setAppParameter']
 }
 
 class AppComponent extends Plugin {
@@ -62,6 +62,7 @@ class AppComponent extends Plugin {
     super(profile)
     const self = this
     self.appManager = new RemixAppManager({})
+    self.queryParams = new QueryParams()
     self._components = {}
     self.registry = registry
     // setup storage
@@ -83,6 +84,22 @@ class AppComponent extends Plugin {
     registry.put({ api: self._components.filesProviders, name: 'fileproviders' })
 
     migrateFileSystem(self._components.filesProviders.browser)
+  }
+
+  getAppParameter (name) {
+    // first look in the URL params then in the local storage
+    const self = this
+    const params = self.queryParams.get()
+    const config = registry.get('config').api
+    const param = params[name] ? params[name] : config.get(name)
+    if (param === 'true') return true
+    if (param === 'false') return false
+    return param
+  }
+
+  setAppParameter (name, value) {
+    const config = registry.get('config').api
+    config.set(name, value)
   }
 
   async run () {
@@ -167,6 +184,7 @@ class AppComponent extends Plugin {
     const contextualListener = new EditorContextListener()
 
     self.engine.register([
+      this,
       blockchain,
       contentImport,
       self.themeModule,
