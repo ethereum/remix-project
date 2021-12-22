@@ -49,6 +49,7 @@ export const SolidityUnitTesting = (props: any) => {
   let [isDebugging, setIsDebugging] = useState(false)
   
   let allTests: any = []
+  let currentErrors: any
 
   let runningTestFileName: any
   let filesContent: any = {}
@@ -233,7 +234,11 @@ export const SolidityUnitTesting = (props: any) => {
 
   const renderTests = (tests: any, contract: any, filename: any) => {
     const index = tests.findIndex((test: any) => test.type === 'testFailure')
-    let label
+    let label = (<div
+      className="alert-primary d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
+    >
+      Unknown
+    </div>)
     if (index > -1) label = (<div
       className="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
       title="At least one contract test failed"
@@ -354,7 +359,7 @@ export const SolidityUnitTesting = (props: any) => {
             // show only contract and file name
             const contractCard: any = (
               <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
-                <span className="font-weight-bold">{contract} ({filename})</span>
+                <span className="font-weight-bold">{contract ? contract: ''} ({filename})</span>
               </div>
             )
             setTestsOutput(prevCards => ([...prevCards, contractCard]))
@@ -396,7 +401,6 @@ export const SolidityUnitTesting = (props: any) => {
 
   const testCallback = (result: any) => {
     console.log('result--------------in testCallback->', result)
-    console.log('testsResultByFilename--------============------in testCallback->', testsResultByFilename)
     if(result.filename) {
       if(!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
@@ -410,6 +414,7 @@ export const SolidityUnitTesting = (props: any) => {
         result.rendered = false
         testsResultByFilename[result.filename][result.context].push(result)
       }
+      console.log('testsResultByFilename--------============------in testCallback END---====->', testsResultByFilename)
       showTestsResult()
     }
   }
@@ -427,19 +432,17 @@ export const SolidityUnitTesting = (props: any) => {
     console.log('testsResultByFilename---------------------------in updateFinalResult->', testsResultByFilename)
     ++readyTestsNumber
     setReadyTestsNumber(readyTestsNumber)
-    // if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
-    //   this.testCallback({ type: 'contract', filename })
-    //   this.currentErrors = _errors.errors
-    //   this.setHeader(false)
-    // }
-    // if (_errors && _errors.errors) {
-    //   _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity, errorType: err.type }))
-    // } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
-    //   _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity, errorType: err.type }))
-    // } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
-    //   // To track error like this: https://github.com/ethereum/remix/pull/1438
-    //   this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, { type: 'error' })
-    // }
+    if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
+      // testCallback({ type: 'contract', filename })
+      const contractCard: any = (
+        <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
+          <span className="font-weight-bold">({filename})</span>
+        </div>
+      )
+      setTestsOutput(prevCards => ([...prevCards, contractCard]))
+      currentErrors = _errors.errors
+      // this.setHeader(false)
+    }
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
       const testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime, rendered: false }
@@ -450,27 +453,14 @@ export const SolidityUnitTesting = (props: any) => {
         testsResultByFilename[filename] = {}
       }
       testsResultByFilename[filename]['errors'] = _errors
+      setTestsExecutionStoppedErrorHidden(false)
       showTestsResult()
     }
-
-      // result.errors.forEach((error, index) => {
-      //   this.testSuite = error.context
-      //   this.runningTestFileName = this.cleanFileName(filename, error.context)
-      //   this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
-      //   const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
-      //   if (!isFailingLabel) this.setHeader(false)
-      // })
-      // this.testsOutput.appendChild(yo`
-      //   <div>
-      //     <p class="text-info mb-2 border-top m-0"></p>
-      //   </div>
-      // `)
-    // }
-    // if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
-    //   // if all tests has been through before stopping no need to print this.
-    //   this.testsExecutionStopped.hidden = false
-    // }
-    // if (_errors) this.testsExecutionStoppedError.hidden = false
+    
+    if (hasBeenStopped && (readyTestsNumber !== runningTestsNumber)) {
+      // if all tests has been through before stopping no need to print this.
+      setTestsExecutionStoppedHidden(false)
+    }
     // if (_errors || this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
     //   // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
     //   const stopBtn = document.getElementById('runTestsTabStopAction')
