@@ -18,6 +18,7 @@ import { WalkthroughService } from './walkthroughService'
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
+import { Plugin } from '@remixproject/engine'
 
 const isElectron = require('is-electron')
 
@@ -50,8 +51,16 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const ContextualListener = require('./app/editor/contextualListener')
 
-class AppComponent {
+const profile = {
+  name: 'app',
+  displayName: 'App',
+  description: 'Application',
+  methods: []
+}
+
+class AppComponent extends Plugin {
   constructor (api = {}, events = {}, opts = {}) {
+    super(profile)
     const self = this
     self.appManager = new RemixAppManager({})
     self._components = {}
