@@ -30,8 +30,8 @@ const loadingReducer = (state = loadingInitialState, action) => {
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const { plugin } = props
-  let fileManager = plugin.fileManager
-  
+  const fileManager = plugin.fileManager
+
   const [state, setState] = useState<{
     themeQuality: { filter: string, name: string },
     showMediaPanel: 'none' | 'twitter' | 'medium',
