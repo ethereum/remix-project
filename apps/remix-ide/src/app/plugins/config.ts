@@ -21,12 +21,10 @@ export class ConfigPlugin extends Plugin {
     const param = params[name] ? params[name] : config.get(name)
     if (param === 'true') return true
     if (param === 'false') return false
-    console.log(param)
     return param
   }
 
   setAppParameter (name: string, value: any) {
-    console.log('setAppParameter', name, value)
     const config = Registry.getInstance().get('config').api
     config.set(name, value)
   }
