@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from 'react' // eslint-disable-lin
 import { PluginRecord } from './types';
 import './panel.css';
 
-export interface RemixUiSidePanelProps {
+export interface RemixPanelProps {
     plugins: Record<string, PluginRecord>;
   }
-const SidePanelHeader = (props: RemixUiSidePanelProps) => {
+const SidePanelHeader = (props: RemixPanelProps) => {
     const [plugin, setPlugin] = useState<PluginRecord>()
 
     useEffect(() => {
