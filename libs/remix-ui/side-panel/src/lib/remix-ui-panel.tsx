@@ -5,11 +5,11 @@ import PanelPlugin from './panel-plugin';
 import { PluginRecord } from './types';
 
 /* eslint-disable-next-line */
-export interface RemixUiSidePanelProps {
+export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>;
 }
 
-export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
+export function RemixPanel(props: RemixPanelProps) {
 
   return (
     <div className='panel plugin-manager'>
@@ -24,4 +24,4 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
   );
 }
 
-export default RemixUiSidePanel;
+export default RemixPanel;
