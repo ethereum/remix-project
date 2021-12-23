@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
-var async = require('async')
+import { eachOfSeries } from 'async'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { format } from 'util'
-
 import './css/style.css'
+
+const _paq = (window as any)._paq = (window as any)._paq || []
 
 /* eslint-disable-next-line */
 export interface SolidityUnitTestingProps {}
@@ -202,7 +203,7 @@ export const SolidityUnitTesting = (props: any) => {
       }
       finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
-    // _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
     testTab.call('terminal', 'log', { type: 'info', value: finalLogs })
   }
 
@@ -516,8 +517,8 @@ export const SolidityUnitTesting = (props: any) => {
     const tests = selectedTests
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
-    // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
-    async.eachOfSeries(tests, (value: any, key: any, callback: any) => {
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
+    eachOfSeries(tests, (value: any, key: any, callback: any) => {
       if (hasBeenStopped.current) return
       runTest(value, callback)
     })
