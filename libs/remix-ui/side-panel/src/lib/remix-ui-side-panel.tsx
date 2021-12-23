@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
-import parse from 'html-react-parser'
 import './remix-ui-side-panel.module.css';
+import SidePanelElement from './sidepanel-element';
 
 /* eslint-disable-next-line */
 export interface RemixUiSidePanelProps {
@@ -18,13 +18,13 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
   const [name, setName] = useState(' - ')
 
   useEffect(() => {
-    console.log()
-  }, [name])
+    console.log('load')
+  }, [])
 
-  const getProfile  = async () => {
-    console.log({active: props.plugin.active})
+  const getProfile = async () => {
+    console.log({ active: props.plugin.active })
     if (props.plugin.active) {
-      const profile =  await props.plugin.appManager.getProfile(props.plugin.active)
+      const profile = await props.plugin.appManager.getProfile(props.plugin.active)
       setProfileDocsLink(profile.documentation)
       profile.displayName ? setName(profile.displayName) : setName(profile.name)
       profile.documentation ? setDockLink(true) : setDockLink(false)
@@ -36,43 +36,38 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
       // Beta
       if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
         setVersionWarningBeta(true)
-      } else{
+      } else {
         setVersionWarningBeta(false)
       }
     }
   }
 
-  const renderHeader =  () => {
+  const renderHeader = () => {
     getProfile()
-   return (
-    <header style={{
-      display: 'flex',
-    alignItems: 'center',
-    padding: '16px 24px 15px',
-    justifyContent: 'space-between',
-    }}>
-    <h6 className="swapitTitle" data-id="sidePanelSwapitTitle">{name}</h6>
-    {dockLink ? (<a href={profileDocsLink} className="titleInfo" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>) : ''}
-    {versionWarning ? (<small title="Version Alpha" className="badge-light versionBadge">alpha</small>) : null }
-    {versionWarningBeta ? (<small title="Version Beta" className="badge-light versionBadge">beta</small>) : null}
-  </header>
-   )
+    return (
+      <header className='swapitHeader'>
+        <h6 className="swapitTitle" data-id="sidePanelSwapitTitle">{name}</h6>
+        {dockLink ? (<a href={profileDocsLink} className="titleInfo" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>) : ''}
+        {versionWarning ? (<small title="Version Alpha" className="badge-light versionBadge">alpha</small>) : null}
+        {versionWarningBeta ? (<small title="Version Beta" className="badge-light versionBadge">beta</small>) : null}
+      </header>
+    )
   }
 
-
   return (
-            <section style={{
-              position: "fixed",
-              height: "50px",
-              width: "320px",
-              backgroundColor: "var(--light)",
-              zIndex: "999",
-            }} >
-              {renderHeader()}
-              <div className="pluginsContainer">
-                {props.contents}
-              </div>
-            </section>
+    <section className='panel plugin-manager'>
+      {renderHeader()}
+      <div className="pluginsContainer">
+        {Object.values(props.contents).map((x) => {
+          if (React.isValidElement(x)) {
+            return x
+          } else {
+            return <SidePanelElement render={x} />
+          }
+        })}
+      </div>
+    </section>
+
   );
 }
 
