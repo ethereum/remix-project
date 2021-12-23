@@ -2,7 +2,8 @@
 /* eslint-disable no-use-before-define */
 import { Plugin } from '@remixproject/engine/lib/abstract'
 import * as packageJson from '../../../../package.json'
-import * as registry from 'apps/remix-ide/src/global/registry'
+import { Registry } from 'apps/remix-ide/src/app/state/registry'
+
 import { RemixAppManager } from '@remix-ui/plugin-manager'
 
 export type Kind =
@@ -52,7 +53,7 @@ export class VerticalIcons extends Plugin<any, any> {
   defaultProfile: defaultModuleProfile
   targetProfileForChange: any
   targetProfileForRemoval: any
-  registry: registry
+  registry: Registry
   keys: string[]
   types: string[]
   renderComponent(): void
@@ -108,3 +109,4 @@ export class VerticalIcons extends Plugin<any, any> {
   view: any
 }
 import EventEmitter = require('events')
+

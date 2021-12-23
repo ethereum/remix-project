@@ -3,7 +3,8 @@
 var $ = require('jquery')
 var yo = require('yo-yo')
 var css = require('./styles/renderer-styles')
-var globlalRegistry = require('../../global/registry')
+
+const { Registry } = require('../state/registry')
 
 /**
  * After refactor, the renderer is only used to render error/warning
@@ -14,7 +15,7 @@ function Renderer (service) {
   const self = this
   self.service = service
   self._components = {}
-  self._components.registry = globlalRegistry
+  self._components.registry = Registry.getInstance()
   // dependencies
   self._deps = {
     fileManager: self._components.registry.get('filemanager').api,

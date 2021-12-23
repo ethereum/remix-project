@@ -1,4 +1,5 @@
-var registry = require('../../global/registry')
+import { Registry } from '../state/registry'
+
 var remixLib = require('@remix-project/remix-lib')
 var yo = require('yo-yo')
 var EventsDecoder = remixLib.execution.EventsDecoder
@@ -50,12 +51,12 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
     }
   })
 
-  registry.put({ api: txlistener, name: 'txlistener' })
+  Registry.getInstance().put({ api: txlistener, name: 'txlistener' })
   blockchain.startListening(txlistener)
 
   const eventsDecoder = new EventsDecoder({
     resolveReceipt: transactionReceiptResolver
   })
   txlistener.startListening()
-  registry.put({ api: eventsDecoder, name: 'eventsDecoder' })
+  Registry.getInstance().put({ api: eventsDecoder, name: 'eventsDecoder' })
 }

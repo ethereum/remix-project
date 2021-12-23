@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
-const globalRegistry = require('../../global/registry')
+import { Registry } from '../state/registry'
 
 const profile = {
   name: 'settings',
@@ -25,7 +25,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.config = config
     this.editor = editor
     this._deps = {
-      themeModule: globalRegistry.get('themeModule').api
+      themeModule: Registry.getInstance().get('themeModule').api
     }
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
