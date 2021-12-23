@@ -92,6 +92,7 @@ export const Toaster = (props: ToasterProps) => {
   return (
     <>
       <ModalDialog
+        id='toaster'
         message={props.message}
         cancelLabel='Close'
         cancelFn={() => {}}
