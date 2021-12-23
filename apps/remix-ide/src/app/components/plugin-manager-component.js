@@ -96,7 +96,7 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   render () {
-    return <div>test</div>
+    return this.htmlElement
   }
 
   getAndFilterPlugins (filter) {

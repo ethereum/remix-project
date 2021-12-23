@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
 import './remix-ui-main-panel.module.css';
-
-/* eslint-disable-next-line */
 export interface RemixUiMainPanelProps {
   plugin: any
   contents: [any]
