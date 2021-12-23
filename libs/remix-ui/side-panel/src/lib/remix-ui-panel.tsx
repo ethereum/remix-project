@@ -16,7 +16,7 @@ export function RemixUiSidePanel(props: RemixUiSidePanelProps) {
       <SidePanelHeader plugins={props.plugins}></SidePanelHeader>
       <div className="pluginsContainer">
         {Object.values(props.plugins).map((pluginRecord) => {
-            return <PanelPlugin pluginRecord={pluginRecord} />
+            return <PanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} />
         })}
       </div>
     </div>
