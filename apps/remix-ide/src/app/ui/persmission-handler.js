@@ -1,9 +1,10 @@
+import { Registry } from '../state/registry'
+
 /* global localStorage */
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const addTooltip = require('./tooltip')
 const modalDialog = require('./modaldialog')
-const globalRegistry = require('../../global/registry')
 
 const css = csjs`
 .permission h4 {
@@ -167,8 +168,8 @@ export class PermissionHandler {
       </article>
     `
 
-    globalRegistry.get('themeModule').api.fixInvert(imgFrom)
-    globalRegistry.get('themeModule').api.fixInvert(imgTo)
+    Registry.getInstance().get('themeModule').api.fixInvert(imgFrom)
+    Registry.getInstance().get('themeModule').api.fixInvert(imgTo)
 
     const pluginMessage = message ? yo`
       <div>

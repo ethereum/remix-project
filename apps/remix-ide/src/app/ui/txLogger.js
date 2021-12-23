@@ -9,8 +9,8 @@ var remixLib = require('@remix-project/remix-lib')
 var EventManager = require('../../lib/events')
 var helper = require('../../lib/helper')
 var modalDialog = require('./modal-dialog-custom')
+const { Registry } = require('../state/registry')
 var typeConversion = remixLib.execution.typeConversion
-var globlalRegistry = require('../../global/registry')
 
 var css = csjs`
   .log {
@@ -125,12 +125,12 @@ class TxLogger {
       }
       return false
     }
-    this.eventsDecoder = globlalRegistry.get('eventsDecoder').api
-    this.txListener = globlalRegistry.get('txlistener').api
+    this.eventsDecoder = Registry.getInstance().get('eventsDecoder').api
+    this.txListener = Registry.getInstance().get('txlistener').api
     this.terminal = terminal
     // dependencies
     this._deps = {
-      compilersArtefacts: globlalRegistry.get('compilersartefacts').api
+      compilersArtefacts: Registry.getInstance().get('compilersartefacts').api
     }
 
     this.logKnownTX = this.terminal.registerCommand('knownTransaction', (args, cmds, append) => {
