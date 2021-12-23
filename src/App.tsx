@@ -95,6 +95,7 @@ function App() {
 
   const handleParsing = async () => {
     setError('')
+    setDeployedAddress(null)
     const filePath = await client.current.call('fileManager', 'getCurrentFile');
     const contractJson = await client.current.call('fileManager', 'readFile', filePath);
     const contract = json.parse(contractJson) as CompiledContract;
@@ -114,9 +115,15 @@ function App() {
       provider.current = await detectEthereumProvider();
       if (provider.current) {
         await provider.current.request({ method: 'eth_requestAccounts' });
-
+        provider.current.on('accountsChanged', (accounts: string[]) => {
+          if(accounts.length > 0) {
+            setAccounts(accounts)
+          }
+        })
+        
         window.web3 = new Web3(provider.current);
         window.web3.eth.getAccounts((_, result) => {
+          console.log('accounts', result)
           setAccounts(result);
         });
         const currentSelected = parseInt(provider.current.networkVersion);
@@ -176,14 +183,21 @@ function App() {
         params
       }
     })
+    /**
+     * This part is responsible for encoding the constructor parameters
+     * because if the constructor has parameters those need to be given initially
+     * with their defined type, so we need to encode them
+     */
     const types = encodedValues.map(({ type }) => type)
     const values = encodedValues.map(({ params }) => params)
   
     const encodedParams = window.web3.eth.abi.encodeParameters(types, values).substring(2)
 
     const ctr = contractToDeploy as CompiledContractJSON
+    // Conacting the compiled contract with encoded consturcor parameters
     const toDeploy = ctr.data.bytecode.object + encodedParams
-  
+    
+    // Loading the factory contract
     const contract = new window.web3.eth.Contract(factoryContract.abi as AbiItem[], '0x56434E34E7771aa9680d09220Fe5d4D5c305323a');
     setLoading(true)
     contract.methods.deploy(`0x${toDeploy}`, salt)
@@ -206,6 +220,9 @@ function App() {
   }
 
   const canDeploy = () => {
+    // If all contstructor inputs are valid and entered
+    // if constructor has two initial arguments, and only one given
+    // the deploy will fail, thus we check for every argument to be entered and be valid
     if(constructorInput) {
       const inputs = Object.keys(customInput).map(key => !!customInput[key].value)
       const allInputs = constructorInput.inputs?.length
@@ -259,12 +276,13 @@ function App() {
       ): null}
 
       {contractToDeploy && canDeploy() ? (
-        <>
-        <select value={selectedNetwork} onChange={handleNetworkChange}>
-          {networks.map(n => <option key={n.chainId} value={n.chainDecimal}>{n.name}</option>)}
-        </select>
-        <div role="button" className="button" onClick={handleVariableParsing}>deploy</div>
-        </>
+        <div className='networkList'>
+          <label>Select network to deploy</label>
+          <select value={selectedNetwork} onChange={handleNetworkChange}>
+            {networks.map(n => <option key={n.chainId} value={n.chainDecimal}>{n.name}</option>)}
+          </select>
+          <div role="button" className="button" onClick={handleVariableParsing}>deploy</div>
+        </div>
       ) : null}
       {isLoading ? 'Deploy in progress...' : null}
       {depoyedAddress ? <>Deployed address: <div className="address">{depoyedAddress}</div></> : null}
