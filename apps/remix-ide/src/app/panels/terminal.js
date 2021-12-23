@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import { Registry } from '../state/registry'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
@@ -11,7 +12,7 @@ const CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 const AutoCompletePopup = require('../ui/auto-complete-popup')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
-const globalRegistry = require('../../global/registry')
+
 const GistHandler = require('../../lib/gist-handler')
 
 const KONSOLES = []
@@ -33,7 +34,7 @@ class Terminal extends Plugin {
     this.fileImport = new CompilerImports()
     this.gistHandler = new GistHandler()
     this.event = new EventManager()
-    this.globalRegistry = globalRegistry
+    this.globalRegistry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('class', 'panel')
     this.element.setAttribute('id', 'terminal-view')

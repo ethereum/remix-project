@@ -5,8 +5,8 @@ import ReactDOM from 'react-dom'
 import React from 'react' // eslint-disable-line
 // eslint-disable-next-line no-unused-vars
 import { RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
+import { Registry } from '../state/registry'
 // var helper = require('../../lib/helper')
-const globalRegistry = require('../../global/registry')
 const { Plugin } = require('@remixproject/engine')
 const EventEmitter = require('events')
 
@@ -32,7 +32,7 @@ export class VerticalIcons extends Plugin {
     this.defaultProfile = profile
     this.targetProfileForChange = {}
     this.targetProfileForRemoval = {}
-    this.registry = globalRegistry
+    this.registry = Registry.getInstance()
     this.keys = ['succeed', 'edited', 'none', 'loading', 'failed']
     this.types = ['error', 'warning', 'success', 'info', '']
   }
