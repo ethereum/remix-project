@@ -68,9 +68,9 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     return result
   }
 
-  const addAnnotation = (file, error) => {
-    if (file === plugin.call('config', 'getAppParameter', 'currentFile')) {
-      plugin.call('editor', 'addAnnotation', error, file)
+  const addAnnotation = async (file, error) => {
+    if (file === await plugin.call('config', 'getAppParameter', 'currentFile')) {
+      await plugin.call('editor', 'addAnnotation', error, file)
     }
   }
 
