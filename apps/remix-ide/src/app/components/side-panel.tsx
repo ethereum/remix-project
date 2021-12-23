@@ -1,8 +1,10 @@
 import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import ReactDOM from 'react-dom' // eslint-disable-line
-import { RemixUiSidePanel } from '@remix-ui/side-panel' // eslint-disable-line
-import * as packageJson from '../../../../../package.json'
+import { RemixUiSidePanel } from '@remix-ui/side-panel'
+import packageJson from '../../../../../package.json'
+import { RemixAppManager } from '../../remixAppManager'
+import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // const csjs = require('csjs-inject')
 
 const sidePanel = {
@@ -15,16 +17,19 @@ const sidePanel = {
 
 // TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
-  constructor (appManager, verticalIcons) {
+  appManager: RemixAppManager
+  sideelement: HTMLDivElement
+  verticalIcons: VerticalIcons;
+  constructor (appManager: RemixAppManager, verticalIcons: VerticalIcons) {
     super(sidePanel)
     this.appManager = appManager
-    this.sideelement = document.createElement('span')
+    this.sideelement = document.createElement('div')
     this.verticalIcons = verticalIcons
 
     // Toggle content
     verticalIcons.events.on('toggleContent', (name) => {
-      if (!this.contents[name]) return
-      if (this.active === name) {
+      if (!this.plugins[name]) return
+      if (this.plugins[name].active) {
         // TODO: Only keep `this.emit` (issue#2210)
         this.emit('toggle', name)
         this.events.emit('toggle', name)
@@ -37,7 +42,7 @@ export class SidePanel extends AbstractPanel {
     })
     // Force opening
     verticalIcons.events.on('showContent', (name) => {
-      if (!this.contents[name]) return
+      if (!this.plugins[name]) return
       this.showContent(name)
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('showing', name)
@@ -74,6 +79,7 @@ export class SidePanel extends AbstractPanel {
   async showContent (name) {
     super.showContent(name)
     this.emit('focusChanged', name)
+    this.renderComponent()
   }
 
   render () {
@@ -82,12 +88,6 @@ export class SidePanel extends AbstractPanel {
 
   renderComponent () {
     console.log('render side panel')
-    ReactDOM.render(
-      <RemixUiSidePanel
-        plugin={this} contents={this.contents}
-      />
-      ,
-      this.sideelement
-    )
+    ReactDOM.render(<RemixUiSidePanel plugins={this.plugins}/>, this.sideelement)
   }
 }

@@ -4,44 +4,79 @@
     display: flex;
     flex-direction: column;
     flex: auto;
-  }
-  .swapitTitle {
+}
+
+.swapitTitle {
     margin: 0;
     text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .swapitTitle i{
+}
+
+.swapitTitle i {
     padding-left: 6px;
     font-size: 14px;
-  }
-  .swapitHeader {
+}
+
+.swapitHeader {
     display: flex;
     align-items: center;
     padding: 16px 24px 15px;
     justify-content: space-between;
-  }
-  .icons i {
+    text-transform: uppercase;
+}
+
+.icons i {
     height: 80%;
     cursor: pointer;
-  }
-  .pluginsContainer {
+}
+
+.pluginsContainer {
     height: 100%;
     overflow-y: auto;
-  }
-  .titleInfo {
+}
+
+.titleInfo {
     padding-left: 10px;
-  }
-  .versionBadge {
+}
+
+.versionBadge {
     background-color: var(--light);
     padding: 0 7px;
     font-weight: bolder;
     margin-left: 5px;
     text-transform: lowercase;
     cursor: default;
-  }
-  iframe {
-    height: 100%;
-  }
+}
 
+iframe {
+    height: 100%;
+    width: 100%;
+    border: 0;
+}
+
+.plugins {
+    height: 100%;
+}
+
+.plugItIn {
+    display: none;
+    height: 100%;
+}
+
+.plugItIn>div {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.plugItIn.active {
+    display: block;
+}
+
+.pluginsContainer {
+    height: 100%;
+    overflow-y: hidden;
+}
