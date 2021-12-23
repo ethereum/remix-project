@@ -1,6 +1,6 @@
 'use strict'
 import { CompilerImports } from '@remix-project/core-plugin'
-import { Registry } from '../app/state/registry'
+import Registry from '../app/state/registry'
 var yo = require('yo-yo')
 var async = require('async')
 var EventManager = require('../lib/events')

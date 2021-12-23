@@ -4,7 +4,7 @@ import yo from 'yo-yo'
 import async from 'async'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 const EventEmitter = require('events')
 const toaster = require('../ui/tooltip')
 const modalDialogCustom = require('../ui/modal-dialog-custom')

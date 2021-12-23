@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 var Renderer = require('../ui/renderer')
 
 var EventManager = require('../../lib/events')
