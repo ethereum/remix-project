@@ -109,4 +109,3 @@ export class VerticalIcons extends Plugin<any, any> {
   view: any
 }
 import EventEmitter = require('events')
-
