@@ -123,7 +123,6 @@ function App() {
         
         window.web3 = new Web3(provider.current);
         window.web3.eth.getAccounts((_, result) => {
-          console.log('accounts', result)
           setAccounts(result);
         });
         const currentSelected = parseInt(provider.current.networkVersion);
@@ -143,7 +142,9 @@ function App() {
       }
     }
 
-    initWeb3()
+    client.current.onload(async () => {
+      await initWeb3()
+    })
   }, [])    
 
   const handleCustomInput = (abi: ABIParameter) => (e: React.ChangeEvent<HTMLInputElement>) => {
