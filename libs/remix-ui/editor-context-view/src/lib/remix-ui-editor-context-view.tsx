@@ -50,55 +50,68 @@ function isDefinition (node: any) {
 type nullableAstNode = astNode | null
 
 export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) {
-  const nodesRef = useRef<Array<astNode>>([])
   /*
     gotoLineDisableRef is used to temporarily disable the update of the view.
     e.g when the user ask the component to "gotoLine" we don't want to rerender the component (but just to put the mouse on the desired line)
   */
-  const referencesRef = useRef([])
-  const activeHighlightsRef = useRef([])
-  const currentNodeRef = useRef(null as nullableAstNode)
-  const gasEstimationRef = useRef({} as gasEstimationType)
   const gotoLineDisableRef = useRef(false)
-  const [, setNode] = useState<Array<astNode>>([])
-
+  const [state, setState] = useState<{
+    nodes: Array<astNode>,
+    references: Array<astNode>,
+    activeHighlights: Array<any>
+    currentNode: nullableAstNode,
+    gasEstimation: gasEstimationType
+  }>({
+    nodes: [],
+    references: [],
+    activeHighlights: [],
+    currentNode: null,
+    gasEstimation: { executionCost: '', codeDepositCost: '' }
+  })
+  
   useEffect(() => {
     props.onContextListenerChanged(async (nodes: Array<astNode>) => {
       if (gotoLineDisableRef.current) {
         gotoLineDisableRef.current = false
         return
       }
-      nodesRef.current = nodes
-      if (!props.hide && nodesRef.current && nodesRef.current.length) {
-        currentNodeRef.current = nodesRef.current[nodesRef.current.length - 1]
-        if (!isDefinition(currentNodeRef.current)) {
-          currentNodeRef.current = await props.declarationOf(currentNodeRef.current)
+      let currentNode
+      if (!props.hide && nodes && nodes.length) {
+        currentNode = nodes[nodes.length - 1]
+        if (!isDefinition(currentNode)) {
+          currentNode = await props.declarationOf(currentNode)
         }
       }
-      if (currentNodeRef.current) {
-        referencesRef.current = await props.referencesOf(currentNodeRef.current)
-        gasEstimationRef.current = await props.gasEstimation(currentNodeRef.current)
+      let references
+      let gasEstimation
+      if (currentNode) {
+        references = await props.referencesOf(currentNode)
+        if (currentNode.nodeType === 'FunctionDefinition') {
+          gasEstimation = await props.gasEstimation(currentNode)
+        }        
       }
-      activeHighlightsRef.current = await props.getActiveHighlights()
-      setNode(nodes)
+      let activeHighlights = await props.getActiveHighlights()
+      setState(prevState => {
+        return { ...prevState, nodes, references, activeHighlights, currentNode, gasEstimation }
+      })
     })
   }, [])
 
   const _render = (node: nullableAstNode) => {
     if (!node) return (<div></div>)
-    const references = referencesRef.current
+    const references = state.references
     const type = node.typeDescriptions && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.nodeType
     const referencesCount = `${references ? references.length : '0'} reference(s)`
 
     let ref = 0
-    const nodes: Array<astNode> = activeHighlightsRef.current
+    const nodes: Array<astNode> = state.activeHighlights
 
     /*
      * show gas estimation
      */
     const gasEstimation = () => {
       if (node.nodeType === 'FunctionDefinition') {
-        const result: gasEstimationType = gasEstimationRef.current
+        const result: gasEstimationType = state.gasEstimation
         const executionCost = ' Execution cost: ' + result.executionCost + ' gas'
         const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
         const estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
@@ -170,7 +183,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
 
   return (
     !props.hide && <div className="container-context-view contextviewcontainer bg-light text-dark border-0 py-1">
-      {_render(currentNodeRef.current)}
+      {_render(state.currentNode)}
     </div>
   )
 }
