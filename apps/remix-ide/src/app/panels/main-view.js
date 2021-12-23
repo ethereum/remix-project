@@ -1,4 +1,4 @@
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')

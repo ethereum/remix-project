@@ -3,7 +3,7 @@ type registryEntry = {
     name: string
 }
 
-export class Registry {
+export default class Registry {
     private static instance: Registry;
     private state: any
 

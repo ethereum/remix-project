@@ -1,4 +1,4 @@
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 
 var remixLib = require('@remix-project/remix-lib')
 var yo = require('yo-yo')
