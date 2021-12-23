@@ -1,4 +1,4 @@
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 
 /* global localStorage */
 const yo = require('yo-yo')

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
