@@ -73,15 +73,15 @@ export const SolidityUnitTesting = (props: any) => {
    const updateForNewCurrent = async (file = null) => {
     // Ensure that when someone clicks on compilation error and that opens a new file
     // Test result, which is compilation error in this case, is not cleared
-    // if (this.currentErrors) {
-    //   if (Array.isArray(this.currentErrors) && this.currentErrors.length > 0) {
-    //     const errFiles = this.currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file })
-    //     if (errFiles.includes(file)) return
-    //   } else if (this.currentErrors.sourceLocation && this.currentErrors.sourceLocation.file && this.currentErrors.sourceLocation.file === file) return
-    // }
+    if (currentErrors) {
+      if (Array.isArray(currentErrors) && currentErrors.length > 0) {
+        const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file })
+        if (errFiles.includes(file)) return
+      } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
+    }
     // // if current file is changed while debugging and one of the files imported in test file are opened
     // // do not clear the test results in SUT plugin
-    // if (isDebugging && this.allFilesInvolved.includes(file)) return
+    if (isDebugging && testTab.allFilesInvolved.includes(file)) return
     allTests = []
     updateTestFileList()
     clearResults()
