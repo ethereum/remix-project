@@ -18,7 +18,7 @@ import { WalkthroughService } from './walkthroughService'
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
-import { Registry } from './app/state/registry'
+import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
 
 const isElectron = require('is-electron')

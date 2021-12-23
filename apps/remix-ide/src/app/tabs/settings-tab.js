@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
-import { Registry } from '../state/registry'
+import Registry from '../state/registry'
 
 const profile = {
   name: 'settings',

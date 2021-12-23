@@ -2,7 +2,7 @@
 /* eslint-disable no-use-before-define */
 import { Plugin } from '@remixproject/engine/lib/abstract'
 import * as packageJson from '../../../../package.json'
-import { Registry } from 'apps/remix-ide/src/app/state/registry'
+import Registry from 'apps/remix-ide/src/app/state/registry'
 
 import { RemixAppManager } from '@remix-ui/plugin-manager'
 

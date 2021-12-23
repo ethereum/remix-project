@@ -1,5 +1,5 @@
 import { BN } from 'ethereumjs-util'
-import { Registry } from '../../state/registry'
+import Registry from '../../state/registry'
 const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
