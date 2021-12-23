@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
 var async = require('async')
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
@@ -44,9 +44,10 @@ export const SolidityUnitTesting = (props: any) => {
   let [readyTestsNumber, setReadyTestsNumber] = useState(0)
   let [runningTestsNumber, setRunningTestsNumber] = useState(0)
 
+  let hasBeenStopped = useRef(false)
+
   let areTestsRunning = false
   let isDebugging = false
-  let hasBeenStopped = false
   let allTests: any = []
   let currentErrors: any
 
@@ -61,7 +62,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const clearResults = () => {
-    console.log('clearResults--->')
     setProgressBarHidden(true)
     testTab.call('editor', 'clearAnnotations')
     setTestsOutput([])
@@ -81,14 +81,12 @@ export const SolidityUnitTesting = (props: any) => {
     // // if current file is changed while debugging and one of the files imported in test file are opened
     // // do not clear the test results in SUT plugin
     // if (isDebugging && this.allFilesInvolved.includes(file)) return
-    console.log('Inside updateForNewCurrent --allTests-->', allTests)
     allTests = []
     updateTestFileList()
     clearResults()
     try {
       testTabLogic.getTests(async (error: any, tests: any) => {
         // if (error) return tooltip(error)
-        console.log('tests in updateForNewCurrent testTabLogic.getTests', tests)
         allTests = tests
         selectedTests = [...allTests]
         setSelectedTests(tests)
@@ -96,7 +94,7 @@ export const SolidityUnitTesting = (props: any) => {
         if (!areTestsRunning) await updateRunAction(file)
       })
     } catch (e) {
-      console.log('error in updateForNewCurrent', e)
+      console.log(e)
     }
   }
 
@@ -352,7 +350,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const showTestsResult = () => {
-    console.log('inside showTestsResult filesContent---->', filesContent)
     let filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
@@ -369,7 +366,6 @@ export const SolidityUnitTesting = (props: any) => {
           }
         } else if (contract === 'errors' && fileTestsResult['errors']) {
           const errors = fileTestsResult['errors']
-          console.log('errors---->', errors)
           if (errors && errors.errors) {
             errors.errors.forEach((err: any) => {
               const errorCard: any = <Renderer message={err.formattedMessage  || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
@@ -403,7 +399,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const testCallback = (result: any) => {
-    console.log('result--------------in testCallback->', result)
     if(result.filename) {
       if(!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
@@ -417,7 +412,6 @@ export const SolidityUnitTesting = (props: any) => {
         result.rendered = false
         testsResultByFilename[result.filename][result.context].push(result)
       }
-      console.log('testsResultByFilename--------============------in testCallback END---====->', testsResultByFilename)
       showTestsResult()
     }
   }
@@ -431,8 +425,6 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const updateFinalResult = (_errors: any, result: any, filename: any) => {
-    console.log('result---------------------------in updateFinalResult->', result, filename)
-    console.log('testsResultByFilename---------------------------in updateFinalResult->', testsResultByFilename)
     ++readyTestsNumber
     setReadyTestsNumber(readyTestsNumber)
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
@@ -454,11 +446,11 @@ export const SolidityUnitTesting = (props: any) => {
       showTestsResult()
     }
     
-    if (hasBeenStopped && (readyTestsNumber !== runningTestsNumber)) {
+    if (hasBeenStopped.current && (readyTestsNumber !== runningTestsNumber)) {
       // if all tests has been through before stopping no need to print this.
       setTestsExecutionStoppedHidden(false)
     }
-    if (_errors || hasBeenStopped || readyTestsNumber === runningTestsNumber) {
+    if (_errors || hasBeenStopped.current || readyTestsNumber === runningTestsNumber) {
       // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
       setDisableStopButton(true)
       setStopButtonLabel('Stop')
@@ -470,10 +462,9 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const runTest = (testFilePath: any, callback: any) => {
-    console.log('runTest----->', testFilePath, hasBeenStopped)
     isDebugging = false
-    if (hasBeenStopped) {
-      // this.updateFinalResult()
+    if (hasBeenStopped.current) {
+      updateFinalResult(null, null, null)
       return
     }
     testTab.fileManager.readFile(testFilePath).then((content: any) => {
@@ -513,9 +504,8 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const runTests = () => {
-    console.log('runtests--->')
     areTestsRunning = true
-    hasBeenStopped = false
+    hasBeenStopped.current = false
     readyTestsNumber = 0
     setReadyTestsNumber(readyTestsNumber)
     runningTestsNumber = selectedTests.length
@@ -524,20 +514,17 @@ export const SolidityUnitTesting = (props: any) => {
     clearResults()
     setProgressBarHidden(false)
     const tests = selectedTests
-    console.log('tests--in runTests----------------->', tests)
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
     // _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
     async.eachOfSeries(tests, (value: any, key: any, callback: any) => {
-      if (hasBeenStopped) return
+      if (hasBeenStopped.current) return
       runTest(value, callback)
     })
   }
 
   const updateRunAction = async (currentFile : any = null) => {
     const isSolidityActive = await testTab.appManager.isActive('solidity')
-    console.log('isSolidityActive-in updateRunAction--->', isSolidityActive)
-    console.log('selectedTests-in updateRunAction--->', selectedTests)
     if (!isSolidityActive || !selectedTests?.length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
@@ -549,7 +536,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const stopTests = () => {
-    hasBeenStopped = true
+    hasBeenStopped.current = true
     setStopButtonLabel('Stopping')
     setDisableStopButton(true)
     setDisableRunButton(true)
@@ -568,7 +555,7 @@ export const SolidityUnitTesting = (props: any) => {
     if (eChecked) {
       setCheckSelectAll(true)
       setDisableRunButton(false)
-      if ((readyTestsNumber === runningTestsNumber || hasBeenStopped) && stopButtonLabel.trim() === 'Stop') {
+      if ((readyTestsNumber === runningTestsNumber || hasBeenStopped.current) && stopButtonLabel.trim() === 'Stop') {
         setRunButtonTitle('Run tests')
       }
     } else if (!selectedTests.length) {
@@ -680,7 +667,6 @@ export const SolidityUnitTesting = (props: any) => {
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
           <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any, index) => {
-            console.log('testFileObj----->', testFileObj)
             const elemId = `singleTest${testFileObj.fileName}`
             return (
               <div className="d-flex align-items-center py-1">
