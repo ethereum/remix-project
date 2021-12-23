@@ -9,7 +9,7 @@ var remixLib = require('@remix-project/remix-lib')
 var EventManager = require('../../lib/events')
 var helper = require('../../lib/helper')
 var modalDialog = require('./modal-dialog-custom')
-const { Registry } = require('../state/registry')
+const Registry = require('../state/registry')
 var typeConversion = remixLib.execution.typeConversion
 
 var css = csjs`
