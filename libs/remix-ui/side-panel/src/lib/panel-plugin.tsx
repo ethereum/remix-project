@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react' // eslint-disable-line
 import { PluginRecord } from './types'
-import './side/panel.css';
+import './panel.css';
 interface panelPLuginProps {
     pluginRecord: PluginRecord
 }
