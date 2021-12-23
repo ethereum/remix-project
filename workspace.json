@@ -1179,7 +1179,6 @@
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
-
           }
         }
       }
