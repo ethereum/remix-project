@@ -145,11 +145,11 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   getAppParameter (name) {
-    return this.call('app', 'getAppParameter', name)
+    return this.call('config', 'getAppParameter', name)
   }
 
   setAppParameter (name, value) {
-    this.call('app', 'setAppParameter', name, value)
+    this.call('config', 'setAppParameter', name, value)
   }
 }
 
