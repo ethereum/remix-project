@@ -4,7 +4,7 @@ var $ = require('jquery')
 var yo = require('yo-yo')
 var css = require('./styles/renderer-styles')
 
-const { Registry } = require('../state/registry')
+const Registry = require('../state/registry')
 
 /**
  * After refactor, the renderer is only used to render error/warning
