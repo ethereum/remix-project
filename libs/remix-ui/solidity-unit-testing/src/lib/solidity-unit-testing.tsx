@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect, CSSProperties } from 'react' // eslint-disable-line
-// import { TestTabLogic } from './logic/testTabLogic'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 var async = require('async')
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
@@ -44,10 +43,10 @@ export const SolidityUnitTesting = (props: any) => {
 
   let [readyTestsNumber, setReadyTestsNumber] = useState(0)
   let [runningTestsNumber, setRunningTestsNumber] = useState(0)
-  let [hasBeenStopped, setHasBeenStopped] = useState(false)
-  let [areTestsRunning, setAreTestsRunning] = useState(false)
-  let [isDebugging, setIsDebugging] = useState(false)
-  
+
+  let areTestsRunning = false
+  let isDebugging = false
+  let hasBeenStopped = false
   let allTests: any = []
   let currentErrors: any
 
@@ -81,21 +80,20 @@ export const SolidityUnitTesting = (props: any) => {
     // }
     // // if current file is changed while debugging and one of the files imported in test file are opened
     // // do not clear the test results in SUT plugin
-    // if (this.isDebugging && this.allFilesInvolved.includes(file)) return
+    // if (isDebugging && this.allFilesInvolved.includes(file)) return
     console.log('Inside updateForNewCurrent --allTests-->', allTests)
     allTests = []
     updateTestFileList()
     clearResults()
-    // if (!areTestsRunning) updateRunAction(file)
     try {
-      testTabLogic.getTests((error: any, tests: any) => {
+      testTabLogic.getTests(async (error: any, tests: any) => {
         // if (error) return tooltip(error)
         console.log('tests in updateForNewCurrent testTabLogic.getTests', tests)
         allTests = tests
         selectedTests = [...allTests]
         setSelectedTests(tests)
         updateTestFileList()
-        // if (!this.testsOutput) return // eslint-disable-line
+        if (!areTestsRunning) await updateRunAction(file)
       })
     } catch (e) {
       console.log('error in updateForNewCurrent', e)
@@ -164,7 +162,7 @@ export const SolidityUnitTesting = (props: any) => {
     }
   }
 
-  const handleCreateFolder = () => {
+  const handleCreateFolder = async() => {
     let inputPath = trimTestDirInput(inputPathValue)
     let path = helper.removeMultipleSlashes(inputPath)
     if (path !== '/') path = helper.removeTrailingSlashes(path)
@@ -174,7 +172,7 @@ export const SolidityUnitTesting = (props: any) => {
     setDisableCreateButton(true)
     setDisableGenerateButton(false)
     testTabLogic.setCurrentPath(inputPath)
-    updateRunAction()
+    await updateRunAction()
     updateForNewCurrent()
     pathOptions.push(inputPath)
     setPathOptions(pathOptions)
@@ -185,7 +183,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const startDebug = async (txHash: any, web3: any) => {
-    // this.isDebugging = true
+    isDebugging = true
     if (!await testTab.appManager.isActive('debugger')) await testTab.appManager.activatePlugin('debugger')
     testTab.call('menuicons', 'select', 'debugger')
     testTab.call('debugger', 'debug', txHash, web3)
@@ -354,7 +352,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const showTestsResult = () => {
-    console.log('filesContent---->', filesContent)
+    console.log('inside showTestsResult filesContent---->', filesContent)
     let filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
@@ -441,7 +439,6 @@ export const SolidityUnitTesting = (props: any) => {
       // show only file name
       renderContract(filename, null, -1, true)
       currentErrors = _errors.errors
-      // this.setHeader(false)
     }
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
@@ -461,18 +458,15 @@ export const SolidityUnitTesting = (props: any) => {
       // if all tests has been through before stopping no need to print this.
       setTestsExecutionStoppedHidden(false)
     }
-    // if (_errors || this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
-    //   // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
-    //   const stopBtn = document.getElementById('runTestsTabStopAction')
-    //   stopBtn.setAttribute('disabled', 'disabled')
-    //   const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
-    //   stopBtnLabel.innerText = 'Stop'
-    //   if (this.data.selectedTests.length !== 0) {
-    //     const runBtn = document.getElementById('runTestsTabRunAction')
-    //     runBtn.removeAttribute('disabled')
-    //   }
-    //   this.areTestsRunning = false
-    // }
+    if (_errors || hasBeenStopped || readyTestsNumber === runningTestsNumber) {
+      // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
+      setDisableStopButton(true)
+      setStopButtonLabel('Stop')
+      if (selectedTests.length !== 0) {
+        setDisableRunButton(false)
+      }
+      areTestsRunning = false
+    }
   }
 
   const runTest = (testFilePath: any, callback: any) => {
@@ -540,8 +534,10 @@ export const SolidityUnitTesting = (props: any) => {
     })
   }
 
-  const updateRunAction = (currentFile : any = null) => {
-    const isSolidityActive = testTab.appManager.isActive('solidity')
+  const updateRunAction = async (currentFile : any = null) => {
+    const isSolidityActive = await testTab.appManager.isActive('solidity')
+    console.log('isSolidityActive-in updateRunAction--->', isSolidityActive)
+    console.log('selectedTests-in updateRunAction--->', selectedTests)
     if (!isSolidityActive || !selectedTests?.length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
@@ -553,7 +549,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const stopTests = () => {
-    setHasBeenStopped(true)
+    hasBeenStopped = true
     setStopButtonLabel('Stopping')
     setDisableStopButton(true)
     setDisableRunButton(true)
