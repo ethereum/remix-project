@@ -1,1 +1,1 @@
-export { default as RemixUiSidePanel } from './lib/side/remix-ui-panel';
+export { default as RemixUiSidePanel } from './lib/remix-ui-panel';

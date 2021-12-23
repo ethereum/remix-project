@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
 import './panel.css';
 import SidePanelHeader from './panel-header';
-import PanelPlugin from '../panel-plugin';
-import { PluginRecord } from '../types';
+import PanelPlugin from './panel-plugin';
+import { PluginRecord } from './types';
 
 /* eslint-disable-next-line */
 export interface RemixUiSidePanelProps {
