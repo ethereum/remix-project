@@ -7,15 +7,10 @@ import { TestTabLogic } from '@remix-ui/solidity-unit-testing' // eslint-disable
 import { ViewPlugin } from '@remixproject/engine-web'
 import helper from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
-import { format } from 'util'
-var yo = require('yo-yo')
-var async = require('async')
+
 var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
-var css = require('./styles/test-tab-styles')
 var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
-
-const _paq = window._paq = window._paq || []
 
 const profile = {
   name: 'solidityUnitTesting',
