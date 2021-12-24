@@ -558,6 +558,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         </div>
       </div>
       <ModalDialog
+        id='terminal'
         title={ modalState.title }
         message={ modalState.message }
         hide={ modalState.hide }
