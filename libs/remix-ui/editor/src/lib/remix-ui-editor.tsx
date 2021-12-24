@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint
 import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
+import { cairoLang, cairoConf } from './cairoSyntax'
 
 import './remix-ui-editor.css'
 
@@ -273,7 +274,11 @@ export const EditorUI = (props: EditorUIProps) => {
     const file = editorModelsState[props.currentFile]
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
-    if (file.language === 'sol') monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
+    if (file.language === 'sol') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
+    } else if (file.language === 'cairo') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
+    }
     setAnnotationsbyFile(props.currentFile)
     setMarkerbyFile(props.currentFile)
   }, [props.currentFile])
@@ -362,9 +367,13 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
+    monacoRef.current.languages.register({ id: 'remix-cairo' })
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language)
     monacoRef.current.languages.setLanguageConfiguration('remix-solidity', conf)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang)
+    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf)
   }
 
   return (

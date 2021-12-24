@@ -106,6 +106,7 @@ function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
   return (
     <Fragment>
       <ModalDialog
+        id='permissionsSettings'
         handleHide={closeModal}
         cancelFn={cancel}
         hide={modalVisibility}
