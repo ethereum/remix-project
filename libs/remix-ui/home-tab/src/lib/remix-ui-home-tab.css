@@ -1,0 +1,82 @@
+.remixui_text {
+  cursor: pointer;
+  font-weight: normal;
+  max-width: 300px;
+}
+.remixui_text:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.remixui_homeContainer {
+  overflow-y: hidden;
+  overflow-y: auto;
+  flex-grow: 3;
+}
+.remixui_hpLogoContainer {
+  margin: 30px;
+  padding-right: 90px;
+}
+.remixui_mediaBadge {
+  font-size: 2em;
+  height: 2em;
+  width: 2em;
+}
+.remixui_mediaBadge:focus {
+  outline: none;
+}
+.remixui_image {
+  height: 1em;
+  width: 1em;
+  text-align: center;
+}
+.remixui_logoImg {
+  height: 10em;
+}
+.remixui_rightPanel {
+  right: 0;
+  position: absolute;
+  z-index: 3;
+}
+.remixui_remixHomeMedia {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.remixui_panels {
+  box-shadow: 0px 0px 13px -7px;
+}
+.remixui_labelIt {
+  margin-bottom: 0;
+}
+.remixui_bigLabelSize {
+  font-size: 13px;
+}
+.remixui_seeAll {
+  margin-top: 7px;
+  white-space: nowrap;
+}
+.remixui_importFrom p {
+  margin-right: 10px;
+}
+.remixui_logoContainer img{
+  height: 150px;
+  opacity: 0.7;
+}
+.remixui_envLogo {
+  height: 16px;
+}
+.remixui_cursorStyle {
+  cursor: pointer;
+}
+.remixui_envButton {
+  width: 120px;
+  height: 70px;
+}
+.remixui_media {
+  overflow: hidden;
+  max-width: 400px;
+  transition: .5s ease-out;
+  z-index: 1000;
+}
+.remixui_migrationBtn {
+  width: 100px;
+}
