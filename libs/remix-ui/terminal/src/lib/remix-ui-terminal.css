@@ -151,6 +151,11 @@ element.style {
     cursor            : row-resize;
     z-index           : 999;
   }
+
+  .dragbarDragging {
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+  }
   
   .console {
     cursor           : pointer;
