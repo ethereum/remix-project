@@ -101,7 +101,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   useEffect(() => {
     updateDirList('/')
     updateForNewCurrent()
-  })
+  }, []) // eslint-disable-line
 
   const updateDirList = (path: string) => {
     testTabLogic.dirList(path).then((options: any) => {
@@ -662,13 +662,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
               data-id="testTabCheckAllTests"
               onClick={checkAll}
               checked={checkSelectAll}
+              onChange={() => {}} // eslint-disable-line
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>
           <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any, index) => {
             const elemId = `singleTest${testFileObj.fileName}`
             return (
-              <div className="d-flex align-items-center py-1">
+              <div className="d-flex align-items-center py-1" key={index}>
                 <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked}/>
                 <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
               </div>
