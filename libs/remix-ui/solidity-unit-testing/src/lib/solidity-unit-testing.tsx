@@ -35,14 +35,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const [progressBarHidden, setProgressBarHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   
-  const [testFiles, setTestFiles] = useState<TestObject[]>([])
+  let [testFiles, setTestFiles] = useState<TestObject[]>([]) // eslint-disable-line
   const [pathOptions, setPathOptions] = useState([''])
   let [selectedTests, setSelectedTests] = useState<string[]>([]) // eslint-disable-line
   
   const [inputPathValue, setInputPathValue] = useState('tests')
 
-  const [readyTestsNumber, setReadyTestsNumber] = useState(0)
-  const [runningTestsNumber, setRunningTestsNumber] = useState(0)
+  let [readyTestsNumber, setReadyTestsNumber] = useState(0) // eslint-disable-line
+  let [runningTestsNumber, setRunningTestsNumber] = useState(0) // eslint-disable-line
 
   const hasBeenStopped = useRef(false)
 
