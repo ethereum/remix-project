@@ -49,7 +49,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   let areTestsRunning = false
   let isDebugging = false
   let allTests: any = []
-  let currentErrors: any
+  let currentErrors: any = []
 
   let runningTestFileName: any
   const filesContent: any = {}
@@ -78,8 +78,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         if (errFiles.includes(file)) return
       } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
     }
-    // // if current file is changed while debugging and one of the files imported in test file are opened
-    // // do not clear the test results in SUT plugin
+    // if current file is changed while debugging and one of the files imported in test file are opened
+    // do not clear the test results in SUT plugin
     if (isDebugging && testTab.allFilesInvolved.includes(file)) return
     allTests = []
     updateTestFileList()
