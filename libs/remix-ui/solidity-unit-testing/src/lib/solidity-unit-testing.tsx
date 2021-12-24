@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
-import { eachOfSeries } from 'async'
+import { eachOfSeries } from 'async' // eslint-disable-line
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 
-const _paq = (window as any)._paq = (window as any)._paq || []
+const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line
 
 /* eslint-disable-next-line */
 export interface SolidityUnitTestingProps {}
@@ -15,10 +15,9 @@ interface TestObject {
   checked: boolean
 }
 
-export const SolidityUnitTesting = (props: any) => {
+export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const {helper, testTab} = props
-
   const { testTabLogic } = testTab
 
   const [defaultPath, setDefaultPath] = useState('tests')
@@ -36,16 +35,16 @@ export const SolidityUnitTesting = (props: any) => {
   const [progressBarHidden, setProgressBarHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
   
-  let [testFiles, setTestFiles] = useState<TestObject[]>([])
+  const [testFiles, setTestFiles] = useState<TestObject[]>([])
   const [pathOptions, setPathOptions] = useState([''])
-  let [selectedTests, setSelectedTests] = useState<string[]>([])
+  let [selectedTests, setSelectedTests] = useState<string[]>([]) // eslint-disable-line
   
   const [inputPathValue, setInputPathValue] = useState('tests')
 
-  let [readyTestsNumber, setReadyTestsNumber] = useState(0)
-  let [runningTestsNumber, setRunningTestsNumber] = useState(0)
+  const [readyTestsNumber, setReadyTestsNumber] = useState(0)
+  const [runningTestsNumber, setRunningTestsNumber] = useState(0)
 
-  let hasBeenStopped = useRef(false)
+  const hasBeenStopped = useRef(false)
 
   let areTestsRunning = false
   let isDebugging = false
@@ -53,9 +52,9 @@ export const SolidityUnitTesting = (props: any) => {
   let currentErrors: any
 
   let runningTestFileName: any
-  let filesContent: any = {}
+  const filesContent: any = {}
 
-  let testsResultByFilename:Record<string, any> = {}
+  const testsResultByFilename:Record<string, any> = {}
   
   const trimTestDirInput = (input:string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -75,7 +74,7 @@ export const SolidityUnitTesting = (props: any) => {
     // Test result, which is compilation error in this case, is not cleared
     if (currentErrors) {
       if (Array.isArray(currentErrors) && currentErrors.length > 0) {
-        const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file })
+        const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
         if (errFiles.includes(file)) return
       } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
     }
@@ -102,7 +101,7 @@ export const SolidityUnitTesting = (props: any) => {
   useEffect(() => {
     updateDirList('/')
     updateForNewCurrent()
-  }, [])
+  })
 
   const updateDirList = (path: string) => {
     testTabLogic.dirList(path).then((options: any) => {
@@ -211,21 +210,21 @@ export const SolidityUnitTesting = (props: any) => {
     await testTab.call('editor', 'discardHighlight')
   }
 
-  const highlightLocation = async (location: any, fileName: any) => {
+  const highlightLocation = async (location: string, fileName: string) => {
     if (location) {
-      var split = location.split(':')
-      var file = split[2]
-      location = {
+      const split = location.split(':')
+      const file = split[2]
+      const parsedLocation = {
         start: parseInt(split[0]),
         length: parseInt(split[1])
       }
-      location = testTab.offsetToLineColumnConverter.offsetToLineColumnWithContent(
-        location,
+      const locationToHighlight = testTab.offsetToLineColumnConverter.offsetToLineColumnWithContent(
+        parsedLocation,
         parseInt(file),
         filesContent[fileName].content
       )
       await testTab.call('editor', 'discardHighlight')
-      await testTab.call('editor', 'highlight', location, fileName, '', { focus: true })
+      await testTab.call('editor', 'highlight', locationToHighlight, fileName, '', { focus: true })
     }
   }
 
@@ -351,7 +350,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const showTestsResult = () => {
-    let filenames = Object.keys(testsResultByFilename)
+    const filenames = Object.keys(testsResultByFilename)
     for(const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
       const contracts = Object.keys(fileTestsResult)
@@ -544,7 +543,7 @@ export const SolidityUnitTesting = (props: any) => {
   }
 
   const getCurrentSelectedTests = () => {
-    let selectedTestsList: TestObject[] = testFiles.filter(testFileObj => testFileObj.checked)
+    const selectedTestsList: TestObject[] = testFiles.filter(testFileObj => testFileObj.checked)
     return selectedTestsList.map(testFileObj => testFileObj.fileName)
   }
 
@@ -663,7 +662,6 @@ export const SolidityUnitTesting = (props: any) => {
               data-id="testTabCheckAllTests"
               onClick={checkAll}
               checked={checkSelectAll}
-              onChange={() => {}}
             />
             <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
           </div>

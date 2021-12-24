@@ -1,5 +1,4 @@
-// const modalDialogCustom = require('../../ui/modal-dialog-custom')
-const remixPath = require('path')
+import remixPath from 'path'
 
 export class TestTabLogic {
 
@@ -75,7 +74,7 @@ export class TestTabLogic {
         } catch (e: any) {
         cb(e.message)
         }
-        for (var file in files) {
+        for (const file in files) {
         const filepath = provider && provider.type ? provider.type + '/' + file : file
         if (/.(_test.sol)$/.exec(file)) tests.push(filepath)
         }
