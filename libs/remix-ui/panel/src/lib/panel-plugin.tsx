@@ -5,7 +5,7 @@ interface panelPLuginProps {
     pluginRecord: PluginRecord
 }
 
-const PanelPlugin = (props: panelPLuginProps) => {
+const RemixUIPanelPlugin = (props: panelPLuginProps) => {
     const sidePanelRef = useRef(null)
     const [view, setView] = useState<JSX.Element | HTMLDivElement>()
     useEffect(() => {
@@ -23,4 +23,4 @@ const PanelPlugin = (props: panelPLuginProps) => {
       return <div className={props.pluginRecord.active? 'plugItIn active':'d-none'} ref={sidePanelRef}>{view}</div>
 }
 
-export default PanelPlugin
+export default RemixUIPanelPlugin

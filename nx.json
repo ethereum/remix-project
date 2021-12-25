@@ -139,10 +139,7 @@
     "remix-ui-tabs": {
       "tags": []
     },
-    "remix-ui-main-panel": {
-      "tags": []
-    },
-    "remix-ui-side-panel": {
+    "remix-ui-panel": {
       "tags": []
     }
   },

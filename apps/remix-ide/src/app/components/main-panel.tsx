@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import ReactDOM from 'react-dom' // eslint-disable-line
-import { RemixPanel } from '@remix-ui/side-panel'
+import { RemixPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 
 const profile = {
