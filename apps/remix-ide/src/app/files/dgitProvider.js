@@ -21,7 +21,7 @@ const profile = {
   description: '',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'decorator', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -82,6 +82,17 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
+    console.log(status)
+    await this.call('filePanel', 'setFileState',
+      status.map((f) => {
+        return {
+          path: f[0],
+          isDirectory: false,
+          fileStateType: ['MODIFIED', 'UNTRACKED'],
+          comment: ''
+        }
+      })
+    )
     return status
   }
 

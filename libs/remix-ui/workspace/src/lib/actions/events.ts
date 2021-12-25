@@ -1,7 +1,7 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { action } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
+import { action, fileState } from '../types'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setFileStateSuccess, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
@@ -44,6 +44,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
 
   plugin.on('fileManager', 'rootFolderChanged', async (path: string) => {
     rootFolderChanged(path)
+  })
+
+  plugin.on('filePanel', 'setFileState', async (items: fileState[]) => {
+    setFileState(items)
   })
 }
 
@@ -188,4 +192,9 @@ const fileRenamed = async (oldPath: string) => {
 
 const rootFolderChanged = async (path) => {
   await dispatch(rootFolderChangedSuccess(path))
+}
+
+const setFileState = async (items: fileState[], cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  await dispatch(setFileStateSuccess(items))
+  cb && cb(null, true)
 }

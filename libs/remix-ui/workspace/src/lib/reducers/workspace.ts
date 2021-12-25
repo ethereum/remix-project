@@ -1,5 +1,5 @@
 import { extractNameFromKey } from '@remix-ui/helper'
-import { action, FileType } from '../types'
+import { action, fileState, FileType } from '../types'
 import * as _ from 'lodash'
 interface Action {
     type: string
@@ -20,7 +20,8 @@ export interface BrowserState {
       registeredMenuItems: action[],
       removedMenuItems: action[],
       error: string
-    }
+    },
+    fileState: fileState[]
   },
   localhost: {
     sharedFolder: string,
@@ -68,7 +69,8 @@ export const browserInitialState: BrowserState = {
       registeredMenuItems: [],
       removedMenuItems: [],
       error: null
-    }
+    },
+    fileState: []
   },
   localhost: {
     sharedFolder: '',
@@ -340,6 +342,33 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           ...state.localhost,
           sharedFolder: payload,
           files: {}
+        }
+      }
+    }
+
+    case 'SET_FILE_STATE_SUCCESS': {
+      const payload = action.payload as fileState[]
+      const a = state.browser.fileState
+      const b = payload
+      const merge = _.merge({}, _.keyBy(a, 'path'), _.keyBy(b, 'path'))
+      const vals = _.values(merge)
+      console.log(a)
+      console.log(vals)
+      vals.map(function (x) {
+        const c = a.find(function (el) {
+          return el.path === x.path
+        })
+        if (c && c.fileStateType) {
+          x.fileStateType = _.uniq([...c.fileStateType, ...x.fileStateType])
+        }
+        return x
+      })
+      console.log(vals)
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          fileState: vals
         }
       }
     }

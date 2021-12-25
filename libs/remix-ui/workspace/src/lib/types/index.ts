@@ -3,7 +3,28 @@ import { customAction } from '@remixproject/plugin-api/lib/file-system/file-pane
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 
+export enum fileStateType {
+  Error = 'ERROR',
+  Untracked = 'UNTRACKED',
+  Modified = 'MODIFIED',
+  Staged = 'STAGED',
+  Committed = 'COMMITTED',
+  Deleted = 'DELETED',
+  Added = 'ADDED',
+  New = 'NEW',
+  Compiled = 'COMPILED',
+}
+
+export type fileState = {
+  path: string,
+  isDirectory: boolean,
+  fileStateType: fileStateType[],
+  comment: string
+}
+
 export type MenuItems = action[]
+
+export type fileDecorator = { name: string, method: string }
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
@@ -64,6 +85,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    fileState: fileState[]
     expandPath: string[],
     focusEdit: string,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],

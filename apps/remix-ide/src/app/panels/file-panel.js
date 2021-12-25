@@ -29,7 +29,7 @@ const globalRegistry = require('../../global/registry')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'setFileState', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -78,6 +78,15 @@ module.exports = class Filepanel extends ViewPlugin {
   registerContextMenuItem (item) {
     return new Promise((resolve, reject) => {
       this.emit('registerContextMenuItemReducerEvent', item, (err, data) => {
+        if (err) reject(err)
+        else resolve(data)
+      })
+    })
+  }
+
+  setFileState (items) {
+    return new Promise((resolve, reject) => {
+      this.emit('setFileState', items, (err, data) => {
         if (err) reject(err)
         else resolve(data)
       })
