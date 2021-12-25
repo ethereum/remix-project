@@ -1,18 +1,18 @@
 {
-  "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ]
-}
+  "env": {
+      "browser": true,
+      "es6": true
+  },
+  "extends": "../../../.eslintrc",
+  "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+      "ecmaVersion": 11,
+      "sourceType": "module"
+  },
+  "rules": {
+      "standard/no-callback-literal": "off"
+  }
+} 
