@@ -1,26 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react' // eslint-disable-line
 import { PluginRecord } from './types'
-import './panel.css';
+import './panel.css'
 interface panelPLuginProps {
     pluginRecord: PluginRecord
 }
 
 const RemixUIPanelPlugin = (props: panelPLuginProps) => {
-    const sidePanelRef = useRef(null)
-    const [view, setView] = useState<JSX.Element | HTMLDivElement>()
-    useEffect(() => {
-        if (sidePanelRef.current) {
-          if (props.pluginRecord.view) {
-            if (React.isValidElement(props.pluginRecord.view)) {
-              setView(props.pluginRecord.view)
-            }else{
-              sidePanelRef.current.appendChild(props.pluginRecord.view)
-            }
-          }
+  const sidePanelRef = useRef(null)
+  const [view, setView] = useState<JSX.Element | HTMLDivElement>()
+  useEffect(() => {
+    if (sidePanelRef.current) {
+      if (props.pluginRecord.view) {
+        if (React.isValidElement(props.pluginRecord.view)) {
+          setView(props.pluginRecord.view)
+        } else {
+          sidePanelRef.current.appendChild(props.pluginRecord.view)
         }
-      }, [])
+      }
+    }
+  }, [])
 
-      return <div className={props.pluginRecord.active? 'plugItIn active':'d-none'} ref={sidePanelRef}>{view}</div>
+  return <div className={props.pluginRecord.active ? 'plugItIn active' : 'd-none'} ref={sidePanelRef}>{view}</div>
 }
 
 export default RemixUIPanelPlugin
