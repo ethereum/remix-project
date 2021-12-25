@@ -7,7 +7,7 @@ import { addNewInstance, addProvider, clearAllInstances, displayNotification, di
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractData, FuncABI, MainnetPrompt, Network, Tx } from '../types'
+import { ContractData, FuncABI, MainnetPrompt } from '../types'
 
 const txFormat = remixLib.execution.txFormat
 declare global {
@@ -314,7 +314,8 @@ const loadContractFromAddress = (address, confirmCb, cb) => {
       try {
         abi = JSON.parse(plugin.editor.currentContent())
       } catch (e) {
-        // return cb('Failed to parse the current file as JSON ABI.')
+        // eslint-disable-next-line standard/no-callback-literal
+        return cb('Failed to parse the current file as JSON ABI.')
       }
       _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithABI'])
       cb(null, 'abi', abi)
@@ -551,34 +552,26 @@ export const clearInstances = () => {
   dispatch(clearAllInstances())
 }
 
-const loadAddress = () => {
+export const loadAddress = (contract: ContractData, address: string) => {
+  if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
   clearInstances()
+  loadContractFromAddress(address,
+    (cb) => {
+      dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
+    },
+    (error, loadType, abi) => {
+      if (error) {
+        return dispatch(displayNotification('Alert', error, 'OK', null))
+      }
+      const compiler = plugin.REACT_API.contracts.contractList.find(item => item.alias === contract.name)
+      const contractData = getSelectedContract(contract.name, compiler.name)
 
-  // let address = this.atAddressButtonInput.value
-  // if (!ethJSUtil.isValidChecksumAddress(address)) {
-  //   addTooltip(yo`
-  //     <span>
-  //       It seems you are not using a checksumed address.
-  //       <br>A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
-  //       <br>Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
-  //     </span>`)
-  //   address = ethJSUtil.toChecksumAddress(address)
-  // }
-  // this.dropdownLogic.loadContractFromAddress(address,
-  //   (cb) => {
-  //     modalDialogCustom.confirm('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, cb)
-  //   },
-  //   (error, loadType, abi) => {
-  //     if (error) {
-  //       return modalDialogCustom.alert(error)
-  //     }
-  //     if (loadType === 'abi') {
-  //       return this.event.trigger('newContractABIAdded', [abi, address])
-  //     }
-  //     var selectedContract = this.getSelectedContract()
-  //     addInstance({ contractData: selectedContract.object, address, name: contractObject.name })
-  //   }
-  // )
+      if (loadType === 'abi') {
+        return addInstance({ contractData, address, name: '<at address>' })
+      }
+      addInstance({ contractData, address, name: contract.name })
+    }
+  )
 }
 
 export const getContext = () => {

@@ -22,7 +22,7 @@ import {
   updateMaxFee, updateMaxPriorityFee,
   updateTxFeeContent, clearInstances,
   removeInstance, getContext,
-  runTransactions
+  runTransactions, loadAddress
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -224,6 +224,8 @@ export function RunTabUI (props: RunTabProps) {
             logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
+            tooltip={toast}
+            loadAddress={loadAddress}
           />
           <RecorderUI />
           <InstanceContainerUI
