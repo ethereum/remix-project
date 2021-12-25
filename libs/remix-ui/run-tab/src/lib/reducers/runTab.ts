@@ -575,7 +575,6 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         instances: {
           ...state.instances,
           instanceList: state.instances.instanceList.map((instance, index) => {
-            console.log('payload: ', payload)
             if (payload.index === index) instance.decodedResponse = payload.decodedResponse
             return instance
           })
