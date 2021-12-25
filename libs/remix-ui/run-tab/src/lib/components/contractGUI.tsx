@@ -15,7 +15,27 @@ export function ContractGUI (props: ContractGUIProps) {
     classList: string,
     dataId: string
   }>({ title: '', content: '', classList: '', dataId: '' })
+  const [clipboardContent, setClipboardContent] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
+
+  useEffect(() => {
+    const multiString = getMultiValsString()
+    const multiJSON = JSON.parse('[' + multiString + ']')
+    let encodeObj
+
+    if (props.evmBC) {
+      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.evmBC)
+    } else {
+      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
+    }
+    if (encodeObj.error) {
+      console.error(encodeObj.error)
+      // throw new Error(encodeObj.error)
+      setClipboardContent(encodeObj.error)
+    } else {
+      setClipboardContent(encodeObj.data)
+    }
+  }, [])
 
   useEffect(() => {
     if (props.title) {
@@ -79,10 +99,12 @@ export function ContractGUI (props: ContractGUIProps) {
       valArrayTest.push(elVal)
       elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
       elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      try {
-        JSON.parse(elVal)
-      } catch (e) {
-        elVal = '"' + elVal + '"'
+      if (elVal) {
+        try {
+          JSON.parse(elVal)
+        } catch (e) {
+          elVal = '"' + elVal + '"'
+        }
       }
       ret += elVal
     }
@@ -109,25 +131,6 @@ export function ContractGUI (props: ContractGUIProps) {
           multiInputs[k].value = JSON.stringify(inputJSON[k])
         }
       }
-    }
-  }
-
-  const clipboardContent = () => {
-    const multiString = getMultiValsString()
-    const multiJSON = JSON.parse('[' + multiString + ']')
-    let encodeObj
-
-    if (props.evmBC) {
-      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.evmBC)
-    } else {
-      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
-    }
-    if (encodeObj.error) {
-      console.error(encodeObj.error)
-      // throw new Error(encodeObj.error)
-      return encodeObj.error
-    } else {
-      return encodeObj.data
     }
   }
 
@@ -185,7 +188,7 @@ export function ContractGUI (props: ContractGUIProps) {
             })}
           </div>
           <div className="udapp_group udapp_multiArg">
-            <CopyToClipboard content={clipboardContent()} tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} />
+            <CopyToClipboard content={clipboardContent} tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} />
             <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
           </div>
         </div>

@@ -180,7 +180,9 @@ export interface ContractDropdownProps {
   gasEstimationPrompt: (msg: string) => JSX.Element,
   logBuilder: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
-  mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element
+  mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
+  tooltip: (toasterMsg: string | JSX.Element) => void,
+  loadAddress: (contract: ContractData, address: string) => void
 }
 
 export interface RecorderProps {
