@@ -6,7 +6,7 @@ import './panel.css';
 export interface RemixPanelProps {
     plugins: Record<string, PluginRecord>;
   }
-const SidePanelHeader = (props: RemixPanelProps) => {
+const RemixUIPanelHeader = (props: RemixPanelProps) => {
     const [plugin, setPlugin] = useState<PluginRecord>()
 
     useEffect(() => {
@@ -26,4 +26,4 @@ const SidePanelHeader = (props: RemixPanelProps) => {
     </header>)
 }
 
-export default SidePanelHeader
+export default RemixUIPanelHeader

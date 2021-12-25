@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
 import './panel.css';
-import SidePanelHeader from './panel-header';
-import PanelPlugin from './panel-plugin';
+import RemixUIPanelHeader from './panel-header';
+import RemixUIPanelPlugin from './panel-plugin';
 import { PluginRecord } from './types';
 
 /* eslint-disable-next-line */
@@ -13,10 +13,10 @@ export function RemixPanel(props: RemixPanelProps) {
 
   return (
     <div className='panel plugin-manager'>
-      <SidePanelHeader plugins={props.plugins}></SidePanelHeader>
+      <RemixUIPanelHeader plugins={props.plugins}></RemixUIPanelHeader>
       <div className="pluginsContainer">
         {Object.values(props.plugins).map((pluginRecord) => {
-            return <PanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} />
+            return <RemixUIPanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} />
         })}
       </div>
     </div>

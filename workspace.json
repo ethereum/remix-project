@@ -1135,31 +1135,16 @@
         }
       }
     },
-    "remix-ui-main-panel": {
-      "root": "libs/remix-ui/main-panel",
-      "sourceRoot": "libs/remix-ui/main-panel/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/main-panel/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/main-panel/**/*"]
-          }
-        }
-      }
-    },
-    "remix-ui-side-panel": {
-      "root": "libs/remix-ui/side-panel",
-      "sourceRoot": "libs/remix-ui/side-panel/src",
+    "remix-ui-panel": {
+      "root": "libs/remix-ui/panel",
+      "sourceRoot": "libs/remix-ui/panel/src",
       "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
-              "libs/remix-ui/side-panel/**/*.{ts,tsx,js,jsx}"
+              "libs/remix-ui/panel/**/*.{ts,tsx,js,jsx}"
             ]
           }
         }
