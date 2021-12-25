@@ -14,13 +14,21 @@ const profile = {
 }
 
 export class HiddenPanel extends AbstractPanel {
-  el: HTMLDivElement
+  el: HTMLElement
   constructor () {
     super(profile)
     this.el = document.createElement('div')
+    this.el.setAttribute('class', 'pluginsContainer')
+  }
+
+  addView (profile: any, view: any): void {
+    super.removeView(profile)
+    super.addView(profile, view)
+    this.renderComponent()
   }
 
   render () {
+    console.log(this.el)
     return this.el
   }
 
