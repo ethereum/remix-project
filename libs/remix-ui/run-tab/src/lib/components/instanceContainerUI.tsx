@@ -23,7 +23,18 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
       </div>
       { instanceList.length > 0
         ? <div> { props.instances.instanceList.map((instance, index) => {
-          return <UniversalDappUI instance={instance} context={props.getContext()} removeInstance={props.removeInstance} index={index} />
+          return <UniversalDappUI
+            instance={instance}
+            context={props.getContext()}
+            removeInstance={props.removeInstance}
+            index={index}
+            gasEstimationPrompt={props.gasEstimationPrompt}
+            logBuilder={props.logBuilder}
+            passphrasePrompt={props.passphrasePrompt}
+            mainnetPrompt={props.mainnetPrompt}
+            runTransactions={props.runTransactions}
+            decodedResponse={instance.decodedResponse || {}}
+          />
         }) }
         </div>
         : <span className="mx-2 mt-3 alert alert-warning" data-id="deployAndRunNoInstanceText" role="alert">

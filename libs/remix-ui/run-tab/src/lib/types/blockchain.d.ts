@@ -14,6 +14,10 @@ export class Blockchain extends Plugin<any, any> {
     getCurrentNetworkStatus(): {
         name: string;
         id: string;
+        network?: {
+            name: string;
+            id: string;
+        };
     };
     setupProviders(): void;
     providers: {};
