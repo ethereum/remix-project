@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
-import { shortenAddress } from 'apps/remix-ide/src/lib/helper'
 import { FuncABI, UdappProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
@@ -8,6 +7,7 @@ import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'ethereumjs-util'
+import { is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper
 
@@ -16,6 +16,8 @@ export function UniversalDappUI (props: UdappProps) {
   const [contractABI, setContractABI] = useState<FuncABI[]>(null)
   const [address, setAddress] = useState<string>('')
   const [expandPath, setExpandPath] = useState<string[]>([])
+  const [llIError, setLlIError] = useState<string>('')
+  const [calldataValue, setCalldataValue] = useState<string>('')
 
   useEffect(() => {
     if (!props.abi) {
@@ -37,94 +39,55 @@ export function UniversalDappUI (props: UdappProps) {
     }
   }, [props.instance.address])
 
-  // const calldataInput = yo`
-  //   <input id="deployAndRunLLTxCalldata" class="${css.calldataInput} form-control" title="The Calldata to send to fallback function of the contract.">
-  // `
-  // const llIError = yo`
-  //   <label id="deployAndRunLLTxError" class="text-danger my-2"></label>
-  // `
-  // // constract LLInteractions elements
-  // const lowLevelInteracions = yo`
-  //   <div class="d-flex flex-column">
-  //     <div class="d-flex flex-row justify-content-between mt-2">
-  //       <div class="py-2 border-top d-flex justify-content-start flex-grow-1">
-  //         Low level interactions
-  //       </div>
-  //       <a
-  //         href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
-  //         title="check out docs for using 'receive'/'fallback'"
-  //         target="_blank"
-  //       >
-  //         <i aria-hidden="true" class="fas fa-info my-2 mr-1"></i>
-  //       </a>
-  //     </div>
-  //     <div class="d-flex flex-column align-items-start">
-  //       <label class="">CALLDATA</label>
-  //       <div class="d-flex justify-content-end w-100 align-items-center">
-  //         ${calldataInput}
-  //         <button id="deployAndRunLLTxSendTransaction" data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction" class="${css.instanceButton} p-0 w-50 btn border-warning text-warning" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
-  //       </div>
-  //     </div>
-  //     <div>
-  //       ${llIError}
-  //     </div>
-  //   </div>
-  // `
+  const sendData = () => {
+    setLlIError('')
+    const fallback = txHelper.getFallbackInterface(contractABI)
+    const receive = txHelper.getReceiveInterface(contractABI)
+    const args = {
+      funcABI: fallback || receive,
+      address: address,
+      contractName: props.instance.name,
+      contractABI: contractABI
+    }
+    const amount = props.sendValue
 
-  // function sendData () {
-  //   function setLLIError (text) {
-  //     llIError.innerText = text
-  //   }
+    if (amount !== '0') {
+      // check for numeric and receive/fallback
+      if (!isNumeric(amount)) {
+        return setLlIError('Value to send should be a number')
+      } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
+        return setLlIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
+      }
+    }
+    let calldata = calldataValue
 
-  //   setLLIError('')
-  //   const fallback = txHelper.getFallbackInterface(contractABI)
-  //   const receive = txHelper.getReceiveInterface(contractABI)
-  //   const args = {
-  //     funABI: fallback || receive,
-  //     address: address,
-  //     contractName: contractName,
-  //     contractABI: contractABI
-  //   }
-  //   const amount = document.querySelector('#value').value
-  //   if (amount !== '0') {
-  //     // check for numeric and receive/fallback
-  //     if (!helper.isNumeric(amount)) {
-  //       return setLLIError('Value to send should be a number')
-  //     } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-  //       return setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
-  //     }
-  //   }
-  //   let calldata = calldataInput.value
-  //   if (calldata) {
-  //     if (calldata.length < 4 && helper.is0XPrefixed(calldata)) {
-  //       return setLLIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
-  //     } else {
-  //       if (helper.is0XPrefixed(calldata)) {
-  //         calldata = calldata.substr(2, calldata.length)
-  //       }
-  //       if (!helper.isHexadecimal(calldata)) {
-  //         return setLLIError('The calldata should be a valid hexadecimal value.')
-  //       }
-  //     }
-  //     if (!fallback) {
-  //       return setLLIError("'Fallback' function is not defined")
-  //     }
-  //   }
+    if (calldata) {
+      if (calldata.length < 4 && is0XPrefixed(calldata)) {
+        return setLlIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
+      } else {
+        if (is0XPrefixed(calldata)) {
+          calldata = calldata.substr(2, calldata.length)
+        }
+        if (!isHexadecimal(calldata)) {
+          return setLlIError('The calldata should be a valid hexadecimal value.')
+        }
+      }
+      if (!fallback) {
+        return setLlIError("'Fallback' function is not defined")
+      }
+    }
 
-  //   if (!receive && !fallback) return setLLIError('Both \'receive\' and \'fallback\' functions are not defined')
+    if (!receive && !fallback) return setLlIError('Both \'receive\' and \'fallback\' functions are not defined')
 
-  //   // we have to put the right function ABI:
-  //   // if receive is defined and that there is no calldata => receive function is called
-  //   // if fallback is defined => fallback function is called
-  //   if (receive && !calldata) args.funABI = receive
-  //   else if (fallback) args.funABI = fallback
+    // we have to put the right function ABI:
+    // if receive is defined and that there is no calldata => receive function is called
+    // if fallback is defined => fallback function is called
+    if (receive && !calldata) args.funcABI = receive
+    else if (fallback) args.funcABI = fallback
 
-  //   if (!args.funABI) return setLLIError('Please define a \'Fallback\' function to send calldata and a either \'Receive\' or payable \'Fallback\' to send ethers')
-  //   self.runTransaction(false, args, null, calldataInput.value, null)
-  // }
-
-  // contractActionsWrapper.appendChild(lowLevelInteracions)
-  // return instance
+    if (!args.funcABI) return setLlIError('Please define a \'Fallback\' function to send calldata and a either \'Receive\' or payable \'Fallback\' to send ethers')
+    runTransaction(false, args.funcABI, null, calldataValue)
+  }
 
   const toggleClass = () => {
     setToggleExpander(!toggleExpander)
@@ -146,7 +109,7 @@ export function UniversalDappUI (props: UdappProps) {
       props.instance.name,
       contractABI,
       props.instance.contractData,
-      props.instance.address,
+      address,
       logMsg,
       props.logBuilder,
       props.mainnetPrompt,
@@ -195,9 +158,15 @@ export function UniversalDappUI (props: UdappProps) {
     }
   }
 
+  const handleCalldataChange = (e) => {
+    const value = e.target.value
+
+    setCalldataValue(value)
+  }
+
   const label = (key: string | number, value: string) => {
     return (
-      <div className="d-flex mr-1 flex-row label_item">
+      <div className="d-flex mt-2 flex-row label_item">
         <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
         <label className="m-0 label_value">{value}</label>
       </div>
@@ -251,23 +220,49 @@ export function UniversalDappUI (props: UdappProps) {
         </button>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
-        {
-          contractABI && contractABI.map((funcABI, index) => {
-            if (funcABI.type !== 'function') return null
-            const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
-            const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
+        <div className="udapp_contractActionsContainer">
+          {
+            contractABI && contractABI.map((funcABI) => {
+              if (funcABI.type !== 'function') return null
+              const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
+              const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
 
-            return <ContractGUI funcABI={funcABI} clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => runTransaction(lookupOnly, funcABI, valArray, inputsValues)} inputs={props.instance.contractData.getConstructorInputs()} evmBC={props.instance.contractData.bytecodeObject} lookupOnly={lookupOnly} />
-          })
-        }
-        <div className="udapp_value">
-          <TreeView id="treeView">
-            {
-              Object.keys(props.decodedResponse).map((innerkey) => {
-                return renderData(props.decodedResponse[innerkey], props.decodedResponse, innerkey, innerkey)
-              })
-            }
-          </TreeView>
+              return <ContractGUI funcABI={funcABI} clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => runTransaction(lookupOnly, funcABI, valArray, inputsValues)} inputs={props.instance.contractData.getConstructorInputs()} evmBC={props.instance.contractData.bytecodeObject} lookupOnly={lookupOnly} />
+            })
+          }
+          <div className="udapp_value">
+            <TreeView id="treeView">
+              {
+                Object.keys(props.decodedResponse).map((innerkey) => {
+                  return renderData(props.decodedResponse[innerkey], props.decodedResponse, innerkey, innerkey)
+                })
+              }
+            </TreeView>
+          </div>
+        </div>
+        <div className="d-flex flex-column">
+          <div className="d-flex flex-row justify-content-between mt-2">
+            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
+              Low level interactions
+            </div>
+            <a
+              href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
+              title="check out docs for using 'receive'/'fallback'"
+              target="_blank"
+            >
+              <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+            </a>
+          </div>
+          <div className="d-flex flex-column align-items-start">
+            <label className="">CALLDATA</label>
+            <div className="d-flex justify-content-end w-100 align-items-center">
+              <input id="deployAndRunLLTxCalldata" onChange={handleCalldataChange} className="udapp_calldataInput form-control" title="The Calldata to send to fallback function of the contract." />
+              <button id="deployAndRunLLTxSendTransaction" data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction" className="udapp_instanceButton p-0 w-50 btn border-warning text-warning" title="Send data to contract." onClick={sendData}>Transact</button>
+            </div>
+          </div>
+          <div>
+            <label id="deployAndRunLLTxError" className="text-danger my-2">{ llIError }</label>
+          </div>
         </div>
       </div>
     </div>

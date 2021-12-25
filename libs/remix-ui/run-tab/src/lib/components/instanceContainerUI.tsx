@@ -34,6 +34,7 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
             mainnetPrompt={props.mainnetPrompt}
             runTransactions={props.runTransactions}
             decodedResponse={instance.decodedResponse || {}}
+            sendValue={props.sendValue}
           />
         }) }
         </div>

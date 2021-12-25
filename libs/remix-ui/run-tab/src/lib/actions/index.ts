@@ -624,8 +624,6 @@ export const runTransactions = (
     (returnValue) => {
       const decodedResponse = txFormat.decodeResponse(returnValue, funcABI)
 
-      console.log('decodedResponse: ', decodedResponse)
-
       dispatch(setDecodedResponse(index, decodedResponse))
     },
     (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
