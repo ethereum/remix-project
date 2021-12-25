@@ -20,12 +20,13 @@ const sidePanel = {
 // TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
   appManager: RemixAppManager
-  sideelement: HTMLDivElement
+  sideelement: any
   verticalIcons: VerticalIcons;
   constructor (appManager: RemixAppManager, verticalIcons: VerticalIcons) {
     super(sidePanel)
     this.appManager = appManager
-    this.sideelement = document.createElement('div')
+    this.sideelement = document.createElement('section')
+    this.sideelement.setAttribute('class', 'panel plugin-manager')
     this.verticalIcons = verticalIcons
 
     // Toggle content
