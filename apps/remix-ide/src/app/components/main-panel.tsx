@@ -51,6 +51,6 @@ export class MainPanel extends AbstractPanel {
     }
 
     renderComponent () {
-      ReactDOM.render(<RemixPanel plugins={this.plugins}/>, this.element)
+      ReactDOM.render(<RemixPanel header={<></>} plugins={this.plugins}/>, this.element)
     }
 }
