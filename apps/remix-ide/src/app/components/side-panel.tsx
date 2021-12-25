@@ -65,7 +65,7 @@ export class SidePanel extends AbstractPanel {
   removeView (profile) {
     super.removeView(profile)
     this.emit('pluginDisabled', profile.name)
-    this.verticalIcons.unlinkContent(profile)
+    this.call('menuicons', 'unlinkContent', profile)
     this.renderComponent()
   }
 
