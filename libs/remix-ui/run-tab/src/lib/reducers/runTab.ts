@@ -68,7 +68,8 @@ export interface RunTabState {
     instanceList: {
       contractData: ContractData,
       address: string,
-      name: string
+      name: string,
+      decodedResponse?: any
     }[],
     error: string
   }
@@ -562,6 +563,22 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         instances: {
           instanceList: [],
           error: null
+        }
+      }
+    }
+
+    case 'SET_DECODED_RESPONSE': {
+      const payload: any = action.payload
+
+      return {
+        ...state,
+        instances: {
+          ...state.instances,
+          instanceList: state.instances.instanceList.map((instance, index) => {
+            console.log('payload: ', payload)
+            if (payload.index === index) instance.decodedResponse = payload.decodedResponse
+            return instance
+          })
         }
       }
     }

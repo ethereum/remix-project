@@ -6,6 +6,8 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { BN } from 'ethereumjs-util'
 
 const txHelper = remixLib.execution.txHelper
 
@@ -13,6 +15,7 @@ export function UniversalDappUI (props: UdappProps) {
   const [toggleExpander, setToggleExpander] = useState<boolean>(true)
   const [contractABI, setContractABI] = useState<FuncABI[]>(null)
   const [address, setAddress] = useState<string>('')
+  const [expandPath, setExpandPath] = useState<string[]>([])
 
   useEffect(() => {
     if (!props.abi) {
@@ -135,41 +138,95 @@ export function UniversalDappUI (props: UdappProps) {
     const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
     const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
 
-    // const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
+    props.runTransactions(
+      props.index,
+      lookupOnly,
+      funcABI,
+      inputsValues,
+      props.instance.name,
+      contractABI,
+      props.instance.contractData,
+      props.instance.address,
+      logMsg,
+      props.logBuilder,
+      props.mainnetPrompt,
+      props.gasEstimationPrompt,
+      props.passphrasePrompt)
+  }
 
-    // const outputCb = (returnValue) => {
-    //   if (outputOverride) {
-    //     const decoded = decodeResponseToTreeView(returnValue, args.funABI)
-    //     outputOverride.innerHTML = ''
-    //     outputOverride.appendChild(decoded)
-    //   }
-    // }
-    // let callinfo = ''
-    // if (lookupOnly) callinfo = 'call'
-    // else if (args.funABI.type === 'fallback' || args.funABI.type === 'receive') callinfo = 'lowLevelInteracions'
-    // else callinfo = 'transact'
+  const extractDataDefault = (item, parent?) => {
+    const ret: any = {}
 
-    // _paq.push(['trackEvent', 'udapp', callinfo, this.blockchain.getCurrentNetworkStatus().network.name])
-    // const params = args.funABI.type !== 'fallback' ? inputsValues : ''
-    // this.blockchain.runOrCallContractMethod(
-    //   args.contractName,
-    //   args.contractABI,
-    //   args.funABI,
-    //   args.contract,
-    //   inputsValues,
-    //   args.address,
-    //   params,
-    //   lookupOnly,
-    //   logMsg,
-    //   this.logCallback,
-    //   outputCb,
-    //   callbacksInContext.confirmationCb.bind(callbacksInContext),
-    //   callbacksInContext.continueCb.bind(callbacksInContext),
-    //   callbacksInContext.promptCb.bind(callbacksInContext))
+    if (BN.isBN(item)) {
+      ret.self = item.toString(10)
+      ret.children = []
+    } else {
+      if (item instanceof Array) {
+        ret.children = item.map((item, index) => {
+          return { key: index, value: item }
+        })
+        ret.self = 'Array'
+        ret.isNode = true
+        ret.isLeaf = false
+      } else if (item instanceof Object) {
+        ret.children = Object.keys(item).map((key) => {
+          return { key: key, value: item[key] }
+        })
+        ret.self = 'Object'
+        ret.isNode = true
+        ret.isLeaf = false
+      } else {
+        ret.self = item
+        ret.children = null
+        ret.isNode = false
+        ret.isLeaf = true
+      }
+    }
+    return ret
+  }
+
+  const handleExpand = (path: string) => {
+    if (expandPath.includes(path)) {
+      const filteredPath = expandPath.filter(value => value !== path)
+
+      setExpandPath(filteredPath)
+    } else {
+      setExpandPath([...expandPath, path])
+    }
+  }
+
+  const label = (key: string | number, value: string) => {
+    return (
+      <div className="d-flex mr-1 flex-row label_item">
+        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
+        <label className="m-0 label_value">{value}</label>
+      </div>
+    )
+  }
+
+  const renderData = (item, parent, key: string | number, keyPath: string) => {
+    const data = extractDataDefault(item, parent)
+    const children = (data.children || []).map((child) => {
+      return (
+        renderData(child.value, data, child.key, keyPath + '/' + child.key)
+      )
+    })
+
+    if (children && children.length > 0) {
+      return (
+        <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={label(key, data.self)} onClick={() => handleExpand(keyPath)} expand={expandPath.includes(keyPath)}>
+          <TreeView id={`treeView${key}`} key={keyPath}>
+            {children}
+          </TreeView>
+        </TreeViewItem>
+      )
+    } else {
+      return <TreeViewItem id={key.toString()} key={keyPath} label={label(key, data.self)} onClick={() => handleExpand(keyPath)} expand={expandPath.includes(keyPath)} />
+    }
   }
 
   return (
-    <div className={`udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : ''}`} id={`instance${address}`} data-shared="universalDappUiInstance">
+    <div className={`udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`} id={`instance${address}`} data-shared="universalDappUiInstance">
       <div className="udapp_title alert alert-secondary">
         <button data-id="universalDappUiTitleExpander" className="btn udapp_titleExpander" onClick={toggleClass}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
@@ -181,7 +238,7 @@ export function UniversalDappUI (props: UdappProps) {
             </span>
           </div>
           <div className="btn-group">
-            <button className="btn p-1 btn-secondary"><CopyToClipboard content={address} /></button>
+            <button className="btn p-1 btn-secondary"><CopyToClipboard content={address} direction={'top'} /></button>
           </div>
         </div>
         <button
@@ -195,16 +252,23 @@ export function UniversalDappUI (props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         {
-          contractABI && contractABI.map((funcABI) => {
+          contractABI && contractABI.map((funcABI, index) => {
             if (funcABI.type !== 'function') return null
             const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
             const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
 
-            return <div className="udapp_value">
-              <ContractGUI funcABI={funcABI} clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => runTransaction(lookupOnly, funcABI, valArray, inputsValues)} inputs={props.instance.contractData.getConstructorInputs()} evmBC={props.instance.contractData.bytecodeObject} lookupOnly={lookupOnly} />
-            </div>
+            return <ContractGUI funcABI={funcABI} clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => runTransaction(lookupOnly, funcABI, valArray, inputsValues)} inputs={props.instance.contractData.getConstructorInputs()} evmBC={props.instance.contractData.bytecodeObject} lookupOnly={lookupOnly} />
           })
         }
+        <div className="udapp_value">
+          <TreeView id="treeView">
+            {
+              Object.keys(props.decodedResponse).map((innerkey) => {
+                return renderData(props.decodedResponse[innerkey], props.decodedResponse, innerkey, innerkey)
+              })
+            }
+          </TreeView>
+        </div>
       </div>
     </div>
   )

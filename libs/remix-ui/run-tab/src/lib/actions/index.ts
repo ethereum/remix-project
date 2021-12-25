@@ -3,11 +3,13 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { addressToString, shortenAddress } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
+import { addNewInstance, addProvider, clearAllInstances, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractData, Network, Tx } from '../types'
+import { ContractData, FuncABI, MainnetPrompt, Network, Tx } from '../types'
+
+const txFormat = remixLib.execution.txFormat
 declare global {
   interface Window {
     _paq: any
@@ -374,35 +376,49 @@ const terminalLogger = (view: JSX.Element) => {
   plugin.call('terminal', 'logHtml', view)
 }
 
-const getConfirmationCb = (confirmDialogContent: (
-  tx: Tx, network:
-  Network, amount: string,
-  gasEstimation: string,
-  gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
-  determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
-  ) => JSX.Element) => {
-  // this code is the same as in recorder.js. TODO need to be refactored out
-  const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-    if (network.name !== 'Main') {
-      return continueTxExecution(null)
-    }
-    const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
-    const content = confirmDialogContent(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
-
-    dispatch(displayNotification('Confirm transaction', content, 'Confirm', 'Cancel', () => {
-      plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', plugin.REACT_API.confirmSettings)
-      // TODO: check if this is check is still valid given the refactor
-      if (!plugin.REACT_API.gasPriceStatus) {
-        cancelCb('Given transaction fee is not correct')
-      } else {
-        continueTxExecution({ maxFee: plugin.REACT_API.maxFee, maxPriorityFee: plugin.REACT_API.maxPriorityFee, baseFeePerGas: plugin.REACT_API.baseFeePerGas, gasPrice: plugin.REACT_API.gasPrice })
-      }
-    }, () => {
-      return cancelCb('Transaction canceled by user.')
-    }))
+const confirmationHandler = (confirmDialogContent: MainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+  if (network.name !== 'Main') {
+    return continueTxExecution(null)
   }
+  const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
+  const content = confirmDialogContent(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
 
-  return confirmationCb
+  dispatch(displayNotification('Confirm transaction', content, 'Confirm', 'Cancel', () => {
+    plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', plugin.REACT_API.confirmSettings)
+    // TODO: check if this is check is still valid given the refactor
+    if (!plugin.REACT_API.gasPriceStatus) {
+      cancelCb('Given transaction fee is not correct')
+    } else {
+      continueTxExecution({ maxFee: plugin.REACT_API.maxFee, maxPriorityFee: plugin.REACT_API.maxPriorityFee, baseFeePerGas: plugin.REACT_API.baseFeePerGas, gasPrice: plugin.REACT_API.gasPrice })
+    }
+  }, () => {
+    return cancelCb('Transaction canceled by user.')
+  }))
+}
+
+const getConfirmationCb = (confirmDialogContent: MainnetPrompt) => {
+  // this code is the same as in recorder.js. TODO need to be refactored out
+  return (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+    confirmationHandler(confirmDialogContent, network, tx, gasEstimation, continueTxExecution, cancelCb)
+  }
+}
+
+const continueHandler = (gasEstimationPrompt: (msg: string) => JSX.Element, error, continueTxExecution, cancelCb) => {
+  if (error) {
+    const msg = typeof error !== 'string' ? error.message : error
+
+    dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
+      continueTxExecution()
+    }, () => {
+      cancelCb()
+    }))
+  } else {
+    continueTxExecution()
+  }
+}
+
+const promptHandler = (passphrasePrompt, okCb, cancelCb) => {
+  dispatch(displayNotification('Passphrase requested', passphrasePrompt('Personal mode is enabled. Please provide passphrase of account'), 'OK', 'Cancel', okCb, cancelCb))
 }
 
 export const createInstance = async (
@@ -412,33 +428,9 @@ export const createInstance = async (
   logBuilder: (msg: string) => JSX.Element,
   publishToStorage: (storage: 'ipfs' | 'swarm',
   contract: ContractData) => void,
-  mainnetPrompt: (
-    tx: Tx, network:
-    Network, amount: string,
-    gasEstimation: string,
-    gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
-    determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
-    ) => JSX.Element,
+  mainnetPrompt: MainnetPrompt,
   isOverSizePrompt: () => JSX.Element,
   args) => {
-  const continueCb = (error, continueTxExecution, cancelCb) => {
-    if (error) {
-      const msg = typeof error !== 'string' ? error.message : error
-
-      dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
-        continueTxExecution()
-      }, () => {
-        cancelCb()
-      }))
-    } else {
-      continueTxExecution()
-    }
-  }
-
-  const promptCb = (okCb, cancelCb) => {
-    dispatch(displayNotification('Passphrase requested', passphrasePrompt('Personal mode is enabled. Please provide passphrase of account'), 'OK', 'Cancel', okCb, cancelCb))
-  }
-
   const statusCb = (msg: string) => {
     const log = logBuilder(msg)
 
@@ -476,14 +468,32 @@ export const createInstance = async (
 
   if (selectedContract.isOverSizeLimit()) {
     return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(), 'Force Send', 'Cancel', () => {
-      deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+      deployContract(selectedContract, args, contractMetadata, compilerContracts, {
+        continueCb: (error, continueTxExecution, cancelCb) => {
+          continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
+        },
+        promptCb: (okCb, cancelCb) => {
+          promptHandler(passphrasePrompt, okCb, cancelCb)
+        },
+        statusCb,
+        finalCb
+      }, confirmationCb)
     }, () => {
       const log = logBuilder(`creation of ${selectedContract.name} canceled by user.`)
 
       return terminalLogger(log)
     }))
   }
-  deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+  deployContract(selectedContract, args, contractMetadata, compilerContracts, {
+    continueCb: (error, continueTxExecution, cancelCb) => {
+      continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
+    },
+    promptCb: (okCb, cancelCb) => {
+      promptHandler(passphrasePrompt, okCb, cancelCb)
+    },
+    statusCb,
+    finalCb
+  }, confirmationCb)
 }
 
 const deployContract = (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
@@ -573,4 +583,59 @@ const loadAddress = () => {
 
 export const getContext = () => {
   return plugin.blockchain.context()
+}
+
+export const runTransactions = (
+  index: number,
+  lookupOnly: boolean,
+  funcABI: FuncABI,
+  inputsValues: string,
+  contractName: string,
+  contractABI, contract,
+  address,
+  logMsg:string,
+  logBuilder: (msg: string) => JSX.Element,
+  mainnetPrompt: MainnetPrompt,
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  passphrasePrompt: (msg: string) => JSX.Element) => {
+  let callinfo = ''
+  if (lookupOnly) callinfo = 'call'
+  else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
+  else callinfo = 'transact'
+
+  _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
+  const params = funcABI.type !== 'fallback' ? inputsValues : ''
+
+  plugin.blockchain.runOrCallContractMethod(
+    contractName,
+    contractABI,
+    funcABI,
+    contract,
+    inputsValues,
+    address,
+    params,
+    lookupOnly,
+    logMsg,
+    (msg) => {
+      const log = logBuilder(msg)
+
+      return terminalLogger(log)
+    },
+    (returnValue) => {
+      const decodedResponse = txFormat.decodeResponse(returnValue, funcABI)
+
+      console.log('decodedResponse: ', decodedResponse)
+
+      dispatch(setDecodedResponse(index, decodedResponse))
+    },
+    (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      confirmationHandler(mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb)
+    },
+    (error, continueTxExecution, cancelCb) => {
+      continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
+    },
+    (okCb, cancelCb) => {
+      promptHandler(passphrasePrompt, okCb, cancelCb)
+    }
+  )
 }
