@@ -236,6 +236,7 @@ export function RunTabUI (props: RunTabProps) {
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
             runTransactions={runTransactions}
+            sendValue={runTab.sendValue}
           />
         </div>
       </div>
