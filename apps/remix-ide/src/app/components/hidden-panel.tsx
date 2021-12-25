@@ -1,13 +1,9 @@
-import React from 'react' // eslint-disable-line
+// eslint-disable-next-line no-use-before-define
+import React from 'react'
+import ReactDOM from 'react-dom' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import * as packageJson from '../../../../../package.json'
-const csjs = require('csjs-inject')
-
-const css = csjs`
-  .pluginsContainer {
-    display: none;
-  }
-`
+import { RemixPanel } from '@remix-ui/panel'
 
 const profile = {
   name: 'hiddenPanel',
@@ -18,22 +14,17 @@ const profile = {
 }
 
 export class HiddenPanel extends AbstractPanel {
+  el: HTMLDivElement
   constructor () {
     super(profile)
-    this.container = document.createElement('div')
+    this.el = document.createElement('div')
   }
 
   render () {
-    return this.container
+    return this.el
   }
 
   renderComponent () {
-    return ReactDOM.render(
-      <div class={css.pluginsContainer}>
-        {this.element}
-      </div>
-      ,
-      this.container
-    )
+    ReactDOM.render(<RemixPanel plugins={this.plugins}/>, this.el)
   }
 }
