@@ -43,7 +43,7 @@ export class AbstractPanel extends HostPlugin {
 
   removeView (profile) {
     this.emit('pluginDisabled', profile.name)
-    this.verticalIcons.unlinkContent(profile)
+    this.call('menuicons', 'unlinkContent', profile)
     this.remove(profile.name)
   }
 
