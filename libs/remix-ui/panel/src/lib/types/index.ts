@@ -1,4 +1,4 @@
-import { Profile } from "@remixproject/plugin-utils";
+import { Profile } from '@remixproject/plugin-utils'
 
 export type PluginRecord = {
     profile: Profile
