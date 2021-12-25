@@ -1,0 +1,71 @@
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; }
+body                 {
+  /* font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif; */
+  font-size          : .8rem;
+}
+pre {
+  overflow-x: auto;
+}
+.remixIDE            {
+  width              : 100vw;
+  height             : 100vh;
+  overflow           : hidden;
+  flex-direction     : row;
+  display            : flex;
+}
+.mainpanel           {
+  display            : flex;
+  flex-direction     : column;
+  overflow           : hidden;
+  flex               : 1;
+  min-width          : 320px;
+}
+.iconpanel           {
+  display            : flex;
+  flex-direction     : column;
+  overflow           : hidden;
+  width              : 50px;
+  user-select        : none;
+}
+.sidepanel           {
+  display            : flex;
+  flex-direction     : row-reverse;
+  width: 320px;
+}
+
+.highlightcode       {
+  position           : absolute;
+  z-index            : 20;
+  background-color   : var(--info);
+}
+.highlightcode_fullLine {
+  position           : absolute;
+  z-index            : 20;
+  background-color   : var(--info);
+  opacity            : 0.5;
+}
+.centered {
+  position           : fixed;
+  top                : 20%;
+  left               : 45%;
+  width              : 200px;
+  height             : 200px;
+}
+.centered svg path {
+  fill: var(--secondary);
+}
+.centered svg polygon {
+  fill              : var(--secondary);
+}
+.onboarding {
+  color             : var(--text-info);
+  background-color  : var(--info);
+}
+.matomoBtn {
+  width              : 100px;
+}
+
+.splash {
+  text-align: center;
+}

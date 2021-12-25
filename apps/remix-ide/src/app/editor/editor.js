@@ -46,7 +46,8 @@ class Editor extends Plugin {
       txt: 'text',
       json: 'json',
       abi: 'json',
-      rs: 'rust'
+      rs: 'rust',
+      cairo: 'cairo'
     }
 
     this.activated = false
