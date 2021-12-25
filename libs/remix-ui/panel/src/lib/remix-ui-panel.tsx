@@ -6,14 +6,15 @@ import { PluginRecord } from './types';
 
 /* eslint-disable-next-line */
 export interface RemixPanelProps {
-  plugins: Record<string, PluginRecord>;
+  plugins: Record<string, PluginRecord>
+  header: JSX.Element
 }
 
 export function RemixPanel(props: RemixPanelProps) {
 
   return (
     <div className='panel plugin-manager'>
-      <RemixUIPanelHeader plugins={props.plugins}></RemixUIPanelHeader>
+      {props.header}
       <div className="pluginsContainer">
         {Object.values(props.plugins).map((pluginRecord) => {
             return <RemixUIPanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} />

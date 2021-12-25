@@ -25,6 +25,6 @@ export class HiddenPanel extends AbstractPanel {
   }
 
   renderComponent () {
-    ReactDOM.render(<RemixPanel plugins={this.plugins}/>, this.el)
+    ReactDOM.render(<RemixPanel header={<></>} plugins={this.plugins}/>, this.el)
   }
 }

@@ -6,6 +6,7 @@ import { RemixPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import { RemixAppManager } from '../../remixAppManager'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
+import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/panel-header'
 // const csjs = require('csjs-inject')
 
 const sidePanel = {
@@ -88,6 +89,6 @@ export class SidePanel extends AbstractPanel {
   }
 
   renderComponent () {
-    ReactDOM.render(<RemixPanel plugins={this.plugins}/>, this.sideelement)
+    ReactDOM.render(<RemixPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins}/>, this.sideelement)
   }
 }
