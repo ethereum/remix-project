@@ -1,10 +1,8 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
-import { ContractData, ContractDropdownProps, Network, Tx } from '../types'
+import { ContractData, ContractDropdownProps } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
-import { PassphrasePrompt } from './passphrase'
-import { MainnetPrompt } from './mainnet'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [networkName, setNetworkName] = useState<string>('')
@@ -122,7 +120,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(loadedContractData, gasEstimationPrompt, passphrasePrompt, logBuilder, props.publishToStorage, mainnetPrompt, isOverSizePrompt, args)
+    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
   }
 
   //   listenToContextChange () {
@@ -174,43 +172,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     const value = e.target.value
 
     setSelectedContract(value)
-  }
-
-  const gasEstimationPrompt = (msg: string) => {
-    return (
-      <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
-        ${msg}
-      </div>
-    )
-  }
-
-  const logBuilder = (msg: string) => {
-    return <pre>{msg}</pre>
-  }
-
-  const passphrasePrompt = (message: string) => {
-    return <PassphrasePrompt message={message} setPassphrase={props.setPassphrase} defaultValue={props.passphrase} />
-  }
-
-  const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
-    return <MainnetPrompt
-      init={determineGasPrice}
-      network={network}
-      tx={tx}
-      amount={amount}
-      gasEstimation={gasEstimation}
-      setNewGasPrice={gasFees}
-      updateBaseFeePerGas={props.updateBaseFeePerGas}
-      updateConfirmSettings={props.updateConfirmSettings}
-      updateGasPrice={props.updateGasPrice}
-      updateGasPriceStatus={props.updateGasPriceStatus}
-      updateMaxFee={props.updateMaxFee}
-      updateMaxPriorityFee={props.updateMaxPriorityFee}
-      setTxFeeContent={props.updateTxFeeContent}
-      txFeeContent={props.txFeeContent}
-      maxFee={props.maxFee}
-      maxPriorityFee={props.maxPriorityFee}
-    />
   }
 
   const isOverSizePrompt = () => {

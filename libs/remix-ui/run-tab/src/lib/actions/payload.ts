@@ -239,3 +239,13 @@ export const clearAllInstances = () => {
     type: 'CLEAR_INSTANCES'
   }
 }
+
+export const setDecodedResponse = (index: number, decodedResponse) => {
+  return {
+    type: 'SET_DECODED_RESPONSE',
+    payload: {
+      index,
+      decodedResponse
+    }
+  }
+}
