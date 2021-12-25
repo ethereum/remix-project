@@ -7,7 +7,7 @@ import { ContractDropdownUI } from './components/contractDropdownUI'
 import { InstanceContainerUI } from './components/instanceContainerUI'
 import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
-import { ContractData, Modal, RunTabProps } from './types'
+import { ContractData, Modal, Network, RunTabProps, Tx } from './types'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
   initRunTab, setAccount,
@@ -21,10 +21,13 @@ import {
   updateGasPrice, updateGasPriceStatus,
   updateMaxFee, updateMaxPriorityFee,
   updateTxFeeContent, clearInstances,
-  removeInstance, getContext
+  removeInstance, getContext,
+  runTransactions
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
+import { PassphrasePrompt } from './components/passphrase'
+import { MainnetPrompt } from './components/mainnet'
 
 export function RunTabUI (props: RunTabProps) {
   const { plugin } = props
@@ -142,6 +145,43 @@ export function RunTabUI (props: RunTabProps) {
     })
   }
 
+  const gasEstimationPrompt = (msg: string) => {
+    return (
+      <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
+        {msg}
+      </div>
+    )
+  }
+
+  const logBuilder = (msg: string) => {
+    return <pre>{msg}</pre>
+  }
+
+  const passphrasePrompt = (message: string) => {
+    return <PassphrasePrompt message={message} setPassphrase={setPassphrasePrompt} defaultValue={runTab.passphrase} />
+  }
+
+  const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
+    return <MainnetPrompt
+      init={determineGasPrice}
+      network={network}
+      tx={tx}
+      amount={amount}
+      gasEstimation={gasEstimation}
+      setNewGasPrice={gasFees}
+      updateBaseFeePerGas={updateBaseFeePerGas}
+      updateConfirmSettings={updateConfirmSettings}
+      updateGasPrice={updateGasPrice}
+      updateGasPriceStatus={updateGasPriceStatus}
+      updateMaxFee={updateMaxFee}
+      updateMaxPriorityFee={updateMaxPriorityFee}
+      setTxFeeContent={updateTxFeeContent}
+      txFeeContent={runTab.txFeeContent}
+      maxFee={runTab.maxFee}
+      maxPriorityFee={runTab.maxPriorityFee}
+    />
+  }
+
   return (
     <Fragment>
       <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
@@ -180,19 +220,23 @@ export function RunTabUI (props: RunTabProps) {
             ipfsCheckedState={runTab.ipfsChecked}
             setIpfsCheckedState={setCheckIpfs}
             publishToStorage={publishToStorage}
-            updateBaseFeePerGas={updateBaseFeePerGas}
-            updateConfirmSettings={updateConfirmSettings}
-            updateGasPrice={updateGasPrice}
-            updateGasPriceStatus={updateGasPriceStatus}
-            updateMaxFee={updateMaxFee}
-            updateMaxPriorityFee={updateMaxPriorityFee}
-            updateTxFeeContent={updateTxFeeContent}
-            txFeeContent={runTab.txFeeContent}
-            maxFee={runTab.maxFee}
-            maxPriorityFee={runTab.maxPriorityFee}
+            gasEstimationPrompt={gasEstimationPrompt}
+            logBuilder={logBuilder}
+            passphrasePrompt={passphrasePrompt}
+            mainnetPrompt={mainnetPrompt}
           />
           <RecorderUI />
-          <InstanceContainerUI instances={runTab.instances} clearInstances={clearInstances} removeInstance={removeInstance} getContext={getContext} />
+          <InstanceContainerUI
+            instances={runTab.instances}
+            clearInstances={clearInstances}
+            removeInstance={removeInstance}
+            getContext={getContext}
+            gasEstimationPrompt={gasEstimationPrompt}
+            logBuilder={logBuilder}
+            passphrasePrompt={passphrasePrompt}
+            mainnetPrompt={mainnetPrompt}
+            runTransactions={runTransactions}
+          />
         </div>
       </div>
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />

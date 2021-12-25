@@ -1,3 +1,4 @@
+import { type } from 'os'
 import { RunTab } from './run-tab'
 export interface RunTabProps {
   plugin: RunTab
@@ -137,6 +138,14 @@ export interface Network {
   }
 }
 
+export type MainnetPrompt = (
+  tx: Tx, network:
+  Network, amount: string,
+  gasEstimation: string,
+  gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+  determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
+  ) => JSX.Element
+
 export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
@@ -155,34 +164,23 @@ export interface ContractDropdownProps {
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,
   setPassphrase: (passphrase: string) => void,
-  createInstance: (selectedContract: ContractData,
-  gasEstimationPrompt: (msg: string) => JSX.Element,
-  passphrasePrompt: (msg: string) => JSX.Element,
-  logBuilder: (msg: string) => JSX.Element,
-  publishToStorage: (storage: 'ipfs' | 'swarm',
-  contract: ContractData) => void,
-  mainnetPrompt: (
-    tx: Tx, network:
-    Network, amount: string,
-    gasEstimation: string,
-    gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
-    determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
-    ) => JSX.Element,
-  isOverSizePrompt: () => JSX.Element,
-  args) => void,
+  createInstance: (
+    selectedContract: ContractData,
+    gasEstimationPrompt: (msg: string) => JSX.Element,
+    passphrasePrompt: (msg: string) => JSX.Element,
+    logBuilder: (msg: string) => JSX.Element,
+    publishToStorage: (storage: 'ipfs' | 'swarm',
+    contract: ContractData) => void,
+    mainnetPrompt: MainnetPrompt,
+    isOverSizePrompt: () => JSX.Element,
+    args) => void,
   ipfsCheckedState: boolean,
   setIpfsCheckedState: (value: boolean) => void,
   publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void,
-  updateBaseFeePerGas: (baseFee: string) => void,
-  updateGasPriceStatus: (status: boolean) => void,
-  updateConfirmSettings: (confirmation: boolean) => void,
-  updateMaxFee: (fee: string) => void,
-  updateMaxPriorityFee: (fee: string) => void,
-  updateGasPrice: (price: string) => void,
-  updateTxFeeContent: (content: string) => void,
-  txFeeContent: string,
-  maxFee: string,
-  maxPriorityFee: string
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  logBuilder: (msg: string) => JSX.Element,
+  passphrasePrompt: (message: string) => JSX.Element,
+  mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element
 }
 
 export interface RecorderProps {
@@ -194,13 +192,31 @@ export interface InstanceContainerProps {
     instanceList: {
       contractData: ContractData,
       address: string,
-      name: string
+      name: string,
+      decodedResponse?: any
     }[],
     error: string
   },
   clearInstances: () => void,
   removeInstance: (index: number) => void,
-  getContext: () => 'memory' | 'blockchain'
+  getContext: () => 'memory' | 'blockchain',
+  runTransactions: (
+    index: number,
+    lookupOnly: boolean,
+    funcABI: FuncABI,
+    inputsValues: string,
+    contractName: string,
+    contractABI, contract,
+    address,
+    logMsg:string,
+    logBuilder: (msg: string) => JSX.Element,
+    mainnetPrompt: MainnetPrompt,
+    gasEstimationPrompt: (msg: string) => JSX.Element,
+    passphrasePrompt: (msg: string) => JSX.Element) => void,
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  logBuilder: (msg: string) => JSX.Element,
+  passphrasePrompt: (message: string) => JSX.Element,
+  mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element
 }
 
 export interface Modal {
@@ -251,5 +267,23 @@ export interface UdappProps {
   context: 'memory' | 'blockchain',
   abi?: FuncABI[],
   removeInstance: (index: number) => void,
-  index: number
+  index: number,
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  logBuilder: (msg: string) => JSX.Element,
+  passphrasePrompt: (message: string) => JSX.Element,
+  mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
+  runTransactions: (
+    index: number,
+    lookupOnly: boolean,
+    funcABI: FuncABI,
+    inputsValues: string,
+    contractName: string,
+    contractABI, contract,
+    address,
+    logMsg:string,
+    logBuilder: (msg: string) => JSX.Element,
+    mainnetPrompt: MainnetPrompt,
+    gasEstimationPrompt: (msg: string) => JSX.Element,
+    passphrasePrompt: (msg: string) => JSX.Element) => void,
+  decodedResponse: any
 }
