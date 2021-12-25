@@ -17,7 +17,7 @@ export class MainPanel extends AbstractPanel {
     constructor (config) {
       super(profile)
       this.element = document.createElement('div')
-      this.element.setAttribute('class', 'mainPanelPluginsContainer')
+      this.element.setAttribute('data-id', 'mainPanelPluginsContainer')
       // this.config = config
     }
 
