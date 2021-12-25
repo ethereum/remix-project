@@ -17,7 +17,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     title: 'address of contract',
     disabled: true
   })
-  const [address, setAddress] = useState<string>('')
+  const [loadedAddress, setLoadedAddress] = useState<string>('')
   const [contractOptions, setContractOptions] = useState<{title: string, disabled: boolean}>({
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
@@ -44,8 +44,8 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [props.exEnvironment])
 
   useEffect(() => {
-    if (!address || !ethJSUtil.isValidAddress(address)) enableAtAddress(false)
-  }, [address])
+    if (!loadFromAddress || !ethJSUtil.isValidAddress(loadedAddress)) enableAtAddress(false)
+  }, [loadedAddress])
 
   useEffect(() => {
     if (/.(.abi)$/.exec(currentFile)) {
@@ -78,6 +78,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   useEffect(() => {
     if (selectedContract) {
+      console.log('contractList: ', contractList)
       const contract = contractList.find(contract => contract.alias === selectedContract)
 
       setLoadedContractData(props.getSelectedContract(selectedContract, contract.name))
@@ -93,7 +94,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: address ? '⚠ Compile *.sol file or select *.abi file.' : '⚠ Compile *.sol file or select *.abi file & then enter the address of deployed contract.'
+        title: loadedAddress ? '⚠ Compile *.sol file or select *.abi file.' : '⚠ Compile *.sol file or select *.abi file & then enter the address of deployed contract.'
       })
     }
   }
@@ -149,18 +150,23 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (!value) {
       enableAtAddress(false)
     } else {
-      if ((!contractOptions.disabled && loadType === 'sol') ||
-        loadType === 'abi') {
+      if (atAddressOptions.disabled && (loadType === 'sol' || loadType === 'abi')) {
         enableAtAddress(true)
       } else {
         enableAtAddress(false)
       }
     }
-    setAddress(value)
+    setLoadedAddress(value)
   }
 
   const loadFromAddress = () => {
-    // trigger dispatchLoadAddress
+    let address = loadedAddress
+
+    if (!ethJSUtil.isValidChecksumAddress(address)) {
+      props.tooltip(checkSumWarning())
+      address = ethJSUtil.toChecksumAddress(address)
+    }
+    props.loadAddress(loadedContractData, address)
   }
 
   const handleCheckedIPFS = () => {
@@ -172,6 +178,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     const value = e.target.value
 
     setSelectedContract(value)
+  }
+
+  const checkSumWarning = () => {
+    return (
+      <span>
+        It seems you are not using a checksumed address.
+        <br />A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
+        <br />Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
+      </span>
+    )
   }
 
   const isOverSizePrompt = () => {
@@ -228,7 +244,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             placeholder="Load contract from Address"
             title="address of contract"
             onChange={atAddressChanged}
-            disabled={atAddressOptions.disabled}
           />
         </div>
       </div>
