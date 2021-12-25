@@ -1362,10 +1362,15 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/remix-ui/panel/**/*.{ts,tsx,js,jsx}"
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/panel/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/panel/**/*"
             ]
           }
         }

@@ -72,7 +72,8 @@
       "@remix-ui/vertical-icons-panel": [
         "libs/remix-ui/vertical-icons-panel/src/index.ts"
       ],
-      "@remix-ui/theme-module": ["libs/remix-ui/theme-module/src/index.ts"]
+      "@remix-ui/theme-module": ["libs/remix-ui/theme-module/src/index.ts"],
+      "@remix-ui/panel": ["libs/remix-ui/panel/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
