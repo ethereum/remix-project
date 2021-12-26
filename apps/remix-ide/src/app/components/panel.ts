@@ -31,14 +31,12 @@ export class AbstractPanel extends HostPlugin {
   }
 
   addView (profile, view) {
-    console.log(profile, view)
     if (this.plugins[profile.name]) throw new Error(`Plugin ${profile.name} already rendered`)
     this.plugins[profile.name] = {
       profile: profile,
       view: view,
       active: false
     }
-    console.log(this.plugins)
   }
 
   removeView (profile) {
@@ -61,20 +59,11 @@ export class AbstractPanel extends HostPlugin {
    */
   showContent (name) {
     if (!this.plugins[name]) throw new Error(`Plugin ${name} is not yet activated`)
-    // hiding the current view and display the `moduleName`
-    /*
-    if (this.active) {
-      this.contents[this.active].style.display = 'none'
-    }
-    this.contents[name].style.display = 'flex'
-    this.contents[name].style.paddingTop = '20%'
-    this.contents[name].style.flexDirection = 'column'
-    */
+
     Object.values(this.plugins).forEach(plugin => {
       plugin.active = false
     })
     this.plugins[name].active = true
-    console.log(this.plugins)
   }
 
   focus (name) {
