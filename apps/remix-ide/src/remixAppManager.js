@@ -1,6 +1,6 @@
 /* global localStorage, fetch */
 import { PluginManager } from '@remixproject/engine'
-import { IframePlugin } from '@remixproject/engine-web'
+import { IframeReactPlugin } from '@remix-ui/app'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
@@ -130,7 +130,7 @@ export class RemixAppManager extends PluginManager {
       }
     }
     return plugins.map(plugin => {
-      return new IframePlugin(plugin)
+      return new IframeReactPlugin(plugin)
     })
   }
 
