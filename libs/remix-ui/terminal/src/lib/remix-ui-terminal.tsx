@@ -95,7 +95,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     event.trigger('resize', [terminalPosition])
-  } , [terminalPosition])
+  }, [terminalPosition])
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -210,9 +210,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       done(error.message || error)
     }
   }
-
-
-
 
   const focusinput = () => {
     inputEl.current.focus()
