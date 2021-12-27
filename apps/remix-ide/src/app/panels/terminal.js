@@ -68,7 +68,7 @@ class Terminal extends Plugin {
     }
     this._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     this._components = {}
-    this._components.cmdInterpreter = new CommandInterpreterAPI(this, null, this.blockchain)
+    this._components.cmdInterpreter = new CommandInterpreterAPI(this, this.blockchain)
     this._components.autoCompletePopup = new AutoCompletePopup(this._opts)
     this._commands = {}
     this.commands = {}
