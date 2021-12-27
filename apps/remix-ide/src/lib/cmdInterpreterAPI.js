@@ -9,12 +9,12 @@ var toolTip = require('../app/ui/tooltip')
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
-  constructor (terminal, localRegistry, blockchain) {
+  constructor (terminal, blockchain) {
     const self = this
     self.event = new EventManager()
     self.blockchain = blockchain
     self._components = {}
-    self._components.registry = localRegistry || Registry.getInstance()
+    self._components.registry = Registry.getInstance()
     self._components.terminal = terminal
     self._components.fileImport = new CompilerImports()
     self._components.gistHandler = new GistHandler()
