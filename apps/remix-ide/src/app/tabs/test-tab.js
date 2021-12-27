@@ -8,7 +8,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import helper from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 
-var tooltip = require('../ui/tooltip')
+// var tooltip = require('../ui/tooltip')
 var Renderer = require('../ui/renderer')
 var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
@@ -28,10 +28,8 @@ module.exports = class TestTab extends ViewPlugin {
     super(profile)
     this.compileTab = compileTab
     this.contentImport = contentImport
-    this._view = { el: null }
     this.fileManager = fileManager
     this.filePanel = filePanel
-    this.data = {}
     this.appManager = appManager
     this.renderer = new Renderer(this)
     this.testRunner = new UnitTestRunner()
@@ -56,7 +54,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   async setTestFolderPath (event) {
     if (event.path.length > 0) {
-      await this.setCurrentPath(event.path[0])
+      this.renderComponent(event.path[0])
     }
   }
 
@@ -89,7 +87,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listenToEvents () {
-
     this.on('filePanel', 'workspaceCreated', async () => {
       this.createTestLibs()
     })
@@ -140,9 +137,9 @@ module.exports = class TestTab extends ViewPlugin {
     return this.element
   }
 
-  renderComponent () {
+  renderComponent (testDirPath) {
     ReactDOM.render(
-      <SolidityUnitTesting testTab={this} helper={helper} />
+      <SolidityUnitTesting testTab={this} helper={helper} initialPath={testDirPath} />
       , this.element)
   }
 }
