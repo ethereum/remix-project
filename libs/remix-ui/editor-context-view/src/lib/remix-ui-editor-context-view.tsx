@@ -97,6 +97,52 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
     })
   }, [])
 
+  /*
+   * show gas estimation
+   */
+  const gasEstimation = (node) => {
+    if (node.nodeType === 'FunctionDefinition') {
+      const result: gasEstimationType = state.gasEstimation
+      const executionCost = ' Execution cost: ' + result.executionCost + ' gas'
+      const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
+      const estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
+      return (
+        <div className="gasEstimation">
+          <i className="fas fa-gas-pump gasStationIcon" title='Gas estimation'></i>
+          <span>{estimatedGas}</span>
+        </div>
+      )
+    } else {
+      return (<div></div>)
+    }
+  }
+
+  /*
+   * onClick jump to ast node in the editor
+   */
+  const _jumpToInternal = async (position: any) => {
+    const jumpToLine = async (fileName: string, lineColumn: any) => {
+      if (fileName !== await props.getCurrentFileName()) {
+        await props.openFile(fileName)
+      }
+      if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
+        gotoLineDisableRef.current = true
+        props.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
+      }
+    }
+    const lastCompilationResult = await props.getLastCompilationResult()
+    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
+      const lineColumn = await props.offsetToLineColumn(
+        position,
+        position.file,
+        lastCompilationResult.getSourceCode().sources,
+        lastCompilationResult.getAsts())
+      const filename = lastCompilationResult.getSourceName(position.file)
+      // TODO: refactor with rendererAPI.errorClick
+      jumpToLine(filename, lineColumn)
+    }
+  }
+
   const _render = (node: nullableAstNode) => {
     if (!node) return (<div></div>)
     const references = state.references
@@ -105,52 +151,6 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
 
     let ref = 0
     const nodes: Array<astNode> = state.activeHighlights
-
-    /*
-     * show gas estimation
-     */
-    const gasEstimation = () => {
-      if (node.nodeType === 'FunctionDefinition') {
-        const result: gasEstimationType = state.gasEstimation
-        const executionCost = ' Execution cost: ' + result.executionCost + ' gas'
-        const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
-        const estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
-        return (
-          <div className="gasEstimation">
-            <i className="fas fa-gas-pump gasStationIcon" title='Gas estimation'></i>
-            <span>{estimatedGas}</span>
-          </div>
-        )
-      } else {
-        return (<div></div>)
-      }
-    }
-
-    /*
-     * onClick jump to ast node in the editor
-     */
-    const _jumpToInternal = async (position: any) => {
-      const jumpToLine = async (fileName: string, lineColumn: any) => {
-        if (fileName !== await props.getCurrentFileName()) {
-          await props.openFile(fileName)
-        }
-        if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-          gotoLineDisableRef.current = true
-          props.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
-        }
-      }
-      const lastCompilationResult = await props.getLastCompilationResult()
-      if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
-        const lineColumn = await props.offsetToLineColumn(
-          position,
-          position.file,
-          lastCompilationResult.getSourceCode().sources,
-          lastCompilationResult.getAsts())
-        const filename = lastCompilationResult.getSourceName(position.file)
-        // TODO: refactor with rendererAPI.errorClick
-        jumpToLine(filename, lineColumn)
-      }
-    }
 
     const jumpTo = () => {
       if (node && node.src) {
@@ -170,7 +170,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
     }
 
     return (
-      <div className="line">{gasEstimation()}
+      <div className="line">{gasEstimation(node)}
         <div title={type} className="type">{type}</div>
         <div title={node.name} className="name mr-2">{node.name}</div>
         <i className="fas fa-share jump" data-action='gotoref' aria-hidden="true" onClick={jumpTo}></i>
