@@ -48,7 +48,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   let areTestsRunning = false
   let isDebugging = false
-  let allTests: any = []
+  const allTests: any = useRef([])
   let currentErrors: any = []
 
   let runningTestFileName: any
@@ -81,14 +81,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   // if current file is changed while debugging and one of the files imported in test file are opened
   // do not clear the test results in SUT plugin
   if (isDebugging && testTab.allFilesInvolved.includes(file)) return
-  allTests = []
+  allTests.current = []
   updateTestFileList()
   clearResults()
   try {
       testTabLogic.getTests(async (error: any, tests: any) => {
         // if (error) return tooltip(error)
-        allTests = tests
-        selectedTests = [...allTests]
+        allTests.current = tests
+        selectedTests = [...allTests.current]
         setSelectedTests(tests)
         updateTestFileList()
         if (!areTestsRunning) await updateRunAction(file)
@@ -113,18 +113,18 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     updateDirList('/')
     updateForNewCurrent()
 
-    testTab.on('filePanel', 'newTestFileCreated', async (file: any) => {
+    testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
       try {
         testTabLogic.getTests((error: any, tests: any) => {
           // if (error) return tooltip(error)
-          allTests = tests
-          selectedTests = [...allTests]
+          allTests.current = tests
+          selectedTests = [...allTests.current]
           setSelectedTests(tests)
           updateTestFileList()
         })
       } catch (e) {
         console.log(e)
-        allTests.push(file)
+        allTests.current.push(file)
         selectedTests.push(file)
         setSelectedTests(selectedTests)
       }
@@ -134,7 +134,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       setCurrentPath(defaultPath)
     })
 
-    testTab.fileManager.events.on('noFileSelected', () => {})
+    testTab.fileManager.events.on('noFileSelected', () => {}) // eslint-disable-line
     testTab.fileManager.events.on('currentFileChanged', (file: any, provider: any) => updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
@@ -616,8 +616,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }
 
   const updateTestFileList = () => {
-    if(allTests?.length) {
-      testFiles =  allTests.map((testFile: any) => { return {'fileName': testFile, 'checked': true }})
+    if(allTests.current?.length) {
+      testFiles =  allTests.current.map((testFile: any) => { return {'fileName': testFile, 'checked': true }})
       setCheckSelectAll(true)
     }
     else 

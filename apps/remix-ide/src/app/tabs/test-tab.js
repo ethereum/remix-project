@@ -88,7 +88,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.events.removeAllListeners('currentFileChanged')
   }
 
-  listenToEvents() {
+  listenToEvents () {
 
     this.on('filePanel', 'workspaceCreated', async () => {
       this.createTestLibs()
