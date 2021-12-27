@@ -37,7 +37,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   
   let [testFiles, setTestFiles] = useState<TestObject[]>([]) // eslint-disable-line
   const [pathOptions, setPathOptions] = useState([''])
-  let [selectedTests, setSelectedTests] = useState<string[]>([]) // eslint-disable-line
   
   const [inputPathValue, setInputPathValue] = useState('tests')
 
@@ -49,6 +48,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   let areTestsRunning = false
   let isDebugging = false
   const allTests: any = useRef([])
+  const selectedTests: any = useRef([])
+
   let currentErrors: any = []
 
   let runningTestFileName: any
@@ -88,8 +89,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       testTabLogic.getTests(async (error: any, tests: any) => {
         // if (error) return tooltip(error)
         allTests.current = tests
-        selectedTests = [...allTests.current]
-        setSelectedTests(tests)
+        selectedTests.current = [...allTests.current]
         updateTestFileList()
         if (!areTestsRunning) await updateRunAction(file)
       })
@@ -118,15 +118,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         testTabLogic.getTests((error: any, tests: any) => {
           // if (error) return tooltip(error)
           allTests.current = tests
-          selectedTests = [...allTests.current]
-          setSelectedTests(tests)
+          selectedTests.current = [...allTests.current]
           updateTestFileList()
         })
       } catch (e) {
         console.log(e)
         allTests.current.push(file)
-        selectedTests.push(file)
-        setSelectedTests(selectedTests)
+        selectedTests.current.push(file)
       }
     })
 
@@ -490,7 +488,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
       setDisableStopButton(true)
       setStopButtonLabel('Stop')
-      if (selectedTests.length !== 0) {
+      if (selectedTests.current?.length !== 0) {
         setDisableRunButton(false)
       }
       areTestsRunning = false
@@ -544,12 +542,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     hasBeenStopped.current = false
     readyTestsNumber = 0
     setReadyTestsNumber(readyTestsNumber)
-    runningTestsNumber = selectedTests.length
+    runningTestsNumber = selectedTests.current.length
     setRunningTestsNumber(runningTestsNumber)
     setDisableStopButton(false)
     clearResults()
     setProgressBarHidden(false)
-    const tests = selectedTests
+    const tests = selectedTests.current
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
     _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
@@ -561,7 +559,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const updateRunAction = async (currentFile : any = null) => {
     const isSolidityActive = await testTab.appManager.isActive('solidity')
-    if (!isSolidityActive || !selectedTests?.length) {
+    if (!isSolidityActive || !selectedTests.current?.length) {
       setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         setRunButtonTitle('No solidity file selected')
@@ -586,15 +584,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const toggleCheckbox = (eChecked: any, index:any) => {
     testFiles[index].checked = eChecked
     setTestFiles(testFiles)
-    selectedTests = getCurrentSelectedTests()
-    setSelectedTests(selectedTests)
+    selectedTests.current = getCurrentSelectedTests()
     if (eChecked) {
       setCheckSelectAll(true)
       setDisableRunButton(false)
       if ((readyTestsNumber === runningTestsNumber || hasBeenStopped.current) && stopButtonLabel.trim() === 'Stop') {
         setRunButtonTitle('Run tests')
       }
-    } else if (!selectedTests.length) {
+    } else if (!selectedTests.current.length) {
       setCheckSelectAll(false)
       setDisableRunButton(true)
       setRunButtonTitle('No test file selected')
@@ -606,11 +603,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setTestFiles(testFiles)
     setCheckSelectAll(event.target.checked)
     if(event.target.checked) {
-      selectedTests = getCurrentSelectedTests()
-      setSelectedTests(selectedTests)
+      selectedTests.current = getCurrentSelectedTests()
       setDisableRunButton(false)
     } else {
-      setSelectedTests([])
+      selectedTests.current = []
       setDisableRunButton(true)
     }
   }
