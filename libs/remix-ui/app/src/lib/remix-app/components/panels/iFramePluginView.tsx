@@ -10,6 +10,7 @@ const IFramePluginView = (props: IFramePluginViewProps) => {
   const [loading, isLoading] = useState<boolean>(true)
 
   const loaded = () => {
+    console.log(props.plugin.profile.name + "loaded")
     props.plugin.shake(ref.current)
     isLoading(false)
   }
