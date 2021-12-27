@@ -86,7 +86,7 @@ module.exports = class TestTab extends ViewPlugin {
     }
     await this.testRunner.init()
     await this.createTestLibs()
-    this.updateRunAction()
+    // this.updateRunAction()
   }
 
   onDeactivation () {
@@ -96,23 +96,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.events.removeAllListeners('currentFileChanged')
   }
 
-  listenToEvents () {
-    this.on('filePanel', 'newTestFileCreated', async file => {
-      try {
-        await this.testTabLogic.getTests((error, tests) => {
-          if (error) return tooltip(error)
-          this.data.allTests = tests
-          this.data.selectedTests = [...this.data.allTests]
-          this.updateTestFileList(tests)
-          if (!this.testsOutput) return // eslint-disable-line
-        })
-      } catch (e) {
-        console.log(e)
-        this.data.allTests.push(file)
-        this.data.selectedTests.push(file)
-      }
-    })
-
+  listenToEvents() {
     this.on('filePanel', 'setWorkspace', async () => {
       this.setCurrentPath(this.defaultPath)
     })
@@ -129,11 +113,6 @@ module.exports = class TestTab extends ViewPlugin {
         this.emit('compilationFinished', source.target, source, 'soljson', data)
       }
     })
-
-    this.fileManager.events.on('noFileSelected', () => {
-    })
-
-    this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
   }
 
   async testFromPath (path) {

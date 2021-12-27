@@ -101,6 +101,27 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   useEffect(() => {
     updateDirList('/')
     updateForNewCurrent()
+
+    testTab.on('filePanel', 'newTestFileCreated', async (file: any) => {
+      try {
+        testTabLogic.getTests((error: any, tests: any) => {
+          // if (error) return tooltip(error)
+          allTests = tests
+          selectedTests = [...allTests]
+          setSelectedTests(tests)
+          updateTestFileList()
+        })
+      } catch (e) {
+        console.log(e)
+        allTests.push(file)
+        selectedTests.push(file)
+        setSelectedTests(selectedTests)
+      }
+    })
+
+    testTab.fileManager.events.on('noFileSelected', () => {})
+    testTab.fileManager.events.on('currentFileChanged', (file: any, provider: any) => updateForNewCurrent(file))
+    
   }, []) // eslint-disable-line
 
   const updateDirList = (path: string) => {
