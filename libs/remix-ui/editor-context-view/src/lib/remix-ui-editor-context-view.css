@@ -1,17 +1,9 @@
-var csjs = require('csjs-inject')
 
-var css = csjs`
-  .contextview {
-    opacity             : 1;
-    position            : relative;
-    height              : 25px;
-  }
-  .container {
+  .container-context-view {
     padding             : 1px 15px;
   }
   .line {
     display             : flex;
-    justify-content     : flex-end;
     align-items         : center;
     text-overflow       : ellipsis;
     overflow            : hidden;
@@ -49,11 +41,3 @@ var css = csjs`
     border-radius     : 1px;
     border            : 2px solid var(--secondary);
   }
-  .contextviewcontainer{
-    z-index           : 50;
-    border-radius     : 1px;
-    border            : 2px solid var(--secondary);
-  }
-`
-
-module.exports = css
