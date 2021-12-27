@@ -139,10 +139,16 @@
     "remix-ui-vertical-icons-panel": {
       "tags": []
     },
+    "remix-ui-home-tab": {
+      "tags": []
+    },
     "remix-ui-tabs": {
       "tags": []
     },
     "remix-ui-theme-module": {
+      "tags": []
+    },
+    "remix-ui-editor-context-view": {
       "tags": []
     }
   },
