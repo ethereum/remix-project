@@ -69,22 +69,22 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setTestsExecutionStoppedErrorHidden(true)
   }
 
-   const updateForNewCurrent = async (file = null) => {
-    // Ensure that when someone clicks on compilation error and that opens a new file
-    // Test result, which is compilation error in this case, is not cleared
-    if (currentErrors) {
-      if (Array.isArray(currentErrors) && currentErrors.length > 0) {
-        const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
-        if (errFiles.includes(file)) return
-      } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
-    }
-    // if current file is changed while debugging and one of the files imported in test file are opened
-    // do not clear the test results in SUT plugin
-    if (isDebugging && testTab.allFilesInvolved.includes(file)) return
-    allTests = []
-    updateTestFileList()
-    clearResults()
-    try {
+  const updateForNewCurrent = async (file = null) => {
+  // Ensure that when someone clicks on compilation error and that opens a new file
+  // Test result, which is compilation error in this case, is not cleared
+  if (currentErrors) {
+    if (Array.isArray(currentErrors) && currentErrors.length > 0) {
+      const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
+      if (errFiles.includes(file)) return
+    } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
+  }
+  // if current file is changed while debugging and one of the files imported in test file are opened
+  // do not clear the test results in SUT plugin
+  if (isDebugging && testTab.allFilesInvolved.includes(file)) return
+  allTests = []
+  updateTestFileList()
+  clearResults()
+  try {
       testTabLogic.getTests(async (error: any, tests: any) => {
         // if (error) return tooltip(error)
         allTests = tests
@@ -94,8 +94,19 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         if (!areTestsRunning) await updateRunAction(file)
       })
     } catch (e) {
-      console.log(e)
-    }
+    console.log(e)
+  }
+  }
+
+  /**
+ * Changes the current path of Unit Testing Plugin
+ * @param path - the path from where UT plugin takes _test.sol files to run
+ */
+  const setCurrentPath = async (path: string) => {
+    testTabLogic.setCurrentPath(path)
+    setInputPathValue(path)
+    updateDirList(path)
+    await updateForNewCurrent()
   }
 
   useEffect(() => {
@@ -119,9 +130,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       }
     })
 
+    testTab.on('filePanel', 'setWorkspace', async () => {
+      setCurrentPath(defaultPath)
+    })
+
     testTab.fileManager.events.on('noFileSelected', () => {})
     testTab.fileManager.events.on('currentFileChanged', (file: any, provider: any) => updateForNewCurrent(file))
-    
+
   }, []) // eslint-disable-line
 
   const updateDirList = (path: string) => {
