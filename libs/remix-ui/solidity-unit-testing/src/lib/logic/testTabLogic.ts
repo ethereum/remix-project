@@ -6,7 +6,6 @@ export class TestTabLogic {
     currentPath
     helper
     constructor (fileManager: any, helper: any) {
-        console.log('Inside TestTabLogic constructor--from SUT-fileManager--->', fileManager)
         this.fileManager = fileManager
         this.helper = helper
         this.currentPath = '/tests'
@@ -48,7 +47,6 @@ export class TestTabLogic {
         this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error: any, newFile: any) => {
             // if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
             const isFileCreated = fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))
-            console.log('isFileCreated---->', isFileCreated)
             // if (!isFileCreated) return modalDialogCustom.alert('Failed to create test file ' + newFile)
             this.fileManager.open(newFile)
             this.fileManager.syncEditor(newFile)
