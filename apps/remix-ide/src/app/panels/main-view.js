@@ -4,8 +4,6 @@ var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
 var { TabProxy } = require('./tab-proxy.js')
 
-var ContextView = require('../editor/contextView')
-
 var csjs = require('csjs-inject')
 
 var css = csjs`
@@ -14,7 +12,7 @@ var css = csjs`
     flex-direction    : column;
     height            : 100%;
     width             : 100%;
-  }
+  }  
 `
 
 // @todo(#650) Extract this into two classes: MainPanel (TabsProxy + Iframe/Editor) & BottomPanel (Terminal)
@@ -25,12 +23,12 @@ export class MainView {
     self._view = {}
     self._components = {}
     self._components.registry = globalRegistry
+    self.contextualListener = contextualListener
     self.editor = editor
     self.fileManager = fileManager
     self.mainPanel = mainPanel
     self.txListener = globalRegistry.get('txlistener').api
     self._components.terminal = terminal
-    self._components.contextualListener = contextualListener
     this.appManager = appManager
     this.init()
   }
@@ -39,7 +37,6 @@ export class MainView {
     this.fileManager.unselectCurrentFile()
     this.mainPanel.showContent(name)
     this._view.editor.style.display = 'none'
-    this._components.contextView.hide()
     this._view.mainPanel.style.display = 'block'
   }
 
@@ -63,19 +60,16 @@ export class MainView {
       // we check upstream for "fileChanged"
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
-      self._components.contextView.show()
     })
     self.tabProxy.event.on('openFile', (file) => {
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
-      self._components.contextView.show()
     })
     self.tabProxy.event.on('closeFile', (file) => {
     })
     self.tabProxy.event.on('switchApp', self.showApp.bind(self))
     self.tabProxy.event.on('closeApp', (name) => {
       self._view.editor.style.display = 'block'
-      self._components.contextView.show()
       self._view.mainPanel.style.display = 'none'
     })
     self.tabProxy.event.on('tabCountChanged', (count) => {
@@ -89,10 +83,6 @@ export class MainView {
         }
       }
     }
-
-    const contextView = new ContextView({ contextualListener: self._components.contextualListener, editor: self.editor })
-
-    self._components.contextView = contextView
 
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
     if (self.txListener) {
@@ -181,15 +171,17 @@ export class MainView {
     self._view.editor.style.display = 'none'
     self._view.mainPanel = self.mainPanel.render()
     self._view.terminal = self._components.terminal.render()
+
     self._view.mainview = yo`
       <div class=${css.mainview}>
         ${self.tabProxy.renderTabsbar()}
         ${self._view.editor}
         ${self._view.mainPanel}
-        ${self._components.contextView.render()}
+        <div class="${css.contextview} contextview"></div>
         ${self._view.terminal}
       </div>
     `
+
     // INIT
     self._adjustLayout('top', self.data._layout.top.offset)
 
