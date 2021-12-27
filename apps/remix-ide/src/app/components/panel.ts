@@ -1,8 +1,6 @@
 import React from 'react' // eslint-disable-line
 import { EventEmitter } from 'events'
-import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 import { HostPlugin } from '@remixproject/engine-web' // eslint-disable-line
-
 import { Profile } from '@remixproject/plugin-utils'
 const EventManager = require('../../lib/events')
 
@@ -13,10 +11,8 @@ type PluginRecord = {
   active: boolean
 }
 export class AbstractPanel extends HostPlugin {
-
   events: EventEmitter
   event: any
-  verticalIcons: VerticalIcons
   public plugins: Record<string, PluginRecord> = {}
   constructor (profile) {
     super(profile)
