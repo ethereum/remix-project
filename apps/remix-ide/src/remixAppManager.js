@@ -4,6 +4,7 @@ import { IframeReactPlugin } from '@remix-ui/app'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
+import { IframePlugin } from '@remixproject/engine-web'
 const _paq = window._paq = window._paq || []
 
 const requiredModules = [ // services + layout views + system views
@@ -130,6 +131,7 @@ export class RemixAppManager extends PluginManager {
       }
     }
     return plugins.map(plugin => {
+      // return new IframePlugin(plugin)
       return new IframeReactPlugin(plugin)
     })
   }
