@@ -150,6 +150,9 @@
     },
     "remix-ui-theme-module": {
       "tags": []
+    },
+    "remix-ui-editor-context-view": {
+      "tags": []
     }
   },
   "targetDependencies": {
