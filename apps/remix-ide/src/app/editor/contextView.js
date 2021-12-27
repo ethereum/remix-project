@@ -15,7 +15,7 @@ const css = require('./styles/contextView-styles')
 class ContextView {
   constructor (opts, localRegistry) {
     this._components = {}
-    this._components.registry = localRegistry || Registry.getInstance()
+    this._components.registry = Registry.getInstance()
     this.contextualListener = opts.contextualListener
     this.editor = opts.editor
     this._deps = {
