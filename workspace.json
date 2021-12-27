@@ -1131,29 +1131,48 @@
           }
         }
       }
+    }, 
+    "remix-ui-editor-context-view": {
+      "root": "libs/remix-ui/editor-context-view",
+      "sourceRoot": "libs/remix-ui/editor-context-view/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/editor-context-view/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor-context-view/**/*"]
+          }
+        }
+      }
     }
   },
-  "remix-ui-editor": {
-    "root": "libs/remix-ui/editor",
-    "sourceRoot": "libs/remix-ui/editor/src",
-    "projectType": "library",
-    "schematics": {},
-    "architect": {
-      "lint": {
-        "builder": "@nrwl/linter:lint",
-        "options": {
-          "linter": "eslint",
-          "babel": true
-        },
-        "component": {
-          "style": "css"
-        },
-        "library": {
-          "style": "css",
-          "linter": "eslint"
-        }
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
       },
       "library": {
+        "style": "css",
         "linter": "eslint"
       }
     },
@@ -1161,57 +1180,8 @@
       "plugin": {
         "linter": "eslint"
       }
-    },
-      "@nrwl/web": {
-        "application": {
-          "linter": "eslint"
-        }
-      },
-      "@nrwl/node": {
-        "application": {
-          "linter": "eslint"
-        },
-        "library": {
-          "linter": "eslint"
-        }
-      }
-    },
-    "cli": {
-      "defaultCollection": "@nrwl/react"
-    },
-    "schematics": {
-      "@nrwl/workspace": {
-        "library": {
-          "linter": "eslint"
-        }
-      },
-      "@nrwl/cypress": {
-        "cypress-project": {
-          "linter": "eslint"
-        }
-      },
-      "@nrwl/react": {
-        "application": {
-          "style": "css",
-          "linter": "eslint",
-          "babel": true
-        },
-        "component": {
-          "style": "css"
-        },
-        "library": {
-          "style": "css",
-          "linter": "eslint"
-        }
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "defaultProject": "remix-ide"
+    }
+  },
+  "defaultProject": "remix-ide"
 }
+
