@@ -8,7 +8,7 @@ import './css/style.css'
 const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line
 
 /* eslint-disable-next-line */
-export interface SolidityUnitTestingProps {}
+export interface SolidityUnitTestingProps { }
 
 interface TestObject {
   fileName: string
@@ -17,7 +17,7 @@ interface TestObject {
 
 export const SolidityUnitTesting = (props: Record<string, any>) => {
 
-  const {helper, testTab} = props
+  const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
   const [defaultPath, setDefaultPath] = useState('tests')
@@ -30,14 +30,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const [checkSelectAll, setCheckSelectAll] = useState(true)
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
-  
+
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
   const [progressBarHidden, setProgressBarHidden] = useState(true)
   const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
-  
+
   let [testFiles, setTestFiles] = useState<TestObject[]>([]) // eslint-disable-line
   const [pathOptions, setPathOptions] = useState([''])
-  
+
   const [inputPathValue, setInputPathValue] = useState('tests')
 
   let [readyTestsNumber, setReadyTestsNumber] = useState(0) // eslint-disable-line
@@ -55,9 +55,9 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   let runningTestFileName: any
   const filesContent: any = {}
 
-  const testsResultByFilename:Record<string, any> = {}
-  
-  const trimTestDirInput = (input:string) => {
+  const testsResultByFilename: Record<string, any> = {}
+
+  const trimTestDirInput = (input: string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
     else return input.trim()
   }
@@ -71,21 +71,21 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }
 
   const updateForNewCurrent = async (file = null) => {
-  // Ensure that when someone clicks on compilation error and that opens a new file
-  // Test result, which is compilation error in this case, is not cleared
-  if (currentErrors) {
-    if (Array.isArray(currentErrors) && currentErrors.length > 0) {
-      const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
-      if (errFiles.includes(file)) return
-    } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
-  }
-  // if current file is changed while debugging and one of the files imported in test file are opened
-  // do not clear the test results in SUT plugin
-  if (isDebugging && testTab.allFilesInvolved.includes(file)) return
-  allTests.current = []
-  updateTestFileList()
-  clearResults()
-  try {
+    // Ensure that when someone clicks on compilation error and that opens a new file
+    // Test result, which is compilation error in this case, is not cleared
+    if (currentErrors) {
+      if (Array.isArray(currentErrors) && currentErrors.length > 0) {
+        const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
+        if (errFiles.includes(file)) return
+      } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
+    }
+    // if current file is changed while debugging and one of the files imported in test file are opened
+    // do not clear the test results in SUT plugin
+    if (isDebugging && testTab.allFilesInvolved.includes(file)) return
+    allTests.current = []
+    updateTestFileList()
+    clearResults()
+    try {
       testTabLogic.getTests(async (error: any, tests: any) => {
         // if (error) return tooltip(error)
         allTests.current = tests
@@ -94,8 +94,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         if (!areTestsRunning) await updateRunAction(file)
       })
     } catch (e) {
-    console.log(e)
-  }
+      console.log(e)
+    }
   }
 
   /**
@@ -108,6 +108,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     updateDirList(path)
     await updateForNewCurrent()
   }
+
+  useEffect(() => {
+    if (initialPath) setCurrentPath(initialPath)
+  }, [initialPath]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     updateDirList('/')
@@ -132,7 +136,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       setCurrentPath(defaultPath)
     })
 
-    testTab.fileManager.events.on('noFileSelected', () => {}) // eslint-disable-line
+    testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
     testTab.fileManager.events.on('currentFileChanged', (file: any, provider: any) => updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
@@ -182,7 +186,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const handleEnter = async(e:any) => {
+  const handleEnter = async (e: any) => {
     let inputPath = e.target.value
     inputPath = helper.removeMultipleSlashes(trimTestDirInput(inputPath))
     setInputPathValue(inputPath)
@@ -194,7 +198,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const handleCreateFolder = async() => {
+  const handleCreateFolder = async () => {
     let inputPath = trimTestDirInput(inputPathValue)
     let path = helper.removeMultipleSlashes(inputPath)
     if (path !== '/') path = helper.removeTrailingSlashes(path)
@@ -266,7 +270,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (withoutLabel) {
       const contractCard: any = (
         <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
-          <span className="font-weight-bold">{contract ? contract: ''} ({filename})</span>
+          <span className="font-weight-bold">{contract ? contract : ''} ({filename})</span>
         </div>
       )
       setTestsOutput(prevCards => ([...prevCards, contractCard]))
@@ -278,7 +282,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       title="At least one contract test failed"
     >
       FAIL
-    </div>) 
+    </div>)
     else label = (<div
       className="alert-success d-inline-block mb-1 mr-1 p-1 passed_{runningTestFileName}"
       title="All contract tests passed"
@@ -303,17 +307,17 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     // show filename and contract
     renderContract(filename, contract, index)
     // show tests
-    for(const test of tests) {
-      if(!test.rendered) {
+    for (const test of tests) {
+      if (!test.rendered) {
         let debugBtn
         if (test.debugTxHash) {
           const { web3, debugTxHash } = test
           debugBtn = (
-          <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-            <i className="fas fa-bug"></i>
-          </div>
+            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
+              <i className="fas fa-bug"></i>
+            </div>
           )
-        } 
+        }
         if (test.type === 'testPass') {
           if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
           const testPassCard: any = (
@@ -325,71 +329,71 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             >
               <div className="d-flex my-1 align-items-start justify-content-between">
                 <span > ✓ {test.value}</span>
-                  {debugBtn}
-                </div>
+                {debugBtn}
+              </div>
             </div>
           )
           setTestsOutput(prevCards => ([...prevCards, testPassCard]))
           test.rendered = true
         } else if (test.type === 'testFailure') {
-              if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
-              if (!test.assertMethod) {
-                const testFailCard1: any = (<div
-                  className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-                  id={"UTContext" + test.context}
-                  onClick={() => highlightLocation(test.location, test.filename)}
-                >
-                  <div className="d-flex my-1 align-items-start justify-content-between">
-                    <span> ✘ {test.value}</span>
-                    {debugBtn}
-                  </div>
-                  <span className="text-dark">Error Message:</span>
-                  <span className="pb-2 text-break">"{test.errMsg}"</span>
-                </div>)
-                setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
-              } else {
-                const preposition = test.assertMethod === 'equal' || test.assertMethod === 'notEqual' ? 'to' : ''
-                const method = test.assertMethod === 'ok' ? '' : test.assertMethod
-                const expected = test.assertMethod === 'ok' ? '\'true\'' : test.expected
-                const testFailCard2: any = (<div
-                  className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
-                  id={"UTContext" + test.context}
-                  onClick={() => highlightLocation(test.location, test.filename)}
-                >
-                  <div className="d-flex my-1 align-items-start justify-content-between">  
-                    <span> ✘ {test.value}</span>
-                    {debugBtn}
-                  </div> 
-                  <span className="text-dark">Error Message:</span>
-                  <span className="pb-2 text-break">"{test.errMsg}"</span>
-                  <span className="text-dark">Assertion:</span>
-                  <div className="d-flex flex-wrap">
-                    <span>Expected value should be</span>
-                    <div className="mx-1 font-weight-bold">{method}</div>
-                    <div>{preposition} {expected}</div>
-                  </div>
-                  <span className="text-dark">Received value:</span>
-                  <span>{test.returned}</span>
-                  <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
-                </div>)
-                setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
-              }
-              test.rendered = true
-            } else if (test.type === 'logOnly') {
-              if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
-              test.rendered = true
-            }
+          if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+          if (!test.assertMethod) {
+            const testFailCard1: any = (<div
+              className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+              id={"UTContext" + test.context}
+              onClick={() => highlightLocation(test.location, test.filename)}
+            >
+              <div className="d-flex my-1 align-items-start justify-content-between">
+                <span> ✘ {test.value}</span>
+                {debugBtn}
+              </div>
+              <span className="text-dark">Error Message:</span>
+              <span className="pb-2 text-break">"{test.errMsg}"</span>
+            </div>)
+            setTestsOutput(prevCards => ([...prevCards, testFailCard1]))
+          } else {
+            const preposition = test.assertMethod === 'equal' || test.assertMethod === 'notEqual' ? 'to' : ''
+            const method = test.assertMethod === 'ok' ? '' : test.assertMethod
+            const expected = test.assertMethod === 'ok' ? '\'true\'' : test.expected
+            const testFailCard2: any = (<div
+              className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
+              id={"UTContext" + test.context}
+              onClick={() => highlightLocation(test.location, test.filename)}
+            >
+              <div className="d-flex my-1 align-items-start justify-content-between">
+                <span> ✘ {test.value}</span>
+                {debugBtn}
+              </div>
+              <span className="text-dark">Error Message:</span>
+              <span className="pb-2 text-break">"{test.errMsg}"</span>
+              <span className="text-dark">Assertion:</span>
+              <div className="d-flex flex-wrap">
+                <span>Expected value should be</span>
+                <div className="mx-1 font-weight-bold">{method}</div>
+                <div>{preposition} {expected}</div>
+              </div>
+              <span className="text-dark">Received value:</span>
+              <span>{test.returned}</span>
+              <span className="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+            </div>)
+            setTestsOutput(prevCards => ([...prevCards, testFailCard2]))
+          }
+          test.rendered = true
+        } else if (test.type === 'logOnly') {
+          if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
+          test.rendered = true
+        }
       }
     }
   }
 
   const showTestsResult = () => {
     const filenames = Object.keys(testsResultByFilename)
-    for(const filename of filenames) {
+    for (const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
       const contracts = Object.keys(fileTestsResult)
-      for(const contract of contracts) {
-        if(contract && contract !== 'summary' && contract !== 'errors') {
+      for (const contract of contracts) {
+        if (contract && contract !== 'summary' && contract !== 'errors') {
           runningTestFileName = cleanFileName(filename, contract)
           const tests = fileTestsResult[contract]
           if (tests?.length) {
@@ -402,19 +406,19 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           const errors = fileTestsResult['errors']
           if (errors && errors.errors) {
             errors.errors.forEach((err: any) => {
-              const errorCard: any = <Renderer message={err.formattedMessage  || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
+              const errorCard: any = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
               setTestsOutput(prevCards => ([...prevCards, errorCard]))
             })
           } else if (errors && Array.isArray(errors) && (errors[0].message || errors[0].formattedMessage)) {
             errors.forEach((err) => {
-              const errorCard: any = <Renderer message={err.formattedMessage  || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
+              const errorCard: any = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
               setTestsOutput(prevCards => ([...prevCards, errorCard]))
             })
           } else if (errors && !errors.errors && !Array.isArray(errors)) {
             // To track error like this: https://github.com/ethereum/remix/pull/1438
             const errorCard: any = <Renderer message={errors.formattedMessage || errors.message} plugin={testTab} opt={{ type: 'error' }} />
             setTestsOutput(prevCards => ([...prevCards, errorCard]))
-          } 
+          }
         }
       }
       // show summary
@@ -429,17 +433,17 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         setTestsOutput(prevCards => ([...prevCards, summaryCard]))
         fileTestsResult['summary']['rendered'] = true
       }
-    }   
+    }
   }
 
   const testCallback = (result: any) => {
-    if(result.filename) {
-      if(!testsResultByFilename[result.filename]) {
+    if (result.filename) {
+      if (!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
         testsResultByFilename[result.filename]['summary'] = {}
       }
-      if(result.type === 'contract') {
-        testsResultByFilename[result.filename][result.value]= {}
+      if (result.type === 'contract') {
+        testsResultByFilename[result.filename][result.value] = {}
         testsResultByFilename[result.filename][result.value] = []
       } else {
         // Set that this test is not rendered on UI
@@ -469,17 +473,17 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
       const testsSummary = { filename, passed: result.totalPassing, failed: result.totalFailing, timeTaken: totalTime, rendered: false }
-      testsResultByFilename[filename]['summary']= testsSummary
+      testsResultByFilename[filename]['summary'] = testsSummary
       showTestsResult()
     } else if (_errors) {
-      if(!testsResultByFilename[filename]) {
+      if (!testsResultByFilename[filename]) {
         testsResultByFilename[filename] = {}
       }
       testsResultByFilename[filename]['errors'] = _errors
       setTestsExecutionStoppedErrorHidden(false)
       showTestsResult()
     }
-    
+
     if (hasBeenStopped.current && (readyTestsNumber !== runningTestsNumber)) {
       // if all tests has been through before stopping no need to print this.
       setTestsExecutionStoppedHidden(false)
@@ -557,7 +561,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
   }
 
-  const updateRunAction = async (currentFile : any = null) => {
+  const updateRunAction = async (currentFile: any = null) => {
     const isSolidityActive = await testTab.appManager.isActive('solidity')
     if (!isSolidityActive || !selectedTests.current?.length) {
       setDisableRunButton(true)
@@ -581,7 +585,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     return selectedTestsList.map(testFileObj => testFileObj.fileName)
   }
 
-  const toggleCheckbox = (eChecked: any, index:any) => {
+  const toggleCheckbox = (eChecked: any, index: any) => {
     testFiles[index].checked = eChecked
     setTestFiles(testFiles)
     selectedTests.current = getCurrentSelectedTests()
@@ -599,10 +603,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }
 
   const checkAll = (event: any) => {
-    testFiles.forEach((testFileObj) =>  testFileObj.checked = event.target.checked)
+    testFiles.forEach((testFileObj) => testFileObj.checked = event.target.checked)
     setTestFiles(testFiles)
     setCheckSelectAll(event.target.checked)
-    if(event.target.checked) {
+    if (event.target.checked) {
       selectedTests.current = getCurrentSelectedTests()
       setDisableRunButton(false)
     } else {
@@ -612,28 +616,28 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }
 
   const updateTestFileList = () => {
-    if(allTests.current?.length) {
-      testFiles =  allTests.current.map((testFile: any) => { return {'fileName': testFile, 'checked': true }})
+    if (allTests.current?.length) {
+      testFiles = allTests.current.map((testFile: any) => { return { 'fileName': testFile, 'checked': true } })
       setCheckSelectAll(true)
     }
-    else 
+    else
       testFiles = []
     setTestFiles(testFiles)
   }
 
   return (
     <div className="px-2" id="testView">
-        <div className="infoBox">
-          <p className="text-lg"> Test your smart contract in Solidity.</p>
-          <p> Select directory to load and generate test files.</p>
-          <label>Test directory:</label>
-          <div>
-            <div className="d-flex p-2">
+      <div className="infoBox">
+        <p className="text-lg"> Test your smart contract in Solidity.</p>
+        <p> Select directory to load and generate test files.</p>
+        <label>Test directory:</label>
+        <div>
+          <div className="d-flex p-2">
             <datalist id="utPathList">{
               pathOptions.map(function (path) {
                 return <option key={path}>{path}</option>
               })
-              }
+            }
             </datalist>
             <input
               placeholder={defaultPath}
@@ -644,8 +648,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
               name="utPath"
               value={inputPathValue}
               title="Press 'Enter' to change the path for test files."
-              style= {{ backgroundImage: "var(--primary)"}}
-              onKeyUp= {handleTestDirInput}
+              style={{ backgroundImage: "var(--primary)" }}
+              onKeyUp={handleTestDirInput}
               onChange={handleEnter}
             />
             <button
@@ -657,65 +661,65 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             >
               Create
             </button>
-            </div>
           </div>
-        </div>
-        <div>          
-          <div className="d-flex p-2">
-            <button
-              className="btn border w-50"
-              data-id="testTabGenerateTestFile"
-              title="Generate sample test file."
-              disabled={disableGenerateButton}
-              onClick={() => {
-                testTabLogic.generateTestFile()
-                updateForNewCurrent()
-              }}
-            >
-              Generate
-            </button>
-            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
-              <label className="btn p-1 ml-2 m-0">How to use...</label>
-            </a>
-          </div>
-          <div className="d-flex p-2">
-            <button id="runTestsTabRunAction" title={runButtonTitle} data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
-              <span className="fas fa-play ml-2"></span>
-              <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
-            </button>
-            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
-              <span className="fas fa-stop ml-2"></span>
-              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
-            </button>
-          </div>
-          <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
-            <input id="checkAllTests"
-              type="checkbox"
-              data-id="testTabCheckAllTests"
-              onClick={checkAll}
-              checked={checkSelectAll}
-              onChange={() => {}} // eslint-disable-line
-            />
-            <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
-          </div>
-          <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any, index) => {
-            const elemId = `singleTest${testFileObj.fileName}`
-            return (
-              <div className="d-flex align-items-center py-1" key={index}>
-                <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked}/>
-                <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
-              </div>
-            )
-          }) 
-          : "No test file available" } </div>
-          <div className="align-items-start flex-column mt-2 mx-3 mb-0">
-            <span className='text-info h6' hidden={progressBarHidden}>Progress: {readyTestsNumber} finished (of {runningTestsNumber})</span>
-            <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
-            <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
-          </div>
-          <div>{testsOutput}</div>
         </div>
       </div>
+      <div>
+        <div className="d-flex p-2">
+          <button
+            className="btn border w-50"
+            data-id="testTabGenerateTestFile"
+            title="Generate sample test file."
+            disabled={disableGenerateButton}
+            onClick={() => {
+              testTabLogic.generateTestFile()
+              updateForNewCurrent()
+            }}
+          >
+            Generate
+          </button>
+          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+            <label className="btn p-1 ml-2 m-0">How to use...</label>
+          </a>
+        </div>
+        <div className="d-flex p-2">
+          <button id="runTestsTabRunAction" title={runButtonTitle} data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
+            <span className="fas fa-play ml-2"></span>
+            <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
+          </button>
+          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
+            <span className="fas fa-stop ml-2"></span>
+            <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+          </button>
+        </div>
+        <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
+          <input id="checkAllTests"
+            type="checkbox"
+            data-id="testTabCheckAllTests"
+            onClick={checkAll}
+            checked={checkSelectAll}
+            onChange={() => { }} // eslint-disable-line
+          />
+          <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
+        </div>
+        <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any, index) => {
+          const elemId = `singleTest${testFileObj.fileName}`
+          return (
+            <div className="d-flex align-items-center py-1" key={index}>
+              <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
+              <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
+            </div>
+          )
+        })
+          : "No test file available"} </div>
+        <div className="align-items-start flex-column mt-2 mx-3 mb-0">
+          <span className='text-info h6' hidden={progressBarHidden}>Progress: {readyTestsNumber} finished (of {runningTestsNumber})</span>
+          <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
+          <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
+        </div>
+        <div>{testsOutput}</div>
+      </div>
+    </div>
   )
 }
 
