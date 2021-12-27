@@ -39,13 +39,6 @@ module.exports = class TestTab extends ViewPlugin {
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.allFilesInvolved = ['.deps/remix-tests/remix_tests.sol', '.deps/remix-tests/remix_accounts.sol']
     this.element = document.createElement('div')
-
-    appManager.event.on('activate', (name) => {
-      if (name === 'solidity') this.updateRunAction()
-    })
-    appManager.event.on('deactivate', (name) => {
-      if (name === 'solidity') this.updateRunAction()
-    })
   }
 
   onActivationInternal () {
@@ -86,7 +79,6 @@ module.exports = class TestTab extends ViewPlugin {
     }
     await this.testRunner.init()
     await this.createTestLibs()
-    // this.updateRunAction()
   }
 
   onDeactivation () {
@@ -97,9 +89,6 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listenToEvents() {
-    this.on('filePanel', 'setWorkspace', async () => {
-      this.setCurrentPath(this.defaultPath)
-    })
 
     this.on('filePanel', 'workspaceCreated', async () => {
       this.createTestLibs()
@@ -118,17 +107,6 @@ module.exports = class TestTab extends ViewPlugin {
   async testFromPath (path) {
     const fileContent = await this.fileManager.readFile(path)
     return this.testFromSource(fileContent, path)
-  }
-
-  /**
-   * Changes the current path of Unit Testing Plugin
-   * @param path - the path from where UT plugin takes _test.sol files to run
-   */
-  async setCurrentPath (path) {
-    this.testTabLogic.setCurrentPath(path)
-    this.inputPath.value = path
-    this.updateDirList(path)
-    await this.updateForNewCurrent()
   }
 
   /*
