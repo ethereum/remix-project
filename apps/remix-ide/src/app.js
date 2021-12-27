@@ -220,7 +220,6 @@ class AppComponent {
       filePanel,
       registry.get('compilersartefacts').api,
       networkModule,
-      self.mainview,
       registry.get('fileproviders/browser').api
     )
     const analysis = new AnalysisTab(registry)

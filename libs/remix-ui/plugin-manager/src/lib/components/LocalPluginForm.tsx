@@ -80,7 +80,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
         icon: 'assets/img/localPlugin.webp',
         canActivate: typeof canactivate === 'string' ? canactivate.split(',').filter(val => val).map(val => { return val.trim() }) : []
       }
-      const localPlugin = type === 'iframe' ? new IframeReactPlugin(initialState) : new WebsocketPlugin(initialState)
+      const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
       targetPlugin.description = localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''
       targetPlugin.events = localPlugin.profile.events !== undefined ? localPlugin.profile.events : []

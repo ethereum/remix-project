@@ -131,8 +131,8 @@ export class RemixAppManager extends PluginManager {
       }
     }
     return plugins.map(plugin => {
-      // return new IframePlugin(plugin)
-      return new IframeReactPlugin(plugin)
+      return new IframePlugin(plugin)
+      // return new IframeReactPlugin(plugin)
     })
   }
 

@@ -21,7 +21,7 @@ function register (api) { KONSOLES.push(api) }
 const profile = {
   displayName: 'Terminal',
   name: 'terminal',
-  methods: ['log'],
+  methods: ['log', 'logHtml'],
   events: [],
   description: ' - ',
   version: packageJson.version
