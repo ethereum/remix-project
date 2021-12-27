@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export const useDragTerminal = (minHeight: number, defaultPosition: number) => {
   const [isOpen, setIsOpen] = useState(defaultPosition > minHeight)
@@ -72,6 +72,6 @@ export const useDragTerminal = (minHeight: number, defaultPosition: number) => {
     terminalPosition,
     isDragging,
     handleDraggingStart,
-    handleToggleTerminal,
+    handleToggleTerminal
   }
 }
