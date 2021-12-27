@@ -32,19 +32,19 @@ export function RemixUiVerticalIconsPanel ({
 }: RemixUiVerticalIconsPanelProps) {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
-  const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer,initialState)
+  const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
 
   useEffect(() => {
     const evaluateScrollability = (evt: any) => {
       console.log('resize event answered by dispatch!')
       dispatchScrollAction({
-      type: 'resize',
-      payload: {
-        scrollHeight: document.querySelector('#remixuiScrollable')?.scrollHeight,
-        clientHeight: document.querySelector('#remixuiScrollable')?.clientHeight,
-        scrollState: false
-      }
-    })
+        type: 'resize',
+        payload: {
+          scrollHeight: document.querySelector('#remixuiScrollable')?.scrollHeight,
+          clientHeight: document.querySelector('#remixuiScrollable')?.clientHeight,
+          scrollState: false
+        }
+      })
     }
     addEventListener('resize', evaluateScrollability)
 
@@ -54,7 +54,7 @@ export function RemixUiVerticalIconsPanel ({
   })
 
   useEffect(() => {
-    addEventListener('activate', ()  => console.log('activate called now'))
+    addEventListener('activate', () => console.log('activate called now'))
   })
 
   function onThemeChanged (themeType: any) {
