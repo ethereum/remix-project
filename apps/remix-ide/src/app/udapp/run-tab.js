@@ -34,14 +34,14 @@ const profile = {
 }
 
 export class RunTab extends ViewPlugin {
-  constructor (blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView, fileProvider) {
+  constructor (blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider) {
     super(profile)
     this.event = new EventManager()
     this.config = config
     this.blockchain = blockchain
     this.fileManager = fileManager
     this.editor = editor
-    this.logCallback = (msg) => { mainView.getTerminal().logHtml(yo`<pre>${msg}</pre>`) }
+    this.logCallback = (msg) => { this.call('terminal', 'logHtml', yo`<pre>${msg}</pre>`) }
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
