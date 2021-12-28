@@ -1,20 +1,20 @@
 'use strict'
 import { CompilerImports } from '@remix-project/core-plugin'
+import Registry from '../app/state/registry'
 var yo = require('yo-yo')
 var async = require('async')
 var EventManager = require('../lib/events')
 
 var toolTip = require('../app/ui/tooltip')
-var globalRegistry = require('../global/registry')
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
-  constructor (terminal, localRegistry, blockchain) {
+  constructor (terminal, blockchain) {
     const self = this
     self.event = new EventManager()
     self.blockchain = blockchain
     self._components = {}
-    self._components.registry = localRegistry || globalRegistry
+    self._components.registry = Registry.getInstance()
     self._components.terminal = terminal
     self._components.fileImport = new CompilerImports()
     self._components.gistHandler = new GistHandler()
