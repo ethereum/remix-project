@@ -1,4 +1,3 @@
-import { type } from 'os'
 import { RunTab } from './run-tab'
 export interface RunTabProps {
   plugin: RunTab
@@ -186,16 +185,24 @@ export interface ContractDropdownProps {
 }
 
 export interface RecorderProps {
-
+  storeScenario: (prompt: (msg: string) => JSX.Element) => void,
+  runCurrentScenario: (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => void,
+  logBuilder: (msg: string) => JSX.Element,
+  mainnetPrompt: MainnetPrompt,
+  gasEstimationPrompt: (msg: string) => JSX.Element,
+  passphrasePrompt: (msg: string) => JSX.Element,
+  scenarioPrompt: (msg: string) => JSX.Element,
+  count: number
 }
 
 export interface InstanceContainerProps {
   instances: {
     instanceList: {
-      contractData: ContractData,
+      contractData?: ContractData,
       address: string,
       name: string,
-      decodedResponse?: any
+      decodedResponse?: any,
+      abi?: any
     }[],
     error: string
   },
@@ -263,12 +270,13 @@ export interface MainnetProps {
 
 export interface UdappProps {
   instance: {
-    contractData: ContractData,
+    contractData?: ContractData,
     address: string,
-    name: string
+    name: string,
+    decodedResponse?: any,
+    abi?: any
   },
   context: 'memory' | 'blockchain',
-  abi?: FuncABI[],
   removeInstance: (index: number) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
@@ -288,6 +296,5 @@ export interface UdappProps {
     mainnetPrompt: MainnetPrompt,
     gasEstimationPrompt: (msg: string) => JSX.Element,
     passphrasePrompt: (msg: string) => JSX.Element) => void,
-  decodedResponse: any,
   sendValue: string
 }

@@ -18,16 +18,18 @@ export function UniversalDappUI (props: UdappProps) {
   const [expandPath, setExpandPath] = useState<string[]>([])
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
+  const [inputs, setInputs] = useState<string>(null)
+  const [evmBC, setEvmBC] = useState(null)
 
   useEffect(() => {
-    if (!props.abi) {
+    if (!props.instance.abi) {
       const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
 
       setContractABI(abi)
     } else {
-      setContractABI(props.abi)
+      setContractABI(props.instance.abi)
     }
-  }, [props.abi])
+  }, [props.instance.abi])
 
   useEffect(() => {
     if (props.instance.address) {
@@ -38,6 +40,13 @@ export function UniversalDappUI (props: UdappProps) {
       setAddress(address)
     }
   }, [props.instance.address])
+
+  useEffect(() => {
+    if (props.instance.contractData) {
+      setInputs(props.instance.contractData.getConstructorInputs())
+      setEvmBC(props.instance.contractData.bytecodeObject)
+    }
+  }, [props.instance.contractData])
 
   const sendData = () => {
     setLlIError('')
@@ -227,14 +236,22 @@ export function UniversalDappUI (props: UdappProps) {
               const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
 
-              return <ContractGUI funcABI={funcABI} clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => runTransaction(lookupOnly, funcABI, valArray, inputsValues)} inputs={props.instance.contractData.getConstructorInputs()} evmBC={props.instance.contractData.bytecodeObject} lookupOnly={lookupOnly} />
+              return <ContractGUI
+                funcABI={funcABI}
+                clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
+                  runTransaction(lookupOnly, funcABI, valArray, inputsValues)
+                }}
+                inputs={inputs}
+                evmBC={evmBC}
+                lookupOnly={lookupOnly}
+              />
             })
           }
           <div className="udapp_value">
             <TreeView id="treeView">
               {
-                Object.keys(props.decodedResponse).map((innerkey) => {
-                  return renderData(props.decodedResponse[innerkey], props.decodedResponse, innerkey, innerkey)
+                Object.keys(props.instance.decodedResponse || {}).map((innerkey) => {
+                  return renderData(props.instance.decodedResponse[innerkey], props.instance.decodedResponse, innerkey, innerkey)
                 })
               }
             </TreeView>

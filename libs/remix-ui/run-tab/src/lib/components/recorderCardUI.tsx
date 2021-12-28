@@ -23,28 +23,17 @@ export function RecorderUI (props: RecorderProps) {
   }
 
   const triggerRecordButton = () => {
-    // dispatch saveScenario()
-    // this.saveScenario(
-    //   (path, cb) => {
-    //     modalDialogCustom.prompt('Save transactions as scenario', 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)
-    //   },
-    //   (error) => {
-    //     if (error) return modalDialogCustom.alert(error)
-    //   }
-    // )
+    props.storeScenario(props.scenarioPrompt)
   }
 
   const handleClickRunButton = () => {
-    // dispatchRunButtonClickHandler
-    // const file = this.config.get('currentFile')
-    // if (!file) return modalDialogCustom.alert('A scenario file has to be selected')
-    // this.runScenario(file)
+    props.runCurrentScenario(props.gasEstimationPrompt, props.passphrasePrompt, props.mainnetPrompt, props.logBuilder)
   }
 
   return (
     <div className="udapp_cardContainer list-group-item border-0">
       <TreeView>
-        <TreeViewItem label={card('Transactions recorded', 0)} showIcon={false} labelClass="ml-n1">
+        <TreeViewItem label={card('Transactions recorded', props.count)} showIcon={false} labelClass="ml-n1">
           <div className="d-flex flex-column">
             <div className="udapp_recorderDescription mt-2">
               All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
