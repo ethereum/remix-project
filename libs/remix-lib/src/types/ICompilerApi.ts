@@ -11,7 +11,7 @@ export interface ICompilerApi {
     getCompilerParameters: () => ConfigurationSettings
     setCompilerParameters: (ConfigurationSettings?) => void
 
-    getAppParameter: (value: string) => string | boolean
+    getAppParameter: (value: string) => Promise<any>
     setAppParameter: (name: string, value: string | boolean) => void
 
     getFileManagerMode: () => string
