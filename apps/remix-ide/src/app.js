@@ -18,11 +18,12 @@ import { WalkthroughService } from './walkthroughService'
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
+import Registry from './app/state/registry'
+import { ConfigPlugin } from './app/plugins/config'
 
 const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
-const registry = require('./global/registry')
 
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
@@ -50,28 +51,28 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 
 class AppComponent {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor () {
     const self = this
     self.appManager = new RemixAppManager({})
+    self.queryParams = new QueryParams()
     self._components = {}
-    self.registry = registry
     // setup storage
     const configStorage = new Storage('config-v0.8:')
 
     // load app config
     const config = new Config(configStorage)
-    registry.put({ api: config, name: 'config' })
+    Registry.getInstance().put({ api: config, name: 'config' })
 
     // load file system
     self._components.filesProviders = {}
     self._components.filesProviders.browser = new FileProvider('browser')
-    registry.put({ api: self._components.filesProviders.browser, name: 'fileproviders/browser' })
+    Registry.getInstance().put({ api: self._components.filesProviders.browser, name: 'fileproviders/browser' })
     self._components.filesProviders.localhost = new RemixDProvider(self.appManager)
-    registry.put({ api: self._components.filesProviders.localhost, name: 'fileproviders/localhost' })
+    Registry.getInstance().put({ api: self._components.filesProviders.localhost, name: 'fileproviders/localhost' })
     self._components.filesProviders.workspace = new WorkspaceFileProvider()
-    registry.put({ api: self._components.filesProviders.workspace, name: 'fileproviders/workspace' })
+    Registry.getInstance().put({ api: self._components.filesProviders.workspace, name: 'fileproviders/workspace' })
 
-    registry.put({ api: self._components.filesProviders, name: 'fileproviders' })
+    Registry.getInstance().put({ api: self._components.filesProviders, name: 'fileproviders' })
 
     migrateFileSystem(self._components.filesProviders.browser)
   }
@@ -90,7 +91,7 @@ class AppComponent {
       'remix-beta.ethereum.org': 25,
       'remix.ethereum.org': 23
     }
-    self.showMatamo = (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics'))
+    self.showMatamo = (matomoDomains[window.location.hostname] && !Registry.getInstance().get('config').api.exists('settings/matomo-analytics'))
     self.walkthroughService = new WalkthroughService(appManager, self.showMatamo)
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
@@ -104,30 +105,30 @@ class AppComponent {
 
     // SERVICES
     // ----------------- theme service ---------------------------------
-    self.themeModule = new ThemeModule(registry)
-    registry.put({ api: self.themeModule, name: 'themeModule' })
+    self.themeModule = new ThemeModule()
+    Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
-    registry.put({ api: editor, name: 'editor' })
+    Registry.getInstance().put({ api: editor, name: 'editor' })
     editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
 
     // ----------------- fileManager service ----------------------------
     const fileManager = new FileManager(editor, appManager)
-    registry.put({ api: fileManager, name: 'filemanager' })
+    Registry.getInstance().put({ api: fileManager, name: 'filemanager' })
     // ----------------- dGit provider ---------------------------------
     const dGitProvider = new DGitProvider()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
-    const blockchain = new Blockchain(registry.get('config').api)
+    const blockchain = new Blockchain(Registry.getInstance().get('config').api)
 
     // ----------------- compilation metadata generation service ---------
     const compilerMetadataGenerator = new CompilerMetadata()
     // ----------------- compilation result service (can keep track of compilation results) ----------------------------
     const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
-    registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
+    Registry.getInstance().put({ api: compilersArtefacts, name: 'compilersartefacts' })
 
     // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
     const fetchAndCompile = new FetchAndCompile()
@@ -138,7 +139,7 @@ class AppComponent {
     const hardhatProvider = new HardhatProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
-    registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
+    Registry.getInstance().put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
 
     // -------------------Terminal----------------------------------------
     makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
@@ -157,7 +158,10 @@ class AppComponent {
     )
     const contextualListener = new EditorContextListener()
 
+    const configPlugin = new ConfigPlugin()
+
     self.engine.register([
+      configPlugin,
       blockchain,
       contentImport,
       self.themeModule,
@@ -179,7 +183,7 @@ class AppComponent {
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
     self.mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
-    registry.put({ api: self.mainview, name: 'mainview' })
+    Registry.getInstance().put({ api: self.mainview, name: 'mainview' })
 
     self.engine.register([
       appPanel,
@@ -195,7 +199,7 @@ class AppComponent {
     const filePanel = new FilePanel(appManager)
     const landingPage = new LandingPage(appManager, self.menuicons, fileManager, filePanel, contentImport)
     self.settings = new SettingsTab(
-      registry.get('config').api,
+      Registry.getInstance().get('config').api,
       editor,
       appManager
     )
@@ -211,23 +215,23 @@ class AppComponent {
     ])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
-    const compileTab = new CompileTab(registry.get('config').api, registry.get('filemanager').api)
+    const compileTab = new CompileTab(Registry.getInstance().get('config').api, Registry.getInstance().get('filemanager').api)
     const run = new RunTab(
       blockchain,
-      registry.get('config').api,
-      registry.get('filemanager').api,
-      registry.get('editor').api,
+      Registry.getInstance().get('config').api,
+      Registry.getInstance().get('filemanager').api,
+      Registry.getInstance().get('editor').api,
       filePanel,
-      registry.get('compilersartefacts').api,
+      Registry.getInstance().get('compilersartefacts').api,
       networkModule,
       self.mainview,
-      registry.get('fileproviders/browser').api
+      Registry.getInstance().get('fileproviders/browser').api
     )
-    const analysis = new AnalysisTab(registry)
+    const analysis = new AnalysisTab()
     const debug = new DebuggerTab()
     const test = new TestTab(
-      registry.get('filemanager').api,
-      registry.get('offsettolinecolumnconverter').api,
+      Registry.getInstance().get('filemanager').api,
+      Registry.getInstance().get('offsettolinecolumnconverter').api,
       filePanel,
       compileTab,
       appManager,
@@ -267,7 +271,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
-    await self.appManager.activatePlugin(['settings'])
+    await self.appManager.activatePlugin(['settings', 'config'])
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['walkthrough'])
