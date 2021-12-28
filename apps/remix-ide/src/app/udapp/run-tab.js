@@ -6,18 +6,9 @@ import * as packageJson from '../../../../../package.json'
 
 const yo = require('yo-yo')
 const EventManager = require('../../lib/events')
-const Card = require('../ui/card')
-
-const css = require('../tabs/styles/run-tab-styles')
-const SettingsUI = require('../tabs/runTab/settings.js')
 const Recorder = require('../tabs/runTab/model/recorder.js')
-const RecorderUI = require('../tabs/runTab/recorder.js')
-const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
-const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
 const toaster = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
-
-const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
 const profile = {
   name: 'udapp',
@@ -45,6 +36,7 @@ export class RunTab extends ViewPlugin {
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
     this.fileProvider = fileProvider
+    this.recorder = new Recorder(blockchain)
     this.REACT_API = {}
     this.setupEvents()
     this.el = document.createElement('div')
@@ -62,14 +54,11 @@ export class RunTab extends ViewPlugin {
 
   getSettings () {
     return new Promise((resolve, reject) => {
-      if (!this.container) reject(new Error('UI not ready'))
-      else {
-        resolve({
-          selectedAccount: this.settingsUI.getSelectedAccount(),
-          selectedEnvMode: this.blockchain.getProvider(),
-          networkEnvironment: this.container.querySelector('*[data-id="settingsNetworkEnv"]').textContent
-        })
-      }
+      resolve({
+        selectedAccount: this.REACT_API.accounts.selectedAccount,
+        selectedEnvMode: this.REACT_API.selectExEnv,
+        networkEnvironment: this.REACT_API.networkName
+      })
     })
   }
 
@@ -108,92 +97,8 @@ export class RunTab extends ViewPlugin {
     return this.blockchain.pendingTransactionsCount()
   }
 
-  renderSettings () {
-    this.settingsUI = new SettingsUI(this.blockchain, this.networkModule)
-
-    this.settingsUI.event.register('clearInstance', () => {
-      this.event.trigger('clearInstance', [])
-    })
-  }
-
-  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, logCallback) {
-    const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
-    this.contractDropdownUI = new ContractDropdownUI(this.blockchain, dropdownLogic, logCallback, this)
-
-    fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
-
-    this.contractDropdownUI.event.register('clearInstance', () => {
-      const noInstancesText = this.noInstancesText
-      if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-    })
-    this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
-      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, '<at address>'))
-    })
-    this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
-      this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
-    })
-  }
-
-  renderRecorder (udappUI, fileManager, config, logCallback) {
-    this.recorderCount = yo`<span>0</span>`
-
-    const recorder = new Recorder(this.blockchain)
-    recorder.event.register('recorderCountChange', (count) => {
-      this.recorderCount.innerText = count
-    })
-    this.event.register('clearInstance', recorder.clearAll.bind(recorder))
-
-    this.recorderInterface = new RecorderUI(this.blockchain, fileManager, recorder, logCallback, config)
-
-    this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
-      var noInstancesText = this.noInstancesText
-      if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, contractName))
-    })
-
-    this.recorderInterface.render()
-  }
-
-  renderRecorderCard () {
-    const collapsedView = yo`
-      <div class="d-flex flex-column">
-        <div class="ml-2 badge badge-pill badge-primary" title="The number of recorded transactions">${this.recorderCount}</div>
-      </div>`
-
-    const expandedView = yo`
-      <div class="d-flex flex-column">
-        <div class="${css.recorderDescription} mt-2">
-          All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
-          another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
-        </div>
-        <div class="${css.transactionActions}">
-          ${this.recorderInterface.recordButton}
-          ${this.recorderInterface.runButton}
-          </div>
-        </div>
-      </div>`
-
-    this.recorderCard = new Card({}, {}, { title: 'Transactions recorded', collapsedView: collapsedView })
-    this.recorderCard.event.register('expandCollapseCard', (arrow, body, status) => {
-      body.innerHTML = ''
-      status.innerHTML = ''
-      if (arrow === 'down') {
-        status.appendChild(collapsedView)
-        body.appendChild(expandedView)
-      } else if (arrow === 'up') {
-        status.appendChild(collapsedView)
-      }
-    })
-  }
-
   render () {
     return this.el
-    this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
-    this.renderSettings()
-    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
-    this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
-    this.renderRecorderCard()
-    return this.renderContainer()
   }
 
   renderComponent () {

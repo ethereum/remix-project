@@ -8,31 +8,7 @@ import { GasPriceUI } from './gasPrice'
 import { ValueUI } from './value'
 
 export function SettingsUI (props: SettingsProps) {
-  // constructor () {
-  //   this.blockchain = blockchain
-  //   this.event = new EventManager()
-  //   this._components = {}
-
-  //   this._components = {
-  //     registry: globalRegistry,
-  //     networkModule: networkModule
-  //   }
-  //   this._components.registry = globalRegistry
-  //   this._deps = {
-  //     config: this._components.registry.get('config').api
-  //   }
-
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
-
-  // /**
-  //  * generate a value used by the env dropdown list.
-  //  * @return {String} - can return 'vm-berlin, 'vm-london', 'injected' or 'web3'
-  //  */
-  // _getProviderDropdownValue () {
-  //   const provider = this.blockchain.getProvider()
-  //   const fork = this.blockchain.getCurrentFork()
-  //   return provider === 'vm' ? provider + '-' + fork : provider
-  // }
 
   return (
     <div className="udapp_settings">

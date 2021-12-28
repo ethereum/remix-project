@@ -24,6 +24,7 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
       { instanceList.length > 0
         ? <div> { props.instances.instanceList.map((instance, index) => {
           return <UniversalDappUI
+            key={index}
             instance={instance}
             context={props.getContext()}
             removeInstance={props.removeInstance}
@@ -33,7 +34,6 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
             passphrasePrompt={props.passphrasePrompt}
             mainnetPrompt={props.mainnetPrompt}
             runTransactions={props.runTransactions}
-            decodedResponse={instance.decodedResponse || {}}
             sendValue={props.sendValue}
           />
         }) }
