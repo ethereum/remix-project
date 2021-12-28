@@ -24,13 +24,14 @@ import {
   removeInstance, getContext,
   runTransactions, loadAddress,
   storeScenario, runCurrentScenario,
-  updateScenarioPath
+  updateScenarioPath, initWebDialogs
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
 import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
+import { Web3ProviderDialog } from './components/web3Dialog'
 
 export function RunTabUI (props: RunTabProps) {
   const { plugin } = props
@@ -58,6 +59,7 @@ export function RunTabUI (props: RunTabProps) {
 
   useEffect(() => {
     initRunTab(plugin)(dispatch)
+    initWebDialogs(envChangeNotification, web3Dialog)(dispatch)
   }, [plugin])
 
   useEffect(() => {
@@ -189,6 +191,24 @@ export function RunTabUI (props: RunTabProps) {
     />
   }
 
+  const envChangeNotification = (env: { context: string, fork: string }, from: string) => {
+    return (
+      <div>
+        <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+        <span>
+          {from}
+          <span className="font-weight-bold text-warning">
+            is changing your environment to
+          </span> {env}
+        </span>
+      </div>
+    )
+  }
+
+  const web3Dialog = () => {
+    return <Web3ProviderDialog externalEndpoint={runTab.externalEndpoint} setWeb3Endpoint={setWeb3Endpoint} />
+  }
+
   return (
     <Fragment>
       <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
@@ -197,7 +217,6 @@ export function RunTabUI (props: RunTabProps) {
             networkName={runTab.networkName}
             personalMode={runTab.personalMode}
             selectExEnv={runTab.selectExEnv}
-            externalEndpoint={runTab.externalEndpoint}
             setWeb3Endpoint={setWeb3Endpoint}
             accounts={runTab.accounts}
             setAccount={setAccount}
@@ -215,6 +234,7 @@ export function RunTabUI (props: RunTabProps) {
             tooltip={toast}
             signMessageWithAddress={signMessageWithAddress}
             passphrase={runTab.passphrase}
+            web3ProviderDialog={web3Dialog}
           />
           <ContractDropdownUI
             exEnvironment={runTab.selectExEnv}
