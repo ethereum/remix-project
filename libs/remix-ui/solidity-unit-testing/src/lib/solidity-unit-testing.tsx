@@ -676,7 +676,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             title="Generate sample test file."
             disabled={disableGenerateButton}
             onClick={() => {
-              testTabLogic.generateTestFile()
+              testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)})
               updateForNewCurrent()
             }}
           >
