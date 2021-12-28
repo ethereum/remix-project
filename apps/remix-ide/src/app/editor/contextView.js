@@ -1,7 +1,7 @@
 'use strict'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import Registry from '../state/registry'
 const yo = require('yo-yo')
-const globalRegistry = require('../../global/registry')
 
 const css = require('./styles/contextView-styles')
 
@@ -13,9 +13,9 @@ const css = require('./styles/contextView-styles')
    - rename declaration/references
 */
 class ContextView {
-  constructor (opts, localRegistry) {
+  constructor (opts) {
     this._components = {}
-    this._components.registry = localRegistry || globalRegistry
+    this._components.registry = Registry.getInstance()
     this.contextualListener = opts.contextualListener
     this.editor = opts.editor
     this._deps = {

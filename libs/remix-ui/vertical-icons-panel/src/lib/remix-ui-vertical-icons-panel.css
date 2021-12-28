@@ -1,0 +1,124 @@
+.remixui_homeIcon {
+    /* display: block; */
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+  }
+  .remixui_homeIcon svg path {
+    fill: var(--primary);
+  }
+  .remixui_homeIcon svg polygon {
+    fill: var(--primary);
+  }
+  .remixui_icons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .remixui_icon {
+    cursor: pointer;
+    margin-bottom: 3px;
+    position: 12px;
+    width: 36px;
+    height: 36px;
+    padding: relative;
+    border-radius: 8px;
+  }
+  .remixui_icon img {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    filter: invert(0.5);
+  }
+  .remixui_image {
+  }
+  .remixui_icon svg {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+  .remixui_icon[title='Settings'] {
+    order: 5;
+    align-self: center;
+    bottom: 0;
+  }
+  .remixui_status {
+    position: relative;
+    bottom: 0;
+    right: 0;
+    left: 12px;
+    top: -13px;
+  }
+  .remixui_statusCheck {
+    font-size: 1.2em;
+  }
+  .remixui_statusWithBG {
+    border-radius: 8px;
+    background-color: var(--danger);
+    color: var(--light);
+    font-size: 12px;
+    height: 15px;
+    text-align: center;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .remixui_verticalIconContextcontainer {
+    display: block;
+    position: fixed;
+    border-radius: 2px;
+    z-index: 1000;
+    box-shadow: 0 0 4px var(--dark);
+  }
+  .remixui_verticalIconContextcontainer:focus {
+    outline: 0;
+  }
+  .remixui_liitem {
+    padding: 2px;
+    padding-left: 6px;
+    cursor: pointer;
+    color: var(--text-dark);
+    background-color: var(--light);
+  }
+  .remixui_liitem:hover {
+    background-color: var(--secondary);
+  }
+  
+  .remixui_scrollbar {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox hide scrollbar */
+    -ms-overflow-style: none;
+  }
+  .remixui_scrollable-container {
+    flex-basis: 510px;
+    flex-grow: 2;
+    /* border-bottom: 3px solid #3f4455; */
+  }
+  .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
+    display: none;
+  }
+  .remixui_hide-scroll {
+    overflow-x: 'hidden';
+  }
+  .remixui_default-icons-container {
+    border-bottom: 2px solid #3f4455;
+  }
+  .remixui_icon-chevron {
+    z-index: 1000;
+  }
+
+  .remixui_settings {
+    flex-basis: 50px;
+  }
+
+  .remixui_requiredSection {
+    flex-basis: 180px;
+    flex-grow: 1;
+  }
+
+  #menuitems {
+    list-style: none;
+    margin: 0px;
+  }

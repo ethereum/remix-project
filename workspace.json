@@ -766,8 +766,8 @@
       }
     },
     "remix-ui-plugin-manager": {
-      "root": "libs/remix-ui/plugin-manager",
-      "sourceRoot": "libs/remix-ui/plugin-manager/src",
+     "root": "libs/remix-ui/plugin-manager",
+      "sourceRoot": "libs/remix-ui/plugin-manager/src", 
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1007,6 +1007,23 @@
         }
       }
     },
+    "remix-ui-home-tab": {
+      "root": "libs/remix-ui/home-tab",
+      "sourceRoot": "libs/remix-ui/home-tab/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/home-tab/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/home-tab/**/*"]
+          }
+
+        }
+      }
+    },
     "remix-ui-editor": {
       "root": "libs/remix-ui/editor",
       "sourceRoot": "libs/remix-ui/editor/src",
@@ -1019,6 +1036,37 @@
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/editor/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/remix-ui/editor/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-theme-module": {
+      "root": "libs/remix-ui/theme-module",
+      "sourceRoot": "libs/remix-ui/theme-module/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+              "tsConfig": ["libs/remix-ui/editor/tsconfig.lib.json"],
+              "exclude": ["**/node_modules/**", "!libs/remix-ui/editor/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-app": {
+      "root": "libs/remix-ui/app",
+      "sourceRoot": "libs/remix-ui/app/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/app/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/app/**/*"]
           }
         }
       }
@@ -1053,6 +1101,36 @@
           }
         }
       }
+    },
+    "remix-ui-vertical-icons-panel": {
+      "root": "libs/remix-ui/vertical-icons-panel",
+      "sourceRoot": "libs/remix-ui/vertical-icons-panel/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-editor-context-view": {
+      "root": "libs/remix-ui/editor-context-view",
+      "sourceRoot": "libs/remix-ui/editor-context-view/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/editor-context-view/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor-context-view/**/*"]
+          }
+        }
+      }
     }
   },
   "cli": {
@@ -1083,42 +1161,12 @@
         "linter": "eslint"
       }
     },
-    "@nrwl/next": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/web": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
     "@nrwl/nx-plugin": {
       "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
         "linter": "eslint"
       }
     }
   },
   "defaultProject": "remix-ide"
 }
+

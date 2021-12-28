@@ -151,14 +151,19 @@ element.style {
     cursor            : row-resize;
     z-index           : 999;
   }
+
+  .dragbarDragging {
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+  }
   
   .console {
     cursor           : pointer;
   }
 
   .dragbarHorizontal:hover  {
-    background-color: #007AA6;
-    border:2px solid #007AA6; 
+    background-color: var(--secondary);
+    border:2px solid var(--secondary); 
   }
   .listenOnNetwork {
     min-height: auto;

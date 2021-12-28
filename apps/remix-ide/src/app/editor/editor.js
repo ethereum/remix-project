@@ -12,7 +12,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'getCursorPosition']
 }
 
 class Editor extends Plugin {
@@ -46,7 +46,8 @@ class Editor extends Plugin {
       txt: 'text',
       json: 'json',
       abi: 'json',
-      rs: 'rust'
+      rs: 'rust',
+      cairo: 'cairo'
     }
 
     this.activated = false
@@ -74,7 +75,8 @@ class Editor extends Plugin {
         this._onChange(this.currentFile)
       }
     }
-    this.el.gotoLine = (line) => this.gotoLine(line, 0)
+    this.el.gotoLine = (line, column) => this.gotoLine(line, column || 0)
+    this.el.getCursorPosition = () => this.getCursorPosition()
     return this.el
   }
 
