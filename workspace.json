@@ -1127,7 +1127,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/editor-context-view/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor-context-view/**/*"]
           }
         }
       }
