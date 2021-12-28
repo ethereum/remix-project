@@ -66,12 +66,17 @@ export interface RunTabState {
   gasPrice: string,
   instances: {
     instanceList: {
-      contractData: ContractData,
+      contractData?: ContractData,
       address: string,
       name: string,
-      decodedResponse?: any
+      decodedResponse?: any,
+      abi?: any
     }[],
     error: string
+  },
+  recorder: {
+    pathToScenario: string,
+    transactionCount: number
   }
 }
 
@@ -153,6 +158,10 @@ export const runTabInitialState: RunTabState = {
   instances: {
     instanceList: [],
     error: null
+  },
+  recorder: {
+    pathToScenario: 'scenario.json',
+    transactionCount: 0
   }
 }
 
@@ -534,7 +543,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'ADD_INSTANCE': {
-      const payload: { contractData: ContractData, address: string, name: string } = action.payload
+      const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: any } = action.payload
 
       return {
         ...state,
@@ -552,7 +561,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state,
         instances: {
           ...state.instances,
-          instanceList: state.instances.instanceList.filter((instance, index) => index !== payload)
+          instanceList: state.instances.instanceList.filter((_, index) => index !== payload)
         }
       }
     }
@@ -578,6 +587,40 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
             if (payload.index === index) instance.decodedResponse = payload.decodedResponse
             return instance
           })
+        }
+      }
+    }
+
+    case 'SET_PATH_TO_SCENARIO': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        recorder: {
+          ...state.recorder,
+          pathToScenario: payload
+        }
+      }
+    }
+
+    case 'SET_RECORDER_COUNT': {
+      const payload: number = action.payload
+
+      return {
+        ...state,
+        recorder: {
+          ...state.recorder,
+          transactionCount: payload
+        }
+      }
+    }
+
+    case 'CLEAR_RECORDER_COUNT': {
+      return {
+        ...state,
+        recorder: {
+          ...state.recorder,
+          transactionCount: 0
         }
       }
     }

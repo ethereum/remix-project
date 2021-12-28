@@ -220,7 +220,7 @@ export const setTxFeeContent = (content: string) => {
   }
 }
 
-export const addNewInstance = (instance: { contractData: ContractData, address: string, name: string }) => {
+export const addNewInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any }) => {
   return {
     type: 'ADD_INSTANCE',
     payload: instance
@@ -247,5 +247,25 @@ export const setDecodedResponse = (index: number, decodedResponse) => {
       index,
       decodedResponse
     }
+  }
+}
+
+export const setPathToScenario = (path: string) => {
+  return {
+    type: 'SET_PATH_TO_SCENARIO',
+    payload: path
+  }
+}
+
+export const setRecorderCount = (count: number) => {
+  return {
+    type: 'SET_RECORDER_COUNT',
+    payload: count
+  }
+}
+
+export const clearRecorderCount = () => {
+  return {
+    type: 'CLEAR_RECORDER_COUNT'
   }
 }

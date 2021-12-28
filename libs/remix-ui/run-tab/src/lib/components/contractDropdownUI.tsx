@@ -78,7 +78,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   useEffect(() => {
     if (selectedContract) {
-      console.log('contractList: ', contractList)
       const contract = contractList.find(contract => contract.alias === selectedContract)
 
       setLoadedContractData(props.getSelectedContract(selectedContract, contract.name))
@@ -123,26 +122,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     }
     props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
   }
-
-  //   listenToContextChange () {
-  //     this.blockchain.event.register('networkStatus', ({ error, network }) => {
-  //       if (error) {
-  //         console.log('can\'t detect network')
-  //         return
-  //       }
-  //       this.exEnvironment = this.blockchain.getProvider()
-  //       this.networkName = network.name
-
-  //       const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
-
-  //       // check if an already selected option exist else use default workflow
-  //       if (savedConfig !== null) {
-  //         this.setCheckedState(savedConfig)
-  //       } else {
-  //         this.setCheckedState(this.networkName === 'Main')
-  //       }
-  //     })
-  //   }
 
   const atAddressChanged = (event) => {
     const value = event.target.value

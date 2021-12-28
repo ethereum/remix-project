@@ -22,12 +22,15 @@ import {
   updateMaxFee, updateMaxPriorityFee,
   updateTxFeeContent, clearInstances,
   removeInstance, getContext,
-  runTransactions, loadAddress
+  runTransactions, loadAddress,
+  storeScenario, runCurrentScenario,
+  updateScenarioPath
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
 import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
+import { ScenarioPrompt } from './components/scenario'
 
 export function RunTabUI (props: RunTabProps) {
   const { plugin } = props
@@ -161,6 +164,10 @@ export function RunTabUI (props: RunTabProps) {
     return <PassphrasePrompt message={message} setPassphrase={setPassphrasePrompt} defaultValue={runTab.passphrase} />
   }
 
+  const scenarioPrompt = (message: string) => {
+    return <ScenarioPrompt message={message} setScenarioPath={updateScenarioPath} defaultValue={runTab.recorder.pathToScenario} />
+  }
+
   const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
     return <MainnetPrompt
       init={determineGasPrice}
@@ -227,7 +234,16 @@ export function RunTabUI (props: RunTabProps) {
             tooltip={toast}
             loadAddress={loadAddress}
           />
-          <RecorderUI />
+          <RecorderUI
+            gasEstimationPrompt={gasEstimationPrompt}
+            logBuilder={logBuilder}
+            passphrasePrompt={passphrasePrompt}
+            mainnetPrompt={mainnetPrompt}
+            storeScenario={storeScenario}
+            runCurrentScenario={runCurrentScenario}
+            scenarioPrompt={scenarioPrompt}
+            count={runTab.recorder.transactionCount}
+          />
           <InstanceContainerUI
             instances={runTab.instances}
             clearInstances={clearInstances}
