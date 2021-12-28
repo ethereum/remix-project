@@ -53,10 +53,6 @@ export function RemixUiVerticalIconsPanel ({
     }
   })
 
-  useEffect(() => {
-    addEventListener('activate', () => console.log('activate called now'))
-  })
-
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
     // @ts-ignore
@@ -132,7 +128,7 @@ export function RemixUiVerticalIconsPanel ({
       <div className="remixui_icons d-flex flex-column vh-100" ref={iconPanelRef}>
         <Home verticalIconPlugin={verticalIconsPlugin} />
         <div className={scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
-          ? 'remixui_default-icons-container remixui_requiredSection' : 'remixui_requiredSection'}>
+          ? 'remixui_default-icons-container remixui_requiredSection' : activateScroll && activateScroll.scrollState ? 'remixui_default-icons-container remixui_requiredSection' : 'remixui_requiredSection'}>
           <RequiredSection
             verticalIconsPlugin={verticalIconsPlugin}
             addActive={addActive}
@@ -145,7 +141,7 @@ export function RemixUiVerticalIconsPanel ({
           id="remixuiScrollable"
           className={scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
             ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
-            : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'}
+            : activateScroll && activateScroll.scrollState ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll' : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'}
           ref={scrollableRef}
         >
           <OtherIcons
