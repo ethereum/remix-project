@@ -565,7 +565,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const updateRunAction = async (currentFile: any = null) => {
     const isSolidityActive = await testTab.appManager.isActive('solidity')
     if (!isSolidityActive || !selectedTests.current?.length) {
-      setDisableRunButton(true)
+      // setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         setRunButtonTitle('No solidity file selected')
       } else {
