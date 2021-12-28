@@ -2,6 +2,7 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
+import Registry from '../state/registry'
 const _paq = window._paq = window._paq || []
 
 const themes = [
@@ -26,11 +27,11 @@ const profile = {
 }
 
 export class ThemeModule extends Plugin {
-  constructor (registry) {
+  constructor () {
     super(profile)
     this.events = new EventEmitter()
     this._deps = {
-      config: registry.get('config').api
+      config: Registry.getInstance().get('config').api
     }
     this.themes = themes.reduce((acc, theme) => {
       theme.url = window.location.origin + window.location.pathname + theme.url
