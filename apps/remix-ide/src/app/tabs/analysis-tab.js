@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
+import Registry from '../state/registry'
 var Renderer = require('../ui/renderer')
 
 var EventManager = require('../../lib/events')
@@ -22,11 +23,11 @@ const profile = {
 }
 
 class AnalysisTab extends ViewPlugin {
-  constructor (registry) {
+  constructor () {
     super(profile)
     this.event = new EventManager()
     this.events = new EventEmitter()
-    this.registry = registry
+    this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
     this._components = {
