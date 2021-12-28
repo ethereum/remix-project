@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react' // eslint-disable-lin
 import { eachOfSeries } from 'async' // eslint-disable-line
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 
@@ -21,6 +22,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const { testTabLogic } = testTab
 
   const [defaultPath, setDefaultPath] = useState('tests')
+  const [toasterMsg, setToasterMsg] = useState('')
+
   const [disableCreateButton, setDisableCreateButton] = useState(true)
   const [disableGenerateButton, setDisableGenerateButton] = useState(false)
   const [disableStopButton, setDisableStopButton] = useState(true)
@@ -87,7 +90,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     clearResults()
     try {
       testTabLogic.getTests(async (error: any, tests: any) => {
-        // if (error) return tooltip(error)
+        if (error) return setToasterMsg(error) 
         allTests.current = tests
         selectedTests.current = [...allTests.current]
         updateTestFileList()
@@ -120,7 +123,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
       try {
         testTabLogic.getTests((error: any, tests: any) => {
-          // if (error) return tooltip(error)
+          if (error) return setToasterMsg(error) 
           allTests.current = tests
           selectedTests.current = [...allTests.current]
           updateTestFileList()
@@ -627,6 +630,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   return (
     <div className="px-2" id="testView">
+      <Toaster message={toasterMsg} />
       <div className="infoBox">
         <p className="text-lg"> Test your smart contract in Solidity.</p>
         <p> Select directory to load and generate test files.</p>
