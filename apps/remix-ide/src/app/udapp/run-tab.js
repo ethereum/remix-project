@@ -4,10 +4,8 @@ import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 
-const yo = require('yo-yo')
 const EventManager = require('../../lib/events')
 const Recorder = require('../tabs/runTab/model/recorder.js')
-const toaster = require('../ui/tooltip')
 const _paq = window._paq = window._paq || []
 
 const profile = {
@@ -65,18 +63,8 @@ export class RunTab extends ViewPlugin {
   async setEnvironmentMode (env) {
     const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
     if (canCall) {
-      toaster(yo`
-        <div>
-          <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
-          <span>
-            ${this.currentRequest.from}
-            <span class="font-weight-bold text-warning">
-              is changing your environment to
-            </span> ${env}
-          </span>
-        </div>
-      `, '', { time: 3000 })
-      this.settingsUI.setExecutionContext(env)
+      env = typeof env === 'string' ? { context: env } : env
+      this.emit('setEnvironmentModeReducer', env, this.currentRequest.from)
     }
   }
 
