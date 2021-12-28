@@ -104,7 +104,7 @@ export const setExternalEndpoint = (endpoint: string) => {
   }
 }
 
-export const displayPopUp = (message: string) => {
+export const displayPopUp = (message: string | JSX.Element) => {
   return {
     type: 'DISPLAY_POPUP_MESSAGE',
     payload: message
@@ -267,5 +267,18 @@ export const setRecorderCount = (count: number) => {
 export const clearRecorderCount = () => {
   return {
     type: 'CLEAR_RECORDER_COUNT'
+  }
+}
+
+export const setEnvToasterContent = (content: (env: { context: string, fork: string }, from: string) => void) => {
+  return {
+    type: 'SET_ENV_TOASTER_CONTENT',
+    payload: content
+  }
+}
+
+export const setWeb3Dialog = () => {
+  return {
+    type: 'SET_WEB3_DIALOG'
   }
 }
