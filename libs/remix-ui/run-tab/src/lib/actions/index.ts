@@ -2,8 +2,8 @@
 import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
-import { addressToString, shortenAddress } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
+import { addressToString, createNonClashingNameAsync, shortenAddress } from '@remix-ui/helper'
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -92,21 +92,16 @@ const setupEvents = () => {
 
   plugin.on('manager', 'pluginDeactivated', removePluginProvider.bind(plugin))
 
-  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data) =>
-    broadcastCompilationResult(file, source, languageVersion, data)
-  )
-  plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) =>
-    broadcastCompilationResult(file, source, languageVersion, data)
-  )
-  plugin.on('lexon', 'compilationFinished', (file, source, languageVersion, data) =>
-    broadcastCompilationResult(file, source, languageVersion, data)
-  )
-  plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) =>
-    broadcastCompilationResult(file, source, languageVersion, data)
-  )
-  plugin.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) =>
-    broadcastCompilationResult(file, source, languageVersion, data)
-  )
+  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
+  plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
+  plugin.on('lexon', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
+  plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
+  plugin.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
   plugin.fileManager.events.on('currentFileChanged', (currentFile: string) => {
     if (/.(.abi)$/.exec(currentFile)) {
       dispatch(setLoadType('abi'))
@@ -118,6 +113,14 @@ const setupEvents = () => {
     } else {
       dispatch(setLoadType('other'))
     }
+  })
+
+  plugin.recorder.event.register('recorderCountChange', (count) => {
+    dispatch(setRecorderCount(count))
+  })
+
+  plugin.event.register('cleared', () => {
+    dispatch(clearRecorderCount())
   })
 }
 
@@ -540,7 +543,7 @@ export const updateTxFeeContent = (content: string) => {
   dispatch(setTxFeeContent(content))
 }
 
-const addInstance = (instance: { contractData: ContractData, address: string, name: string }) => {
+const addInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: any }) => {
   dispatch(addNewInstance(instance))
 }
 
@@ -550,6 +553,7 @@ export const removeInstance = (index: number) => {
 
 export const clearInstances = () => {
   dispatch(clearAllInstances())
+  dispatch(clearRecorderCount())
 }
 
 export const loadAddress = (contract: ContractData, address: string) => {
@@ -595,10 +599,9 @@ export const runTransactions = (
   if (lookupOnly) callinfo = 'call'
   else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
   else callinfo = 'transact'
-
   _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
-  const params = funcABI.type !== 'fallback' ? inputsValues : ''
 
+  const params = funcABI.type !== 'fallback' ? inputsValues : ''
   plugin.blockchain.runOrCallContractMethod(
     contractName,
     contractABI,
@@ -629,4 +632,77 @@ export const runTransactions = (
       promptHandler(passphrasePrompt, okCb, cancelCb)
     }
   )
+}
+
+const saveScenario = (promptCb, cb) => {
+  const txJSON = JSON.stringify(plugin.recorder.getAll(), null, 2)
+  const path = plugin.fileManager.currentPath()
+
+  promptCb(path, async () => {
+    const fileProvider = plugin.fileManager.fileProviderOf(path)
+
+    if (!fileProvider) return
+    const newFile = path + '/' + plugin.REACT_API.recorder.pathToScenario
+    try {
+      console.log('newFile: ', newFile)
+      const newPath = await createNonClashingNameAsync(newFile, plugin.fileManager)
+      console.log('newPath: ', newPath)
+      // eslint-disable-next-line standard/no-callback-literal
+      if (!fileProvider.set(newPath, txJSON)) return cb('Failed to create file ' + newFile)
+      plugin.fileManager.open(newFile)
+    } catch (error) {
+      // eslint-disable-next-line standard/no-callback-literal
+      if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
+    }
+  })
+}
+
+export const storeScenario = (prompt: (msg: string) => JSX.Element) => {
+  saveScenario(
+    (path, cb) => {
+      dispatch(displayNotification('Save transactions as scenario', prompt('Transactions will be saved in a file under ' + path), 'Ok', 'Cancel', cb, null))
+    },
+    (error) => {
+      if (error) return dispatch(displayNotification('Alert', error, 'Ok', null))
+    }
+  )
+}
+
+const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
+  if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'Ok', null))
+
+  plugin.fileManager.readFile(file).then((json) => {
+    // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
+    plugin.recorder.runScenario(
+      json,
+      (error, continueTxExecution, cancelCb) => {
+        continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
+      }, (okCb, cancelCb) => {
+        promptHandler(passphrasePrompt, okCb, cancelCb)
+      }, (msg) => {
+        dispatch(displayNotification('Alert', msg, 'Ok', null))
+      }, (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+        confirmationHandler(confirmDialogContent, network, tx, gasEstimation, continueTxExecution, cancelCb)
+      }, (msg: string) => {
+        const log = logBuilder(msg)
+
+        return terminalLogger(log)
+      }, (error, abi, address, contractName) => {
+        if (error) {
+          return dispatch(displayNotification('Alert', error, 'Ok', null))
+        }
+        addInstance({ name: contractName, address, abi })
+      })
+  }).catch((error) => dispatch(displayNotification('Alert', error, 'Ok', null)))
+}
+
+export const runCurrentScenario = (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
+  const file = plugin.config.get('currentFile')
+
+  if (!file) return dispatch(displayNotification('Alert', 'A scenario file has to be selected', 'Ok', null))
+  runScenario(file, gasEstimationPrompt, passphrasePrompt, confirmDialogContent, logBuilder)
+}
+
+export const updateScenarioPath = (path: string) => {
+  dispatch(setPathToScenario(path))
 }

@@ -34,8 +34,10 @@ export class RunTab extends ViewPlugin {
     udappUI: any;
     renderComponent(): void;
     onReady(api: any): void;
+    recorder: Recorder;
 }
 import { ViewPlugin } from "@remixproject/engine-web/lib/view";
 import { Blockchain } from "./blockchain";
 import { RunTabState } from "../reducers/runTab";
+import { Recorder } from "./recorder";
 
