@@ -1155,6 +1155,19 @@
           }
         }
       }
+    },
+    "remix-ui-run-tab": {
+      "root": "libs/remix-ui/run-tab",
+      "sourceRoot": "libs/remix-ui/run-tab/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/remix-ui/run-tab/**/*.{ts,tsx,js,jsx}"]
+          }
+        }
+      }
     }
   },
   "cli": {
