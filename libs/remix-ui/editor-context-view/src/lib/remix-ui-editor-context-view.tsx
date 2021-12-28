@@ -36,7 +36,7 @@ export interface RemixUiEditorContextViewProps {
   declarationOf: (node: astNode) => astNode
 }
 
-function isDefinition(node: any) {
+function isDefinition (node: any) {
   return node.nodeType === 'ContractDefinition' ||
     node.nodeType === 'FunctionDefinition' ||
     node.nodeType === 'ModifierDefinition' ||
@@ -47,7 +47,7 @@ function isDefinition(node: any) {
 
 type nullableAstNode = astNode | null
 
-export function RemixUiEditorContextView(props: RemixUiEditorContextViewProps) {
+export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) {
   /*
     gotoLineDisableRef is used to temporarily disable the update of the view.
     e.g when the user ask the component to "gotoLine" we don't want to rerender the component (but just to put the mouse on the desired line)
