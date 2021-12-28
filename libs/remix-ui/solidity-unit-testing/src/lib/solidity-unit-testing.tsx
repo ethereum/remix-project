@@ -47,17 +47,15 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   let [runningTestsNumber, setRunningTestsNumber] = useState(0) // eslint-disable-line
 
   const hasBeenStopped = useRef(false)
-
-  let areTestsRunning = false
-  let isDebugging = false
   const allTests: any = useRef([])
   const selectedTests: any = useRef([])
 
-  let currentErrors: any = []
+  let areTestsRunning = false
+  let isDebugging = false
 
+  let currentErrors: any = []
   let runningTestFileName: any
   const filesContent: any = {}
-
   const testsResultByFilename: Record<string, any> = {}
 
   const trimTestDirInput = (input: string) => {
@@ -721,7 +719,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
           <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
         </div>
-        <div>{testsOutput}</div>
+        <div id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput">{testsOutput}</div>
       </div>
     </div>
   )
