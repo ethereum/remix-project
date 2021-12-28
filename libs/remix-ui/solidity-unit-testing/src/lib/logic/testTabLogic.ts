@@ -35,8 +35,7 @@ export class TestTabLogic {
         return res
     }
 
-    generateTestFile () {
-        console.log('Inside generateTestFile-1SUT-currentFile-', this.fileManager.currentFile(), this.currentPath)
+    generateTestFile (errorCb: any) {
         let fileName = this.fileManager.currentFile()
         const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
         if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'
@@ -45,10 +44,9 @@ export class TestTabLogic {
         const splittedFileName = fileName.split('/')
         const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
         this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error: any, newFile: any) => {
-            // if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+            if (error) return errorCb('Failed to create file. ' + newFile + ' ' + error)
             const isFileCreated = fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))
-            console.log('isFileCreated--->', isFileCreated)
-            // if (!isFileCreated) return modalDialogCustom.alert('Failed to create test file ' + newFile)
+            if (!isFileCreated) return errorCb('Failed to create test file ' + newFile)
             this.fileManager.open(newFile)
             this.fileManager.syncEditor(newFile)
         })
