@@ -49,6 +49,7 @@ const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
+const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 class AppComponent {
   constructor () {
@@ -82,6 +83,7 @@ class AppComponent {
     // APP_MANAGER
     const appManager = self.appManager
     const pluginLoader = self.appManager.pluginLoader
+    self.panels = {}
     self.workspace = pluginLoader.get()
     self.engine = new RemixEngine()
     self.engine.register(appManager)
@@ -182,12 +184,12 @@ class AppComponent {
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    self.mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
+    // self.mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
     Registry.getInstance().put({ api: self.mainview, name: 'mainview' })
-
+    const tabProxy = new TabProxy(fileManager, editor)
     self.engine.register([
       appPanel,
-      self.mainview.tabProxy
+      tabProxy
     ])
 
     // those views depend on app_manager
@@ -249,6 +251,13 @@ class AppComponent {
       filePanel.hardhatHandle,
       filePanel.slitherHandle
     ])
+
+    self.panels = {
+      main: appPanel,
+      editor: editor,
+      terminal: terminal,
+      tabs: tabProxy
+    }
   }
 
   async activate () {
@@ -268,6 +277,7 @@ class AppComponent {
 
     await self.appManager.activatePlugin(['editor'])
     await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await self.appManager.activatePlugin(['mainPanel'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
@@ -314,10 +324,10 @@ class AppComponent {
     // activate solidity plugin
     self.appManager.activatePlugin(['solidity', 'udapp'])
     // Load and start the service who manager layout and frame
-    const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, null)
+    // const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, null)
 
-    if (params.embed) framingService.embed()
-    framingService.start(params)
+    // if (params.embed) framingService.embed()
+    // framingService.start(params)
   }
 }
 

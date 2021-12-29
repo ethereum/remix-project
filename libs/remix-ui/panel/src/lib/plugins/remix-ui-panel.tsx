@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
 import './panel.css'
-import RemixUIPanelHeader from './panel-header'
 import RemixUIPanelPlugin from './panel-plugin'
-import { PluginRecord } from './types'
+import { PluginRecord } from '../types'
 
 /* eslint-disable-next-line */
 export interface RemixPanelProps {
@@ -10,7 +9,7 @@ export interface RemixPanelProps {
   header: JSX.Element
 }
 
-export function RemixPanel (props: RemixPanelProps) {
+export function RemixPluginPanel (props: RemixPanelProps) {
   return (
     <>
       {props.header}
@@ -26,4 +25,4 @@ export function RemixPanel (props: RemixPanelProps) {
   )
 }
 
-export default RemixPanel
+export default RemixPluginPanel

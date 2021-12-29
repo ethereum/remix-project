@@ -2,11 +2,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { AbstractPanel } from './panel'
-import { RemixPanel } from '@remix-ui/panel'
+import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import { RemixAppManager } from '../../remixAppManager'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/panel-header'
+import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
 // const csjs = require('csjs-inject')
 
 const sidePanel = {
@@ -90,6 +90,6 @@ export class SidePanel extends AbstractPanel {
   }
 
   renderComponent () {
-    ReactDOM.render(<RemixPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins}/>, this.sideelement)
+    ReactDOM.render(<RemixPluginPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins}/>, this.sideelement)
   }
 }
