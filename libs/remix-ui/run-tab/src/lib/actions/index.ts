@@ -24,13 +24,9 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
   plugin = udapp
   dispatch = reducerDispatch
   setupEvents()
-  // setInterval(() => {
-  //   fillAccountsList()
-  // }, 1000)
-  // fillAccountsList()
-  setTimeout(async () => {
-    await fillAccountsList()
-  }, 0)
+  setInterval(() => {
+    fillAccountsList()
+  }, 1000)
 }
 
 const setupEvents = () => {
@@ -157,7 +153,12 @@ const fillAccountsList = async () => {
       const loadedAccounts = {}
 
       if (!accounts) accounts = []
-      await (Promise as any).allSettled(accounts.map((account) => {
+      // allSettled is undefined..
+      // so the current promise (all) will finish when:
+      // - all the promises resolve
+      // - at least one reject
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+      await (Promise as any).all(accounts.map((account) => {
         return new Promise((resolve, reject) => {
           plugin.blockchain.getBalanceInEther(account, (err, balance) => {
             if (err) return reject(err)
