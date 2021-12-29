@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { useEffect, useRef, useState } from 'react' // eslint-disable-line
-import { PluginRecord } from './types'
+import { PluginRecord } from '../types'
 import './panel.css'
 
 export interface RemixPanelProps {

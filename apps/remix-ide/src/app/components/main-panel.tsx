@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import ReactDOM from 'react-dom' // eslint-disable-line
-import { RemixPanel } from '@remix-ui/panel'
+import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 
 const profile = {
@@ -51,6 +51,6 @@ export class MainPanel extends AbstractPanel {
     }
 
     renderComponent () {
-      ReactDOM.render(<RemixPanel header={<></>} plugins={this.plugins}/>, this.element)
+      ReactDOM.render(<RemixPluginPanel header={<></>} plugins={this.plugins}/>, this.element)
     }
 }
