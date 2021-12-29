@@ -1162,9 +1162,11 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": ["libs/remix-ui/run-tab/**/*.{ts,tsx,js,jsx}"]
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/editor-context-view/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor-context-view/**/*"]
           }
         }
       }
