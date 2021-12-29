@@ -47,12 +47,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   let [runningTestsNumber, setRunningTestsNumber] = useState(0) // eslint-disable-line
 
   const hasBeenStopped = useRef(false)
+  const isDebugging = useRef(false)
   const allTests: any = useRef([])
   const selectedTests: any = useRef([])
   const currentErrors: any = useRef([])
 
+
   let areTestsRunning = false
-  let isDebugging = false
 
   let runningTestFileName: any
   const filesContent: any = {}
@@ -82,7 +83,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
     // if current file is changed while debugging and one of the files imported in test file are opened
     // do not clear the test results in SUT plugin
-    if (isDebugging && testTab.allFilesInvolved.includes(file)) return
+    if (isDebugging.current && testTab.allFilesInvolved.includes(file)) return
     allTests.current = []
     updateTestFileList()
     clearResults()
@@ -220,7 +221,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }
 
   const startDebug = async (txHash: any, web3: any) => {
-    isDebugging = true
+    isDebugging.current = true
     if (!await testTab.appManager.isActive('debugger')) await testTab.appManager.activatePlugin('debugger')
     testTab.call('menuicons', 'select', 'debugger')
     testTab.call('debugger', 'debug', txHash, web3)
@@ -501,7 +502,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }
 
   const runTest = (testFilePath: any, callback: any) => {
-    isDebugging = false
+    isDebugging.current = false
     if (hasBeenStopped.current) {
       updateFinalResult(null, null, null)
       return
