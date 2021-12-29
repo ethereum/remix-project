@@ -279,18 +279,23 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       return
     }
     let label
-    if (index > -1) label = (<div
-      className="alert-danger d-inline-block mb-1 mr-1 p-1 failed_{runningTestFileName}"
+    if (index > -1) {
+      const className = "alert-danger d-inline-block mb-1 mr-1 p-1 failed_" + runningTestFileName
+      label = (<div
+      className={className}
       title="At least one contract test failed"
     >
       FAIL
     </div>)
-    else label = (<div
-      className="alert-success d-inline-block mb-1 mr-1 p-1 passed_{runningTestFileName}"
+    } else {
+      const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
+      label = (<div
+      className={className}
       title="All contract tests passed"
     >
       PASS
     </div>)
+    }
     // show contract and file name with label
     const ContractCard: any = (
       <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
