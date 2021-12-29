@@ -1165,8 +1165,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/editor-context-view/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor-context-view/**/*"]
+            "tsConfig": ["libs/remix-ui/run-tab/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/run-tab/**/*"]
           }
         }
       }
