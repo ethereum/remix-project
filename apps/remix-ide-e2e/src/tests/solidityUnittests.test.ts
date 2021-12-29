@@ -66,6 +66,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passed: 2', 120000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failed: 1', 120000)
+      // '.failed_tests_simple_storage_test_solMyTest' is the class for 'FAIL' label
       .verify.elementPresent('.failed_tests_simple_storage_test_solMyTest')
   },
 
