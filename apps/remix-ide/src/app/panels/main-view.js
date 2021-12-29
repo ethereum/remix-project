@@ -73,6 +73,7 @@ export class MainView {
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
     })
+    // when no tab is selected count 0 open home tab
     self.tabProxy.event.on('tabCountChanged', (count) => {
       if (!count) this.editor.displayEmptyReadOnlySession()
     })
@@ -86,17 +87,20 @@ export class MainView {
     }
 
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
+    // mv 
     if (self.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
         self.txListener.setListenOnNetwork(listenOnNetWork)
       })
     }
   }
+  // rm
 
   _terminalTopOffset () {
     return this._deps.config.get('terminal-top-offset') || 150
   }
 
+  /* can be rm */
   _adjustLayout (direction, delta) {
     var limitUp = 0
     var limitDown = 32
@@ -127,6 +131,7 @@ export class MainView {
     }
   }
 
+  /* plugin calls */
   minimizeTerminal () {
     this._adjustLayout('top')
   }
@@ -135,20 +140,24 @@ export class MainView {
     this._adjustLayout('top', offset || this._terminalTopOffset())
   }
 
+  // rm
   getTerminal () {
     return this._components.terminal
   }
 
+  // rm
   getEditor () {
     var self = this
     return self.editor
   }
 
+  // rm
   refresh () {
     var self = this
     self._view.tabs.onmouseenter()
   }
 
+  // rm logs
   log (data = {}) {
     var self = this
     var command = self._components.terminal.commands[data.type]
@@ -172,7 +181,7 @@ export class MainView {
     self._view.editor.style.display = 'none'
     self._view.mainPanel = self.mainPanel.render()
     self._view.terminal = self._components.terminal.render()
-
+    // rm contextview
     self._view.mainview = yo`
       <div class=${css.mainview}>
         ${self.tabProxy.renderTabsbar()}
@@ -192,12 +201,14 @@ export class MainView {
 
     return self._view.mainview
   }
+  // rm
 
   registerCommand (name, command, opts) {
     var self = this
     return self._components.terminal.registerCommand(name, command, opts)
   }
 
+  // rm 
   updateTerminalFilter (filter) {
     this._components.terminal.updateJournal(filter)
   }

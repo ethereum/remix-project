@@ -5,6 +5,7 @@ import MatomoDialog from './modals/matomo'
 import AlertModal from './modals/alert'
 import AppContext from './context/context'
 import DragBar from './dragbar/dragbar'
+import { RemixUIMainPanel } from '@remix-ui/panel'
 interface IRemixAppUi {
   app: any
 }
@@ -69,7 +70,7 @@ const RemixApp = (props: IRemixAppUi) => {
   }
 
   return (
-    <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager }}>
+    <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager, panels: props.app.panels }}>
       <RemixSplashScreen hide={appReady}></RemixSplashScreen>
       <AlertModal></AlertModal>
       <MatomoDialog hide={!appReady}></MatomoDialog>
@@ -78,8 +79,9 @@ const RemixApp = (props: IRemixAppUi) => {
         {components.iconPanel}
         {components.sidePanel}
         <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-        {components.mainPanel}
-
+        <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
+          <RemixUIMainPanel></RemixUIMainPanel>
+        </div>
       </div>
       {components.hiddenPanel}
     </AppContext.Provider>

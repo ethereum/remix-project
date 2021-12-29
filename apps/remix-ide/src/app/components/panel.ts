@@ -9,6 +9,7 @@ type PluginRecord = {
   profile: Profile
   view: any
   active: boolean
+  class?: string
 }
 export class AbstractPanel extends HostPlugin {
   events: EventEmitter
@@ -31,7 +32,8 @@ export class AbstractPanel extends HostPlugin {
     this.plugins[profile.name] = {
       profile: profile,
       view: view,
-      active: false
+      active: false,
+      class: 'plugItIn'
     }
   }
 
