@@ -49,11 +49,11 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const hasBeenStopped = useRef(false)
   const allTests: any = useRef([])
   const selectedTests: any = useRef([])
+  const currentErrors: any = useRef([])
 
   let areTestsRunning = false
   let isDebugging = false
 
-  let currentErrors: any = []
   let runningTestFileName: any
   const filesContent: any = {}
   const testsResultByFilename: Record<string, any> = {}
@@ -74,11 +74,11 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const updateForNewCurrent = async (file = null) => {
     // Ensure that when someone clicks on compilation error and that opens a new file
     // Test result, which is compilation error in this case, is not cleared
-    if (currentErrors) {
-      if (Array.isArray(currentErrors) && currentErrors.length > 0) {
-        const errFiles = currentErrors.map(err => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
+    if (currentErrors.current) {
+      if (Array.isArray(currentErrors.current) && currentErrors.current.length > 0) {
+        const errFiles = currentErrors.current.map((err:any) => { if (err.sourceLocation && err.sourceLocation.file) return err.sourceLocation.file }) // eslint-disable-line
         if (errFiles.includes(file)) return
-      } else if (currentErrors.sourceLocation && currentErrors.sourceLocation.file && currentErrors.sourceLocation.file === file) return
+      } else if (currentErrors.current.sourceLocation && currentErrors.current.sourceLocation.file && currentErrors.current.sourceLocation.file === file) return
     }
     // if current file is changed while debugging and one of the files imported in test file are opened
     // do not clear the test results in SUT plugin
@@ -469,7 +469,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
       // show only file name
       renderContract(filename, null, -1, true)
-      currentErrors = _errors.errors
+      currentErrors.current = _errors.errors
     }
     if (result) {
       const totalTime = parseFloat(result.totalTime).toFixed(2)
