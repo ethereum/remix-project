@@ -38,14 +38,12 @@ export interface RemixUiEditorContextViewProps {
 
 function isDefinition (node: any) {
   return node.nodeType === 'ContractDefinition' ||
-  node.nodeType === 'FunctionDefinition' ||
-  node.nodeType === 'ModifierDefinition' ||
-  node.nodeType === 'VariableDeclaration' ||
-  node.nodeType === 'StructDefinition' ||
-  node.nodeType === 'EventDefinition'
+    node.nodeType === 'FunctionDefinition' ||
+    node.nodeType === 'ModifierDefinition' ||
+    node.nodeType === 'VariableDeclaration' ||
+    node.nodeType === 'StructDefinition' ||
+    node.nodeType === 'EventDefinition'
 }
-
-
 
 type nullableAstNode = astNode | null
 
@@ -68,7 +66,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
     currentNode: null,
     gasEstimation: { executionCost: '', codeDepositCost: '' }
   })
-  
+
   useEffect(() => {
     props.onContextListenerChanged(async (nodes: Array<astNode>) => {
       if (gotoLineDisableRef.current) {
@@ -88,9 +86,9 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
         references = await props.referencesOf(currentNode)
         if (currentNode.nodeType === 'FunctionDefinition') {
           gasEstimation = await props.gasEstimation(currentNode)
-        }        
+        }
       }
-      let activeHighlights = await props.getActiveHighlights()
+      const activeHighlights = await props.getActiveHighlights()
       setState(prevState => {
         return { ...prevState, nodes, references, activeHighlights, currentNode, gasEstimation }
       })
