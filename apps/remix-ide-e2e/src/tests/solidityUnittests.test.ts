@@ -93,10 +93,9 @@ module.exports = {
       .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .pause(2000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol', 200000)
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/4_Ballot_test.sol')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/4_Ballot_test.sol', 200000)
+      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol')
       .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/simple_storage_test.sol')
       .waitForElementContainsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped', 60000)
   },
