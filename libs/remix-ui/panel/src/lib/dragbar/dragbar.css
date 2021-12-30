@@ -1,12 +1,12 @@
 /* dragbar UI */
 
-.dragbar {
+.dragbar_terminal {
   display: block;
-  height: 100%;
+  width: 100%;
   position: absolute;
   left: 0px;
   top: 0px;
-  width: 0.3em;
+  height: 0.3em;
   z-index: 9999;
 }
 
@@ -20,8 +20,8 @@
   z-index: 9998;
 }
 
-.dragbar:hover,
-.dragbar.ondrag {
+.dragbar_terminal:hover,
+.dragbar_terminal.ondrag {
   background-color: var(--secondary);
-  cursor: col-resize;
+  cursor: row-resize;
 }
