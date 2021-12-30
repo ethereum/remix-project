@@ -10,7 +10,7 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
   const [view, setView] = useState<JSX.Element | HTMLDivElement>()
   useEffect(() => {
     console.log(panelRef)
-    const ref:any = panelRef? panelRef : localRef
+    const ref:any = panelRef || localRef
     if (ref.current) {
       if (props.pluginRecord.view) {
         if (React.isValidElement(props.pluginRecord.view)) {
