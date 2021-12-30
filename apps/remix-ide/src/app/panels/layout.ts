@@ -1,8 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { Profile } from '@remixproject/plugin-utils'
 import { EventEmitter } from 'events'
-import { TabProxy } from './tab-proxy'
-const EventManager = require('../../lib/events')
+import QueryParams from '../../lib/query-params'
 
 const profile: Profile = {
   name: 'layout',
@@ -28,35 +27,57 @@ export class Layout extends Plugin {
     this.event = new EventEmitter()
   }
 
-  onActivation(): void {
+  async onActivation(): Promise<void> {
     console.log('layout plugin activated')
     this.on('fileManager', 'currentFileChanged', () => {
-      console.log('layout plugin currentFileChanged')
       this.panels.editor.active = true
       this.panels.main.active = false
       this.event.emit('change', null)
     })
     this.on('tabs', 'openFile', () => {
-      console.log('layout plugin currentFileChanged')
       this.panels.editor.active = true
       this.panels.main.active = false
       this.event.emit('change', null)
     })
     this.on('tabs', 'switchApp', (name: string) => {
-      console.log('layout plugin switchApp', name)
       this.call('mainPanel', 'showContent', name)
       this.panels.editor.active = false
       this.panels.main.active = true
       this.event.emit('change', null)
     })
     this.on('tabs', 'closeApp', (name: string) => {
-      console.log('layout plugin closeapp', name)
       this.panels.editor.active = true
       this.panels.main.active = false
       this.event.emit('change', null)
     })
-    this.on('tabs', 'tabCountChanged', (count) => {
-      // if (!count) this.editor.displayEmptyReadOnlySession()
+    this.on('tabs', 'tabCountChanged', async count => {
+      if (!count) await this.call('manager', 'activatePlugin', 'home')
     })
+    this.on('manager', 'activate', (profile: Profile) => {
+      switch (profile.name) {
+        case 'filePanel':
+          this.call('menuicons', 'select', 'filePanel')
+          break
+      }
+    })
+    document.addEventListener('keypress', e => {
+      if (e.shiftKey && e.ctrlKey) {
+        if (e.code === 'KeyF') {
+          // Ctrl+Shift+F
+          this.call('menuicons', 'select', 'filePanel')
+        } else if (e.code === 'KeyA') {
+          // Ctrl+Shift+A
+          this.call('menuicons', 'select', 'pluginManager')
+        } else if (e.code === 'KeyS') {
+          //  Ctrl+Shift+S
+          this.call('menuicons', 'select', 'settings')
+        }
+        e.preventDefault()
+      }
+    })
+    const queryParams = new QueryParams()
+    const params = queryParams.get()
+    // if (params.minimizeterminal) // this.mainView.minimizeTerminal()
+    // if (params.minimizesidepanel) // this.resizeFeature.hidePanel()
   }
 }
