@@ -16,6 +16,7 @@ const RemixUIMainPanel = () => {
   const refs = [tabsRef, editorRef, mainPanelRef, terminalRef]
 
   const _adjustLayout = (delta: number) => {
+    if(!delta) return
     const limitDown = 32
     const containerHeight = window.innerHeight
     const tmp = delta - limitDown
@@ -64,9 +65,10 @@ const RemixUIMainPanel = () => {
   return (
     <div className="mainview">
       {Object.values(plugins).map((pluginRecord, i) => {
+        console.log(pluginRecord)
         return (
           <>
-          {(pluginRecord.profile.name === 'terminal') ? <DragBar minHeight={32} hidden={false} setHideStatus={()=>{}} refObject={terminalRef}></DragBar>:<></>}
+          {(pluginRecord.profile.name === 'terminal') ? <DragBar key={'dragbar'} minHeight={32} hidden={false} setHideStatus={()=>{}} refObject={terminalRef}></DragBar>:<></>}
           <RemixUIPanelPlugin
             ref={refs[i]}
             key={pluginRecord.profile.name}
