@@ -16,18 +16,18 @@ module.exports = {
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
       .waitForElementVisible('#editorView')
+      .click('*[data-id="tabProxyZoomIn"]')
+      .checkElementStyle('.view-lines', 'font-size', '13px')
+      .click('*[data-id="tabProxyZoomIn"]')
       .checkElementStyle('.view-lines', 'font-size', '14px')
-      .click('*[data-id="tabProxyZoomIn"]')
-      .click('*[data-id="tabProxyZoomIn"]')
-      .checkElementStyle('.view-lines', 'font-size', '16px')
   },
 
   'Should zoom out editor #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#editorView')
-      .checkElementStyle('.view-lines', 'font-size', '16px')
-      .click('*[data-id="tabProxyZoomOut"]')
-      .click('*[data-id="tabProxyZoomOut"]')
       .checkElementStyle('.view-lines', 'font-size', '14px')
+      .click('*[data-id="tabProxyZoomOut"]')
+      .click('*[data-id="tabProxyZoomOut"]')
+      .checkElementStyle('.view-lines', 'font-size', '12px')
   },
 
   'Should display compile error in editor #group1': function (browser: NightwatchBrowser) {
