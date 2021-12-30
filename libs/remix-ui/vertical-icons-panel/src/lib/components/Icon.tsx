@@ -20,6 +20,7 @@ export interface IconStatus {
     key: string
     title: string
     type: string
+    pluginName?: string
   }
 
 export interface BadgeStatus extends IconStatus {
@@ -111,9 +112,10 @@ function Icon ({
         ref={iconRef}
       >
         <img className="remixui_image" src={icon} alt={name} />
-        <Badge
-          badgeStatus={badgeStatus!}
-        />
+        { badgeStatus && badgeStatus.pluginName === name ? (
+          <Badge
+            badgeStatus={badgeStatus!}
+          />) : null }
       </div>
       {showContext ? (
         <VerticalIconsContextMenu

@@ -23,6 +23,7 @@ function SolidityStaticAnalysis ({ verticalIconsPlugin, itemContextAction, addAc
   const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   useEffect(() => {
     verticalIconsPlugin.on('solidityStaticAnalysis', 'statusChanged', (iconStatus: IconStatus) => {
+      iconStatus.pluginName = 'solidityStaticAnalysis'
       const action: IconBadgeReducerAction = { type: 'solidityStaticAnalysis', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
       dispatchStatusUpdate(action)
     })
