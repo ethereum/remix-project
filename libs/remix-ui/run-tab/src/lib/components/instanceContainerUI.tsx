@@ -35,6 +35,7 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
             mainnetPrompt={props.mainnetPrompt}
             runTransactions={props.runTransactions}
             sendValue={props.sendValue}
+            getFuncABIInputs={props.getFuncABIInputs}
           />
         }) }
         </div>

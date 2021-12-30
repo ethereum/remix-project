@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
-import { ContractData, ContractDropdownProps } from '../types'
+import { ContractData, ContractDropdownProps, FuncABI } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 
@@ -25,6 +25,8 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [selectedContract, setSelectedContract] = useState<string>('')
   const [compFails, setCompFails] = useState<'none' | 'block'>('none')
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
+  const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
+  const [constructorInputs, setConstructorInputs] = useState(null)
   const { contractList, loadType, currentFile } = props.contracts
 
   useEffect(() => {
@@ -79,8 +81,13 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   useEffect(() => {
     if (selectedContract) {
       const contract = contractList.find(contract => contract.alias === selectedContract)
+      const loadedContractData = props.getSelectedContract(selectedContract, contract.name)
 
-      setLoadedContractData(props.getSelectedContract(selectedContract, contract.name))
+      if (loadedContractData) {
+        setLoadedContractData(loadedContractData)
+        setConstructorInterface(loadedContractData.getConstructorInterface())
+        setConstructorInputs(loadedContractData.getConstructorInputs())
+      }
     }
   }, [selectedContract])
 
@@ -193,7 +200,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <div className="udapp_deployDropdown">
           { contractList.length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
-              <ContractGUI title='Deploy' funcABI={loadedContractData.getConstructorInterface()} clickCallBack={clickCallback} inputs={loadedContractData.getConstructorInputs()} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
+              <ContractGUI title='Deploy' funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
                   id="deployAndRunPublishToIPFS"

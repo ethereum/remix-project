@@ -717,3 +717,7 @@ export const runCurrentScenario = (gasEstimationPrompt: (msg: string) => JSX.Ele
 export const updateScenarioPath = (path: string) => {
   dispatch(setPathToScenario(path))
 }
+
+export const getFuncABIInputs = (funcABI: FuncABI) => {
+  return plugin.blockchain.getInputs(funcABI)
+}
