@@ -1149,7 +1149,8 @@
           }
         }
       }
-    },
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/react"
   },
@@ -1185,5 +1186,4 @@
     }
   },
   "defaultProject": "remix-ide"
-  }
 }
