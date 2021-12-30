@@ -33,7 +33,7 @@ export class AbstractPanel extends HostPlugin {
       profile: profile,
       view: view,
       active: false,
-      class: 'plugItIn'
+      class: 'plugItIn active'
     }
   }
 

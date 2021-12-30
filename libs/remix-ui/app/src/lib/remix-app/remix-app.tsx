@@ -70,7 +70,7 @@ const RemixApp = (props: IRemixAppUi) => {
   }
 
   return (
-    <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager, panels: props.app.panels }}>
+    <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager, layout: props.app.layout }}>
       <RemixSplashScreen hide={appReady}></RemixSplashScreen>
       <AlertModal></AlertModal>
       <MatomoDialog hide={!appReady}></MatomoDialog>
