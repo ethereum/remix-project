@@ -71,11 +71,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       enableContractNames(false)
       setCompFails('block')
     }
-    if (contractList.length > 0) {
-      const contract = contractList.find(contract => contract.alias === selectedContract)
-
-      if (!selectedContract || !contract) setSelectedContract(contractList[0].alias)
-    }
+    initSelectedContract()
   }, [loadType, currentFile])
 
   useEffect(() => {
@@ -90,6 +86,18 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       }
     }
   }, [selectedContract])
+
+  useEffect(() => {
+    initSelectedContract()
+  }, [contractList])
+
+  const initSelectedContract = () => {
+    if (contractList.length > 0) {
+      const contract = contractList.find(contract => contract.alias === selectedContract)
+
+      if (!selectedContract || !contract) setSelectedContract(contractList[0].alias)
+    }
+  }
 
   const enableAtAddress = (enable: boolean) => {
     if (enable) {
@@ -119,8 +127,8 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     }
   }
 
-  const clickCallback = (inputsValues) => {
-    createInstance(loadedContractData, inputsValues)
+  const clickCallback = (inputs, value) => {
+    createInstance(loadedContractData, value)
   }
 
   const createInstance = (selectedContract, args) => {
