@@ -36,7 +36,6 @@ export function RemixUiVerticalIconsPanel ({
 
   useEffect(() => {
     const evaluateScrollability = (evt: any) => {
-      console.log('resize event answered by dispatch!')
       dispatchScrollAction({
         type: 'resize',
         payload: {
@@ -80,7 +79,6 @@ export function RemixUiVerticalIconsPanel ({
   }
 
   function addActive (name: string) {
-    console.log('addactive has been called now.')
     if (name === 'home') return
     const themeType = verticalIconsPlugin.registry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0

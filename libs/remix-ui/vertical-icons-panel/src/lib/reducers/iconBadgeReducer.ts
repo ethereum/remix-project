@@ -36,6 +36,7 @@ function setIconStatus (name: string, status: IconStatus) {
 
 export function iconBadgeReducer (state: BadgeStatus, action: IconBadgeReducerAction) {
   const { status, ref, verticalIconPlugin } = action.payload
+  console.log('badge contains ', { status })
   if (Object.keys(verticalIconPlugin.targetProfileForChange).includes(action.type)) {
     const setStatus = setIconStatus(action.type, status)
     return setStatus
