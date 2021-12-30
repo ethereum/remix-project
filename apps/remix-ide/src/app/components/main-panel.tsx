@@ -9,7 +9,7 @@ const profile = {
   displayName: 'Main Panel',
   description: '',
   version: packageJson.version,
-  methods: ['addView', 'removeView']
+  methods: ['addView', 'removeView', 'showContent']
 }
 
 export class MainPanel extends AbstractPanel {
@@ -18,6 +18,7 @@ export class MainPanel extends AbstractPanel {
       super(profile)
       this.element = document.createElement('div')
       this.element.setAttribute('data-id', 'mainPanelPluginsContainer')
+      this.element.setAttribute('style', 'height: 100%; width: 100%;')
       // this.config = config
     }
 

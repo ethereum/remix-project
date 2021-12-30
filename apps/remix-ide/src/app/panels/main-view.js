@@ -126,6 +126,9 @@ export class MainView {
       self._view.editor.style.height = `${mainPanelHeight}px`
       self._view.mainPanel.style.height = `${mainPanelHeight}px`
       self._view.terminal.style.height = `${delta}px` // - menu bar height
+      self._view.editor.height = `${mainPanelHeight}px`
+      self._view.mainPanel.height = `${mainPanelHeight}px`
+      self._view.terminal.height = `${delta}px` // - menu bar height
       self.editor.resize((document.querySelector('#editorWrap') || {}).checked)
       self._components.terminal.scroll2bottom()
     }

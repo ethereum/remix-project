@@ -22,6 +22,7 @@ export class TabProxy extends Plugin {
     this._view = {}
     this._handlers = {}
     this.loadedTabs = []
+    this.el = document.createElement('div')
   }
 
   onActivation () {
@@ -72,10 +73,12 @@ export class TabProxy extends Plugin {
         this.addTab(workspacePath, '', () => {
           this.fileManager.open(file)
           this.event.emit('openFile', file)
+          this.emit('openFile', file)
         },
         () => {
           this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
+          this.emit('closeFile', file)
         })
         this.tabsApi.activateTab(workspacePath)
       } else {
@@ -88,10 +91,12 @@ export class TabProxy extends Plugin {
         this.addTab(path, '', () => {
           this.fileManager.open(file)
           this.event.emit('openFile', file)
+          this.emit('openFile', file)
         },
         () => {
           this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
+          this.emit('closeFile', file)
         })
         this.tabsApi.activateTab(path)
       }
@@ -132,9 +137,9 @@ export class TabProxy extends Plugin {
         this.addTab(
           name,
           displayName,
-          () => this.event.emit('switchApp', name),
+          () => this.emit('switchApp', name),
           () => {
-            this.event.emit('closeApp', name)
+            this.emit('closeApp', name)
             this.call('manager', 'deactivatePlugin', name)
           },
           icon
@@ -149,7 +154,7 @@ export class TabProxy extends Plugin {
   }
 
   focus (name) {
-    this.event.emit('switchApp', name)
+    this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
   }
 
@@ -199,11 +204,13 @@ export class TabProxy extends Plugin {
     () => {
       this.fileManager.closeFile(newName)
       this.event.emit('closeFile', newName)
+      this.emit('closeFile', newName)
     })
     this.removeTab(oldName)
   }
 
   addTab (name, title, switchTo, close, icon) {
+    console.log('add tab', name)
     if (this._handlers[name]) return this.renderComponent()
 
     var slash = name.split('/')
@@ -281,11 +288,12 @@ export class TabProxy extends Plugin {
   }
 
   renderComponent () {
+
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
         if (this._handlers[name]) this._handlers[name].switchTo()
-        this.event.emit('tabCountChanged', this.loadedTabs.length)
+        this.emit('tabCountChanged', this.loadedTabs.length)
       }
     }
 
@@ -293,7 +301,7 @@ export class TabProxy extends Plugin {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
         if (this._handlers[name]) this._handlers[name].close()
-        this.event.emit('tabCountChanged', this.loadedTabs.length)
+        this.emit('tabCountChanged', this.loadedTabs.length)
       }
     }
 
@@ -308,8 +316,7 @@ export class TabProxy extends Plugin {
   }
 
   renderTabsbar () {
-    this.el = document.createElement('div')
-    this.renderComponent()
+
     return this.el
   }
 }

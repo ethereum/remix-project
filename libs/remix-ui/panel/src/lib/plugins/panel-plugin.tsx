@@ -1,26 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react' // eslint-disable-line
+import React, { forwardRef, useEffect, useRef, useState } from 'react' // eslint-disable-line
 import { PluginRecord } from '../types'
 import './panel.css'
 interface panelPLuginProps {
-    pluginRecord: PluginRecord
+  pluginRecord: PluginRecord
 }
 
-const RemixUIPanelPlugin = (props: panelPLuginProps) => {
-  const PanelRef = useRef<HTMLDivElement>(null)
+const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
+  const localRef = useRef<HTMLDivElement>(null)
   const [view, setView] = useState<JSX.Element | HTMLDivElement>()
   useEffect(() => {
-    if (PanelRef.current) {
+    console.log(panelRef)
+    const ref:any = panelRef? panelRef : localRef
+    if (ref.current) {
       if (props.pluginRecord.view) {
         if (React.isValidElement(props.pluginRecord.view)) {
           setView(props.pluginRecord.view)
         } else {
-          PanelRef.current.appendChild(props.pluginRecord.view)
+          ref.current.appendChild(props.pluginRecord.view)
         }
       }
     }
   }, [])
 
-  return <div className={props.pluginRecord.active ? `${props.pluginRecord.class} active` : 'd-none'} ref={PanelRef}>{view}</div>
+  return (
+    <div
+      className={
+        props.pluginRecord.active ? `${props.pluginRecord.class}` : 'd-none'
+      }
+      ref={panelRef || localRef}
+    >
+      {view}
+    </div>
+  )
 }
 
-export default RemixUIPanelPlugin
+export default forwardRef(RemixUIPanelPlugin)
