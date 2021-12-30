@@ -327,10 +327,6 @@ class AppComponent {
     // activate solidity plugin
     self.appManager.activatePlugin(['solidity', 'udapp'])
     // Load and start the service who manager layout and frame
-    // const framingService = new FramingService(self.sidePanel, self.menuicons, self.mainview, null)
-
-    // if (params.embed) framingService.embed()
-    // framingService.start(params)
   }
 }
 

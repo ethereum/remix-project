@@ -10,12 +10,12 @@ const _paq = window._paq = window._paq || []
 const requiredModules = [ // services + layout views + system views
   'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'walkthrough']
 
 const dependentModules = ['git', 'hardhat', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -79,6 +79,7 @@ export class RemixAppManager extends PluginManager {
   onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
+    this.emit('activate', plugin)
     if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
