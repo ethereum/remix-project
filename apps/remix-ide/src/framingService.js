@@ -1,9 +1,6 @@
 export class FramingService {
   constructor (verticalIcons, layout) {
     this.verticalIcons = verticalIcons
-    this.mainPanel = mainView.getAppPanel()
-    this.mainView = mainView
-    this.resizeFeature = resizeFeature
   }
 
   start (params) {

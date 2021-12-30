@@ -87,7 +87,7 @@ export class MainView {
     }
 
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
-    // mv 
+    // mv
     if (self.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
         self.txListener.setListenOnNetwork(listenOnNetWork)
@@ -211,7 +211,7 @@ export class MainView {
     return self._components.terminal.registerCommand(name, command, opts)
   }
 
-  // rm 
+  // rm
   updateTerminalFilter (filter) {
     this._components.terminal.updateJournal(filter)
   }
