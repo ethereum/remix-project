@@ -24,7 +24,8 @@ import {
   removeInstance, getContext,
   runTransactions, loadAddress,
   storeScenario, runCurrentScenario,
-  updateScenarioPath, initWebDialogs
+  updateScenarioPath, initWebDialogs,
+  getFuncABIInputs
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -275,6 +276,7 @@ export function RunTabUI (props: RunTabProps) {
             mainnetPrompt={mainnetPrompt}
             runTransactions={runTransactions}
             sendValue={runTab.sendValue}
+            getFuncABIInputs={getFuncABIInputs}
           />
         </div>
       </div>

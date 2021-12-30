@@ -1166,7 +1166,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/run-tab/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/run-tab/**/*"]
+            "exclude": ["**/node_modules/**", "libs/remix-ui/run-tab/**/*.d.ts", "!libs/remix-ui/run-tab/**/*"]
           }
         }
       }
