@@ -18,7 +18,6 @@ export function UniversalDappUI (props: UdappProps) {
   const [expandPath, setExpandPath] = useState<string[]>([])
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
-  const [inputs, setInputs] = useState<string>(null)
   const [evmBC, setEvmBC] = useState(null)
 
   useEffect(() => {
@@ -43,7 +42,6 @@ export function UniversalDappUI (props: UdappProps) {
 
   useEffect(() => {
     if (props.instance.contractData) {
-      setInputs(props.instance.contractData.getConstructorInputs())
       setEvmBC(props.instance.contractData.bytecodeObject)
     }
   }, [props.instance.contractData])
@@ -235,6 +233,7 @@ export function UniversalDappUI (props: UdappProps) {
               if (funcABI.type !== 'function') return null
               const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
+              const inputs = props.getFuncABIInputs(funcABI)
 
               return <ContractGUI
                 funcABI={funcABI}
