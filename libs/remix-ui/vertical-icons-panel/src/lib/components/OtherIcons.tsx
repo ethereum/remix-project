@@ -33,14 +33,15 @@ function OtherIcons ({ verticalIconsPlugin, itemContextAction, addActive, remove
     Object.keys(verticalIconsPlugin.targetProfileForChange)
       .filter(customFilter)
       .forEach(p =>
-        verticalIconsPlugin.on(verticalIconsPlugin.targetProfileForChange[p].name, 'statusChanged', (iconStatus: IconStatus) => {
+        verticalIconsPlugin.on(verticalIconsPlugin.targetProfileForChange[p].name, 'statusChanged', (evt: Event, iconStatus: IconStatus) => {
           const action: IconBadgeReducerAction = {
             type: verticalIconsPlugin.targetProfileForChange[p].name,
             payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin }
           }
+          console.log('check the event payload', { evt })
           dispatchStatusUpdate(action)
         }))
-  }, [])
+  }, [verticalIconsPlugin.targetProfileForChange, Object.keys(verticalIconsPlugin.targetProfileForChange).length])
   return (
     <div id="otherIcons">
       {
