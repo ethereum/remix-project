@@ -288,7 +288,6 @@ export class TabProxy extends Plugin {
   }
 
   renderComponent () {
-
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
@@ -316,7 +315,6 @@ export class TabProxy extends Plugin {
   }
 
   renderTabsbar () {
-
     return this.el
   }
 }
