@@ -20,6 +20,7 @@ import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, Fetch
 import migrateFileSystem from './migrateFileSystem'
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
+import { Layout } from './app/panels/layout'
 
 const isElectron = require('is-electron')
 
@@ -161,8 +162,10 @@ class AppComponent {
     const contextualListener = new EditorContextListener()
 
     const configPlugin = new ConfigPlugin()
+    self.layout = new Layout()
 
     self.engine.register([
+      self.layout,
       configPlugin,
       blockchain,
       contentImport,
@@ -252,11 +255,11 @@ class AppComponent {
       filePanel.slitherHandle
     ])
 
-    self.panels = {
-      main: appPanel,
-      editor: editor,
-      terminal: terminal,
-      tabs: tabProxy
+    self.layout.panels = {
+      tabs: { plugin:tabProxy, active: true },
+      editor: { plugin:editor, active: true },
+      main: { plugin:appPanel, active: false },
+      terminal: { plugin:terminal, active: true },
     }
   }
 
@@ -275,7 +278,7 @@ class AppComponent {
       console.log('couldn\'t register iframe plugins', e.message)
     }
 
-    await self.appManager.activatePlugin(['editor'])
+    await self.appManager.activatePlugin(['layout', 'editor'])
     await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
