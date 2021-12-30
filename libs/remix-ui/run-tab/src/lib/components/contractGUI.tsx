@@ -164,8 +164,7 @@ export function ContractGUI (props: ContractGUIProps) {
           placeholder={props.inputs}
           title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
           onChange={handleBasicInput}
-          style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }}>
-        </input>
+          style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
         <i
           className="fas fa-angle-down udapp_methCaret"
           onClick={switchMethodViewOn}
