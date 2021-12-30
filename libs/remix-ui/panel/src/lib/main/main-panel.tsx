@@ -56,7 +56,7 @@ const RemixUIMainPanel = () => {
   }
 
   useLayoutEffect(() => {
-    _adjustLayout(113)
+    _adjustLayout(198)
   })
 
   useEffect(() => {
