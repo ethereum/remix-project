@@ -1,5 +1,6 @@
 import AppContext from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 import React, { useContext, useEffect, useRef, useState } from 'react' // eslint-disable-line
+import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
 import { PluginRecord } from '../types'
 import './main-panel.css'
@@ -64,11 +65,14 @@ const RemixUIMainPanel = () => {
     <div className="mainview">
       {Object.values(plugins).map((pluginRecord, i) => {
         return (
+          <>
+          {(pluginRecord.profile.name === 'terminal') ? <DragBar minHeight={32} hidden={false} setHideStatus={()=>{}} refObject={terminalRef}></DragBar>:<></>}
           <RemixUIPanelPlugin
             ref={refs[i]}
             key={pluginRecord.profile.name}
             pluginRecord={pluginRecord}
           />
+          </>
         )
       })}
     </div>
