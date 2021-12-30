@@ -24,6 +24,7 @@ function Debugger ({ verticalIconsPlugin, itemContextAction, addActive, removeAc
 
   useEffect(() => {
     verticalIconsPlugin.on('debugger', 'statusChanged', (iconStatus: IconStatus) => {
+      iconStatus.pluginName = 'debugger'
       const action: IconBadgeReducerAction = { type: 'debugger', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
       dispatchStatusUpdate(action)
     })

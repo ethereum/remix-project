@@ -23,6 +23,7 @@ function Solidity ({ verticalIconsPlugin, itemContextAction, addActive, removeAc
 
   useEffect(() => {
     verticalIconsPlugin.on('solidity', 'statusChanged', (iconStatus: IconStatus) => {
+      iconStatus.pluginName = 'solidity'
       const action: IconBadgeReducerAction = { type: 'solidity', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
       dispatchStatusUpdate(action)
     })
