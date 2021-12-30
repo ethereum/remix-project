@@ -74,7 +74,10 @@
       ],
       "@remix-ui/theme-module": ["libs/remix-ui/theme-module/src/index.ts"],
       "@remix-ui/panel": ["libs/remix-ui/panel/src/index.ts"],
-      "@remix-ui/editor-context-view": ["libs/remix-ui/editor-context-view/src/index.ts"]
+      "@remix-ui/editor-context-view": ["libs/remix-ui/editor-context-view/src/index.ts"],
+      "@remix-ui/solidity-unit-testing": [
+        "libs/remix-ui/solidity-unit-testing/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

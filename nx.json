@@ -151,6 +151,9 @@
     "remix-ui-theme-module": {
       "tags": []
     },
+    "solidity-unit-testing": {
+      "tags": []
+    },
     "remix-ui-editor-context-view": {
       "tags": []
     }
