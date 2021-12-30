@@ -1,6 +1,5 @@
 /* global localStorage, fetch */
 import { PluginManager } from '@remixproject/engine'
-import { IframeReactPlugin } from '@remix-ui/app'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'

@@ -22,12 +22,12 @@ interface panels {
 export class Layout extends Plugin {
   event: any
   panels: panels
-  constructor() {
+  constructor () {
     super(profile)
     this.event = new EventEmitter()
   }
 
-  async onActivation(): Promise<void> {
+  async onActivation (): Promise<void> {
     console.log('layout plugin activated')
     this.on('fileManager', 'currentFileChanged', () => {
       this.panels.editor.active = true
