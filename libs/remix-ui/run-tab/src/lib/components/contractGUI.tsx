@@ -73,7 +73,7 @@ export function ContractGUI (props: ContractGUIProps) {
         dataId: title + ' - transact (not payable)'
       })
     }
-  }, [props.lookupOnly, props.funcABI])
+  }, [props.lookupOnly, props.funcABI, title])
 
   const switchMethodViewOn = () => {
     setToggleContainer(true)

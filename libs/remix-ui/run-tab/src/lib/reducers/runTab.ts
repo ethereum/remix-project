@@ -256,7 +256,12 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
       return {
         ...state,
-        selectExEnv: payload
+        selectExEnv: payload,
+        accounts: {
+          ...state.accounts,
+          selectedAccount: '',
+          loadedAccounts: {}
+        }
       }
     }
 
