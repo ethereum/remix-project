@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import AppContext from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react' // eslint-disable-line
 import DragBar from '../dragbar/dragbar'
@@ -65,7 +66,6 @@ const RemixUIMainPanel = () => {
       console.log('change')
       renderPanels()
     })
-
   }, [])
 
   return (
