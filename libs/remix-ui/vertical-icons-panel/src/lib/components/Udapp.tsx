@@ -23,6 +23,7 @@ function Udapp ({ verticalIconsPlugin, itemContextAction, addActive, removeActiv
 
   useEffect(() => {
     verticalIconsPlugin.on('udapp', 'statusChanged', (iconStatus: IconStatus) => {
+      iconStatus.pluginName = 'udapp'
       const action: IconBadgeReducerAction = { type: 'udapp', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
       dispatchStatusUpdate(action)
     })
