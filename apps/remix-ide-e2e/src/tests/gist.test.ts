@@ -135,9 +135,9 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
-      .execute(() => {
+      .execute(function () {
         (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => {})
+      })
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
       .openFile(`gist-${testData.validGistId}/README.txt`)
