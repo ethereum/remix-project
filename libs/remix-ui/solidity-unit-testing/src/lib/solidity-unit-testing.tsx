@@ -21,7 +21,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
-  const [defaultPath, setDefaultPath] = useState('tests')
   const [toasterMsg, setToasterMsg] = useState('')
 
   const [disableCreateButton, setDisableCreateButton] = useState(true)
@@ -52,7 +51,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const selectedTests: any = useRef([])
   const currentErrors: any = useRef([])
 
-
+  const defaultPath = 'tests'
   let areTestsRunning = false
 
   let runningTestFileName: any
@@ -115,9 +114,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }, [initialPath]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    updateDirList('/')
-    updateForNewCurrent()
-
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
       try {
         testTabLogic.getTests((error: any, tests: any) => {
