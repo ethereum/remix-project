@@ -19,7 +19,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
     else {
       browser.click('button[id^="runAndDeployAtAdressButton"]')
         .execute(function () {
-          const modal = document.querySelector('#modal-footer-ok') as HTMLElement
+          const modal = document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement
           modal.click()
         })
     }
