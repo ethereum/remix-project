@@ -25,8 +25,7 @@ module.exports = {
   'Should debug failing transaction #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .scrollAndClick('*[title="string name, uint256 goal"]')
       .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
       .click('*[data-id="createProject - transact (not payable)"]')

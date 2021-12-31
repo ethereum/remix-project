@@ -1,7 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
-const selector = '#runTabView select[class^="contractNames"]'
+const selector = '.udapp_contractNames'
 
 class SelectContract extends EventEmitter {
   command (this: NightwatchBrowser, contractName: string): NightwatchBrowser {
