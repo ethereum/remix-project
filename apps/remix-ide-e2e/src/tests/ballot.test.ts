@@ -85,6 +85,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
+      .pause(5000)
       .execute(function () {
         const env: any = document.getElementById('selectExEnvOptions')
         return env.value
