@@ -116,12 +116,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   useEffect(() => {
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
       try {
-        testTabLogic.getTests((error: any, tests: any) => {
-          if (error) return setToasterMsg(error) 
-          allTests.current = tests
-          selectedTests.current = [...allTests.current]
-          updateTestFileList()
-        })
+        const tests = await testTabLogic.getTests()
+        allTests.current = tests
+        selectedTests.current = [...allTests.current]
+        updateTestFileList()
       } catch (e) {
         console.log(e)
         allTests.current.push(file)
@@ -134,7 +132,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
 
     testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
-    testTab.fileManager.events.on('currentFileChanged', async(file: any, provider: any) => await updateForNewCurrent(file))
+    testTab.fileManager.events.on('currentFileChanged', async (file: any, provider: any) => await updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
 
@@ -169,14 +167,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          await setCurrentPath(testDirInput)
+          
         } else {
           // Enable Create button
           setDisableCreateButton(false)
           // Disable Generate button because dir does not exist
           setDisableGenerateButton(true)
-          await setCurrentPath(testDirInput)
         }
+        await setCurrentPath(testDirInput)
       }
     } else {
       await setCurrentPath('/')
