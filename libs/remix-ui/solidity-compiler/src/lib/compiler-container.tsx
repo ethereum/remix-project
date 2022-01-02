@@ -64,23 +64,29 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [])
 
   useEffect(() => {
-    if (compileTabLogic && compileTabLogic.compiler) {
-      setState(prevState => {
-        const params = api.getCompilerParameters()
-        const optimize = params.optimize
-        const runs = params.runs as string
-        const evmVersion = params.evmVersion
-        return {
-          ...prevState,
-          hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
-          autoCompile: api.getAppParameter('autoCompile') as boolean || false,
-          includeNightlies: api.getAppParameter('includeNightlies') as boolean || false,
-          optimize: optimize,
-          runs: runs,
-          evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
-        }
-      })
-    }
+    (async () => {
+      if (compileTabLogic && compileTabLogic.compiler) {
+        const autocompile = await api.getAppParameter('autoCompile') as boolean || false
+        const hideWarnings = await api.getAppParameter('hideWarnings') as boolean || false
+        const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
+        setState(prevState => {
+          const params = api.getCompilerParameters()
+          const optimize = params.optimize
+          const runs = params.runs as string
+          const evmVersion = params.evmVersion
+
+          return {
+            ...prevState,
+            hideWarnings: hideWarnings,
+            autoCompile: autocompile,
+            includeNightlies: includeNightlies,
+            optimize: optimize,
+            runs: runs,
+            evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
+          }
+        })
+      }
+    })()
   }, [compileTabLogic])
 
   useEffect(() => {
@@ -596,7 +602,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           }
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
-              { <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
+              { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
               Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>

@@ -1,4 +1,5 @@
 import { BN } from 'ethereumjs-util'
+import Registry from '../../state/registry'
 const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
@@ -8,7 +9,6 @@ const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
-const globalRegistry = require('../../../global/registry')
 
 class SettingsUI {
   constructor (blockchain, networkModule) {
@@ -22,10 +22,10 @@ class SettingsUI {
       this.updateAccountBalances()
     })
     this._components = {
-      registry: globalRegistry,
+      registry: Registry.getInstance(),
       networkModule: networkModule
     }
-    this._components.registry = globalRegistry
+    this._components.registry = Registry.getInstance()
     this._deps = {
       config: this._components.registry.get('config').api
     }

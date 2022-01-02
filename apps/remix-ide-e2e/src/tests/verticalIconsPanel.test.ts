@@ -27,6 +27,6 @@ module.exports = {
       .click('*[id="menuitemdeactivate"]')
       .click('*[data-id="verticalIconsKindsettings"]')
       .click('*[data-id="verticalIconsKindpluginManager"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugPlugin"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
   }
 }

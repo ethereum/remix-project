@@ -1,4 +1,4 @@
-import React, { useState } from 'react' // eslint-disable-line
+import React, { useEffect, useState } from 'react' // eslint-disable-line
 import { SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { ContractSelection } from './contract-selection' // eslint-disable-line
@@ -31,6 +31,14 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     }
   })
   const [currentVersion, setCurrentVersion] = useState('')
+  const [hideWarnings, setHideWarnings] = useState<boolean>(false)
+
+  useEffect(() => {
+    (async () => {
+      const hide = await api.getAppParameter('hideWarnings') as boolean || false
+      setHideWarnings(hide)
+    })()
+  }, [])
 
   api.onCurrentFileChanged = (currentFile: string) => {
     setState(prevState => {
@@ -118,7 +126,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={api} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} /> }
           { compileErrors.error && (compileErrors.error.mode === 'panic') && modal('Error', panicMessage(compileErrors.error.formattedMessage), 'Close', null) }
           { compileErrors.errors && compileErrors.errors.length && compileErrors.errors.map((err, index) => {
-            if (api.getAppParameter('hideWarnings')) {
+            if (hideWarnings) {
               if (err.severity !== 'warning') {
                 return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
               }

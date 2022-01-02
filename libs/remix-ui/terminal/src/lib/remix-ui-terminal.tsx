@@ -17,6 +17,7 @@ import RenderKnownTransactions from './components/RenderKnownTransactions' // es
 import parse from 'html-react-parser'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
+import { useDragTerminal } from './custom-hooks/useDragTerminal'
 
 /* eslint-disable-next-line */
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -25,13 +26,8 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const { call, _deps, on, config, event, gistHandler, version } = props.plugin
-  const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-  // dragable state
-  const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
-  const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
-  const [dragging, setDragging] = useState(false)
 
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
@@ -78,6 +74,28 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   // terminal dragable
   const leftRef = useRef(null)
   const panelRef = useRef(null)
+  const terminalMenu = useRef(null)
+
+  const terminalMenuOffsetHeight = (terminalMenu.current && terminalMenu.current.offsetHeight) || 35
+  const terminalDefaultPosition = config.get('terminal-top-offset')
+
+  const {
+    isOpen,
+    isDragging,
+    terminalPosition,
+    handleDraggingStart,
+    handleToggleTerminal
+  } = useDragTerminal(terminalMenuOffsetHeight, terminalDefaultPosition)
+
+  // Check open state
+  useEffect(() => {
+    const resizeValue = isOpen ? [config.get('terminal-top-offset')] : []
+    event.trigger('resize', resizeValue)
+  }, [isOpen])
+
+  useEffect(() => {
+    event.trigger('resize', [terminalPosition])
+  }, [terminalPosition])
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -193,19 +211,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const handleMinimizeTerminal = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (toggleDownUp === 'fa-angle-double-down') {
-      setToggleDownUp('fa-angle-double-up')
-      event.trigger('resize', [])
-    } else {
-      const terminalTopOffset = config.get('terminal-top-offset')
-      event.trigger('resize', [terminalTopOffset])
-      setToggleDownUp('fa-angle-double-down')
-    }
-  }
-
   const focusinput = () => {
     inputEl.current.focus()
   }
@@ -276,53 +281,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setCmdTemp(inputEl.current.innerText)
     }
   }
-
-  /* start of mouse events */
-
-  const mousedown = (event: MouseEvent) => {
-    setSeparatorYPosition(event.clientY)
-    leftRef.current.style.backgroundColor = '#007AA6'
-    leftRef.current.style.border = '2px solid #007AA6'
-    setDragging(true)
-  }
-
-  const onMouseMove: any = (e: MouseEvent) => {
-    e.preventDefault()
-    if (dragging && leftHeight && separatorYPosition) {
-      const newLeftHeight = leftHeight + separatorYPosition - e.clientY
-      setSeparatorYPosition(e.clientY)
-      setLeftHeight(newLeftHeight)
-      event.trigger('resize', [newLeftHeight + 32])
-    }
-  }
-
-  const onMouseUp = () => {
-    leftRef.current.style.backgroundColor = ''
-    leftRef.current.style.border = ''
-    setDragging(false)
-  }
-
-  /* end of mouse event */
-
-  useEffect(() => {
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
-
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
-    }
-  }, [onMouseMove, onMouseUp])
-
-  React.useEffect(() => {
-    if (panelRef) {
-      if (!leftHeight) {
-        setLeftHeight(panelRef.current.offsetHeight)
-        return
-      }
-      panelRef.current.style.height = `${leftHeight}px`
-    }
-  }, [leftHeight, setLeftHeight, panelRef])
 
   /* block contents that gets rendered from scriptRunner */
 
@@ -403,6 +361,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  const handleClickSelect = (item: string) => {
+    const result: string = getKeyOf(item) as string || getValueOf(item) as string
+    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: result }))
+    inputEl.current.focus()
+  }
+
   const handleSelect = (event) => {
     const suggestionCount = autoCompletState.activeSuggestion
     if (event.keyCode === 38) {
@@ -438,11 +402,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const handleAutoComplete = () => (
-    <div className='popup alert alert-secondary' style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '') && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}>
+    <div className='popup alert alert-secondary' style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 2)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}>
       <div>
         {autoCompletState.data._options.map((item, index) => {
           return (
-            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`} onKeyDown={ handleSelect } >
+            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`} onKeyDown={ handleSelect } onClick={() => handleClickSelect(item)}>
               <div>
                 {getKeyOf(item)}
               </div>
@@ -465,9 +429,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     <div style={{ height: '323px', flexGrow: 1 }} className='panel' ref={panelRef}>
       <div className="bar">
-        <div className="dragbarHorizontal" onMouseDown={mousedown} ref={leftRef}></div>
-        <div className="menu border-top border-dark bg-light" data-id="terminalToggleMenu">
-          <i className={`mx-2 toggleTerminal fas ${toggleDownUp}`} data-id="terminalToggleIcon" onClick={ handleMinimizeTerminal }></i>
+        <div className={`dragbarHorizontal ${isDragging ? 'dragbarDragging' : ''}`} onMouseDown={handleDraggingStart} ref={leftRef}></div>
+        <div className="menu border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
+          <i className={`mx-2 toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
           <div className="mx-2 console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
             <i className="fas fa-ban" aria-hidden="true" title="Clear console"
             ></i>
@@ -560,6 +524,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         </div>
       </div>
       <ModalDialog
+        id='terminal'
         title={ modalState.title }
         message={ modalState.message }
         hide={ modalState.hide }
