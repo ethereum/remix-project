@@ -20,11 +20,15 @@ const DragBar = (props: IRemixDragBarUi) => {
     setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
     setDragState(false)
   }
+  const handleResize = () => {
+    setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
+  }
 
   useEffect(() => {
-    function handleResize () {
-      setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
-    }
+    handleResize()
+  }, [props.hidden])
+
+  useEffect(() => {
     window.addEventListener('resize', handleResize)
     // TODO: not a good way to wait on the ref doms element to be rendered of course
     setTimeout(() =>

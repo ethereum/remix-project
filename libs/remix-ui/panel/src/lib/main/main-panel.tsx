@@ -24,19 +24,17 @@ const RemixUIMainPanel = () => {
           profile: panel.plugin.profile,
           active: panel.active,
           view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
-          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : '')
+          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : ''),
+          minimized: panel.minimized
         })
       })
-      // console.log(pluginPanels)
       setPlugins(pluginPanels)
     }
   }
 
   useEffect(() => {
     renderPanels()
-    // console.log(appContext.layout)
     appContext.layout.event.on('change', () => {
-      console.log('change')
       renderPanels()
     })
   }, [])
@@ -46,7 +44,7 @@ const RemixUIMainPanel = () => {
       {Object.values(plugins).map((pluginRecord, i) => {
         return (
           <>
-            {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={false} setHideStatus={() => {}} refObject={terminalRef}></DragBar> : null}
+            {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={pluginRecord.minimized || false} setHideStatus={() => {}} refObject={terminalRef}></DragBar> : null}
             <RemixUIPanelPlugin
               ref={refs[i]}
               key={pluginRecord.profile.name}
