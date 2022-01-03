@@ -95,7 +95,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     event.trigger('resize', [terminalPosition])
-  } , [terminalPosition])
+  }, [terminalPosition])
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -210,9 +210,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       done(error.message || error)
     }
   }
-
-
-
 
   const focusinput = () => {
     inputEl.current.focus()
@@ -364,6 +361,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  const handleClickSelect = (item: string) => {
+    const result: string = getKeyOf(item) as string || getValueOf(item) as string
+    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: result }))
+    inputEl.current.focus()
+  }
+
   const handleSelect = (event) => {
     const suggestionCount = autoCompletState.activeSuggestion
     if (event.keyCode === 38) {
@@ -399,11 +402,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const handleAutoComplete = () => (
-    <div className='popup alert alert-secondary' style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '') && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}>
+    <div className='popup alert alert-secondary' style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 2)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}>
       <div>
         {autoCompletState.data._options.map((item, index) => {
           return (
-            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`} onKeyDown={ handleSelect } >
+            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`} onKeyDown={ handleSelect } onClick={() => handleClickSelect(item)}>
               <div>
                 {getKeyOf(item)}
               </div>

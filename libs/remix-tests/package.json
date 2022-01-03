@@ -49,6 +49,7 @@
     "color-support": "^1.1.3",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
+    "deep-equal": "^1.0.1",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",

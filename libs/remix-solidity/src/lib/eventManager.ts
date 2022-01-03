@@ -21,7 +21,7 @@ export default class EventManager {
       obj = this.anonymous
     }
     for (const reg in this.registered[eventName]) {
-      if (this.registered[eventName][reg].obj === obj && this.registered[eventName][reg].func === func) {
+      if (this.registered[eventName][reg].obj === obj && this.registered[eventName][reg].func.toString() === func.toString()) {
         this.registered[eventName].splice(reg, 1)
       }
     }

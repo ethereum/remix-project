@@ -9,3 +9,8 @@
     height: auto;
     width: auto;
 }
+
+.contextview {
+    opacity: 1;
+    position: absolute;
+}
