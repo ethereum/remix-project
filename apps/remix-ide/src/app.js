@@ -272,7 +272,7 @@ class AppComponent {
       filePanel,
       Registry.getInstance().get('compilersartefacts').api,
       networkModule,
-      egistry.getInstance().get('fileproviders/browser').api
+      Registry.getInstance().get('fileproviders/browser').api
     )
     const analysis = new AnalysisTab()
     const debug = new DebuggerTab()
