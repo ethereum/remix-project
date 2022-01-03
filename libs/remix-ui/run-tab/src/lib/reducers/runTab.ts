@@ -95,7 +95,7 @@ export const runTabInitialState: RunTabState = {
   gasLimit: 3000000,
   selectExEnv: 'vm-london',
   personalMode: false,
-  networkName: '',
+  networkName: 'VM',
   providers: {
     providerList: [{
       id: 'vm-mode-london',
@@ -257,6 +257,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         selectExEnv: payload,
+        networkName: state.selectExEnv === 'vm-london' || state.selectExEnv === 'vm-berlin' ? 'VM' : state.networkName,
         accounts: {
           ...state.accounts,
           selectedAccount: '',

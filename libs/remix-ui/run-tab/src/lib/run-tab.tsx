@@ -16,7 +16,7 @@ import {
   clearPopUp, createNewBlockchainAccount,
   setPassphrasePrompt, setMatchPassphrasePrompt,
   signMessageWithAddress, getSelectedContract,
-  createInstance, setCheckIpfs,
+  createInstance,
   updateBaseFeePerGas, updateConfirmSettings,
   updateGasPrice, updateGasPriceStatus,
   updateMaxFee, updateMaxPriorityFee,
@@ -25,7 +25,7 @@ import {
   runTransactions, loadAddress,
   storeScenario, runCurrentScenario,
   updateScenarioPath, initWebDialogs,
-  getFuncABIInputs
+  getFuncABIInputs, setNetworkNameFromProvider
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -33,6 +33,7 @@ import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
 import { Web3ProviderDialog } from './components/web3Dialog'
+import { setIpfsCheckedState } from './actions/payload'
 
 export function RunTabUI (props: RunTabProps) {
   const { plugin } = props
@@ -111,6 +112,10 @@ export function RunTabUI (props: RunTabProps) {
       toast(runTab.popup)
     }
   }, [runTab.popup])
+
+  const setCheckIpfs = (value: boolean) => {
+    dispatch(setIpfsCheckedState(value))
+  }
 
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals(modals => {
@@ -254,6 +259,8 @@ export function RunTabUI (props: RunTabProps) {
             mainnetPrompt={mainnetPrompt}
             tooltip={toast}
             loadAddress={loadAddress}
+            networkName={runTab.networkName}
+            setNetworkName={setNetworkNameFromProvider}
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
@@ -282,7 +289,7 @@ export function RunTabUI (props: RunTabProps) {
       </div>
       <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
-      <PublishToStorage api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
+      <PublishToStorage id='udapp' api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
     </Fragment>
   )
 }
