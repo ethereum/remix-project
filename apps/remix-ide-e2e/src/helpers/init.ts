@@ -9,6 +9,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
+    .maximizeWindow()
     .fullscreenWindow(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
