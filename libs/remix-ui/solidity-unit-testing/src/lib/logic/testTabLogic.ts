@@ -12,6 +12,10 @@ export class TestTabLogic {
     }
 
     setCurrentPath (path: string) {
+        if (path === '/') { 
+            this.currentPath = '/'
+            return
+        }
         if (path.indexOf('/') === 0) return
         this.currentPath = this.helper.removeMultipleSlashes(this.helper.removeTrailingSlashes(path))
     }
@@ -60,22 +64,22 @@ export class TestTabLogic {
         return this.fileManager.isRemixDActive()
     }
 
-    async getTests (cb: any) {
-        if (!this.currentPath) return cb(null, [])
+    async getTests () {
+        if (!this.currentPath) return []
         const provider = this.fileManager.fileProviderOf(this.currentPath)
-        if (!provider) return cb(null, [])
+        if (!provider) return []
         const tests = []
         let files = []
         try {
-        if (await this.fileManager.exists(this.currentPath)) files = await this.fileManager.readdir(this.currentPath)
+            if (await this.fileManager.exists(this.currentPath)) files = await this.fileManager.readdir(this.currentPath)
         } catch (e: any) {
-        cb(e.message)
+            throw e.message
         }
         for (const file in files) {
-        const filepath = provider && provider.type ? provider.type + '/' + file : file
-        if (/.(_test.sol)$/.exec(file)) tests.push(filepath)
+            const filepath = provider && provider.type ? provider.type + '/' + file : file
+            if (/.(_test.sol)$/.exec(file)) tests.push(filepath)
         }
-        cb(null, tests, this.currentPath)
+        return tests
     }
 
     // @todo(#2758): If currently selected file is compiled and compilation result is available,
