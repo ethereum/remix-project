@@ -3,7 +3,7 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { addressToString, createNonClashingNameAsync, shortenAddress } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setIpfsCheckedState, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -75,7 +75,7 @@ const setupEvents = () => {
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
-    const netUI = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : ''
+    const netUI = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
 
     setNetworkNameFromProvider(netUI)
   })
@@ -231,7 +231,7 @@ const setExecEnv = (env: string) => {
   dispatch(setExecutionEnvironment(env))
 }
 
-const setNetworkNameFromProvider = (networkName: string) => {
+export const setNetworkNameFromProvider = (networkName: string) => {
   dispatch(setNetworkName(networkName))
 }
 
@@ -520,10 +520,6 @@ const deployContract = (selectedContract, args, contractMetadata, compilerContra
   }
   if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
   plugin.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
-}
-
-export const setCheckIpfs = (value: boolean) => {
-  dispatch(setIpfsCheckedState(value))
 }
 
 export const updateGasPriceStatus = (status: boolean) => {
