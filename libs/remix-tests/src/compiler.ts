@@ -184,11 +184,13 @@ export function compileContractSources (sources: SrcIfc, compiler: any, opts: an
 
   async.waterfall([
     function doCompilation (next) {
-      // @ts-ignore
-      compiler.event.register('compilationFinished', this, (success, data, source) => {
+      const compilationFinishedCb = (success, data, source) => {
         if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
         next(null, data)
-      })
+      }
+      compiler.event.unregister('compilationFinished', compilationFinishedCb)
+      // @ts-ignore
+      compiler.event.register('compilationFinished', compilationFinishedCb)      
       compiler.compile(sources, filepath)
     }
   ], function (err: Error | null | undefined, result: any) {
