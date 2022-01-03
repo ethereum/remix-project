@@ -40,7 +40,7 @@ export class Layout extends Plugin {
       this.event.emit('change', null)
     })
     this.on('tabs', 'switchApp', (name: string) => {
-      this.call('mainPanel', 'showContent', name)
+      this.call('mainPanel', 'showCotent', name)
       this.panels.editor.active = false
       this.panels.main.active = true
       this.event.emit('change', null)
