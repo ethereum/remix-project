@@ -5,7 +5,6 @@ import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
-  const [networkName, setNetworkName] = useState<string>('')
   const [abiLabel, setAbiLabel] = useState<{
     display: string,
     content: string
@@ -31,10 +30,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   useEffect(() => {
     enableAtAddress(false)
-    const savedConfig = window.localStorage.getItem(`ipfs/${props.exEnvironment}/${networkName}`)
-    const isCheckedIPFS = savedConfig === 'true' ? true : false // eslint-disable-line
-
-    if (isCheckedIPFS) props.setIpfsCheckedState(true)
     setAbiLabel({
       display: 'none',
       content: 'ABI file selected'
@@ -42,8 +37,13 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [])
 
   useEffect(() => {
-    if (props.exEnvironment === 'vm-london' || props.exEnvironment === 'vm-berlin') setNetworkName('VM')
-  }, [props.exEnvironment])
+    if (props.exEnvironment && props.networkName) {
+      const savedConfig = window.localStorage.getItem(`ipfs/${props.exEnvironment}/${props.networkName}`)
+      const isCheckedIPFS = savedConfig === 'true' ? true : false // eslint-disable-line
+
+      props.setIpfsCheckedState(isCheckedIPFS)
+    }
+  }, [props.exEnvironment, props.networkName])
 
   useEffect(() => {
     if (!loadFromAddress || !ethJSUtil.isValidAddress(loadedAddress)) enableAtAddress(false)
@@ -164,8 +164,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }
 
   const handleCheckedIPFS = () => {
-    props.setIpfsCheckedState(!props.ipfsCheckedState)
-    window.localStorage.setItem(`ipfs/${props.exEnvironment}/${networkName}`, props.ipfsCheckedState.toString())
+    const checkedState = !props.ipfsCheckedState
+
+    props.setIpfsCheckedState(checkedState)
+    window.localStorage.setItem(`ipfs/${props.exEnvironment}/${props.networkName}`, checkedState.toString())
   }
 
   const handleContractChange = (e) => {
