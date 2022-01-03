@@ -1,6 +1,6 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
-import { Fragment } from 'react'
+import React, { Fragment } from 'react'
 // import Badge from './Badge'
 import Icon from './Icon'
 
