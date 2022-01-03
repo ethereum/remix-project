@@ -1117,6 +1117,24 @@
         }
       }
     },
+    "solidity-unit-testing": {
+      "root": "libs/remix-ui/solidity-unit-testing",
+      "sourceRoot": "libs/remix-ui/solidity-unit-testing/src", 
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/solidity-unit-testing/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/solidity-unit-testing/**/*"
+            ]
+          }
+        }
+      }
+    },
     "remix-ui-editor-context-view": {
       "root": "libs/remix-ui/editor-context-view",
       "sourceRoot": "libs/remix-ui/editor-context-view/src",
@@ -1169,4 +1187,3 @@
   },
   "defaultProject": "remix-ide"
 }
-
