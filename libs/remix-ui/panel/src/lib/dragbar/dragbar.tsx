@@ -6,7 +6,7 @@ interface IRemixDragBarUi {
   refObject: React.MutableRefObject<any>;
   setHideStatus: (hide: boolean) => void;
   hidden: boolean
-  minHeight: number
+  minHeight?: number
 }
 
 const DragBar = (props: IRemixDragBarUi) => {

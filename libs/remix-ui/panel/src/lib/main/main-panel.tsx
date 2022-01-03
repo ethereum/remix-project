@@ -16,27 +16,8 @@ const RemixUIMainPanel = () => {
 
   const refs = [tabsRef, editorRef, mainPanelRef, terminalRef]
 
-  const _adjustLayout = (delta: number) => {
-    if (!delta) return
-    console.log('adjustLayout', delta, terminalRef.current)
-    const limitDown = 32
-    const containerHeight = window.innerHeight
-    const tmp = delta - limitDown
-    delta = tmp > 0 ? tmp : 0
-    let mainPanelHeight = containerHeight - delta
-    mainPanelHeight = mainPanelHeight < 0 ? 0 : mainPanelHeight - 35
-    // self.editor.resize((document.querySelector('#editorWrap') || {}).checked)
-    // editorRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
-    terminalRef.current?.setAttribute('style', 'height: 100px;')
-    // mainPanelRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
-    // appContext.panels.editor.resize((document.querySelector('#editorWrap') || {}).checked)
-    appContext.layout.panels.terminal.plugin.scroll2bottom()
-  }
-
   const renderPanels = () => {
-    // console.log(appContext)
     if (appContext) {
-      console.log(appContext)
       const pluginPanels: PluginRecord[] = []
       Object.values(appContext.layout.panels).map((panel: any) => {
         pluginPanels.push({
@@ -48,16 +29,8 @@ const RemixUIMainPanel = () => {
       })
       // console.log(pluginPanels)
       setPlugins(pluginPanels)
-
-      appContext.layout.panels.terminal.plugin.event.register('resize', (delta: number) =>
-        _adjustLayout(delta)
-      )
     }
   }
-
-  useLayoutEffect(() => {
-    // _adjustLayout(70)
-  })
 
   useEffect(() => {
     renderPanels()
@@ -71,10 +44,9 @@ const RemixUIMainPanel = () => {
   return (
     <div className="mainview">
       {Object.values(plugins).map((pluginRecord, i) => {
-        console.log(pluginRecord)
         return (
           <>
-            {(pluginRecord.profile.name === 'terminal') ? <DragBar key={'dragbar'} minHeight={32} hidden={false} setHideStatus={() => {}} refObject={terminalRef}></DragBar> : <></>}
+            {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={false} setHideStatus={() => {}} refObject={terminalRef}></DragBar> : null}
             <RemixUIPanelPlugin
               ref={refs[i]}
               key={pluginRecord.profile.name}
