@@ -5,4 +5,5 @@ export type PluginRecord = {
     view: any
     active: boolean
     class?: string
+    minimized?: boolean
   }
