@@ -23,7 +23,7 @@ const DragBar = (props: IRemixDragBarUi) => {
       setOffSet(props.refObject.current.offsetTop)
       setDragBarPosY(props.refObject.current.offsetTop)
     }, 1000)
-  }, [])
+  }, [props.refObject])
 
   useEffect(() => {
     // setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetHeight))
