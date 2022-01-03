@@ -1,16 +1,9 @@
 import React from 'react' // eslint-disable-line
 import { EventEmitter } from 'events'
 import { HostPlugin } from '@remixproject/engine-web' // eslint-disable-line
-import { Profile } from '@remixproject/plugin-utils'
+import { PluginRecord } from 'libs/remix-ui/panel/src/lib/types'
 const EventManager = require('../../lib/events')
 
-/** Abstract class used for hosting the view of a plugin */
-type PluginRecord = {
-  profile: Profile
-  view: any
-  active: boolean
-  class?: string
-}
 export class AbstractPanel extends HostPlugin {
   events: EventEmitter
   event: any
