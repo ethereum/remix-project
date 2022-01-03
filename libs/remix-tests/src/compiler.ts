@@ -170,8 +170,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  * @param opts Options
  * @param cb Callback
  */
-export function compileContractSources (sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb): void {
-  let compiler
+export function compileContractSources (sources: SrcIfc, compiler: any, opts: any, cb): void {
   const filepath = opts.testFilePath || ''
   const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
@@ -184,24 +183,14 @@ export function compileContractSources (sources: SrcIfc, compilerConfig: Compile
   }
 
   async.waterfall([
-    function loadCompiler (next) {
-      const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = compilerConfig
-      compiler = new RemixCompiler(importFileCb)
-      compiler.set('evmVersion', evmVersion)
-      compiler.set('optimize', optimize)
-      compiler.set('runs', runs)
-      compiler.loadVersion(usingWorker, currentCompilerUrl)
-      // @ts-ignore
-      compiler.event.register('compilerLoaded', this, (version) => {
-        next()
-      })
-    },
     function doCompilation (next) {
-      // @ts-ignore
-      compiler.event.register('compilationFinished', this, (success, data, source) => {
+      const compilationFinishedCb = (success, data, source) => {
         if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
         next(null, data)
-      })
+      }
+      compiler.event.unregister('compilationFinished', compilationFinishedCb)
+      // @ts-ignore
+      compiler.event.register('compilationFinished', compilationFinishedCb)
       compiler.compile(sources, filepath)
     }
   ], function (err: Error | null | undefined, result: any) {
