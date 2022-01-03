@@ -24,7 +24,7 @@ const RemixUIMainPanel = () => {
     const tmp = delta - limitDown
     delta = tmp > 0 ? tmp : 0
     let mainPanelHeight = containerHeight - delta
-    mainPanelHeight = mainPanelHeight < 0 ? 0 : mainPanelHeight
+    mainPanelHeight = mainPanelHeight < 0 ? 0 : mainPanelHeight - 35
     // self.editor.resize((document.querySelector('#editorWrap') || {}).checked)
     editorRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
     terminalRef.current?.setAttribute('style', `height: ${delta}px`)
@@ -56,7 +56,7 @@ const RemixUIMainPanel = () => {
   }
 
   useLayoutEffect(() => {
-    _adjustLayout(198)
+    // _adjustLayout(70)
   })
 
   useEffect(() => {

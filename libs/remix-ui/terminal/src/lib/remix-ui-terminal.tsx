@@ -434,7 +434,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   return (
-    <div style={{ height: '323px', flexGrow: 1 }} className='panel' ref={panelRef}>
+    <div style={{ flexGrow: 1 }} className='panel' ref={panelRef}>
       <div className="bar">
         <div className="menu border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
           <i className={`mx-2 toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
