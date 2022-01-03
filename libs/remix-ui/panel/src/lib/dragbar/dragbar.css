@@ -17,7 +17,7 @@
   width: 100vw;
   height: 100vh;
   display: block;
-  z-index: 9998;
+  z-index: 900;
 }
 
 .dragbar_terminal:hover,
