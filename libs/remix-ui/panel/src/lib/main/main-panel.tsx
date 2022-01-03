@@ -27,14 +27,14 @@ const RemixUIMainPanel = () => {
           class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : '')
         })
       })
-      console.log(pluginPanels)
+      // console.log(pluginPanels)
       setPlugins(pluginPanels)
     }
   }
 
   useEffect(() => {
     renderPanels()
-    console.log(appContext.layout)
+    // console.log(appContext.layout)
     appContext.layout.event.on('change', () => {
       console.log('change')
       renderPanels()
