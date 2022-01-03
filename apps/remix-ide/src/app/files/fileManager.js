@@ -4,8 +4,8 @@ import yo from 'yo-yo'
 import async from 'async'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import Registry from '../state/registry'
 const EventEmitter = require('events')
-const globalRegistry = require('../../global/registry')
 const toaster = require('../ui/tooltip')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
@@ -44,7 +44,7 @@ class FileManager extends Plugin {
     this.events = new EventEmitter()
     this.editor = editor
     this._components = {}
-    this._components.registry = globalRegistry
+    this._components.registry = Registry.getInstance()
     this.appManager = appManager
     this.init()
   }

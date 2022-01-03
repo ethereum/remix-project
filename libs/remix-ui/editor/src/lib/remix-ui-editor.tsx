@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { RemixUiEditorContextView, astNode } from '@remix-ui/editor-context-view'
 import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
@@ -49,6 +50,7 @@ loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
+  contextualListener: any
   activated: boolean
   themeType: string
   currentFile: string
@@ -62,6 +64,7 @@ export interface EditorUIProps {
   }
   plugin: {
     on: (plugin: string, event: string, listener: any) => void
+    call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
   }
   editorAPI: {
     findMatches: (uri: string, value: string) => any
@@ -207,7 +210,12 @@ export const EditorUI = (props: EditorUIProps) => {
         'editor.lineHighlightBorder': secondaryColor,
         'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
         'editorGutter.background': lightColor,
-        'minimap.background': lightColor
+        'minimap.background': lightColor,
+        'menu.foreground': textColor,
+        'menu.background': textbackground,
+        'menu.selectionBackground': secondaryColor,
+        'menu.selectionForeground': textColor,
+        'menu.selectionBorder': secondaryColor
       }
     })
     monacoRef.current.editor.setTheme(themeName)
@@ -256,7 +264,7 @@ export const EditorUI = (props: EditorUIProps) => {
             range: new monacoRef.current.Range(marker.position.start.line + 1, marker.position.start.column + 1, marker.position.end.line + 1, marker.position.end.column + 1),
             options: {
               isWholeLine,
-              inlineClassName: `bg-info highlightLine${marker.position.start.line + 1}`
+              inlineClassName: `alert-info highlightLine${marker.position.start.line + 1}`
             }
           })
         }
@@ -377,15 +385,31 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   return (
-    <Editor
-      width="100%"
-      height="100%"
-      path={props.currentFile}
-      language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
-      onMount={handleEditorDidMount}
-      beforeMount={handleEditorWillMount}
-      options={{ glyphMargin: true }}
-    />
+    <div className="w-100 h-100 d-flex flex-column-reverse">
+      <Editor
+        width="100%"
+        path={props.currentFile}
+        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
+        onMount={handleEditorDidMount}
+        beforeMount={handleEditorWillMount}
+        options={{ glyphMargin: true }}
+      />
+      <div className="contextview">
+        <RemixUiEditorContextView
+          hide={false}
+          gotoLine={(line, column) => props.plugin.call('editor', 'gotoLine', line, column)}
+          openFile={(file) => props.plugin.call('editor', 'openFile', file)}
+          getLastCompilationResult={() => { return props.plugin.call('compilerArtefacts', 'getLastCompilationResult') } }
+          offsetToLineColumn={(position, file, sources, asts) => { return props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn', position, file, sources, asts) } }
+          getCurrentFileName={() => { return props.plugin.call('fileManager', 'file') } }
+          onContextListenerChanged={(listener) => { props.plugin.on('contextualListener', 'contextChanged', listener) }}
+          referencesOf={(node: astNode) => { return props.plugin.call('contextualListener', 'referencesOf', node) }}
+          getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
+          gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}
+          declarationOf={(node: astNode) => { return props.plugin.call('contextualListener', 'declarationOf', node) }}
+        />
+      </div>
+    </div>
   )
 }
 
