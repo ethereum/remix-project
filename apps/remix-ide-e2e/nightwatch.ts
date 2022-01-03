@@ -78,7 +78,11 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'moz:firefoxOptions': {
-          args: ['-headless']
+          args: [
+            '--headless',
+            '--width=2560',
+            '--height=1440'
+          ]
         }
       }
     }
