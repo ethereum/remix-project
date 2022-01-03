@@ -24,10 +24,10 @@ const RemixUIMainPanel = () => {
           profile: panel.plugin.profile,
           active: panel.active,
           view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
-          class: panel.plugin.profile.name + '-wrap'
+          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : '')
         })
       })
-      // console.log(pluginPanels)
+      console.log(pluginPanels)
       setPlugins(pluginPanels)
     }
   }
