@@ -1,9 +1,8 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import React, { useEffect, useReducer } from 'react'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-import Icon, { IconStatus } from './Icon'
+import React from 'react'
+import Icon from './Icon'
 
 function customFilter (p: string) {
   if (p !== 'settings' && p !== 'pluginManager' &&
@@ -19,29 +18,7 @@ interface OtherIconsProps {
   removeActive: () => void
 }
 
-// const initialState = {
-//   text: '',
-//   key: '',
-//   title: '',
-//   type: '',
-//   pluginName: ''
-// }
-
 function OtherIcons ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: OtherIconsProps) {
-  // useEffect(() => {
-  //   Object.keys(verticalIconsPlugin.targetProfileForChange)
-  //     .filter(customFilter)
-  //     .forEach(p =>
-  //       verticalIconsPlugin.on(verticalIconsPlugin.targetProfileForChange[p].name, 'statusChanged', (iconStatus: IconStatus) => {
-  //         iconStatus.pluginName = verticalIconsPlugin.targetProfileForChange[p].name
-  //         const action: IconBadgeReducerAction = {
-  //           type: verticalIconsPlugin.targetProfileForChange[p].name,
-  //           payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin }
-  //         }
-  //         console.log('check the event payload', { iconStatus })
-  //         dispatchStatusUpdate(action)
-  //       }))
-  // }, [verticalIconsPlugin.targetProfileForChange, Object.keys(verticalIconsPlugin.targetProfileForChange).length])
   return (
     <div id="otherIcons">
       {

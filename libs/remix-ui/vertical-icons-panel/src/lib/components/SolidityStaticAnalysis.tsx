@@ -1,7 +1,6 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment } from 'react'
-// import Badge from './Badge'
 import Icon from './Icon'
 
 interface SolidityStaticAnalysisProps {
@@ -12,14 +11,6 @@ interface SolidityStaticAnalysisProps {
 }
 
 function SolidityStaticAnalysis ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: SolidityStaticAnalysisProps) {
-  // const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
-  // useEffect(() => {
-  //   verticalIconsPlugin.on('solidityStaticAnalysis', 'statusChanged', (iconStatus: IconStatus) => {
-  //     iconStatus.pluginName = 'solidityStaticAnalysis'
-  //     const action: IconBadgeReducerAction = { type: 'solidityStaticAnalysis', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
-  //     dispatchStatusUpdate(action)
-  //   })
-  // }, [])
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
