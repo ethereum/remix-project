@@ -190,7 +190,7 @@ export function compileContractSources (sources: SrcIfc, compiler: any, opts: an
       }
       compiler.event.unregister('compilationFinished', compilationFinishedCb)
       // @ts-ignore
-      compiler.event.register('compilationFinished', compilationFinishedCb)      
+      compiler.event.register('compilationFinished', compilationFinishedCb)
       compiler.compile(sources, filepath)
     }
   ], function (err: Error | null | undefined, result: any) {
