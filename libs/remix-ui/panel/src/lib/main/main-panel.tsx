@@ -26,9 +26,9 @@ const RemixUIMainPanel = () => {
     let mainPanelHeight = containerHeight - delta
     mainPanelHeight = mainPanelHeight < 0 ? 0 : mainPanelHeight - 35
     // self.editor.resize((document.querySelector('#editorWrap') || {}).checked)
-    editorRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
-    terminalRef.current?.setAttribute('style', `height: ${delta}px`)
-    mainPanelRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
+    // editorRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
+    terminalRef.current?.setAttribute('style', 'height: 100px;')
+    // mainPanelRef.current?.setAttribute('style', `height: ${mainPanelHeight}px`)
     // appContext.panels.editor.resize((document.querySelector('#editorWrap') || {}).checked)
     appContext.layout.panels.terminal.plugin.scroll2bottom()
   }
