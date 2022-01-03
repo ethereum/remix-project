@@ -7,7 +7,7 @@ import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeR
 import { BadgeStatus, IconProfile, IconStatus } from './Icon'
 
 interface BadgeProps {
-  badgeStatus: BadgeStatus
+  badgeStatus?: BadgeStatus
 }
 
 // eslint-disable-next-line no-undef

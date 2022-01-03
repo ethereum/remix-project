@@ -1,9 +1,8 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect, useReducer } from 'react'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
+import { Fragment } from 'react'
 // import Badge from './Badge'
-import Icon, { IconStatus } from './Icon'
+import Icon from './Icon'
 
 interface SolidityStaticAnalysisProps {
   verticalIconsPlugin: VerticalIcons
@@ -12,22 +11,15 @@ interface SolidityStaticAnalysisProps {
   removeActive: () => void
 }
 
-const initialState = {
-  text: '',
-  key: '',
-  title: '',
-  type: ''
-}
-
 function SolidityStaticAnalysis ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: SolidityStaticAnalysisProps) {
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
-  useEffect(() => {
-    verticalIconsPlugin.on('solidityStaticAnalysis', 'statusChanged', (iconStatus: IconStatus) => {
-      iconStatus.pluginName = 'solidityStaticAnalysis'
-      const action: IconBadgeReducerAction = { type: 'solidityStaticAnalysis', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
-      dispatchStatusUpdate(action)
-    })
-  }, [])
+  // const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
+  // useEffect(() => {
+  //   verticalIconsPlugin.on('solidityStaticAnalysis', 'statusChanged', (iconStatus: IconStatus) => {
+  //     iconStatus.pluginName = 'solidityStaticAnalysis'
+  //     const action: IconBadgeReducerAction = { type: 'solidityStaticAnalysis', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
+  //     dispatchStatusUpdate(action)
+  //   })
+  // }, [])
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
@@ -47,7 +39,6 @@ function SolidityStaticAnalysis ({ verticalIconsPlugin, itemContextAction, addAc
                 key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
                 }
-                badgeStatus={badgeStatus}
               />
             </div>
           ))
