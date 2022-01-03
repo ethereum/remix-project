@@ -81,7 +81,8 @@ module.exports = {
           args: [
             '-headless',
             '-width=2560',
-            '-height=1440'
+            '-height=1440',
+            '-window-size=2560x1440'
           ]
         }
       }
