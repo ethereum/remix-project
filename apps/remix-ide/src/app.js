@@ -302,7 +302,7 @@ class AppComponent {
       tabs: { plugin: tabProxy, active: true },
       editor: { plugin: editor, active: true },
       main: { plugin: appPanel, active: false },
-      terminal: { plugin: terminal, active: true }
+      terminal: { plugin: terminal, active: true, minimized: false }
     }
   }
 

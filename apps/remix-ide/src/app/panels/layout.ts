@@ -5,12 +5,14 @@ import QueryParams from '../../lib/query-params'
 
 const profile: Profile = {
   name: 'layout',
-  description: 'layout'
+  description: 'layout',
+  methods: ['minimize']
 }
 
 interface panelState {
   active: boolean
   plugin: Plugin
+  minimized: boolean
 }
 interface panels {
   tabs: panelState
@@ -77,7 +79,15 @@ export class Layout extends Plugin {
     })
     const queryParams = new QueryParams()
     const params = queryParams.get()
-    // if (params.minimizeterminal) // this.mainView.minimizeTerminal()
+    if (params.minimizeterminal) {
+      this.panels.terminal.minimized = true
+      this.event.emit('change', null)
+    }
     // if (params.minimizesidepanel) // this.resizeFeature.hidePanel()
+  }
+
+  minimize (name: string, minimized:boolean): void {
+    this.panels[name].minimized = minimized
+    this.event.emit('change', null)
   }
 }
