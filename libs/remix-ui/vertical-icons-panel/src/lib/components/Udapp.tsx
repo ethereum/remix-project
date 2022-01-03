@@ -11,16 +11,6 @@ interface UdappProps {
 }
 
 function Udapp ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: UdappProps) {
-  // const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
-
-  // useEffect(() => {
-  //   verticalIconsPlugin.on('udapp', 'statusChanged', (iconStatus: IconStatus) => {
-  //     iconStatus.pluginName = 'udapp'
-  //     const action: IconBadgeReducerAction = { type: 'udapp', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
-  //     dispatchStatusUpdate(action)
-  //   })
-  // }, [])
-
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
