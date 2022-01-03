@@ -19,30 +19,29 @@ interface OtherIconsProps {
   removeActive: () => void
 }
 
-const initialState = {
-  text: '',
-  key: '',
-  title: '',
-  type: '',
-  pluginName: ''
-}
+// const initialState = {
+//   text: '',
+//   key: '',
+//   title: '',
+//   type: '',
+//   pluginName: ''
+// }
 
 function OtherIcons ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: OtherIconsProps) {
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
-
-  useEffect(() => {
-    Object.keys(verticalIconsPlugin.targetProfileForChange)
-      .filter(customFilter)
-      .forEach(p =>
-        verticalIconsPlugin.on(verticalIconsPlugin.targetProfileForChange[p].name, 'statusChanged', (iconStatus: IconStatus) => {
-          iconStatus.pluginName = verticalIconsPlugin.targetProfileForChange[p].name
-          const action: IconBadgeReducerAction = {
-            type: verticalIconsPlugin.targetProfileForChange[p].name,
-            payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin }
-          }
-          dispatchStatusUpdate(action)
-        }))
-  }, [verticalIconsPlugin.targetProfileForChange, Object.keys(verticalIconsPlugin.targetProfileForChange).length])
+  // useEffect(() => {
+  //   Object.keys(verticalIconsPlugin.targetProfileForChange)
+  //     .filter(customFilter)
+  //     .forEach(p =>
+  //       verticalIconsPlugin.on(verticalIconsPlugin.targetProfileForChange[p].name, 'statusChanged', (iconStatus: IconStatus) => {
+  //         iconStatus.pluginName = verticalIconsPlugin.targetProfileForChange[p].name
+  //         const action: IconBadgeReducerAction = {
+  //           type: verticalIconsPlugin.targetProfileForChange[p].name,
+  //           payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin }
+  //         }
+  //         console.log('check the event payload', { iconStatus })
+  //         dispatchStatusUpdate(action)
+  //       }))
+  // }, [verticalIconsPlugin.targetProfileForChange, Object.keys(verticalIconsPlugin.targetProfileForChange).length])
   return (
     <div id="otherIcons">
       {
@@ -58,7 +57,6 @@ function OtherIcons ({ verticalIconsPlugin, itemContextAction, addActive, remove
               key={
                 verticalIconsPlugin.targetProfileForChange[p].displayName
               }
-              badgeStatus={badgeStatus}
             />
           ))}
     </div>

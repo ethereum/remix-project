@@ -1,9 +1,8 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect, useReducer } from 'react'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
+import { Fragment } from 'react'
 // import Badge from './Badge'
-import Icon, { IconStatus } from './Icon'
+import Icon from './Icon'
 
 interface SolidityProps {
   verticalIconsPlugin: VerticalIcons
@@ -11,23 +10,19 @@ interface SolidityProps {
   addActive: (name: string) => void
   removeActive: () => void
 }
-const initialState = {
-  text: '',
-  key: '',
-  title: '',
-  type: ''
-}
+
+// const init = [initialState]
 
 function Solidity ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: SolidityProps) {
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
+  // const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, init)
 
-  useEffect(() => {
-    verticalIconsPlugin.on('solidity', 'statusChanged', (iconStatus: IconStatus) => {
-      iconStatus.pluginName = 'solidity'
-      const action: IconBadgeReducerAction = { type: 'solidity', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
-      dispatchStatusUpdate(action)
-    })
-  }, [])
+  // useEffect(() => {
+  //   verticalIconsPlugin.on('solidity', 'statusChanged', (iconStatus: IconStatus) => {
+  //     iconStatus.pluginName = 'solidity'
+  //     const action: IconBadgeReducerAction = { type: 'solidity', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
+  //     dispatchStatusUpdate(action)
+  //   })
+  // }, [])
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
@@ -47,7 +42,6 @@ function Solidity ({ verticalIconsPlugin, itemContextAction, addActive, removeAc
                 key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
                 }
-                badgeStatus={badgeStatus}
               />
             </div>
           ))
