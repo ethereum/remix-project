@@ -21,7 +21,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
-  const [defaultPath, setDefaultPath] = useState('tests')
   const [toasterMsg, setToasterMsg] = useState('')
 
   const [disableCreateButton, setDisableCreateButton] = useState(true)
@@ -52,7 +51,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const selectedTests: any = useRef([])
   const currentErrors: any = useRef([])
 
-
+  const defaultPath = 'tests'
   let areTestsRunning = false
 
   let runningTestFileName: any
@@ -88,15 +87,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     updateTestFileList()
     clearResults()
     try {
-      testTabLogic.getTests(async (error: any, tests: any) => {
-        if (error) return setToasterMsg(error) 
-        allTests.current = tests
-        selectedTests.current = [...allTests.current]
-        updateTestFileList()
-        if (!areTestsRunning) await updateRunAction(file)
-      })
-    } catch (e) {
+      const tests = await testTabLogic.getTests()
+      allTests.current = tests
+      selectedTests.current = [...allTests.current]
+      updateTestFileList()
+      if (!areTestsRunning) await updateRunAction(file)
+    } catch (e: any) {
       console.log(e)
+      setToasterMsg(e)
     }
   }
 
@@ -116,17 +114,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }, [initialPath]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    updateDirList('/')
-    updateForNewCurrent()
-
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
       try {
-        testTabLogic.getTests((error: any, tests: any) => {
-          if (error) return setToasterMsg(error) 
-          allTests.current = tests
-          selectedTests.current = [...allTests.current]
-          updateTestFileList()
-        })
+        const tests = await testTabLogic.getTests()
+        allTests.current = tests
+        selectedTests.current = [...allTests.current]
+        updateTestFileList()
       } catch (e) {
         console.log(e)
         allTests.current.push(file)
@@ -135,11 +128,11 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
 
     testTab.on('filePanel', 'setWorkspace', async () => {
-      setCurrentPath(defaultPath)
+      await setCurrentPath(defaultPath)
     })
 
     testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
-    testTab.fileManager.events.on('currentFileChanged', (file: any, provider: any) => updateForNewCurrent(file))
+    testTab.fileManager.events.on('currentFileChanged', async (file: any, provider: any) => await updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
 
@@ -157,7 +150,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (e.key === 'Enter') {
       if (await testTabLogic.pathExists(testDirInput)) {
         testTabLogic.setCurrentPath(testDirInput)
-        updateForNewCurrent()
+        await updateForNewCurrent()
         return
       }
     }
@@ -174,17 +167,19 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          testTabLogic.setCurrentPath(testDirInput)
-          updateForNewCurrent()
+          
         } else {
           // Enable Create button
           setDisableCreateButton(false)
           // Disable Generate button because dir does not exist
           setDisableGenerateButton(true)
         }
+        await setCurrentPath(testDirInput)
       }
     } else {
-      updateDirList('/')
+      await setCurrentPath('/')
+      setDisableCreateButton(true)
+      setDisableGenerateButton(false)
     }
   }
 
@@ -194,8 +189,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setInputPathValue(inputPath)
     if (disableCreateButton) {
       if (await testTabLogic.pathExists(inputPath)) {
-        testTabLogic.setCurrentPath(inputPath)
-        updateForNewCurrent()
+        await setCurrentPath(inputPath)
       }
     }
   }
@@ -211,7 +205,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setDisableGenerateButton(false)
     testTabLogic.setCurrentPath(inputPath)
     await updateRunAction()
-    updateForNewCurrent()
+    await updateForNewCurrent()
     pathOptions.push(inputPath)
     setPathOptions(pathOptions)
   }
@@ -648,7 +642,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             }
             </datalist>
             <input
-              placeholder={defaultPath}
               list="utPathList"
               className="inputFolder custom-select"
               id="utPath"
@@ -659,6 +652,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
               style={{ backgroundImage: "var(--primary)" }}
               onKeyUp={handleTestDirInput}
               onChange={handleEnter}
+              onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
             />
             <button
               className="btn border ml-2"
@@ -679,9 +673,9 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             data-id="testTabGenerateTestFile"
             title="Generate sample test file."
             disabled={disableGenerateButton}
-            onClick={() => {
+            onClick={async () => {
               testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)})
-              updateForNewCurrent()
+              await updateForNewCurrent()
             }}
           >
             Generate

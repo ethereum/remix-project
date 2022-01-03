@@ -133,7 +133,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   render () {
     this.onActivationInternal()
-    this.renderComponent()
+    this.renderComponent('tests')
     return this.element
   }
 
