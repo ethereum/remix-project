@@ -12,26 +12,25 @@ interface IRemixDragBarUi {
 const DragBar = (props: IRemixDragBarUi) => {
   const [dragState, setDragState] = useState<boolean>(false)
   const [dragBarPosY, setDragBarPosY] = useState<number>(0)
-  const [offset, setOffSet] = useState<number>(0)
   const nodeRef = React.useRef(null) // fix for strictmode
 
-  useEffect(() => {
-    // arbitrary time out to wait the the UI to be completely done
-    setTimeout(() => {
-      console.log(window.innerHeight)
-      console.log(props.refObject.current.offsetTop)
-      setOffSet(props.refObject.current.offsetTop)
-      setDragBarPosY(props.refObject.current.offsetTop)
-    }, 1000)
-  }, [props.refObject])
-
-  useEffect(() => {
-    // setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetHeight))
-  }, [props.hidden, offset])
-
   function stopDrag (e: MouseEvent, data: any) {
+    const h = window.innerHeight - data.y
+    props.refObject.current.setAttribute('style', `height: ${h}px;`)
+    setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
     setDragState(false)
   }
+
+  useEffect(() => {
+    function handleResize () {
+      setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
+    }
+    window.addEventListener('resize', handleResize)
+    // TODO: not a good way to wait on the ref doms element to be rendered of course
+    setTimeout(() =>
+      handleResize(), 2000)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   function startDrag () {
     setDragState(true)

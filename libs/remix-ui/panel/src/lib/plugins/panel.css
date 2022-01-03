@@ -94,3 +94,12 @@ iframe {
     border: 0;
     display: block;
 }
+
+.mainPanel-wrap, .editor-wrap {
+    flex: 1;
+    min-height: 100px;
+}
+
+.terminal-wrap {
+    min-height: 35px;
+}
