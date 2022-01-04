@@ -10,7 +10,6 @@ interface ModalWrapperProps extends ModalDialogProps {
 
 const ModalWrapper = (props: ModalWrapperProps) => {
   const [state, setState] = useState<ModalDialogProps>()
-  const [modalInput, setModalInput] = useState<string>('')
   const ref = useRef()
 
   const onFinishPrompt = async () => {
