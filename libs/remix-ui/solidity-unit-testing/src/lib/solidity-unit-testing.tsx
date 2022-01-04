@@ -16,6 +16,23 @@ interface TestObject {
   checked: boolean
 }
 
+export interface TestResultInterface {
+  type: string
+  value: any
+  time?: number
+  context?: string
+  errMsg?: string
+  filename: string
+  assertMethod?: string
+  returned?: string | number
+  expected?: string | number
+  location?: string
+  hhLogs?: []
+  web3?: any
+  debugTxHash?: string
+  rendered?: boolean
+}
+
 export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const { helper, testTab, initialPath } = props
@@ -139,8 +156,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }, []) // eslint-disable-line
 
   const updateDirList = (path: string) => {
-    testTabLogic.dirList(path).then((options: any) => {
-      console.log('options in testDir List--->', options)
+    testTabLogic.dirList(path).then((options: string[]) => {
       setPathOptions(options)
     })
   }
@@ -213,7 +229,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setPathOptions(pathOptions)
   }
 
-  const cleanFileName = (fileName: any, testSuite: any) => {
+  const cleanFileName = (fileName: string, testSuite: string) => {
     return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') + testSuite : fileName
   }
 
@@ -224,9 +240,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     testTab.call('debugger', 'debug', txHash, web3)
   }
 
-  const printHHLogs = (logsArr: any, testName: any) => {
+  const printHHLogs = (logsArr: Record<string, any>[], testName: string) => {
     let finalLogs = `<b>${testName}:</b>\n`
-    console.log('logsArr======>', logsArr)
     for (const log of logsArr) {
       let formattedLog
       // Hardhat implements the same formatting options that can be found in Node.js' console.log,
@@ -307,8 +322,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
   }
 
-  const renderTests = (tests: any, contract: any, filename: any) => {
-    const index = tests.findIndex((test: any) => test.type === 'testFailure')
+  const renderTests = (tests: TestResultInterface[], contract: string, filename: string) => {
+    const index = tests.findIndex((test: TestResultInterface) => test.type === 'testFailure')
     // show filename and contract
     renderContract(filename, contract, index)
     // show tests
@@ -346,7 +361,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             const testFailCard1: any = (<div
               className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
               id={"UTContext" + test.context}
-              onClick={() => highlightLocation(test.location, test.filename)}
+              onClick={() => { if(test.location) highlightLocation(test.location, test.filename)}}
             >
               <div className="d-flex my-1 align-items-start justify-content-between">
                 <span> ✘ {test.value}</span>
@@ -363,7 +378,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             const testFailCard2: any = (<div
               className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
               id={"UTContext" + test.context}
-              onClick={() => highlightLocation(test.location, test.filename)}
+              onClick={() => { if(test.location) highlightLocation(test.location, test.filename)}}
             >
               <div className="d-flex my-1 align-items-start justify-content-between">
                 <span> ✘ {test.value}</span>
@@ -400,7 +415,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       for (const contract of contracts) {
         if (contract && contract !== 'summary' && contract !== 'errors') {
           runningTestFileName = cleanFileName(filename, contract)
-          const tests = fileTestsResult[contract]
+          const tests = fileTestsResult[contract] as TestResultInterface[]
           if (tests?.length) {
             renderTests(tests, contract, filename)
           } else {
@@ -441,7 +456,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const testCallback = (result: any) => {
+  const testCallback = (result: Record<string, any>) => {
     if (result.filename) {
       if (!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
