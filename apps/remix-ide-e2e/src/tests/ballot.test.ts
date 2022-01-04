@@ -84,13 +84,14 @@ module.exports = {
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
-      .modalFooterOKClick()
+      .waitForElementPresent('[data-id="fileSystem-modal-footer-ok-react"]')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(5000)
       .execute(function () {
         const env: any = document.getElementById('selectExEnvOptions')
+
         return env.value
       }, [], function (result) {
-        console.log({ result })
         browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
       })
       .clickLaunchIcon('solidity')
