@@ -30,7 +30,6 @@ export class Layout extends Plugin {
   }
 
   async onActivation (): Promise<void> {
-    console.log('layout plugin activated')
     this.on('fileManager', 'currentFileChanged', () => {
       this.panels.editor.active = true
       this.panels.main.active = false
