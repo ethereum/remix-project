@@ -9,12 +9,12 @@ const _paq = window._paq = window._paq || []
 const requiredModules = [ // services + layout views + system views
   'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'walkthrough', 'layout']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'walkthrough', 'layout', 'modal']
 
 const dependentModules = ['git', 'hardhat', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'modal']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
