@@ -26,6 +26,7 @@ import migrateFileSystem from './migrateFileSystem'
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
 import { Layout } from './app/panels/layout'
+import { ModalPlugin } from './app/plugins/modal'
 
 const isElectron = require('is-electron')
 
@@ -195,11 +196,14 @@ class AppComponent {
     )
     const contextualListener = new EditorContextListener()
 
+    self.modal = new ModalPlugin()
+
     const configPlugin = new ConfigPlugin()
     self.layout = new Layout()
 
     self.engine.register([
       self.layout,
+      self.modal,
       configPlugin,
       blockchain,
       contentImport,
@@ -318,19 +322,11 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
-
-    await self.appManager.activatePlugin(['layout', 'editor'])
-    await self.appManager.activatePlugin([
-      'theme',
-      'fileManager',
-      'compilerMetadata',
-      'compilerArtefacts',
-      'network',
-      'web3Provider',
-      'offsetToLineColumnConverter'
-    ])
-    await self.appManager.activatePlugin(['mainPanel'])
-    await self.appManager.activatePlugin(['menuicons', 'tabs'])
+    await self.appManager.activatePlugin(['modal'])
+    await self.appManager.activatePlugin(['modal'])
+    await self.appManager.activatePlugin(['editor'])
+    await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
     await self.appManager.activatePlugin(['settings', 'config'])
