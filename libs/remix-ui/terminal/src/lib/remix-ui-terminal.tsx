@@ -315,7 +315,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const listenOnNetwork = (e: any) => {
     const isListening = e.target.checked
-    // setIsListeningOnNetwork(isListening)
     listenOnNetworkAction(props.plugin, isListening)
   }
 
