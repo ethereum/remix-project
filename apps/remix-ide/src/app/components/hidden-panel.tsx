@@ -28,7 +28,6 @@ export class HiddenPanel extends AbstractPanel {
   }
 
   render () {
-    console.log(this.el)
     return this.el
   }
 
