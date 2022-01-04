@@ -67,8 +67,7 @@ module.exports = {
 
   'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .pause(5000)
