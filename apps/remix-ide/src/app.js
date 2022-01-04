@@ -331,7 +331,7 @@ class AppComponent {
       'offsetToLineColumnConverter'
     ])
     await self.appManager.activatePlugin(['mainPanel'])
-    await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await self.appManager.activatePlugin(['menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
     await self.appManager.activatePlugin(['settings', 'config'])
