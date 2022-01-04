@@ -13,6 +13,11 @@ export interface AppModal {
     defaultValue?: string
 }
 
+export interface AlertModal {
+    title?: string,
+    message: string | JSX.Element,
+}
+
 export interface ModalState {
     modals: AppModal[],
     toasters: string[],
