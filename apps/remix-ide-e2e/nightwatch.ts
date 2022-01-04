@@ -68,7 +68,13 @@ module.exports = {
       desiredCapabilities: {
         browserName: 'firefox',
         javascriptEnabled: true,
-        acceptSslCerts: true
+        acceptSslCerts: true,
+        'moz:firefoxOptions': {
+          args: [
+            '-width=2560',
+            '-height=1440'
+          ]
+        }
       }
     },
 
@@ -79,10 +85,8 @@ module.exports = {
         acceptSslCerts: true,
         'moz:firefoxOptions': {
           args: [
-            '-headless',
             '-width=2560',
-            '-height=1440',
-            '-window-size=2560x1440'
+            '-height=1440'
           ]
         }
       }
