@@ -322,7 +322,7 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
-    await self.appManager.activatePlugin(['modal'])
+    await self.appManager.activatePlugin(['layout'])
     await self.appManager.activatePlugin(['modal'])
     await self.appManager.activatePlugin(['editor'])
     await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])

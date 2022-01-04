@@ -3,7 +3,7 @@ import { AlertModal, AppModal } from '../interface'
 import { ModalInitialState } from '../state/modals'
 import { ModalTypes } from '../types'
 
-const AppContext = React.createContext<{layout: any, settings: any, showMatamo: boolean, appManager: any, modal: any}>(null)
+export const AppContext = React.createContext<any>(null)
 
 export interface dispatchModalInterface {
   modal: (data: AppModal) => void
