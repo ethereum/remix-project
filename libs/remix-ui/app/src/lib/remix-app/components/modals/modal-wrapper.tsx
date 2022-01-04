@@ -50,7 +50,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   }, [props])
 
   return (
-    <ModalDialog id='appDialog' {...state} handleHide={props.handleHide} />
+    <ModalDialog id={props.id} {...state} handleHide={props.handleHide} />
   )
 }
 export default ModalWrapper

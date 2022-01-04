@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react'
 import { modalActionTypes } from '../actions/modals'
+import { AlertModal, AppModal } from '../interface'
 import { modalReducer } from '../reducer/modals'
 import { ModalInitialState } from '../state/modals'
 import { ModalTypes } from '../types'
@@ -8,15 +9,16 @@ import { AppContext, dispatchModalContext, modalContext } from './context'
 export const ModalProvider = ({ children = [], reducer = modalReducer, initialState = ModalInitialState } = {}) => {
   const [{ modals, toasters, focusModal, focusToaster }, dispatch] = useReducer(reducer, initialState)
 
-  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: (value?:any) => void, cancelLabel?: string, cancelFn?: () => void, modalType?: ModalTypes, defaultValue?: string) => {
+  const modal = (data: AppModal) => {
+    const { title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue } = data
     dispatch({
       type: modalActionTypes.setModal,
       payload: { title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue }
     })
   }
 
-  const alert = (title: string, message?: string | JSX.Element) => {
-    modal(message ? title : 'Alert', message || title, 'OK', null, null, null)
+  const alert = (data: AlertModal) => {
+    modal({ title: data.title || 'Alert', message: data.message || data.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
   }
 
   const handleHideModal = () => {

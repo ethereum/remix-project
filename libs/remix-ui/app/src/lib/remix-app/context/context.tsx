@@ -1,14 +1,23 @@
 import React from 'react'
+import { AlertModal, AppModal } from '../interface'
 import { ModalInitialState } from '../state/modals'
 import { ModalTypes } from '../types'
 
-export const AppContext = React.createContext(null)
+export const AppContext = React.createContext<any>(null)
 
-export const dispatchModalContext = React.createContext({
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: (value?:any) => void, cancelLabel?: string, cancelFn?: () => void, modalType?: ModalTypes, defaultValue?: string) => { },
+export interface dispatchModalInterface {
+  modal: (data: AppModal) => void
+  toast: (message: string) => void
+  alert: (data: AlertModal) => void
+  handleHideModal: () => void,
+  handleToaster: () => void
+}
+
+export const dispatchModalContext = React.createContext<dispatchModalInterface>({
+  modal: (data: AppModal) => { },
   toast: (message: string) => {},
-  alert: (title: string, message?: string | JSX.Element) => {},
-  handleHideModal: () => { },
+  alert: (data: AlertModal) => {},
+  handleHideModal: () => {},
   handleToaster: () => {}
 })
 

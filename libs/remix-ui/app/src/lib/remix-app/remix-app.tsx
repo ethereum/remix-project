@@ -6,6 +6,7 @@ import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
+import DialogViewPlugin from './components/modals/dialogViewPlugin'
 
 interface IRemixAppUi {
   app: any
@@ -73,7 +74,8 @@ const RemixApp = (props: IRemixAppUi) => {
   const value = {
     settings: props.app.settings,
     showMatamo: props.app.showMatamo,
-    appManager: props.app.appManager
+    appManager: props.app.appManager,
+    modal: props.app.modal
   }
 
   return (
@@ -91,6 +93,7 @@ const RemixApp = (props: IRemixAppUi) => {
       </div>
       {components.hiddenPanel}
       <AppDialogs></AppDialogs>
+      <DialogViewPlugin></DialogViewPlugin>
     </AppProvider>
   )
 }

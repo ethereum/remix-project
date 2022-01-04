@@ -20,6 +20,7 @@ import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, Fetch
 import migrateFileSystem from './migrateFileSystem'
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
+import { ModalPlugin } from './app/plugins/modal'
 
 const isElectron = require('is-electron')
 
@@ -158,9 +159,12 @@ class AppComponent {
     )
     const contextualListener = new EditorContextListener()
 
+    self.modal = new ModalPlugin()
+
     const configPlugin = new ConfigPlugin()
 
     self.engine.register([
+      self.modal,
       configPlugin,
       blockchain,
       contentImport,
@@ -266,6 +270,7 @@ class AppComponent {
       console.log('couldn\'t register iframe plugins', e.message)
     }
 
+    await self.appManager.activatePlugin(['modal'])
     await self.appManager.activatePlugin(['editor'])
     await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
