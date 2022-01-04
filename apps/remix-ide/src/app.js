@@ -243,7 +243,6 @@ class AppComponent {
       contentImport
     )
 
-
     const testplugin = new ModalPluginTester()
     self.engine.register([
       testplugin,
