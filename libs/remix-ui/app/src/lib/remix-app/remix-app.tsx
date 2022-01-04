@@ -60,6 +60,13 @@ const RemixApp = (props: IRemixAppUi) => {
     props.app.sidePanel.events.on('showing', () => {
       setHideSidePanel(false)
     })
+
+    props.app.layout.event.on('minimizesidepanel', () => {
+      // the 'showing' event always fires from sidepanel, so delay this a bit
+      setTimeout(() => {
+        setHideSidePanel(true)
+      }, 1000)
+    })
   }
 
   const components = {
