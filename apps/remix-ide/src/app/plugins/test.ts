@@ -45,9 +45,9 @@ export class ModalPluginTester extends Plugin {
       id: 'myalert',
       message: 'alert message'
     }
-    this.call('modal', 'alert', al)
+    // this.call('modal', 'alert', al)
 
     // set toaster
-    this.call('modal', 'toast', 'toast message')
+    // this.call('modal', 'toast', 'toast message')
   }
 }
