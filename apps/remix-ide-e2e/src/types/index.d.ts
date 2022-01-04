@@ -17,7 +17,7 @@ declare module 'nightwatch' {
         testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
         goToVMTraceStep(step: number, incr?: number): NightwatchBrowser,
         checkVariableDebug(id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser,
-        addAtAddressInstance(address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser,
+        addAtAddressInstance(address: string, isValidFormat: boolean, isValidChecksum: boolean, isAbi?: boolean): NightwatchBrowser,
         modalFooterOKClick(id?: string): NightwatchBrowser,
         clickInstance(index: number): NightwatchBrowser,
         journalLastChildIncludes(val: string): NightwatchBrowser,
