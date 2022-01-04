@@ -1,11 +1,16 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BN } from 'ethereumjs-util'
 import { isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'
 
 export function ValueUI (props: ValueProps) {
   const inputValue = useRef(null)
+  const [sendValue, setSendValue] = useState<string>('')
+
+  useEffect(() => {
+    sendValue && props.setSendValue(sendValue)
+  }, [sendValue])
 
   const validateInputKey = (e) => {
     // preventing not numeric keys
@@ -13,31 +18,32 @@ export function ValueUI (props: ValueProps) {
     if (!isNumeric(e.key) ||
       (e.key === '0' && !parseInt(inputValue.current.value) && inputValue.current.value.length > 0)) {
       e.preventDefault()
-      e.stopImmediatePropagation()
     }
   }
 
-  const validateValue = () => {
-    if (!inputValue.current.value) {
+  const validateValue = (e) => {
+    const value = e.target.value
+
+    if (!value) {
       // assign 0 if given value is
       // - empty
-      inputValue.current.value = 0
+      setSendValue('0')
       return
     }
 
     let v
     try {
-      v = new BN(inputValue.current.value, 10)
-      inputValue.current.value = v.toString(10)
+      v = new BN(value, 10)
+      setSendValue(v.toString(10))
     } catch (e) {
       // assign 0 if given value is
       // - not valid (for ex 4345-54)
       // - contains only '0's (for ex 0000) copy past or edit
-      inputValue.current.value = 0
+      setSendValue('0')
     }
 
     // if giveen value is negative(possible with copy-pasting) set to 0
-    if (v.lt(0)) inputValue.current.value = 0
+    if (v.lt(0)) setSendValue('0')
   }
 
   return (
@@ -45,6 +51,7 @@ export function ValueUI (props: ValueProps) {
       <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Value</label>
       <div className="udapp_gasValueContainer">
         <input
+          ref={inputValue}
           type="number"
           min="0"
           pattern="^[0-9]"
@@ -52,7 +59,7 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          value={props.sendValue}
+          value={sendValue || '0'}
           title="Enter the value and choose the unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}

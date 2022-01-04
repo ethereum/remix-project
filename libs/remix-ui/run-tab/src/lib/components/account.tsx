@@ -123,7 +123,7 @@ export function AccountUI (props: AccountProps) {
         <div>
           <textarea
             id="prompt_text"
-            data-id="modalDialogCustomPromptText"
+            data-id="signMessageTextarea"
             style={{ width: '100%' }}
             rows={4}
             cols={50}

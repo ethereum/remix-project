@@ -42,7 +42,8 @@ export interface SettingsProps {
   tooltip: (toasterMsg: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string,
-  web3ProviderDialog: () => JSX.Element
+  web3ProviderDialog: () => JSX.Element,
+  setSendValue: (value: string) => void
 }
 
 export interface EnvironmentProps {
@@ -95,6 +96,7 @@ export interface GasPriceProps {
 
 export interface ValueProps {
   setUnit: (unit: 'ether' | 'finney' | 'gwei' | 'wei') => void,
+  setSendValue: (value: string) => void,
   sendValue: string,
   sendUnit: string
 }

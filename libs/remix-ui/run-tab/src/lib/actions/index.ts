@@ -717,3 +717,7 @@ export const updateScenarioPath = (path: string) => {
 export const getFuncABIInputs = (funcABI: FuncABI) => {
   return plugin.blockchain.getInputs(funcABI)
 }
+
+export const setSendTransactionValue = (value: string) => {
+  dispatch(setSendValue(value))
+}
