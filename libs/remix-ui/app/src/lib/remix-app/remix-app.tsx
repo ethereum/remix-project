@@ -1,11 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
-import RemixSplashScreen from './modals/splashscreen'
-import MatomoDialog from './modals/matomo'
-import AlertModal from './modals/alert'
-import AppContext from './context/context'
-import DragBar from './dragbar/dragbar'
 import { RemixUIMainPanel } from '@remix-ui/panel'
+import RemixSplashScreen from './components/splashscreen'
+import MatomoDialog from './components/modals/matomo'
+import OriginWarning from './components/modals/origin-warning'
+import DragBar from './components/dragbar/dragbar'
+import { AppProvider } from './context/provider'
+import AppDialogs from './components/modals/dialogs'
+import DialogViewPlugin from './components/modals/dialogViewPlugin'
+
 interface IRemixAppUi {
   app: any
 }
@@ -76,10 +79,18 @@ const RemixApp = (props: IRemixAppUi) => {
     hiddenPanel: <div ref={hiddenPanelRef}></div>
   }
 
+  const value = {
+    settings: props.app.settings,
+    showMatamo: props.app.showMatamo,
+    appManager: props.app.appManager,
+    modal: props.app.modal,
+    layout: props.app.layout
+  }
+
   return (
-    <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager, layout: props.app.layout }}>
+    <AppProvider value={value}>
       <RemixSplashScreen hide={appReady}></RemixSplashScreen>
-      <AlertModal></AlertModal>
+      <OriginWarning></OriginWarning>
       <MatomoDialog hide={!appReady}></MatomoDialog>
 
       <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
@@ -91,8 +102,9 @@ const RemixApp = (props: IRemixAppUi) => {
         </div>
       </div>
       {components.hiddenPanel}
-    </AppContext.Provider>
-
+      <AppDialogs></AppDialogs>
+      <DialogViewPlugin></DialogViewPlugin>
+    </AppProvider>
   )
 }
 
