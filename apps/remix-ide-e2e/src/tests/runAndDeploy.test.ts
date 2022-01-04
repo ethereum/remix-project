@@ -181,7 +181,7 @@ module.exports = {
       .useCss().switchBrowserTab(0)
       .refresh()
       .clickLaunchIcon('pluginManager') // load debugger and source verification
-    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_source-verification"] button')
+    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
