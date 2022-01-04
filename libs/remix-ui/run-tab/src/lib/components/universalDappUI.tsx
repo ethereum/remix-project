@@ -229,7 +229,7 @@ export function UniversalDappUI (props: UdappProps) {
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
           {
-            contractABI && contractABI.map((funcABI) => {
+            contractABI && contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null
               const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
@@ -243,6 +243,7 @@ export function UniversalDappUI (props: UdappProps) {
                 inputs={inputs}
                 evmBC={evmBC}
                 lookupOnly={lookupOnly}
+                key={index}
               />
             })
           }
