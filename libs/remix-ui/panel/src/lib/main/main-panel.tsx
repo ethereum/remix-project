@@ -43,14 +43,13 @@ const RemixUIMainPanel = () => {
     <div className="mainview">
       {Object.values(plugins).map((pluginRecord, i) => {
         return (
-          <>
+          <React.Fragment key={`mainView${i}`}>
             {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={pluginRecord.minimized || false} setHideStatus={() => {}} refObject={terminalRef}></DragBar> : null}
             <RemixUIPanelPlugin
               ref={refs[i]}
-              key={pluginRecord.profile.name}
               pluginRecord={pluginRecord}
             />
-          </>
+          </React.Fragment>
         )
       })}
     </div>
