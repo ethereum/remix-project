@@ -21,42 +21,42 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
-  const [toasterMsg, setToasterMsg] = useState('')
+  const [toasterMsg, setToasterMsg] = useState<string>('')
 
-  const [disableCreateButton, setDisableCreateButton] = useState(true)
-  const [disableGenerateButton, setDisableGenerateButton] = useState(false)
-  const [disableStopButton, setDisableStopButton] = useState(true)
-  const [disableRunButton, setDisableRunButton] = useState(false)
-  const [runButtonTitle, setRunButtonTitle] = useState('Run tests')
-  const [stopButtonLabel, setStopButtonLabel] = useState('Stop')
+  const [disableCreateButton, setDisableCreateButton] = useState<boolean>(true)
+  const [disableGenerateButton, setDisableGenerateButton] = useState<boolean>(false)
+  const [disableStopButton, setDisableStopButton] = useState<boolean>(true)
+  const [disableRunButton, setDisableRunButton] = useState<boolean>(false)
+  const [runButtonTitle, setRunButtonTitle] = useState<string>('Run tests')
+  const [stopButtonLabel, setStopButtonLabel] = useState<string>('Stop')
 
-  const [checkSelectAll, setCheckSelectAll] = useState(true)
+  const [checkSelectAll, setCheckSelectAll] = useState<boolean>(true)
   const [testsOutput, setTestsOutput] = useState<Element[]>([])
 
-  const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState(true)
-  const [progressBarHidden, setProgressBarHidden] = useState(true)
-  const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState(true)
+  const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState<boolean>(true)
+  const [progressBarHidden, setProgressBarHidden] = useState<boolean>(true)
+  const [testsExecutionStoppedErrorHidden, setTestsExecutionStoppedErrorHidden] = useState<boolean>(true)
 
   let [testFiles, setTestFiles] = useState<TestObject[]>([]) // eslint-disable-line
-  const [pathOptions, setPathOptions] = useState([''])
+  const [pathOptions, setPathOptions] = useState<string[]>([''])
 
-  const [inputPathValue, setInputPathValue] = useState('tests')
+  const [inputPathValue, setInputPathValue] = useState<string>('tests')
 
-  let [readyTestsNumber, setReadyTestsNumber] = useState(0) // eslint-disable-line
-  let [runningTestsNumber, setRunningTestsNumber] = useState(0) // eslint-disable-line
+  let [readyTestsNumber, setReadyTestsNumber] = useState<number>(0) // eslint-disable-line
+  let [runningTestsNumber, setRunningTestsNumber] = useState<number>(0) // eslint-disable-line
 
-  const hasBeenStopped = useRef(false)
-  const isDebugging = useRef(false)
-  const allTests: any = useRef([])
-  const selectedTests: any = useRef([])
-  const currentErrors: any = useRef([])
+  const hasBeenStopped = useRef<boolean>(false)
+  const isDebugging = useRef<boolean>(false)
+  const allTests = useRef<string[]>([])
+  const selectedTests = useRef<string[]>([])
+  const currentErrors:any = useRef([])
 
   const defaultPath = 'tests'
   let areTestsRunning = false
 
-  let runningTestFileName: any
-  const filesContent: any = {}
-  const testsResultByFilename: Record<string, any> = {}
+  let runningTestFileName: string
+  const filesContent: Record<string, Record<string, string>> = {}
+  const testsResultByFilename: Record<string, Record<string, Record<string, any>>> = {}
 
   const trimTestDirInput = (input: string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -71,7 +71,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setTestsExecutionStoppedErrorHidden(true)
   }
 
-  const updateForNewCurrent = async (file = null) => {
+  const updateForNewCurrent = async (file: string | null = null) => {
     // Ensure that when someone clicks on compilation error and that opens a new file
     // Test result, which is compilation error in this case, is not cleared
     if (currentErrors.current) {
@@ -90,6 +90,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       const tests = await testTabLogic.getTests()
       allTests.current = tests
       selectedTests.current = [...allTests.current]
+      console.log('allTests----->', allTests.current)
+      console.log('selectedTests----->', selectedTests.current)
       updateTestFileList()
       if (!areTestsRunning) await updateRunAction(file)
     } catch (e: any) {
@@ -132,12 +134,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
 
     testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
-    testTab.fileManager.events.on('currentFileChanged', async (file: any, provider: any) => await updateForNewCurrent(file))
+    testTab.fileManager.events.on('currentFileChanged', async (file: string, provider: any) => await updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
 
   const updateDirList = (path: string) => {
     testTabLogic.dirList(path).then((options: any) => {
+      console.log('options in testDir List--->', options)
       setPathOptions(options)
     })
   }
@@ -214,7 +217,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') + testSuite : fileName
   }
 
-  const startDebug = async (txHash: any, web3: any) => {
+  const startDebug = async (txHash: string, web3: any) => {
     isDebugging.current = true
     if (!await testTab.appManager.isActive('debugger')) await testTab.appManager.activatePlugin('debugger')
     testTab.call('menuicons', 'select', 'debugger')
@@ -223,6 +226,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const printHHLogs = (logsArr: any, testName: any) => {
     let finalLogs = `<b>${testName}:</b>\n`
+    console.log('logsArr======>', logsArr)
     for (const log of logsArr) {
       let formattedLog
       // Hardhat implements the same formatting options that can be found in Node.js' console.log,
@@ -262,7 +266,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const renderContract = (filename: any, contract: any, index: number, withoutLabel = false) => {
+  const renderContract = (filename: string, contract: string|null, index: number, withoutLabel = false) => {
     if (withoutLabel) {
       const contractCard: any = (
         <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
