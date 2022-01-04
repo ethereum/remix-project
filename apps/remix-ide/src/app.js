@@ -12,6 +12,7 @@ import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { FramingService } from './framingService'
+import { ModalPluginTester } from './app/plugins/test'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -242,7 +243,10 @@ class AppComponent {
       contentImport
     )
 
+
+    const testplugin = new ModalPluginTester()
     self.engine.register([
+      testplugin,
       compileTab,
       run,
       debug,
@@ -280,6 +284,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['walkthrough'])
+    await self.appManager.activatePlugin(['testerplugin'])
 
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()

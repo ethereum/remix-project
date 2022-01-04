@@ -4,6 +4,7 @@ export const ModalInitialState: ModalState = {
   modals: [],
   toasters: [],
   focusModal: {
+    id: '',
     hide: true,
     title: '',
     message: '',
