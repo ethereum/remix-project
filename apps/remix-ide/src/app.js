@@ -221,7 +221,7 @@ class AppComponent {
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    // self.mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
+  
     Registry.getInstance().put({ api: self.mainview, name: 'mainview' })
     const tabProxy = new TabProxy(fileManager, editor)
     self.engine.register([appPanel, tabProxy])
