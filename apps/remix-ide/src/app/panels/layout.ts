@@ -82,7 +82,9 @@ export class Layout extends Plugin {
       this.panels.terminal.minimized = true
       this.event.emit('change', null)
     }
-    // if (params.minimizesidepanel) // this.resizeFeature.hidePanel()
+    if (params.minimizesidepanel) {
+      this.event.emit('minimizesidepanel')
+    }
   }
 
   minimize (name: string, minimized:boolean): void {
