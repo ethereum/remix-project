@@ -16,7 +16,7 @@ import {
   clearPopUp, createNewBlockchainAccount,
   setPassphrasePrompt, setMatchPassphrasePrompt,
   signMessageWithAddress, getSelectedContract,
-  createInstance,
+  createInstance, setSendTransactionValue,
   updateBaseFeePerGas, updateConfirmSettings,
   updateGasPrice, updateGasPriceStatus,
   updateMaxFee, updateMaxPriorityFee,
@@ -228,6 +228,7 @@ export function RunTabUI (props: RunTabProps) {
             setAccount={setAccount}
             setUnit={setUnit}
             sendValue={runTab.sendValue}
+            setSendValue={setSendTransactionValue}
             sendUnit={runTab.sendUnit}
             gasLimit={runTab.gasLimit}
             setGasFee={setGasFee}
@@ -287,7 +288,7 @@ export function RunTabUI (props: RunTabProps) {
           />
         </div>
       </div>
-      <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
+      <ModalDialog id='udappNotify' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
       <PublishToStorage id='udapp' api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
     </Fragment>
