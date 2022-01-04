@@ -9,6 +9,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       modalList.push(action.payload)
       if (state.modals.length === 1 && state.focusModal.hide === true) { // if it's the first one show it
         const focusModal: AppModal = {
+          id: modalList[0].id,
           hide: false,
           title: modalList[0].title,
           message: modalList[0].message,

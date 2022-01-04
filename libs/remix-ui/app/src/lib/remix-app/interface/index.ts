@@ -1,6 +1,7 @@
 import { ModalTypes } from '../types'
 
 export interface AppModal {
+    id: string
     hide?: boolean
     title: string
     // eslint-disable-next-line no-undef
@@ -14,6 +15,7 @@ export interface AppModal {
 }
 
 export interface AlertModal {
+    id: string
     title?: string,
     message: string | JSX.Element,
 }
