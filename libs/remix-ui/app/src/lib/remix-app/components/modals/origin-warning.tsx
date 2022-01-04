@@ -20,14 +20,12 @@ const OriginWarning = () => {
       setContent(`The Remix IDE has moved to http://remix.ethereum.org.\n
       This instance of Remix you are visiting WILL NOT BE UPDATED.\n
       Please make a backup of your contracts and start using http://remix.ethereum.org`)
-    } else {
-      setContent('testing')
     }
   }, [])
 
   useEffect(() => {
     if (content) {
-      alert({ title: null, message: content })
+      alert({ id: 'warningOriging', title: null, message: content })
     }
   }, [content])
 

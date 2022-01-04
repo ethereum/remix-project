@@ -9,7 +9,7 @@ const AppDialogs = () => {
 
   return (
     <>
-      <ModalWrapper id={'appDialog'} {...focusModal} handleHide={handleHideModal}></ModalWrapper>
+      <ModalWrapper {...focusModal} handleHide={handleHideModal}></ModalWrapper>
       <Toaster message={focusToaster} handleHide={handleToaster} />
     </>)
 }

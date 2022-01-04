@@ -10,15 +10,15 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
   const [{ modals, toasters, focusModal, focusToaster }, dispatch] = useReducer(reducer, initialState)
 
   const modal = (data: AppModal) => {
-    const { title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue } = data
+    const { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue } = data
     dispatch({
       type: modalActionTypes.setModal,
-      payload: { title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue }
+      payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue }
     })
   }
 
   const alert = (data: AlertModal) => {
-    modal({ title: data.title || 'Alert', message: data.message || data.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
+    modal({ id: data.id, title: data.title || 'Alert', message: data.message || data.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
   }
 
   const handleHideModal = () => {

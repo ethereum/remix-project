@@ -10,6 +10,7 @@ interface ModalWrapperProps extends ModalDialogProps {
 
 const ModalWrapper = (props: ModalWrapperProps) => {
   const [state, setState] = useState<ModalDialogProps>()
+  const [modalInput, setModalInput] = useState<string>('')
   const ref = useRef()
 
   const onFinishPrompt = async () => {
@@ -21,11 +22,11 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     }
   }
 
-  const createModalMessage = () => {
+  const createModalMessage = (defaultValue: string) => {
     return (
       <>
         {props.message}
-        <input type={props.modalType === ModalTypes.password ? 'password' : 'text'} value={props.defaultValue} data-id="modalDialogCustomPromp" ref={ref} className="form-control" /></>
+        <input type={props.modalType === ModalTypes.password ? 'password' : 'text'} defaultValue={defaultValue} data-id="modalDialogCustomPromp" ref={ref} className="form-control" /></>
     )
   }
 
@@ -37,7 +38,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           setState({
             ...props,
             okFn: onFinishPrompt,
-            message: createModalMessage()
+            message: createModalMessage(props.defaultValue)
           })
           break
         default:
