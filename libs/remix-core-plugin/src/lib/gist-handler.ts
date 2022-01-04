@@ -1,5 +1,6 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
+import { AppModal, ModalTypes } from '@remix-ui/app'
 
 interface StringByString {
   [key: string]: string;
@@ -30,10 +31,22 @@ export class GistHandler extends Plugin {
         if (gistId) {
           cb(gistId)
         } else {
-          await this.call('modal', 'alert', 'Gist load error', 'Error while loading gist. Please provide a valid Gist ID or URL.')
+          const modalContent: AppModal = {
+            id: 'gisthandler',
+            title: 'Gist load error',
+            message: 'Error while loading gist. Please provide a valid Gist ID or URL.',
+            modalType: ModalTypes.alert
+          }
+          await this.call('modal', 'modal', modalContent)
         }
       } else {
-        await this.call('modal', 'alert', 'Gist load error', 'Error while loading gist. Id cannot be empty.')        
+        const modalContent: AppModal = {
+          id: 'gisthandler',
+          title: 'Gist load error',
+          message: 'Error while loading gist. Id cannot be empty.',
+          modalType: ModalTypes.alert
+        }
+        await this.call('modal', 'modal', modalContent)
       }
       return loadingFromGist
     } else {
@@ -52,11 +65,23 @@ export class GistHandler extends Plugin {
       try {
         data = (await fetch(`https://api.github.com/gists/${gistId}`)).json() as any
         if (!data.files) {
-          this.call('model', 'alert', 'Gist load error', data.message)
+          const modalContent: AppModal = {
+            id: 'gisthandler',
+            title: 'Gist load error',
+            message: data.message,
+            modalType: ModalTypes.alert
+          }
+          await this.call('modal', 'modal', modalContent)
           return
         }
       } catch (e: any) {
-        this.call('model', 'alert', 'Gist load error', e.message)
+        const modalContent: AppModal = {
+          id: 'gisthandler',
+          title: 'Gist load error',
+          message: e.message,
+          modalType: ModalTypes.alert
+        }
+        await this.call('modal', 'modal', modalContent)
         return
       }
             
@@ -68,8 +93,14 @@ export class GistHandler extends Plugin {
       this.call('fileManager', 'setBatchFiles', obj, 'workspace', true, async (errorSavingFiles: any) => {
         if (!errorSavingFiles) {
           const provider = await this.call('fileManager', 'getProviderByName', 'workspace')
-      } else {
-          this.call('model', 'alert', 'Gist load error', errorSavingFiles.message || errorSavingFiles)
+        } else {
+          const modalContent: AppModal = {
+            id: 'gisthandler',
+            title: 'Gist load error',
+            message:  errorSavingFiles.message || errorSavingFiles,
+            modalType: ModalTypes.alert
+          }
+          this.call('modal', 'modal', modalContent)
         }
       })
 
