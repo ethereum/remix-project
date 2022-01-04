@@ -102,7 +102,7 @@ iframe {
 
 .terminal-wrap {
     min-height: 35px;
-    height: 30%;
+    height: 20%;
 }
 
 .terminal-wrap.minimized {
