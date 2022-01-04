@@ -47,6 +47,7 @@ const RemixUIMainPanel = () => {
             {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={pluginRecord.minimized || false} setHideStatus={() => {}} refObject={terminalRef}></DragBar> : null}
             <RemixUIPanelPlugin
               ref={refs[i]}
+              key={pluginRecord.profile.name}
               pluginRecord={pluginRecord}
             />
           </React.Fragment>
