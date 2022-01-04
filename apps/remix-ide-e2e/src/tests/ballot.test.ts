@@ -84,8 +84,8 @@ module.exports = {
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
-      .waitForElementPresent('[data-id="fileSystem-modal-footer-ok-react"]')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .pause(5000)
       .execute(function () {
         const env: any = document.getElementById('selectExEnvOptions')
