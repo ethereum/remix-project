@@ -120,8 +120,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
           if (!errorLoadingFile) {
             const provider = plugin.fileManager.getProvider('workspace')
 
-            provider.lastLoadedGistId = gistId
-          } else {
+        } else {
             dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
           }
         })
