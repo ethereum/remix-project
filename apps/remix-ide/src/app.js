@@ -283,7 +283,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['walkthrough'])
-    
+
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()
     })

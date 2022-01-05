@@ -81,7 +81,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
       .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
-      .modalFooterCancelClick()
+      .modalFooterCancelClick('gisthandler')
   },
 
   'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
@@ -91,10 +91,10 @@ module.exports = {
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.invalidGistId)
-      .modalFooterOKClick()
+      .modalFooterOKClick('gisthandler')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Not Found')
-      .modalFooterOKClick()
+      .modalFooterOKClick('gisthandler')
   },
 
   'Display Error Message For Missing Gist Token When Publishing': function (browser: NightwatchBrowser) {
