@@ -46,8 +46,8 @@ export class GistHandler extends Plugin {
       } catch (e) {
         // the modal has been canceled
         return
-      }     
-      
+      }
+
       if (value !== '') {
         gistId = getGistId(value)
         if (gistId) {
@@ -78,7 +78,7 @@ export class GistHandler extends Plugin {
       cb(gistId)
     }
     return loadingFromGist
-  }  
+  }
 
   load (gistId: String | null) {
     const self = this
@@ -106,7 +106,7 @@ export class GistHandler extends Plugin {
         await this.call('modal', 'modal', modalContent)
         return
       }
-            
+
       const obj: StringByString = {}
       Object.keys(data.files).forEach((element) => {
         const path = element.replace(/\.\.\./g, '/')
@@ -119,14 +119,14 @@ export class GistHandler extends Plugin {
           const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
-            message:  errorSavingFiles.message || errorSavingFiles,
+            message: errorSavingFiles.message || errorSavingFiles,
             modalType: 'alert'
           }
           this.call('modal', 'modal', modalContent)
         }
       })
 
-      
+
     })
   }
 }
