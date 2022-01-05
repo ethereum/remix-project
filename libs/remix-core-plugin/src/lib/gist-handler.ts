@@ -24,20 +24,29 @@ export class GistHandler extends Plugin {
     var loadingFromGist = false
     if (!gistId) {
       loadingFromGist = true
-      const value = await (() => {
-        return new Promise((resolve, reject) => {
-          const modalContent = {
-            id: 'gisthandler',
-            title: 'Load a Gist',
-            message: 'Enter the ID of the Gist or URL you would like to load.',
-            modalType: 'prompt',
-            okFn: (value) => {
-              resolve(value)
+      let value
+      try {
+        value = await (() => {
+          return new Promise((resolve, reject) => {
+            const modalContent = {
+              id: 'gisthandler',
+              title: 'Load a Gist',
+              message: 'Enter the ID of the Gist or URL you would like to load.',
+              modalType: 'prompt',
+              okFn: (value) => {
+                setTimeout(() => resolve(value), 0)
+              },
+              cancelFn: () => {
+                setTimeout(() => reject(), 0)
+              }
             }
-          }
-          this.call('modal', 'modal', modalContent)
-        })
-      })()
+            this.call('modal', 'modal', modalContent)
+          })
+        })()
+      } catch (e) {
+        // the modal has been canceled
+        return
+      }     
       
       if (value !== '') {
         gistId = getGistId(value)
@@ -50,16 +59,16 @@ export class GistHandler extends Plugin {
             message: 'Error while loading gist. Please provide a valid Gist ID or URL.',
             modalType: 'alert'
           }
-          await this.call('modal', 'modal', modalContent)
+          this.call('modal', 'modal', modalContent)
         }
       } else {
         const modalContent = {
-          id: 'gisthandler',
+          id: 'gisthandlerEmpty',
           title: 'Gist load error',
           message: 'Error while loading gist. Id cannot be empty.',
           modalType: 'alert'
         }
-        await this.call('modal', 'modal', modalContent)
+        this.call('modal', 'modal', modalContent)
       }
       return loadingFromGist
     } else {
