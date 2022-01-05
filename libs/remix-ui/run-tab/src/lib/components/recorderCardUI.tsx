@@ -16,7 +16,7 @@ export function RecorderUI (props: RecorderProps) {
           </div>
         </div>
         <div>
-          <div><i className="udapp_arrow fas fa-angle-down"></i></div>
+          <div><i className="udapp_arrow fas fa-angle-down" data-id="udapp_arrow"></i></div>
         </div>
       </div>
     )
@@ -43,7 +43,7 @@ export function RecorderUI (props: RecorderProps) {
               <i className="fas fa-save savetransaction udapp_recorder udapp_icon"
                 onClick={triggerRecordButton} title="Save Transactions" aria-hidden="true">
               </i>
-              <i className="fas fa-play runtransaction udapp_runTxs udapp_icon" title="Run Transactions" aria-hidden="true" onClick={handleClickRunButton}></i>
+              <i className="fas fa-play runtransaction udapp_runTxs udapp_icon" title="Run Transactions" data-id="runtransaction" aria-hidden="true" onClick={handleClickRunButton}></i>
             </div>
           </div>
         </TreeViewItem>

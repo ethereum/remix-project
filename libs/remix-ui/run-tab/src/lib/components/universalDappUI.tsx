@@ -104,7 +104,7 @@ export function UniversalDappUI (props: UdappProps) {
     props.removeInstance(props.index)
   }
 
-  const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues) => {
+  const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
     const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
     const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
 
@@ -121,7 +121,8 @@ export function UniversalDappUI (props: UdappProps) {
       props.logBuilder,
       props.mainnetPrompt,
       props.gasEstimationPrompt,
-      props.passphrasePrompt)
+      props.passphrasePrompt,
+      funcIndex)
   }
 
   const extractDataDefault = (item, parent?) => {
@@ -235,27 +236,34 @@ export function UniversalDappUI (props: UdappProps) {
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
               const inputs = props.getFuncABIInputs(funcABI)
 
-              return <ContractGUI
-                funcABI={funcABI}
-                clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
-                  runTransaction(lookupOnly, funcABI, valArray, inputsValues)
-                }}
-                inputs={inputs}
-                evmBC={evmBC}
-                lookupOnly={lookupOnly}
-                key={index}
-              />
+              return <>
+                <ContractGUI
+                  funcABI={funcABI}
+                  clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
+                    runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
+                  }}
+                  inputs={inputs}
+                  evmBC={evmBC}
+                  lookupOnly={lookupOnly}
+                  key={index}
+                />
+                <div className="udapp_value" data-id="udapp_value">
+                  <TreeView id="treeView">
+                    {
+                      Object.keys(props.instance.decodedResponse || {}).map((key) => {
+                        const funcIndex = index.toString()
+                        const response = props.instance.decodedResponse[key]
+
+                        return key === funcIndex ? Object.keys(response || {}).map((innerkey) => {
+                          return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
+                        }) : null
+                      })
+                    }
+                  </TreeView>
+                </div>
+              </>
             })
           }
-          <div className="udapp_value">
-            <TreeView id="treeView">
-              {
-                Object.keys(props.instance.decodedResponse || {}).map((innerkey) => {
-                  return renderData(props.instance.decodedResponse[innerkey], props.instance.decodedResponse, innerkey, innerkey)
-                })
-              }
-            </TreeView>
-          </div>
         </div>
         <div className="d-flex flex-column">
           <div className="d-flex flex-row justify-content-between mt-2">
