@@ -86,6 +86,7 @@ module.exports = {
 
   'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
     browser
+      .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
@@ -99,6 +100,7 @@ module.exports = {
 
   'Display Error Message For Missing Gist Token When Publishing': function (browser: NightwatchBrowser) {
     browser
+      .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('settings')
       .waitForElementVisible('[data-id="settingsTabRemoveGistToken"]')
