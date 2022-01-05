@@ -37,7 +37,7 @@ export class GistHandler extends Plugin {
                 setTimeout(() => resolve(value), 0)
               },
               cancelFn: () => {
-                setTimeout(() => reject("Canceled"), 0)
+                setTimeout(() => reject(new Error('Canceled')), 0)
               }
             }
             this.call('modal', 'modal', modalContent)
