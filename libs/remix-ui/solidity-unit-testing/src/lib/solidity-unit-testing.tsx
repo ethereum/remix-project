@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect, ReactElement } from 'react' // eslint-disable-line
 import { eachOfSeries } from 'async' // eslint-disable-line
+import type Web3 from 'web3'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 
-const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line
-
-/* eslint-disable-next-line */
-export interface SolidityUnitTestingProps { }
+const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line @typescript-eslint/no-explicit-any
 
 interface TestObject {
   fileName: string
@@ -18,7 +16,7 @@ interface TestObject {
 
 interface TestResultInterface {
   type: string
-  value: any
+  value: any  // eslint-disable-line @typescript-eslint/no-explicit-any
   time?: number
   context?: string
   errMsg?: string
@@ -28,7 +26,7 @@ interface TestResultInterface {
   expected?: string | number
   location?: string
   hhLogs?: []
-  web3?: any
+  web3?: Web3
   debugTxHash?: string
   rendered?: boolean
 }
@@ -36,11 +34,11 @@ interface TestResultInterface {
 interface FinalResult {
   totalPassing: number,
   totalFailing: number,
-  totalTime: any,
-  errors: any[],
+  totalTime: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  errors: any[],  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export const SolidityUnitTesting = (props: Record<string, any>) => {
+export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
@@ -73,14 +71,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const isDebugging = useRef<boolean>(false)
   const allTests = useRef<string[]>([])
   const selectedTests = useRef<string[]>([])
-  const currentErrors:any = useRef([])
+  const currentErrors:any = useRef([]) // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const defaultPath = 'tests'
   let areTestsRunning = false
 
   let runningTestFileName: string
   const filesContent: Record<string, Record<string, string>> = {}
-  const testsResultByFilename: Record<string, Record<string, Record<string, any>>> = {}
+  const testsResultByFilename: Record<string, Record<string, Record<string, any>>> = {} // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const trimTestDirInput = (input: string) => {
     if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
@@ -116,7 +114,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       selectedTests.current = [...allTests.current]
       updateTestFileList()
       if (!areTestsRunning) await updateRunAction(file)
-    } catch (e: any) {
+    } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       console.log(e)
       setToasterMsg(e)
     }
@@ -156,7 +154,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
 
     testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
-    testTab.fileManager.events.on('currentFileChanged', async (file: string, provider: any) => await updateForNewCurrent(file))
+    testTab.fileManager.events.on('currentFileChanged', async (file: string) => await updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
 
@@ -166,7 +164,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
   }
 
-  const handleTestDirInput = async (e: any) => {
+  const handleTestDirInput = async (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     let testDirInput = trimTestDirInput(e.target.value)
     testDirInput = helper.removeMultipleSlashes(testDirInput)
     if (testDirInput !== '/') testDirInput = helper.removeTrailingSlashes(testDirInput)
@@ -207,7 +205,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const handleEnter = async (e: any) => {
+  const handleEnter = async (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     let inputPath = e.target.value
     inputPath = helper.removeMultipleSlashes(trimTestDirInput(inputPath))
     setInputPathValue(inputPath)
@@ -238,14 +236,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') + testSuite : fileName
   }
 
-  const startDebug = async (txHash: string, web3: any) => {
+  const startDebug = async (txHash: string, web3: Web3) => {
     isDebugging.current = true
     if (!await testTab.appManager.isActive('debugger')) await testTab.appManager.activatePlugin('debugger')
     testTab.call('menuicons', 'select', 'debugger')
     testTab.call('debugger', 'debug', txHash, web3)
   }
 
-  const printHHLogs = (logsArr: Record<string, any>[], testName: string) => {
+  const printHHLogs = (logsArr: Record<string, any>[], testName: string) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     let finalLogs = `<b>${testName}:</b>\n`
     for (const log of logsArr) {
       let formattedLog
@@ -430,7 +428,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         } else if (contract === 'errors' && fileTestsResult['errors']) {
           const errors = fileTestsResult['errors']
           if (errors && errors.errors) {
-            errors.errors.forEach((err: any) => {
+            errors.errors.forEach((err: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
               const errorCard: ReactElement = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
               setTestsOutput(prevCards => ([...prevCards, errorCard]))
             })
@@ -461,7 +459,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const testCallback = (result: Record<string, any>) => {
+  const testCallback = (result: Record<string, any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (result.filename) {
       if (!testsResultByFilename[result.filename]) {
         testsResultByFilename[result.filename] = {}
@@ -479,7 +477,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const resultsCallback = (_err: any, result: any, cb: any) => {
+  const resultsCallback = (_err: any, result: any, cb: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     // total stats for the test
     // result.passingNum
     // result.failureNum
@@ -487,7 +485,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     cb()
   }
 
-  const updateFinalResult = (_errors: any, result: FinalResult|null, filename: string) => {
+  const updateFinalResult = (_errors: any, result: FinalResult|null, filename: string) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     ++readyTestsNumber
     setReadyTestsNumber(readyTestsNumber)
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
@@ -524,7 +522,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const runTest = (testFilePath: string, callback: any) => {
+  const runTest = (testFilePath: string, callback: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     isDebugging.current = false
     if (hasBeenStopped.current) {
       updateFinalResult(null, null, testFilePath)
@@ -550,14 +548,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       testTab.testRunner.runTestSources(
         runningTests,
         compilerConfig,
-        (result: Record<string, any>) => testCallback(result),
-        (_err: any, result: any, cb: any) => resultsCallback(_err, result, cb),
+        (result: Record<string, any>) => testCallback(result), // eslint-disable-line @typescript-eslint/no-explicit-any
+        (_err: any, result: any, cb: any) => resultsCallback(_err, result, cb), // eslint-disable-line @typescript-eslint/no-explicit-any
         deployCb,
-        (error: any, result: any) => {
+        (error: any, result: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           updateFinalResult(error, result, testFilePath)
           callback(error)
-        }, (url: string, cb: any) => {
-          return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: Error) => cb(error.message))
+        }, (url: string, cb: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+          return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: Error) => cb(error.message)) // eslint-disable-line @typescript-eslint/no-explicit-any
         }, { testFilePath }
       )
     }).catch((error: Error) => {
@@ -580,13 +578,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
     _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
-    eachOfSeries(tests, (value: string, key: string, callback: any) => {
+    eachOfSeries(tests, (value: string, key: string, callback: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
       if (hasBeenStopped.current) return
       runTest(value, callback)
     })
   }
 
-  const updateRunAction = async (currentFile: any = null) => {
+  const updateRunAction = async (currentFile: any = null) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const isSolidityActive = await testTab.appManager.isActive('solidity')
     if (!isSolidityActive || !selectedTests.current?.length) {
       // setDisableRunButton(true)
@@ -627,7 +625,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     } else setCheckSelectAll(false)
   }
 
-  const checkAll = (event: any) => {
+  const checkAll = (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     testFiles.forEach((testFileObj) => testFileObj.checked = event.target.checked)
     setTestFiles(testFiles)
     setCheckSelectAll(event.target.checked)
@@ -698,7 +696,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             title="Generate sample test file."
             disabled={disableGenerateButton}
             onClick={async () => {
-              testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)})
+              testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
               await updateForNewCurrent()
             }}
           >
