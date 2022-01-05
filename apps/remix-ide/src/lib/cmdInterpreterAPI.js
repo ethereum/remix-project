@@ -33,7 +33,7 @@ class CmdInterpreterAPI {
 
   log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
   loadgist (id, cb) {
-    this._components.terminal.call('loadFromGistHandler', 'load', id)
+    this._components.terminal.call('gistHandler', 'load', id)
     if (cb) cb()
   }
 

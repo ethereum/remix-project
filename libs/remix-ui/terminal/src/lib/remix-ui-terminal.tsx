@@ -178,7 +178,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   function loadgist (id, cb) {
-    gistHandler.loadFromGist({ gist: id }, _deps.fileManager)
+    props.plugin.call('gistHandler', 'load', id)
     if (cb) cb()
   }
 

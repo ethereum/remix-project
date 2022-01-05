@@ -1,6 +1,5 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import { AppModal, ModalTypes } from '@remix-ui/app'
 
 interface StringByString {
   [key: string]: string;
@@ -25,26 +24,40 @@ export class GistHandler extends Plugin {
     var loadingFromGist = false
     if (!gistId) {
       loadingFromGist = true
-      let value: string = await this.call('modal', 'prompt-value', 'Load a Gist', 'Enter the ID of the Gist or URL you would like to load.', null)
+      const value = await (() => {
+        return new Promise((resolve, reject) => {
+          const modalContent = {
+            id: 'gisthandler',
+            title: 'Load a Gist',
+            message: 'Enter the ID of the Gist or URL you would like to load.',
+            modalType: 'prompt',
+            okFn: (value) => {
+              resolve(value)
+            }
+          }
+          this.call('modal', 'modal', modalContent)
+        })
+      })()
+      
       if (value !== '') {
         gistId = getGistId(value)
         if (gistId) {
           cb(gistId)
         } else {
-          const modalContent: AppModal = {
+          const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
             message: 'Error while loading gist. Please provide a valid Gist ID or URL.',
-            modalType: ModalTypes.alert
+            modalType: 'alert'
           }
           await this.call('modal', 'modal', modalContent)
         }
       } else {
-        const modalContent: AppModal = {
+        const modalContent = {
           id: 'gisthandler',
           title: 'Gist load error',
           message: 'Error while loading gist. Id cannot be empty.',
-          modalType: ModalTypes.alert
+          modalType: 'alert'
         }
         await this.call('modal', 'modal', modalContent)
       }
@@ -63,23 +76,23 @@ export class GistHandler extends Plugin {
     return self.handleLoad(gistId, async (gistId: String | null) => {
       let data: any
       try {
-        data = (await fetch(`https://api.github.com/gists/${gistId}`)).json() as any
+        data = await (await fetch(`https://api.github.com/gists/${gistId}`)).json() as any
         if (!data.files) {
-          const modalContent: AppModal = {
+          const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
             message: data.message,
-            modalType: ModalTypes.alert
+            modalType: 'alert'
           }
           await this.call('modal', 'modal', modalContent)
           return
         }
       } catch (e: any) {
-        const modalContent: AppModal = {
+        const modalContent = {
           id: 'gisthandler',
           title: 'Gist load error',
           message: e.message,
-          modalType: ModalTypes.alert
+          modalType: 'alert'
         }
         await this.call('modal', 'modal', modalContent)
         return
@@ -94,11 +107,11 @@ export class GistHandler extends Plugin {
         if (!errorSavingFiles) {
           const provider = await this.call('fileManager', 'getProviderByName', 'workspace')
         } else {
-          const modalContent: AppModal = {
+          const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
             message:  errorSavingFiles.message || errorSavingFiles,
-            modalType: ModalTypes.alert
+            modalType: 'alert'
           }
           this.call('modal', 'modal', modalContent)
         }
