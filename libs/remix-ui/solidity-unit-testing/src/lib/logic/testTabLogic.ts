@@ -5,6 +5,7 @@ export class TestTabLogic {
     fileManager
     currentPath
     helper
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor (fileManager: any, helper: any) {
         this.fileManager = fileManager
         this.helper = helper
@@ -26,7 +27,7 @@ export class TestTabLogic {
         if (!path || !(/\S/.test(path))) return
         path = this.helper.removeMultipleSlashes(path)
         const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-        fileProvider.exists(path).then((res: any) => {
+        fileProvider.exists(path).then((res: boolean) => {
         if (!res) fileProvider.createDir(path)
         })
     }
@@ -35,11 +36,12 @@ export class TestTabLogic {
         // Checking to ignore the value which contains only whitespaces
         if (!path || !(/\S/.test(path))) return
         const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-        const res = await fileProvider.exists(path, (e: any, res: any) => { return res })
+        const res = await fileProvider.exists(path, (e: Error, res: boolean) => { return res })
         return res
     }
 
-    generateTestFile (errorCb: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    generateTestFile (errorCb:any) {
         let fileName = this.fileManager.currentFile()
         const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
         if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'
@@ -47,7 +49,7 @@ export class TestTabLogic {
         if (!fileProvider) return
         const splittedFileName = fileName.split('/')
         const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
-        this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error: any, newFile: any) => {
+        this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error: Error, newFile: string) => {
             if (error) return errorCb('Failed to create file. ' + newFile + ' ' + error)
             const isFileCreated = fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))
             if (!isFileCreated) return errorCb('Failed to create test file ' + newFile)
@@ -72,7 +74,7 @@ export class TestTabLogic {
         let files = []
         try {
             if (await this.fileManager.exists(this.currentPath)) files = await this.fileManager.readdir(this.currentPath)
-        } catch (e: any) {
+        } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
             throw e.message
         }
         for (const file in files) {
@@ -84,7 +86,7 @@ export class TestTabLogic {
 
     // @todo(#2758): If currently selected file is compiled and compilation result is available,
     // 'contractName' should be <compiledContractName> + '_testSuite'
-    generateTestContractSample (hasCurrent: any, fileToImport: any, contractName = 'testSuite') {
+    generateTestContractSample (hasCurrent: boolean, fileToImport: string, contractName = 'testSuite') {
         let relative = remixPath.relative(this.currentPath, remixPath.dirname(fileToImport))
         if (relative === '') relative = '.'
         const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// <import file to test>'
