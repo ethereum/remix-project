@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useRef, useEffect, ReactElement } from 'react' // eslint-disable-line
 import { eachOfSeries } from 'async' // eslint-disable-line
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
@@ -55,7 +55,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   const [stopButtonLabel, setStopButtonLabel] = useState<string>('Stop')
 
   const [checkSelectAll, setCheckSelectAll] = useState<boolean>(true)
-  const [testsOutput, setTestsOutput] = useState<Element[]>([])
+  const [testsOutput, setTestsOutput] = useState<ReactElement[]>([])
 
   const [testsExecutionStoppedHidden, setTestsExecutionStoppedHidden] = useState<boolean>(true)
   const [progressBarHidden, setProgressBarHidden] = useState<boolean>(true)
@@ -288,7 +288,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const renderContract = (filename: string, contract: string|null, index: number, withoutLabel = false) => {
     if (withoutLabel) {
-      const contractCard: any = (
+      const contractCard: ReactElement = (
         <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
           <span className="font-weight-bold">{contract ? contract : ''} ({filename})</span>
         </div>
@@ -315,13 +315,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     </div>)
     }
     // show contract and file name with label
-    const ContractCard: any = (
+    const ContractCard: ReactElement = (
       <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
         {label}<span className="font-weight-bold">{contract} ({filename})</span>
       </div>
     )
     setTestsOutput(prevCards => {
-      const index = prevCards.findIndex((card: any) => card.props.id === runningTestFileName)
+      const index = prevCards.findIndex((card: ReactElement) => card.props.id === runningTestFileName)
       prevCards[index] = ContractCard
       return prevCards
     })
@@ -345,7 +345,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         }
         if (test.type === 'testPass') {
           if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
-          const testPassCard: any = (
+          const testPassCard: ReactElement = (
             <div
               id={runningTestFileName}
               data-id="testTabSolidityUnitTestsOutputheader"
@@ -363,7 +363,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         } else if (test.type === 'testFailure') {
           if (test.hhLogs && test.hhLogs.length) printHHLogs(test.hhLogs, test.value)
           if (!test.assertMethod) {
-            const testFailCard1: any = (<div
+            const testFailCard1: ReactElement = (<div
               className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
               id={"UTContext" + test.context}
               onClick={() => { if(test.location) highlightLocation(test.location, test.filename)}}
@@ -380,7 +380,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             const preposition = test.assertMethod === 'equal' || test.assertMethod === 'notEqual' ? 'to' : ''
             const method = test.assertMethod === 'ok' ? '' : test.assertMethod
             const expected = test.assertMethod === 'ok' ? '\'true\'' : test.expected
-            const testFailCard2: any = (<div
+            const testFailCard2: ReactElement = (<div
               className="bg-light mb-2 px-2 testLog d-flex flex-column text-danger border-0"
               id={"UTContext" + test.context}
               onClick={() => { if(test.location) highlightLocation(test.location, test.filename)}}
@@ -431,17 +431,17 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           const errors = fileTestsResult['errors']
           if (errors && errors.errors) {
             errors.errors.forEach((err: any) => {
-              const errorCard: any = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
+              const errorCard: ReactElement = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
               setTestsOutput(prevCards => ([...prevCards, errorCard]))
             })
           } else if (errors && Array.isArray(errors) && (errors[0].message || errors[0].formattedMessage)) {
             errors.forEach((err) => {
-              const errorCard: any = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
+              const errorCard: ReactElement = <Renderer message={err.formattedMessage || err.message} plugin={testTab} opt={{ type: err.severity, errorType: err.type }} />
               setTestsOutput(prevCards => ([...prevCards, errorCard]))
             })
           } else if (errors && !errors.errors && !Array.isArray(errors)) {
             // To track error like this: https://github.com/ethereum/remix/pull/1438
-            const errorCard: any = <Renderer message={errors.formattedMessage || errors.message} plugin={testTab} opt={{ type: 'error' }} />
+            const errorCard: ReactElement = <Renderer message={errors.formattedMessage || errors.message} plugin={testTab} opt={{ type: 'error' }} />
             setTestsOutput(prevCards => ([...prevCards, errorCard]))
           }
         }
@@ -449,7 +449,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       // show summary
       const testSummary = fileTestsResult['summary']
       if (testSummary && testSummary.filename && !testSummary.rendered) {
-        const summaryCard: any = (<div className="d-flex alert-secondary mb-3 p-3 flex-column">
+        const summaryCard: ReactElement = (<div className="d-flex alert-secondary mb-3 p-3 flex-column">
           <span className="font-weight-bold">Result for {testSummary.filename}</span>
           <span className="text-success">Passed: {testSummary.passed}</span>
           <span className="text-danger">Failed: {testSummary.failed}</span>
@@ -556,8 +556,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         (error: any, result: any) => {
           updateFinalResult(error, result, testFilePath)
           callback(error)
-        }, (url: any, cb: any) => {
-          return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: any) => cb(error.message))
+        }, (url: string, cb: any) => {
+          return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: Error) => cb(error.message))
         }, { testFilePath }
       )
     }).catch((error: Error) => {
