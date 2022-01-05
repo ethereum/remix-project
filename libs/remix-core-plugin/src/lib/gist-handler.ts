@@ -1,3 +1,4 @@
+/* global fetch */
 'use strict'
 import { Plugin } from '@remixproject/engine'
 
@@ -13,7 +14,6 @@ const profile = {
 }
 
 export class GistHandler extends Plugin {
-
   constructor () {
     super(profile)
   }
@@ -37,7 +37,7 @@ export class GistHandler extends Plugin {
                 setTimeout(() => resolve(value), 0)
               },
               cancelFn: () => {
-                setTimeout(() => reject(), 0)
+                setTimeout(() => reject("Canceled"), 0)
               }
             }
             this.call('modal', 'modal', modalContent)
@@ -113,9 +113,7 @@ export class GistHandler extends Plugin {
         obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
       })
       this.call('fileManager', 'setBatchFiles', obj, 'workspace', true, async (errorSavingFiles: any) => {
-        if (!errorSavingFiles) {
-          const provider = await this.call('fileManager', 'getProviderByName', 'workspace')
-        } else {
+        if (errorSavingFiles) {
           const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
@@ -125,8 +123,6 @@ export class GistHandler extends Plugin {
           this.call('modal', 'modal', modalContent)
         }
       })
-
-
     })
   }
 }
