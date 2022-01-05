@@ -16,7 +16,7 @@ interface TestObject {
   checked: boolean
 }
 
-export interface TestResultInterface {
+interface TestResultInterface {
   type: string
   value: any
   time?: number
@@ -31,6 +31,13 @@ export interface TestResultInterface {
   web3?: any
   debugTxHash?: string
   rendered?: boolean
+}
+
+interface FinalResult {
+  totalPassing: number,
+  totalFailing: number,
+  totalTime: any,
+  errors: any[],
 }
 
 export const SolidityUnitTesting = (props: Record<string, any>) => {
@@ -107,8 +114,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       const tests = await testTabLogic.getTests()
       allTests.current = tests
       selectedTests.current = [...allTests.current]
-      console.log('allTests----->', allTests.current)
-      console.log('selectedTests----->', selectedTests.current)
       updateTestFileList()
       if (!areTestsRunning) await updateRunAction(file)
     } catch (e: any) {
@@ -482,7 +487,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     cb()
   }
 
-  const updateFinalResult = (_errors: any, result: any, filename: any) => {
+  const updateFinalResult = (_errors: any, result: FinalResult|null, filename: string) => {
     ++readyTestsNumber
     setReadyTestsNumber(readyTestsNumber)
     if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
@@ -519,14 +524,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
   }
 
-  const runTest = (testFilePath: any, callback: any) => {
+  const runTest = (testFilePath: string, callback: any) => {
     isDebugging.current = false
     if (hasBeenStopped.current) {
-      updateFinalResult(null, null, null)
+      updateFinalResult(null, null, testFilePath)
       return
     }
-    testTab.fileManager.readFile(testFilePath).then((content: any) => {
-      const runningTests: any = {}
+    testTab.fileManager.readFile(testFilePath).then((content: string) => {
+      const runningTests: Record<string, Record<string, string>> = {}
       runningTests[testFilePath] = { content }
       filesContent[testFilePath] = { content }
       const { currentVersion, evmVersion, optimize, runs, isUrl } = testTab.compileTab.getCurrentCompilerConfig()
@@ -538,14 +543,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      const deployCb = async (file: any, contractAddress: any) => {
+      const deployCb = async (file: string, contractAddress: string) => {
         const compilerData = await testTab.call('compilerArtefacts', 'getCompilerAbstract', file)
         await testTab.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilerData)
       }
       testTab.testRunner.runTestSources(
         runningTests,
         compilerConfig,
-        (result: any) => testCallback(result),
+        (result: Record<string, any>) => testCallback(result),
         (_err: any, result: any, cb: any) => resultsCallback(_err, result, cb),
         deployCb,
         (error: any, result: any) => {
@@ -555,7 +560,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: any) => cb(error.message))
         }, { testFilePath }
       )
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
       console.log(error)
       if (error) return // eslint-disable-line
     })
@@ -571,11 +576,11 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     setDisableStopButton(false)
     clearResults()
     setProgressBarHidden(false)
-    const tests = selectedTests.current
+    const tests: string[] = selectedTests.current
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
     _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
-    eachOfSeries(tests, (value: any, key: any, callback: any) => {
+    eachOfSeries(tests, (value: string, key: string, callback: any) => {
       if (hasBeenStopped.current) return
       runTest(value, callback)
     })
@@ -605,7 +610,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     return selectedTestsList.map(testFileObj => testFileObj.fileName)
   }
 
-  const toggleCheckbox = (eChecked: any, index: any) => {
+  const toggleCheckbox = (eChecked: boolean, index: number) => {
     testFiles[index].checked = eChecked
     setTestFiles(testFiles)
     selectedTests.current = getCurrentSelectedTests()
@@ -637,7 +642,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const updateTestFileList = () => {
     if (allTests.current?.length) {
-      testFiles = allTests.current.map((testFile: any) => { return { 'fileName': testFile, 'checked': true } })
+      testFiles = allTests.current.map((testFile: string) => { return { 'fileName': testFile, 'checked': true } })
       setCheckSelectAll(true)
     }
     else
@@ -723,7 +728,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           />
           <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
         </div>
-        <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: any, index) => {
+        <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: TestObject, index) => {
           const elemId = `singleTest${testFileObj.fileName}`
           return (
             <div className="d-flex align-items-center py-1" key={index}>
