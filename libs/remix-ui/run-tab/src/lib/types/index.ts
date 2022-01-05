@@ -204,7 +204,7 @@ export interface InstanceContainerProps {
       contractData?: ContractData,
       address: string,
       name: string,
-      decodedResponse?: any,
+      decodedResponse?: Record<number, any>,
       abi?: any
     }[],
     error: string
@@ -213,7 +213,7 @@ export interface InstanceContainerProps {
   removeInstance: (index: number) => void,
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
-    index: number,
+    instanceIndex: number,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -224,7 +224,8 @@ export interface InstanceContainerProps {
     logBuilder: (msg: string) => JSX.Element,
     mainnetPrompt: MainnetPrompt,
     gasEstimationPrompt: (msg: string) => JSX.Element,
-    passphrasePrompt: (msg: string) => JSX.Element) => void,
+    passphrasePrompt: (msg: string) => JSX.Element,
+    funcIndex?: number) => void,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   logBuilder: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
@@ -277,7 +278,7 @@ export interface UdappProps {
     contractData?: ContractData,
     address: string,
     name: string,
-    decodedResponse?: any,
+    decodedResponse?: Record<number, any>,
     abi?: any
   },
   context: 'memory' | 'blockchain',
@@ -288,7 +289,7 @@ export interface UdappProps {
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
-    index: number,
+    instanceIndex: number,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -299,7 +300,8 @@ export interface UdappProps {
     logBuilder: (msg: string) => JSX.Element,
     mainnetPrompt: MainnetPrompt,
     gasEstimationPrompt: (msg: string) => JSX.Element,
-    passphrasePrompt: (msg: string) => JSX.Element) => void,
+    passphrasePrompt: (msg: string) => JSX.Element,
+    funcIndex?: number) => void,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
 }

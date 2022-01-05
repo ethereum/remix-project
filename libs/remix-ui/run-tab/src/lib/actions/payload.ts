@@ -240,12 +240,13 @@ export const clearAllInstances = () => {
   }
 }
 
-export const setDecodedResponse = (index: number, decodedResponse) => {
+export const setDecodedResponse = (instanceIndex: number, response, funcIndex?: number) => {
   return {
     type: 'SET_DECODED_RESPONSE',
     payload: {
-      index,
-      decodedResponse
+      instanceIndex,
+      funcIndex,
+      response
     }
   }
 }
