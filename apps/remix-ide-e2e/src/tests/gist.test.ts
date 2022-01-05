@@ -76,11 +76,11 @@ module.exports = {
       .waitForElementVisible('button[data-id="landingPageImportFromGistButton"]')
       .pause(1000)
       .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="modalDialogModalTitle"]')
-      .assert.containsText('*[data-id="modalDialogModalTitle"]', 'Load a Gist')
-      .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Enter the ID of the Gist or URL you would like to load.')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalTitle-react"]')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Load a Gist')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
       .modalFooterCancelClick()
   },
 
@@ -89,11 +89,11 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
-      .setValue('*[data-id="modalDialogCustomPromptText"]', testData.invalidGistId)
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
+      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.invalidGistId)
       .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Not Found')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Not Found')
       .modalFooterOKClick()
   },
 
