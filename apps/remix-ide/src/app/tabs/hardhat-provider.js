@@ -1,8 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import Web3 from 'web3'
-const yo = require('yo-yo')
-const modalDialogCustom = require('../ui/modal-dialog-custom')
+import React from 'react' // eslint-disable-line
 
 const profile = {
   name: 'hardhat-provider',
@@ -27,29 +26,47 @@ export default class HardhatProvider extends Plugin {
   }
 
   hardhatProviderDialogBody () {
-    return yo`
-        <div class="">
+    return <div>
           Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
-          <div class="border p-1">npx hardhat node</div>
-        <br>
-        For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
-        <br><br>
+          <div class="border p-1">npx hardhat node</div>       
+        For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>       
         Hardhat JSON-RPC Endpoint
       </div>
-    `
   }
 
   sendAsync (data) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (this.blocked) return reject(new Error('provider unable to connect'))
       // If provider is not set, allow to open modal only when provider is trying to connect
       if (!this.provider) {
-        modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
-          this.provider = new Web3.providers.HttpProvider(target)
-          this.sendAsyncInternal(data, resolve, reject)
-        }, () => {
-          this.sendAsyncInternal(data, resolve, reject)
-        })
+        let value
+        try {
+          value = await (() => {
+            return new Promise((resolve, reject) => {
+              const modalContent = {
+                id: 'harrhatprovider',
+                title: 'Hardhat node request',
+                message: this.hardhatProviderDialogBody(),
+                modalType: 'prompt',
+                okLabel: 'OK',
+                cancelLabel: 'Cancel',
+                okFn: (value) => {
+                  setTimeout(() => resolve(value), 0)
+                },
+                cancelFn: (value) => {
+                  setTimeout(() => reject(new Error('Canceled')), 0)
+                },
+                defaultValue: 'http://127.0.0.1:8545'
+              }
+              this.call('modal', 'modal', modalContent)
+            })
+          })()
+        } catch (e) {
+          // the modal has been canceled
+          return
+        }        
+        this.provider = new Web3.providers.HttpProvider(target)
+        this.sendAsyncInternal(data, resolve, reject)       
       } else {
         this.sendAsyncInternal(data, resolve, reject)
       }
@@ -64,7 +81,14 @@ export default class HardhatProvider extends Plugin {
       this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, async (error, message) => {
         if (error) {
           this.blocked = true
-          modalDialogCustom.alert('Hardhat Provider', `Error while connecting to the hardhat provider: ${error.message}`)
+          const modalContent = {
+            id: 'harrhatprovider',
+            title: 'Hardhat Provider',
+            message: `Error while connecting to the hardhat provider: ${error.message}`,
+            modalType: 'alert',
+            okLabel: 'OK'
+          }
+          this.call('modal', 'modal', modalContent)    
           await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
           this.provider = null
           setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
