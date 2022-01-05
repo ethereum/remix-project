@@ -12,6 +12,7 @@ import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { FramingService } from './framingService'
+import { ModalPluginTester } from './app/plugins/test'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -20,6 +21,7 @@ import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, Fetch
 import migrateFileSystem from './migrateFileSystem'
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
+import { ModalPlugin } from './app/plugins/modal'
 
 const isElectron = require('is-electron')
 
@@ -158,9 +160,12 @@ class AppComponent {
     )
     const contextualListener = new EditorContextListener()
 
+    self.modal = new ModalPlugin()
+
     const configPlugin = new ConfigPlugin()
 
     self.engine.register([
+      self.modal,
       configPlugin,
       blockchain,
       contentImport,
@@ -238,7 +243,9 @@ class AppComponent {
       contentImport
     )
 
+    const testplugin = new ModalPluginTester()
     self.engine.register([
+      testplugin,
       compileTab,
       run,
       debug,
@@ -266,6 +273,7 @@ class AppComponent {
       console.log('couldn\'t register iframe plugins', e.message)
     }
 
+    await self.appManager.activatePlugin(['modal'])
     await self.appManager.activatePlugin(['editor'])
     await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
@@ -275,6 +283,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['walkthrough'])
+    await self.appManager.activatePlugin(['testerplugin'])
 
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()
