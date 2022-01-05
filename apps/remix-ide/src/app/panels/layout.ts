@@ -78,11 +78,11 @@ export class Layout extends Plugin {
     })
     const queryParams = new QueryParams()
     const params = queryParams.get()
-    if (params.minimizeterminal) {
+    if (params.minimizeterminal || params.embed) {
       this.panels.terminal.minimized = true
       this.event.emit('change', null)
     }
-    if (params.minimizesidepanel) {
+    if (params.minimizesidepanel || params.embed) {
       this.event.emit('minimizesidepanel')
     }
   }
