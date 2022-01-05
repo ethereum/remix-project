@@ -69,7 +69,7 @@ export interface RunTabState {
       contractData?: ContractData,
       address: string,
       name: string,
-      decodedResponse?: any,
+      decodedResponse?: Record<number, any>,
       abi?: any
     }[],
     error: string
@@ -553,7 +553,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'ADD_INSTANCE': {
-      const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: any } = action.payload
+      const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> } = action.payload
 
       return {
         ...state,
@@ -587,14 +587,14 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'SET_DECODED_RESPONSE': {
-      const payload: any = action.payload
+      const payload: { instanceIndex: number, funcIndex: number, response: any } = action.payload
 
       return {
         ...state,
         instances: {
           ...state.instances,
           instanceList: state.instances.instanceList.map((instance, index) => {
-            if (payload.index === index) instance.decodedResponse = payload.decodedResponse
+            if (payload.instanceIndex === index) instance.decodedResponse[payload.funcIndex] = payload.response
             return instance
           })
         }

@@ -550,7 +550,8 @@ export const updateTxFeeContent = (content: string) => {
   dispatch(setTxFeeContent(content))
 }
 
-const addInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: any }) => {
+const addInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> }) => {
+  instance.decodedResponse = {}
   dispatch(addNewInstance(instance))
 }
 
@@ -590,7 +591,7 @@ export const getContext = () => {
 }
 
 export const runTransactions = (
-  index: number,
+  instanceIndex: number,
   lookupOnly: boolean,
   funcABI: FuncABI,
   inputsValues: string,
@@ -601,7 +602,8 @@ export const runTransactions = (
   logBuilder: (msg: string) => JSX.Element,
   mainnetPrompt: MainnetPrompt,
   gasEstimationPrompt: (msg: string) => JSX.Element,
-  passphrasePrompt: (msg: string) => JSX.Element) => {
+  passphrasePrompt: (msg: string) => JSX.Element,
+  funcIndex?: number) => {
   let callinfo = ''
   if (lookupOnly) callinfo = 'call'
   else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
@@ -625,9 +627,9 @@ export const runTransactions = (
       return terminalLogger(log)
     },
     (returnValue) => {
-      const decodedResponse = txFormat.decodeResponse(returnValue, funcABI)
+      const response = txFormat.decodeResponse(returnValue, funcABI)
 
-      dispatch(setDecodedResponse(index, decodedResponse))
+      dispatch(setDecodedResponse(instanceIndex, response, funcIndex))
     },
     (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       confirmationHandler(mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb)
@@ -651,9 +653,7 @@ const saveScenario = (promptCb, cb) => {
     if (!fileProvider) return
     const newFile = path + '/' + plugin.REACT_API.recorder.pathToScenario
     try {
-      console.log('newFile: ', newFile)
       const newPath = await createNonClashingNameAsync(newFile, plugin.fileManager)
-      console.log('newPath: ', newPath)
       // eslint-disable-next-line standard/no-callback-literal
       if (!fileProvider.set(newPath, txJSON)) return cb('Failed to create file ' + newFile)
       plugin.fileManager.open(newFile)
