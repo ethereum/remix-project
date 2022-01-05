@@ -96,8 +96,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
           </div>
           <div className="modal-footer" data-id={`${props.id}ModalDialogModalFooter-react`}>
             {/* todo add autofocus ^^ */}
-            { props.okLabel &&
-              <span
+            { <span
                 data-id={`${props.id}-modal-footer-ok-react`}
                 className={'modal-ok btn btn-sm ' + (state.toggleBtn ? 'btn-dark' : 'btn-light')}
                 onClick={() => {
@@ -108,8 +107,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
                 { props.okLabel ? props.okLabel : 'OK' }
               </span>
             }
-            { props.cancelLabel &&
-              <span
+            { <span
                 data-id={`${props.id}-modal-footer-cancel-react`}
                 className={'modal-cancel btn btn-sm ' + (state.toggleBtn ? 'btn-light' : 'btn-dark')}
                 data-dismiss="modal"
