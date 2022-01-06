@@ -6,7 +6,6 @@ var async = require('async')
 var EventManager = require('../lib/events')
 
 var toolTip = require('../app/ui/tooltip')
-var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
   constructor (terminal, blockchain) {
@@ -17,7 +16,6 @@ class CmdInterpreterAPI {
     self._components.registry = Registry.getInstance()
     self._components.terminal = terminal
     self._components.fileImport = new CompilerImports()
-    self._components.gistHandler = new GistHandler()
     self._deps = {
       fileManager: self._components.registry.get('filemanager').api,
       editor: self._components.registry.get('editor').api,
@@ -35,8 +33,7 @@ class CmdInterpreterAPI {
 
   log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
   loadgist (id, cb) {
-    const self = this
-    self._components.gistHandler.loadFromGist({ gist: id }, this._deps.fileManager)
+    this._components.terminal.call('gistHandler', 'load', id)
     if (cb) cb()
   }
 
