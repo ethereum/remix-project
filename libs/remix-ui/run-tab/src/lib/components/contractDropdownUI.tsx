@@ -183,7 +183,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     return (
       <span>
         It seems you are not using a checksumed address.
-        <br />A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
+        <br />A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">EIP-55</a>.
         <br />Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
       </span>
     )
@@ -192,7 +192,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const isOverSizePrompt = () => {
     return (
       <div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br />
-      More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
+      More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a>
       </div>
     )
   }
