@@ -1,5 +1,5 @@
 { 
-    "extends": "../../.eslintrc.json", 
+    "extends": "../../.eslintrc", 
     "rules": {
         "standard/no-callback-literal": "off",
         "no-unused-vars": "off",
