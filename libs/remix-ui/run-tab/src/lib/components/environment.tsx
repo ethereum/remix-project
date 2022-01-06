@@ -30,7 +30,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
             )
           }
         </select>
-        <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i className="udapp_infoDeployAction ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
+        <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
       </div>
     </div>
   )

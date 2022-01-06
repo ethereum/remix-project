@@ -328,7 +328,6 @@ const loadContractFromAddress = (address, confirmCb, cb) => {
       try {
         abi = JSON.parse(plugin.editor.currentContent())
       } catch (e) {
-        // eslint-disable-next-line standard/no-callback-literal
         return cb('Failed to parse the current file as JSON ABI.')
       }
       _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithABI'])
@@ -654,11 +653,9 @@ const saveScenario = (promptCb, cb) => {
     const newFile = path + '/' + plugin.REACT_API.recorder.pathToScenario
     try {
       const newPath = await createNonClashingNameAsync(newFile, plugin.fileManager)
-      // eslint-disable-next-line standard/no-callback-literal
       if (!fileProvider.set(newPath, txJSON)) return cb('Failed to create file ' + newFile)
       plugin.fileManager.open(newFile)
     } catch (error) {
-      // eslint-disable-next-line standard/no-callback-literal
       if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
     }
   })
