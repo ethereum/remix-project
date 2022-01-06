@@ -5,11 +5,11 @@ import { isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'
 
 export function ValueUI (props: ValueProps) {
-  const inputValue = useRef(null)
-  const [sendValue, setSendValue] = useState<string>('')
+  const [sendValue, setSendValue] = useState<string>(props.sendValue)
+  const inputValue = useRef<HTMLInputElement>({} as HTMLInputElement)
 
   useEffect(() => {
-    sendValue && props.setSendValue(sendValue)
+    (sendValue !== props.sendValue) && props.setSendValue(sendValue)
   }, [sendValue])
 
   const validateInputKey = (e) => {
@@ -27,8 +27,7 @@ export function ValueUI (props: ValueProps) {
     if (!value) {
       // assign 0 if given value is
       // - empty
-      setSendValue('0')
-      return
+      return setSendValue('0')
     }
 
     let v
@@ -59,16 +58,16 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          value={sendValue || '0'}
           title="Enter the value and choose the unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}
+          value={props.sendValue}
         />
         <select name="unit" value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
-          <option data-unit="wei">Wei</option>
-          <option data-unit="gwei">Gwei</option>
-          <option data-unit="finney">Finney</option>
-          <option data-unit="ether">Ether</option>
+          <option data-unit="wei" value='wei'>Wei</option>
+          <option data-unit="gwei" value="gwei">Gwei</option>
+          <option data-unit="finney" value="finney">Finney</option>
+          <option data-unit="ether" value="ether">Ether</option>
         </select>
       </div>
     </div>
