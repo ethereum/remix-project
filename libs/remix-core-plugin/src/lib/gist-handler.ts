@@ -33,6 +33,8 @@ export class GistHandler extends Plugin {
               title: 'Load a Gist',
               message: 'Enter the ID of the Gist or URL you would like to load.',
               modalType: 'prompt',
+              okLabel: 'OK',
+              cancelLabel: 'Cancel',
               okFn: (value) => {
                 setTimeout(() => resolve(value), 0)
               },
@@ -57,7 +59,8 @@ export class GistHandler extends Plugin {
             id: 'gisthandler',
             title: 'Gist load error',
             message: 'Error while loading gist. Please provide a valid Gist ID or URL.',
-            modalType: 'alert'
+            modalType: 'alert',
+            okLabel: 'OK',
           }
           this.call('modal', 'modal', modalContent)
         }
@@ -66,7 +69,8 @@ export class GistHandler extends Plugin {
           id: 'gisthandlerEmpty',
           title: 'Gist load error',
           message: 'Error while loading gist. Id cannot be empty.',
-          modalType: 'alert'
+          modalType: 'alert',
+          okLabel: 'OK',
         }
         this.call('modal', 'modal', modalContent)
       }
@@ -91,7 +95,8 @@ export class GistHandler extends Plugin {
             id: 'gisthandler',
             title: 'Gist load error',
             message: data.message,
-            modalType: 'alert'
+            modalType: 'alert',
+            okLabel: 'OK',
           }
           await this.call('modal', 'modal', modalContent)
           return
@@ -101,7 +106,8 @@ export class GistHandler extends Plugin {
           id: 'gisthandler',
           title: 'Gist load error',
           message: e.message,
-          modalType: 'alert'
+          modalType: 'alert',
+          okLabel: 'OK',
         }
         await this.call('modal', 'modal', modalContent)
         return
@@ -118,7 +124,8 @@ export class GistHandler extends Plugin {
             id: 'gisthandler',
             title: 'Gist load error',
             message: errorSavingFiles.message || errorSavingFiles,
-            modalType: 'alert'
+            modalType: 'alert',
+            okLabel: 'OK',
           }
           this.call('modal', 'modal', modalContent)
         }
