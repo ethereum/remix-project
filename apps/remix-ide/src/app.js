@@ -20,6 +20,8 @@ import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
 import { Layout } from './app/panels/layout'
 import { ModalPlugin } from './app/plugins/modal'
+import { Blockchain } from './blockchain/blockchain.js'
+import { HardhatProvider } from './app/tabs/hardhat-provider'
 
 const isElectron = require('is-electron')
 
@@ -28,7 +30,6 @@ const remixLib = require('@remix-project/remix-lib')
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
-const HardhatProvider = require('./app/tabs/hardhat-provider')
 const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
@@ -36,8 +37,6 @@ const FileProvider = require('./app/files/fileProvider')
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 const toolTip = require('./app/ui/tooltip')
-
-const Blockchain = require('./blockchain/blockchain.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 
