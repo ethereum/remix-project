@@ -1,12 +1,9 @@
 import * as packageJson from '../../../../../package.json'
-// eslint-disable-next-line no-unused-vars
-import { basicLogo } from '../ui/svgLogo'
 import ReactDOM from 'react-dom'
 import React from 'react' // eslint-disable-line
 // eslint-disable-next-line no-unused-vars
 import { RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 import Registry from '../state/registry'
-// var helper = require('../../lib/helper')
 const { Plugin } = require('@remixproject/engine')
 const EventEmitter = require('events')
 
