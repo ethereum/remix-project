@@ -24,7 +24,13 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "eslint-disable-next-line no-empty": "off",
+        "no-empty": "off"
+      }
     },
     {
       "files": ["*.js", "*.jsx"],
