@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
+import { RemixUIMainPanel } from '@remix-ui/panel'
 import RemixSplashScreen from './components/splashscreen'
 import MatomoDialog from './components/modals/matomo'
 import OriginWarning from './components/modals/origin-warning'
@@ -62,6 +63,13 @@ const RemixApp = (props: IRemixAppUi) => {
     props.app.sidePanel.events.on('showing', () => {
       setHideSidePanel(false)
     })
+
+    props.app.layout.event.on('minimizesidepanel', () => {
+      // the 'showing' event always fires from sidepanel, so delay this a bit
+      setTimeout(() => {
+        setHideSidePanel(true)
+      }, 1000)
+    })
   }
 
   const components = {
@@ -75,7 +83,8 @@ const RemixApp = (props: IRemixAppUi) => {
     settings: props.app.settings,
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
-    modal: props.app.modal
+    modal: props.app.modal,
+    layout: props.app.layout
   }
 
   return (
@@ -88,8 +97,9 @@ const RemixApp = (props: IRemixAppUi) => {
         {components.iconPanel}
         {components.sidePanel}
         <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-        {components.mainPanel}
-
+        <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
+          <RemixUIMainPanel></RemixUIMainPanel>
+        </div>
       </div>
       {components.hiddenPanel}
       <AppDialogs></AppDialogs>
