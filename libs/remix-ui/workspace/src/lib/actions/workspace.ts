@@ -118,7 +118,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
         })
         plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
           if (errorLoadingFile) {
-            dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))         
+            dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
           }
         })
       } catch (e) {
