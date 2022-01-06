@@ -25,7 +25,7 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
-  const { call, _deps, on, config, event, gistHandler, version } = props.plugin
+  const { call, _deps, on, config, event, version } = props.plugin
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
 
