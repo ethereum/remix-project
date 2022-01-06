@@ -672,9 +672,11 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       return files
     }
   } else {
-    if (payload.path === state.mode || payload.path === '/') {
+    if (payload.path === '/') {
+      const files = normalize(payload.fileTree, payload.path, payload.type)
+      return { [state.mode]: files }
+    } else if (payload.path === state.mode) {
       let files = normalize(payload.fileTree, payload.path, payload.type)
-
       files = _.merge(files, state[state.mode].files[state.mode])
       if (deletePath) delete files[deletePath]
       return { [state.mode]: files }
