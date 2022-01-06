@@ -48,7 +48,7 @@ export class HardhatProvider extends Plugin {
     this.blocked = false
   }
 
-  hardhatProviderDialogBody () {
+  hardhatProviderDialogBody (): JSX.Element {
     return (<div> Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
           <div className="border p-1">npx hardhat node</div>       
         For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>       
@@ -56,7 +56,7 @@ export class HardhatProvider extends Plugin {
       </div>)
   }
 
-  sendAsync (data: JsonDataRequest) {
+  sendAsync (data: JsonDataRequest): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.blocked) return reject(new Error('provider unable to connect'))
       // If provider is not set, allow to open modal only when provider is trying to connect
@@ -98,7 +98,7 @@ export class HardhatProvider extends Plugin {
     })
   }
 
-  async sendAsyncInternal (data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest) {
+  private async sendAsyncInternal (data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
     if (this.provider) {
       // Check the case where current environment is VM on UI and it still sends RPC requests
       // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
