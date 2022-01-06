@@ -93,7 +93,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
       .execute(() => {
         (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => {})    
+      }, [], () => {})
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.invalidGistId)
       .modalFooterOKClick('gisthandler')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
@@ -137,7 +137,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
       .execute(() => {
         (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => {})    
+      }, [], () => {})
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
       .openFile(`gist-${testData.validGistId}/README.txt`)
