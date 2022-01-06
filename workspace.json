@@ -82,16 +82,6 @@
               "apps/remix-ide/src/assets/js/**/*.js"
             ]
           }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "csslint && node apps/remix-ide/test/index.js"
-              }
-            ]
-          }
         }
       }
     },
