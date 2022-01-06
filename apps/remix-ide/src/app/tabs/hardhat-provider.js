@@ -56,13 +56,16 @@ export default class HardhatProvider extends Plugin {
                 cancelFn: (value) => {
                   setTimeout(() => reject(new Error('Canceled')), 0)
                 },
+                hideFn: (value) => {
+                  setTimeout(() => reject(new Error('Hide')), 0)
+                },
                 defaultValue: 'http://127.0.0.1:8545'
               }
               this.call('modal', 'modal', modalContent)
             })
           })()
         } catch (e) {
-          // the modal has been canceled
+          // the modal has been canceled/hide
           return
         }        
         this.provider = new Web3.providers.HttpProvider(target)
