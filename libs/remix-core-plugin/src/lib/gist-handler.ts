@@ -61,21 +61,17 @@ export class GistHandler extends Plugin {
           const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
-            message: 'Error while loading gist. Please provide a valid Gist ID or URL.',
-            modalType: 'alert',
-            okLabel: 'OK'
+            message: 'Error while loading gist. Please provide a valid Gist ID or URL.'
           }
-          this.call('modal', 'modal', modalContent)
+          this.call('modal', 'alert', modalContent)
         }
       } else {
         const modalContent = {
           id: 'gisthandlerEmpty',
           title: 'Gist load error',
-          message: 'Error while loading gist. Id cannot be empty.',
-          modalType: 'alert',
-          okLabel: 'OK'
+          message: 'Error while loading gist. Id cannot be empty.'
         }
-        this.call('modal', 'modal', modalContent)
+        this.call('modal', 'alert', modalContent)
       }
       return loadingFromGist
     } else {
@@ -108,11 +104,10 @@ export class GistHandler extends Plugin {
         const modalContent = {
           id: 'gisthandler',
           title: 'Gist load error',
-          message: e.message,
-          modalType: 'alert',
-          okLabel: 'OK'
+          message: e.message
+
         }
-        await this.call('modal', 'modal', modalContent)
+        await this.call('modal', 'alert', modalContent)
         return
       }
 
@@ -126,11 +121,10 @@ export class GistHandler extends Plugin {
           const modalContent = {
             id: 'gisthandler',
             title: 'Gist load error',
-            message: errorSavingFiles.message || errorSavingFiles,
-            modalType: 'alert',
-            okLabel: 'OK'
+            message: errorSavingFiles.message || errorSavingFiles
+
           }
-          this.call('modal', 'modal', modalContent)
+          this.call('modal', 'alert', modalContent)
         }
       })
     })
