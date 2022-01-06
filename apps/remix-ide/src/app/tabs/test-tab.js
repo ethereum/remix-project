@@ -8,8 +8,6 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import helper from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 
-// var tooltip = require('../ui/tooltip')
-var Renderer = require('../ui/renderer')
 var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
 const profile = {
@@ -31,7 +29,6 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager = fileManager
     this.filePanel = filePanel
     this.appManager = appManager
-    this.renderer = new Renderer(this)
     this.testRunner = new UnitTestRunner()
     this.testTabLogic = new TestTabLogic(this.fileManager, helper)
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
