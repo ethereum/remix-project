@@ -273,7 +273,7 @@ export function UniversalDappUI (props: UdappProps) {
             <a
               href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
               title="check out docs for using 'receive'/'fallback'"
-              target="_blank"
+              target="_blank" rel="noreferrer"
             >
               <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
             </a>

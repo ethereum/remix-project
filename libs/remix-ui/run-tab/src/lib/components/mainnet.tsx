@@ -116,7 +116,7 @@ export function MainnetPrompt (props: MainnetProps) {
             : <div className="d-flex align-items-center my-1">
               <span className="text-dark mr-2 text-nowrap">Gas price:</span>
               <input className="form-control mr-1 text-right" style={{ width: '40px', height: '28px' }} id='gasprice' onInput={(e: any) => onGasPriceChange(e.target.value)} />
-              <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> for current gas price info.)</span>
+              <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info' rel="noreferrer">ethgasstation.info</a> for current gas price info.)</span>
             </div>
         }
         <div className="mb-3">

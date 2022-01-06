@@ -92,7 +92,7 @@ export function ContractGUI (props: ContractGUIProps) {
     let ret = ''
     const valArrayTest = []
 
-    for (var j = 0; j < valArray.length; j++) {
+    for (let j = 0; j < valArray.length; j++) {
       if (ret !== '') ret += ','
       let elVal = valArray[j] ? valArray[j].value : ''
 
