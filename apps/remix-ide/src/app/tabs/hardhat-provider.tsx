@@ -66,7 +66,7 @@ export class HardhatProvider extends Plugin {
           value = await ((): Promise<string> => {
             return new Promise((resolve, reject) => {
               const modalContent: AppModal = {
-                id: 'harrhatprovider',
+                id: 'hardhatprovider',
                 title: 'Hardhat node request',
                 message: this.hardhatProviderDialogBody(),
                 modalType: ModalTypes.prompt,
@@ -110,7 +110,7 @@ export class HardhatProvider extends Plugin {
       } catch (error) {
         this.blocked = true
         const modalContent: AlertModal = {
-          id: 'harrhatprovider',
+          id: 'hardhatprovider',
           title: 'Hardhat Provider',
           message: `Error while connecting to the hardhat provider: ${error.message}`,
         }

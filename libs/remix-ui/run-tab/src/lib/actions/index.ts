@@ -237,7 +237,7 @@ export const setExecutionContext = (executionContext: { context: string, fork: s
     }, () => { setFinalContext() }))
   }, (alertMsg) => {
     dispatch(displayPopUp(alertMsg))
-  }, setFinalContext())
+  }, () => { setFinalContext() })
 }
 
 export const setWeb3Endpoint = (endpoint: string) => {
