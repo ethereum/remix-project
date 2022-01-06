@@ -60,7 +60,7 @@ export class GistHandler extends Plugin {
             title: 'Gist load error',
             message: 'Error while loading gist. Please provide a valid Gist ID or URL.',
             modalType: 'alert',
-            okLabel: 'OK',
+            okLabel: 'OK'
           }
           this.call('modal', 'modal', modalContent)
         }
@@ -70,7 +70,7 @@ export class GistHandler extends Plugin {
           title: 'Gist load error',
           message: 'Error while loading gist. Id cannot be empty.',
           modalType: 'alert',
-          okLabel: 'OK',
+          okLabel: 'OK'
         }
         this.call('modal', 'modal', modalContent)
       }
@@ -96,7 +96,7 @@ export class GistHandler extends Plugin {
             title: 'Gist load error',
             message: data.message,
             modalType: 'alert',
-            okLabel: 'OK',
+            okLabel: 'OK'
           }
           await this.call('modal', 'modal', modalContent)
           return
@@ -107,7 +107,7 @@ export class GistHandler extends Plugin {
           title: 'Gist load error',
           message: e.message,
           modalType: 'alert',
-          okLabel: 'OK',
+          okLabel: 'OK'
         }
         await this.call('modal', 'modal', modalContent)
         return
@@ -125,7 +125,7 @@ export class GistHandler extends Plugin {
             title: 'Gist load error',
             message: errorSavingFiles.message || errorSavingFiles,
             modalType: 'alert',
-            okLabel: 'OK',
+            okLabel: 'OK'
           }
           this.call('modal', 'modal', modalContent)
         }
