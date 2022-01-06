@@ -5,8 +5,6 @@ import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
 
-const GistHandler = require('../../../lib/gist-handler')
-
 const profile = {
   name: 'home',
   displayName: 'Home',
@@ -26,7 +24,6 @@ export class LandingPage extends ViewPlugin {
     this.contentImport = contentImport
     this.appManager = appManager
     this.verticalIcons = verticalIcons
-    this.gistHandler = new GistHandler()
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'landingPageHomeContainer')
     this.el.setAttribute('class', 'remixui_homeContainer justify-content-between bg-light d-flex')

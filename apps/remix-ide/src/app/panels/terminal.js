@@ -13,8 +13,6 @@ const AutoCompletePopup = require('../ui/auto-complete-popup')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 
-const GistHandler = require('../../lib/gist-handler')
-
 const KONSOLES = []
 
 function register (api) { KONSOLES.push(api) }
@@ -32,7 +30,6 @@ class Terminal extends Plugin {
   constructor (opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
-    this.gistHandler = new GistHandler()
     this.event = new EventManager()
     this.globalRegistry = Registry.getInstance()
     this.element = document.createElement('div')
