@@ -12,11 +12,10 @@ import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { FramingService } from './framingService'
-import { ModalPluginTester } from './app/plugins/test'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
 import Registry from './app/state/registry'
@@ -106,6 +105,8 @@ class AppComponent {
     }
 
     // SERVICES
+    // ----------------- gist service ---------------------------------
+    self.gistHandler = new GistHandler()
     // ----------------- theme service ---------------------------------
     self.themeModule = new ThemeModule()
     Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
@@ -166,6 +167,7 @@ class AppComponent {
 
     self.engine.register([
       self.modal,
+      self.gistHandler,
       configPlugin,
       blockchain,
       contentImport,
@@ -243,9 +245,7 @@ class AppComponent {
       contentImport
     )
 
-    const testplugin = new ModalPluginTester()
     self.engine.register([
-      testplugin,
       compileTab,
       run,
       debug,
@@ -280,10 +280,9 @@ class AppComponent {
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
     await self.appManager.activatePlugin(['settings', 'config'])
-    await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport'])
+    await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await self.appManager.activatePlugin(['settings'])
     await self.appManager.activatePlugin(['walkthrough'])
-    await self.appManager.activatePlugin(['testerplugin'])
 
     self.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       await self.appManager.registerContextMenuItems()
