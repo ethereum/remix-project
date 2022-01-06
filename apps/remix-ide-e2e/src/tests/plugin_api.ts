@@ -324,5 +324,28 @@ module.exports = {
 
   'Should get compilationresults #group6': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
+  },
+
+  // PROVIDER
+
+  'Should switch to hardhat provider (provider plugin)': async function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Hardhat provider"]')
+      .modalFooterOKClick('hardhatprovider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
+      .getValue('*[data-id="settingsNetworkEnv"]', (result) => {
+        browser.assert.ok((result.value as string).match(/^Custom \(\d+\) network$/) !== undefined, 'Expected to ')
+      })
+      .perform(async () => {
+        const request = {
+          id: 9999,
+          jsonrpc: "2.0",
+          method: "net_listening",
+          params: []
+        }
+        const result = true
+        await clickAndCheckLog(browser, 'hardhat-provider:sendAsync', {}, result, request)
+      })
   }
 }
