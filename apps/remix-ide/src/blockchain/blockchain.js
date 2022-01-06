@@ -1,3 +1,5 @@
+
+import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
 import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
@@ -9,6 +11,7 @@ import VMProvider from './providers/vm.js'
 import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
+import { etherScanLink } from './helper'
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
@@ -343,14 +346,18 @@ export class Blockchain extends Plugin {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-
-    this.txRunner = new TxRunner(web3Runner, { runAsync: true })
-    this.txRunner.event.register('transactionBroadcasted', (txhash) => {
+    
+    web3Runner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
-        this.event.trigger('transactionBroadcasted', [txhash, network.name])
+        if (network.name === 'VM') return
+        this.call('terminal', 'logHtml',
+          (<a href={etherScanLink(network.name, txhash)} target="_blank">
+            open in etherscan
+          </a>))        
       })
     })
+    this.txRunner = new TxRunner(web3Runner, { runAsync: true })
   }
 
   /**
