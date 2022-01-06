@@ -8,6 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node", "jest"],
     "module": "es6",
+    "resolveJsonModule": true
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
