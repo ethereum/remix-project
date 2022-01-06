@@ -5,9 +5,9 @@ import async from 'async'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
-const EventEmitter = require('events')
+import { EventEmitter } from 'events'
+import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
 const toaster = require('../ui/tooltip')
-const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
 
 /*
@@ -37,6 +37,18 @@ const createError = (err) => {
 }
 
 class FileManager extends Plugin {
+  mode: string
+  openedFiles: any
+  events: EventEmitter
+  editor: any
+  _components: any
+  appManager: RemixAppManager
+  _deps: any
+  getCurrentFile: () => any
+  getFile: (path: any) => Promise<unknown>
+  getFolder: (path: any) => Promise<unknown>
+  setFile: (path: any, data: any) => Promise<unknown>
+  switchFile: (path: any) => Promise<void>
   constructor (editor, appManager) {
     super(profile)
     this.mode = 'browser'
@@ -70,7 +82,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the file/directory
    * @param {string} message message to display if path doesn't exist.
    */
-  async _handleExists (path, message) {
+  async _handleExists (path: string, message?:string) {
     const exists = await this.exists(path)
 
     if (!exists) {
@@ -96,7 +108,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the file/directory
    * @param {string} message message to display if path is not a directory.
    */
-  async _handleIsDir (path, message) {
+  async _handleIsDir (path: string, message?: string) {
     const isDir = await this.isDirectory(path)
 
     if (!isDir) {
@@ -305,13 +317,19 @@ class FileManager extends Plugin {
 
       if (isFile) {
         if (newPathExists) {
-          modalDialogCustom.alert('File already exists.')
+          this.call('modal', 'alert', {
+            id: 'fileManagerAlert',
+            message: 'File already exists'
+          })
           return
         }
         return provider.rename(oldPath, newPath, false)
       } else {
         if (newPathExists) {
-          modalDialogCustom.alert('Folder already exists.')
+          this.call('modal', 'alert', {
+            id: 'fileManagerAlert',
+            message: 'Directory already exists'
+          })
           return
         }
         return provider.rename(oldPath, newPath, true)
@@ -612,7 +630,7 @@ class FileManager extends Plugin {
     this.events.emit('noFileSelected')
   }
 
-  async openFile (file) {
+  async openFile (file?: string) {
     if (!file) {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
@@ -639,7 +657,7 @@ class FileManager extends Plugin {
               // TODO: Only keep `this.emit` (issue#2210)
               this.emit('currentFileChanged', file)
               this.events.emit('currentFileChanged', file)
-              resolve()
+              resolve(true)
             }
           })
         })
@@ -698,7 +716,7 @@ class FileManager extends Plugin {
               dirPaths.push(item)
               resolve(dirPaths)
             }
-            return new Promise((resolve, reject) => { resolve() })
+            return new Promise((resolve, reject) => { resolve(true) })
           })
           Promise.all(promises).then(() => { resolve(dirPaths) })
         })
@@ -760,9 +778,15 @@ class FileManager extends Plugin {
       helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
         (error, name) => {
           if (error) {
-            modalDialogCustom.alert('Unexpected error loading the file ' + error)
+            this.call('modal', 'alert', {
+              id: 'fileManagerAlert',
+              message: 'Unexpected error loading file ' + file + ': ' + error
+            })
           } else if (helper.checkSpecialChars(name)) {
-            modalDialogCustom.alert('Special characters are not allowed')
+            this.call('modal', 'alert', {
+              id: 'fileManagerAlert',
+              message: 'Special characters are not allowed in file names.'
+            })
           } else {
             try {
               self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
