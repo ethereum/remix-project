@@ -6,10 +6,10 @@ export interface AppModal {
     title: string
     // eslint-disable-next-line no-undef
     message: string | JSX.Element
-    okLabel?: string
-    okFn?: (value?:any) => void
-    cancelLabel?: string
-    cancelFn?: () => void,
+    okLabel: string
+    okFn: (value?:any) => void
+    cancelLabel: string
+    cancelFn: () => void,
     modalType?: ModalTypes,
     defaultValue?: string
     hideFn?: () => void
