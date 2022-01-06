@@ -19,8 +19,6 @@ export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: VerticalIcons
 }
 
-let scrollHeight: any
-
 const initialState = {
   scrollHeight: 0,
   clientHeight: 0,
@@ -51,6 +49,12 @@ export function RemixUiVerticalIconsPanel ({
       removeEventListener('resize', evaluateScrollability)
     }
   })
+
+  useEffect(() => {
+    addEventListener('pluginDisabled', (evt: any) => {
+      console.log('plugin disabled and it should have a payload ', { evt })
+    })
+  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
 
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
