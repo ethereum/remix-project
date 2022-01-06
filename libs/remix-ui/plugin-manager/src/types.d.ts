@@ -4,6 +4,7 @@ import { EventEmitter } from 'events'
 import { Engine } from '@remixproject/engine/lib/engine'
 import { PluginBase, Profile } from '@remixproject/plugin-utils'
 import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
+import { IframeReactPlugin } from '@remix-ui/app'
 /* eslint-disable camelcase */
 
 interface SetPluginOptionType {
@@ -88,7 +89,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   render(): HTMLDivElement
   getAndFilterPlugins: (filter?: string, profiles?: Profile[]) => void
   triggerEngineEventListener: () => void
-  activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | WebsocketPlugin) => Promise<void>
+  activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | IframeReactPlugin | WebsocketPlugin) => Promise<void>
   activeProfiles: string[]
   _paq: any
 }

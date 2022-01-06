@@ -106,8 +106,8 @@ export const registerErrorScriptRunnerAction = (on, commandName, commandFn, disp
   })
 }
 
-export const listenOnNetworkAction = async (event, isListening) => {
-  event.trigger('listenOnNetWork', [isListening])
+export const listenOnNetworkAction = async (plugins, isListening) => {
+  plugins.txListener.setListenOnNetwork(isListening)
 }
 
 export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) => {

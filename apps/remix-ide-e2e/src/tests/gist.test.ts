@@ -76,29 +76,34 @@ module.exports = {
       .waitForElementVisible('button[data-id="landingPageImportFromGistButton"]')
       .pause(1000)
       .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="modalDialogModalTitle"]')
-      .assert.containsText('*[data-id="modalDialogModalTitle"]', 'Load a Gist')
-      .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Enter the ID of the Gist or URL you would like to load.')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
-      .modalFooterCancelClick()
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalTitle-react"]')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Load a Gist')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
+      .modalFooterCancelClick('gisthandler')
   },
 
   'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
     browser
+      .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
-      .setValue('*[data-id="modalDialogCustomPromptText"]', testData.invalidGistId)
-      .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Not Found')
-      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+      }, [], () => {})
+      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.invalidGistId)
+      .modalFooterOKClick('gisthandler')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Not Found')
+      .modalFooterOKClick('gisthandler')
   },
 
   'Display Error Message For Missing Gist Token When Publishing': function (browser: NightwatchBrowser) {
     browser
+      .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('settings')
       .waitForElementVisible('[data-id="settingsTabRemoveGistToken"]')
@@ -129,9 +134,12 @@ module.exports = {
       .click('[data-id="settingsTabSaveGistToken"]')
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
-      .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
-      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+      }, [], () => {})
+      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
+      .modalFooterOKClick('gisthandler')
       .openFile(`gist-${testData.validGistId}/README.txt`)
       .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
       .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
