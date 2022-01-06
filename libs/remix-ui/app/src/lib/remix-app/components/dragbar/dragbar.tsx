@@ -16,16 +16,21 @@ const DragBar = (props: IRemixDragBarUi) => {
   const nodeRef = React.useRef(null) // fix for strictmode
 
   useEffect(() => {
-    // arbitrary time out to wait the the UI to be completely done
-    setTimeout(() => {
-      setOffSet(props.refObject.current.offsetLeft)
-      setDragBarPosX(offset + props.refObject.current.offsetWidth)
-    }, 1000)
-  }, [])
-
-  useEffect(() => {
     setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))
   }, [props.hidden, offset])
+
+  const handleResize = () => {
+    setOffSet(props.refObject.current.offsetLeft)
+    setDragBarPosX(props.refObject.current.offsetLeft + props.refObject.current.offsetWidth)
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    // TODO: not a good way to wait on the ref doms element to be rendered of course
+    setTimeout(() =>
+      handleResize(), 2000)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   function stopDrag (e: MouseEvent, data: any) {
     setDragState(false)

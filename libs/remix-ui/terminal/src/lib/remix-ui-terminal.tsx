@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
@@ -17,7 +18,6 @@ import RenderKnownTransactions from './components/RenderKnownTransactions' // es
 import parse from 'html-react-parser'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
-import { useDragTerminal } from './custom-hooks/useDragTerminal'
 
 /* eslint-disable-next-line */
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -28,7 +28,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const { call, _deps, on, config, event, version } = props.plugin
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-
+  const [isOpen, setIsOpen] = useState<boolean>(true)
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
@@ -79,24 +79,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const terminalMenuOffsetHeight = (terminalMenu.current && terminalMenu.current.offsetHeight) || 35
   const terminalDefaultPosition = config.get('terminal-top-offset')
 
-  const {
-    isOpen,
-    isDragging,
-    terminalPosition,
-    handleDraggingStart,
-    handleToggleTerminal
-  } = useDragTerminal(terminalMenuOffsetHeight, terminalDefaultPosition)
-
-  // Check open state
-  useEffect(() => {
-    const resizeValue = isOpen ? [config.get('terminal-top-offset')] : []
-    event.trigger('resize', resizeValue)
-  }, [isOpen])
-
-  useEffect(() => {
-    event.trigger('resize', [terminalPosition])
-  }, [terminalPosition])
-
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }
@@ -106,6 +88,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       logHtml: (html) => {
         scriptRunnerDispatch({ type: 'html', payload: { message: [html.innerText] } })
       },
+
       log: (message) => {
         scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
       }
@@ -332,8 +315,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const listenOnNetwork = (e: any) => {
     const isListening = e.target.checked
-    // setIsListeningOnNetwork(isListening)
-    listenOnNetworkAction(event, isListening)
+    listenOnNetworkAction(props.plugin, isListening)
   }
 
   const onChange = (event: any) => {
@@ -426,10 +408,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false }))
   }
 
+  const handleToggleTerminal = () => {
+    setIsOpen(!isOpen)
+    props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
+  }
+
   return (
-    <div style={{ height: '323px', flexGrow: 1 }} className='panel' ref={panelRef}>
+    <div style={{ flexGrow: 1 }} className='panel' ref={panelRef}>
       <div className="bar">
-        <div className={`dragbarHorizontal ${isDragging ? 'dragbarDragging' : ''}`} onMouseDown={handleDraggingStart} ref={leftRef}></div>
         <div className="menu border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
           <i className={`mx-2 toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
           <div className="mx-2 console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >

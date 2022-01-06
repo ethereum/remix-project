@@ -15,7 +15,7 @@ const profile = {
   displayName: 'Vertical Icons',
   description: '',
   version: packageJson.version,
-  methods: ['select']
+  methods: ['select', 'unlinkContent']
 }
 
 // TODO merge with side-panel.js. VerticalIcons should not be a plugin
