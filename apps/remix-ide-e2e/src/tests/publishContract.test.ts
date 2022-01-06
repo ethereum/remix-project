@@ -67,7 +67,7 @@ module.exports = {
 
         if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
       })
-      .modalFooterOKClick()
+      .modalFooterOKClick('udapp')
   },
 
   'Should remember choice after page refresh': function (browser: NightwatchBrowser) {
