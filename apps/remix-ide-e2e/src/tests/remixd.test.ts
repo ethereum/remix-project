@@ -125,9 +125,9 @@ function startRemixd (browser: NightwatchBrowser) {
     .clickLaunchIcon('filePanel')
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentActivateButtonremixd"]')
-    .waitForElementVisible('#modal-footer-ok', 2000)
+    .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
-    .click('#modal-footer-ok')
+    .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 
