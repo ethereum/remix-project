@@ -7,7 +7,6 @@ const DialogViewPlugin = () => {
   const app = useContext(AppContext)
 
   useEffect(() => {
-    console.log(modal, app)
     app.modal.setDispatcher({ modal, alert, toast })
   }, [])
   return <></>
