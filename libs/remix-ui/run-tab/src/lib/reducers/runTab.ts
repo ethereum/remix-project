@@ -52,6 +52,7 @@ export interface RunTabState {
     }[],
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
+    compilationCount: number,
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
@@ -91,7 +92,7 @@ export const runTabInitialState: RunTabState = {
     selectedAccount: ''
   },
   sendValue: '0',
-  sendUnit: 'ether',
+  sendUnit: 'wei',
   gasLimit: 3000000,
   selectExEnv: 'vm-london',
   personalMode: false,
@@ -145,6 +146,7 @@ export const runTabInitialState: RunTabState = {
     contractList: [],
     loadType: 'other',
     currentFile: '',
+    compilationCount: 0,
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -475,7 +477,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state,
         contracts: {
           ...state.contracts,
-          currentFile: payload
+          currentFile: payload,
+          compilationCount: state.contracts.compilationCount + 1
         }
       }
     }
