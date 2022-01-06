@@ -117,11 +117,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
           obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
         })
         plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
-          if (!errorLoadingFile) {
-            const provider = plugin.fileManager.getProvider('workspace')
-
-            provider.lastLoadedGistId = gistId
-          } else {
+          if (errorLoadingFile) {
             dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
           }
         })
