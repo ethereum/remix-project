@@ -12,12 +12,15 @@ export const ModalDialog = (props: ModalDialogProps) => {
   const [state, setState] = useState({
     toggleBtn: true
   })
+  const calledHideFunctionOnce = useRef<boolean>()
   const modal = useRef(null)
   const handleHide = () => {
-    props.handleHide()
+    if (!calledHideFunctionOnce.current) { props.handleHide() }
+    calledHideFunctionOnce.current = true
   }
 
   useEffect(() => {
+    calledHideFunctionOnce.current = props.hide
     modal.current.focus()
   }, [props.hide])
 
@@ -32,12 +35,9 @@ export const ModalDialog = (props: ModalDialogProps) => {
     }
     if (modal.current) {
       modal.current.addEventListener('blur', handleBlur)
-
-      return () => {
-        if (modal.current) {
-          modal.current.removeEventListener('blur', handleBlur)
-        }
-      }
+    }
+    return () => {
+      modal.current.removeEventListener('blur', handleBlur)
     }
   }, [modal.current])
 
