@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { forwardRef, useEffect, useRef, useState } from 'react' // eslint-disable-line
 import { PluginRecord } from '../types'
 import './panel.css'

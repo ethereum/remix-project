@@ -1,4 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+// eslint-disable-next-line no-use-before-define
+import React, { useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
