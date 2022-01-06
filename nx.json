@@ -145,6 +145,9 @@
     "remix-ui-tabs": {
       "tags": []
     },
+    "remix-ui-panel": {
+      "tags": []
+    },
     "remix-ui-theme-module": {
       "tags": []
     },

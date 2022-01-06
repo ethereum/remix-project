@@ -136,7 +136,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.appManager.activatePlugin('remixd')
   }
   const importFromGist = () => {
-    plugin.gistHandler.loadFromGist({ gist: '' }, fileManager)
+    plugin.call('gistHandler', 'load', '')
     plugin.verticalIcons.select('filePanel')
   }
   const switchToPreviousVersion = () => {
