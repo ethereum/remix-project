@@ -8,8 +8,6 @@ import Registry from '../state/registry'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
-const AutoCompletePopup = require('../ui/auto-complete-popup')
-
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 
 const KONSOLES = []
@@ -64,7 +62,6 @@ class Terminal extends Plugin {
     }
     this._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     this._components = {}
-    this._components.autoCompletePopup = new AutoCompletePopup(this._opts)
     this._commands = {}
     this.commands = {}
     this._JOURNAL = []
