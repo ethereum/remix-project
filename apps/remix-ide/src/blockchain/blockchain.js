@@ -23,7 +23,7 @@ const profile = {
   version: packageJson.version
 }
 
-class Blockchain extends Plugin {
+export class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config) {
     super(profile)
@@ -545,5 +545,3 @@ class Blockchain extends Plugin {
     })
   }
 }
-
-module.exports = Blockchain
