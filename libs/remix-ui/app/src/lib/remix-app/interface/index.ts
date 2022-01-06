@@ -12,6 +12,7 @@ export interface AppModal {
     cancelFn: () => void,
     modalType?: ModalTypes,
     defaultValue?: string
+    hideFn?: () => void
 }
 
 export interface AlertModal {
