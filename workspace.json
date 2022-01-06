@@ -82,16 +82,6 @@
               "apps/remix-ide/src/assets/js/**/*.js"
             ]
           }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "csslint && node apps/remix-ide/test/index.js"
-              }
-            ]
-          }
         }
       }
     },
@@ -1117,6 +1107,21 @@
         }
       }
     },
+    "remix-ui-panel": {
+      "root": "libs/remix-ui/panel",
+      "sourceRoot": "libs/remix-ui/panel/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/panel/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/panel/**/*"]
+          }
+        }
+      }
+    }, 
     "solidity-unit-testing": {
       "root": "libs/remix-ui/solidity-unit-testing",
       "sourceRoot": "libs/remix-ui/solidity-unit-testing/src", 

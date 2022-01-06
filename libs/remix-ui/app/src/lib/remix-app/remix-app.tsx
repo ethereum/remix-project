@@ -1,10 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
-import RemixSplashScreen from './modals/splashscreen'
-import MatomoDialog from './modals/matomo'
-import AlertModal from './modals/alert'
-import AppContext from './context/context'
-import DragBar from './dragbar/dragbar'
+import { RemixUIMainPanel } from '@remix-ui/panel'
+import RemixSplashScreen from './components/splashscreen'
+import MatomoDialog from './components/modals/matomo'
+import OriginWarning from './components/modals/origin-warning'
+import DragBar from './components/dragbar/dragbar'
+import { AppProvider } from './context/provider'
+import AppDialogs from './components/modals/dialogs'
+import DialogViewPlugin from './components/modals/dialogViewPlugin'
+
 interface IRemixAppUi {
   app: any
 }
@@ -59,6 +63,13 @@ const RemixApp = (props: IRemixAppUi) => {
     props.app.sidePanel.events.on('showing', () => {
       setHideSidePanel(false)
     })
+
+    props.app.layout.event.on('minimizesidepanel', () => {
+      // the 'showing' event always fires from sidepanel, so delay this a bit
+      setTimeout(() => {
+        setHideSidePanel(true)
+      }, 1000)
+    })
   }
 
   const components = {
@@ -68,22 +79,32 @@ const RemixApp = (props: IRemixAppUi) => {
     hiddenPanel: <div ref={hiddenPanelRef}></div>
   }
 
+  const value = {
+    settings: props.app.settings,
+    showMatamo: props.app.showMatamo,
+    appManager: props.app.appManager,
+    modal: props.app.modal,
+    layout: props.app.layout
+  }
+
   return (
-    <AppContext.Provider value={{ settings: props.app.settings, showMatamo: props.app.showMatamo, appManager: props.app.appManager }}>
+    <AppProvider value={value}>
       <RemixSplashScreen hide={appReady}></RemixSplashScreen>
-      <AlertModal></AlertModal>
+      <OriginWarning></OriginWarning>
       <MatomoDialog hide={!appReady}></MatomoDialog>
 
       <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
         {components.iconPanel}
         {components.sidePanel}
         <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-        {components.mainPanel}
-
+        <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
+          <RemixUIMainPanel></RemixUIMainPanel>
+        </div>
       </div>
       {components.hiddenPanel}
-    </AppContext.Provider>
-
+      <AppDialogs></AppDialogs>
+      <DialogViewPlugin></DialogViewPlugin>
+    </AppProvider>
   )
 }
 
