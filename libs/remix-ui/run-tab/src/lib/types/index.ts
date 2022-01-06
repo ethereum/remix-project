@@ -156,6 +156,7 @@ export interface ContractDropdownProps {
     }[],
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
+    compilationCount: number,
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string

@@ -26,7 +26,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
-  const { contractList, loadType, currentFile } = props.contracts
+  const { contractList, loadType, currentFile, compilationCount } = props.contracts
 
   useEffect(() => {
     enableAtAddress(false)
@@ -72,20 +72,23 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       setCompFails('block')
     }
     initSelectedContract()
-  }, [loadType, currentFile])
+  }, [loadType, currentFile, compilationCount])
 
   useEffect(() => {
     if (selectedContract) {
       const contract = contractList.find(contract => contract.alias === selectedContract)
-      const loadedContractData = props.getSelectedContract(selectedContract, contract.name)
 
-      if (loadedContractData) {
-        setLoadedContractData(loadedContractData)
-        setConstructorInterface(loadedContractData.getConstructorInterface())
-        setConstructorInputs(loadedContractData.getConstructorInputs())
+      if (contract) {
+        const loadedContractData = props.getSelectedContract(selectedContract, contract.name)
+
+        if (loadedContractData) {
+          setLoadedContractData(loadedContractData)
+          setConstructorInterface(loadedContractData.getConstructorInterface())
+          setConstructorInputs(loadedContractData.getConstructorInputs())
+        }
       }
     }
-  }, [selectedContract])
+  }, [selectedContract, compilationCount])
 
   useEffect(() => {
     initSelectedContract()
