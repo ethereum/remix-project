@@ -146,6 +146,8 @@ export class CompilerImports extends Plugin {
             const splitted = /([^/]+)\/(.*)$/g.exec(url)
 
             const possiblePaths = ['localhost/installed_contracts/' + url]
+            // pick remix-tests library contracts from '.deps'
+            if (url.startsWith('remix_')) possiblePaths.push('localhost/.deps/remix-tests/' + url)
             if (splitted) possiblePaths.push('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2])
             possiblePaths.push('localhost/node_modules/' + url)
             if (splitted) possiblePaths.push('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2])
