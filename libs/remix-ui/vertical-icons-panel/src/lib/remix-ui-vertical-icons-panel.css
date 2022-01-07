@@ -113,10 +113,6 @@
     flex-basis: 50px;
   }
 
-  .remixui_requiredSection {
-    border-bottom: 1px solid var(--secondary);
-  }
-
   #menuitems {
     list-style: none;
     margin: 0px;
