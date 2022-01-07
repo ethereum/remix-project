@@ -1,20 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable no-use-before-define */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { Dispatch, Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
+// eslint-disable-next-line no-use-before-define
+import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 import Badge from './Badge'
 import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-
-  interface IconProps {
-    verticalIconPlugin: VerticalIcons
-    profile: IconProfile
-    contextMenuAction: (evt: any, profileName: string, documentation: string) => void
-    addActive: (profileName: string) => void
-    removeActive: () => void
-  }
 
 export interface IconStatus {
     key: string
@@ -39,6 +28,14 @@ export interface IconProfile {
     name: string
     version: string
     tooltip?: string
+  }
+
+  interface IconProps {
+    verticalIconPlugin: VerticalIcons
+    profile: IconProfile
+    contextMenuAction: (evt: any, profileName: string, documentation: string) => void
+    addActive: (profileName: string) => void
+    removeActive: () => void
   }
 
 const initialState = {
@@ -99,6 +96,9 @@ function Icon ({
       const action: IconBadgeReducerAction = { type: name, payload: { status: iconStatus, verticalIconPlugin: verticalIconPlugin } }
       dispatchStatusUpdate(action)
     })
+    return () => {
+      verticalIconPlugin.off(name, 'statusChanged')
+    }
   }, [])
 
   return (
