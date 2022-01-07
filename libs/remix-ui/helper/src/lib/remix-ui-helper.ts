@@ -1,3 +1,5 @@
+import * as ethJSUtil from 'ethereumjs-util'
+
 export const extractNameFromKey = (key: string): string => {
   if (!key) return
   const keyPath = key.split('/')
@@ -8,6 +10,7 @@ export const extractNameFromKey = (key: string): string => {
 export const extractParentFromKey = (key: string):string => {
   if (!key) return
   const keyPath = key.split('/')
+
   keyPath.pop()
 
   return keyPath.join('/')
@@ -61,4 +64,33 @@ export const getPathIcon = (path: string) => {
                 ? 'fak fa-lexon' : path.endsWith('.contract')
                   ? 'fab fa-ethereum' : path.endsWith('.cairo')
                     ? 'fab fa-ethereum' : 'far fa-file' // TODO: add cairo icon
+}
+
+export const isNumeric = (value) => {
+  return /^\+?(0|[1-9]\d*)$/.test(value)
+}
+
+export const shortenAddress = (address, etherBalance?) => {
+  const len = address.length
+
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
+}
+
+export const addressToString = (address) => {
+  if (!address) return null
+  if (typeof address !== 'string') {
+    address = address.toString('hex')
+  }
+  if (address.indexOf('0x') === -1) {
+    address = '0x' + address
+  }
+  return ethJSUtil.toChecksumAddress(address)
+}
+
+export const is0XPrefixed = (value) => {
+  return value.substr(0, 2) === '0x'
+}
+
+export const isHexadecimal = (value) => {
+  return /^[0-9a-fA-F]+$/.test(value) && (value.length % 2 === 0)
 }

@@ -173,6 +173,7 @@ module.exports = {
       .waitForElementVisible('#value')
       .clearValue('#value')
       .setValue('#value', '0')
+      .pause(2000)
       .createContract('')
       .clickInstance(1)
       .pause(1000)

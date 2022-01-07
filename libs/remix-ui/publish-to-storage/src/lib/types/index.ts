@@ -1,6 +1,7 @@
 export interface RemixUiPublishToStorageProps {
+  id?: string
   api: any,
-  storage: string,
+  storage: 'swarm' | 'ipfs',
   contract: any,
   resetStorage: () => void
 }

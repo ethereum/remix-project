@@ -15,11 +15,8 @@ module.exports = {
     browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TestContract'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
-      .click('#runTabView .instance div[class^="title"]')
-      .click('#runTabView .instance div[class^="title"]')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .clickFunction('f - transact (not payable)')
       .testFunction('last',
         {
@@ -45,9 +42,8 @@ module.exports = {
   'Test Complex Return Values #group1': function (browser: NightwatchBrowser) {
     browser.testContracts('returnValues.sol', sources[1]['returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('udapp')
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .clickFunction('retunValues1 - transact (not payable)')
       .testFunction('last',
         {
@@ -90,9 +86,8 @@ module.exports = {
   'Test Complex Input Values #group2': function (browser: NightwatchBrowser) {
     browser.testContracts('inputValues.sol', sources[2]['inputValues.sol'], ['test'])
       .clickLaunchIcon('udapp')
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"' })
       .testFunction('last',
         {
@@ -136,8 +131,8 @@ module.exports = {
     browser.testContracts('eventFunctionInput.sol', sources[3]['eventFunctionInput.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
@@ -145,7 +140,7 @@ module.exports = {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .pause(5000)
@@ -168,7 +163,7 @@ module.exports = {
       .clearTransactions()
       .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -186,7 +181,7 @@ module.exports = {
   'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(1)
       .clickFunction('h - transact (not payable)')
       .pause(5000)

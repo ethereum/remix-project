@@ -136,7 +136,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.appManager.activatePlugin('remixd')
   }
   const importFromGist = () => {
-    plugin.gistHandler.loadFromGist({ gist: '' }, fileManager)
+    plugin.call('gistHandler', 'load', '')
     plugin.verticalIcons.select('filePanel')
   }
   const switchToPreviousVersion = () => {
@@ -166,9 +166,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'learnEth'])
   }
   const startSourceVerify = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'source-verification'])
-    plugin.verticalIcons.select('source-verification')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'source-verification'])
+    await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
+    plugin.verticalIcons.select('sourcify')
+    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'sourcify'])
   }
   const startPluginManager = async () => {
     await plugin.appManager.activatePlugin('pluginManager')

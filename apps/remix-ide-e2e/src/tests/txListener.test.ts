@@ -26,7 +26,7 @@ module.exports = {
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {

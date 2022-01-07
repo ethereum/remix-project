@@ -7,7 +7,7 @@
     },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
-    ".eslintrc": "*",
+    ".eslintrc.json": "*",
     "nx.json": "*"
   },
   "npmScope": "remix-project",
@@ -145,6 +145,9 @@
     "remix-ui-tabs": {
       "tags": []
     },
+    "remix-ui-panel": {
+      "tags": []
+    },
     "remix-ui-theme-module": {
       "tags": []
     },
@@ -152,6 +155,9 @@
       "tags": []
     },
     "remix-ui-editor-context-view": {
+      "tags": []
+    },
+    "remix-ui-run-tab": {
       "tags": []
     }
   },
