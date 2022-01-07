@@ -8,12 +8,7 @@ import Registry from '../state/registry'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
-const CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-const AutoCompletePopup = require('../ui/auto-complete-popup')
-
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
-
-const GistHandler = require('../../lib/gist-handler')
 
 const KONSOLES = []
 
@@ -22,7 +17,7 @@ function register (api) { KONSOLES.push(api) }
 const profile = {
   displayName: 'Terminal',
   name: 'terminal',
-  methods: ['log'],
+  methods: ['log', 'logHtml'],
   events: [],
   description: ' - ',
   version: packageJson.version
@@ -32,7 +27,6 @@ class Terminal extends Plugin {
   constructor (opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
-    this.gistHandler = new GistHandler()
     this.event = new EventManager()
     this.globalRegistry = Registry.getInstance()
     this.element = document.createElement('div')
@@ -68,8 +62,6 @@ class Terminal extends Plugin {
     }
     this._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     this._components = {}
-    this._components.cmdInterpreter = new CommandInterpreterAPI(this, this.blockchain)
-    this._components.autoCompletePopup = new AutoCompletePopup(this._opts)
     this._commands = {}
     this.commands = {}
     this._JOURNAL = []

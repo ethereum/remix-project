@@ -51,7 +51,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
-      .modalFooterOKClick()
+      .modalFooterOKClick('udappNotify')
       .executeScript('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
@@ -109,10 +109,10 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
-      .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true)
+      .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true, false)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
