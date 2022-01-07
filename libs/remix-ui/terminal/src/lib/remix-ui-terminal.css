@@ -5,194 +5,93 @@ element.style {
 #terminalCliInput{
   width: 95%;
   background: transparent;
-  border: none;
-  font-weight: bold;
-  color: #a2a3b4;
-  border-top-style: hidden;
-
-
-
-  
-  border-right-style: hidden;
-  border-left-style: hidden;
-  border-bottom-style: hidden;
 }
 #terminalCliInput:focus {
   outline: none;
 }
 
-.border-primary {
-  border-color: #007aa6!important;
-}
-
-/* seleted option should reflect the theme color */
-.selectedOptions {
-  background-color: #222336;
-}
-
-.panel              {
+.remix_ui_terminal_panel {
     position          : relative;
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
     min-height        : 3em;
   }
-  .bar                {
-    display           : flex;
+  .remix_ui_terminal_bar {
     z-index           : 2;
   }
-  .menu               {
-    position             : relative;
-    display              : flex;
-    align-items          : center;
-    width                : 100%;
+  .remix_ui_terminal_menu {
     max-height           : 35px;
     min-height           : 35px;
   }
-  .toggleTerminal              {
+  .remix_ui_terminal_toggleTerminal {
     cursor            : pointer;
   }
-  .toggleTerminal:hover              {
+  .remix_ui_terminal_toggleTerminal:hover {
     color             : var(--secondary);
   }
-  .terminal_container   {
-    display             : flex;
-    flex-direction      : column;
-    height              : 100%;
+  .remix_ui_terminal_container {
     overflow-y          : auto;
     font-family         : monospace;
-    margin              : 0px;
     background-repeat   : no-repeat;
     background-position : center 15%;
     background-size     : auto calc(75% -  1.7em);
   }
-  .terminal    {
-    position          : relative;
-    display           : flex;
-    flex-direction    : column;
-    height            : 100%;
-  }
-  .journal            {
+
+  .remix_ui_terminal_journal {
     margin-top        : auto;
     font-family       : monospace;
+    overflow-y        : scroll;
   }
-  .block              {
-    word-break        : break-word;
+  .remix_ui_terminal_block {
     white-space       : pre-wrap;
+    font-family       : monospace;
     line-height       : 2ch;
-    padding           : 1ch;
-    margin-top        : 2ch;
   }
-  .block > pre        {
+  .remix_ui_terminal_block > pre {
     max-height        : 200px;
   }
-  .cli                {
+  .remix_ui_terminal_cli                {
     line-height       : 1.7em;
     font-family       : monospace;
     padding           : .4em;
     color             : var(--primary);
   }
-  .prompt             {
-    margin-right      : 0.5em;
+  .remix_ui_terminal_prompt             {
     font-family       : monospace;
-    font-weight       : bold;
-    font-size         : 14px;
-    color             : lightgray;
   }
-  .input              {
-    word-break        : break-word;
+  .remix_ui_terminal_input {
     outline           : none;
     font-family       : monospace;
   }
-  .search {
-    display           : flex;
-    align-items       : center;
+  .remix_ui_terminal_search {
     width             : 330px;
     padding-left      : 20px;
-    height            : 100%;
     padding-top       : 1px;
     padding-bottom    : 1px;
   }
-  .filter                       {
+  .remix_ui_terminal_filter {
     height                      : 80%;
     white-space                 : nowrap;
     overflow                    : hidden;
     text-overflow               : ellipsis;
   }
-  .searchIcon                   {
+  .remix_ui_terminal_searchIcon {
     width                       : 25px;
     border-top-left-radius      : 3px;
     border-bottom-left-radius   : 3px;
-    display                     : flex;
-    align-items                 : center;
-    justify-content             : center;
     margin-right                : 5px;
   }
-  .listen         {
-    margin-right  : 30px;
-    min-width     : 40px;
-    height        : 13px;
-    display       : flex;
-    align-items   : center;
-  }
-  .listenLabel {
-    min-width: 50px;
-  }
-  .verticalLine {
-    border-left       : 1px solid var(--secondary);
-    height            : 65%;
-  }
-  .dragbarHorizontal  {
-    position          : absolute;
-    top               : 0;
-    height            : 0.2em;
-    right             : 0;
-    left              : 0;
-    cursor            : row-resize;
-    z-index           : 999;
-  }
-
-  .dragbarDragging {
-    background-color: var(--primary);
-    border: 2px solid var(--primary);
-  }
   
-  .console {
+  .remix_ui_terminal_console {
     cursor           : pointer;
   }
 
-  .dragbarHorizontal:hover  {
-    background-color: var(--secondary);
-    border:2px solid var(--secondary); 
-  }
-  .listenOnNetwork {
+  .remix_ui_terminal_listenOnNetwork {
     min-height: auto;
   }
-  .ghostbar           {
-    position          : absolute;
-    height            : 6px;
-    opacity           : 0.5;
-    cursor            : row-resize;
-    z-index           : 9999;
-    left              : 0;
-    right             : 0;
-  }
 
-
-  .divider-hitbox {
-    color: white;
-    cursor: row-resize;
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-  }
-
-  .ul {margin-left: 0; padding-left: 20px;}
-
-  .popup             {
-    position         : absolute;
-    text-align       : left;
+  .remix_ui_terminal_popup {
     width            : 95%;
     font-family      : monospace;
     background-color : var(--secondary);
@@ -205,99 +104,15 @@ element.style {
     overflow-y       : scroll;
   }
 
-  .autoCompleteItem {
+  .remix_ui_terminal_autoCompleteItem {
     padding          : 4px;
     border-radius    : 2px;
   }
 
-  .popup a {
+  .remix_ui_terminal_popup a {
     cursor           : pointer;
   }
 
-  .listHandlerShow   {
-    display          : block;
-  }
-
-  .listHandlerHide   {
-    display          : none;
-  }
-
-  .listHandlerButtonShow {
-    position         : fixed;
-    width            : 46%;
-  }
-
-  .pageNumberAlignment {
-    font-size        : 10px;
-    float            : right;
-  }
-
-  .modalContent {
-    position         : absolute;
-    margin-left      : 20%;
-    margin-bottom    : 32px;
-    bottom           : 0px;
-    padding          : 0;
-    line-height      : 18px;
-    font-size        : 12px;
-    width            : 40%;
-    box-shadow       : 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    -webkit-animation-name: animatebottom;
-    -webkit-animation-duration: 0.4s;
-    animation-name   : animatetop;
-    animation-duration: 0.4s
-  }
-
-  @-webkit-keyframes animatetop {
-    from {bottom: -300px; opacity: 0}
-    to {bottom: 0; opacity: 1}
-  }
-
-  @keyframes animatetop {
-    from {bottom: -300px; opacity: 0}
-    to {bottom: 0; opacity: 1}
-  }
-
-
-
-
-  /* tx logger css*/
-
-  .log {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    cursor: pointer;
-  }
-  .log:hover {
-    opacity: 0.8;
-  }
-
-  .txStatus {
-    display: flex;
-    font-size: 20px;
-    margin-right: 20px;
-    float: left;
-  }
-  .succeeded {
-    color: var(--success);
-  }
-  .failed {
-    color: var(--danger);
-  }
-
-  .terminal_arrow {
-    color: var(--text-info);
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    margin-left: 10px;
-  }
-  .terminal_arrow:hover {
-    color: var(--secondary);
-  }
-  .notavailable {
-  }
   .call {
     font-size: 7px;
     border-radius: 50%;
@@ -310,23 +125,74 @@ element.style {
     text-transform: uppercase;
     font-weight: bold;
   }
-  .txItem {
+  
+  .remix_ui_terminal_txItem {
     color: var(--text-info);
     margin-right: 5px;
     float: left;
   }
-  .txItemTitle {
+
+  .remix_ui_terminal_txItemTitle {
     font-weight: bold;
   }
-  .tx {
+
+  /* tx logger css*/
+
+  .remix_ui_terminal_log {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    cursor: pointer;
+  }
+  .remix_ui_terminal_log:hover {
+    opacity: 0.8;
+  }
+
+  .remix_ui_terminal_txStatus {
+    display: flex;
+    font-size: 20px;
+    margin-right: 20px;
+    float: left;
+  }
+  .remix_ui_terminal_succeeded {
+    color: var(--success);
+  }
+  .remix_ui_terminal_failed {
+    color: var(--danger);
+  }
+
+  .remix_ui_terminal_arrow {
+    color: var(--text-info);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    margin-left: 10px;
+  }
+  .remix_ui_terminal_arrow:hover {
+    color: var(--secondary);
+  }
+  .remix_ui_terminal_call {
+    font-size: 7px;
+    border-radius: 50%;
+    min-width: 20px;
+    min-height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-info);
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  .remix_ui_terminal_tx {
     color: var(--text-info);
     font-weight: bold;
     float: left;
     margin-right: 10px;
   }
-  .txTable,
-  .tr,
-  .td {
+  
+  .remix_ui_terminal_tr,
+  .remix_ui_terminal_td {
     border-collapse: collapse;
     font-size: 10px;
     color: var(--text-info);
@@ -342,27 +208,27 @@ element.style {
     align-self: center;
     width: 85%;
   }
-  .tr, .td {
+  .remix_ui_terminal_tr, .remix_ui_terminal_td {
     padding: 4px;
     vertical-align: baseline;
   }
-  .td:first-child {
+  .remix_ui_terminal_td:first-child {
     min-width: 30%;
     width: 30%;
     align-items: baseline;
     font-weight: bold;
   }
-  .tableTitle {
+  .remix_ui_terminal_tableTitle {
     width: 25%;
   }
-  .buttons {
+  .remix_ui_terminal_buttons {
     display: flex;
     margin-left: auto;
   }
-  .debug {
+  .remix_ui_terminal_debug {
     white-space: nowrap;
   }
-  .debug:hover {
+  .remix_ui_terminal_debug:hover {
     opacity: 0.8;
   }
 
@@ -424,4 +290,3 @@ element.style {
   font-size: 14px;
   padding: 18px;
 }
-
