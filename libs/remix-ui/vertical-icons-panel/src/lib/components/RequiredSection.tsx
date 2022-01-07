@@ -26,6 +26,12 @@ function RequiredSection ({ verticalIconsPlugin, itemContextAction, addActive, r
         removeActive={removeActive}
         itemContextAction={itemContextAction}
       />
+      <PluginManager
+        verticalIconsPlugin={verticalIconsPlugin}
+        addActive={addActive}
+        removeActive={removeActive}
+        itemContextAction={itemContextAction}
+      />
       <Solidity
         verticalIconsPlugin={verticalIconsPlugin}
         addActive={addActive}
@@ -45,12 +51,6 @@ function RequiredSection ({ verticalIconsPlugin, itemContextAction, addActive, r
         itemContextAction={itemContextAction}
       />
       <Debugger
-        verticalIconsPlugin={verticalIconsPlugin}
-        addActive={addActive}
-        removeActive={removeActive}
-        itemContextAction={itemContextAction}
-      />
-      <PluginManager
         verticalIconsPlugin={verticalIconsPlugin}
         addActive={addActive}
         removeActive={removeActive}
