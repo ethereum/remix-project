@@ -283,3 +283,9 @@ export const setWeb3Dialog = () => {
     type: 'SET_WEB3_DIALOG'
   }
 }
+
+export const resetUdapp = () => {
+  return {
+    type: 'RESET_STATE'
+  }
+}
