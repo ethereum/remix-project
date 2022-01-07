@@ -50,12 +50,6 @@ export function RemixUiVerticalIconsPanel ({
     }
   })
 
-  useEffect(() => {
-    addEventListener('pluginDisabled', (evt: any) => {
-      console.log('plugin disabled and it should have a payload ', { evt })
-    })
-  }, [Object.keys(verticalIconsPlugin.targetProfileForChange).length])
-
   function onThemeChanged (themeType: any) {
     const invert = themeType === 'dark' ? 1 : 0
     // @ts-ignore
@@ -109,13 +103,9 @@ export function RemixUiVerticalIconsPanel ({
     themeModule.events.on('themeChanged', (theme: any) => {
       onThemeChanged(theme.quality)
     })
-  }, [])
-
-  useEffect(() => {
-    const themeModule = verticalIconsPlugin.registry.get('themeModule').api
-    themeModule.events.on('themeChanged', (theme: any) => {
-      onThemeChanged(theme.quality)
-    })
+    return () => {
+      themeModule.events.off('themeChanged')
+    }
   }, [])
 
   useEffect(() => {
