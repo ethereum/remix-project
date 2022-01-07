@@ -5,7 +5,6 @@ import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
-var Renderer = require('../ui/renderer')
 
 var EventManager = require('../../lib/events')
 
@@ -30,9 +29,7 @@ class AnalysisTab extends ViewPlugin {
     this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
-    this._components = {
-      renderer: new Renderer(this)
-    }
+    this._components = {}
     this._components.registry = this.registry
     this._deps = {
       offsetToLineColumnConverter: this.registry.get(

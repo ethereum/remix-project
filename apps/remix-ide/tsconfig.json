@@ -4,6 +4,7 @@
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "types": ["node", "jest"],
     "module": "es6",

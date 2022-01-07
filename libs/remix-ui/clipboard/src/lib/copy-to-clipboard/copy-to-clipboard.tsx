@@ -36,7 +36,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
   }
 
   const reset = () => {
-    setTimeout(() => setMessage('Copy'), 500)
+    setTimeout(() => setMessage(tip), 500)
   }
 
   return (
