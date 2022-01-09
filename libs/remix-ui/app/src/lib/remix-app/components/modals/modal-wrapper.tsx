@@ -14,11 +14,19 @@ const ModalWrapper = (props: ModalWrapperProps) => {
 
   const onFinishPrompt = async () => {
     if (ref.current === undefined) {
-      props.okFn()
+      onOkFn()
     } else {
       // @ts-ignore: Object is possibly 'null'.
-      props.okFn(ref.current.value)
+      (props.resolve) ? props.resolve(ref.current.value) : props.okFn(ref.current.value)
     }
+  }
+
+  const onOkFn = async () => {
+    (props.resolve) ? props.resolve(true) : props.okFn()
+  }
+
+  const onCancelFn = async () => {
+    (props.resolve) ? props.resolve(false) : props.cancelFn()
   }
 
   const createModalMessage = (defaultValue: string) => {
@@ -37,15 +45,24 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           setState({
             ...props,
             okFn: onFinishPrompt,
+            cancelFn: onCancelFn,
             message: createModalMessage(props.defaultValue)
           })
           break
         default:
-          setState({ ...props })
+          setState({
+            ...props,
+            okFn: (onOkFn),
+            cancelFn: onCancelFn
+          })
           break
       }
     } else {
-      setState({ ...props })
+      setState({
+        ...props,
+        okFn: onOkFn,
+        cancelFn: onCancelFn
+      })
     }
   }, [props])
 

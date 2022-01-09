@@ -11,14 +11,16 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
 
   const modal = (data: AppModal) => {
     const { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue, hideFn } = data
-    dispatch({
-      type: modalActionTypes.setModal,
-      payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue, hideFn }
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: modalActionTypes.setModal,
+        payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue, hideFn, resolve }
+      })
     })
   }
 
   const alert = (data: AlertModal) => {
-    modal({ id: data.id, title: data.title || 'Alert', message: data.message || data.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
+    return modal({ id: data.id, title: data.title || 'Alert', message: data.message || data.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
   }
 
   const handleHideModal = () => {
