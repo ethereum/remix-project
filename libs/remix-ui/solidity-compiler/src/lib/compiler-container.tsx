@@ -356,13 +356,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         return console.log('loading ' + selectedVersion + ' not allowed, version should start with "soljson"')
       }
     }
+
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    if (selectedVersion === 'builtin') {
-      selectedVersion = state.defaultVersion
-      compileTabLogic.compiler.loadVersion(false, url)
-    } else if (canUseWorker(selectedVersion)) {
+    if (selectedVersion === 'builtin') selectedVersion = state.defaultVersion
+    if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
       compileTabLogic.compiler.loadVersion(true, url)
     } else {
       compileTabLogic.compiler.loadVersion(false, url)
