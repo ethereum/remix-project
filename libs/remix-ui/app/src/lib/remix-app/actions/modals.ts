@@ -21,7 +21,7 @@ export const enum modalActionTypes {
 type ModalPayload = {
   [modalActionTypes.setModal]: AppModal
   [modalActionTypes.handleHideModal]: any
-  [modalActionTypes.setToast]: string
+  [modalActionTypes.setToast]: string | JSX.Element
   [modalActionTypes.handleToaster]: any
 }
 

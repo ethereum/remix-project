@@ -1,5 +1,4 @@
 import { ViewPlugin } from '@remixproject/engine-web'
-import { PluginManagerSettings } from './plugin-manager-settings'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
@@ -24,7 +23,6 @@ class PluginManagerComponent extends ViewPlugin {
     super(profile)
     this.appManager = appManager
     this.engine = engine
-    this.pluginManagerSettings = new PluginManagerSettings()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'pluginManager')
     this.filter = ''
@@ -90,7 +88,6 @@ class PluginManagerComponent extends ViewPlugin {
     ReactDOM.render(
       <RemixUiPluginManager
         pluginComponent={this}
-        pluginManagerSettings={this.pluginManagerSettings}
       />,
       this.htmlElement)
   }

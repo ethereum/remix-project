@@ -319,7 +319,7 @@ class AppComponent {
       console.log("couldn't register iframe plugins", e.message)
     }
     await self.appManager.activatePlugin(['layout'])
-    await self.appManager.activatePlugin(['modal'])
+    await self.appManager.activatePlugin(['notification'])
     await self.appManager.activatePlugin(['editor'])
     await self.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
