@@ -30,11 +30,11 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       return { ...state, modals: modalList }
     }
     case modalActionTypes.handleHideModal:
-      if (state.focusModal.resolve) {
-        state.focusModal.resolve(undefined)
-      } else
       if (state.focusModal.hideFn) {
         state.focusModal.hideFn()
+      }
+      else if (state.focusModal.resolve) {
+        state.focusModal.resolve(undefined)
       }
       state.focusModal = { ...state.focusModal, hide: true, message: null }
       return { ...state }
