@@ -14,9 +14,9 @@ interface IModalApi {
 }
 
 const profile:LibraryProfile<IModalApi> = {
-  name: 'modal',
-  displayName: 'Modal',
-  description: 'Modal',
+  name: 'notification',
+  displayName: 'Notification',
+  description: 'Displays notifications',
   methods: ['modal', 'alert', 'toast']
 }
 
