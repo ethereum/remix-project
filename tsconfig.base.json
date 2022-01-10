@@ -76,7 +76,8 @@
       "@remix-ui/panel": ["libs/remix-ui/panel/src/index.ts"],
       "@remix-ui/editor-context-view": ["libs/remix-ui/editor-context-view/src/index.ts"],
       "@remix-ui/solidity-unit-testing": ["libs/remix-ui/solidity-unit-testing/src/index.ts"],
-      "@remix-ui/run-tab": ["libs/remix-ui/run-tab/src/index.ts"]
+      "@remix-ui/run-tab": ["libs/remix-ui/run-tab/src/index.ts"],
+      "@remix-ui/permission-handler": ["libs/remix-ui/permission-handler/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
