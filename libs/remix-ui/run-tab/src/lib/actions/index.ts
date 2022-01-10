@@ -110,7 +110,7 @@ const setupEvents = () => {
 
 export const initWebDialogs = (envToasterContent: (env: { context: string, fork: string }, from: string) => void, web3Dialog: () => void) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setEnvToasterContent(envToasterContent))
-  dispatch(setWeb3Dialog)
+  dispatch(setWeb3Dialog(web3Dialog))
 }
 
 const updateAccountBalances = () => {
