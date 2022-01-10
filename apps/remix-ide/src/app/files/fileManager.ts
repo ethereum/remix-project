@@ -1,13 +1,11 @@
 'use strict'
-
-import yo from 'yo-yo'
 import async from 'async'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
-const toaster = require('../ui/tooltip')
+import { fileChangedToasterMsg } from '@remix-ui/helper'
 const helper = require('../../lib/helper.js')
 
 /*
@@ -317,7 +315,7 @@ class FileManager extends Plugin {
 
       if (isFile) {
         if (newPathExists) {
-          this.call('modal', 'alert', {
+          this.call('notification', 'alert', {
             id: 'fileManagerAlert',
             message: 'File already exists'
           })
@@ -326,7 +324,7 @@ class FileManager extends Plugin {
         return provider.rename(oldPath, newPath, false)
       } else {
         if (newPathExists) {
-          this.call('modal', 'alert', {
+          this.call('notification', 'alert', {
             id: 'fileManagerAlert',
             message: 'Directory already exists'
           })
@@ -528,17 +526,7 @@ class FileManager extends Plugin {
       const required = this.appManager.isRequired(this.currentRequest.from)
       if (canCall && !required) {
         // inform the user about modification after permission is granted and even if permission was saved before
-        toaster(yo`
-          <div>
-            <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
-            <span>
-              ${this.currentRequest.from}
-              <span class="font-weight-bold text-warning">
-                is modifying 
-              </span>${path}
-            </span>
-          </div>
-        `, '', { time: 3000 })
+        this.call('notification','toast', fileChangedToasterMsg(this.currentRequest.from, path))
       }
     }
     return await this._setFileInternal(path, content)
@@ -778,12 +766,12 @@ class FileManager extends Plugin {
       helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
         (error, name) => {
           if (error) {
-            this.call('modal', 'alert', {
+            this.call('notification', 'alert', {
               id: 'fileManagerAlert',
               message: 'Unexpected error loading file ' + file + ': ' + error
             })
           } else if (helper.checkSpecialChars(name)) {
-            this.call('modal', 'alert', {
+            this.call('notification', 'alert', {
               id: 'fileManagerAlert',
               message: 'Special characters are not allowed in file names.'
             })
