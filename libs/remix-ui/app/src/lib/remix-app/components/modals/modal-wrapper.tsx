@@ -17,16 +17,16 @@ const ModalWrapper = (props: ModalWrapperProps) => {
       onOkFn()
     } else {
       // @ts-ignore: Object is possibly 'null'.
-      (props.resolve) ? props.resolve(ref.current.value) : props.okFn(ref.current.value)
+      (props.okFn) ? props.okFn(ref.current.value) : props.resolve(ref.current.value)
     }
   }
 
   const onOkFn = async () => {
-    (props.resolve) ? props.resolve(true) : props.okFn()
+    (props.okFn) ? props.okFn() : props.resolve(true)
   }
 
   const onCancelFn = async () => {
-    (props.resolve) ? props.resolve(false) : props.cancelFn()
+    (props.cancelFn) ? props.cancelFn() : props.resolve(false)
   }
 
   const createModalMessage = (defaultValue: string) => {
