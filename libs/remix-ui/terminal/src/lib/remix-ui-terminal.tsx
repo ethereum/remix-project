@@ -381,6 +381,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     } else {
       setShowTableHash((prevState) => ([...prevState, tx.hash]))
     }
+    scrollToBottom()
   }
 
   const handleAutoComplete = () => (
@@ -422,7 +423,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
   }
 
-  const classNameBlock = 'remix_ui_terminal_block px-4 text-break'
+  const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
     <div style={{ flexGrow: 1 }} className='remix_ui_terminal_panel' ref={panelRef}>
@@ -469,13 +470,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         {
           handleAutoComplete()
         }
-        <div data-id='terminalContainerDisplay' style = {{
-          position: 'relative',
-          height: '100%',
-          width: '100%',
-          opacity: '0.1',
-          zIndex: -1
-        }}></div>
         <div className="position-relative d-flex flex-column-reverse h-100">
           <div id='journal' className='remix_ui_terminal_journal pt-3 pb-4 px-2 m-2' data-id='terminalJournal'>
             {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
