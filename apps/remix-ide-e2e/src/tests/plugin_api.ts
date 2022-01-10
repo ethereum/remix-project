@@ -340,8 +340,8 @@ module.exports = {
       .perform(async () => {
         const request = {
           id: 9999,
-          jsonrpc: "2.0",
-          method: "net_listening",
+          jsonrpc: '2.0',
+          method: 'net_listening',
           params: []
         }
         const result = true
