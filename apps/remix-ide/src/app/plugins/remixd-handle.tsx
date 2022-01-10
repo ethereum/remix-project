@@ -30,7 +30,6 @@ enum State {
 export class RemixdHandle extends WebsocketPlugin {
   localhostProvider: any
   appManager: PluginManager
-  state: State
   constructor (localhostProvider, appManager) {
     super(profile)
     this.localhostProvider = localhostProvider
@@ -48,7 +47,8 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async activate () {
-    await this.connectToLocalhost()
+    this.connectToLocalhost()
+    return true
   }
 
   async canceled () {
@@ -95,13 +95,15 @@ export class RemixdHandle extends WebsocketPlugin {
       this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
-      this.state = State.new
       const mod:AppModal = {
         id: 'remixdConnect',
         title: 'Connect to localhost',
         message: remixdDialog(),
-        okFn: () => {
-          this.state = State.ok
+        okLabel: 'Connect',
+        cancelLabel: 'Cancel',
+      }
+      const result =  await this.call('modal', 'modal', mod)
+      if(result) {
           try {
             this.localhostProvider.preInit()
             super.activate()
@@ -115,18 +117,10 @@ export class RemixdHandle extends WebsocketPlugin {
           } catch (error) {
             connection(error)
           }
-        },
-        cancelFn: async () => {
-          this.state = State.cancel
-          await this.canceled()
-        },
-        okLabel: 'Connect',
-        cancelLabel: 'Cancel',
-        hideFn: async () => {
-          if (this.state === State.new) await this.canceled()
-        }
       }
-      await this.call('modal', 'modal', mod)
+      else {
+        await this.canceled()
+      }
     } else {
       try {
         super.activate()

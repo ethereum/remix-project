@@ -19,7 +19,8 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
           cancelFn: modalList[0].cancelFn,
           modalType: modalList[0].modalType,
           defaultValue: modalList[0].defaultValue,
-          hideFn: modalList[0].hideFn
+          hideFn: modalList[0].hideFn,
+          resolve: modalList[0].resolve
         }
 
         modalList = modalList.slice()
@@ -31,6 +32,8 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
     case modalActionTypes.handleHideModal:
       if (state.focusModal.hideFn) {
         state.focusModal.hideFn()
+      } else if (state.focusModal.resolve) {
+        state.focusModal.resolve(undefined)
       }
       state.focusModal = { ...state.focusModal, hide: true, message: null }
       return { ...state }
