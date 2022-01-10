@@ -37,7 +37,7 @@ const showTable = (opts, showTableHash) => {
   const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   return (
     <table
-      className={`remix_ui_terminal_txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`}
+      className={`mt-1 mb-2 mr-4  align-self-center ${showTableHash.includes(opts.hash) ? 'active' : ''}`}
       id="txTable"
       data-id={`txLoggerTable${opts.hash}`}
     >
