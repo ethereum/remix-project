@@ -159,6 +159,9 @@
     },
     "remix-ui-run-tab": {
       "tags": []
+    },
+    "remix-ui-permission-handler": {
+      "tags": []
     }
   },
   "targetDependencies": {

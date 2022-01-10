@@ -1170,6 +1170,21 @@
           }
         }
       }
+    },
+    "remix-ui-permission-handler": {
+      "root": "libs/remix-ui/permission-handler",
+      "sourceRoot": "libs/remix-ui/permission-handler/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/permission-handler/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "libs/remix-ui/permission-handler/**/*.d.ts", "!libs/remix-ui/permission-handler/**/*"]
+          }
+        }
+      }
     }
   },
   "cli": {
