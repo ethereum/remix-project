@@ -656,6 +656,13 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
+    case 'RESET_STATE': {
+      return {
+        ...runTabInitialState,
+        ipfsChecked: state.ipfsChecked
+      }
+    }
+
     default:
       return state
   }
