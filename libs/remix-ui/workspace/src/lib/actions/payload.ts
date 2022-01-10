@@ -187,6 +187,13 @@ export const focusElement = (elements: { key: string, type: 'file' | 'folder' | 
   }
 }
 
+export const removeFocus = (name: string) => {
+  return {
+    type: 'REMOVE_FOCUS_ELEMENT',
+    payload: name
+  }
+}
+
 export const setContextMenuItem = (item: action) => {
   return {
     type: 'SET_CONTEXT_MENU_ITEM',
