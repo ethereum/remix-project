@@ -3,7 +3,7 @@ element.style {
  height: 323px !important;
 }
 #terminalCliInput{
-  width: 95%;
+  width: 97%;
   background: transparent;
 }
 #terminalCliInput:focus {
@@ -96,12 +96,11 @@ element.style {
   font-family      : monospace;
   background-color : var(--secondary);
   overflow         : auto;
-  padding-bottom   : 13px;
   z-index          : 80;
-  bottom           : 1em;
+  bottom           : 2.2em;
   border-width     : 4px;
-  left             : 2em;
   overflow-y       : scroll;
+  box-shadow       : 0px 0px 13px -8px;
 }
 
 .remix_ui_terminal_autoCompleteItem {
