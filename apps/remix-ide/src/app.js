@@ -36,7 +36,6 @@ const FileManager = require('./app/files/fileManager')
 const FileProvider = require('./app/files/fileProvider')
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
-const toolTip = require('./app/ui/tooltip')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 
@@ -368,7 +367,7 @@ class AppComponent {
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                toolTip(`initiating ${callDetails[0]} ...`)
+                self.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
                 self.appManager.call(...callDetails).catch(console.error)
               }
