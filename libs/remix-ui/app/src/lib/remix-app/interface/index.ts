@@ -7,12 +7,13 @@ export interface AppModal {
     // eslint-disable-next-line no-undef
     message: string | JSX.Element
     okLabel: string
-    okFn: (value?:any) => void
+    okFn?: (value?:any) => void
     cancelLabel: string
-    cancelFn: () => void,
+    cancelFn?: () => void,
     modalType?: ModalTypes,
     defaultValue?: string
-    hideFn?: () => void
+    hideFn?: () => void,
+    resolve?: (value?:any) => void
 }
 
 export interface AlertModal {
