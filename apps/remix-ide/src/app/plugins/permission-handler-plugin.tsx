@@ -72,7 +72,7 @@ export class PermissionHandlerPlugin extends Plugin {
             const { allow, hash } = this.permissions[to.name][method][from.name]
             if (!allow) {
                 const warning = this.notAllowWarning(from, to, method)
-                this.call('modal', 'toast', warning)
+                this.call('notification', 'toast', warning)
                 return false
             }
             return hash === from.hash
@@ -100,7 +100,7 @@ export class PermissionHandlerPlugin extends Plugin {
             cancelLabel: 'Decline'
         }
 
-        const result = await this.call('modal', 'modal', modal)
+        const result = await this.call('notification', 'modal', modal)
         return new Promise((resolve, reject) => {
             if (result) {
                 if (this.permissions[to.name][method][from.name]) {

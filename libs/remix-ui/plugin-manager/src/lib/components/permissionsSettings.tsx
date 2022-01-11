@@ -5,11 +5,7 @@ import { ModalDialog } from '@remix-ui/modal-dialog'
 import useLocalStorage from '../custom-hooks/useLocalStorage'
 import { PluginPermissions } from '../../types'
 
-interface PermissionSettingsProps {
-  pluginSettings: any
-}
-
-function PermisssionsSettings ({ pluginSettings }: PermissionSettingsProps) {
+function PermisssionsSettings () {
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
   const [permissionCache, setpermissionCache] = useState<PluginPermissions>()
