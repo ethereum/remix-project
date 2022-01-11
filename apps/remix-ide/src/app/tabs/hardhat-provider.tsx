@@ -83,7 +83,7 @@ export class HardhatProvider extends Plugin {
                 },
                 defaultValue: 'http://127.0.0.1:8545'
               }
-              this.call('modal', 'modal', modalContent)
+              this.call('notification', 'modal', modalContent)
             })
           })()
         } catch (e) {
@@ -114,7 +114,7 @@ export class HardhatProvider extends Plugin {
           title: 'Hardhat Provider',
           message: `Error while connecting to the hardhat provider: ${error.message}`,
         }
-        this.call('modal', 'alert', modalContent)
+        this.call('notification', 'alert', modalContent)
         await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
         this.provider = null
         setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
