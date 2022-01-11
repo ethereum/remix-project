@@ -82,7 +82,7 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
         // @ts-ignore
           browser.frame(0, () => { resolve(true) })
         } else {
-          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@id="PermissionHandler-modal-footer-ok-react"]', () => {
+          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
           // @ts-ignore
             browser.frame(0, () => { resolve(true) })
           })
