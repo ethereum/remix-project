@@ -8,7 +8,6 @@ import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import { Permissionhandler } from '@remix-ui/permission-handler'
 
 interface IRemixAppUi {
   app: any
@@ -105,7 +104,6 @@ const RemixApp = (props: IRemixAppUi) => {
       {components.hiddenPanel}
       <AppDialogs></AppDialogs>
       <DialogViewPlugin></DialogViewPlugin>
-      <Permissionhandler></Permissionhandler>
     </AppProvider>
   )
 }

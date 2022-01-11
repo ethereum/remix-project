@@ -2,7 +2,6 @@
 import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
-import { PermissionHandler } from './app/ui/persmission-handler'
 import { IframePlugin } from '@remixproject/engine-web'
 const _paq = window._paq = window._paq || []
 
@@ -40,7 +39,6 @@ export class RemixAppManager extends PluginManager {
     this.event = new EventEmitter()
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
-    this.permissionHandler = new PermissionHandler()
   }
 
   async canActivatePlugin (from, to) {
@@ -72,7 +70,7 @@ export class RemixAppManager extends PluginManager {
       return true
     }
     // ask the user for permission
-    return await this.permissionHandler.askPermission(this.profiles[from], this.profiles[to], method, message)
+    return await this.call('permissionhandler', 'askPermission', this.profiles[from], this.profiles[to], method, message)
   }
 
   onPluginActivated (plugin) {
