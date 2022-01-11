@@ -24,7 +24,7 @@ export interface AlertModal {
 
 export interface ModalState {
     modals: AppModal[],
-    toasters: string[] | JSX.Element[],
+    toasters: (string | JSX.Element)[],
     focusModal: AppModal,
     focusToaster: string | JSX.Element
 }
