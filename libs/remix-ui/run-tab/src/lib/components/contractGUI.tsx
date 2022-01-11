@@ -58,6 +58,11 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const onCTCMouseDown = () => {
     const multiString = getMultiValsString()
+    // copy-to-clipboard icon is only visible for method requiring input params
+    if (!multiString) {
+      setClipboardContent('cannot encode empty arguments')
+      return
+    }
     const multiJSON = JSON.parse('[' + multiString + ']')
     let encodeObj
 
