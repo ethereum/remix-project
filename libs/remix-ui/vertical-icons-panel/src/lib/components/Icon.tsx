@@ -1,25 +1,15 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable no-use-before-define */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line no-use-before-define
 import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 import Badge from './Badge'
-
-  interface IconProps {
-    verticalIconPlugin: VerticalIcons
-    profile: IconProfile
-    contextMenuAction: (evt: any, profileName: string, documentation: string) => void
-    addActive: (profileName: string) => void
-    removeActive: () => void
-    badgeStatus?: BadgeStatus
-  }
+import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
 
 export interface IconStatus {
     key: string
     title: string
     type: string
+    pluginName?: string
   }
 
 export interface BadgeStatus extends IconStatus {
@@ -40,14 +30,29 @@ export interface IconProfile {
     tooltip?: string
   }
 
+  interface IconProps {
+    verticalIconPlugin: VerticalIcons
+    profile: IconProfile
+    contextMenuAction: (evt: any, profileName: string, documentation: string) => void
+    addActive: (profileName: string) => void
+    removeActive: () => void
+  }
+
+const initialState = {
+  text: '',
+  key: '',
+  title: '',
+  type: '',
+  pluginName: ''
+}
+
 function Icon ({
   profile,
   verticalIconPlugin,
   contextMenuAction,
   addActive,
-  removeActive,
+  removeActive
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  badgeStatus
 }: IconProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { tooltip, displayName, name, kind, icon, documentation } = profile
@@ -58,6 +63,7 @@ function Icon ({
   const [links, setLinks] = useState<{ Documentation: string, CanDeactivate: boolean }>(
       {} as { Documentation: string, CanDeactivate: boolean }
   )
+  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   // @ts-ignore
   const [pageX, setPageX] = useState<number>(null)
   // @ts-ignore
@@ -83,6 +89,17 @@ function Icon ({
   function closeContextMenu () {
     setShowContext(false)
   }
+
+  useEffect(() => {
+    verticalIconPlugin.on(name, 'statusChanged', (iconStatus: IconStatus) => {
+      iconStatus.pluginName = name
+      const action: IconBadgeReducerAction = { type: name, payload: { status: iconStatus, verticalIconPlugin: verticalIconPlugin } }
+      dispatchStatusUpdate(action)
+    })
+    return () => {
+      verticalIconPlugin.off(name, 'statusChanged')
+    }
+  }, [])
 
   return (
     <Fragment>
@@ -111,9 +128,10 @@ function Icon ({
         ref={iconRef}
       >
         <img className="remixui_image" src={icon} alt={name} />
-        <Badge
-          badgeStatus={badgeStatus!}
-        />
+        { badgeStatus && badgeStatus.pluginName === name ? (
+          <Badge
+            badgeStatus={badgeStatus}
+          />) : null }
       </div>
       {showContext ? (
         <VerticalIconsContextMenu

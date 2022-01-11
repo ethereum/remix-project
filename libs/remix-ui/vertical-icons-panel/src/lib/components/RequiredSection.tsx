@@ -26,6 +26,12 @@ function RequiredSection ({ verticalIconsPlugin, itemContextAction, addActive, r
         removeActive={removeActive}
         itemContextAction={itemContextAction}
       />
+      <PluginManager
+        verticalIconsPlugin={verticalIconsPlugin}
+        addActive={addActive}
+        removeActive={removeActive}
+        itemContextAction={itemContextAction}
+      />
       <Solidity
         verticalIconsPlugin={verticalIconsPlugin}
         addActive={addActive}
@@ -50,16 +56,15 @@ function RequiredSection ({ verticalIconsPlugin, itemContextAction, addActive, r
         removeActive={removeActive}
         itemContextAction={itemContextAction}
       />
-      <PluginManager
-        verticalIconsPlugin={verticalIconsPlugin}
-        addActive={addActive}
-        removeActive={removeActive}
-        itemContextAction={itemContextAction}
-      />
-      <Chevron
-        divElementRef={scrollableRef}
-        cssRule={'fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
-      />
+      {
+        scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
+          ? (
+            <Chevron
+              divElementRef={scrollableRef}
+              cssRule={'fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
+            />
+          ) : null
+      }
     </Fragment>
   )
 }

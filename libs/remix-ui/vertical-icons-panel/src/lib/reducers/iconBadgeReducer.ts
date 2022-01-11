@@ -31,7 +31,8 @@ function setIconStatus (name: string, status: IconStatus) {
     thisType = 'danger' // to use with bootstrap
   } else thisType = helper.checkSpecialChars(status.type) ? '' : status.type!
   const title = helper.checkSpecialChars(status.title) ? '' : status.title
-  return { title, type: thisType, key, text }
+  const pluginName = status.pluginName
+  return { title, type: thisType, key, text, pluginName }
 }
 
 export function iconBadgeReducer (state: BadgeStatus, action: IconBadgeReducerAction) {
