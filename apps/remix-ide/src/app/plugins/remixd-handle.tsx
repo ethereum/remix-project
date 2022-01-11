@@ -69,7 +69,7 @@ export class RemixdHandle extends WebsocketPlugin {
           id: 'connectionAlert',
           message: 'Cannot connect to the remixd daemon. Please make sure you have the remixd running in the background.'
         }
-        this.call('modal', 'alert', alert)
+        this.call('notification', 'alert', alert)
         this.canceled()
       } else {
         const intervalId = setInterval(() => {
@@ -80,7 +80,7 @@ export class RemixdHandle extends WebsocketPlugin {
               id: 'connectionAlert',
               message: 'Connection to remixd terminated.Please make sure remixd is still running in the background.'
             }
-            this.call('modal', 'alert', alert)
+            this.call('notification', 'alert', alert)
             this.canceled()
           }
         }, 3000)
@@ -102,7 +102,7 @@ export class RemixdHandle extends WebsocketPlugin {
         okLabel: 'Connect',
         cancelLabel: 'Cancel',
       }
-      const result =  await this.call('modal', 'modal', mod)
+      const result =  await this.call('notification', 'modal', mod)
       if(result) {
           try {
             this.localhostProvider.preInit()
