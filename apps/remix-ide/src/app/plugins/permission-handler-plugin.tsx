@@ -96,8 +96,8 @@ export class PermissionHandlerPlugin extends Plugin {
             id: 'PermissionHandler',
             title: `Permission needed for ${to.displayName || to.name}`,
             message: <PermissionHandlerDialog plugin={this} theme={await this.getTheme()} value={value}></PermissionHandlerDialog>,
-            okLabel: 'sure',
-            cancelLabel: 'no'
+            okLabel: 'Accept',
+            cancelLabel: 'Decline'
         }
 
         const result = await this.call('modal', 'modal', modal)
