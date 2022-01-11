@@ -3,7 +3,7 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { addressToString, createNonClashingNameAsync, shortenAddress } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -23,6 +23,7 @@ let plugin: RunTab, dispatch: React.Dispatch<any>
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
+  resetAndInit()
   setupEvents()
   setInterval(() => {
     fillAccountsList()
@@ -30,29 +31,6 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
 }
 
 const setupEvents = () => {
-  plugin.blockchain.resetAndInit(plugin.config, {
-    getAddress: (cb) => {
-      cb(null, plugin.REACT_API.accounts.selectedAccount)
-    },
-    getValue: (cb) => {
-      try {
-        const number = plugin.REACT_API.sendValue
-        const unit = plugin.REACT_API.sendUnit
-
-        cb(null, Web3.utils.toWei(number, unit))
-      } catch (e) {
-        cb(e)
-      }
-    },
-    getGasLimit: (cb) => {
-      try {
-        cb(null, '0x' + new ethJSUtil.BN(plugin.REACT_API.gasLimit, 10).toString(16))
-      } catch (e) {
-        cb(e.message)
-      }
-    }
-  })
-
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
     plugin.emit('newTransaction', tx, receipt)
   })
@@ -103,6 +81,11 @@ const setupEvents = () => {
     setExecutionContext(env, plugin.REACT_API.web3Dialog())
   })
 
+  plugin.on('filePanel', 'setWorkspace', () => {
+    dispatch(resetUdapp())
+    resetAndInit()
+  })
+
   plugin.fileManager.events.on('currentFileChanged', (currentFile: string) => {
     if (/.(.abi)$/.exec(currentFile)) {
       dispatch(setLoadType('abi'))
@@ -127,7 +110,7 @@ const setupEvents = () => {
 
 export const initWebDialogs = (envToasterContent: (env: { context: string, fork: string }, from: string) => void, web3Dialog: () => void) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setEnvToasterContent(envToasterContent))
-  dispatch(setWeb3Dialog)
+  dispatch(setWeb3Dialog(web3Dialog))
 }
 
 const updateAccountBalances = () => {
@@ -254,7 +237,7 @@ export const setExecutionContext = (executionContext: { context: string, fork: s
     }, () => { setFinalContext() }))
   }, (alertMsg) => {
     dispatch(displayPopUp(alertMsg))
-  }, setFinalContext())
+  }, () => { setFinalContext() })
 }
 
 export const setWeb3Endpoint = (endpoint: string) => {
@@ -717,4 +700,29 @@ export const getFuncABIInputs = (funcABI: FuncABI) => {
 
 export const setSendTransactionValue = (value: string) => {
   dispatch(setSendValue(value))
+}
+
+const resetAndInit = () => {
+  plugin.blockchain.resetAndInit(plugin.config, {
+    getAddress: (cb) => {
+      cb(null, plugin.REACT_API.accounts.selectedAccount)
+    },
+    getValue: (cb) => {
+      try {
+        const number = plugin.REACT_API.sendValue
+        const unit = plugin.REACT_API.sendUnit
+
+        cb(null, Web3.utils.toWei(number, unit))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      try {
+        cb(null, '0x' + new ethJSUtil.BN(plugin.REACT_API.gasLimit, 10).toString(16))
+      } catch (e) {
+        cb(e.message)
+      }
+    }
+  })
 }

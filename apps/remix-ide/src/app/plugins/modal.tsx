@@ -14,9 +14,9 @@ interface IModalApi {
 }
 
 const profile:LibraryProfile<IModalApi> = {
-  name: 'modal',
-  displayName: 'Modal',
-  description: 'Modal',
+  name: 'notification',
+  displayName: 'Notification',
+  description: 'Displays notifications',
   methods: ['modal', 'alert', 'toast']
 }
 
@@ -31,11 +31,11 @@ export class ModalPlugin extends Plugin implements MethodApi<IModalApi> {
   }
 
   async modal (args: AppModal) {
-    this.dispatcher.modal(args)
+    return this.dispatcher.modal(args)
   }
 
   async alert (args: AlertModal) {
-    this.dispatcher.alert(args)
+    return this.dispatcher.alert(args)
   }
 
   async toast (message: string) {

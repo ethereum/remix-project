@@ -7,7 +7,6 @@ import LocalPluginForm from './LocalPluginForm'
 
 interface RootViewProps {
   pluginComponent: PluginManagerComponent
-  pluginManagerSettings: PluginManagerSettings
   children: ReactNode
 }
 
@@ -21,7 +20,7 @@ export interface pluginActivated {
   profile: Profile
 }
 
-function RootView ({ pluginComponent, pluginManagerSettings, children }: RootViewProps) {
+function RootView ({ pluginComponent, children }: RootViewProps) {
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
 
@@ -52,7 +51,7 @@ function RootView ({ pluginComponent, pluginManagerSettings, children }: RootVie
           </button>
         </header>
         {children}
-        <PermisssionsSettings pluginSettings={pluginManagerSettings}/>
+        <PermisssionsSettings />
       </div>
       <LocalPluginForm
         closeModal={closeModal}
