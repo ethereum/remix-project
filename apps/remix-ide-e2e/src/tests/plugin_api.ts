@@ -10,7 +10,7 @@ declare global {
 const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
-  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp'],
+  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
   url: 'http://localhost:2020',
   location: 'sidePanel'
 }
@@ -324,5 +324,33 @@ module.exports = {
 
   'Should get compilationresults #group6': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
+  },
+
+  // PROVIDER
+
+  'Should switch to hardhat provider (provider plugin) #group8': function (browser: NightwatchBrowser) {
+    browser
+      .frameParent()
+      .useCss()
+      .clickLaunchIcon('pluginManager')
+      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonhardhat-provider"]')
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Hardhat Provider"]')
+      .modalFooterOKClick('hardhatprovider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
+      .clickLaunchIcon('localPlugin')
+      .useXpath()
+      // @ts-ignore
+      .frame(0)
+      .perform(async () => {
+        const request = {
+          id: 9999,
+          jsonrpc: '2.0',
+          method: 'net_listening',
+          params: []
+        }
+        const result = '{"jsonrpc":"2.0","result":true,"id":9999}'
+        await clickAndCheckLog(browser, 'hardhat-provider:sendAsync', result, null, request)
+      })
   }
 }
