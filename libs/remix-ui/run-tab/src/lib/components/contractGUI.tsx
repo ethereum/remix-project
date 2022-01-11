@@ -19,25 +19,6 @@ export function ContractGUI (props: ContractGUIProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
 
   useEffect(() => {
-    const multiString = getMultiValsString()
-    const multiJSON = JSON.parse('[' + multiString + ']')
-    let encodeObj
-
-    if (props.evmBC) {
-      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.evmBC)
-    } else {
-      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
-    }
-    if (encodeObj.error) {
-      console.error(encodeObj.error)
-      // throw new Error(encodeObj.error)
-      setClipboardContent(encodeObj.error)
-    } else {
-      setClipboardContent(encodeObj.data)
-    }
-  }, [])
-
-  useEffect(() => {
     if (props.title) {
       setTitle(props.title)
     } else if (props.funcABI.name) {
@@ -74,6 +55,24 @@ export function ContractGUI (props: ContractGUIProps) {
       })
     }
   }, [props.lookupOnly, props.funcABI, title])
+
+  const onCTCMouseDown = () => {
+    const multiString = getMultiValsString()
+    const multiJSON = JSON.parse('[' + multiString + ']')
+    let encodeObj
+
+    if (props.evmBC) {
+      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.evmBC)
+    } else {
+      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
+    }
+    if (encodeObj.error) {
+      console.error(encodeObj.error)
+      setClipboardContent(encodeObj.error)
+    } else {
+      setClipboardContent(encodeObj.data)
+    }
+  }
 
   const switchMethodViewOn = () => {
     setToggleContainer(true)
@@ -187,7 +186,7 @@ export function ContractGUI (props: ContractGUIProps) {
             })}
           </div>
           <div className="udapp_group udapp_multiArg">
-            <CopyToClipboard content={clipboardContent} tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} />
+            <CopyToClipboard content={clipboardContent} tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} onmousedown= {onCTCMouseDown} />
             <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
           </div>
         </div>
