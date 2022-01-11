@@ -497,6 +497,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'REMOVE_FOCUS_ELEMENT': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        focusElement: state.focusElement.filter(element => element.key !== payload)
+      }
+    }
+
     case 'SET_CONTEXT_MENU_ITEM': {
       const payload = action.payload as action
 

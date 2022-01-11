@@ -11,5 +11,6 @@ export interface ModalDialogProps {
   showCancelIcon?: boolean,
   hide?: boolean,
   handleHide: (hideState?: boolean) => void,
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  resolve?: (value?:any) => void,
 }

@@ -66,7 +66,7 @@ export class HardhatProvider extends Plugin {
           value = await ((): Promise<string> => {
             return new Promise((resolve, reject) => {
               const modalContent: AppModal = {
-                id: 'harrhatprovider',
+                id: 'hardhatprovider',
                 title: 'Hardhat node request',
                 message: this.hardhatProviderDialogBody(),
                 modalType: ModalTypes.prompt,
@@ -83,7 +83,7 @@ export class HardhatProvider extends Plugin {
                 },
                 defaultValue: 'http://127.0.0.1:8545'
               }
-              this.call('modal', 'modal', modalContent)
+              this.call('notification', 'modal', modalContent)
             })
           })()
         } catch (e) {
@@ -110,11 +110,11 @@ export class HardhatProvider extends Plugin {
       } catch (error) {
         this.blocked = true
         const modalContent: AlertModal = {
-          id: 'harrhatprovider',
+          id: 'hardhatprovider',
           title: 'Hardhat Provider',
           message: `Error while connecting to the hardhat provider: ${error.message}`,
         }
-        this.call('modal', 'alert', modalContent)
+        this.call('notification', 'alert', modalContent)
         await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
         this.provider = null
         setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
