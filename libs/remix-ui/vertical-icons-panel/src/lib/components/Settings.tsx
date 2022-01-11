@@ -34,10 +34,10 @@ function Settings ({ scrollableRef, verticalIconsPlugin, itemContextAction, addA
   }, [])
   return (
     <div id="settingsIcons" className="remixui_settings mb-0 flex-grow-0" data-id="vertialIconsSettingsIcons" ref={settingsRef}>
-      <Chevron
+      { scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight ? (<Chevron
         divElementRef={scrollableRef}
         cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
-      />
+      />) : null }
       {Object.keys(verticalIconsPlugin.targetProfileForChange)
         .filter(p => p === 'settings')
         .map(p => (

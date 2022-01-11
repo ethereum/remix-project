@@ -57,6 +57,7 @@ export class VerticalIcons extends Plugin {
   unlinkContent (profile) {
     this.targetProfileForRemoval = profile
     this.removeIcon(profile)
+    this.renderComponent()
   }
 
   listenOnStatus (profile) {
