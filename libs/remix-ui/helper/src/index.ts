@@ -1,2 +1,2 @@
 export * from './lib/remix-ui-helper'
-export * from './lib/components'
+export * from './lib/helper-components'

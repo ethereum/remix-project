@@ -8,11 +8,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import QueryParams from '../../lib/query-params'
 // import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
-
-const yo = require('yo-yo')
-const addTooltip = require('../ui/tooltip')
-
-const css = require('./styles/compile-tab-styles')
+import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper'
 
 const profile = {
   name: 'solidity',
@@ -41,6 +37,8 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
     this.initCompilerApi()
+    this.el = document.createElement('div')
+    this.el.setAttribute('id', 'compileTabView')
   }
 
   renderComponent () {
@@ -70,11 +68,6 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   render () {
-    if (this.el) return this.el
-    this.el = yo`
-      <div class="${css.debuggerTabView}" id="compileTabView">
-        <div id="compiler" class="${css.compiler}"></div>
-      </div>`
     this.renderComponent()
 
     return this.el
@@ -101,11 +94,13 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     super.setCompilerConfig(settings)
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
-    addTooltip(yo`<div><b>${this.currentRequest.from}</b> is updating the <b>Solidity compiler configuration</b>.<pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
+    const value = JSON.stringify(settings, null, '\t')
+  
+    this.call('notification', 'toast', compilerConfigChangedToastMsg(this.currentRequest.from, value))
   }
 
   compile (fileName) {
-    addTooltip(yo`<div><b>${this.currentRequest.from}</b> is requiring to compile <b>${fileName}</b></div>`)
+    this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
     super.compile(fileName)
   }
 
