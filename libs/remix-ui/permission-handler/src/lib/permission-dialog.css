@@ -23,3 +23,7 @@
   .images i {
     margin: 0 20px;
   }
+
+  .invert {
+    filter: invert(1);
+  }

@@ -1,8 +1,8 @@
-import { IconProfile } from 'libs/remix-ui/vertical-icons-panel/src/lib/components/Icon'
+import { Profile } from '@remixproject/plugin-utils'
 
 export interface PermissionHandlerValue {
-    from: IconProfile,
-    to: IconProfile,
+    from: Profile,
+    to: Profile,
     remember: boolean,
     method: string,
     message: string
@@ -10,4 +10,6 @@ export interface PermissionHandlerValue {
 
 export interface PermissionHandlerProps {
     value: PermissionHandlerValue
+    theme: string
+    plugin: any
 }

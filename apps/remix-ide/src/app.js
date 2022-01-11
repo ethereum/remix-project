@@ -10,6 +10,7 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
+import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -191,8 +192,11 @@ class AppComponent {
 
     const configPlugin = new ConfigPlugin()
     self.layout = new Layout()
+    
+    const permissionHandler = new PermissionHandlerPlugin()
 
     self.engine.register([
+      permissionHandler,
       self.layout,
       self.modal,
       self.gistHandler,
@@ -317,7 +321,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['layout'])
     await self.appManager.activatePlugin(['modal'])
     await self.appManager.activatePlugin(['editor'])
-    await self.appManager.activatePlugin(['theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await self.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
