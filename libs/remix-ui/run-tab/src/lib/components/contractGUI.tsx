@@ -15,7 +15,6 @@ export function ContractGUI (props: ContractGUIProps) {
     classList: string,
     dataId: string
   }>({ title: '', content: '', classList: '', dataId: '' })
-  const [clipboardContent, setClipboardContent] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
 
   useEffect(() => {
@@ -56,12 +55,11 @@ export function ContractGUI (props: ContractGUIProps) {
     }
   }, [props.lookupOnly, props.funcABI, title])
 
-  const onCTCMouseDown = () => {
+  const getContentOnCTC = () => {
     const multiString = getMultiValsString()
     // copy-to-clipboard icon is only visible for method requiring input params
     if (!multiString) {
-      setClipboardContent('cannot encode empty arguments')
-      return
+      return 'cannot encode empty arguments'
     }
     const multiJSON = JSON.parse('[' + multiString + ']')
     let encodeObj
@@ -73,9 +71,9 @@ export function ContractGUI (props: ContractGUIProps) {
     }
     if (encodeObj.error) {
       console.error(encodeObj.error)
-      setClipboardContent(encodeObj.error)
+      return encodeObj.error
     } else {
-      setClipboardContent(encodeObj.data)
+      return encodeObj.data
     }
   }
 
@@ -191,7 +189,7 @@ export function ContractGUI (props: ContractGUIProps) {
             })}
           </div>
           <div className="udapp_group udapp_multiArg">
-            <CopyToClipboard content={clipboardContent} tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} onmousedown= {onCTCMouseDown} />
+            <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} getContent={getContentOnCTC} />
             <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
           </div>
         </div>
