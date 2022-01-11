@@ -1,8 +1,7 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect, useReducer } from 'react'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-import Icon, { IconStatus } from './Icon'
+import React, { Fragment } from 'react'
+import Icon from './Icon'
 
 interface UdappProps {
   verticalIconsPlugin: VerticalIcons
@@ -11,23 +10,7 @@ interface UdappProps {
   removeActive: () => void
 }
 
-const initialState = {
-  text: '',
-  key: '',
-  title: '',
-  type: ''
-}
-
 function Udapp ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: UdappProps) {
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
-
-  useEffect(() => {
-    verticalIconsPlugin.on('udapp', 'statusChanged', (iconStatus: IconStatus) => {
-      const action: IconBadgeReducerAction = { type: 'udapp', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
-      dispatchStatusUpdate(action)
-    })
-  }, [])
-
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
@@ -48,7 +31,6 @@ function Udapp ({ verticalIconsPlugin, itemContextAction, addActive, removeActiv
                 key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
                 }
-                badgeStatus={badgeStatus}
               />
             </div>
           ))
