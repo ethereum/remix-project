@@ -171,6 +171,11 @@ export const runTabInitialState: RunTabState = {
   web3Dialog: null
 }
 
+type AddProvider = {
+  name: string,
+  provider: any
+}
+
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
   switch (action.type) {
     case 'FETCH_ACCOUNTS_LIST_REQUEST': {
@@ -328,25 +333,32 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'ADD_PROVIDER': {
-      const payload: string = action.payload
-
+      const payload: AddProvider = action.payload
+      const id = action.payload.name
+      state.providers.providerList.push({
+        content: payload.name,
+        dataId: id,
+        id,
+        title: payload.name,
+        value: id
+      })
       return {
         ...state,
         providers: {
           ...state.providers,
-          providerList: { ...state.providers.providerList, payload }
+          providerList: state.providers.providerList
         }
       }
     }
 
     case 'REMOVE_PROVIDER': {
-      const payload: string = action.payload
-
+      const id: string = action.payload
+      const providers = state.providers.providerList.filter((el) => el.id !== id)
       return {
         ...state,
         providers: {
           ...state.providers,
-          providerList: delete state.providers.providerList[payload] ? state.providers.providerList : state.providers.providerList
+          providerList: providers
         }
       }
     }
