@@ -12,10 +12,11 @@ interface ICopyToClipboard {
   direction?: Placement,
   className?: string,
   title?: string,
-  children?: JSX.Element
+  children?: JSX.Element,
+  onmousedown?: any
 }
 export const CopyToClipboard = (props: ICopyToClipboard) => {
-  let { content, tip = 'Copy', icon = 'fa-copy', direction = 'right', children, ...otherProps } = props
+  let { content, tip = 'Copy', icon = 'fa-copy', direction = 'right', children, onmousedown, ...otherProps } = props
   const [message, setMessage] = useState(tip)
   const handleClick = (e) => {
     if (content && content !== '') { // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
@@ -41,7 +42,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
 
   return (
     // eslint-disable-next-line jsx-a11y/anchor-is-valid
-    <a href='#' onClick={handleClick} onMouseLeave={reset}>
+    <a href='#' onClick={handleClick} onMouseLeave={reset} onMouseDown={onmousedown}>
       <OverlayTrigger placement={direction} overlay={
         <Tooltip id="overlay-tooltip">
           { message }
