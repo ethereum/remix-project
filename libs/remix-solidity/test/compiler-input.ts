@@ -1,14 +1,14 @@
 'use strict'
 import tape from 'tape'
-import { getValidLanguage } from "../src/compiler/compiler-input";
-import { Language } from "../src/compiler/types";
+import { getValidLanguage } from '../src/compiler/compiler-input'
+import { Language } from '../src/compiler/types'
 
 tape('compiler-input', function (t) {
   t.test('getValidLanguage', function (st) {
     st.plan(9)
 
-    const correctYul: Language = 'Yul';
-    const correctSolidity: Language = 'Solidity';
+    const correctYul: Language = 'Yul'
+    const correctSolidity: Language = 'Solidity'
 
     const yulUpperCase = 'Yul'
     const yulLowerCase = 'yul'
