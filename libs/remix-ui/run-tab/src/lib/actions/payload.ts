@@ -278,9 +278,10 @@ export const setEnvToasterContent = (content: (env: { context: string, fork: str
   }
 }
 
-export const setWeb3Dialog = () => {
+export const setWeb3Dialog = (web3Dialog: () => void) => {
   return {
-    type: 'SET_WEB3_DIALOG'
+    type: 'SET_WEB3_DIALOG',
+    payload: web3Dialog
   }
 }
 
