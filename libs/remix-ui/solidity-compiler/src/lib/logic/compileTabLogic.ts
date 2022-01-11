@@ -1,5 +1,5 @@
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
-import { helpers } from '@remix-project/remix-lib'
+import { getValidLanguage } from '@remix-project/remix-solidity'
 
 const Compiler = require('@remix-project/remix-solidity').Compiler
 const EventEmitter = require('events')
@@ -42,7 +42,7 @@ export class CompileTabLogic {
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
-    this.language = helpers.compiler.getValidLanguage(this.api.getCompilerParameters().language)
+    this.language = getValidLanguage(this.api.getCompilerParameters().language)
     if (this.language != null) {
       this.compiler.set('language', this.language)
     }
