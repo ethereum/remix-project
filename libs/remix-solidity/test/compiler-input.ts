@@ -1,10 +1,10 @@
 'use strict'
 import tape from 'tape'
-import { getValidLanguage } from "../src/helpers/compilerHelper";
-import { Language } from "@remix-project/remix-solidity-ts";
+import { getValidLanguage } from "../src/compiler/compiler-input";
+import { Language } from "../src/compiler/types";
 
-tape('compilerHelper', function (t) {
-  t.test('lowerbound', function (st) {
+tape('compiler-input', function (t) {
+  t.test('getValidLanguage', function (st) {
     st.plan(9)
 
     const correctYul: Language = 'Yul';
