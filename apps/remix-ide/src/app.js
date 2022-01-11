@@ -36,7 +36,6 @@ const FileManager = require('./app/files/fileManager')
 const FileProvider = require('./app/files/fileProvider')
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
-const toolTip = require('./app/ui/tooltip')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 
@@ -319,7 +318,7 @@ class AppComponent {
       console.log("couldn't register iframe plugins", e.message)
     }
     await self.appManager.activatePlugin(['layout'])
-    await self.appManager.activatePlugin(['modal'])
+    await self.appManager.activatePlugin(['notification'])
     await self.appManager.activatePlugin(['editor'])
     await self.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
@@ -368,7 +367,7 @@ class AppComponent {
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                toolTip(`initiating ${callDetails[0]} ...`)
+                self.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
                 self.appManager.call(...callDetails).catch(console.error)
               }
