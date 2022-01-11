@@ -5,7 +5,7 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
-import { fileChangedToasterMsg } from '@remix-ui/helper'
+import { fileChangedToastMsg } from '@remix-ui/helper'
 const helper = require('../../lib/helper.js')
 
 /*
@@ -526,7 +526,7 @@ class FileManager extends Plugin {
       const required = this.appManager.isRequired(this.currentRequest.from)
       if (canCall && !required) {
         // inform the user about modification after permission is granted and even if permission was saved before
-        this.call('notification','toast', fileChangedToasterMsg(this.currentRequest.from, path))
+        this.call('notification','toast', fileChangedToastMsg(this.currentRequest.from, path))
       }
     }
     return await this._setFileInternal(path, content)
