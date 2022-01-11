@@ -43,7 +43,6 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
       copyData()
     }
     e.preventDefault()
-    return false
   }
 
   const reset = () => {
