@@ -45,7 +45,7 @@ export class GistHandler extends Plugin {
                 setTimeout(() => reject(new Error('Hide')), 0)
               }
             }
-            this.call('modal', 'modal', modalContent)
+            this.call('notification', 'modal', modalContent)
           })
         })()
       } catch (e) {
@@ -63,7 +63,7 @@ export class GistHandler extends Plugin {
             title: 'Gist load error',
             message: 'Error while loading gist. Please provide a valid Gist ID or URL.'
           }
-          this.call('modal', 'alert', modalContent)
+          this.call('notification', 'alert', modalContent)
         }
       } else {
         const modalContent = {
@@ -71,7 +71,7 @@ export class GistHandler extends Plugin {
           title: 'Gist load error',
           message: 'Error while loading gist. Id cannot be empty.'
         }
-        this.call('modal', 'alert', modalContent)
+        this.call('notification', 'alert', modalContent)
       }
       return loadingFromGist
     } else {
@@ -97,7 +97,7 @@ export class GistHandler extends Plugin {
             modalType: 'alert',
             okLabel: 'OK'
           }
-          await this.call('modal', 'modal', modalContent)
+          await this.call('notification', 'modal', modalContent)
           return
         }
       } catch (e: any) {
@@ -107,7 +107,7 @@ export class GistHandler extends Plugin {
           message: e.message
 
         }
-        await this.call('modal', 'alert', modalContent)
+        await this.call('notification', 'alert', modalContent)
         return
       }
 
@@ -124,7 +124,7 @@ export class GistHandler extends Plugin {
             message: errorSavingFiles.message || errorSavingFiles
 
           }
-          this.call('modal', 'alert', modalContent)
+          this.call('notification', 'alert', modalContent)
         }
       })
     })
