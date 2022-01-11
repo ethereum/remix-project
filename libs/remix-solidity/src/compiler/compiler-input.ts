@@ -42,4 +42,3 @@ export function getValidLanguage (val: string): Language {
   }
   return null
 }
-
