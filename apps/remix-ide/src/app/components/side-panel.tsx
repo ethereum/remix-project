@@ -63,6 +63,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   removeView (profile) {
+    if(this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
     super.removeView(profile)
     this.emit('pluginDisabled', profile.name)
     this.call('menuicons', 'unlinkContent', profile)

@@ -64,6 +64,11 @@ export class VerticalIcons extends Plugin {
 
   }
 
+  async activateHome() {
+    await this.call('manager', 'activatePlugin', 'home')
+    await this.call('tabs', 'focus', 'home')
+  }
+
   /**
    * Remove an icon from the map
    * @param {ModuleProfile} profile The profile of the module
