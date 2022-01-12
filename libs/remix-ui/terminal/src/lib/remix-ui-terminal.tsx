@@ -471,7 +471,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           handleAutoComplete()
         }
         <div className="position-relative d-flex flex-column-reverse h-100">
-          <div id='journal' className='remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 m-2 mr-0' data-id='terminalJournal'>
+          <div id='journal' className='remix_ui_terminal_journal d-flex flex-column pt-3 mb-4 pb-4 px-2 m-2 mr-0' data-id='terminalJournal'>
             {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === EMPTY_BLOCK) {
@@ -554,7 +554,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
             <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
             <input
-              className="remix_ui_terminal_input bg-light ml-1 text-dark text-break border-0"
+              className="remix_ui_terminal_input ml-1 text-break border-0"
               ref={inputEl}
               spellCheck="false"
               contentEditable="true"
