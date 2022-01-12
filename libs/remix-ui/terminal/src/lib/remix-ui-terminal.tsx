@@ -18,6 +18,7 @@ import RenderKnownTransactions from './components/RenderKnownTransactions' // es
 import parse from 'html-react-parser'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
+import { stateDecoder } from 'dist/libs/remix-debug/src/solidity-decoder'
 
 /* eslint-disable-next-line */
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -551,7 +552,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             })}
             <div ref={messagesEndRef} />
           </div>
-          <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
+          { isOpen && <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
             <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
             <input
               className="remix_ui_terminal_input ml-1 text-break border-0"
@@ -566,6 +567,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               onPaste={handlePaste}
             ></input>
           </div>
+          }
         </div>
       </div>
       <ModalDialog
