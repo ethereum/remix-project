@@ -11,7 +11,7 @@ function Home ({ verticalIconPlugin }: HomeProps) {
   return (
     <div
       className="pl-1 mt-2 remixui_homeIcon"
-      onClick={async () => verticalIconPlugin.activateHome()}
+      onClick={async () => await verticalIconPlugin.activateHome()}
       // @ts-ignore
       plugin="home"
       title="Home"

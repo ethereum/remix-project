@@ -60,6 +60,7 @@ function RequiredSection ({ verticalIconsPlugin, itemContextAction, addActive, r
         scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
           ? (
             <Chevron
+              direction='up'
               divElementRef={scrollableRef}
               cssRule={'fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
             />
