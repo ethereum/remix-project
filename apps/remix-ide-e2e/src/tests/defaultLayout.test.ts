@@ -56,7 +56,7 @@ module.exports = {
       .waitForElementVisible('div[data-id="terminalCli"]')
       .click('i[data-id="terminalToggleIcon"]')
       .checkElementStyle('div[data-id="terminalToggleMenu"]', 'height', '35px')
-      .waitForElementNotVisible('div[data-id="terminalCli"]', 10000)
+      .assert.not.elementPresent('div[data-id="terminalCli"]')
       .click('i[data-id="terminalToggleIcon"]')
       .waitForElementVisible('div[data-id="terminalCli"]')
   },
