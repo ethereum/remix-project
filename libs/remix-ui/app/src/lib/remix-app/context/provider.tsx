@@ -30,7 +30,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
     })
   }
 
-  const toast = (message: string) => {
+  const toast = (message: string | JSX.Element) => {
     dispatch({
       type: modalActionTypes.setToast,
       payload: message

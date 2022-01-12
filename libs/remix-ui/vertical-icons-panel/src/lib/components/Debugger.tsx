@@ -1,9 +1,7 @@
 import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect, useReducer } from 'react'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-import Badge from './Badge'
-import Icon, { IconStatus } from './Icon'
+import React, { Fragment } from 'react'
+import Icon from './Icon'
 
 interface DebuggerProps {
   verticalIconsPlugin: VerticalIcons
@@ -12,23 +10,7 @@ interface DebuggerProps {
   removeActive: () => void
 }
 
-const initialState = {
-  text: '',
-  key: '',
-  title: '',
-  type: ''
-}
-
 function Debugger ({ verticalIconsPlugin, itemContextAction, addActive, removeActive }: DebuggerProps) {
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
-
-  useEffect(() => {
-    verticalIconsPlugin.on('debugger', 'statusChanged', (iconStatus: IconStatus) => {
-      const action: IconBadgeReducerAction = { type: 'debugger', payload: { status: iconStatus, verticalIconPlugin: verticalIconsPlugin } }
-      dispatchStatusUpdate(action)
-    })
-  }, [])
-
   return (
     <Fragment>
       {verticalIconsPlugin.targetProfileForChange &&
@@ -48,9 +30,6 @@ function Debugger ({ verticalIconsPlugin, itemContextAction, addActive, removeAc
                 key={
                   verticalIconsPlugin.targetProfileForChange[p].displayName
                 }
-              />
-              <Badge
-                badgeStatus={badgeStatus}
               />
             </div>
           ))
