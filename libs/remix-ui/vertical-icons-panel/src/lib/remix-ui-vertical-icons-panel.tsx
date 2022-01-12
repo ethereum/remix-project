@@ -92,9 +92,6 @@ export function RemixUiVerticalIconsPanel ({
 
   async function itemContextAction (e: any, name: string, documentation: string) {
     verticalIconsPlugin.appManager.deactivatePlugin(name)
-    if (e.target.parentElement.classList.contains('active')) {
-      verticalIconsPlugin.select('filePanel')
-    }
     verticalIconsPlugin.renderComponent()
   }
 
