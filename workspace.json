@@ -309,10 +309,10 @@
           }
         },
         "test": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/jest:jest",
           "options": {
-            "commands": ["./../../node_modules/.bin/npm-run-all test"],
-            "cwd": "libs/remix-solidity"
+            "jestConfig": "libs/remix-solidity/jest.config.js",
+            "tsConfig": "libs/remix-solidity/tsconfig.spec.json"
           }
         },
         "build": {
