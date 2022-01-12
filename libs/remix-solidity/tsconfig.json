@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node"],
-    "esModuleInterop": true
+    "types": ["jest", "node"]
   },
   "include": ["**/*.ts"]
 }
