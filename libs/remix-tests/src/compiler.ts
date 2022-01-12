@@ -196,7 +196,6 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
         compiler.loadVersion(usingWorker, currentCompilerUrl)
         // @ts-ignore
         compiler.event.register('compilerLoaded', this, (version) => {
-          console.log('Inside compiler loaded')
           next()
         })
       } else {
@@ -205,9 +204,9 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
       }
     },
     (next) => {
-      console.log('compiler before compilation', compiler)
       const compilationFinishedCb = (success, data, source) => {
-        UTRunner.compiler = compiler
+        // data.error usually exists for exceptions like worker error etc.
+        if (!data.error) UTRunner.compiler = compiler
         if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
         next(null, data)
       }
