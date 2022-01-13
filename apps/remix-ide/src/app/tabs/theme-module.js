@@ -6,16 +6,16 @@ import Registry from '../state/registry'
 const _paq = window._paq = window._paq || []
 
 const themes = [
-  { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
-  { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
-  { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
-  { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
-  { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
+  { name: 'dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
+  { name: 'light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
+  { name: 'midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
+  { name: 'black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
+  { name: 'candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
 
-  { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
-  { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
-  { name: 'Spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
-  { name: 'Cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css' }
+  { name: 'cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
+  { name: 'flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
+  { name: 'spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
+  { name: 'cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css' }
 ]
 
 const profile = {
@@ -39,8 +39,10 @@ export class ThemeModule extends Plugin {
     }, {})
     this._paq = _paq
     let queryTheme = (new QueryParams()).get().theme
+    queryTheme = queryTheme && queryTheme.toLocaleLowerCase()
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
+    currentTheme = currentTheme && currentTheme.toLocaleLowerCase()
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.currentThemeState = { queryTheme, currentTheme }
     this.active = queryTheme || currentTheme || 'Dark'
