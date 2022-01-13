@@ -62,13 +62,7 @@ export function ContractGUI (props: ContractGUIProps) {
       return 'cannot encode empty arguments'
     }
     const multiJSON = JSON.parse('[' + multiString + ']')
-    let encodeObj
-
-    if (props.evmBC) {
-      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.evmBC)
-    } else {
-      encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
-    }
+    const encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
     if (encodeObj.error) {
       console.error(encodeObj.error)
       return encodeObj.error
