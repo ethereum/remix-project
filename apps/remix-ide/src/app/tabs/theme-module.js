@@ -6,16 +6,16 @@ import Registry from '../state/registry'
 const _paq = window._paq = window._paq || []
 
 const themes = [
-  { name: 'dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
-  { name: 'light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
-  { name: 'midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
-  { name: 'black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
-  { name: 'candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
+  { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
+  { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
+  { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
+  { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
+  { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
 
-  { name: 'cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
-  { name: 'flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
-  { name: 'spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
-  { name: 'cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css' }
+  { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
+  { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
+  { name: 'Spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
+  { name: 'Cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css' }
 ]
 
 const profile = {
@@ -35,7 +35,7 @@ export class ThemeModule extends Plugin {
     }
     this.themes = themes.reduce((acc, theme) => {
       theme.url = window.location.origin + window.location.pathname + theme.url
-      return { ...acc, [theme.name]: theme }
+      return { ...acc, [theme.name.toLocaleLowerCase()]: theme }
     }, {})
     this._paq = _paq
     let queryTheme = (new QueryParams()).get().theme
@@ -45,7 +45,7 @@ export class ThemeModule extends Plugin {
     currentTheme = currentTheme && currentTheme.toLocaleLowerCase()
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.currentThemeState = { queryTheme, currentTheme }
-    this.active = queryTheme || currentTheme || 'Dark'
+    this.active = queryTheme || currentTheme || 'dark'
     this.forced = !!queryTheme
   }
 
@@ -84,6 +84,7 @@ export class ThemeModule extends Plugin {
    * @param {string} [themeName] - The name of the theme
    */
   switchTheme (themeName) {
+    themeName = themeName && themeName.toLocaleLowerCase() 
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
