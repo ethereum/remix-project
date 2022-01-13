@@ -548,7 +548,6 @@ export const clearInstances = () => {
 
 export const loadAddress = (contract: ContractData, address: string) => {
   if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
-  clearInstances()
   loadContractFromAddress(address,
     (cb) => {
       dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
