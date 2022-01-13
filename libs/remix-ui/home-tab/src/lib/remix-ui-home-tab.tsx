@@ -248,7 +248,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               <div className="d-flex flex-row pt-2">
                 <ThemeContext.Provider value={ state.themeQuality }>
                   <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" callback={() => startSolidity()} />
-                  <PluginButton imgPath="assets/img/cairoLogo.webp" envID="CairoLogo" envText="Cairo compiler"  l2={true} callback={() => startCairo()} />
+                  <PluginButton imgPath="assets/img/cairoLogo.webp" envID="CairoLogo" envText="Cairo compiler" l2={true} callback={() => startCairo()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
                   <PluginButton imgPath="assets/img/learnEthLogo.webp" envID="learnEthLogo" envText="LearnEth" callback={() => startLearnEth()} />
                   <PluginButton imgPath="assets/img/sourcifyLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
