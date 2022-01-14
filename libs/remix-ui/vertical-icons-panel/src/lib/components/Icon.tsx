@@ -89,6 +89,8 @@ const Icon = ({
         onClick={() => {
           (verticalIconPlugin as any).toggle(name)
         }}
+        //@ts-ignore
+        plugin={name}
         title={title}
         onContextMenu={(e: any) => {
           e.preventDefault()
