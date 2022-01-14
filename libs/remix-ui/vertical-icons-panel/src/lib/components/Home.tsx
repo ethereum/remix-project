@@ -9,7 +9,7 @@ function Home ({ verticalIconPlugin }: HomeProps) {
     <div
       className="pl-1 mt-2 remixui_homeIcon"
       onClick={async () => await verticalIconPlugin.activateHome()}
-      {...{ plugin: 'home '}}
+      {...{ plugin: 'home'}}
       title="Home"
       data-id="verticalIconsHomeIcon"
       id="verticalIconsHomeIcon"
