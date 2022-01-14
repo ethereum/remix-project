@@ -35,8 +35,8 @@ const RemixUiVerticalIconsPanel = ({
       dispatchScrollAction({
         type: 'resize',
         payload: {
-          scrollHeight: document.querySelector('#remixuiScrollable')?.scrollHeight,
-          clientHeight: document.querySelector('#remixuiScrollable')?.clientHeight,
+          scrollHeight: scrollableRef.current?.scrollHeight,
+          clientHeight: scrollableRef.current?.clientHeight,
           scrollState: false
         }
       })
