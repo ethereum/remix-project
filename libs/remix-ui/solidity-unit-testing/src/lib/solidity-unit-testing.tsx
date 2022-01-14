@@ -222,7 +222,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     if (path !== '/') path = helper.removeTrailingSlashes(path)
     if (inputPath === '') inputPath = defaultPath
     setInputPathValue(path)
-    testTabLogic.generateTestFolder(inputPath)
+    await testTabLogic.generateTestFolder(inputPath)
+    setToasterMsg('Folder created successfully')
     setDisableCreateButton(true)
     setDisableGenerateButton(false)
     testTabLogic.setCurrentPath(inputPath)
