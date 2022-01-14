@@ -6,7 +6,8 @@ export type actionType = {
 
 export function verticalScrollReducer (prevState: any, actionPayload: actionType) {
   if (actionPayload.type === 'resize') {
-    let { scrollHeight, clientHeight, scrollState } = actionPayload.payload
+    const { scrollHeight, clientHeight } = actionPayload.payload
+    let { scrollState } = actionPayload.payload
     if (scrollHeight > clientHeight) scrollState = true
     return { scrollHeight, clientHeight, scrollState }
   }
