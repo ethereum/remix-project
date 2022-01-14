@@ -6,7 +6,7 @@ import QueryParams from '../../lib/query-params'
 const profile: Profile = {
   name: 'layout',
   description: 'layout',
-  methods: ['minimize']
+  methods: ['minimize', 'startrender']
 }
 
 interface panelState {
@@ -27,6 +27,10 @@ export class Layout extends Plugin {
   constructor () {
     super(profile)
     this.event = new EventEmitter()
+  }
+
+  startrender (): void {
+    this.event.emit('startrender')
   }
 
   async onActivation (): Promise<void> {

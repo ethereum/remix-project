@@ -301,6 +301,7 @@ class AppComponent {
       main: { plugin: appPanel, active: false },
       terminal: { plugin: terminal, active: true, minimized: false }
     }
+    return true
   }
 
   async activate () {
@@ -372,6 +373,7 @@ class AppComponent {
                 self.appManager.call(...callDetails).catch(console.error)
               }
             }
+            self.appManager.call('layout', 'startrender')
           })
           .catch(console.error)
       }

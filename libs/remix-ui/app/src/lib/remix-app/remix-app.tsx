@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import RemixSplashScreen from './components/splashscreen'
@@ -15,33 +15,26 @@ interface IRemixAppUi {
 
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
+  const [loading, hideLoader] = useState<boolean>(false)
+  const [init, setInit] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const sidePanelRef = useRef(null)
   const mainPanelRef = useRef(null)
   const iconPanelRef = useRef(null)
   const hiddenPanelRef = useRef(null)
+  const panelsRendered = useRef(false)
 
   useEffect(() => {
-    if (sidePanelRef.current) {
-      if (props.app.sidePanel) {
-        sidePanelRef.current.appendChild(props.app.sidePanel.render())
-      }
+    async function run () {
+      await props.app.run()
+      setInit(true)
     }
-    if (mainPanelRef.current) {
-      if (props.app.mainview) {
-        mainPanelRef.current.appendChild(props.app.mainview.render())
-      }
-    }
-    if (iconPanelRef.current) {
-      if (props.app.menuicons) {
-        iconPanelRef.current.appendChild(props.app.menuicons.render())
-      }
-    }
-    if (hiddenPanelRef.current) {
-      if (props.app.hiddenPanel) {
-        hiddenPanelRef.current.appendChild(props.app.hiddenPanel.render())
-      }
-    }
+    run()
+  }, [])
+
+  useEffect(() => {
+    if (!init) return
+
     async function activateApp () {
       props.app.themeModule.initTheme(() => {
         setAppReady(true)
@@ -52,9 +45,38 @@ const RemixApp = (props: IRemixAppUi) => {
     if (props.app) {
       activateApp()
     }
-  }, [])
+  }, [init])
+
+  useEffect(() => {
+    if (!panelsRendered.current) {
+      if (sidePanelRef.current) {
+        if (props.app.sidePanel) {
+          sidePanelRef.current.appendChild(props.app.sidePanel.render())
+        }
+      }
+      if (mainPanelRef.current) {
+        if (props.app.mainview) {
+          mainPanelRef.current.appendChild(props.app.mainview.render())
+        }
+      }
+      if (iconPanelRef.current) {
+        if (props.app.menuicons) {
+          iconPanelRef.current.appendChild(props.app.menuicons.render())
+        }
+      }
+      if (hiddenPanelRef.current) {
+        if (props.app.hiddenPanel) {
+          hiddenPanelRef.current.appendChild(props.app.hiddenPanel.render())
+        }
+        panelsRendered.current = true
+      }
+    }
+  })
 
   function setListeners () {
+    props.app.layout.event.on('startrender', () => {
+      hideLoader(true)
+    })
     props.app.sidePanel.events.on('toggle', () => {
       setHideSidePanel(prev => {
         return !prev
@@ -89,21 +111,25 @@ const RemixApp = (props: IRemixAppUi) => {
 
   return (
     <AppProvider value={value}>
-      <RemixSplashScreen hide={appReady}></RemixSplashScreen>
-      <OriginWarning></OriginWarning>
-      <MatomoDialog hide={!appReady}></MatomoDialog>
+      {appReady
+        ? <>
+          <OriginWarning></OriginWarning>
+          <MatomoDialog hide={!appReady}></MatomoDialog>
 
-      <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-        {components.iconPanel}
-        {components.sidePanel}
-        <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-        <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
-          <RemixUIMainPanel></RemixUIMainPanel>
-        </div>
-      </div>
-      {components.hiddenPanel}
-      <AppDialogs></AppDialogs>
-      <DialogViewPlugin></DialogViewPlugin>
+          <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
+            {components.iconPanel}
+            {components.sidePanel}
+            <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
+            <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
+              <RemixUIMainPanel></RemixUIMainPanel>
+            </div>
+          </div>
+          {components.hiddenPanel}
+          <AppDialogs></AppDialogs>
+          <DialogViewPlugin></DialogViewPlugin>
+        </>
+        : <></>}
+      <RemixSplashScreen hide={loading}></RemixSplashScreen>
     </AppProvider>
   )
 }
