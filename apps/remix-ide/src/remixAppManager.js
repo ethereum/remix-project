@@ -149,16 +149,6 @@ export class RemixAppManager extends PluginManager {
       pattern: [],
       sticky: true
     })
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'optimism-compiler',
-      name: 'compileCustomAction',
-      label: 'Compile with Optimism',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: [],
-      sticky: true
-    })
   }
 }
 
