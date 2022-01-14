@@ -18,7 +18,6 @@ import RenderKnownTransactions from './components/RenderKnownTransactions' // es
 import parse from 'html-react-parser'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
-import { stateDecoder } from 'dist/libs/remix-debug/src/solidity-decoder'
 
 /* eslint-disable-next-line */
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -73,12 +72,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const messagesEndRef = useRef(null)
 
   // terminal dragable
-  const leftRef = useRef(null)
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
-
-  const terminalMenuOffsetHeight = (terminalMenu.current && terminalMenu.current.offsetHeight) || 35
-  const terminalDefaultPosition = config.get('terminal-top-offset')
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
