@@ -222,7 +222,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     if (path !== '/') path = helper.removeTrailingSlashes(path)
     if (inputPath === '') inputPath = defaultPath
     setInputPathValue(path)
-    testTabLogic.generateTestFolder(inputPath)
+    await testTabLogic.generateTestFolder(inputPath)
+    setToasterMsg('Folder created successfully')
     setDisableCreateButton(true)
     setDisableGenerateButton(false)
     testTabLogic.setCurrentPath(inputPath)
@@ -672,6 +673,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               value={inputPathValue}
               title="Press 'Enter' to change the path for test files."
               style={{ backgroundImage: "var(--primary)" }}
+              onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
               onKeyUp={handleTestDirInput}
               onChange={handleEnter}
               onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
