@@ -47,6 +47,9 @@ const RemixUiVerticalIconsPanel = ({
     }
   })
   useEffect(() => {
+    verticalIconsPlugin.call('theme', 'currentTheme').then((th: any) => {
+      setTheme(th.quality)
+    })
     verticalIconsPlugin.on('theme', 'themeChanged', (th: any) => {
       setTheme(th.quality)
     })
