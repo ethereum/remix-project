@@ -74,8 +74,6 @@ const setupEvents = () => {
 
   plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
 
-  plugin.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
-
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     dispatch(displayPopUp(plugin.REACT_API.envToasterContent(env, from)))
     setExecutionContext(env, plugin.REACT_API.web3Dialog())
