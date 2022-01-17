@@ -167,15 +167,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
   const handleTestDirInput = async (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     let testDirInput = trimTestDirInput(e.target.value)
     testDirInput = helper.removeMultipleSlashes(testDirInput)
-    if (testDirInput !== '/') testDirInput = helper.removeTrailingSlashes(testDirInput)
     setInputPathValue(testDirInput)
-    if (e.key === 'Enter') {
-      if (await testTabLogic.pathExists(testDirInput)) {
-        testTabLogic.setCurrentPath(testDirInput)
-        await updateForNewCurrent()
-        return
-      }
-    }
     if (testDirInput) {
       if (testDirInput.endsWith('/') && testDirInput !== '/') {
         testDirInput = helper.removeTrailingSlashes(testDirInput)
@@ -202,17 +194,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       await setCurrentPath('/')
       setDisableCreateButton(true)
       setDisableGenerateButton(false)
-    }
-  }
-
-  const handleEnter = async (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-    let inputPath = e.target.value
-    inputPath = helper.removeMultipleSlashes(trimTestDirInput(inputPath))
-    setInputPathValue(inputPath)
-    if (disableCreateButton) {
-      if (await testTabLogic.pathExists(inputPath)) {
-        await setCurrentPath(inputPath)
-      }
     }
   }
 
@@ -674,8 +655,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               title="Press 'Enter' to change the path for test files."
               style={{ backgroundImage: "var(--primary)" }}
               onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
-              onKeyUp={handleTestDirInput}
-              onChange={handleEnter}
+              onChange={handleTestDirInput}
               onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
             />
             <button
