@@ -15,7 +15,7 @@ interface IRemixAppUi {
 
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
-  const [loading, hideLoader] = useState<boolean>(false)
+  const [loadingReady, setLoadingReady] = useState<boolean>(false)
   const [init, setInit] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const sidePanelRef = useRef(null)
@@ -75,7 +75,7 @@ const RemixApp = (props: IRemixAppUi) => {
 
   function setListeners () {
     props.app.layout.event.on('startrender', () => {
-      hideLoader(true)
+      setLoadingReady(true)
     })
     props.app.sidePanel.events.on('toggle', () => {
       setHideSidePanel(prev => {
@@ -125,10 +125,10 @@ const RemixApp = (props: IRemixAppUi) => {
           {components.hiddenPanel}
           <AppDialogs></AppDialogs>
           <DialogViewPlugin></DialogViewPlugin>
-          {loading ? <MatomoDialog></MatomoDialog> : null}
+          {loadingReady ? <MatomoDialog></MatomoDialog> : null}
         </>
         : null}
-      <RemixSplashScreen hide={loading}></RemixSplashScreen>
+      <RemixSplashScreen hide={loadingReady}></RemixSplashScreen>
     </AppProvider>
   )
 }
