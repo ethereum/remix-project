@@ -31,6 +31,7 @@ export class Layout extends Plugin {
 
   startrender (): void {
     this.event.emit('startrender')
+    this.emit('startrender')
   }
 
   async onActivation (): Promise<void> {

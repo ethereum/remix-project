@@ -114,8 +114,6 @@ const RemixApp = (props: IRemixAppUi) => {
       {appReady
         ? <>
           <OriginWarning></OriginWarning>
-          <MatomoDialog hide={!appReady}></MatomoDialog>
-
           <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
             {components.iconPanel}
             {components.sidePanel}
@@ -127,8 +125,9 @@ const RemixApp = (props: IRemixAppUi) => {
           {components.hiddenPanel}
           <AppDialogs></AppDialogs>
           <DialogViewPlugin></DialogViewPlugin>
+          {loading ? <MatomoDialog></MatomoDialog> : null}
         </>
-        : <></>}
+        : null}
       <RemixSplashScreen hide={loading}></RemixSplashScreen>
     </AppProvider>
   )

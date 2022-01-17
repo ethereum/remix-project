@@ -314,7 +314,7 @@ class AppComponent {
     }
 
     try {
-      self.engine.register(await self.appManager.registeredPlugins())
+      await self.engine.register(await self.appManager.registeredPlugins())
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
@@ -376,6 +376,8 @@ class AppComponent {
             self.appManager.call('layout', 'startrender')
           })
           .catch(console.error)
+      } else{
+        self.appManager.call('layout', 'startrender')
       }
     })
     // activate solidity plugin

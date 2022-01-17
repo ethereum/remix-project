@@ -18,10 +18,12 @@ const MatomoDialog = (props) => {
   }
 
   useEffect(() => {
-    if (visible && showMatamo) {
+    if (showMatamo) {
       modal({ id: 'matomoModal', title: 'Help us to improve Remix IDE', message: message(), okLabel: 'Accept', okFn: handleModalOkClick, cancelLabel: 'Decline', cancelFn: declineModal })
+    } else {
+      appManager.call('walkthrough', 'start')
     }
-  }, [visible])
+  }, [])
 
   const declineModal = async () => {
     settings.updateMatomoAnalyticsChoice(false)
@@ -39,7 +41,7 @@ const MatomoDialog = (props) => {
     setVisible(false)
   }
 
-  return (<></>)
+  return (null)
 }
 
 export default MatomoDialog
