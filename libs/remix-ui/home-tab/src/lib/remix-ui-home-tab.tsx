@@ -80,6 +80,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const remiAudioEl = useRef(null)
   const inputValue = useRef(null)
+  const openFilesInput = useRef(null)
 
   useEffect(() => {
     plugin.call('theme', 'currentTheme').then((theme) => {
@@ -266,7 +267,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file-alt"></i>
-                  <label className="ml-1 remixui_home_labelIt remixui_home_bigLabelSize} remixui_home_text" htmlFor="openFileInput">
+                  <label className="ml-1 remixui_home_labelIt remixui_home_bigLabelSize} remixui_home_text" htmlFor="openFileInput" onClick={() => {
+                    openFilesInput.current.click()
+                  }}>
                     Open Files
                   </label>
                   <input title="open file" type="file" id="openFileInput" onChange={(event) => {
