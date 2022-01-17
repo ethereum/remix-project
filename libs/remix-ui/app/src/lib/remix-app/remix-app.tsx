@@ -128,7 +128,7 @@ const RemixApp = (props: IRemixAppUi) => {
           {loadingReady ? <MatomoDialog></MatomoDialog> : null}
         </>
         : null}
-      <RemixSplashScreen hide={loadingReady}></RemixSplashScreen>
+      {loadingReady ? null : <RemixSplashScreen></RemixSplashScreen> }
     </AppProvider>
   )
 }
