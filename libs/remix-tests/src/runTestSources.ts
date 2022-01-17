@@ -1,6 +1,4 @@
 import async, { ErrorCallback } from 'async'
-import deepequal from 'deep-equal'
-import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { compileContractSources, writeTestAccountsContract } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
@@ -50,29 +48,13 @@ export class UnitTestRunner {
    * @param importFileCb Import file callback
    * @param opts Options
    */
-  async runTestSources (contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, deployCb:any, finalCallback: any, importFileCb, opts: Options) {
+  async runTestSources (contractSources: SrcIfc, newCompilerConfig: CompilerConfiguration, testCallback, resultCallback, deployCb:any, finalCallback: any, importFileCb, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     if (opts.web3 || opts.accounts) this.init(opts.web3, opts.accounts)
-
     async.waterfall([
       (next) => {
-        if (!deepequal(this.compilerConfig, compilerConfig)) {
-          this.compilerConfig = compilerConfig
-          const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = compilerConfig
-          this.compiler = new RemixCompiler(importFileCb)
-          this.compiler.set('evmVersion', evmVersion)
-          this.compiler.set('optimize', optimize)
-          this.compiler.set('runs', runs)
-          this.compiler.loadVersion(usingWorker, currentCompilerUrl)
-          // @ts-ignore
-          this.compiler.event.register('compilerLoaded', this, (version) => {
-            next()
-          })
-        } else next()
-      },
-      (next) => {
-        compileContractSources(contractSources, this.compiler, { accounts: this.testsAccounts, testFilePath: opts.testFilePath, event: this.event }, next)
+        compileContractSources(contractSources, newCompilerConfig, importFileCb, this, { accounts: this.testsAccounts, testFilePath: opts.testFilePath, event: this.event }, next)
       },
       (compilationResult: compilationInterface, asts: ASTInterface, next) => {
         for (const filename in asts) {
