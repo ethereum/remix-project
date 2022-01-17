@@ -125,6 +125,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }
 
   const createNewFile = async () => {
+    plugin.verticalIcons.select('filePanel')
     await plugin.call('filePanel', 'createNewFile')
   }
 
@@ -261,21 +262,22 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <h4>File</h4>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file"></i>
-                  <span className="ml-1 mb-1 remixui_text" onClick={() => createNewFile()}>New File</span>
+                  <label className="ml-1 mb-1 remixui_text" onClick={() => createNewFile()}>New File</label>
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file-alt"></i>
-                  <span className="ml-1 remixui_labelIt remixui_bigLabelSize} remixui_text">
+                  <label className="ml-1 remixui_labelIt remixui_bigLabelSize} remixui_text" htmlFor="openFileInput">
                     Open Files
-                    <input title="open file" type="file" onChange={(event) => {
-                      event.stopPropagation()
-                      uploadFile(event.target)
-                    }} multiple />
-                  </span>
+                  </label>
+                  <input title="open file" type="file" id="openFileInput" onChange={(event) => {
+                    event.stopPropagation()
+                    plugin.verticalIcons.select('filePanel')
+                    uploadFile(event.target)
+                  }} multiple />
                 </p>
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
-                  <span className="ml-1 remixui_text" onClick={() => connectToLocalhost()}>Connect to Localhost</span>
+                  <label className="ml-1 remixui_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
                 </p>
                 <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
                 <div className="btn-group">
@@ -301,7 +303,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 fab fa-ethereum remixui_image"></i>
-                  <span className="remixui_text" onClick={() => switchToPreviousVersion()}>Old experience</span>
+                  <label className="remixui_text" onClick={() => switchToPreviousVersion()}>Old experience</label>
                 </p>
               </div>
             </div>
