@@ -31,6 +31,7 @@ module.exports = {
   'Display Error Message For Invalid GitHub URL Modal': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="landingPageImportFromGitHubButton"]')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .execute(() => {
@@ -46,6 +47,7 @@ module.exports = {
   'Import From Github For Valid URL': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="landingPageImportFromGitHubButton"]')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
       .clearValue('*[data-id="homeTabModalDialogCustomPromptText"]')
