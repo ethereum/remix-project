@@ -2,7 +2,7 @@
 import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
-import { addressToString, createNonClashingNameAsync, shortenAddress } from '@remix-ui/helper'
+import { addressToString, createNonClashingNameAsync, extractNameFromKey, shortenAddress } from '@remix-ui/helper'
 import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
@@ -622,38 +622,39 @@ export const runTransactions = (
   )
 }
 
-const saveScenario = (promptCb, cb) => {
+const saveScenario = (newPath: string, provider, promptCb, cb) => {
   const txJSON = JSON.stringify(plugin.recorder.getAll(), null, 2)
-  const path = plugin.fileManager.currentPath()
 
-  promptCb(path, async () => {
-    const fileProvider = plugin.fileManager.fileProviderOf(path)
-
-    if (!fileProvider) return
-    const newFile = path + '/' + plugin.REACT_API.recorder.pathToScenario
+  promptCb(() => {
     try {
-      const newPath = await createNonClashingNameAsync(newFile, plugin.fileManager)
-      if (!fileProvider.set(newPath, txJSON)) return cb('Failed to create file ' + newFile)
-      plugin.fileManager.open(newFile)
+      if (!provider.set(newPath, txJSON)) return cb('Failed to create file ' + newPath)
+      plugin.fileManager.open(newPath)
     } catch (error) {
-      if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
+      if (error) return cb('Failed to create file. ' + newPath + ' ' + error)
     }
   })
 }
 
-export const storeScenario = (prompt: (msg: string) => JSX.Element) => {
-  saveScenario(
-    (path, cb) => {
-      dispatch(displayNotification('Save transactions as scenario', prompt('Transactions will be saved in a file under ' + path), 'Ok', 'Cancel', cb, null))
+export const storeScenario = async (prompt: (msg: string, defaultValue: string) => JSX.Element) => {
+  const path = plugin.fileManager.currentPath()
+  const fileProvider = plugin.fileManager.fileProviderOf(path)
+
+  if (!fileProvider) return displayNotification('Alert', 'Invalid File Provider', 'OK', null)
+  const newPath = await createNonClashingNameAsync(path + '/' + plugin.REACT_API.recorder.pathToScenario, plugin.fileManager)
+  const newName = extractNameFromKey(newPath)
+
+  saveScenario(newPath, fileProvider,
+    (cb) => {
+      dispatch(displayNotification('Save transactions as scenario', prompt('Transactions will be saved in a file under ' + path, newName), 'OK', 'Cancel', cb, null))
     },
     (error) => {
-      if (error) return dispatch(displayNotification('Alert', error, 'Ok', null))
+      if (error) return dispatch(displayNotification('Alert', error, 'OK', null))
     }
   )
 }
 
 const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
-  if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'Ok', null))
+  if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'OK', null))
 
   plugin.fileManager.readFile(file).then((json) => {
     // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
@@ -664,7 +665,7 @@ const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Ele
       }, (okCb, cancelCb) => {
         promptHandler(passphrasePrompt, okCb, cancelCb)
       }, (msg) => {
-        dispatch(displayNotification('Alert', msg, 'Ok', null))
+        dispatch(displayNotification('Alert', msg, 'OK', null))
       }, (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
         confirmationHandler(confirmDialogContent, network, tx, gasEstimation, continueTxExecution, cancelCb)
       }, (msg: string) => {
@@ -673,11 +674,11 @@ const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Ele
         return terminalLogger(log)
       }, (error, abi, address, contractName) => {
         if (error) {
-          return dispatch(displayNotification('Alert', error, 'Ok', null))
+          return dispatch(displayNotification('Alert', error, 'OK', null))
         }
         addInstance({ name: contractName, address, abi })
       })
-  }).catch((error) => dispatch(displayNotification('Alert', error, 'Ok', null)))
+  }).catch((error) => dispatch(displayNotification('Alert', error, 'OK', null)))
 }
 
 export const runCurrentScenario = (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
