@@ -259,7 +259,7 @@ class Recorder {
           cb(err)
         }
       )
-    }, () => { self.setListen(true); self.clearAll() })
+    }, () => { self.setListen(true) })
   }
 
   runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
