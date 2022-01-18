@@ -9,6 +9,8 @@ export function verticalScrollReducer (prevState: any, actionPayload: actionType
     const { scrollHeight, clientHeight } = actionPayload.payload
     let { scrollState } = actionPayload.payload
     if (scrollHeight > clientHeight) scrollState = true
+    console.log(scrollHeight, clientHeight)
+    console.log(scrollState)
     return { scrollHeight, clientHeight, scrollState }
   }
   return prevState

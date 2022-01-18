@@ -30,22 +30,32 @@ const RemixUiVerticalIconsPanel = ({
   const iconPanelRef = useRef<any>()
   const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
   const [theme, setTheme] = useState<string>('dark')
+
+
+
+  const evaluateScrollability = () => {
+    dispatchScrollAction({
+      type: 'resize',
+      payload: {
+        scrollHeight: scrollableRef.current?.scrollHeight,
+        clientHeight: scrollableRef.current?.clientHeight,
+        scrollState: false
+      }
+    })
+  }
+  
   useEffect(() => {
-    const evaluateScrollability = (evt: any) => {
-      dispatchScrollAction({
-        type: 'resize',
-        payload: {
-          scrollHeight: scrollableRef.current?.scrollHeight,
-          clientHeight: scrollableRef.current?.clientHeight,
-          scrollState: false
-        }
-      })
-    }
-    addEventListener('resize', evaluateScrollability)
+    window.addEventListener('resize', evaluateScrollability)
+    evaluateScrollability()
     return () => {
-      removeEventListener('resize', evaluateScrollability)
+      window.removeEventListener('resize', evaluateScrollability)
     }
-  })
+  }, [])
+
+  useEffect(() => {
+    evaluateScrollability()
+  },[icons, theme])
+
   useEffect(() => {
     verticalIconsPlugin.call('theme', 'currentTheme').then((th: any) => {
       setTheme(th.quality)
