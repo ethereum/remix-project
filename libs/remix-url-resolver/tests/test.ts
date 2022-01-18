@@ -260,7 +260,7 @@ describe('testRunner', () => {
           const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'})
           const expt: object = {
             content: content,
-            cleanUrl: 'ipfs/QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M',
+            cleanUrl: 'QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M',
             type: 'ipfs'
           }
           assert.deepEqual(results, expt)
