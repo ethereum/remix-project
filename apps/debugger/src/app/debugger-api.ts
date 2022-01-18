@@ -83,7 +83,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
     const targetAddress = target || receipt.contractAddress || receipt.to
     const codeAtAddress = await this._web3.eth.getCode(targetAddress)
-    const output = await this.call('fetchAndCompile', 'resolve', targetAddress, codeAtAddress, 'browser/.debug')
+    const output = await this.call('fetchAndCompile', 'resolve', targetAddress, codeAtAddress, '.debug')
     if (output) {
       return new CompilerAbstract(output.languageversion, output.data, output.source)
     }
