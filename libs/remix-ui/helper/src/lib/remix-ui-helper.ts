@@ -37,9 +37,9 @@ export const createNonClashingNameAsync = async (name: string, fileManager, pref
   let exist = true
 
   do {
-    const isDuplicate = await fileManager.exists(name + _counter + prefix + '.' + ext)
+    const isDuplicate = await fileManager.exists(name + (_counter || '') + prefix + '.' + ext)
 
-    if (isDuplicate) _counter = (_counter | 0) + 1
+    if (isDuplicate) _counter = (_counter || 0) + 1
     else exist = false
   } while (exist)
   const counter = _counter || ''
