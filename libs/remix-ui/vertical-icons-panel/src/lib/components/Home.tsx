@@ -7,7 +7,7 @@ interface HomeProps {
 function Home ({ verticalIconPlugin }: HomeProps) {
   return (
     <div
-      className="pl-1 mt-2 remixui_homeIcon"
+      className="mt-3 my-1 remixui_homeIcon"
       onClick={async () => await verticalIconPlugin.activateHome()}
       {...{ plugin: 'home'}}
       title="Home"
