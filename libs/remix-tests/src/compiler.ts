@@ -1,6 +1,7 @@
 import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
+import deepequal from 'deep-equal'
 import Log from './logger'
 import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
@@ -170,7 +171,8 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  * @param opts Options
  * @param cb Callback
  */
-export function compileContractSources (sources: SrcIfc, compiler: any, opts: any, cb): void {
+export function compileContractSources (sources: SrcIfc, newCompConfig: any, importFileCb, UTRunner, opts: any, cb): void {
+  let compiler
   const filepath = opts.testFilePath || ''
   const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
@@ -183,8 +185,28 @@ export function compileContractSources (sources: SrcIfc, compiler: any, opts: an
   }
 
   async.waterfall([
-    function doCompilation (next) {
+    (next) => {
+      if (!deepequal(UTRunner.compilerConfig, newCompConfig)) {
+        UTRunner.compilerConfig = newCompConfig
+        const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = newCompConfig
+        compiler = new RemixCompiler(importFileCb)
+        compiler.set('evmVersion', evmVersion)
+        compiler.set('optimize', optimize)
+        compiler.set('runs', runs)
+        compiler.loadVersion(usingWorker, currentCompilerUrl)
+        // @ts-ignore
+        compiler.event.register('compilerLoaded', this, (version) => {
+          next()
+        })
+      } else {
+        compiler = UTRunner.compiler
+        next()
+      }
+    },
+    (next) => {
       const compilationFinishedCb = (success, data, source) => {
+        // data.error usually exists for exceptions like worker error etc.
+        if (!data.error) UTRunner.compiler = compiler
         if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
         next(null, data)
       }
