@@ -575,7 +575,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       } else {
         setRunButtonTitle('The "Solidity Plugin" should be activated')
       }
-    }
+    } else setDisableRunButton(false)
   }
 
   const stopTests = () => {
