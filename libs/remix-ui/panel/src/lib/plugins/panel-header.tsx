@@ -20,7 +20,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
 
   return (
     <header className='swapitHeader'><h6 data-id='sidePanelSwapitTitle'>{plugin?.profile.displayName || plugin?.profile.name}</h6>
-      {plugin?.profile.documentation ? (<a href={plugin.profile.documentation} className="titleInfo" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>) : ''}
+      {plugin?.profile.documentation ? (<a href={plugin.profile.documentation} className="titleInfo mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>) : ''}
     </header>)
 }
 
