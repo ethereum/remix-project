@@ -37,30 +37,30 @@ const showTable = (opts, showTableHash) => {
   const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   return (
     <table
-      className={`txTable ${showTableHash.includes(opts.hash) ? 'active' : ''}`}
+      className={`mt-1 mb-2 mr-4  align-self-center ${showTableHash.includes(opts.hash) ? 'active' : ''}`}
       id="txTable"
       data-id={`txLoggerTable${opts.hash}`}
     >
       <tbody>
         {opts.status !== undefined ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               status
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableStatus${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >{`${opts.status} ${msg}`}</td>
           </tr>
         ) : null}
         {opts.hash && !opts.isCall ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               transaction hash
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -70,12 +70,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.contractAddress ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               contract address
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableContractAddress${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -85,12 +85,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.from ? (
-          <tr className="tr">
+          <tr className="remix_ui_terminal_tr">
             <td className="td tableTitle" data-shared={`key_${opts.hash}`}>
               from
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableFrom${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -100,12 +100,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.to ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               to
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableTo${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -115,12 +115,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.gas ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               gas
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableGas${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -130,12 +130,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.transactionCost ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               transaction cost
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableTransactionCost${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -145,12 +145,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.executionCost ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               execution cost
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableExecutionHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -160,12 +160,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.hash ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               hash
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -175,12 +175,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.input ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               input
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -190,12 +190,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts['decoded input'] ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               decoded input
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -205,12 +205,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts['decoded output'] ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               decoded output
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -220,12 +220,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.logs ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               logs
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
@@ -238,12 +238,12 @@ const showTable = (opts, showTableHash) => {
           </tr>
         ) : null}
         {opts.val ? (
-          <tr className="tr">
-            <td className="td" data-shared={`key_${opts.hash}`}>
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               val
             </td>
             <td
-              className="td"
+              className="remix_ui_terminal_td"
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
