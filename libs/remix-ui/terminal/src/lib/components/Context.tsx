@@ -19,41 +19,41 @@ const Context = ({ opts, blockchain }) => {
   if (blockchain.getProvider() === 'vm') {
     return (
       <div>
-        <span className='txLog_7Xiho'>
-          <span className='tx'>[vm]</span>
-          <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-          <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-          <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
-          <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-          <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-          <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+        <span>
+          <span className='remix_ui_terminal_tx'>[vm]</span>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>from:</span> {from}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>to:</span> {to}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>value:</span> {value} wei</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>data:</span> {input}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>logs:</span> {logs}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>hash:</span> {hash}</div>
         </span>
       </div>)
   } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
     return (
       <div>
-        <span className='txLog_7Xiho'>
-          <span className='tx'>[block:{block} txIndex:{i}]</span>
-          <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-          <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-          <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
-          <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-          <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-          <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+        <span>
+          <span className='remix_ui_terminal_tx'>[block:{block} txIndex:{i}]</span>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>from:</span> {from}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>to:</span> {to}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>value:</span> {value} wei</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>data:</span> {input}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>logs:</span> {logs}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>hash:</span> {hash}</div>
         </span>
       </div>)
   } else {
     hash = helper.shortenHexData(data.blockHash)
     return (
       <div>
-        <span className='txLog'>
-          <span className='tx'>[block:{block} txIndex:{i}]</span>
-          <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-          <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-          <div className='txItem'><span className='txItemTitle'>value:</span> {value} wei</div>
-          <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
-          <div className='txItem'><span className='txItemTitle'>logs:</span> {logs}</div>
-          <div className='txItem'><span className='txItemTitle'>hash:</span> {hash}</div>
+        <span>
+          <span className='remix_ui_terminal_tx'>[block:{block} txIndex:{i}]</span>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>from:</span> {from}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>to:</span> {to}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>value:</span> {value} wei</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>data:</span> {input}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>logs:</span> {logs}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>hash:</span> {hash}</div>
         </span>
       </div>)
   }
