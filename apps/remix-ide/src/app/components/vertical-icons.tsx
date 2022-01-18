@@ -18,7 +18,6 @@ const profile = {
   events: ['toggleContent', 'showContent']
 }
 
-// TODO merge with side-panel.js. VerticalIcons should not be a plugin
 export class VerticalIcons extends Plugin {
   events: EventEmitter
   htmlElement: HTMLDivElement
