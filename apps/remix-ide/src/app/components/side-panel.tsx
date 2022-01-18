@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import { AbstractPanel } from './panel'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import { RemixAppManager } from '../../remixAppManager'
 import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
 // const csjs = require('csjs-inject')
 

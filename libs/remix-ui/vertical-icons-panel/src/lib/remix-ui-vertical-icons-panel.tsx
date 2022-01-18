@@ -70,7 +70,7 @@ const RemixUiVerticalIconsPanel = ({
           ? 'remixui_default-icons-container remixui_requiredSection' : activateScroll && activateScroll.scrollState ? 'remixui_default-icons-container remixui_requiredSection' : 'remixui_requiredSection'}>
           <IconList
             theme={theme}
-            icons={icons.filter((p) => p.isRequired)}
+            icons={icons.filter((p) => p.isRequired && p.profile.name !== 'pluginManager')}
             verticalIconsPlugin={verticalIconsPlugin}
             itemContextAction={itemContextAction}
           />
@@ -107,7 +107,7 @@ const RemixUiVerticalIconsPanel = ({
               />) : null }
               <IconList
                 theme={theme}
-                icons={icons.filter((p) => p.profile.name === 'settings')}
+                icons={icons.filter((p) => p.profile.name === 'settings' || p.profile.name === 'pluginManager')}
                 verticalIconsPlugin={verticalIconsPlugin}
                 itemContextAction={itemContextAction}
               />
