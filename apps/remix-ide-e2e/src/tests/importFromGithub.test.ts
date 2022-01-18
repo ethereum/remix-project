@@ -56,7 +56,7 @@ module.exports = {
       }, [], () => {})
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
-      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
+      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]').pause(2000)
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
       .waitForElementVisible("div[title='default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol'")
       .end()
