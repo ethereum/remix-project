@@ -67,6 +67,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
   let [readyTestsNumber, setReadyTestsNumber] = useState<number>(0) // eslint-disable-line
   let [runningTestsNumber, setRunningTestsNumber] = useState<number>(0) // eslint-disable-line
 
+  const areTestsRunning = useRef<boolean>(false)
   const hasBeenStopped = useRef<boolean>(false)
   const isDebugging = useRef<boolean>(false)
   const allTests = useRef<string[]>([])
@@ -74,7 +75,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
   const currentErrors:any = useRef([]) // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const defaultPath = 'tests'
-  let areTestsRunning = false
 
   let runningTestFileName: string
   const filesContent: Record<string, Record<string, string>> = {}
@@ -113,7 +113,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       allTests.current = tests
       selectedTests.current = [...allTests.current]
       updateTestFileList()
-      if (!areTestsRunning) await updateRunAction(file)
+      if (!areTestsRunning.current) await updateRunAction(file)
     } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       console.log(e)
       setToasterMsg(e)
@@ -153,7 +153,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       await setCurrentPath(defaultPath)
     })
 
-    testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
+    testTab.fileManager.events.on('noFileSelected', async () => { await updateForNewCurrent() })
     testTab.fileManager.events.on('currentFileChanged', async (file: string) => await updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
@@ -167,15 +167,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
   const handleTestDirInput = async (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     let testDirInput = trimTestDirInput(e.target.value)
     testDirInput = helper.removeMultipleSlashes(testDirInput)
-    if (testDirInput !== '/') testDirInput = helper.removeTrailingSlashes(testDirInput)
     setInputPathValue(testDirInput)
-    if (e.key === 'Enter') {
-      if (await testTabLogic.pathExists(testDirInput)) {
-        testTabLogic.setCurrentPath(testDirInput)
-        await updateForNewCurrent()
-        return
-      }
-    }
     if (testDirInput) {
       if (testDirInput.endsWith('/') && testDirInput !== '/') {
         testDirInput = helper.removeTrailingSlashes(testDirInput)
@@ -202,17 +194,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       await setCurrentPath('/')
       setDisableCreateButton(true)
       setDisableGenerateButton(false)
-    }
-  }
-
-  const handleEnter = async (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-    let inputPath = e.target.value
-    inputPath = helper.removeMultipleSlashes(trimTestDirInput(inputPath))
-    setInputPathValue(inputPath)
-    if (disableCreateButton) {
-      if (await testTabLogic.pathExists(inputPath)) {
-        await setCurrentPath(inputPath)
-      }
     }
   }
 
@@ -519,7 +500,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       if (selectedTests.current?.length !== 0) {
         setDisableRunButton(false)
       }
-      areTestsRunning = false
+      areTestsRunning.current = false
     }
   }
 
@@ -566,7 +547,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
   }
 
   const runTests = () => {
-    areTestsRunning = true
+    areTestsRunning.current = true
     hasBeenStopped.current = false
     readyTestsNumber = 0
     setReadyTestsNumber(readyTestsNumber)
@@ -587,14 +568,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   const updateRunAction = async (currentFile: any = null) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const isSolidityActive = await testTab.appManager.isActive('solidity')
-    if (!isSolidityActive || !selectedTests.current?.length) {
-      // setDisableRunButton(true)
+    if (!isSolidityActive || !selectedTests.current.length) {
+      setDisableRunButton(true)
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         setRunButtonTitle('No solidity file selected')
       } else {
         setRunButtonTitle('The "Solidity Plugin" should be activated')
       }
-    }
+    } else setDisableRunButton(false)
   }
 
   const stopTests = () => {
@@ -611,7 +592,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   const toggleCheckbox = (eChecked: boolean, index: number) => {
     testFiles[index].checked = eChecked
-    setTestFiles(testFiles)
+    setTestFiles([...testFiles])
     selectedTests.current = getCurrentSelectedTests()
     if (eChecked) {
       setCheckSelectAll(true)
@@ -628,7 +609,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   const checkAll = (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     testFiles.forEach((testFileObj) => testFileObj.checked = event.target.checked)
-    setTestFiles(testFiles)
+    setTestFiles([...testFiles])
     setCheckSelectAll(event.target.checked)
     if (event.target.checked) {
       selectedTests.current = getCurrentSelectedTests()
@@ -646,7 +627,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     }
     else
       testFiles = []
-    setTestFiles(testFiles)
+    setTestFiles([...testFiles])
   }
 
   return (
@@ -674,8 +655,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               title="Press 'Enter' to change the path for test files."
               style={{ backgroundImage: "var(--primary)" }}
               onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
-              onKeyUp={handleTestDirInput}
-              onChange={handleEnter}
+              onChange={handleTestDirInput}
               onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
             />
             <button
@@ -728,7 +708,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           />
           <label className="text-nowrap pl-2 mb-0" htmlFor="checkAllTests"> Select all </label>
         </div>
-        <div className="testList py-2 mt-0 border-bottom">{testFiles?.length ? testFiles.map((testFileObj: TestObject, index) => {
+        <div className="testList py-2 mt-0 border-bottom">{testFiles.length ? testFiles.map((testFileObj: TestObject, index) => {
           const elemId = `singleTest${testFileObj.fileName}`
           return (
             <div className="d-flex align-items-center py-1" key={index}>
