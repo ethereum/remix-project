@@ -35,7 +35,8 @@ export class CompilerImports extends Plugin {
 
   isExternalUrl (url) {
     const handlers = this.urlResolver.getHandlers()
-    return handlers.some(handler => handler.match(url))
+    // we filter out "npm" because this will be recognized as internal url although it's not the case.
+    return handlers.filter((handler) => handler.type !== 'npm').some(handler => handler.match(url))
   }
 
   /**
