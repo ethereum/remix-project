@@ -20,6 +20,7 @@ const DragBar = (props: IRemixDragBarUi) => {
     props.refObject.current.setAttribute('style', `height: ${h}px;`)
     setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
     setDragState(false)
+    props.setHideStatus(false)
   }
   const handleResize = () => {
     setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
