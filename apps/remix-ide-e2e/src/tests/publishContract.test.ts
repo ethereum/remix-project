@@ -73,7 +73,7 @@ module.exports = {
   'Should remember choice after page refresh': function (browser: NightwatchBrowser) {
     browser
       .refresh()
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]').pause(1000)
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('udapp')
