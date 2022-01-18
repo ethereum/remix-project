@@ -16,7 +16,6 @@ const sidePanel = {
   methods: ['addView', 'removeView']
 }
 
-// TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
   sideelement: any
   constructor() {
