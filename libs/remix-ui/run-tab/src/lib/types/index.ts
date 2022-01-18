@@ -189,13 +189,13 @@ export interface ContractDropdownProps {
 }
 
 export interface RecorderProps {
-  storeScenario: (prompt: (msg: string) => JSX.Element) => void,
+  storeScenario: (prompt: (msg: string, defaultValue: string) => JSX.Element) => void,
   runCurrentScenario: (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => void,
   logBuilder: (msg: string) => JSX.Element,
   mainnetPrompt: MainnetPrompt,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
-  scenarioPrompt: (msg: string) => JSX.Element,
+  scenarioPrompt: (msg: string, defaultValue: string) => JSX.Element,
   count: number
 }
 
