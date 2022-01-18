@@ -4,7 +4,8 @@ element.style {
 }
 #terminalCliInput{
   width: 97%;
-  background: transparent;
+  font-weight: 800;
+  background: var(--body-bg)
 }
 #terminalCliInput:focus {
   outline: none;
@@ -40,6 +41,7 @@ element.style {
 
 .remix_ui_terminal_journal {
   margin-top        : auto;
+  margin-bottom     : 2rem;
   font-family       : monospace;
   overflow-y        : scroll;
 }
@@ -51,13 +53,14 @@ element.style {
 .remix_ui_terminal_block > pre {
   max-height        : 200px;
 }
-.remix_ui_terminal_cli                {
+.remix_ui_terminal_cli {
+  white-space       : nowrap;
   line-height       : 1.7em;
   font-family       : monospace;
   padding           : .4em;
   color             : var(--primary);
 }
-.remix_ui_terminal_prompt             {
+.remix_ui_terminal_prompt {
   font-family       : monospace;
 }
 .remix_ui_terminal_input {
