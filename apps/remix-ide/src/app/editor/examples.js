@@ -313,7 +313,7 @@ const deployWithEthers = `// Right click on the script name and hit "Run" to exe
 
 const readme = `REMIX EXAMPLE PROJECT
 
-Remix example project is present when Remix loads very first time or there are no files existing in the File Explorer. 
+Remix example project is present when Remix loads for the very first time or there are no files existing in the File Explorer. 
 It contains 3 directories:
 
 1. 'contracts': Holds three contracts with different complexity level, denoted with number prefix in file name.
