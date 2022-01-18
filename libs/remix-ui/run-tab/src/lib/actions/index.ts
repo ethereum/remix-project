@@ -639,7 +639,7 @@ export const storeScenario = async (prompt: (msg: string, defaultValue: string) 
   const path = plugin.fileManager.currentPath()
   const fileProvider = plugin.fileManager.fileProviderOf(path)
 
-  if (!fileProvider) return displayNotification('Alert', 'Invalid File Provider', 'Ok', null)
+  if (!fileProvider) return displayNotification('Alert', 'Invalid File Provider', 'OK', null)
   const newPath = await createNonClashingNameAsync(path + '/' + plugin.REACT_API.recorder.pathToScenario, plugin.fileManager)
   const newName = extractNameFromKey(newPath)
 
@@ -654,7 +654,7 @@ export const storeScenario = async (prompt: (msg: string, defaultValue: string) 
 }
 
 const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
-  if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'Ok', null))
+  if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'OK', null))
 
   plugin.fileManager.readFile(file).then((json) => {
     // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
@@ -665,7 +665,7 @@ const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Ele
       }, (okCb, cancelCb) => {
         promptHandler(passphrasePrompt, okCb, cancelCb)
       }, (msg) => {
-        dispatch(displayNotification('Alert', msg, 'Ok', null))
+        dispatch(displayNotification('Alert', msg, 'OK', null))
       }, (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
         confirmationHandler(confirmDialogContent, network, tx, gasEstimation, continueTxExecution, cancelCb)
       }, (msg: string) => {
@@ -674,11 +674,11 @@ const runScenario = (file: string, gasEstimationPrompt: (msg: string) => JSX.Ele
         return terminalLogger(log)
       }, (error, abi, address, contractName) => {
         if (error) {
-          return dispatch(displayNotification('Alert', error, 'Ok', null))
+          return dispatch(displayNotification('Alert', error, 'OK', null))
         }
         addInstance({ name: contractName, address, abi })
       })
-  }).catch((error) => dispatch(displayNotification('Alert', error, 'Ok', null)))
+  }).catch((error) => dispatch(displayNotification('Alert', error, 'OK', null)))
 }
 
 export const runCurrentScenario = (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
