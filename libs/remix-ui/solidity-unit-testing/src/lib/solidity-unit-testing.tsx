@@ -153,7 +153,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       await setCurrentPath(defaultPath)
     })
 
-    testTab.fileManager.events.on('noFileSelected', () => { }) // eslint-disable-line
+    testTab.fileManager.events.on('noFileSelected', async () => { await updateForNewCurrent() })
     testTab.fileManager.events.on('currentFileChanged', async (file: string) => await updateForNewCurrent(file))
 
   }, []) // eslint-disable-line
