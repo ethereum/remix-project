@@ -50,6 +50,10 @@ export class RemixAppManager extends PluginManager {
     return isNative(from.name)
   }
 
+  async canDeactivate(from,to) {
+   return this.canDeactivatePlugin(from, to)
+  }
+
   async deactivatePlugin (name) {
     const [to, from] = [
       await this.getProfile(name),
