@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import helper from 'apps/remix-ide/src/lib/helper'
+import { checkSpecialChars } from '@remix-ui/helper'
 import { BadgeStatus, IconStatus } from '../components/Icon'
-import React, { MutableRefObject } from 'react'
-import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 
 export type IconBadgeReducerAction = {
   readonly type: string
@@ -14,32 +11,30 @@ export type IconBadgeReducerAction = {
    * @param {String} name
    * @param {Object} status
    */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function setIconStatus (name: string, status: IconStatus) {
+
+function setIconStatus(name: string, status: IconStatus) {
   if (status.key === 'none') return { ...status, text: '' } // remove status
 
   let text = ''
   let key = ''
   if (typeof status.key === 'number') {
     key = status.key
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text = key
-  } else key = helper.checkSpecialChars(status.key) ? '' : status.key
+  } else key = checkSpecialChars(status.key) ? '' : status.key
 
   let thisType = ''
   if (status.type === 'error') {
     thisType = 'danger' // to use with bootstrap
-  } else thisType = helper.checkSpecialChars(status.type) ? '' : status.type!
-  const title = helper.checkSpecialChars(status.title) ? '' : status.title
+  } else thisType = checkSpecialChars(status.type) ? '' : status.type!
+  const title = checkSpecialChars(status.title) ? '' : status.title
   const pluginName = status.pluginName
   return { title, type: thisType, key, text, pluginName }
 }
 
-export function iconBadgeReducer (state: BadgeStatus, action: IconBadgeReducerAction) {
-  const { status, ref, verticalIconPlugin } = action.payload
-  if (Object.keys(verticalIconPlugin.targetProfileForChange).includes(action.type)) {
-    const setStatus = setIconStatus(action.type, status)
-    return setStatus
-  }
-  return state
+export function iconBadgeReducer(state: BadgeStatus, action: IconBadgeReducerAction) {
+  const { status } = action.payload
+
+  const setStatus = setIconStatus(action.type, status)
+  return setStatus
+
 }
