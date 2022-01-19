@@ -490,6 +490,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                         showTableHash={showTableHash}
                         txDetails={txDetails}
                         modal={modal}
+                        provider={x.provider}
                       />}
                     </div>
                   )
@@ -517,6 +518,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                         showTableHash = { showTableHash }
                         txDetails = { txDetails }
                         modal={modal}
+                        provider={x.provider}
                       />) }
                     </div>
                   )
