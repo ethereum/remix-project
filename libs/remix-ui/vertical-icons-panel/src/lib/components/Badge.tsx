@@ -1,10 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line no-use-before-define
-import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-// eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect, useReducer } from 'react'
-import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
-import { BadgeStatus, IconProfile, IconStatus } from './Icon'
+import React from 'react'
+import { BadgeStatus } from './Icon'
 
 interface BadgeProps {
   badgeStatus?: BadgeStatus
