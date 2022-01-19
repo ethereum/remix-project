@@ -47,7 +47,6 @@ function isRemixTestFile (path: string) {
 
 function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
   const importRegEx = /import ['"](.+?)['"];/g
-  let group: RegExpExecArray| null = null
   const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
 
   // Return if file is a remix test file or already processed
