@@ -144,52 +144,52 @@ export const registerScriptRunnerReducer = (state, action) => {
     case HTML:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log', provider: action.payload.provider })
       }
     case LOG:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info', provider: action.payload.provider })
       }
     case INFO:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-info', provider: action.payload.provider })
       }
     case WARN:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-warning' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-warning', provider: action.payload.provider })
       }
     case ERROR:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-danger' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-danger', provider: action.payload.provider })
       }
     case SCRIPT:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log', provider: action.payload.provider })
       }
     case KNOWN_TRANSACTION:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'knownTransaction' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'knownTransaction', provider: action.payload.provider })
       }
     case UNKNOWN_TRANSACTION:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'unknownTransaction' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'unknownTransaction', provider: action.payload.provider })
       }
     case EMPTY_BLOCK:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'emptyBlock' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', name: 'emptyBlock', provider: action.payload.provider })
       }
     case NEW_TRANSACTION:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '' })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: '', provider: action.payload.provider })
       }
   }
 }
