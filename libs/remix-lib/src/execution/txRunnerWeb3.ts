@@ -153,7 +153,7 @@ async function tryTillReceiptAvailable (txhash, web3) {
 async function tryTillTxAvailable (txhash, web3) {
   try {
     const tx = await web3.eth.getTransaction(txhash)
-    if (tx) return tx
+    if (tx && tx.blockHash) return tx
   } catch (e) {}
   return await tryTillTxAvailable(txhash, web3)
 }
