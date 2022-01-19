@@ -1,9 +1,10 @@
 import { Profile } from '@remixproject/plugin-utils'
 
-export type PluginRecord = {
+export type IconRecord = {
     profile: Profile
-    view: any
     active: boolean
     class?: string
-    minimized?: boolean
+    canbeDeactivated?: boolean
+    isRequired?: boolean
+    timestamp: number
 }
