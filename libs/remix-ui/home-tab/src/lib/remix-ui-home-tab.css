@@ -36,7 +36,7 @@
 .remixui_home_rightPanel {
   right: 0;
   position: absolute;
-  z-index: 3;
+  z-index: 3000;
 }
 .remixui_home_remixHomeMedia {
   overflow-y: auto;
