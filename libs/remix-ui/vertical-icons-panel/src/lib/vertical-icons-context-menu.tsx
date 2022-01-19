@@ -1,9 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-use-before-define */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Plugin } from '@remixproject/engine'
 import React, { Fragment, useEffect, useRef } from 'react'
-import { VerticalIcons } from '../../types/vertical-icons-panel'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageX: number
@@ -11,7 +7,7 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
   profileName: string
   links: { Documentation: string, CanDeactivate: boolean }
   canBeDeactivated: boolean
-  verticalIconPlugin: VerticalIcons
+  verticalIconPlugin: any
   hideContextMenu: () => void
   contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
@@ -21,31 +17,22 @@ interface MenuLinksProps {
   hide: () => void
   profileName: string
   canBeDeactivated: boolean
-  verticalIconPlugin: VerticalIcons
+  verticalIconPlugin: any
   ref?: React.MutableRefObject<any>
   toggle: (name: string) => void
   contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 interface MenuProps {
-  verticalIconsPlugin: VerticalIcons
+  verticalIconsPlugin: Plugin
   profileName: string
   listItems: { Documentation: string, CanDeactivate: boolean }
   hide: () => void
 }
 
-const requiredModules = [
-  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
-  'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic']
-const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider']
-
-function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
+const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) =>{
   const menuRef = useRef(null)
-  useEffect(() => {
-    document.addEventListener('click', props.hideContextMenu)
-    return () => document.removeEventListener('click', props.hideContextMenu)
-  }, [])
+  ClickOutside(menuRef, props.hideContextMenu)
   useEffect(() => {
     // @ts-ignore
     menuRef.current.focus()
@@ -54,7 +41,6 @@ function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
     <div
       id="menuItemsContainer"
       className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
-      onBlur={props.hideContextMenu}
       style={{
         left: props.pageX,
         top: props.pageY,
@@ -80,15 +66,15 @@ function VerticalIconsContextMenu (props: VerticalIconsContextMenuProps) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function MenuForLinks ({
+const MenuForLinks = ({
   listItems,
   hide,
   profileName,
   contextMenuAction
-}: MenuLinksProps) {
+}: MenuLinksProps) => {
   return (
     <Fragment>
-      {listItems.CanDeactivate && !requiredModules.includes(profileName)
+      {listItems.CanDeactivate
         ? <li
           id="menuitemdeactivate"
           onClick={(evt) => {
@@ -116,6 +102,20 @@ function MenuForLinks ({
             </li>}
     </Fragment>
   )
+}
+
+ function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
+  useEffect(() => {
+      function handleClickOutside(event: any) {
+          if (ref.current && !ref.current.contains(event.target)) {
+              hideFn()
+          }
+      }
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+      };
+  }, [ref]);
 }
 
 export default VerticalIconsContextMenu

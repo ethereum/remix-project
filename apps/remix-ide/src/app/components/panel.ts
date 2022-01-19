@@ -49,8 +49,7 @@ export class AbstractPanel extends HostPlugin {
    * @param {String} name The name of the plugin to display the content
    */
   showContent (name) {
-    if (!this.plugins[name]) throw new Error(`Plugin ${name} is not yet activated`)
-
+    if (!this.plugins[name]) throw new Error(`Plugin ${name} is not yet activated`)    
     Object.values(this.plugins).forEach(plugin => {
       plugin.active = false
     })
