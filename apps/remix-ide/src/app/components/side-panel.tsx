@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom'
 import { AbstractPanel } from './panel'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import { RemixAppManager } from '../../remixAppManager'
-import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
 // const csjs = require('csjs-inject')
 
@@ -17,20 +15,18 @@ const sidePanel = {
   methods: ['addView', 'removeView']
 }
 
-// TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
-  appManager: RemixAppManager
   sideelement: any
-  verticalIcons: VerticalIcons;
-  constructor (appManager: RemixAppManager, verticalIcons: VerticalIcons) {
+  constructor() {
     super(sidePanel)
-    this.appManager = appManager
     this.sideelement = document.createElement('section')
     this.sideelement.setAttribute('class', 'panel plugin-manager')
-    this.verticalIcons = verticalIcons
+  }
 
+  onActivation() {
+    this.renderComponent()
     // Toggle content
-    verticalIcons.events.on('toggleContent', (name) => {
+    this.on('menuicons', 'toggleContent', (name) => {
       if (!this.plugins[name]) return
       if (this.plugins[name].active) {
         // TODO: Only keep `this.emit` (issue#2210)
@@ -44,7 +40,7 @@ export class SidePanel extends AbstractPanel {
       this.events.emit('showing', name)
     })
     // Force opening
-    verticalIcons.events.on('showContent', (name) => {
+    this.on('menuicons', 'showContent', (name) => {
       if (!this.plugins[name]) return
       this.showContent(name)
       // TODO: Only keep `this.emit` (issue#2210)
@@ -53,25 +49,22 @@ export class SidePanel extends AbstractPanel {
     })
   }
 
-  onActivation () {
-    this.renderComponent()
-  }
-
-  focus (name) {
+  focus(name) {
     this.emit('focusChanged', name)
     super.focus(name)
   }
 
-  removeView (profile) {
+  removeView(profile) {
+    if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
     super.removeView(profile)
     this.emit('pluginDisabled', profile.name)
     this.call('menuicons', 'unlinkContent', profile)
     this.renderComponent()
   }
 
-  addView (profile, view) {
+  addView(profile, view) {
     super.addView(profile, view)
-    this.verticalIcons.linkContent(profile)
+    this.call('menuicons', 'linkContent', profile)
     this.renderComponent()
   }
 
@@ -79,17 +72,17 @@ export class SidePanel extends AbstractPanel {
    * Display content and update the header
    * @param {String} name The name of the plugin to display
    */
-  async showContent (name) {
+  async showContent(name) {
     super.showContent(name)
     this.emit('focusChanged', name)
     this.renderComponent()
   }
 
-  render () {
+  render() {
     return this.sideelement
   }
 
-  renderComponent () {
-    ReactDOM.render(<RemixPluginPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins}/>, this.sideelement)
+  renderComponent() {
+    ReactDOM.render(<RemixPluginPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins} />, this.sideelement)
   }
 }
