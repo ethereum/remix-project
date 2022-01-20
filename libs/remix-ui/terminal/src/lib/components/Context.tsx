@@ -4,7 +4,7 @@ import helper from 'apps/remix-ide/src/lib/helper'
 const remixLib = require('@remix-project/remix-lib')
 const typeConversion = remixLib.execution.typeConversion
 
-const Context = ({ opts, blockchain }) => {
+const Context = ({ opts, provider }: { opts, provider: string }) => {
   const data = opts.tx || ''
   const from = opts.from ? helper.shortenHexData(opts.from) : ''
   let to = opts.to
@@ -16,7 +16,8 @@ const Context = ({ opts, blockchain }) => {
   const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
-  if (blockchain.getProvider() === 'vm') {
+
+  if (provider === 'vm') {
     return (
       <div>
         <span>
@@ -29,7 +30,7 @@ const Context = ({ opts, blockchain }) => {
           <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>hash:</span> {hash}</div>
         </span>
       </div>)
-  } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
+  } else if (provider !== 'vm' && data.resolvedData) {
     return (
       <div>
         <span>
