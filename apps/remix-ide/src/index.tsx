@@ -1,16 +1,18 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 import AppComponent from './app'
 // eslint-disable-next-line no-unused-vars
-import { RemixApp } from '@remix-ui/app'
+const RemixApp = lazy(() => import ('@remix-ui/app'));
 
 const appComponent = new AppComponent()
 appComponent.run()
 
 ReactDOM.render(
   <React.StrictMode>
-    <RemixApp app={appComponent}></RemixApp>
+    <Suspense fallback={<div>Loading...</div>}>
+      <RemixApp app={appComponent} />
+    </Suspense>
   </React.StrictMode>,
   document.getElementById('root')
 )
