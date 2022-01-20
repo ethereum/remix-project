@@ -25,6 +25,7 @@ export function ContractGUI (props: ContractGUIProps) {
     } else {
       setTitle(props.funcABI.type === 'receive' ? '(receive)' : '(fallback)')
     }
+    setBasicInput('')
   }, [props.title, props.funcABI])
 
   useEffect(() => {
