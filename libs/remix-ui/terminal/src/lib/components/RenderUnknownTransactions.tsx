@@ -3,7 +3,7 @@ import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
-const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails, modal }) => {
+const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails, modal, provider }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
@@ -21,7 +21,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
     <span id={`tx${tx.hash}`} key={index}>
       <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>
         <CheckTxStatus tx={receipt || tx} type={txType} />
-        <Context opts = { options } blockchain={plugin.blockchain} />
+        <Context opts = { options } provider={provider} />
         <div className='remix_ui_terminal_buttons'>
           <div className='remix_ui_terminal_debug btn btn-primary btn-sm'
             data-shared='txLoggerDebugButton'
