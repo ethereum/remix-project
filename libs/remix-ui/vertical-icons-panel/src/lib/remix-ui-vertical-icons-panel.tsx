@@ -109,19 +109,19 @@ const RemixUiVerticalIconsPanel = ({
             itemContextAction={itemContextAction}
           />
         </div>
-            <div>
-              { scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight ? (<Chevron
-                divElementRef={scrollableRef}
-                direction='down'
-                cssRule={'fa fa-chevron-down remixui_icon-chevron my-0'}
-              />) : null }
-              <IconList
-                theme={theme}
-                icons={icons.filter((p) => p.profile.name === 'settings' || p.profile.name === 'pluginManager')}
-                verticalIconsPlugin={verticalIconsPlugin}
-                itemContextAction={itemContextAction}
-              />
-            </div>
+        <div className="remixui_default-icons-container border-0">
+          { scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight ? (<Chevron
+            divElementRef={scrollableRef}
+            direction='down'
+            cssRule={'fa fa-chevron-down remixui_icon-chevron my-0'}
+          />) : null }
+          <IconList
+            theme={theme}
+            icons={icons.filter((p) => p.profile.name === 'settings' || p.profile.name === 'pluginManager')}
+            verticalIconsPlugin={verticalIconsPlugin}
+            itemContextAction={itemContextAction}
+          />
+        </div>
       </div>
     </div>
   )
