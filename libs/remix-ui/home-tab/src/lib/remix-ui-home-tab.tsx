@@ -152,10 +152,10 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidity'])
   }
-  const startCairo = async () => {
-    await plugin.appManager.activatePlugin('cairo_compiler')
-    plugin.verticalIcons.select('cairo_compiler')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'cairo_compiler'])
+  const startStarkNet = async () => {
+    await plugin.appManager.activatePlugin('starkNet_compiler')
+    plugin.verticalIcons.select('starkNet_compiler')
+    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'starkNet_compiler'])
   }
   const startSolhint = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solhint'])
@@ -250,7 +250,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               <div className="d-flex flex-row pt-2">
                 <ThemeContext.Provider value={ state.themeQuality }>
                   <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" callback={() => startSolidity()} />
-                  <PluginButton imgPath="assets/img/cairoLogo.webp" envID="CairoLogo" envText="Cairo compiler" l2={true} callback={() => startCairo()} />
+                  <PluginButton imgPath="assets/img/starkNetLogo.webp" envID="starkNetLogo" envText="StarkNet" l2={true} callback={() => startStarkNet()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
                   <PluginButton imgPath="assets/img/learnEthLogo.webp" envID="learnEthLogo" envText="LearnEth" callback={() => startLearnEth()} />
                   <PluginButton imgPath="assets/img/sourcifyLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
