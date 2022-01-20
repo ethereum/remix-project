@@ -47,7 +47,6 @@ function isRemixTestFile (path: string) {
 
 function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
   const importRegEx = /import ['"](.+?)['"];/g
-  let group: RegExpExecArray| null = null
   const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
 
   // Return if file is a remix test file or already processed
@@ -62,14 +61,6 @@ function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
     content = includeTestLibs.concat(content)
   }
   sources[filePath] = { content }
-  importRegEx.exec('') // Resetting state of RegEx
-
-  // Process each 'import' in file content
-  while ((group = importRegEx.exec(content))) {
-    const importedFile: string = group[1]
-    const importedFilePath: string = path.join(path.dirname(filePath), importedFile)
-    processFile(importedFilePath, sources)
-  }
 }
 
 const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
@@ -123,7 +114,13 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
   } finally {
     async.waterfall([
       function loadCompiler (next) {
-        compiler = new RemixCompiler()
+        compiler = new RemixCompiler((url, cb) => {
+          try {
+            cb(null, fs.readFileSync(url, 'utf-8'))
+          } catch (e) {
+            cb(e.message)
+          }
+        })
         if (compilerConfig) {
           const { currentCompilerUrl, evmVersion, optimize, runs } = compilerConfig
           if (evmVersion) compiler.set('evmVersion', evmVersion)
