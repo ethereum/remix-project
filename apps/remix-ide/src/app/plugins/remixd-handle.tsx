@@ -155,7 +155,7 @@ function remixdDialog () {
       </div>
       <div className='mb-2 text-break'>
         <h6 className="text-danger">
-          Before using, make sure remixd version is latest i.e. <b>${remixdVersion}</b>
+          Before using, make sure remixd version is latest i.e. <b>v{remixdVersion}</b>
           <br></br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
         </h6>
       </div>
