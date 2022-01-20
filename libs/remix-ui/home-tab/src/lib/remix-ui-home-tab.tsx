@@ -173,7 +173,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'sourcify'])
   }
   const startPluginManager = async () => {
-    await plugin.appManager.activatePlugin('pluginManager')
     plugin.verticalIcons.select('pluginManager')
   }
 
