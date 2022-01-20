@@ -225,8 +225,8 @@ class AppComponent {
     self.engine.register([appPanel, tabProxy])
 
     // those views depend on app_manager
-    self.menuicons = new VerticalIcons(appManager)
-    self.sidePanel = new SidePanel(appManager, self.menuicons)
+    self.menuicons = new VerticalIcons()
+    self.sidePanel = new SidePanel()
     self.hiddenPanel = new HiddenPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(
