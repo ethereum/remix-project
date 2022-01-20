@@ -353,7 +353,7 @@ export class Blockchain extends Plugin {
         if (network.name === 'VM') return
         this.call('terminal', 'logHtml',
           (<a href={etherScanLink(network.name, txhash)} target="_blank">
-            open in etherscan
+            view on etherscan
           </a>))        
       })
     })
