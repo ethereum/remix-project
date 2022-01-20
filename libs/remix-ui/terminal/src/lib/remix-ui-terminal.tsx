@@ -419,6 +419,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
   }
 
+  useEffect(() => {
+    props.plugin.on('layout', 'change', (panels) => {
+      setIsOpen(!panels.terminal.minimized)
+    })
+
+    return () => {
+      props.plugin.off('layout', 'change')
+    }
+  }, [])
+
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
