@@ -12,7 +12,7 @@ interface OtherIconsProps {
 
 function IconList ({ verticalIconsPlugin, itemContextAction, icons, theme }: OtherIconsProps) {
   return (
-    <div id="otherIcons">
+    <div className="" id="otherIcons">
       {
         icons
           .map(p => (
