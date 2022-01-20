@@ -90,7 +90,7 @@ const RemixUiVerticalIconsPanel = ({
                 <Chevron
                   direction='up'
                   divElementRef={scrollableRef}
-                  cssRule={'fa fa-chevron-up remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
+                  cssRule={'fa fa-chevron-up remixui_icon-chevron my-0'}
                 />
               ) : null
           }
@@ -113,7 +113,7 @@ const RemixUiVerticalIconsPanel = ({
               { scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight ? (<Chevron
                 divElementRef={scrollableRef}
                 direction='down'
-                cssRule={'fa fa-chevron-down remixui_icon-chevron mt-0 mb-0 ml-1 pl-3'}
+                cssRule={'fa fa-chevron-down remixui_icon-chevron my-0'}
               />) : null }
               <IconList
                 theme={theme}
