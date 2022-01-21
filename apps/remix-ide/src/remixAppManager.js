@@ -50,6 +50,10 @@ export class RemixAppManager extends PluginManager {
     return isNative(from.name)
   }
 
+  async canDeactivate(from,to) {
+   return this.canDeactivatePlugin(from, to)
+  }
+
   async deactivatePlugin (name) {
     const [to, from] = [
       await this.getProfile(name),
@@ -139,16 +143,6 @@ export class RemixAppManager extends PluginManager {
       id: 'flattener',
       name: 'flattenFileCustomAction',
       label: 'Flatten',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: [],
-      sticky: true
-    })
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'optimism-compiler',
-      name: 'compileCustomAction',
-      label: 'Compile with Optimism',
       type: [],
       extension: ['.sol'],
       path: [],

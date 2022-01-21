@@ -36,7 +36,7 @@ export const TabsUI = (props: TabsUIProps) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     return (
-      <div onClick={() => { props.onSelect(index); currentIndexRef.current = index; setSelectedIndex(index) }} ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
+      <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
         {tab.icon ? (<img className="my-1 mr-1 iconImage" src={tab.icon} />) : (<i className={classNameImg}></i>)}
         <span className="title-tabs">{tab.title}</span>
         <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
@@ -87,6 +87,11 @@ export const TabsUI = (props: TabsUIProps) => {
             if (tabsElement.current) return
             tabsElement.current = domEl
             tabsElement.current.addEventListener('wheel', transformScroll)
+          }}
+          onSelect={(index) => {
+            props.onSelect(index)
+            currentIndexRef.current = index
+            setSelectedIndex(index)
           }}
         >
           <TabList className="d-flex flex-row align-items-center">

@@ -1,9 +1,10 @@
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
-import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
 import Badge from './Badge'
 import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
+import { Plugin } from '@remixproject/engine'
+import { IconRecord } from '../types'
 
 export interface IconStatus {
     key: string
@@ -16,26 +17,11 @@ export interface BadgeStatus extends IconStatus {
     text: string
   }
 
-export interface IconProfile {
-    description: string
-    displayName: string
-    documentation: string
-    events: any[]
-    icon: string
-    kind: string
-    location: string
-    methods: string[]
-    name: string
-    version: string
-    tooltip?: string
-  }
-
   interface IconProps {
-    verticalIconPlugin: VerticalIcons
-    profile: IconProfile
+    verticalIconPlugin: Plugin
+    iconRecord: IconRecord
     contextMenuAction: (evt: any, profileName: string, documentation: string) => void
-    addActive: (profileName: string) => void
-    removeActive: () => void
+    theme: string
   }
 
 const initialState = {
@@ -46,18 +32,15 @@ const initialState = {
   pluginName: ''
 }
 
-function Icon ({
-  profile,
+const Icon = ({
+  iconRecord,
   verticalIconPlugin,
   contextMenuAction,
-  addActive,
-  removeActive
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-}: IconProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { tooltip, displayName, name, kind, icon, documentation } = profile
+  theme
+}: IconProps) => {
+  const { displayName, name, icon, documentation } = iconRecord.profile
   const [title] = useState(() => {
-    const temp = tooltip || displayName || name
+    const temp = null || displayName || name
     return temp.replace(/^\w/, (word: string) => word.toUpperCase())
   })
   const [links, setLinks] = useState<{ Documentation: string, CanDeactivate: boolean }>(
@@ -71,11 +54,9 @@ function Icon ({
   const [showContext, setShowContext] = useState(false)
   const [canDeactivate] = useState(false)
   const iconRef = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
-    const deactivationState = verticalIconPlugin.appManager
-      .canDeactivatePlugin(verticalIconPlugin.defaultProfile, { name })
+    const deactivationState = iconRecord.canbeDeactivated
     if (documentation && documentation.length > 0 && deactivationState) {
       setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
     } else {
@@ -102,21 +83,13 @@ function Icon ({
   }, [])
 
   return (
-    <Fragment>
+    <>
       <div
-        className={name === 'pluginManager' ? 'remixui_icon ml-2 mt-2 mr-2 mb-0 pl-1' : 'remixui_icon m-2 pl-1'}
-        onLoad={() => {
-          if (name === 'filePanel') {
-            addActive(name)
-          }
-        }}
+        className={`remixui_icon m-2  pt-1`}
         onClick={() => {
-          removeActive()
-          addActive(name)
-          verticalIconPlugin.toggle(name)
+          (verticalIconPlugin as any).toggle(name)
         }}
-        // @ts-ignore
-        plugin={name}
+        {...{plugin: name}}
         title={title}
         onContextMenu={(e: any) => {
           e.preventDefault()
@@ -127,11 +100,10 @@ function Icon ({
         id={`verticalIconsKind${name}`}
         ref={iconRef}
       >
-        <img className="remixui_image" src={icon} alt={name} />
-        { badgeStatus && badgeStatus.pluginName === name ? (
+        <img className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}`:''}`} src={icon} alt={name} />
           <Badge
             badgeStatus={badgeStatus}
-          />) : null }
+          />
       </div>
       {showContext ? (
         <VerticalIconsContextMenu
@@ -145,7 +117,7 @@ function Icon ({
           contextMenuAction={contextMenuAction}
         />
       ) : null}
-    </Fragment>
+    </>
   )
 }
 
