@@ -205,7 +205,7 @@ export function RunTabUI (props: RunTabProps) {
           {from}
           <span className="font-weight-bold text-warning">
             is changing your environment to
-          </span> {env}
+          </span> {env && env.context}
         </span>
       </div>
     )
