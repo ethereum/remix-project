@@ -172,8 +172,8 @@ export function RunTabUI (props: RunTabProps) {
     return <PassphrasePrompt message={message} setPassphrase={setPassphrasePrompt} defaultValue={runTab.passphrase} />
   }
 
-  const scenarioPrompt = (message: string) => {
-    return <ScenarioPrompt message={message} setScenarioPath={updateScenarioPath} defaultValue={runTab.recorder.pathToScenario} />
+  const scenarioPrompt = (message: string, defaultValue) => {
+    return <ScenarioPrompt message={message} setScenarioPath={updateScenarioPath} defaultValue={defaultValue} />
   }
 
   const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
@@ -205,7 +205,7 @@ export function RunTabUI (props: RunTabProps) {
           {from}
           <span className="font-weight-bold text-warning">
             is changing your environment to
-          </span> {env}
+          </span> {env && env.context}
         </span>
       </div>
     )

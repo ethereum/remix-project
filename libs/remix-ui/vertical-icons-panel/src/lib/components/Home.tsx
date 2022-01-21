@@ -1,19 +1,15 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { VerticalIcons } from 'libs/remix-ui/vertical-icons-panel/types/vertical-icons-panel'
-import React, { ReactNode } from 'react'
+import React from 'react'
 import BasicLogo from './BasicLogo'
 interface HomeProps {
-  verticalIconPlugin: VerticalIcons
+  verticalIconPlugin: any
 }
 
 function Home ({ verticalIconPlugin }: HomeProps) {
   return (
     <div
-      className="pl-1 mt-2 remixui_homeIcon"
-      onClick={async () => verticalIconPlugin.activateHome()}
-      // @ts-ignore
-      plugin="home"
+      className="mt-2 my-1 remixui_homeIcon"
+      onClick={async () => await verticalIconPlugin.activateHome()}
+      {...{ plugin: 'home'}}
       title="Home"
       data-id="verticalIconsHomeIcon"
       id="verticalIconsHomeIcon"

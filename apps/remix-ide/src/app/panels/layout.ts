@@ -80,7 +80,8 @@ export class Layout extends Plugin {
     const params = queryParams.get()
     if (params.minimizeterminal || params.embed) {
       this.panels.terminal.minimized = true
-      this.event.emit('change', null)
+      this.event.emit('change', this.panels)
+      this.emit('change', this.panels)
     }
     if (params.minimizesidepanel || params.embed) {
       this.event.emit('minimizesidepanel')

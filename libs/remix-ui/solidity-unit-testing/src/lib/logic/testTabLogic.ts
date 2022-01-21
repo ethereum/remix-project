@@ -21,23 +21,20 @@ export class TestTabLogic {
         this.currentPath = this.helper.removeMultipleSlashes(this.helper.removeTrailingSlashes(path))
     }
 
-    generateTestFolder (path:string) {
+    async generateTestFolder (path:string) {
         // Todo move this check to File Manager after refactoring
         // Checking to ignore the value which contains only whitespaces
         if (!path || !(/\S/.test(path))) return
         path = this.helper.removeMultipleSlashes(path)
         const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-        fileProvider.exists(path).then((res: boolean) => {
-        if (!res) fileProvider.createDir(path)
-        })
+        if(!await fileProvider.exists(path)) fileProvider.createDir(path)
     }
 
     async pathExists (path: string) {
         // Checking to ignore the value which contains only whitespaces
         if (!path || !(/\S/.test(path))) return
         const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-        const res = await fileProvider.exists(path, (e: Error, res: boolean) => { return res })
-        return res
+        return await fileProvider.exists(path)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

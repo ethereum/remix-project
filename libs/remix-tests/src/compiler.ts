@@ -1,6 +1,7 @@
 import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
+import deepequal from 'deep-equal'
 import Log from './logger'
 import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
@@ -46,7 +47,6 @@ function isRemixTestFile (path: string) {
 
 function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
   const importRegEx = /import ['"](.+?)['"];/g
-  let group: RegExpExecArray| null = null
   const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
 
   // Return if file is a remix test file or already processed
@@ -61,14 +61,6 @@ function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
     content = includeTestLibs.concat(content)
   }
   sources[filePath] = { content }
-  importRegEx.exec('') // Resetting state of RegEx
-
-  // Process each 'import' in file content
-  while ((group = importRegEx.exec(content))) {
-    const importedFile: string = group[1]
-    const importedFilePath: string = path.join(path.dirname(filePath), importedFile)
-    processFile(importedFilePath, sources)
-  }
 }
 
 const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
@@ -122,7 +114,13 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
   } finally {
     async.waterfall([
       function loadCompiler (next) {
-        compiler = new RemixCompiler()
+        compiler = new RemixCompiler((url, cb) => {
+          try {
+            cb(null, fs.readFileSync(url, 'utf-8'))
+          } catch (e) {
+            cb(e.message)
+          }
+        })
         if (compilerConfig) {
           const { currentCompilerUrl, evmVersion, optimize, runs } = compilerConfig
           if (evmVersion) compiler.set('evmVersion', evmVersion)
@@ -170,7 +168,8 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  * @param opts Options
  * @param cb Callback
  */
-export function compileContractSources (sources: SrcIfc, compiler: any, opts: any, cb): void {
+export function compileContractSources (sources: SrcIfc, newCompConfig: any, importFileCb, UTRunner, opts: any, cb): void {
+  let compiler
   const filepath = opts.testFilePath || ''
   const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
@@ -183,8 +182,28 @@ export function compileContractSources (sources: SrcIfc, compiler: any, opts: an
   }
 
   async.waterfall([
-    function doCompilation (next) {
+    (next) => {
+      if (!deepequal(UTRunner.compilerConfig, newCompConfig)) {
+        UTRunner.compilerConfig = newCompConfig
+        const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = newCompConfig
+        compiler = new RemixCompiler(importFileCb)
+        compiler.set('evmVersion', evmVersion)
+        compiler.set('optimize', optimize)
+        compiler.set('runs', runs)
+        compiler.loadVersion(usingWorker, currentCompilerUrl)
+        // @ts-ignore
+        compiler.event.register('compilerLoaded', this, (version) => {
+          next()
+        })
+      } else {
+        compiler = UTRunner.compiler
+        next()
+      }
+    },
+    (next) => {
       const compilationFinishedCb = (success, data, source) => {
+        // data.error usually exists for exceptions like worker error etc.
+        if (!data.error) UTRunner.compiler = compiler
         if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
         next(null, data)
       }

@@ -35,15 +35,17 @@ export class ThemeModule extends Plugin {
     }
     this.themes = themes.reduce((acc, theme) => {
       theme.url = window.location.origin + window.location.pathname + theme.url
-      return { ...acc, [theme.name]: theme }
+      return { ...acc, [theme.name.toLocaleLowerCase()]: theme }
     }, {})
     this._paq = _paq
     let queryTheme = (new QueryParams()).get().theme
+    queryTheme = queryTheme && queryTheme.toLocaleLowerCase()
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
+    currentTheme = currentTheme && currentTheme.toLocaleLowerCase()
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.currentThemeState = { queryTheme, currentTheme }
-    this.active = queryTheme || currentTheme || 'Dark'
+    this.active = queryTheme || currentTheme || 'dark'
     this.forced = !!queryTheme
   }
 
@@ -82,6 +84,7 @@ export class ThemeModule extends Plugin {
    * @param {string} [themeName] - The name of the theme
    */
   switchTheme (themeName) {
+    themeName = themeName && themeName.toLocaleLowerCase() 
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
