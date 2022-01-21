@@ -80,6 +80,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const remiAudioEl = useRef(null)
   const inputValue = useRef(null)
+  const rightPanel = useRef(null)
 
   useEffect(() => {
     plugin.call('theme', 'currentTheme').then((theme) => {
@@ -97,7 +98,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     window.addEventListener('click', (event) => {
       const target = event.target as Element
       const id = target.id
-      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn') {
+      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn' && !rightPanel.current.contains(event.target)) {
         // todo check event.target
         setState(prevState => { return { ...prevState, showMediaPanel: 'none' } })
       }
@@ -125,6 +126,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }
 
   const createNewFile = async () => {
+    plugin.verticalIcons.select('filePanel')
     await plugin.call('filePanel', 'createNewFile')
   }
 
@@ -150,10 +152,10 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidity'])
   }
-  const startOptimism = async () => {
-    await plugin.appManager.activatePlugin('optimism-compiler')
-    plugin.verticalIcons.select('optimism-compiler')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'optimism-compiler'])
+  const startCairo = async () => {
+    await plugin.appManager.activatePlugin('cairo_compiler')
+    plugin.verticalIcons.select('cairo_compiler')
+    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'cairo_compiler'])
   }
   const startSolhint = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solhint'])
@@ -171,7 +173,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'sourcify'])
   }
   const startPluginManager = async () => {
-    await plugin.appManager.activatePlugin('pluginManager')
     plugin.verticalIcons.select('pluginManager')
   }
 
@@ -232,7 +233,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
           </div>
           <div className="mr-4 d-flex">
-            <img className="mt-4 mb-2 remixui_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
+            <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
             <audio
               id="remiAudio"
               muted={false}
@@ -241,14 +242,14 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             ></audio>
           </div>
         </div>
-        <div className="row remixui_hpSections mx-2 mr-4" data-id="landingPageHpSections">
+        <div className="row mx-2 mr-4" data-id="landingPageHpSections">
           <div className="ml-3">
             <div className="mb-5">
               <h4>Featured Plugins</h4>
               <div className="d-flex flex-row pt-2">
                 <ThemeContext.Provider value={ state.themeQuality }>
                   <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" callback={() => startSolidity()} />
-                  <PluginButton imgPath="assets/img/optimismLogo.webp" envID="optimismLogo" envText="Optimism" callback={() => startOptimism()} />
+                  <PluginButton imgPath="assets/img/cairoLogo.webp" envID="CairoLogo" envText="Cairo compiler" l2={true} callback={() => startCairo()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
                   <PluginButton imgPath="assets/img/learnEthLogo.webp" envID="learnEthLogo" envText="LearnEth" callback={() => startLearnEth()} />
                   <PluginButton imgPath="assets/img/sourcifyLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
@@ -261,21 +262,22 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <h4>File</h4>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file"></i>
-                  <span className="ml-1 mb-1 remixui_text" onClick={() => createNewFile()}>New File</span>
+                  <label className="ml-1 mb-1 remixui_home_text" onClick={() => createNewFile()}>New File</label>
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file-alt"></i>
-                  <span className="ml-1 remixui_labelIt remixui_bigLabelSize} remixui_text">
+                  <label className="ml-1 remixui_home_labelIt remixui_home_bigLabelSize remixui_home_text" htmlFor="openFileInput">
                     Open Files
-                    <input title="open file" type="file" onChange={(event) => {
-                      event.stopPropagation()
-                      uploadFile(event.target)
-                    }} multiple />
-                  </span>
+                  </label>
+                  <input title="open file" type="file" id="openFileInput" onChange={(event) => {
+                    event.stopPropagation()
+                    plugin.verticalIcons.select('filePanel')
+                    uploadFile(event.target)
+                  }} multiple />
                 </p>
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
-                  <span className="ml-1 remixui_text" onClick={() => connectToLocalhost()}>Connect to Localhost</span>
+                  <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
                 </p>
                 <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
                 <div className="btn-group">
@@ -289,28 +291,28 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <h4>Resources</h4>
                 <p className="mb-1">
                   <i className="mr-2 fas fa-book"></i>
-                  <a className="remixui_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
+                  <a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 fab fa-gitter"></i>
-                  <a className="remixui_text" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+                  <a className="remixui_home_text" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
                 </p>
                 <p className="mb-1">
-                  <img id='remixHhomeWebsite' className="mr-2 remixui_image" src={ plugin.profile.icon } style={ { filter: state.themeQuality.filter } } alt=''></img>
-                  <a className="remixui_text" target="__blank" href="https://remix-project.org">Featuring website</a>
+                  <img id='remixHhomeWebsite' className="mr-2 remixui_home_image" src={ plugin.profile.icon } style={ { filter: state.themeQuality.filter } } alt=''></img>
+                  <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Featuring website</a>
                 </p>
                 <p className="mb-1">
-                  <i className="mr-2 fab fa-ethereum remixui_image"></i>
-                  <span className="remixui_text" onClick={() => switchToPreviousVersion()}>Old experience</span>
+                  <i className="mr-2 fab fa-ethereum remixui_home_image"></i>
+                  <label className="remixui_home_text" onClick={() => switchToPreviousVersion()}>Old experience</label>
                 </p>
               </div>
             </div>
           </div>
         </div>
-        <div className="d-flex flex-column remixui_rightPanel">
+        <div className="d-flex flex-column remixui_home_rightPanel">
           <div className="d-flex pr-3 py-2 align-self-end" id="remixIDEMediaPanelsTitle">
             <button
-              className="btn-info p-2 m-1 border rounded-circle remixui_mediaBadge fab fa-twitter"
+              className="btn-info p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-twitter"
               id="remixIDEHomeTwitterbtn"
               title="Twitter"
               onClick={(e) => {
@@ -321,7 +323,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               }}
             ></button>
             <button
-              className="btn-danger p-2 m-1 border rounded-circle remixui_mediaBadge fab fa-medium"
+              className="btn-danger p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-medium"
               id="remixIDEHomeMediumbtn"
               title="Medium blogs"
               onClick={(e) => {
@@ -332,9 +334,14 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               }}
             ></button>
           </div>
-          <div className="mr-3 d-flex bg-light remixui_panels" style={ { visibility: state.showMediaPanel === 'none' ? 'hidden' : 'visible' } } id="remixIDEMediaPanels">
-            <div id="remixIDE_MediumBlock" className="p-2 mx-1 mt-3 mb-0 remixui_remixHomeMedia" style={ { maxHeight: maxHeight } }>
-              <div id="medium-widget" className="px-3 remixui_media" hidden={state.showMediaPanel !== 'medium'} style={ { maxHeight: elHeight } }>
+          <div
+            className="mr-3 d-flex bg-light remixui_home_panels"
+            style={ { visibility: state.showMediaPanel === 'none' ? 'hidden' : 'visible' } }
+            id="remixIDEMediaPanels"
+            ref={rightPanel}
+          >
+            <div id="remixIDE_MediumBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" style={ { maxHeight: maxHeight } }>
+              <div id="medium-widget" className="px-3 remixui_home_media" hidden={state.showMediaPanel !== 'medium'} style={ { maxHeight: '10000px' } }>
                 <div
                   id="retainable-rss-embed"
                   data-rss="https://medium.com/feed/remix-ide"
@@ -348,10 +355,10 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </div>
               </div>
             </div>
-            <div id="remixIDE_TwitterBlock" className="p-2 mx-1 mt-3 mb-0 remixui_remixHomeMedia" hidden={state.showMediaPanel !== 'twitter'} style={ { maxHeight: maxHeight, marginRight: '28px' } } >
-              <div className="remixui_media" style={ { minHeight: elHeight } } >
+            <div id="remixIDE_TwitterBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" hidden={state.showMediaPanel !== 'twitter'} style={ { maxHeight: maxHeight, marginRight: '28px' } } >
+              <div className="remixui_home_media" style={ { minHeight: elHeight } } >
                 <a className="twitter-timeline"
-                  data-width="330"
+                  data-width="375"
                   data-theme={ state.themeQuality.name }
                   data-chrome="nofooter noheader transparent"
                   data-tweet-limit="18"

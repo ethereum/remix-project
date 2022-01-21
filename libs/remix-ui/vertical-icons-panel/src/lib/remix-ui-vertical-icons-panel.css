@@ -4,6 +4,10 @@
     height: 42px;
     cursor: pointer;
   }
+  .remixui_homeIcon:hover {
+    box-shadow: 0px 0px 14px -7px;
+  }
+
   .remixui_homeIcon svg path {
     fill: var(--primary);
   }
@@ -16,14 +20,16 @@
     justify-content: space-between;
     align-items: center;
   }
+  .remixui_icon:hover {
+    box-shadow: 0px 0px 14px -7px;
+  }
+
   .remixui_icon {
     cursor: pointer;
-    margin-bottom: 3px;
-    position: 12px;
     width: 36px;
     height: 36px;
-    padding: relative;
     border-radius: 8px;
+    align-items: center;
   }
   .remixui_icon img {
     width: 28px;
@@ -31,8 +37,15 @@
     padding: 4px;
     filter: invert(0.5);
   }
-  .remixui_image {
+
+  .remixui_icon .selected-dark {
+    filter: invert(1) grayscale(1);
   }
+
+  .remixui_icon .selected-light {
+    filter: invert(0) grayscale(1);
+  }
+
   .remixui_icon svg {
     width: 28px;
     height: 28px;
@@ -104,9 +117,12 @@
   }
   .remixui_default-icons-container {
     border-bottom: 2px solid #3f4455;
+    text-align: center;
   }
   .remixui_icon-chevron {
     z-index: 1000;
+    cursor: pointer;
+    align-items: center;
   }
 
   .remixui_settings {
