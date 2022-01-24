@@ -149,6 +149,18 @@ module.exports = {
     await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
   },
 
+  'Should select another provider #group1': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm', fork: 'berlin' })
+    await browser
+      .frameParent()
+      .useCss()
+      .clickLaunchIcon('udapp')
+      .waitForElementContainsText('#selectExEnvOptions option:checked', 'JavaScript VM (Berlin)')
+      .clickLaunchIcon('localPlugin')
+      .useXpath()
+      // @ts-ignore
+      .frame(0)
+  },
   // context menu item
 
   'Should create context menu item #group1': async function (browser: NightwatchBrowser) {
