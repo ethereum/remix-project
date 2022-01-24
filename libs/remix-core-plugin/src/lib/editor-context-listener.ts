@@ -84,11 +84,6 @@ export class EditorContextListener extends Plugin {
 
   async _highlightItems (cursorPosition, compilationResult, file) {
     if (this.currentPosition === cursorPosition) return
-    if (this.currentFile !== file) {
-      this.currentFile = file
-      this.currentPosition = cursorPosition
-      return
-    }
     this._stopHighlighting()
     this.currentPosition = cursorPosition
     this.currentFile = file
@@ -122,9 +117,13 @@ export class EditorContextListener extends Plugin {
   async _highlight (node, compilationResult) {
     if (!node) return
     const position = sourceMappingDecoder.decode(node.src)
+    const fileTarget = compilationResult.getSourceName(position.file)
+    const nodeFound = this._activeHighlights.find((el) => el.fileTarget === fileTarget && el.position.file === position.file && el.position.length === position.length && el.position.start === position.start)
+    if (nodeFound) return // if the content is already highlighted, do nothing.
+
     await this._highlightInternal(position, node, compilationResult)
     if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
-      this._activeHighlights.push({ position, fileTarget: compilationResult.getSourceName(position.file), nodeId: node.id })
+      this._activeHighlights.push({ position, fileTarget, nodeId: node.id })
     }
   }
 
@@ -204,13 +203,16 @@ export class EditorContextListener extends Plugin {
   }
 
   _loadContractInfos (node) {
+    const path = (this.nodes.length && this.nodes[0].absolutePath) || this.results.source.target
     for (const i in this.nodes) {
       if (this.nodes[i].id === node.scope) {
         const contract = this.nodes[i]
-        this.contract = this.results.data.contracts[this.results.source.target][contract.name]
-        this.estimationObj = this.contract.evm.gasEstimates
-        this.creationCost = this.estimationObj === null ? '-' : this.estimationObj.creation.totalCost
-        this.codeDepositCost = this.estimationObj === null ? '-' : this.estimationObj.creation.codeDepositCost
+        this.contract = this.results.data.contracts[path][contract.name]
+        if (contract) {
+          this.estimationObj = this.contract.evm.gasEstimates
+          this.creationCost = this.estimationObj === null ? '-' : this.estimationObj.creation.totalCost
+          this.codeDepositCost = this.estimationObj === null ? '-' : this.estimationObj.creation.codeDepositCost
+        }
       }
     }
   }
