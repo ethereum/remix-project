@@ -6,13 +6,13 @@ import AppComponent from './app'
 const RemixApp = lazy(() => import ('@remix-ui/app'));
 
 const appComponent = new AppComponent()
-appComponent.run()
-
-ReactDOM.render(
-  <React.StrictMode>
-    <Suspense fallback={<div>Loading...</div>}>
-      <RemixApp app={appComponent} />
-    </Suspense>
-  </React.StrictMode>,
-  document.getElementById('root')
-)
+appComponent.run().then(() => {
+  ReactDOM.render(
+    <React.StrictMode>
+      <Suspense fallback={<div>Loading...</div>}>
+        <RemixApp app={appComponent} />
+      </Suspense>
+    </React.StrictMode>,
+    document.getElementById('root')
+  )
+})
