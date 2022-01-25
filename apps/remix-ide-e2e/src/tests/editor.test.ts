@@ -147,6 +147,7 @@ module.exports = {
       .waitForElementContainsText('.contextview .type', 'uint256')
       .waitForElementContainsText('.contextview .name', 'number')
       .click('.contextview [data-action="previous"]') // declaration
+      .pause(1000)
       .execute(() => {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
@@ -154,6 +155,7 @@ module.exports = {
         browser.assert.equal(result.value, '180')
       })
       .click('.contextview [data-action="next"]') // back to the initial state
+      .pause(1000)
       .execute(() => {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
@@ -161,6 +163,7 @@ module.exports = {
         browser.assert.equal(result.value, '323')
       })
       .click('.contextview [data-action="next"]') // next reference
+      .pause(1000)
       .execute(() => {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
@@ -168,6 +171,7 @@ module.exports = {
         browser.assert.equal(result.value, '489')
       })
       .click('.contextview [data-action="gotoref"]') // back to the declaration
+      .pause(1000)
       .execute(() => {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
