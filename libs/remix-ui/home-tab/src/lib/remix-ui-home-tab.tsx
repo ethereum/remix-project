@@ -266,7 +266,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
-        
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
           <div className="d-flex justify-content-between ">
             <div className="mx-4 my-4 d-flex">
@@ -283,11 +282,11 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             </div>
           </div>
           <div>
-            <i className="text-danger fas fa-exclamation-triangle"></i>
+            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
             <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              Scam Alert: Beware of Youtube videos promoting "liquidity front runner bots" saying to paste contract code into Remix IDE.
+              Scam Alert: Beware of Youtube videos promoting "liquidity front runner bots" asking to paste contract code into Remix IDE.
             </span>
-            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">More here</a>
+            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
