@@ -34,7 +34,7 @@ export interface SettingsProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => void,
+  setExecutionContext: (executionContext: { context: string, fork: string }) => void,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
@@ -42,7 +42,6 @@ export interface SettingsProps {
   tooltip: (toasterMsg: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string,
-  web3ProviderDialog: () => JSX.Element,
   setSendValue: (value: string) => void
 }
 
@@ -61,8 +60,7 @@ export interface EnvironmentProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => void,
-  web3ProviderDialog: () => JSX.Element
+  setExecutionContext: (executionContext: { context: string, fork: string }) => void
 }
 
 export interface NetworkProps {
