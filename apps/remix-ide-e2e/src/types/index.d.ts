@@ -61,6 +61,7 @@ declare module 'nightwatch' {
         acceptAndRemember (this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
         clearConsole (this: NightwatchBrowser): NightwatchBrowser
         clearTransactions (this: NightwatchBrowser): NightwatchBrowser
+        currentSelectedFileIs (name: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
