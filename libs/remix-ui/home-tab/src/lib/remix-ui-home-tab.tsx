@@ -266,18 +266,27 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
-        <div className="border-bottom d-flex justify-content-between mr-4 pb-3 mb-3">
-          <div className="mx-4 my-4 d-flex">
-            <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+        <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
+          <div className="d-flex justify-content-between ">
+            <div className="mx-4 my-4 d-flex">
+              <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+            </div>
+            <div className="mr-4 d-flex">
+              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
+              <audio
+                id="remiAudio"
+                muted={false}
+                src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"
+                ref={remiAudioEl}
+              ></audio>
+            </div>
           </div>
-          <div className="mr-4 d-flex">
-            <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
-            <audio
-              id="remiAudio"
-              muted={false}
-              src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"
-              ref={remiAudioEl}
-            ></audio>
+          <div>
+            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
+            <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
+              Scam Alert: Beware of Youtube videos promoting "liquidity front runner bots" asking to paste contract code into Remix IDE.
+            </span>
+            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
