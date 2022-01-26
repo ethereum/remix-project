@@ -42,16 +42,16 @@ const RemixApp = (props: IRemixAppUi) => {
         hiddenPanelRef.current.appendChild(props.app.hiddenPanel.render())
       }
     }
-    async function activateApp () {
-      props.app.themeModule.initTheme(() => {
-        setAppReady(true)
-        props.app.activate()
-        setListeners()
-      })
-    }
-    if (props.app) {
-      activateApp()
-    }
+    // async function activateApp () {
+    //   props.app.themeModule.initTheme(() => {
+    //     setAppReady(true)
+    //     props.app.activate()
+    //     setListeners()
+    //   })
+    // }
+    // if (props.app) {
+    //   activateApp()
+    // }
   }, [])
 
   function setListeners () {

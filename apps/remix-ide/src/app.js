@@ -2,7 +2,7 @@
 import { RunTab, makeUdapp } from './app/udapp'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
-import { ThemeModule } from './app/tabs/theme-module'
+// import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { Web3ProviderModule } from './app/tabs/web3-provider'
 import { SidePanel } from './app/components/side-panel'
@@ -30,7 +30,6 @@ const remixLib = require('@remix-project/remix-lib')
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
-const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
 const FileProvider = require('./app/files/fileProvider')
@@ -52,15 +51,9 @@ const { TabProxy } = require('./app/panels/tab-proxy.js')
 class AppComponent {
   constructor () {
     const self = this
-    self.appManager = new RemixAppManager({})
+    self.appManager = Registry.getInstance().get('appManagerRegistry').api
     self.queryParams = new QueryParams()
     self._components = {}
-    // setup storage
-    const configStorage = new Storage('config-v0.8:')
-
-    // load app config
-    const config = new Config(configStorage)
-    Registry.getInstance().put({ api: config, name: 'config' })
 
     // load file system
     self._components.filesProviders = {}
@@ -95,8 +88,7 @@ class AppComponent {
     const pluginLoader = self.appManager.pluginLoader
     self.panels = {}
     self.workspace = pluginLoader.get()
-    self.engine = new RemixEngine()
-    self.engine.register(appManager)
+    self.engine = Registry.getInstance().get('engineRegistry').api
 
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
@@ -125,9 +117,9 @@ class AppComponent {
     // SERVICES
     // ----------------- gist service ---------------------------------
     self.gistHandler = new GistHandler()
-    // ----------------- theme service ---------------------------------
-    self.themeModule = new ThemeModule()
-    Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
+    // // ----------------- theme service ---------------------------------
+    // self.themeModule = new ThemeModule()
+    // Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
@@ -202,7 +194,7 @@ class AppComponent {
       configPlugin,
       blockchain,
       contentImport,
-      self.themeModule,
+      // self.themeModule,
       editor,
       fileManager,
       compilerMetadataGenerator,
@@ -320,7 +312,9 @@ class AppComponent {
     await self.appManager.activatePlugin(['layout'])
     await self.appManager.activatePlugin(['notification'])
     await self.appManager.activatePlugin(['editor'])
-    await self.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await self.appManager.activatePlugin(['permissionhandler',
+    // 'theme',
+    'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])
