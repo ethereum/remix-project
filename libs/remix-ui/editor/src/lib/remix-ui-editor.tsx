@@ -398,11 +398,12 @@ export const EditorUI = (props: EditorUIProps) => {
         <RemixUiEditorContextView
           hide={false}
           gotoLine={(line, column) => props.plugin.call('editor', 'gotoLine', line, column)}
-          openFile={(file) => props.plugin.call('editor', 'openFile', file)}
+          openFile={(file) => props.plugin.call('fileManager', 'switchFile', file)}
           getLastCompilationResult={() => { return props.plugin.call('compilerArtefacts', 'getLastCompilationResult') } }
           offsetToLineColumn={(position, file, sources, asts) => { return props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn', position, file, sources, asts) } }
           getCurrentFileName={() => { return props.plugin.call('fileManager', 'file') } }
           onContextListenerChanged={(listener) => { props.plugin.on('contextualListener', 'contextChanged', listener) }}
+          onCurrentFileChanged={(listener) => { props.plugin.on('fileManager', 'currentFileChanged', listener) }}
           referencesOf={(node: astNode) => { return props.plugin.call('contextualListener', 'referencesOf', node) }}
           getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
           gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}
