@@ -470,7 +470,7 @@ class FileManager extends Plugin {
   }
 
   currentFile () {
-    return this._deps.config.get('currentFile')
+    return this.editor.current()
   }
 
   async closeAllFiles () {
