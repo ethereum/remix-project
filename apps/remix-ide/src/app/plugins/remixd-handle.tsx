@@ -142,11 +142,11 @@ function remixdDialog () {
       </div>
       <div className='mb-2 text-break'>
         If you are just looking for the remixd command, here it is:
-        <br></br><br></br><b>${commandText}</b>
+        <br></br><br></br><b>{commandText}</b>
         <CopyToClipboard data-id='remixdCopyCommand' content={commandText}></CopyToClipboard>
       </div>
       <div className='mb-2 text-break'>
-        When connected, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>.
+        When connected, a session will be started between <em>{window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>.
          The shared folder will be in the "File Explorers" workspace named "localhost".
         <br/>Read more about other <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#ports-usage">Remixd ports usage</a>
       </div>
@@ -155,7 +155,7 @@ function remixdDialog () {
       </div>
       <div className='mb-2 text-break'>
         <h6 className="text-danger">
-          Before using, make sure remixd version is latest i.e. <b>${remixdVersion}</b>
+          Before using, make sure remixd version is latest i.e. <b>v{remixdVersion}</b>
           <br></br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
         </h6>
       </div>

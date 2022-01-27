@@ -438,7 +438,7 @@ class Editor extends Plugin {
     if (!filePath) return
     filePath = await this.call('fileManager', 'getPathFromUrl', filePath)
     filePath = filePath.file
-    if (!this.sessions[filePath]) throw new Error('file not found' + filePath)
+    if (!this.sessions[filePath]) return
     const path = filePath || this.currentFile
 
     const { from } = this.currentRequest

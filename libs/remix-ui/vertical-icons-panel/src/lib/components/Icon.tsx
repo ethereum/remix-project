@@ -85,7 +85,7 @@ const Icon = ({
   return (
     <>
       <div
-        className={`remixui_icon m-2 pl-1`}
+        className={`remixui_icon m-2  pt-1`}
         onClick={() => {
           (verticalIconPlugin as any).toggle(name)
         }}
