@@ -104,9 +104,13 @@
     scrollbar-width: none; /* Firefox hide scrollbar */
     -ms-overflow-style: none;
   }
+  .remixui_requiredSection {
+    text-align: center;
+  }
   .remixui_scrollable-container {
     flex-basis: 510px;
     flex-grow: 2;
+    text-align: center;
     /* border-bottom: 3px solid #3f4455; */
   }
   .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
