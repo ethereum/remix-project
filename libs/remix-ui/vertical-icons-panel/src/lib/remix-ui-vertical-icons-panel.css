@@ -29,6 +29,7 @@
     width: 36px;
     height: 36px;
     border-radius: 8px;
+    align-items: center;
   }
   .remixui_icon img {
     width: 28px;
@@ -39,15 +40,12 @@
 
   .remixui_icon .selected-dark {
     filter: invert(1) grayscale(1);
-    
   }
 
   .remixui_icon .selected-light {
     filter: invert(0) grayscale(1);
   }
 
-  .remixui_image {
-  }
   .remixui_icon svg {
     width: 28px;
     height: 28px;
@@ -106,9 +104,13 @@
     scrollbar-width: none; /* Firefox hide scrollbar */
     -ms-overflow-style: none;
   }
+  .remixui_requiredSection {
+    text-align: center;
+  }
   .remixui_scrollable-container {
     flex-basis: 510px;
     flex-grow: 2;
+    text-align: center;
     /* border-bottom: 3px solid #3f4455; */
   }
   .remixui_scrollbar::-webkit-scrollbar { /* Chrome, Safari and other Webkit browsers*/
@@ -119,9 +121,12 @@
   }
   .remixui_default-icons-container {
     border-bottom: 2px solid #3f4455;
+    text-align: center;
   }
   .remixui_icon-chevron {
     z-index: 1000;
+    cursor: pointer;
+    align-items: center;
   }
 
   .remixui_settings {
@@ -131,8 +136,4 @@
   #menuitems {
     list-style: none;
     margin: 0px;
-  }
-
-  .remixui_icon-chevron {
-    cursor: pointer;
   }
