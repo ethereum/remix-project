@@ -426,7 +426,7 @@ const testModalToasterApi = `
       remix.call('notification', 'alert', { message: 'message 2', id: 'test_id_2_' })
 
       const modalContent = {
-        id: 'test_id_3_'
+        id: 'test_id_3_',
         title: 'test with input title',
         message: 'test with input content',
         modalType: 'prompt',
