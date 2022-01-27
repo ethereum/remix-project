@@ -403,6 +403,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="test_id_2_ModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="test_id_2_ModalDialogModalBody-react"]', 'message 2')
       .modalFooterOKClick('test_id_2_')
+      .waitForElementVisible('*[data-id="test_id_3_ModalDialogModalBody-react"]')
+      .modalFooterOKClick('test_id_3_')
+      .journalLastChildIncludes('default value... ') // check the return value of the prompt
       // check the toasters
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
@@ -415,12 +418,24 @@ const testModalToasterApi = `
 // Right click on the script name and hit "Run" to execute
 (async () => {
  try {
-    setTimeout(() => {
+    setTimeout(async () => {
       console.log('test .. ')
       remix.call('notification', 'alert', { message: 'message 1', id: 'test_id_1_' })
       remix.call('notification', 'toast', 'I am a toast')
       remix.call('notification', 'toast', 'I am a re-toast')
       remix.call('notification', 'alert', { message: 'message 2', id: 'test_id_2_' })
+
+      const modalContent = {
+        id: 'test_id_3_'
+        title: 'test with input title',
+        message: 'test with input content',
+        modalType: 'prompt',
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        defaultValue: 'default value... '
+      }
+      const result = await remix.call('notification', 'modal', modalContent)
+      console.log(result)
     }, 500)
  } catch (e) {
     console.log(e.message)
