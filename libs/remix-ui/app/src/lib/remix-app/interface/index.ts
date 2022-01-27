@@ -14,7 +14,8 @@ export interface AppModal {
     modalType?: ModalTypes,
     defaultValue?: string
     hideFn?: () => void,
-    resolve?: (value?:any) => void
+    resolve?: (value?:any) => void,
+    next?: () => void
 }
 
 export interface AlertModal {
