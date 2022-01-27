@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
+import JSZip from 'jszip'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
@@ -152,10 +153,10 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidity'])
   }
-  const startCairo = async () => {
-    await plugin.appManager.activatePlugin('cairo_compiler')
-    plugin.verticalIcons.select('cairo_compiler')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'cairo_compiler'])
+  const startStarkNet = async () => {
+    await plugin.appManager.activatePlugin('starkNet_compiler')
+    plugin.verticalIcons.select('starkNet_compiler')
+    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'starkNet_compiler'])
   }
   const startSolhint = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solhint'])
@@ -173,8 +174,44 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'sourcify'])
   }
   const startPluginManager = async () => {
-    await plugin.appManager.activatePlugin('pluginManager')
     plugin.verticalIcons.select('pluginManager')
+  }
+  const saveAs = (blob, name) => {
+    const node = document.createElement('a')
+    node.download = name
+    node.rel = 'noopener'
+    node.href = URL.createObjectURL(blob)
+    setTimeout(function () { URL.revokeObjectURL(node.href) }, 4E4) // 40s
+    setTimeout(function () {
+      try {
+        node.dispatchEvent(new MouseEvent('click'))
+      } catch (e) {
+        var evt = document.createEvent('MouseEvents')
+        evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
+          20, false, false, false, false, 0, null)
+        node.dispatchEvent(evt)
+      }
+    }, 0) // 40s
+  }
+  const downloadFiles = async () => {
+    try {
+      plugin.call('notification', 'toast', 'preparing files for download, please wait..')
+      const zip = new JSZip()
+      const browserProvider = fileManager.getProvider('browser')
+      await browserProvider.copyFolderToJson('/', ({ path, content }) => {
+        zip.file(path, content)
+      })
+      zip.generateAsync({ type: 'blob' }).then(function (blob) {
+        var today = new Date()
+        var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+        var time = today.getHours() + 'h' + today.getMinutes() + 'min'
+        saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
+      }).catch((e) => {
+        plugin.call('notification', 'toast', e.message)
+      })
+    } catch (e) {
+      plugin.call('notification', 'toast', e.message)
+    }
   }
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
@@ -229,18 +266,27 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
-        <div className="border-bottom d-flex justify-content-between mr-4 pb-3 mb-3">
-          <div className="mx-4 my-4 d-flex">
-            <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+        <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
+          <div className="d-flex justify-content-between ">
+            <div className="mx-4 my-4 d-flex">
+              <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+            </div>
+            <div className="mr-4 d-flex">
+              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
+              <audio
+                id="remiAudio"
+                muted={false}
+                src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"
+                ref={remiAudioEl}
+              ></audio>
+            </div>
           </div>
-          <div className="mr-4 d-flex">
-            <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
-            <audio
-              id="remiAudio"
-              muted={false}
-              src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"
-              ref={remiAudioEl}
-            ></audio>
+          <div>
+            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
+            <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
+              Scam Alert: Beware of Youtube videos promoting "liquidity front runner bots" asking to paste contract code into Remix IDE.
+            </span>
+            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
@@ -250,7 +296,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               <div className="d-flex flex-row pt-2">
                 <ThemeContext.Provider value={ state.themeQuality }>
                   <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" callback={() => startSolidity()} />
-                  <PluginButton imgPath="assets/img/cairoLogo.webp" envID="CairoLogo" envText="Cairo compiler" l2={true} callback={() => startCairo()} />
+                  <PluginButton imgPath="assets/img/starkNetLogo.webp" envID="starkNetLogo" envText="StarkNet" l2={true} callback={() => startStarkNet()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
                   <PluginButton imgPath="assets/img/learnEthLogo.webp" envID="learnEthLogo" envText="LearnEth" callback={() => startLearnEth()} />
                   <PluginButton imgPath="assets/img/sourcifyLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
@@ -279,6 +325,10 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
                   <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
+                </p>
+                <p className="mb-1">
+                  <i className="mr-1 far fa-download"></i>
+                  <label className="ml-1 remixui_home_text" onClick={() => downloadFiles()}>Download Backup</label>
                 </p>
                 <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
                 <div className="btn-group">

@@ -8,15 +8,26 @@ import './remix-ui-editor-context-view.css'
 export type astNode = {
   name: string,
   id: number,
-  children: Array<any>,
+  children?: Array<any>,
   typeDescriptions: any,
   nodeType: String,
-  src: any,
-  nodeId: any,
-  position: any
+  src: string // e.g "142:1361:0"
+}
+
+export type nodePositionLight = {
+  file: number,
+  length: number,
+  start: number
+}
+
+export type astNodeLight = {
+  fileTarget: String,
+  nodeId: number,
+  position: nodePositionLight
 }
 
 export type onContextListenerChangedListener = (nodes: Array<astNode>) => void
+export type ononCurrentFileChangedListener = (name: string) => void
 
 export type gasEstimationType = {
   executionCost: string,
@@ -30,8 +41,9 @@ export interface RemixUiEditorContextViewProps {
   offsetToLineColumn: (position: any, file: any, sources: any, asts: any) => any,
   getCurrentFileName: () => String
   onContextListenerChanged: (listener: onContextListenerChangedListener) => void
+  onCurrentFileChanged: (listener: ononCurrentFileChangedListener) => void
   referencesOf: (nodes: astNode) => Array<astNode>
-  getActiveHighlights: () => Array<astNode>
+  getActiveHighlights: () => Array<astNodeLight>
   gasEstimation: (node: astNode) => gasEstimationType
   declarationOf: (node: astNode) => astNode
 }
@@ -48,49 +60,56 @@ function isDefinition (node: any) {
 type nullableAstNode = astNode | null
 
 export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) {
-  /*
-    gotoLineDisableRef is used to temporarily disable the update of the view.
-    e.g when the user ask the component to "gotoLine" we don't want to rerender the component (but just to put the mouse on the desired line)
-  */
-  const gotoLineDisableRef = useRef(false)
+  const loopOverReferences = useRef(0)
+  const currentNodeDeclaration = useRef<nullableAstNode>(null)
   const [state, setState] = useState<{
     nodes: Array<astNode>,
-    references: Array<astNode>,
     activeHighlights: Array<any>
-    currentNode: nullableAstNode,
     gasEstimation: gasEstimationType
   }>({
     nodes: [],
-    references: [],
     activeHighlights: [],
-    currentNode: null,
     gasEstimation: { executionCost: '', codeDepositCost: '' }
   })
 
   useEffect(() => {
-    props.onContextListenerChanged(async (nodes: Array<astNode>) => {
-      if (gotoLineDisableRef.current) {
-        gotoLineDisableRef.current = false
-        return
-      }
-      let currentNode
-      if (!props.hide && nodes && nodes.length) {
-        currentNode = nodes[nodes.length - 1]
-        if (!isDefinition(currentNode)) {
-          currentNode = await props.declarationOf(currentNode)
-        }
-      }
-      let references
-      let gasEstimation
-      if (currentNode) {
-        references = await props.referencesOf(currentNode)
-        if (currentNode.nodeType === 'FunctionDefinition') {
-          gasEstimation = await props.gasEstimation(currentNode)
-        }
-      }
-      const activeHighlights = await props.getActiveHighlights()
+    props.onCurrentFileChanged(() => {
+      currentNodeDeclaration.current = null
       setState(prevState => {
-        return { ...prevState, nodes, references, activeHighlights, currentNode, gasEstimation }
+        return { ...prevState, nodes: [], activeHighlights: [] }
+      })
+    })
+
+    props.onContextListenerChanged(async (nodes: Array<astNode>) => {
+      let nextNodeDeclaration
+      let nextNode
+      if (!props.hide && nodes && nodes.length) {
+        nextNode = nodes[nodes.length - 1]
+        if (!isDefinition(nextNode)) {
+          nextNodeDeclaration = await props.declarationOf(nextNode)
+        } else {
+          nextNodeDeclaration = nextNode
+        }
+      }
+      if (nextNodeDeclaration && currentNodeDeclaration.current && nextNodeDeclaration.id === currentNodeDeclaration.current.id) return
+
+      currentNodeDeclaration.current = nextNodeDeclaration
+
+      let gasEstimation
+      if (currentNodeDeclaration.current) {
+        if (currentNodeDeclaration.current.nodeType === 'FunctionDefinition') {
+          gasEstimation = await props.gasEstimation(currentNodeDeclaration.current)
+        }
+      }
+      const activeHighlights: Array<astNodeLight> = await props.getActiveHighlights()
+      if (nextNode && activeHighlights && activeHighlights.length) {
+        loopOverReferences.current = activeHighlights.findIndex((el: astNodeLight) => `${el.position.start}:${el.position.length}:${el.position.file}` === nextNode.src)
+        loopOverReferences.current = loopOverReferences.current === -1 ? 0 : loopOverReferences.current
+      } else {
+        loopOverReferences.current = 0
+      }
+      setState(prevState => {
+        return { ...prevState, nodes, activeHighlights, gasEstimation }
       })
     })
   }, [])
@@ -123,8 +142,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
       if (fileName !== await props.getCurrentFileName()) {
         await props.openFile(fileName)
       }
-      if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-        gotoLineDisableRef.current = true
+      if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
         props.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
       }
     }
@@ -141,14 +159,14 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
     }
   }
 
-  const _render = (node: nullableAstNode) => {
+  const _render = () => {
+    const node = currentNodeDeclaration.current
     if (!node) return (<div></div>)
-    const references = state.references
+    const references = state.activeHighlights
     const type = node.typeDescriptions && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.nodeType
     const referencesCount = `${references ? references.length : '0'} reference(s)`
 
-    let ref = 0
-    const nodes: Array<astNode> = state.activeHighlights
+    const nodes: Array<astNodeLight> = state.activeHighlights
 
     const jumpTo = () => {
       if (node && node.src) {
@@ -161,10 +179,10 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
 
     // JUMP BETWEEN REFERENCES
     const jump = (e: any) => {
-      e.target.dataset.action === 'next' ? ref++ : ref--
-      if (ref < 0) ref = nodes.length - 1
-      if (ref >= nodes.length) ref = 0
-      _jumpToInternal(nodes[ref].position)
+      e.target.dataset.action === 'next' ? loopOverReferences.current++ : loopOverReferences.current--
+      if (loopOverReferences.current < 0) loopOverReferences.current = nodes.length - 1
+      if (loopOverReferences.current >= nodes.length) loopOverReferences.current = 0
+      _jumpToInternal(nodes[loopOverReferences.current].position)
     }
 
     return (
@@ -181,7 +199,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
 
   return (
     !props.hide && <div className="container-context-view contextviewcontainer bg-light text-dark border-0 py-1">
-      {_render(state.currentNode)}
+      {_render()}
     </div>
   )
 }

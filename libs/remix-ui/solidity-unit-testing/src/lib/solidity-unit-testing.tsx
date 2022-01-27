@@ -723,7 +723,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           <label className="text-warning h6" data-id="testTabTestsExecutionStopped" hidden={testsExecutionStoppedHidden}>The test execution has been stopped</label>
           <label className="text-danger h6" data-id="testTabTestsExecutionStoppedError" hidden={testsExecutionStoppedErrorHidden}>The test execution has been stopped because of error(s) in your test file</label>
         </div>
-        <div id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput">{testsOutput}</div>
+        <div className="mx-3 mb-2 pb-4 border-primary" id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput">{testsOutput}</div>
       </div>
     </div>
   )
