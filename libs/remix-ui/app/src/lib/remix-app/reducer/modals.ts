@@ -19,7 +19,8 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
         modalType: action.payload.modalType,
         defaultValue: action.payload.defaultValue,
         hideFn: action.payload.hideFn,
-        resolve: action.payload.resolve
+        resolve: action.payload.resolve,
+        next: action.payload.next
       }
 
       const modalList: AppModal[] = state.modals.slice()
@@ -39,15 +40,22 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
         if (state.focusModal.resolve) {
           state.focusModal.resolve(undefined)
         }
+        if (state.focusModal.next) {
+          state.focusModal.next()
+        }
       }, 250)
       const modalList: AppModal[] = state.modals.slice()
       modalList.shift() // remove the current modal from the list
+      state.focusModal = { ...state.focusModal, hide: true, message: null }
+      return { ...state, modals: modalList }
+    }
+    case modalActionTypes.processQueue: {
+      const modalList: AppModal[] = state.modals.slice()
       if (modalList.length) {
         const focusModal = modalList[0] // extract the next modal from the list
         return { ...state, modals: modalList, focusModal }
       } else {
-        state.focusModal = { ...state.focusModal, hide: true, message: null }
-        return { ...state, modals: [] }
+        return { ...state, modals: modalList }
       }
     }
     case modalActionTypes.setToast: {
