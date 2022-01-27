@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 export interface ModalDialogProps {
   id: string
+  timestamp?: number,
   title?: string,
   message?: string | JSX.Element,
   okLabel?: string,

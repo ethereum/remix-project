@@ -5,8 +5,10 @@ import { AppModal, ModalState } from '../interface'
 export const modalReducer = (state: ModalState = ModalInitialState, action: ModalAction) => {
   switch (action.type) {
     case modalActionTypes.setModal: {
+      const timestamp = Date.now()
       const focusModal: AppModal = {
-        id: action.payload.id || Date.now().toString(),
+        timestamp,
+        id: action.payload.id || timestamp.toString(),
         hide: false,
         title: action.payload.title,
         message: action.payload.message,
