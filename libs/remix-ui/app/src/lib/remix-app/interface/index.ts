@@ -2,6 +2,7 @@ import { ModalTypes } from '../types'
 
 export interface AppModal {
     id: string
+    timestamp?: number
     hide?: boolean
     title: string
     // eslint-disable-next-line no-undef
