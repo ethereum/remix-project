@@ -20,9 +20,9 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   useEffect(() => {
-    calledHideFunctionOnce.current = props.hide
+    calledHideFunctionOnce.current = false
     modal.current.focus()
-  }, [props.hide])
+  }, [props.timestamp])
 
   useEffect(() => {
     function handleBlur (e) {
