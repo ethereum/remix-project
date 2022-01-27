@@ -1,8 +1,5 @@
 'use strict'
 import { RunTab, makeUdapp } from './app/udapp'
-import { RemixEngine } from './remixEngine'
-import { RemixAppManager } from './remixAppManager'
-// import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { Web3ProviderModule } from './app/tabs/web3-provider'
 import { SidePanel } from './app/components/side-panel'
@@ -25,10 +22,7 @@ import { HardhatProvider } from './app/tabs/hardhat-provider'
 
 const isElectron = require('is-electron')
 
-const remixLib = require('@remix-project/remix-lib')
-
 const QueryParams = require('./lib/query-params')
-const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
 
 const FileManager = require('./app/files/fileManager')
@@ -117,9 +111,6 @@ class AppComponent {
     // SERVICES
     // ----------------- gist service ---------------------------------
     self.gistHandler = new GistHandler()
-    // // ----------------- theme service ---------------------------------
-    // self.themeModule = new ThemeModule()
-    // Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
@@ -194,7 +185,6 @@ class AppComponent {
       configPlugin,
       blockchain,
       contentImport,
-      // self.themeModule,
       editor,
       fileManager,
       compilerMetadataGenerator,
@@ -312,9 +302,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['layout'])
     await self.appManager.activatePlugin(['notification'])
     await self.appManager.activatePlugin(['editor'])
-    await self.appManager.activatePlugin(['permissionhandler',
-    // 'theme',
-    'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await self.appManager.activatePlugin(['permissionhandler', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await self.appManager.activatePlugin(['home'])

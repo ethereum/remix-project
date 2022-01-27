@@ -45,27 +45,10 @@ pre {
   background-color   : var(--info);
   opacity            : 0.5;
 }
-.centered {
-  position           : fixed;
-  top                : 20%;
-  left               : 45%;
-  width              : 200px;
-  height             : 200px;
-}
-.centered svg path {
-  fill: var(--secondary);
-}
-.centered svg polygon {
-  fill              : var(--secondary);
-}
 .onboarding {
   color             : var(--text-info);
   background-color  : var(--info);
 }
 .matomoBtn {
   width              : 100px;
-}
-
-.splash {
-  text-align: center;
 }

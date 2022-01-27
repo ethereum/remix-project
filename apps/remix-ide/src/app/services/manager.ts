@@ -1,10 +1,10 @@
-
 import { RemixEngine } from '../../remixEngine'
 import { RemixAppManager } from '../../remixAppManager'
 import Registry from '../state/registry'
 import Config from '../../config'
 import * as RemixLib from '@remix-project/remix-lib'
 import { ThemeService } from './theme'
+import { RenderSplashScreen } from './splashscreen/splashscreen'
 
 const Storage = RemixLib.Storage
 
@@ -31,5 +31,5 @@ class RemixManagerService {
   const themeService = new ThemeService()
 
   await themeService.activate()
-  themeService.themeModule.initTheme()
+  themeService.themeModule.initTheme(() => RenderSplashScreen())
 })()
