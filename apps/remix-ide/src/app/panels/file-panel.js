@@ -4,7 +4,6 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
-import Registry from '../state/registry'
 import { RemixdHandle } from '../plugins/remixd-handle'
 const { GitHandle } = require('../files/git-handle.js')
 const { HardhatHandle } = require('../files/hardhat-handle.js')
@@ -42,7 +41,7 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this.registry = Registry.getInstance()
+    this.registry = Registry
     this.fileProviders = this.registry.get('fileproviders').api
     this.fileManager = this.registry.get('filemanager').api
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import * as packageJson from '../../../../../../package.json'
 import './splashscreen.css'
 
 export const RemixSplashScreen = () => {
@@ -11,6 +12,9 @@ export const RemixSplashScreen = () => {
     </svg>
     <div className="info-secondary splash">
       REMIX IDE
+      <div>
+        <span className='version'>v{ packageJson.version }</span> <i className="far fa-spinner-third fa-spin fa-sm"></i>
+      </div>
     </div>
   </div></>)
 }

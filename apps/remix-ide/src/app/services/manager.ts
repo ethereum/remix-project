@@ -1,11 +1,11 @@
 import { RemixEngine } from '../../remixEngine'
 import { RemixAppManager } from '../../remixAppManager'
-import Registry from '../state/registry'
 import Config from '../../config'
 import * as RemixLib from '@remix-project/remix-lib'
 import { ThemeService } from './theme'
 import { RenderSplashScreen } from './splashscreen/splashscreen'
 
+declare var Registry
 const Storage = RemixLib.Storage
 
 class RemixManagerService {
@@ -20,9 +20,9 @@ class RemixManagerService {
     // load app config
     const config = new Config(configStorage)
 
-    Registry.getInstance().put({ api: config, name: 'config' })
-    Registry.getInstance().put({ api: this.appManager, name: 'appManagerRegistry' })
-    Registry.getInstance().put({ api: this.engine, name: 'engineRegistry' })
+    Registry.put({ api: config, name: 'config' })
+    Registry.put({ api: this.appManager, name: 'appManagerRegistry' })
+    Registry.put({ api: this.engine, name: 'engineRegistry' })
   }
 }
 

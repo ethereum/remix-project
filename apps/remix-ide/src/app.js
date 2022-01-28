@@ -13,7 +13,6 @@ import { WalkthroughService } from './walkthroughService'
 
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
 
-import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
 import { Layout } from './app/panels/layout'
 import { ModalPlugin } from './app/plugins/modal'
@@ -45,31 +44,31 @@ const { TabProxy } = require('./app/panels/tab-proxy.js')
 class AppComponent {
   constructor () {
     const self = this
-    self.appManager = Registry.getInstance().get('appManagerRegistry').api
+    self.appManager = Registry.get('appManagerRegistry').api
     self.queryParams = new QueryParams()
     self._components = {}
 
     // load file system
     self._components.filesProviders = {}
     self._components.filesProviders.browser = new FileProvider('browser')
-    Registry.getInstance().put({
+    Registry.put({
       api: self._components.filesProviders.browser,
       name: 'fileproviders/browser'
     })
     self._components.filesProviders.localhost = new RemixDProvider(
       self.appManager
     )
-    Registry.getInstance().put({
+    Registry.put({
       api: self._components.filesProviders.localhost,
       name: 'fileproviders/localhost'
     })
     self._components.filesProviders.workspace = new WorkspaceFileProvider()
-    Registry.getInstance().put({
+    Registry.put({
       api: self._components.filesProviders.workspace,
       name: 'fileproviders/workspace'
     })
 
-    Registry.getInstance().put({
+    Registry.put({
       api: self._components.filesProviders,
       name: 'fileproviders'
     })
@@ -82,7 +81,7 @@ class AppComponent {
     const pluginLoader = self.appManager.pluginLoader
     self.panels = {}
     self.workspace = pluginLoader.get()
-    self.engine = Registry.getInstance().get('engineRegistry').api
+    self.engine = Registry.get('engineRegistry').api
 
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
@@ -91,7 +90,7 @@ class AppComponent {
     }
     self.showMatamo =
       matomoDomains[window.location.hostname] &&
-      !Registry.getInstance()
+      !Registry
         .get('config')
         .api.exists('settings/matomo-analytics')
     self.walkthroughService = new WalkthroughService(
@@ -114,27 +113,27 @@ class AppComponent {
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
-    Registry.getInstance().put({ api: editor, name: 'editor' })
+    Registry.put({ api: editor, name: 'editor' })
     editor.event.register('requiringToSaveCurrentfile', () =>
       fileManager.saveCurrentFile()
     )
 
     // ----------------- fileManager service ----------------------------
     const fileManager = new FileManager(editor, appManager)
-    Registry.getInstance().put({ api: fileManager, name: 'filemanager' })
+    Registry.put({ api: fileManager, name: 'filemanager' })
     // ----------------- dGit provider ---------------------------------
     const dGitProvider = new DGitProvider()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
-    const blockchain = new Blockchain(Registry.getInstance().get('config').api)
+    const blockchain = new Blockchain(Registry.get('config').api)
 
     // ----------------- compilation metadata generation service ---------
     const compilerMetadataGenerator = new CompilerMetadata()
     // ----------------- compilation result service (can keep track of compilation results) ----------------------------
     const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
-    Registry.getInstance().put({
+    Registry.put({
       api: compilersArtefacts,
       name: 'compilersartefacts'
     })
@@ -148,7 +147,7 @@ class AppComponent {
     const hardhatProvider = new HardhatProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
-    Registry.getInstance().put({
+    Registry.put({
       api: offsetToLineColumnConverter,
       name: 'offsettolinecolumnconverter'
     })
@@ -202,7 +201,7 @@ class AppComponent {
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    Registry.getInstance().put({ api: self.mainview, name: 'mainview' })
+    Registry.put({ api: self.mainview, name: 'mainview' })
     const tabProxy = new TabProxy(fileManager, editor)
     self.engine.register([appPanel, tabProxy])
 
@@ -224,7 +223,7 @@ class AppComponent {
       contentImport
     )
     self.settings = new SettingsTab(
-      Registry.getInstance().get('config').api,
+      Registry.get('config').api,
       editor,
       appManager
     )
@@ -241,24 +240,24 @@ class AppComponent {
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const compileTab = new CompileTab(
-      Registry.getInstance().get('config').api,
-      Registry.getInstance().get('filemanager').api
+      Registry.get('config').api,
+      Registry.get('filemanager').api
     )
     const run = new RunTab(
       blockchain,
-      Registry.getInstance().get('config').api,
-      Registry.getInstance().get('filemanager').api,
-      Registry.getInstance().get('editor').api,
+      Registry.get('config').api,
+      Registry.get('filemanager').api,
+      Registry.get('editor').api,
       filePanel,
-      Registry.getInstance().get('compilersartefacts').api,
+      Registry.get('compilersartefacts').api,
       networkModule,
-      Registry.getInstance().get('fileproviders/browser').api
+      Registry.get('fileproviders/browser').api
     )
     const analysis = new AnalysisTab()
     const debug = new DebuggerTab()
     const test = new TestTab(
-      Registry.getInstance().get('filemanager').api,
-      Registry.getInstance().get('offsettolinecolumnconverter').api,
+      Registry.get('filemanager').api,
+      Registry.get('offsettolinecolumnconverter').api,
       filePanel,
       compileTab,
       appManager,

@@ -2,11 +2,11 @@
 import async from 'async'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
 import { fileChangedToastMsg } from '@remix-ui/helper'
 const helper = require('../../lib/helper.js')
+declare var Registry
 
 /*
   attach to files event (removed renamed)
@@ -54,7 +54,7 @@ class FileManager extends Plugin {
     this.events = new EventEmitter()
     this.editor = editor
     this._components = {}
-    this._components.registry = Registry.getInstance()
+    this._components.registry = Registry
     this.appManager = appManager
     this.init()
   }

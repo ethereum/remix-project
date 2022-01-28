@@ -57,6 +57,30 @@
 	</head>
 	<body>
 		<div id="root"></div>
+		<script type="text/javascript">
+			function RegistryInstance () {
+					this.state = {}
+			}
+
+			RegistryInstance.prototype.put = function (entry) {
+					if (this.state[entry.name]) return this.state[entry.name]
+					const server = {
+					// uid: serveruid,
+						api: entry.api
+					}
+					this.state[entry.name] = { server }
+					return server
+			}
+
+			RegistryInstance.prototype.get = function (name) {
+				const state = this.state[name]
+				if (!state) return
+				const server = state.server
+				return server
+			}
+
+			var Registry = new RegistryInstance()
+		</script>		
 		<script src="manager.js"></script>
 		<script>
 			function  urlParams () {

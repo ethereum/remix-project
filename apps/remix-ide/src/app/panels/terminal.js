@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
@@ -28,7 +27,7 @@ class Terminal extends Plugin {
     super(profile)
     this.fileImport = new CompilerImports()
     this.event = new EventManager()
-    this.globalRegistry = Registry.getInstance()
+    this.globalRegistry = Registry
     this.element = document.createElement('div')
     this.element.setAttribute('class', 'panel')
     this.element.setAttribute('id', 'terminal-view')
