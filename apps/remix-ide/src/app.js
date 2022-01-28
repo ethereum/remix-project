@@ -9,7 +9,7 @@ import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, Fetch
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
 import { Layout } from './app/panels/layout'
-import { ModalPlugin } from './app/plugins/modal'
+import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
 import { HardhatProvider } from './app/tabs/hardhat-provider'
 
@@ -177,7 +177,7 @@ class AppComponent {
     )
     const contextualListener = new EditorContextListener()
 
-    self.modal = new ModalPlugin()
+    self.notification = new NotificationPlugin()
 
     const configPlugin = new ConfigPlugin()
     self.layout = new Layout()
@@ -187,7 +187,7 @@ class AppComponent {
     self.engine.register([
       permissionHandler,
       self.layout,
-      self.modal,
+      self.notification,
       self.gistHandler,
       configPlugin,
       blockchain,
