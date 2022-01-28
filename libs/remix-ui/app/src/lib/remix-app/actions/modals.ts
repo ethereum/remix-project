@@ -14,6 +14,7 @@ type ActionMap<M extends { [index: string]: any }> = {
 export const enum modalActionTypes {
   setModal = 'SET_MODAL',
   setToast = 'SET_TOAST',
+  processQueue = 'PROCESS_QUEUEU',
   handleHideModal = 'HANDLE_HIDE_MODAL',
   handleToaster = 'HANDLE_HIDE_TOAST'
 }
@@ -22,7 +23,8 @@ type ModalPayload = {
   [modalActionTypes.setModal]: AppModal
   [modalActionTypes.handleHideModal]: any
   [modalActionTypes.setToast]: string | JSX.Element
-  [modalActionTypes.handleToaster]: any
+  [modalActionTypes.handleToaster]: any,
+  [modalActionTypes.processQueue]: any
 }
 
 export type ModalAction = ActionMap<ModalPayload>[keyof ActionMap<

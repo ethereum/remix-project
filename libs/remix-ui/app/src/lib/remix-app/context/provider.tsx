@@ -9,12 +9,18 @@ import { AppContext, dispatchModalContext, modalContext } from './context'
 export const ModalProvider = ({ children = [], reducer = modalReducer, initialState = ModalInitialState } = {}) => {
   const [{ modals, toasters, focusModal, focusToaster }, dispatch] = useReducer(reducer, initialState)
 
+  const onNextFn = async () => {
+    dispatch({
+      type: modalActionTypes.processQueue
+    })
+  }
+
   const modal = (data: AppModal) => {
     const { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue, hideFn } = data
     return new Promise((resolve, reject) => {
       dispatch({
         type: modalActionTypes.setModal,
-        payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue, hideFn, resolve }
+        payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue, hideFn, resolve, next: onNextFn }
       })
     })
   }
