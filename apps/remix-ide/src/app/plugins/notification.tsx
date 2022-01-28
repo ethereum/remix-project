@@ -4,7 +4,7 @@ import { AppModal } from '@remix-ui/app'
 import { AlertModal } from 'libs/remix-ui/app/src/lib/remix-app/interface'
 import { dispatchModalInterface } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 
-interface IModalApi {
+interface INotificationApi {
   events: StatusEvents,
   methods: {
     modal: (args: AppModal) => void
@@ -13,14 +13,14 @@ interface IModalApi {
   }
 }
 
-const profile:LibraryProfile<IModalApi> = {
+const profile:LibraryProfile<INotificationApi> = {
   name: 'notification',
   displayName: 'Notification',
   description: 'Displays notifications',
   methods: ['modal', 'alert', 'toast']
 }
 
-export class ModalPlugin extends Plugin implements MethodApi<IModalApi> {
+export class NotificationPlugin extends Plugin implements MethodApi<INotificationApi> {
   dispatcher: dispatchModalInterface
   constructor () {
     super(profile)
@@ -38,7 +38,7 @@ export class ModalPlugin extends Plugin implements MethodApi<IModalApi> {
     return this.dispatcher.alert(args)
   }
 
-  async toast (message: string) {
+  async toast (message: string | JSX.Element) {
     this.dispatcher.toast(message)
   }
 }
