@@ -5,49 +5,78 @@ import { AppModal, ModalState } from '../interface'
 export const modalReducer = (state: ModalState = ModalInitialState, action: ModalAction) => {
   switch (action.type) {
     case modalActionTypes.setModal: {
-      let modalList:AppModal[] = state.modals
-      modalList.push(action.payload)
-      if (state.modals.length === 1 && state.focusModal.hide === true) { // if it's the first one show it
-        const focusModal: AppModal = {
-          id: modalList[0].id,
-          hide: false,
-          title: modalList[0].title,
-          message: modalList[0].message,
-          okLabel: modalList[0].okLabel,
-          okFn: modalList[0].okFn,
-          cancelLabel: modalList[0].cancelLabel,
-          cancelFn: modalList[0].cancelFn,
-          modalType: modalList[0].modalType,
-          defaultValue: modalList[0].defaultValue,
-          hideFn: modalList[0].hideFn,
-          resolve: modalList[0].resolve
-        }
-
-        modalList = modalList.slice()
-        modalList.shift()
-        return { ...state, modals: modalList, focusModal: focusModal }
+      const timestamp = Date.now()
+      const focusModal: AppModal = {
+        timestamp,
+        id: action.payload.id || timestamp.toString(),
+        hide: false,
+        title: action.payload.title,
+        message: action.payload.message,
+        okLabel: action.payload.okLabel,
+        okFn: action.payload.okFn,
+        cancelLabel: action.payload.cancelLabel,
+        cancelFn: action.payload.cancelFn,
+        modalType: action.payload.modalType,
+        defaultValue: action.payload.defaultValue,
+        hideFn: action.payload.hideFn,
+        resolve: action.payload.resolve,
+        next: action.payload.next
       }
+
+      const modalList: AppModal[] = state.modals.slice()
+      modalList.push(focusModal)
+
+      if (modalList.length === 1) {
+        return { ...state, modals: modalList, focusModal }
+      } else {
+        return { ...state, modals: modalList }
+      }
+    }
+    case modalActionTypes.handleHideModal: {
+      setTimeout(() => {
+        if (state.focusModal.hideFn) {
+          state.focusModal.hideFn()
+        }
+        if (state.focusModal.resolve) {
+          state.focusModal.resolve(undefined)
+        }
+        if (state.focusModal.next) {
+          state.focusModal.next()
+        }
+      }, 250)
+      const modalList: AppModal[] = state.modals.slice()
+      modalList.shift() // remove the current modal from the list
+      state.focusModal = { ...state.focusModal, hide: true, message: null }
       return { ...state, modals: modalList }
     }
-    case modalActionTypes.handleHideModal:
-      if (state.focusModal.hideFn) {
-        state.focusModal.hideFn()
-      } else if (state.focusModal.resolve) {
-        state.focusModal.resolve(undefined)
+    case modalActionTypes.processQueue: {
+      const modalList: AppModal[] = state.modals.slice()
+      if (modalList.length) {
+        const focusModal = modalList[0] // extract the next modal from the list
+        return { ...state, modals: modalList, focusModal }
+      } else {
+        return { ...state, modals: modalList }
       }
-      state.focusModal = { ...state.focusModal, hide: true, message: null }
-      return { ...state }
-
-    case modalActionTypes.setToast:
-      state.toasters.push(action.payload)
-      if (state.toasters.length > 0) {
-        const focus = state.toasters[0]
-        state.toasters.shift()
-        return { ...state, focusToaster: focus }
+    }
+    case modalActionTypes.setToast: {
+      const toasterList = state.toasters.slice()
+      const message = action.payload
+      toasterList.push(message)
+      if (toasterList.length === 1) {
+        return { ...state, toasters: toasterList, focusToaster: action.payload }
+      } else {
+        return { ...state, toasters: toasterList }
       }
-      return { ...state }
-
-    case modalActionTypes.handleToaster:
-      return { ...state, focusToaster: '' }
+    }
+    case modalActionTypes.handleToaster: {
+      const toasterList = state.toasters.slice()
+      toasterList.shift()
+      if (toasterList.length) {
+        const toaster = toasterList[0]
+        return { ...state, toasters: toasterList, focusToaster: toaster }
+      } else {
+        return { ...state, toasters: [] }
+      }
+    }
   }
 }

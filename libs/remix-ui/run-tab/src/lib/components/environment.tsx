@@ -9,9 +9,8 @@ export function EnvironmentUI (props: EnvironmentProps) {
     let context = provider.value
 
     context = context.startsWith('vm') ? 'vm' : context // context has to be 'vm', 'web3' or 'injected'
-    const displayContent = props.web3ProviderDialog()
 
-    props.setExecutionContext({ context, fork }, displayContent)
+    props.setExecutionContext({ context, fork })
   }
 
   return (
