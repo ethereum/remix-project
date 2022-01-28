@@ -78,9 +78,7 @@ export interface RunTabState {
   recorder: {
     pathToScenario: string,
     transactionCount: number
-  },
-  envToasterContent: (env: { context: string, fork: string }, from: string) => JSX.Element
-  web3Dialog: () => JSX.Element
+  }
 }
 
 export const runTabInitialState: RunTabState = {
@@ -166,9 +164,7 @@ export const runTabInitialState: RunTabState = {
   recorder: {
     pathToScenario: 'scenario.json',
     transactionCount: 0
-  },
-  envToasterContent: null,
-  web3Dialog: null
+  }
 }
 
 type AddProvider = {
@@ -647,24 +643,6 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
           ...state.recorder,
           transactionCount: 0
         }
-      }
-    }
-
-    case 'SET_ENV_TOASTER_CONTENT': {
-      const payload: (env: string, from: string) => JSX.Element = action.payload
-
-      return {
-        ...state,
-        envToasterContent: payload
-      }
-    }
-
-    case 'SET_WEB3_DIALOG': {
-      const payload: () => JSX.Element = action.payload
-
-      return {
-        ...state,
-        web3Dialog: payload
       }
     }
 
