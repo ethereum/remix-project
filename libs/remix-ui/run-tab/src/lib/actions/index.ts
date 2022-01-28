@@ -2,8 +2,8 @@
 import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
-import { addressToString, createNonClashingNameAsync, extractNameFromKey, shortenAddress } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
+import { addressToString, createNonClashingNameAsync, envChangeNotification, extractNameFromKey, shortenAddress, web3Dialog } from '@remix-ui/helper'
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -75,8 +75,8 @@ const setupEvents = () => {
   plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
 
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
-    dispatch(displayPopUp(plugin.REACT_API.envToasterContent(env, from)))
-    setExecutionContext(env, plugin.REACT_API.web3Dialog())
+    plugin.call('notification', 'toast', envChangeNotification(env, from))
+    setExecutionContext(env)
   })
 
   plugin.on('filePanel', 'setWorkspace', () => {
@@ -104,11 +104,6 @@ const setupEvents = () => {
   plugin.event.register('cleared', () => {
     dispatch(clearRecorderCount())
   })
-}
-
-export const initWebDialogs = (envToasterContent: (env: { context: string, fork: string }, from: string) => void, web3Dialog: () => void) => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setEnvToasterContent(envToasterContent))
-  dispatch(setWeb3Dialog(web3Dialog))
 }
 
 const updateAccountBalances = () => {
@@ -225,16 +220,28 @@ const removeExternalProvider = (name) => {
   dispatch(removeProvider(name))
 }
 
-export const setExecutionContext = (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => {
+export const setExecutionContext = (executionContext: { context: string, fork: string }) => {
+  const displayContent = web3Dialog(plugin.REACT_API.externalEndpoint, setWeb3Endpoint)
+
   plugin.blockchain.changeExecutionContext(executionContext, () => {
-    dispatch(displayNotification('External node request', displayContent, 'OK', 'Cancel', () => {
-      plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
-        if (alertMsg) dispatch(displayPopUp(alertMsg))
+    plugin.call('notification', 'modal', {
+      id: 'envNotification',
+      title: 'External node request',
+      message: displayContent,
+      okLabel: 'OK',
+      cancelLabel: 'Cancel',
+      okFn: () => {
+        plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
+          if (alertMsg) plugin.call('notification', 'toast', alertMsg)
+          setFinalContext()
+        })
+      },
+      cancelFn: () => {
         setFinalContext()
-      })
-    }, () => { setFinalContext() }))
+      }
+    })
   }, (alertMsg) => {
-    dispatch(displayPopUp(alertMsg))
+    plugin.call('notification', 'toast', alertMsg)
   }, () => { setFinalContext() })
 }
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Web3ProviderDialog } from './components/web3Dialog'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
   <div><i className="fas fa-exclamation-triangle text-danger mr-1"></i>
@@ -50,5 +51,21 @@ export const localCompilationToastMsg = () => (
 export const sourceVerificationNotAvailableToastMsg = () => (
   <div>
     <b>Source verification plugin not activated or not available.</b> continuing <i>without</i> source code debugging.
+  </div>
+)
+
+export const web3Dialog = (externalEndpoint: string, setWeb3Endpoint: (value: string) => void) => (
+  <Web3ProviderDialog externalEndpoint={externalEndpoint} setWeb3Endpoint={setWeb3Endpoint} />
+)
+
+export const envChangeNotification = (env: { context: string, fork: string }, from: string) => (
+  <div>
+    <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+    <span>
+      { from + ' '}
+      <span className="font-weight-bold text-warning">
+        is changing your environment to
+      </span> {env && env.context}
+    </span>
   </div>
 )
