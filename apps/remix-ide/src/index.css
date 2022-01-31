@@ -1,0 +1,22 @@
+.centered {
+  position           : fixed;
+  top                : 20%;
+  left               : 45%;
+  width              : 200px;
+  height             : 200px;
+}
+.centered svg path {
+  fill: var(--secondary);
+}
+.centered svg polygon {
+  fill              : var(--secondary);
+}
+.splash {
+  text-align: center;
+}
+.version {
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: normal;
+  max-width: 300px;
+}

@@ -3,6 +3,8 @@ import React from 'react'
 import { render } from 'react-dom'
 // eslint-disable-next-line no-unused-vars
 import { RemixApp } from '@remix-ui/app'
+import * as packageJson from '../../../package.json'
+import './index.css'
 
 (function () {
   render(
@@ -15,6 +17,9 @@ import { RemixApp } from '@remix-ui/app'
           </svg>
           <div className="info-secondary splash">
             REMIX IDE
+            <div>
+              <span className='version'>v{ packageJson.version }</span> <i className="far fa-spinner-third fa-spin fa-sm"></i>
+            </div>
           </div>
         </div>
     </React.StrictMode>,
@@ -35,3 +40,4 @@ import ('./app').then((AppComponent) => {
 }).catch(err => {
   console.log('Error on loading Remix:', err)
 })
+
