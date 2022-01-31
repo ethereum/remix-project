@@ -17,9 +17,11 @@ import './index.css'
           </svg>
           <div className="info-secondary splash">
             REMIX IDE
-            <div>
-              <span className='version'>v{ packageJson.version }</span> <i className="far fa-spinner-third fa-spin fa-sm"></i>
-            </div>
+            <br />
+            <span className='version'> v{ packageJson.version }</span>
+          </div>
+          <div style={{ marginTop: '100%', textAlign: 'center' }}>
+            <i className="fas fa-spinner fa-spin fa-3x"></i>
           </div>
         </div>
     </React.StrictMode>,
