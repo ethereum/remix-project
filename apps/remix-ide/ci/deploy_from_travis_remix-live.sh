@@ -15,7 +15,7 @@ cp -r $FILES_TO_PACKAGE "./"
 rm -rf dist
 ls
 mv production.index.html index.html
-FILES_TO_DEPLOY="assets index.html main.js polyfills.js"
+FILES_TO_DEPLOY="assets index.html main.js polyfills.js vendors~app.js app.js"
 # ZIP the whole directory
 zip -r remix-$SHA.zip $FILES_TO_DEPLOY
 # -f is needed because "build" is part of .gitignore
