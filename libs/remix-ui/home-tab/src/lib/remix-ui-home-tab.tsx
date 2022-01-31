@@ -7,6 +7,9 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { ThemeContext, themes } from './themeContext'
+import YouTubePlaylist from 'react-youtube-playlist';
+import 'react-youtube-playlist/dist/styles'
+ 
 declare global {
   interface Window {
     _paq: any
@@ -35,7 +38,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const [state, setState] = useState<{
     themeQuality: { filter: string, name: string },
-    showMediaPanel: 'none' | 'twitter' | 'medium',
+    showMediaPanel: 'none' | 'twitter' | 'medium' | 'youtube',
     showModalDialog: boolean,
     modalInfo: { title: string, loadItem: string, examples: Array<string> },
     importSource: string,
@@ -99,7 +102,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     window.addEventListener('click', (event) => {
       const target = event.target as Element
       const id = target.id
-      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn' && !rightPanel.current.contains(event.target)) {
+      if (id !== 'remixIDEHomeTwitterbtn' && id != 'remixYoutubebtn' && id !== 'remixIDEHomeMediumbtn' && !rightPanel.current.contains(event.target)) {
         // todo check event.target
         setState(prevState => { return { ...prevState, showMediaPanel: 'none' } })
       }
@@ -109,6 +112,29 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     scriptTwitter.src = 'https://platform.twitter.com/widgets.js'
     scriptTwitter.async = true
     document.body.appendChild(scriptTwitter)
+    // to retrieve youtube playlist
+    var scriptYoutube = document.createElement('script')
+
+    scriptYoutube.src = 'https://www.youtube.com/iframe_api'
+    const firstScriptTag = document.getElementsByTagName('script')[0]
+    firstScriptTag.parentNode.insertBefore(scriptYoutube, firstScriptTag)
+
+    // This function creates an <iframe> (and YouTube player) after the API code downloads.
+    let player
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('remixIDE_YoutubeBlock', {
+        height: '390',
+        width: '640',
+        videoId: 'M7lc1UVf-VE',
+        playerVars: {
+          'playsinline': 1
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
     // to retrieve medium publications
     const scriptMedium = document.createElement('script')
     scriptMedium.src = 'https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js'
@@ -117,6 +143,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     return () => {
       document.body.removeChild(scriptTwitter)
       document.body.removeChild(scriptMedium)
+      document.body.removeChild(scriptYoutube)
     }
   }, [])
 
@@ -363,6 +390,17 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className="d-flex flex-column remixui_home_rightPanel">
           <div className="d-flex pr-3 py-2 align-self-end" id="remixIDEMediaPanelsTitle">
             <button
+              className="btn-info p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-youtube"
+              id="remixIDEHomeYoutubebtn"
+              title="Youtube"
+              onClick={(e) => {
+                setState(prevState => {
+                  return { ...prevState, showMediaPanel: state.showMediaPanel === 'youtube' ? 'none' : 'youtube' }
+                })
+                _paq.push(['trackEvent', 'pluginManager', 'media', 'youtube'])
+              }}
+            ></button>
+            <button
               className="btn-info p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-twitter"
               id="remixIDEHomeTwitterbtn"
               title="Twitter"
@@ -417,6 +455,15 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 >
                 </a>
               </div>
+            </div>
+            <div id="remixIDE_YoutubeBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" hidden={state.showMediaPanel !== 'youtube'} style={ { maxHeight: maxHeight, marginRight: '28px' } } >
+              <YouTubePlaylist
+                width="375"
+                height={'100%'}
+                api_key='AIzaSyDCVQrYwImFPrVKgXCt0a9xHlYoSuAJ7QE'
+                playlist_id='PLl2EmBUiy4o2tqy-5M4k124JD8YFhklbd'
+                show_thumbnails
+              />
             </div>
           </div>
         </div>
