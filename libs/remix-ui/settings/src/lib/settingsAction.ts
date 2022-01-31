@@ -50,3 +50,9 @@ export const removeTokenToast = (config, dispatch) => {
   config.set('settings/gist-access-token', '')
   dispatch({ type: 'removed', payload: { message: 'Access token removed' } })
 }
+
+export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, postageStampId) => {
+  config.set('settings/swarm-private-bee-address', privateBeeAddress)
+  config.set('settings/swarm-postage-stamp-id', postageStampId)
+  dispatch({ type: 'save', payload: { message: 'Swarm settings have been saved' } })
+}
