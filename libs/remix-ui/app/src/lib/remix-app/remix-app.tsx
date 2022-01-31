@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
-import RemixSplashScreen from './components/splashscreen'
 import MatomoDialog from './components/modals/matomo'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
@@ -89,7 +88,6 @@ const RemixApp = (props: IRemixAppUi) => {
 
   return (
     <AppProvider value={value}>
-      <RemixSplashScreen hide={appReady}></RemixSplashScreen>
       <OriginWarning></OriginWarning>
       <MatomoDialog hide={!appReady}></MatomoDialog>
 
