@@ -1,6 +1,16 @@
 'use strict'
 import { RunTab, makeUdapp } from './app/udapp'
+import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
+import { ThemeModule } from './app/tabs/theme-module'
+import { NetworkModule } from './app/tabs/network-module'
+import { Web3ProviderModule } from './app/tabs/web3-provider'
+import { SidePanel } from './app/components/side-panel'
+import { HiddenPanel } from './app/components/hidden-panel'
+import { VerticalIcons } from './app/components/vertical-icons'
+import { LandingPage } from './app/ui/landing-page/landing-page'
+import { MainPanel } from './app/components/main-panel'
+import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -85,7 +95,7 @@ class AppComponent {
     const pluginLoader = self.appManager.pluginLoader
     self.panels = {}
     self.workspace = pluginLoader.get()
-    self.engine = new (await import('./remixEngine')).RemixEngine
+    self.engine = new RemixEngine()
     self.engine.register(appManager)
 
     const matomoDomains = {
@@ -116,7 +126,7 @@ class AppComponent {
     // ----------------- gist service ---------------------------------
     self.gistHandler = new GistHandler()
     // ----------------- theme service ---------------------------------
-    self.themeModule = new (await import('./app/tabs/theme-module')).ThemeModule()
+    self.themeModule = new ThemeModule()
     Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
 
     // ----------------- editor service ----------------------------
@@ -149,9 +159,9 @@ class AppComponent {
     // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
     const fetchAndCompile = new FetchAndCompile()
     // ----------------- network service (resolve network id / name) -----
-    const networkModule = new (await import('./app/tabs/network-module')).NetworkModule(blockchain)
+    const networkModule = new NetworkModule(blockchain)
     // ----------------- represent the current selected web3 provider ----
-    const web3Provider = new (await import('./app/tabs/web3-provider')).Web3ProviderModule(blockchain)
+    const web3Provider = new Web3ProviderModule(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
@@ -182,7 +192,7 @@ class AppComponent {
     const configPlugin = new ConfigPlugin()
     self.layout = new Layout()
     
-    const permissionHandler = new (await import('./app/plugins/permission-handler-plugin')).PermissionHandlerPlugin()
+    const permissionHandler = new PermissionHandlerPlugin()
 
     self.engine.register([
       permissionHandler,
@@ -209,22 +219,22 @@ class AppComponent {
     ])
 
     // LAYOUT & SYSTEM VIEWS
-    const appPanel = new (await import('./app/components/main-panel')).MainPanel()
+    const appPanel = new MainPanel()
     Registry.getInstance().put({ api: self.mainview, name: 'mainview' })
     const tabProxy = new TabProxy(fileManager, editor)
     self.engine.register([appPanel, tabProxy])
 
     // those views depend on app_manager
-    self.menuicons = new (await import('./app/components/vertical-icons')).VerticalIcons()
-    self.sidePanel = new (await import('./app/components/side-panel')).SidePanel()
-    self.hiddenPanel = new (await import('./app/components/hidden-panel')).HiddenPanel()
+    self.menuicons = new VerticalIcons()
+    self.sidePanel = new SidePanel()
+    self.hiddenPanel = new HiddenPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(
       appManager,
       self.engine
     )
     const filePanel = new FilePanel(appManager)
-    const landingPage = new (await import('./app/ui/landing-page/landing-page')).LandingPage(
+    const landingPage = new LandingPage(
       appManager,
       self.menuicons,
       fileManager,
