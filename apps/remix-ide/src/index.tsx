@@ -20,8 +20,8 @@ import './index.css'
             <br />
             <span className='version'> v{ packageJson.version }</span>
           </div>
-          <div style={{ marginTop: '100%', textAlign: 'center' }}>
-            <i className="fas fa-spinner fa-spin fa-3x"></i>
+          <div style={{ marginTop: '50%', textAlign: 'center' }}>
+            <i className="fas fa-spinner fa-spin fa-2x"></i>
           </div>
         </div>
     </React.StrictMode>,
