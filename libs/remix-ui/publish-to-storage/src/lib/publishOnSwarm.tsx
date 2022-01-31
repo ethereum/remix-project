@@ -140,6 +140,9 @@ const hashFromResults = (results: UploadResult[]) => {
 
 const uploadToBee = async (bee: Bee, postageStampId: string, content) => {
   try {
+    if (bee.url === publicBeeNode.url) {
+      postageStampId = defaultPostageStampId
+    }
     return await bee.uploadData(postageStampId, content)
   } catch {
     // ignore errors for now
