@@ -290,7 +290,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           <div>
             <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
             <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              Scam Alert: Beware of Youtube videos promoting "liquidity front runner bots" asking to paste contract code into Remix IDE.
+              Scam Alert: Beware of videos promoting "liquidity front runner bots" asking to paste contract code into Remix IDE.
             </span>
             <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
           </div>
