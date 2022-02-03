@@ -47,7 +47,7 @@ class FileProvider {
     return this.externalFolders.includes(path)
   }
 
-  discardChanges (path, toastCb, modalCb) {
+  async discardChanges (path, toastCb, modalCb) {
     this.remove(path)
     const compilerImport = new CompilerImports()
     this.providerExternalsStorage.keys().map(value => {
@@ -56,7 +56,7 @@ class FileProvider {
           this.getNormalizedName(value),
           true,
           (loadingMsg) => { toastCb(loadingMsg) },
-          (error, content, cleanUrl, type, url) => {
+          async (error, content, cleanUrl, type, url) => {
             if (error) {
               modalCb(error)
             } else {
