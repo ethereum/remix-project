@@ -6,6 +6,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+npm run ganache-cli &
 npm run serve:production &
 npx nx serve remix-ide-e2e-src-local-plugin &
 

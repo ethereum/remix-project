@@ -1,9 +1,8 @@
 import React, { useState } from 'react'  // eslint-disable-line
-
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import helper from 'apps/remix-ide/src/lib/helper'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import showTable from './Table'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 const remixLib = require('@remix-project/remix-lib')
 const typeConversion = remixLib.execution.typeConversion
@@ -25,18 +24,18 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
 
   return (
     <span id={`tx${tx.hash}`} key={index}>
-      <div className="log" onClick={(event) => txDetails(event, tx)}>
+      <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>
         <CheckTxStatus tx={tx} type={txType} />
-        <span className="txLog">
+        <span>
           <span className="tx">[call]</span>
-          <div className='txItem'><span className='txItemTitle'>from:</span> {from}</div>
-          <div className='txItem'><span className='txItemTitle'>to:</span> {to}</div>
-          <div className='txItem'><span className='txItemTitle'>data:</span> {input}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>from:</span> {from}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>to:</span> {to}</div>
+          <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>data:</span> {input}</div>
         </span>
-        <div className='buttons'>
-          <div className="debug btn btn-primary btn-sm" onClick={(event) => debug(event, tx)}>Debug</div>
+        <div className='remix_ui_terminal_buttons'>
+          <div className="remix_ui_terminal_debug btn btn-primary btn-sm" onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
-        <i className="terminal_arrow fas fa-angle-down"></i>
+        <i className="remix_ui_terminal_terminal_arrow fas fa-angle-down"></i>
       </div>
       {showTableHash.includes(tx.hash) ? showTable({
         hash: tx.hash,

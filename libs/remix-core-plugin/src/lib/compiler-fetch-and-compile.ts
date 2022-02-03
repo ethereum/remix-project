@@ -69,7 +69,7 @@ export class FetchAndCompile extends Plugin {
 
     let data
     try {
-      data = await this.call('source-verification', 'fetchByNetwork', contractAddress, network.id)
+      data = await this.call('sourcify', 'fetchByNetwork', contractAddress, network.id)
     } catch (e) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
       this.unresolvedAddresses.push(contractAddress)

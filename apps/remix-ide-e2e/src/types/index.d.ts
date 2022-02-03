@@ -17,8 +17,8 @@ declare module 'nightwatch' {
         testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
         goToVMTraceStep(step: number, incr?: number): NightwatchBrowser,
         checkVariableDebug(id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser,
-        addAtAddressInstance(address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser,
-        modalFooterOKClick(): NightwatchBrowser,
+        addAtAddressInstance(address: string, isValidFormat: boolean, isValidChecksum: boolean, isAbi?: boolean): NightwatchBrowser,
+        modalFooterOKClick(id?: string): NightwatchBrowser,
         clickInstance(index: number): NightwatchBrowser,
         journalLastChildIncludes(val: string): NightwatchBrowser,
         executeScript(script: string): NightwatchBrowser,
@@ -32,7 +32,7 @@ declare module 'nightwatch' {
         scrollToLine(line: number): NightwatchBrowser,
         waitForElementContainsText(id: string, value: string, timeout?: number): NightwatchBrowser,
         getModalBody(callback: (value: string, cb: VoidFunction) => void): NightwatchBrowser,
-        modalFooterCancelClick(): NightwatchBrowser,
+        modalFooterCancelClick(id?: string): NightwatchBrowser,
         selectContract(contractName: string): NightwatchBrowser,
         createContract(inputParams: string): NightwatchBrowser,
         getAddressAtPosition(index: number, cb: (pos: string) => void): NightwatchBrowser,
@@ -61,6 +61,7 @@ declare module 'nightwatch' {
         acceptAndRemember (this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
         clearConsole (this: NightwatchBrowser): NightwatchBrowser
         clearTransactions (this: NightwatchBrowser): NightwatchBrowser
+        currentSelectedFileIs (name: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

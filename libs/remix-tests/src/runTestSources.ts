@@ -16,6 +16,8 @@ export class UnitTestRunner {
   accountsLibCode
   testsAccounts: string[] | null
   web3
+  compiler
+  compilerConfig
 
   constructor () {
     this.event = new EventEmitter()
@@ -46,14 +48,13 @@ export class UnitTestRunner {
    * @param importFileCb Import file callback
    * @param opts Options
    */
-  async runTestSources (contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, deployCb:any, finalCallback: any, importFileCb, opts: Options) {
+  async runTestSources (contractSources: SrcIfc, newCompilerConfig: CompilerConfiguration, testCallback, resultCallback, deployCb:any, finalCallback: any, importFileCb, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     if (opts.web3 || opts.accounts) this.init(opts.web3, opts.accounts)
-
     async.waterfall([
       (next) => {
-        compileContractSources(contractSources, compilerConfig, importFileCb, { accounts: this.testsAccounts, testFilePath: opts.testFilePath, event: this.event }, next)
+        compileContractSources(contractSources, newCompilerConfig, importFileCb, this, { accounts: this.testsAccounts, testFilePath: opts.testFilePath, event: this.event }, next)
       },
       (compilationResult: compilationInterface, asts: ASTInterface, next) => {
         for (const filename in asts) {

@@ -25,8 +25,7 @@ module.exports = {
   'Should debug failing transaction #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .scrollAndClick('*[title="string name, uint256 goal"]')
       .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
       .click('*[data-id="createProject - transact (not payable)"]')
@@ -200,7 +199,7 @@ module.exports = {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
-      .pause(1000)
+      .pause(3000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
   // depends on Should debug using generated sources

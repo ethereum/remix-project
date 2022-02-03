@@ -4,7 +4,6 @@ import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
-  // eslint-disable-next-line no-undef
   modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,

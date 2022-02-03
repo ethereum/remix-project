@@ -4,11 +4,12 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
-const { RemixdHandle } = require('../files/remixd-handle.js')
+import Registry from '../state/registry'
+import { RemixdHandle } from '../plugins/remixd-handle'
 const { GitHandle } = require('../files/git-handle.js')
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { SlitherHandle } = require('../files/slither-handle.js')
-const globalRegistry = require('../../global/registry')
+
 /*
   Overview of APIs:
    * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
@@ -41,7 +42,7 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this.registry = globalRegistry
+    this.registry = Registry.getInstance()
     this.fileProviders = this.registry.get('fileproviders').api
     this.fileManager = this.registry.get('filemanager').api
 

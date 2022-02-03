@@ -21,6 +21,7 @@
   --light: #fff;
   --dark: #645fb5;
   --text: #11556c;
+  --body-bg: #d5efff;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -69,7 +70,7 @@ body {
   line-height: 1.5;
   color: #0f7292;
   text-align: left;
-  background-color: #d5efff;
+  background-color: var(--body-bg);
 }
 
 [tabindex="-1"]:focus {
