@@ -752,6 +752,43 @@ class FileManager extends Plugin {
   }
 
   async setBatchFiles (filesSet, fileProvider, override, callback) {
+    const self = this
+    if (!fileProvider) fileProvider = 'workspace'
+    if (override === undefined) override = false
+
+    for (const file of Object.keys(filesSet)) {
+      if (override) {
+        await self._deps.filesProviders[fileProvider].set(file, filesSet[file].content, (e) => {
+          if (e) callback(e.message || e)
+        })
+        await self.syncEditor(fileProvider + file)
+        return callback()
+      } else {
+
+        helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
+          async (error, name) => {
+            if (error) {
+              this.call('notification', 'alert', {
+                id: 'fileManagerAlert',
+                message: 'Unexpected error loading file ' + file + ': ' + error
+              })
+            } else if (helper.checkSpecialChars(name)) {
+            this.call('notification', 'alert', {
+              id: 'fileManagerAlert',
+              message: 'Special characters are not allowed in file names.'
+            })
+            } else {
+              try {
+                await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+              } catch (e) {
+                return callback(e.message || e)
+              }
+              self.syncEditor(fileProvider + name)
+            }
+        callback() }
+      )
+    }
+    }
   }
 
   currentWorkspace () {
