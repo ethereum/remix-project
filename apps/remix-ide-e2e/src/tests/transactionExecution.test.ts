@@ -15,11 +15,8 @@ module.exports = {
     browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TestContract'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
-      .click('#runTabView .instance div[class^="title"]')
-      .click('#runTabView .instance div[class^="title"]')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .clickFunction('f - transact (not payable)')
       .testFunction('last',
         {
@@ -45,9 +42,8 @@ module.exports = {
   'Test Complex Return Values #group1': function (browser: NightwatchBrowser) {
     browser.testContracts('returnValues.sol', sources[1]['returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('udapp')
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .clickFunction('retunValues1 - transact (not payable)')
       .testFunction('last',
         {
@@ -90,9 +86,8 @@ module.exports = {
   'Test Complex Input Values #group2': function (browser: NightwatchBrowser) {
     browser.testContracts('inputValues.sol', sources[2]['inputValues.sol'], ['test'])
       .clickLaunchIcon('udapp')
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"' })
       .testFunction('last',
         {
@@ -136,8 +131,8 @@ module.exports = {
     browser.testContracts('eventFunctionInput.sol', sources[3]['eventFunctionInput.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
@@ -145,7 +140,7 @@ module.exports = {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .pause(5000)
@@ -168,7 +163,7 @@ module.exports = {
       .clearTransactions()
       .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -186,7 +181,7 @@ module.exports = {
   'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(1)
       .clickFunction('h - transact (not payable)')
       .pause(5000)
@@ -200,6 +195,26 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param2 from library"')
       .journalLastChildIncludes('"documentation": "param3 from library"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
+  },
+
+  'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #group4': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('Storage.sol', sources[6]['Storage.sol'])
+      .addFile('Owner.sol', sources[6]['Owner.sol'])
+      .clickLaunchIcon('udapp')
+      .createContract('42')
+      .openFile('Storage.sol')
+      .clickLaunchIcon('udapp')
+      .createContract('') // this creation will fail if the component hasn't been properly reset.
+      .clickInstance(1)
+      .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })
+      .testFunction('last', // we check if the contract is actually reachable.
+        {
+          status: 'true Transaction mined and execution succeed',
+          'decoded input': {
+            'uint256 num': '24'
+          }
+        })
       .end()
   }
 }
@@ -325,6 +340,93 @@ contract C {
           function h() public {
               lib.set();
           }      
+      }`
+    }
+  },
+  {
+    'Owner.sol': {
+      content: `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+
+      /**
+       * @title Owner
+       * @dev Set & change owner
+       */
+      contract Owner {
+
+          address private owner;
+          
+          // event for EVM logging
+          event OwnerSet(address indexed oldOwner, address indexed newOwner);
+          
+          // modifier to check if caller is owner
+          modifier isOwner() {
+              // If the first argument of 'require' evaluates to 'false', execution terminates and all
+              // changes to the state and to Ether balances are reverted.
+              // This used to consume all gas in old EVM versions, but not anymore.
+              // It is often a good idea to use 'require' to check if functions are called correctly.
+              // As a second argument, you can also provide an explanation about what went wrong.
+              require(msg.sender == owner, "Caller is not owner");
+              _;
+          }
+          
+          /**
+           * @dev Set contract deployer as owner
+           */
+          constructor(uint p) {
+              owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor
+              emit OwnerSet(address(0), owner);
+          }
+
+          /**
+           * @dev Change owner
+           * @param newOwner address of new owner
+           */
+          function changeOwner(address newOwner) public isOwner {
+              emit OwnerSet(owner, newOwner);
+              owner = newOwner;
+          }
+
+          /**
+           * @dev Return owner address 
+           * @return address of owner
+           */
+          function getOwner() external view returns (address) {
+              return owner;
+          }
+      }`
+    },
+    'Storage.sol': {
+      content: `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+
+      /**
+       * @title Storage
+       * @dev Store & retrieve value in a variable
+       */
+      contract Storage {
+
+          uint256 number;
+
+          /**
+           * @dev Store value in variable
+           * @param num value to store
+           */
+          function store(uint256 num) public {
+              number = num;
+          }
+
+          /**
+           * @dev Return value 
+           * @return value of 'number'
+           */
+          function retrieve() public view returns (uint256){
+              return number;
+          }
       }`
     }
   }

@@ -36,15 +36,19 @@ module.exports = {
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]', 120000)
-      .setValue('*[data-id="modalDialogCustomPromptText"]', 'Remix is cool!')
+      .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+      .click('*[data-id="signMessageTextarea"]')
+      .setValue('*[data-id="signMessageTextarea"]', 'Remix is cool!')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
-      .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="modalDialogContainer"]', 12000)
+      .pause(2000)
+      .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]')
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 12000)
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
-      .modalFooterOKClick()
+      .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]')
   },
 
   'Should deploy contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
@@ -63,8 +67,7 @@ module.exports = {
 
   'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .pause(5000)
@@ -180,7 +183,7 @@ module.exports = {
       .useCss().switchBrowserTab(0)
       .refresh()
       .clickLaunchIcon('pluginManager') // load debugger and source verification
-    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_source-verification"] button')
+    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')

@@ -10,7 +10,7 @@ declare global {
 const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
-  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp'],
+  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
   url: 'http://localhost:2020',
   location: 'sidePanel'
 }
@@ -64,12 +64,16 @@ const clearPayLoad = async (browser: NightwatchBrowser) => {
   })
 }
 
-const clickButton = async (browser: NightwatchBrowser, buttonText: string) => {
+const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => {
   return new Promise((resolve) => {
     browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).pause(100)
       .click(`//*[@data-id='${buttonText}']`, async () => {
         await checkForAcceptAndRemember(browser)
-        browser.waitForElementContainsText('//*[@id="callStatus"]', 'stop').perform(() => resolve(true))
+        if (waitResult) {
+          browser.waitForElementContainsText('//*[@id="callStatus"]', 'stop').perform(() => resolve(true))
+        } else {
+          resolve(true)
+        }
       })
   })
 }
@@ -82,7 +86,7 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
         // @ts-ignore
           browser.frame(0, () => { resolve(true) })
         } else {
-          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@id="modal-footer-ok"]').click('//*[@id="modal-footer-ok"]', () => {
+          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
           // @ts-ignore
             browser.frame(0, () => { resolve(true) })
           })
@@ -103,7 +107,7 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
  * @return {Promise}
  */
 
-const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any) => {
+const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => {
   if (payload) {
     await setPayload(browser, payload)
   } else {
@@ -112,10 +116,14 @@ const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, 
   if (methodResult && typeof methodResult !== 'string') { methodResult = JSON.stringify(methodResult) }
   if (eventResult && typeof eventResult !== 'string') { eventResult = JSON.stringify(eventResult) }
   if (buttonText) {
-    await clickButton(browser, buttonText)
+    await clickButton(browser, buttonText, waitResult)
   }
-  await debugValues(browser, 'methods', methodResult)
-  await debugValues(browser, 'events', eventResult)
+  if (methodResult) {
+    await debugValues(browser, 'methods', methodResult)
+  }
+  if (eventResult) {
+    await debugValues(browser, 'events', eventResult)
+  }
 }
 
 const assertPluginIsActive = function (browser: NightwatchBrowser, id: string, shouldBeVisible: boolean) {
@@ -149,6 +157,18 @@ module.exports = {
     await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
   },
 
+  'Should select another provider #group1': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm', fork: 'berlin' })
+    await browser
+      .frameParent()
+      .useCss()
+      .clickLaunchIcon('udapp')
+      .waitForElementContainsText('#selectExEnvOptions option:checked', 'JavaScript VM (Berlin)')
+      .clickLaunchIcon('localPlugin')
+      .useXpath()
+      // @ts-ignore
+      .frame(0)
+  },
   // context menu item
 
   'Should create context menu item #group1': async function (browser: NightwatchBrowser) {
@@ -326,5 +346,100 @@ module.exports = {
 
   'Should get compilationresults #group6': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'solidity:getCompilationResult', 'contracts/1_Storage.sol', null, null)
+  },
+
+  // PROVIDER
+
+  'Should switch to hardhat provider (provider plugin) #group8': function (browser: NightwatchBrowser) {
+    browser
+      .frameParent()
+      .useCss()
+      .clickLaunchIcon('pluginManager')
+      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonhardhat-provider"]')
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Hardhat Provider"]')
+      .modalFooterOKClick('hardhatprovider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
+      .clickLaunchIcon('localPlugin')
+      .useXpath()
+      // @ts-ignore
+      .frame(0)
+      .perform(async () => {
+        const request = {
+          id: 9999,
+          jsonrpc: '2.0',
+          method: 'net_listening',
+          params: []
+        }
+        const result = '{"jsonrpc":"2.0","result":true,"id":9999}'
+        await clickAndCheckLog(browser, 'hardhat-provider:sendAsync', result, null, request)
+      })
+  },
+
+  // MODAL
+
+  'Should open 2 alert in a row and trigger 2 toaster in between #group9': function (browser: NightwatchBrowser) {
+    browser
+      .frameParent()
+      .useCss()
+      .addFile('test_modal.js', { content: testModalToasterApi })
+      .executeScript('remix.execute(\'test_modal.js\')')
+      .clickLaunchIcon('localPlugin')
+      .useXpath()
+      // @ts-ignore
+      .frame(0)
+      .perform(async () => {
+        await clickAndCheckLog(browser, 'notification:toast', null, null, 'message toast from local plugin', false) // create a toast on behalf of the localplugin
+        await clickAndCheckLog(browser, 'notification:alert', null, null, { message: 'message from local plugin', id: 'test_id_1_local_plugin' }, false) // create an alert on behalf of the localplugin
+      })
+      .frameParent()
+      .useCss()
+      // check the local plugin notifications
+      .waitForElementVisible('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]', 'message from local plugin')
+      .modalFooterOKClick('test_id_1_local_plugin')
+      // check the script runner notifications
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
+      .modalFooterOKClick('test_id_1_')
+      .waitForElementVisible('*[data-id="test_id_2_ModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="test_id_2_ModalDialogModalBody-react"]', 'message 2')
+      .modalFooterOKClick('test_id_2_')
+      .waitForElementVisible('*[data-id="test_id_3_ModalDialogModalBody-react"]')
+      .modalFooterOKClick('test_id_3_')
+      .journalLastChildIncludes('default value... ') // check the return value of the prompt
+      // check the toasters
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
   }
 }
+
+const testModalToasterApi = `
+// Right click on the script name and hit "Run" to execute
+(async () => {
+ try {
+    setTimeout(async () => {
+      console.log('test .. ')
+      remix.call('notification', 'alert', { message: 'message 1', id: 'test_id_1_' })
+      remix.call('notification', 'toast', 'I am a toast')
+      remix.call('notification', 'toast', 'I am a re-toast')
+      remix.call('notification', 'alert', { message: 'message 2', id: 'test_id_2_' })
+
+      const modalContent = {
+        id: 'test_id_3_',
+        title: 'test with input title',
+        message: 'test with input content',
+        modalType: 'prompt',
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        defaultValue: 'default value... '
+      }
+      const result = await remix.call('notification', 'modal', modalContent)
+      console.log(result)
+    }, 500)
+ } catch (e) {
+    console.log(e.message)
+ }
+})()    `

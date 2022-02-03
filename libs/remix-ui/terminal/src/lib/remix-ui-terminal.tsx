@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
 import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
@@ -24,15 +25,10 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
-  const { call, _deps, on, config, event, gistHandler, version } = props.plugin
-  const [toggleDownUp, setToggleDownUp] = useState('fa-angle-double-down')
+  const { call, _deps, on, config, event, version } = props.plugin
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
-  // dragable state
-  const [leftHeight, setLeftHeight] = useState<undefined | number>(undefined)
-  const [separatorYPosition, setSeparatorYPosition] = useState<undefined | number>(undefined)
-  const [dragging, setDragging] = useState(false)
-
+  const [isOpen, setIsOpen] = useState<boolean>(true)
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
@@ -76,8 +72,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const messagesEndRef = useRef(null)
 
   // terminal dragable
-  const leftRef = useRef(null)
   const panelRef = useRef(null)
+  const terminalMenu = useRef(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -86,8 +82,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   useEffect(() => {
     props.onReady({
       logHtml: (html) => {
-        scriptRunnerDispatch({ type: 'html', payload: { message: [html.innerText] } })
+        scriptRunnerDispatch({ type: 'html', payload: { message: [html ? html.innerText ? html.innerText : html : null] } })
       },
+
       log: (message) => {
         scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
       }
@@ -159,7 +156,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   function loadgist (id, cb) {
-    gistHandler.loadFromGist({ gist: id }, _deps.fileManager)
+    props.plugin.call('gistHandler', 'load', id)
     if (cb) cb()
   }
 
@@ -189,19 +186,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       done()
     } catch (error) {
       done(error.message || error)
-    }
-  }
-
-  const handleMinimizeTerminal = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (toggleDownUp === 'fa-angle-double-down') {
-      setToggleDownUp('fa-angle-double-up')
-      event.trigger('resize', [])
-    } else {
-      const terminalTopOffset = config.get('terminal-top-offset')
-      event.trigger('resize', [terminalTopOffset])
-      setToggleDownUp('fa-angle-double-down')
     }
   }
 
@@ -276,53 +260,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  /* start of mouse events */
-
-  const mousedown = (event: MouseEvent) => {
-    setSeparatorYPosition(event.clientY)
-    leftRef.current.style.backgroundColor = '#007AA6'
-    leftRef.current.style.border = '2px solid #007AA6'
-    setDragging(true)
-  }
-
-  const onMouseMove: any = (e: MouseEvent) => {
-    e.preventDefault()
-    if (dragging && leftHeight && separatorYPosition) {
-      const newLeftHeight = leftHeight + separatorYPosition - e.clientY
-      setSeparatorYPosition(e.clientY)
-      setLeftHeight(newLeftHeight)
-      event.trigger('resize', [newLeftHeight + 32])
-    }
-  }
-
-  const onMouseUp = () => {
-    leftRef.current.style.backgroundColor = ''
-    leftRef.current.style.border = ''
-    setDragging(false)
-  }
-
-  /* end of mouse event */
-
-  useEffect(() => {
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
-
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
-    }
-  }, [onMouseMove, onMouseUp])
-
-  React.useEffect(() => {
-    if (panelRef) {
-      if (!leftHeight) {
-        setLeftHeight(panelRef.current.offsetHeight)
-        return
-      }
-      panelRef.current.style.height = `${leftHeight}px`
-    }
-  }, [leftHeight, setLeftHeight, panelRef])
-
   /* block contents that gets rendered from scriptRunner */
 
   const _blocksRenderer = (mode) => {
@@ -373,8 +310,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const listenOnNetwork = (e: any) => {
     const isListening = e.target.checked
-    // setIsListeningOnNetwork(isListening)
-    listenOnNetworkAction(event, isListening)
+    listenOnNetworkAction(props.plugin, isListening)
   }
 
   const onChange = (event: any) => {
@@ -400,6 +336,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     } else {
       setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: inputString }))
     }
+  }
+
+  const handleClickSelect = (item: string) => {
+    const result: string = getKeyOf(item) as string || getValueOf(item) as string
+    setAutoCompleteState(prevState => ({ ...prevState, showSuggestions: false, userInput: result }))
+    inputEl.current.focus()
   }
 
   const handleSelect = (event) => {
@@ -434,14 +376,24 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     } else {
       setShowTableHash((prevState) => ([...prevState, tx.hash]))
     }
+    scrollToBottom()
   }
 
   const handleAutoComplete = () => (
-    <div className='popup alert alert-secondary' style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '') && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}>
+    <div
+      className='remix_ui_terminal_popup bg-light ml-4 p-2 position-absolute text-left '
+      style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 2)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}
+    >
       <div>
         {autoCompletState.data._options.map((item, index) => {
           return (
-            <div key={index} data-id="autoCompletePopUpAutoCompleteItem" className={`autoCompleteItem listHandlerShow item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`} onKeyDown={ handleSelect } >
+            <div
+              key={index}
+              data-id="autoCompletePopUpAutoCompleteItem"
+              className={`remix_ui_terminal_autoCompleteItem item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`}
+              onKeyDown={ handleSelect }
+              onClick={() => handleClickSelect(item)}
+            >
               <div>
                 {getKeyOf(item)}
               </div>
@@ -461,18 +413,34 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setAutoCompleteState(prevState => ({ ...prevState, activeSuggestion: 0, showSuggestions: false }))
   }
 
+  const handleToggleTerminal = () => {
+    setIsOpen(!isOpen)
+    props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
+  }
+
+  useEffect(() => {
+    props.plugin.on('layout', 'change', (panels) => {
+      setIsOpen(!panels.terminal.minimized)
+    })
+
+    return () => {
+      props.plugin.off('layout', 'change')
+    }
+  }, [])
+
+  const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
+
   return (
-    <div style={{ height: '323px', flexGrow: 1 }} className='panel' ref={panelRef}>
-      <div className="bar">
-        <div className="dragbarHorizontal" onMouseDown={mousedown} ref={leftRef}></div>
-        <div className="menu border-top border-dark bg-light" data-id="terminalToggleMenu">
-          <i className={`mx-2 toggleTerminal fas ${toggleDownUp}`} data-id="terminalToggleIcon" onClick={ handleMinimizeTerminal }></i>
-          <div className="mx-2 console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
+    <div style={{ flexGrow: 1 }} className='remix_ui_terminal_panel' ref={panelRef}>
+      <div className="remix_ui_terminal_bar d-flex">
+        <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
+          <i className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
+          <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
             <i className="fas fa-ban" aria-hidden="true" title="Clear console"
             ></i>
           </div>
           <div className="mx-2" title='Pending Transactions'>0</div>
-          <div className="pt-1 h-80 mx-3 align-items-center listenOnNetwork custom-control custom-checkbox">
+          <div className="pt-1 h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
             <input
               className="custom-control-input"
               id="listenNetworkCheck"
@@ -488,77 +456,128 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               listen on network
             </label>
           </div>
-          <div className="search">
-            <i className="fas fa-search searchIcon bg-light" aria-hidden="true"></i>
+          <div className="remix_ui_terminal_search d-flex align-items-center h-100">
+            <i
+              className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light"
+              aria-hidden="true">
+            </i>
             <input
               onChange={(event) => setSearchInput(event.target.value.trim()) }
               type="text"
-              className="border filter form-control"
+              className="remix_ui_terminal_filter border form-control"
               id="searchInput"
               placeholder="Search with transaction hash or address"
               data-id="terminalInputSearch" />
           </div>
         </div>
       </div>
-      <div tabIndex={-1} className="terminal_container" data-id="terminalContainer" >
+      <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer" >
         {
           handleAutoComplete()
         }
-        <div data-id='terminalContainerDisplay' style = {{
-          position: 'relative',
-          height: '100%',
-          width: '100%',
-          opacity: '0.1',
-          zIndex: -1
-        }}></div>
-        <div className="terminal">
-          <div id='journal' className='journal' data-id='terminalJournal'>
+        <div className="position-relative d-flex flex-column-reverse h-100">
+          <div id='journal' className='remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0' data-id='terminalJournal'>
             {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === EMPTY_BLOCK) {
                 return (
-                  <div className="px-4 block" data-id='block' key={index}>
-                    <span className='txLog'>
-                      <span className='tx'><div className='txItem'>[<span className='txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ] </div></span></span>
+                  <div className={classNameBlock} data-id='block' key={index}>
+                    <span className='remix_ui_terminal_tx'>
+                      <div className='remix_ui_terminal_txItem'>[<span className='remix_ui_terminal_txItemTitle'>block:{x.message} - </span> 0 {'transactions'} ]
+                      </div>
+                    </span>
                   </div>
                 )
               } else if (x.name === UNKNOWN_TRANSACTION) {
                 return x.message.filter(x => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || (x.tx.to.includes(searchInput))).map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { <RenderUnKnownTransactions tx={trans.tx} receipt={trans.receipt} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} modal={modal}/>} </div>)
+                  return (
+                    <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}> {
+                      <RenderUnKnownTransactions
+                        tx={trans.tx}
+                        receipt={trans.receipt}
+                        index={index} plugin={props.plugin}
+                        showTableHash={showTableHash}
+                        txDetails={txDetails}
+                        modal={modal}
+                        provider={x.provider}
+                      />}
+                    </div>
+                  )
                 })
               } else if (x.name === KNOWN_TRANSACTION) {
                 return x.message.map((trans) => {
-                  return (<div className='px-4 block' data-id={`block_tx${trans.tx.hash}`} key={index}> { trans.tx.isCall ? <RenderCall tx={trans.tx} resolvedData={trans.resolvedData} logs={trans.logs} index={index} plugin={props.plugin} showTableHash={showTableHash} txDetails={txDetails} modal={modal}/> : (<RenderKnownTransactions tx = { trans.tx } receipt = { trans.receipt } resolvedData = { trans.resolvedData } logs = {trans.logs } index = { index } plugin = { props.plugin } showTableHash = { showTableHash } txDetails = { txDetails } modal={modal}/>) } </div>)
+                  return (
+                    <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
+                      { trans.tx.isCall ? <RenderCall
+                        tx={trans.tx}
+                        resolvedData={trans.resolvedData}
+                        logs={trans.logs}
+                        index={index}
+                        plugin={props.plugin}
+                        showTableHash={showTableHash}
+                        txDetails={txDetails}
+                        modal={modal}
+                      /> : (<RenderKnownTransactions
+                        tx = { trans.tx }
+                        receipt = { trans.receipt }
+                        resolvedData = { trans.resolvedData }
+                        logs = {trans.logs }
+                        index = { index }
+                        plugin = { props.plugin }
+                        showTableHash = { showTableHash }
+                        txDetails = { txDetails }
+                        modal={modal}
+                        provider={x.provider}
+                      />) }
+                    </div>
+                  )
                 })
               } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
-                  if (typeof msg === 'object') {
+                  if (React.isValidElement(msg)) {
                     return (
-                      <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
+                      <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg }</span></div>
+                    )
+                  } else if (typeof msg === 'object') {
+                    return (
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
                     )
                   } else {
                     return (
-                      <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg ? msg.toString().replace(/,/g, '') : msg }</span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg ? msg.toString().replace(/,/g, '') : msg }</span></div>
                     )
                   }
                 })
               } else {
                 if (typeof x.message !== 'function') {
                   return (
-                    <div className="px-4 block" data-id="block" key={index}> <span className={x.style}> {x.message}</span></div>
+                    <div className={classNameBlock} data-id="block" key={index}> <span className={x.style}> {x.message}</span></div>
                   )
                 }
               }
             })}
             <div ref={messagesEndRef} />
           </div>
-          <div id="terminalCli" data-id="terminalCli" className="cli" onClick={focusinput}>
-            <span className="prompt">{'>'}</span>
-            <input className="input" ref={inputEl} spellCheck="false" contentEditable="true" id="terminalCliInput" data-id="terminalCliInput" onChange={(event) => onChange(event)} onKeyDown={(event) => handleKeyDown(event) } value={autoCompletState.userInput} onPaste={handlePaste}></input>
+          { isOpen && <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
+            <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
+            <input
+              className="remix_ui_terminal_input ml-1 text-dark text-break border-0"
+              ref={inputEl}
+              spellCheck="false"
+              contentEditable="true"
+              id="terminalCliInput"
+              data-id="terminalCliInput"
+              onChange={(event) => onChange(event)}
+              onKeyDown={(event) => handleKeyDown(event) }
+              value={autoCompletState.userInput}
+              onPaste={handlePaste}
+            ></input>
           </div>
+          }
         </div>
       </div>
       <ModalDialog
+        id='terminal'
         title={ modalState.title }
         message={ modalState.message }
         hide={ modalState.hide }

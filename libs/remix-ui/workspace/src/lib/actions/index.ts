@@ -179,7 +179,7 @@ export const createNewFolder = async (path: string, rootDir: string) => {
   const exists = await fileManager.exists(dirName)
 
   if (exists) {
-    return dispatch(displayNotification('Rename File Failed', `A file or folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
+    return dispatch(displayNotification('Failed to create folder', `A folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
   }
   await fileManager.mkdir(dirName)
   path = path.indexOf(rootDir + '/') === 0 ? path.replace(rootDir + '/', '') : path

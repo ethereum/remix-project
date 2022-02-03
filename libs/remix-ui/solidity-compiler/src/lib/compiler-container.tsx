@@ -7,6 +7,7 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
+import { getValidLanguage } from '@remix-project/remix-solidity'
 
 import './css/style.css'
 
@@ -64,23 +65,31 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [])
 
   useEffect(() => {
-    if (compileTabLogic && compileTabLogic.compiler) {
-      setState(prevState => {
-        const params = api.getCompilerParameters()
-        const optimize = params.optimize
-        const runs = params.runs as string
-        const evmVersion = params.evmVersion
-        return {
-          ...prevState,
-          hideWarnings: api.getAppParameter('hideWarnings') as boolean || false,
-          autoCompile: api.getAppParameter('autoCompile') as boolean || false,
-          includeNightlies: api.getAppParameter('includeNightlies') as boolean || false,
-          optimize: optimize,
-          runs: runs,
-          evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default'
-        }
-      })
-    }
+    (async () => {
+      if (compileTabLogic && compileTabLogic.compiler) {
+        const autocompile = await api.getAppParameter('autoCompile') as boolean || false
+        const hideWarnings = await api.getAppParameter('hideWarnings') as boolean || false
+        const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
+        setState(prevState => {
+          const params = api.getCompilerParameters()
+          const optimize = params.optimize
+          const runs = params.runs as string
+          const evmVersion = params.evmVersion
+          const language = getValidLanguage(params.language)
+
+          return {
+            ...prevState,
+            hideWarnings: hideWarnings,
+            autoCompile: autocompile,
+            includeNightlies: includeNightlies,
+            optimize: optimize,
+            runs: runs,
+            evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default',
+            language: (language !== null) ? language : 'Solidity'
+          }
+        })
+      }
+    })()
   }, [compileTabLogic])
 
   useEffect(() => {
@@ -531,8 +540,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
             <select onChange={(e) => handleLanguageChange(e.target.value)} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
-              <option value='Solidity'>Solidity</option>
-              <option value='Yul'>Yul</option>
+              <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
+              <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
             </select>
           </div>
           <div className="mb-2">
@@ -596,7 +605,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           }
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
-              { <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i> }
+              { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
               Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>

@@ -59,15 +59,12 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     }
   }
 
-  getAppParameter (name) {
-    const param = localStorage.getItem(name) || defaultAppParameters[name]
-    if (param === 'true') return true
-    if (param === 'false') return false
-    return param
+  async getAppParameter (name) {
+    return await PluginClient.call('config', 'getAppParameter', name)
   }
 
-  setAppParameter (name, value) {
-    localStorage.setItem(name, value)
+  async setAppParameter (name, value) {
+    await PluginClient.call('config', 'setAppParameter', name, value)
   }
 
   getFileManagerMode () {

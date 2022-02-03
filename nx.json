@@ -1,5 +1,4 @@
 {
-  "npmScope": "remix-project",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -8,9 +7,10 @@
     },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
-    ".eslintrc": "*",
+    ".eslintrc.json": "*",
     "nx.json": "*"
   },
+  "npmScope": "remix-project",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -130,10 +130,37 @@
     "remix-ui-editor": {
       "tags": []
     },
-    "remix-ui-helper": {
+    "remix-ui-app": {
+      "tags": []
+    },
+    "remix-ui-helper": { 
+      "tags": []
+    },
+    "remix-ui-vertical-icons-panel": {
+      "tags": []
+    },
+    "remix-ui-home-tab": {
       "tags": []
     },
     "remix-ui-tabs": {
+      "tags": []
+    },
+    "remix-ui-panel": {
+      "tags": []
+    },
+    "remix-ui-theme-module": {
+      "tags": []
+    },
+    "solidity-unit-testing": {
+      "tags": []
+    },
+    "remix-ui-editor-context-view": {
+      "tags": []
+    },
+    "remix-ui-run-tab": {
+      "tags": []
+    },
+    "remix-ui-permission-handler": {
       "tags": []
     }
   },
