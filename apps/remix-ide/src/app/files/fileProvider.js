@@ -2,8 +2,6 @@
 
 import { CompilerImports } from '@remix-project/core-plugin'
 const EventManager = require('events')
-const modalDialogCustom = require('../ui/modal-dialog-custom')
-const tooltip = require('../ui/tooltip')
 const remixLib = require('@remix-project/remix-lib')
 const Storage = remixLib.Storage
 
@@ -49,7 +47,7 @@ class FileProvider {
     return this.externalFolders.includes(path)
   }
 
-  discardChanges (path) {
+  discardChanges (path, toastCb, modalCb) {
     this.remove(path)
     const compilerImport = new CompilerImports()
     this.providerExternalsStorage.keys().map(value => {
@@ -57,10 +55,10 @@ class FileProvider {
         compilerImport.import(
           this.getNormalizedName(value),
           true,
-          (loadingMsg) => { tooltip(loadingMsg) },
-          async (error, content, cleanUrl, type, url) => {
+          (loadingMsg) => { toastCb(loadingMsg) },
+          (error, content, cleanUrl, type, url) => {
             if (error) {
-              modalDialogCustom.alert(error)
+              modalCb(error)
             } else {
               await this.addExternal(type + '/' + cleanUrl, content, url)
             }

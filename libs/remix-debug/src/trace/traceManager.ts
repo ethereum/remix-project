@@ -63,7 +63,7 @@ export class TraceManager {
     return new Promise((resolve, reject) => {
       const options = {
         disableStorage: true,
-        disableMemory: false,
+        enableMemory: true,
         disableStack: false,
         fullStorage: false
       }

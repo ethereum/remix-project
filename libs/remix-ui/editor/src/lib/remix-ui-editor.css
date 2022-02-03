@@ -9,3 +9,13 @@
     height: auto;
     width: auto;
 }
+
+.monaco-hover .markdown-hover > .hover-contents:not(.code-hover-contents) {
+    max-width: none !important;
+    word-wrap: break-word;
+}
+
+.contextview {
+    opacity: 1;
+    position: absolute;
+}

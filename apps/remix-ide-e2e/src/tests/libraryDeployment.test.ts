@@ -27,8 +27,7 @@ module.exports = {
         console.log('testAutoDeployLib ' + address)
         addressRef = address
       })
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .clickInstance(0)
       .perform((done) => {
         browser.testConstantFunction(addressRef, 'get - call', null, '0:\nuint256: 45').perform(() => {
           done()
@@ -37,7 +36,6 @@ module.exports = {
   },
 
   'Test Manual Deploy Lib': function (browser: NightwatchBrowser) {
-    console.log('testManualDeployLib')
     browser.click('*[data-id="deployAndRunClearInstances"]')
       .pause(5000)
       .clickLaunchIcon('settings')
@@ -104,8 +102,7 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
     .getAddressAtPosition(1, (address) => {
       addressRef = address
     })
-    .waitForElementPresent('.instance:nth-of-type(3)')
-    .click('.instance:nth-of-type(3) > div > button')
+    .clickInstance(1)
     .perform(() => {
       browser
         .testConstantFunction(addressRef, 'get - call', null, '0:\nuint256: 45')

@@ -35,7 +35,8 @@ export class CompilerImports extends Plugin {
 
   isExternalUrl (url) {
     const handlers = this.urlResolver.getHandlers()
-    return handlers.some(handler => handler.match(url))
+    // we filter out "npm" because this will be recognized as internal url although it's not the case.
+    return handlers.filter((handler) => handler.type !== 'npm').some(handler => handler.match(url))
   }
 
   /**
@@ -146,6 +147,8 @@ export class CompilerImports extends Plugin {
             const splitted = /([^/]+)\/(.*)$/g.exec(url)
 
             const possiblePaths = ['localhost/installed_contracts/' + url]
+            // pick remix-tests library contracts from '.deps'
+            if (url.startsWith('remix_')) possiblePaths.push('localhost/.deps/remix-tests/' + url)
             if (splitted) possiblePaths.push('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2])
             possiblePaths.push('localhost/node_modules/' + url)
             if (splitted) possiblePaths.push('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2])

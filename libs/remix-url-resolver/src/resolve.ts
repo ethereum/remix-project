@@ -117,7 +117,7 @@ export class RemixURLResolver {
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req)
-      return { content: response.data, cleanUrl: url }
+      return { content: response.data, cleanUrl: url.replace('ipfs/', '') }
     } catch (e) {
       throw e
     }

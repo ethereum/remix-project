@@ -4,7 +4,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult'],
   events: [],
   version: '0.0.1'
 }
@@ -48,15 +48,14 @@ export class CompilerArtefacts extends Plugin {
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
-    this.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
-      saveCompilationPerFileResult(file, source, languageVersion, data)
-    })
-
     this.on('solidityUnitTesting', 'compilationFinished', (file, source, languageVersion, data) => {
       this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
+  }
+
+  getLastCompilationResult () {
+    return this.compilersArtefacts.__last
   }
 
   getAllContractDatas () {

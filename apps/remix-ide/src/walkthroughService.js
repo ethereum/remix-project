@@ -1,11 +1,26 @@
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../package.json'
 const introJs = require('intro.js')
 
-export class WalkthroughService {
-  constructor (params) {
-    this.params = params
+const profile = {
+  name: 'walkthrough',
+  displayName: 'Walkthrough',
+  description: '',
+  version: packageJson.version,
+  methods: ['start']
+}
+
+export class WalkthroughService extends Plugin {
+  constructor (appManager, showMatamo) {
+    super(profile)
+    appManager.event.on('activate', (plugin) => {
+      if (plugin.name === 'udapp' && !showMatamo) {
+        this.start()
+      }
+    })
   }
 
-  start (params) {
+  start () {
     if (!localStorage.getItem('hadTour_initial')) {
       introJs().setOptions({
         steps: [{
@@ -16,7 +31,7 @@ export class WalkthroughService {
           position: 'right'
         },
         {
-          element: document.querySelector('#compileIcons'),
+          element: document.querySelector('#verticalIconsKindsolidity'),
           title: 'Solidity Compiler',
           intro: 'Having selected a .sol file in the File Explorers (the icon above), compile it with the Solidity Compiler.',
           tooltipClass: 'bg-light text-dark',
@@ -24,7 +39,7 @@ export class WalkthroughService {
         },
         {
           title: 'Deploy your contract',
-          element: document.querySelector('#runIcons'),
+          element: document.querySelector('#verticalIconsKindudapp'),
           intro: 'Choose a chain, deploy a contract and play with your functions.',
           tooltipClass: 'bg-light text-dark',
           position: 'right'
@@ -47,8 +62,5 @@ export class WalkthroughService {
       }).start()
       localStorage.setItem('hadTour_initial', true)
     }
-  }
-
-  startFeatureTour () {
   }
 }
