@@ -27,7 +27,7 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
       <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>
         <CheckTxStatus tx={tx} type={txType} />
         <span>
-          <span className="tx">[call]</span>
+          <span className="remix_ui_terminal_tx">[call]</span>
           <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>from:</span> {from}</div>
           <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>to:</span> {to}</div>
           <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>data:</span> {input}</div>
