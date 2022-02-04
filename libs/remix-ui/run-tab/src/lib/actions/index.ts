@@ -552,25 +552,25 @@ export const clearInstances = () => {
 }
 
 export const loadAddress = (contract: ContractData, address: string) => {
-  if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
   loadContractFromAddress(address,
-    (cb) => {
-      dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
-    },
-    (error, loadType, abi) => {
-      if (error) {
-        return dispatch(displayNotification('Alert', error, 'OK', null))
-      }
-      const compiler = plugin.REACT_API.contracts.contractList.find(item => item.alias === contract.name)
-      const contractData = getSelectedContract(contract.name, compiler.name)
-
-      if (loadType === 'abi') {
-        return addInstance({ contractData, address, name: '<at address>' })
-      }
-      addInstance({ contractData, address, name: contract.name })
-    }
-  )
-}
+     (cb) => {
+       dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
+     },
+     (error, loadType, abi) => {
+       if (error) {
+         return dispatch(displayNotification('Alert', error, 'OK', null))
+       }
+       if (loadType === 'abi') {
+         return addInstance({ abi, address, name: '<at address>' })
+       } else if (loadType === 'instance') {
+         if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
+         const compiler = plugin.REACT_API.contracts.contractList.find(item => item.alias === contract.name)
+         const contractData = getSelectedContract(contract.name, compiler.name)
+         return addInstance({ contractData, address, name: contract.name })
+       }
+     }
+   )
+ }
 
 export const getContext = () => {
   return plugin.blockchain.context()
