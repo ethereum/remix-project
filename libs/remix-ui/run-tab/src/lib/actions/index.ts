@@ -145,6 +145,13 @@ const fillAccountsList = async () => {
           })
         })
       }))
+      const provider = plugin.blockchain.getProvider()
+
+      if (provider === 'injected') {
+        const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
+
+        if (!(Object.keys(loadedAccounts).includes(selectedAddress))) setAccount(null)
+      }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
     }).catch((e) => {
       dispatch(fetchAccountsListFailed(e.message))
