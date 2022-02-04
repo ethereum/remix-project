@@ -37,6 +37,7 @@ export class Blockchain extends Plugin<any, any> {
     setProviderFromEndpoint(target: any, context: any, cb: any): void;
     detectNetwork(cb: any): void;
     getProvider(): any;
+    getInjectedWeb3Address(): any;
     /**
      * return the fork name applied to the current envionment
      * @return {String} - fork name
