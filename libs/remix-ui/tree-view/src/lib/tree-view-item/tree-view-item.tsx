@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react' // eslint-disable-line
 import { TreeViewItemProps } from '../../types'
 
 import './tree-view-item.css'

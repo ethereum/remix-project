@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { useEffect, useState } from 'react'
 import { SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { ContractSelection } from './contract-selection' // eslint-disable-line

@@ -1,5 +1,3 @@
-import React, { useState } from 'react'  // eslint-disable-line
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import helper from 'apps/remix-ide/src/lib/helper'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import showTable from './Table'

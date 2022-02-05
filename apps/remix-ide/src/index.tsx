@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, {StrictMode} from 'react'
 import { render } from 'react-dom'
 // eslint-disable-next-line no-unused-vars
 import { RemixApp } from '@remix-ui/app'
@@ -33,13 +32,12 @@ import ('./app').then((AppComponent) => {
   const appComponent = new AppComponent.default()
   appComponent.run().then(() => {
     render(
-      <React.StrictMode>
+      <StrictMode>
           <RemixApp app={appComponent} />
-      </React.StrictMode>,
+      </StrictMode>,
       document.getElementById('root')
     )
   })
 }).catch(err => {
   console.log('Error on loading Remix:', err)
 })
-

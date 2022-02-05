@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' //eslint-disable-line
+import { useEffect, useState } from 'react'
 import './renderer.css'
 interface RendererProps {
   message: any;

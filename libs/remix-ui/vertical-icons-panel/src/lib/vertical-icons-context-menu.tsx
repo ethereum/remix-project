@@ -1,5 +1,5 @@
+import { useEffect, useRef } from 'react'
 import { Plugin } from '@remixproject/engine'
-import React, { Fragment, useEffect, useRef } from 'react'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageX: number
@@ -73,7 +73,7 @@ const MenuForLinks = ({
   contextMenuAction
 }: MenuLinksProps) => {
   return (
-    <Fragment>
+    <>
       {listItems.CanDeactivate
         ? <li
           id="menuitemdeactivate"
@@ -100,7 +100,7 @@ const MenuForLinks = ({
                 Documentation
               </a>
             </li>}
-    </Fragment>
+    </>
   )
 }
 

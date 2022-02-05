@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react'  //eslint-disable-line
+import { CSSProperties } from 'react'
 import './remix-ui-checkbox.css'
 
 /* eslint-disable-next-line */

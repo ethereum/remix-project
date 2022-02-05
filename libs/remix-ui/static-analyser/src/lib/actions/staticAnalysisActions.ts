@@ -1,5 +1,3 @@
-import React from 'react' //eslint-disable-line
-
 export const compilation = (analysisModule, dispatch) => {
   if (analysisModule) {
     analysisModule.on(

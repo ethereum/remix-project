@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, MutableRefObject } from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
 interface IRemixDragBarUi {
-  refObject: React.MutableRefObject<any>;
+  refObject: MutableRefObject<any>;
   setHideStatus: (hide: boolean) => void;
   hidden: boolean
   minWidth: number
@@ -13,7 +13,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   const [dragState, setDragState] = useState<boolean>(false)
   const [dragBarPosX, setDragBarPosX] = useState<number>(0)
   const [offset, setOffSet] = useState<number>(0)
-  const nodeRef = React.useRef(null) // fix for strictmode
+  const nodeRef = useRef(null) // fix for strictmode
 
   useEffect(() => {
     setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))

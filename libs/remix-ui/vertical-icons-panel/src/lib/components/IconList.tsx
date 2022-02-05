@@ -1,6 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect } from 'react'
 import { IconRecord } from '../types'
 import Icon from './Icon'
 interface OtherIconsProps {

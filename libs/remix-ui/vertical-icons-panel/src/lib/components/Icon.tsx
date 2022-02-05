@@ -1,6 +1,5 @@
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
-// eslint-disable-next-line no-use-before-define
-import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
+import { SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import Badge from './Badge'
 import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
 import { Plugin } from '@remixproject/engine'

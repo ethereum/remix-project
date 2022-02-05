@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import  { useState, useEffect } from 'react'
 import CalldataPanel from './calldata-panel' // eslint-disable-line
 import MemoryPanel from './memory-panel' // eslint-disable-line
 import CallstackPanel from './callstack-panel' // eslint-disable-line

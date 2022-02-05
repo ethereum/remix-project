@@ -1,5 +1,3 @@
-import React from 'react'
-
 const RemixSplashScreen = (props) => {
   return (<>  <div style={{ display: props.hide ? 'none' : 'block' }} className='centered'>
     <svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 100">

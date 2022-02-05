@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { useState, useRef, useEffect, useReducer } from 'react'
 import { RemixUiEditorContextView, astNode } from '@remix-ui/editor-context-view'
 import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'

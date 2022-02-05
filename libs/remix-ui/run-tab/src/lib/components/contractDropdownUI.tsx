@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ContractData, ContractDropdownProps, FuncABI } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'

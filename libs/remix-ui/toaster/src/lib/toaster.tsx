@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { useEffect, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 import './toaster.css'

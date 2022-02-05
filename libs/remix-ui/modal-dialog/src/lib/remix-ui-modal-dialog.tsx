@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
+import { useRef, useState, useEffect } from 'react'
 import { ModalDialogProps } from './types' // eslint-disable-line
 
 import './remix-ui-modal-dialog.css'

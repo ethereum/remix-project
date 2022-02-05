@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect, useReducer, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 // eslint-disable-next-line no-unused-vars
 import { Toaster } from '@remix-ui/toaster'
@@ -196,7 +195,7 @@ export function RunTabUI (props: RunTabProps) {
   }
 
   return (
-    <Fragment>
+    <>
       <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
         <div className="list-group list-group-flush">
           <SettingsUI
@@ -270,6 +269,6 @@ export function RunTabUI (props: RunTabProps) {
       <ModalDialog id='udappNotify' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
       <PublishToStorage id='udapp' api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
-    </Fragment>
+    </>
   )
 }

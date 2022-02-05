@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-import React, { forwardRef, useEffect, useRef, useState } from 'react' // eslint-disable-line
+import { forwardRef, useEffect, useRef, useState, isValidElement } from 'react'
 import { PluginRecord } from '../types'
 import './panel.css'
 interface panelPLuginProps {
@@ -13,7 +12,7 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
     const ref:any = panelRef || localRef
     if (ref.current) {
       if (props.pluginRecord.view) {
-        if (React.isValidElement(props.pluginRecord.view)) {
+        if (isValidElement(props.pluginRecord.view)) {
           setView(props.pluginRecord.view)
         } else {
           ref.current.appendChild(props.pluginRecord.view)

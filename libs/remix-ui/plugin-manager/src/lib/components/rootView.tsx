@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment, ReactNode, useEffect, useState } from 'react' // eslint-disable-line no-use-before-define
+import { ReactNode, useEffect, useState } from 'react'
 import { PluginManagerComponent, PluginManagerSettings } from '../../types'
 import PermisssionsSettings from './permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
@@ -33,7 +32,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
     pluginComponent.getAndFilterPlugins(filterPlugins)
   }, [filterPlugins])
   return (
-    <Fragment>
+    <>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
         <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
           <input
@@ -58,7 +57,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
         visible={visible}
         pluginManager={pluginComponent}
       />
-    </Fragment>
+    </>
   )
 }
 

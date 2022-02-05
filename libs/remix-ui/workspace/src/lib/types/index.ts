@@ -1,4 +1,3 @@
-import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }

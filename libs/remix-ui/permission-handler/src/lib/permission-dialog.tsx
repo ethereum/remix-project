@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, useContext, useEffect, useRef, useState } from 'react' // eslint-disable-line
+import { useState } from 'react'
 import { PermissionHandlerProps } from '../interface'
 import './permission-dialog.css'
 

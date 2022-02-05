@@ -1,5 +1,4 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
-import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'

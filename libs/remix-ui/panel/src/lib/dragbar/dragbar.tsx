@@ -1,10 +1,9 @@
-// eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, MutableRefObject } from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
 interface IRemixDragBarUi {
-  refObject: React.MutableRefObject<any>;
+  refObject: MutableRefObject<any>;
   setHideStatus: (hide: boolean) => void;
   hidden: boolean
   minHeight?: number
@@ -13,7 +12,7 @@ interface IRemixDragBarUi {
 const DragBar = (props: IRemixDragBarUi) => {
   const [dragState, setDragState] = useState<boolean>(false)
   const [dragBarPosY, setDragBarPosY] = useState<number>(0)
-  const nodeRef = React.useRef(null) // fix for strictmode
+  const nodeRef = useRef(null) // fix for strictmode
 
   function stopDrag (e: MouseEvent, data: any) {
     const h = window.innerHeight - data.y

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
+import { useEffect, useState, useRef, useReducer } from 'react'
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'

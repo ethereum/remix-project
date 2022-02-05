@@ -1,4 +1,3 @@
-import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'

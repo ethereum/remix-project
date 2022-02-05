@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RemixPlugin } from './Client'
 import { Logger } from './logger'
 import { filePanelProfile } from '@remixproject/plugin-api/lib/file-system/file-panel/profile'

@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FuncABI, UdappProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'

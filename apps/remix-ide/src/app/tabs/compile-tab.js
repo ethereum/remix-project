@@ -1,5 +1,4 @@
 /* global */
-import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line

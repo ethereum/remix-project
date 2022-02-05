@@ -1,4 +1,3 @@
-import React from 'react' // eslint-disable-line
 import helper from 'apps/remix-ide/src/lib/helper'
 
 const remixLib = require('@remix-project/remix-lib')

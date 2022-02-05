@@ -1,4 +1,3 @@
-import React from 'react'
 import { CompileTabLogic } from '../logic/compileTabLogic'
 export const setEditorMode = (mode: string) => {
   return {

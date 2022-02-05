@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react' // eslint-disable-line
+import { useEffect, useRef, useState, useReducer } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -66,7 +66,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [showSlither, setShowSlither] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
-  const warningContainer = React.useRef(null)
+  const warningContainer = useRef(null)
   const [warningState, setWarningState] = useState({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 

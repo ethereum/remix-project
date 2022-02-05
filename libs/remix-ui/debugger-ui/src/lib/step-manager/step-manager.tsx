@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react'
 import Slider from '../slider/slider' // eslint-disable-line
 import ButtonNavigator from '../button-navigator/button-navigator' // eslint-disable-line
 

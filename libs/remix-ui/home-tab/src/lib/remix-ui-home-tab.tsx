@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { useState, useRef, useEffect, useReducer } from 'react'
 
 import './remix-ui-home-tab.css'
 import JSZip from 'jszip'

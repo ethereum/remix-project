@@ -1,4 +1,3 @@
-import React from 'react'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, NEW_BLOCK, NEW_CALL, NEW_TRANSACTION, UNKNOWN_TRANSACTION } from '../types/terminalTypes'
 
 export const registerCommandAction = (name: string, command, activate, dispatch: React.Dispatch<any>) => {

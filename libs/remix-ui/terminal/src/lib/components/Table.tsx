@@ -1,4 +1,3 @@
-import React, { useState } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import helper from 'apps/remix-ide/src/lib/helper'
 

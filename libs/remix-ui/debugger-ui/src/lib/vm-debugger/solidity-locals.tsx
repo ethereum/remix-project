@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react' 
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import { extractData } from '../../utils/solidityTypeFormatter' // eslint-disable-line
 import { ExtractData } from '../../types' // eslint-disable-line

@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useEffect,
-  useReducer,
-  useRef,
-  useState
-} from 'react'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import { Plugin } from '@remixproject/engine'
 import './remix-ui-vertical-icons-panel.css'
 import IconList from './components/IconList'
@@ -43,7 +37,7 @@ const RemixUiVerticalIconsPanel = ({
       }
     })
   }
-  
+
   useEffect(() => {
     window.addEventListener('resize', evaluateScrollability)
     evaluateScrollability()

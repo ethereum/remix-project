@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-expressions */
 import { AppContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
-import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react' // eslint-disable-line
+import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
 import { PluginRecord } from '../types'
@@ -53,14 +52,14 @@ const RemixUIMainPanel = () => {
     <div className="mainview">
       {Object.values(plugins).map((pluginRecord, i) => {
         return (
-          <React.Fragment key={`mainView${i}`}>
+          <Fragment key={`mainView${i}`}>
             {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={pluginRecord.minimized || false} setHideStatus={showTerminal} refObject={terminalRef}></DragBar> : null}
             <RemixUIPanelPlugin
               ref={refs[i]}
               key={pluginRecord.profile.name}
               pluginRecord={pluginRecord}
             />
-          </React.Fragment>
+          </Fragment>
         )
       })}
     </div>

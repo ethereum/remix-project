@@ -1,5 +1,4 @@
 'use strict'
-import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'

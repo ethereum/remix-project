@@ -1,5 +1,3 @@
-import React from 'react' // eslint-disable-line
-
 import './modal-dialog-custom.css'
 
 /* eslint-disable-next-line */

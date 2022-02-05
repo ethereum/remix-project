@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Fragment, useState } from 'react' // eslint-disable-line no-use-before-define
+import { useState } from 'react'
 /* eslint-disable-line */
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import useLocalStorage from '../custom-hooks/useLocalStorage'
@@ -100,7 +99,7 @@ function PermisssionsSettings () {
   }
 
   return (
-    <Fragment>
+    <>
       <ModalDialog
         id='permissionsSettings'
         handleHide={closeModal}
@@ -135,7 +134,7 @@ function PermisssionsSettings () {
           Permissions
         </button>
       </footer>
-    </Fragment>
+    </>
   )
 }
 export default PermisssionsSettings

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react' // eslint-disable-line
+import { useRef, useEffect } from 'react'
 import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'

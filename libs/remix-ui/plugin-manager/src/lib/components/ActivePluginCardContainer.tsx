@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
-import React from 'react' // eslint-disable-line no-use-before-define
 import { PluginManagerComponent } from '../../types'
 import ActivePluginCard from './ActivePluginCard'
 import ModuleHeading from './moduleHeading'
@@ -16,7 +14,7 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
   }
 
   return (
-    <React.Fragment>
+    <>
       {(pluginComponent.activePlugins && pluginComponent.activePlugins.length) ? <ModuleHeading headingLabel="Active Modules" count={pluginComponent.activePlugins.length} /> : null}
       {pluginComponent.activePlugins && pluginComponent.activePlugins.map((profile, idx) => {
         return (
@@ -29,7 +27,7 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
         )
       })
       }
-    </React.Fragment>
+    </>
   )
 }
 

@@ -1,5 +1,3 @@
-import React from 'react'  //eslint-disable-line
-
 interface StaticAnalyserButtonProps {
   onClick: (event) => void
   buttonText: string,

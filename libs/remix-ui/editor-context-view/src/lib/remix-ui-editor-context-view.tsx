@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
+import { useEffect, useState, useRef } from 'react'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 
 import './remix-ui-editor-context-view.css'

@@ -1,5 +1,4 @@
 /* global */
-import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 import { TestTabLogic } from '@remix-ui/solidity-unit-testing' // eslint-disable-line

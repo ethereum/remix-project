@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react'
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line

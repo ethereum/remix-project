@@ -1,4 +1,4 @@
-import React, {useEffect, useState}  from "react" // eslint-disable-line
+import {useEffect, useState}  from "react" // eslint-disable-line
 
 export const useKeyPress = (targetKey: string): boolean => {
 // State for keeping track of whether key is pressed

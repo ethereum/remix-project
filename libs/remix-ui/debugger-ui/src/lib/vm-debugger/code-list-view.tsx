@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
 import AssemblyItems from './assembly-items' // eslint-disable-line
 
 export const CodeListView = ({ registerEvent }) => {

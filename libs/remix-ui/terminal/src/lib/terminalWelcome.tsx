@@ -1,5 +1,3 @@
-import React from 'react' // eslint-disable-line
-
 const TerminalWelcomeMessage = ({ packageJson }) => {
   return (
     <div className="remix_ui_terminal_block px-4 " data-id="block_null">

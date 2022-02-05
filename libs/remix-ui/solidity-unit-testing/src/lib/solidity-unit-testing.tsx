@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, ReactElement } from 'react' // eslint-disable-line
+import { useState, useRef, useEffect, ReactElement } from 'react'
 import { eachOfSeries } from 'async' // eslint-disable-line
 import type Web3 from 'web3'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
@@ -182,7 +182,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          
+
         } else {
           // Enable Create button
           setDisableCreateButton(false)

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { ModalDialogProps } from 'libs/remix-ui/modal-dialog/src/lib/types'
 import { ModalTypes } from '../../types'

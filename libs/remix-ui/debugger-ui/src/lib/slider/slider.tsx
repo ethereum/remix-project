@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react'
 
 export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   const [state, setState] = useState({

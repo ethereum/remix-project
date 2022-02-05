@@ -1,5 +1,4 @@
-/* eslint-disable no-use-before-define */
-import React, { MutableRefObject } from 'react'
+import { MutableRefObject } from 'react'
 
 export interface ChevronProps {
     divElementRef: MutableRefObject<any>

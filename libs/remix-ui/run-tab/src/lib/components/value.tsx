@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BN } from 'ethereumjs-util'
 import { isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react'
 import CodeListView from './code-list-view' // eslint-disable-line
 import FunctionPanel from './function-panel' // eslint-disable-line
 import StepDetail from './step-detail' // eslint-disable-line

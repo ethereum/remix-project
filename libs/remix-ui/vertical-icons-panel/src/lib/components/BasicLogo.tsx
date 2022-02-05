@@ -1,4 +1,3 @@
-import React from 'react'
 
 function BasicLogo () {
   return (<svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 100">

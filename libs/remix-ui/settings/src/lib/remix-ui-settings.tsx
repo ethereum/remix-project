@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
+import { useState, useReducer, useEffect, useCallback } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
 import { enablePersonalModeText, ethereunVMText, generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText } from './constants'

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import { useReducer, useContext } from 'react'
 import { modalActionTypes } from '../actions/modals'
 import { AlertModal, AppModal } from '../interface'
 import { modalReducer } from '../reducer/modals'
@@ -64,9 +64,9 @@ export const AppProvider = ({ children = [], value = {} } = {}) => {
 }
 
 export const useDialogs = () => {
-  return React.useContext(modalContext)
+  return useContext(modalContext)
 }
 
 export const useDialogDispatchers = () => {
-  return React.useContext(dispatchModalContext)
+  return useContext(dispatchModalContext)
 }

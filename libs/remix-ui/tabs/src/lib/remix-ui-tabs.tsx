@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { useDialogDispatchers } from '../../context/provider'
 

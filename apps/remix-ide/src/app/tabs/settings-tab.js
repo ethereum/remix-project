@@ -1,4 +1,3 @@
-import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'

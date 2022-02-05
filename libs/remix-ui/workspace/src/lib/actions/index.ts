@@ -1,4 +1,3 @@
-import React from 'react'
 import { extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'

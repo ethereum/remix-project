@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import { FileType } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'

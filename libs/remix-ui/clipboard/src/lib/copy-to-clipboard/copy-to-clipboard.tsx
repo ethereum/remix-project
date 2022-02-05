@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import copy from 'copy-to-clipboard'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { Placement } from 'react-bootstrap/esm/Overlay'

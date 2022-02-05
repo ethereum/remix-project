@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, SyntheticEvent } from 'react' // eslint-disable-line
+import { useEffect, useState, SyntheticEvent } from 'react'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
@@ -8,7 +8,6 @@ import { contextMenuActions } from '../utils'
 
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
 
 export const FileExplorer = (props: FileExplorerProps) => {

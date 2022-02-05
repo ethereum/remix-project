@@ -1,5 +1,4 @@
 /* global */
-import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'

@@ -1,4 +1,3 @@
-import React from 'react'
 import { BadgeStatus } from './Icon'
 
 interface BadgeProps {

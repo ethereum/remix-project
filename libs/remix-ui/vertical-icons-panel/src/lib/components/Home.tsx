@@ -1,5 +1,5 @@
-import React from 'react'
 import BasicLogo from './BasicLogo'
+
 interface HomeProps {
   verticalIconPlugin: any
 }

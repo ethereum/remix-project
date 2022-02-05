@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
 import isElectron from 'is-electron'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
