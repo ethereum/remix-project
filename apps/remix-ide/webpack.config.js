@@ -23,6 +23,8 @@ module.exports = config => {
       })
     ]
   }
+  
+  webpackConfig.output.chunkLoadTimeout = 600000
 
   if (process.env.NODE_ENV === 'production') {
     return {

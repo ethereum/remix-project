@@ -2,8 +2,8 @@
 import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
-import { addressToString, createNonClashingNameAsync, extractNameFromKey, shortenAddress } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent, setWeb3Dialog } from './payload'
+import { addressToString, createNonClashingNameAsync, envChangeNotification, extractNameFromKey, shortenAddress, web3Dialog } from '@remix-ui/helper'
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setEnvToasterContent, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -75,8 +75,8 @@ const setupEvents = () => {
   plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
 
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
-    dispatch(displayPopUp(plugin.REACT_API.envToasterContent(env, from)))
-    setExecutionContext(env, plugin.REACT_API.web3Dialog())
+    plugin.call('notification', 'toast', envChangeNotification(env, from))
+    setExecutionContext(env)
   })
 
   plugin.on('filePanel', 'setWorkspace', () => {
@@ -104,11 +104,6 @@ const setupEvents = () => {
   plugin.event.register('cleared', () => {
     dispatch(clearRecorderCount())
   })
-}
-
-export const initWebDialogs = (envToasterContent: (env: { context: string, fork: string }, from: string) => void, web3Dialog: () => void) => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setEnvToasterContent(envToasterContent))
-  dispatch(setWeb3Dialog(web3Dialog))
 }
 
 const updateAccountBalances = () => {
@@ -150,6 +145,13 @@ const fillAccountsList = async () => {
           })
         })
       }))
+      const provider = plugin.blockchain.getProvider()
+
+      if (provider === 'injected') {
+        const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
+
+        if (!(Object.keys(loadedAccounts).includes(selectedAddress))) setAccount(null)
+      }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
     }).catch((e) => {
       dispatch(fetchAccountsListFailed(e.message))
@@ -225,16 +227,28 @@ const removeExternalProvider = (name) => {
   dispatch(removeProvider(name))
 }
 
-export const setExecutionContext = (executionContext: { context: string, fork: string }, displayContent: JSX.Element) => {
+export const setExecutionContext = (executionContext: { context: string, fork: string }) => {
+  const displayContent = web3Dialog(plugin.REACT_API.externalEndpoint, setWeb3Endpoint)
+
   plugin.blockchain.changeExecutionContext(executionContext, () => {
-    dispatch(displayNotification('External node request', displayContent, 'OK', 'Cancel', () => {
-      plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
-        if (alertMsg) dispatch(displayPopUp(alertMsg))
+    plugin.call('notification', 'modal', {
+      id: 'envNotification',
+      title: 'External node request',
+      message: displayContent,
+      okLabel: 'OK',
+      cancelLabel: 'Cancel',
+      okFn: () => {
+        plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
+          if (alertMsg) plugin.call('notification', 'toast', alertMsg)
+          setFinalContext()
+        })
+      },
+      cancelFn: () => {
         setFinalContext()
-      })
-    }, () => { setFinalContext() }))
+      }
+    })
   }, (alertMsg) => {
-    dispatch(displayPopUp(alertMsg))
+    plugin.call('notification', 'toast', alertMsg)
   }, () => { setFinalContext() })
 }
 
@@ -545,25 +559,25 @@ export const clearInstances = () => {
 }
 
 export const loadAddress = (contract: ContractData, address: string) => {
-  if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
   loadContractFromAddress(address,
-    (cb) => {
-      dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
-    },
-    (error, loadType, abi) => {
-      if (error) {
-        return dispatch(displayNotification('Alert', error, 'OK', null))
-      }
-      const compiler = plugin.REACT_API.contracts.contractList.find(item => item.alias === contract.name)
-      const contractData = getSelectedContract(contract.name, compiler.name)
-
-      if (loadType === 'abi') {
-        return addInstance({ contractData, address, name: '<at address>' })
-      }
-      addInstance({ contractData, address, name: contract.name })
-    }
-  )
-}
+     (cb) => {
+       dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
+     },
+     (error, loadType, abi) => {
+       if (error) {
+         return dispatch(displayNotification('Alert', error, 'OK', null))
+       }
+       if (loadType === 'abi') {
+         return addInstance({ abi, address, name: '<at address>' })
+       } else if (loadType === 'instance') {
+         if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
+         const compiler = plugin.REACT_API.contracts.contractList.find(item => item.alias === contract.name)
+         const contractData = getSelectedContract(contract.name, compiler.name)
+         return addInstance({ contractData, address, name: contract.name })
+       }
+     }
+   )
+ }
 
 export const getContext = () => {
   return plugin.blockchain.context()

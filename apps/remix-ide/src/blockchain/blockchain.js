@@ -226,6 +226,10 @@ export class Blockchain extends Plugin {
     return this.executionContext.getProvider()
   }
 
+  getInjectedWeb3Address () {
+    return this.executionContext.getSelectedAddress()
+  }
+
   /**
    * return the fork name applied to the current envionment
    * @return {String} - fork name
@@ -353,7 +357,7 @@ export class Blockchain extends Plugin {
         if (network.name === 'VM') return
         this.call('terminal', 'logHtml',
           (<a href={etherScanLink(network.name, txhash)} target="_blank">
-            open in etherscan
+            view on etherscan
           </a>))        
       })
     })

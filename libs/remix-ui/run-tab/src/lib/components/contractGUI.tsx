@@ -25,6 +25,7 @@ export function ContractGUI (props: ContractGUIProps) {
     } else {
       setTitle(props.funcABI.type === 'receive' ? '(receive)' : '(fallback)')
     }
+    setBasicInput('')
   }, [props.title, props.funcABI])
 
   useEffect(() => {
@@ -62,7 +63,12 @@ export function ContractGUI (props: ContractGUIProps) {
       return 'cannot encode empty arguments'
     }
     const multiJSON = JSON.parse('[' + multiString + ']')
-    const encodeObj = txFormat.encodeData(props.funcABI, multiJSON, null)
+
+    const encodeObj = txFormat.encodeData(
+        props.funcABI,
+        multiJSON,
+        props.funcABI.type === 'constructor' ? props.evmBC : null)
+
     if (encodeObj.error) {
       console.error(encodeObj.error)
       return encodeObj.error

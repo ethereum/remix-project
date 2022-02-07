@@ -264,7 +264,7 @@ export const EditorUI = (props: EditorUIProps) => {
             range: new monacoRef.current.Range(marker.position.start.line + 1, marker.position.start.column + 1, marker.position.end.line + 1, marker.position.end.column + 1),
             options: {
               isWholeLine,
-              inlineClassName: `alert-info highlightLine${marker.position.start.line + 1}`
+              inlineClassName: `alert-info border-0 highlightLine${marker.position.start.line + 1}`
             }
           })
         }
@@ -398,11 +398,12 @@ export const EditorUI = (props: EditorUIProps) => {
         <RemixUiEditorContextView
           hide={false}
           gotoLine={(line, column) => props.plugin.call('editor', 'gotoLine', line, column)}
-          openFile={(file) => props.plugin.call('editor', 'openFile', file)}
+          openFile={(file) => props.plugin.call('fileManager', 'switchFile', file)}
           getLastCompilationResult={() => { return props.plugin.call('compilerArtefacts', 'getLastCompilationResult') } }
           offsetToLineColumn={(position, file, sources, asts) => { return props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn', position, file, sources, asts) } }
           getCurrentFileName={() => { return props.plugin.call('fileManager', 'file') } }
           onContextListenerChanged={(listener) => { props.plugin.on('contextualListener', 'contextChanged', listener) }}
+          onCurrentFileChanged={(listener) => { props.plugin.on('fileManager', 'currentFileChanged', listener) }}
           referencesOf={(node: astNode) => { return props.plugin.call('contextualListener', 'referencesOf', node) }}
           getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
           gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}

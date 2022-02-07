@@ -111,9 +111,11 @@ export const listenOnNetworkAction = async (plugins, isListening) => {
 }
 
 export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) => {
+  const provider = plugins.blockchain.getProvider()
+
   plugins.txListener.event.register(NEW_BLOCK, (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
-      dispatch({ type: EMPTY_BLOCK, payload: { message: 0 } })
+      dispatch({ type: EMPTY_BLOCK, payload: { message: 0, provider } })
     }
   })
   plugins.txListener.event.register(KNOWN_TRANSACTION, () => {
@@ -128,6 +130,8 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
 
   const log = async (plugins, tx, receipt, dispatch: React.Dispatch<any>) => {
     const resolvedTransaction = await plugins.txListener.resolvedTransaction(tx.hash)
+    const provider = plugins.blockchain.getProvider()
+  
     if (resolvedTransaction) {
       let compiledContracts = null
       if (plugins._deps.compilersArtefacts.__last) {
@@ -135,11 +139,11 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
       }
       await plugins.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, async (error, logs) => {
         if (!error) {
-          await dispatch({ type: KNOWN_TRANSACTION, payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }] } })
+          await dispatch({ type: KNOWN_TRANSACTION, payload: { message: [{ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs }], provider } })
         }
       })
     } else {
-      await dispatch({ type: UNKNOWN_TRANSACTION, payload: { message: [{ tx: tx, receipt: receipt }] } })
+      await dispatch({ type: UNKNOWN_TRANSACTION, payload: { message: [{ tx: tx, receipt: receipt }], provider } })
     }
   }
 
