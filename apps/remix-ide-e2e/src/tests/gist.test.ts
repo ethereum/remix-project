@@ -140,9 +140,9 @@ module.exports = {
       })
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
-      .openFile(`gist-${testData.validGistId}/README.txt`)
-      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
-      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
+      .openFile(`${testData.validGistId}/README.txt`)
+      .waitForElementVisible(`div[title='default_workspace/${testData.validGistId}/README.txt']`)
+      .assert.containsText(`div[title='default_workspace/${testData.validGistId}/README.txt'] > span`, 'README.txt')
       .end()
   }
 }
