@@ -47,7 +47,7 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
-      // .clickLaunchIcon('filePanel')
+      .clickLaunchIcon('filePanel')
       .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
