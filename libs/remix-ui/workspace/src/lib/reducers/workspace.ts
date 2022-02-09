@@ -608,12 +608,12 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
-  files = _.set(files, _path, {
+  files = _.setWith(files, _path, {
     path: path,
     name: extractNameFromKey(path),
     isDirectory: false,
     type: 'file'
-  })
+  }, Object)
   return files
 }
 
@@ -638,13 +638,13 @@ const removeInputField = (state: BrowserState, path: string): { [x: string]: Rec
 
   if (prevFiles) {
     prevFiles.child && prevFiles.child[path + '/' + 'blank'] && delete prevFiles.child[path + '/' + 'blank']
-    files = _.set(files, _path, {
+    files = _.setWith(files, _path, {
       isDirectory: true,
       path,
       name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
       type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
       child: prevFiles ? prevFiles.child : {}
-    })
+    }, Object)
   }
 
   return files
@@ -682,7 +682,7 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
             delete prevFiles.child[deletePath]
           }
         }
-        files = _.set(files, _path, prevFiles)
+        files = _.setWith(files, _path, prevFiles, Object)
       } else if (payload.fileTree && payload.path) {
         files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
       }
@@ -711,7 +711,7 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
             delete prevFiles.child[deletePath]
           }
         }
-        files = _.set(files, _path, prevFiles)
+        files = _.setWith(files, _path, prevFiles, Object)
       } else {
         files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
       }

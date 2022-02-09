@@ -72,6 +72,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
   const isDebugging = useRef<boolean>(false)
   const allTests = useRef<string[]>([])
   const selectedTests = useRef<string[]>([])
+  const currentTestFiles:any = useRef([]) // stores files for which tests have been run
   const currentErrors:any = useRef([]) // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const defaultPath = 'tests'
@@ -104,7 +105,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     }
     // if current file is changed while debugging and one of the files imported in test file are opened
     // do not clear the test results in SUT plugin
-    if (isDebugging.current && testTab.allFilesInvolved.includes(file)) return
+    if ((isDebugging.current && testTab.allFilesInvolved.includes(file)) || currentTestFiles.current.includes(file)) return
     allTests.current = []
     updateTestFileList()
     clearResults()
@@ -394,6 +395,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   const showTestsResult = () => {
     const filenames = Object.keys(testsResultByFilename)
+    currentTestFiles.current = filenames
     for (const filename of filenames) {
       const fileTestsResult = testsResultByFilename[filename]
       const contracts = Object.keys(fileTestsResult)
