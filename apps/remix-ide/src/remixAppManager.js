@@ -1,4 +1,3 @@
-/* global localStorage, fetch */
 import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
@@ -174,7 +173,7 @@ class PluginLoader {
     }
 
     this.loaders.queryParams = {
-      set: () => {},
+      set: () => {  /* Do nothing. */ },
       get: () => {
         const { activate } = queryParams.get()
         if (!activate) return []

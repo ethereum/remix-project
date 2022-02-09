@@ -11,10 +11,9 @@ const helper = require('../../../../lib/helper')
   */
 class Recorder {
   constructor (blockchain) {
-    var self = this
-    self.event = new EventManager()
-    self.blockchain = blockchain
-    self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
+    this.event = new EventManager()
+    this.blockchain = blockchain
+    this.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
 
     this.blockchain.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
@@ -33,11 +32,11 @@ class Recorder {
           if (record.linkReferences && Object.keys(record.linkReferences).length) {
             for (var file in record.linkReferences) {
               for (var lib in record.linkReferences[file]) {
-                self.data._linkReferences[lib] = '<address>'
+                this.data._linkReferences[lib] = '<address>'
               }
             }
           }
-          self.data._abis[keccak] = abi
+          this.data._abis[keccak] = abi
 
           this.data._contractABIReferences[timestamp] = keccak
         } else {
@@ -57,8 +56,8 @@ class Recorder {
         this.blockchain.getAccounts((error, accounts) => {
           if (error) return console.log(error)
           record.from = `account{${accounts.indexOf(from)}}`
-          self.data._usedAccounts[record.from] = from
-          self.append(timestamp, record)
+          this.data._usedAccounts[record.from] = from
+          this.append(timestamp, record)
         })
       }
     })
@@ -128,9 +127,8 @@ class Recorder {
     *
     */
   append (timestamp, record) {
-    var self = this
-    self.data.journal.push({ timestamp, record })
-    self.event.trigger('newTxRecorded', [self.data.journal.length])
+    this.data.journal.push({ timestamp, record })
+    this.event.trigger('newTxRecorded', [this.data.journal.length])
   }
 
   /**
@@ -138,17 +136,16 @@ class Recorder {
     *
     */
   getAll () {
-    var self = this
-    var records = [].concat(self.data.journal)
+    var records = [].concat(this.data.journal)
     return {
-      accounts: self.data._usedAccounts,
-      linkReferences: self.data._linkReferences,
+      accounts: this.data._usedAccounts,
+      linkReferences: this.data._linkReferences,
       transactions: records.sort((A, B) => {
         var stampA = A.timestamp
         var stampB = B.timestamp
         return stampA - stampB
       }),
-      abis: self.data._abis
+      abis: this.data._abis
     }
   }
 
@@ -157,17 +154,16 @@ class Recorder {
     *
     */
   clearAll () {
-    var self = this
-    self.data._listen = true
-    self.data._replay = false
-    self.data.journal = []
-    self.data._createdContracts = {}
-    self.data._createdContractsReverse = {}
-    self.data._usedAccounts = {}
-    self.data._abis = {}
-    self.data._contractABIReferences = {}
-    self.data._linkReferences = {}
-    self.event.trigger('cleared', [])
+    this.data._listen = true
+    this.data._replay = false
+    this.data.journal = []
+    this.data._createdContracts = {}
+    this.data._createdContractsReverse = {}
+    this.data._usedAccounts = {}
+    this.data._abis = {}
+    this.data._contractABIReferences = {}
+    this.data._linkReferences = {}
+    this.event.trigger('cleared', [])
   }
 
   /**
@@ -180,11 +176,10 @@ class Recorder {
     *
     */
   run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
-    var self = this
-    self.setListen(false)
+    this.setListen(false)
     logCallBack(`Running ${records.length} transaction(s) ...`)
     async.eachOfSeries(records, function (tx, index, cb) {
-      var record = self.resolveAddress(tx.record, accounts, options)
+      var record = this.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
         return alertCb('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
@@ -193,9 +188,9 @@ class Recorder {
       if (record.linkReferences && Object.keys(record.linkReferences).length) {
         for (var k in linkReferences) {
           var link = linkReferences[k]
-          var timestamp = self.extractTimestamp(link)
-          if (timestamp && self.data._createdContractsReverse[timestamp]) {
-            link = self.data._createdContractsReverse[timestamp]
+          var timestamp = this.extractTimestamp(link)
+          if (timestamp && this.data._createdContractsReverse[timestamp]) {
+            link = this.data._createdContractsReverse[timestamp]
           }
           tx.record.bytecode = format.linkLibraryStandardFromlinkReferences(k, link.replace('0x', ''), tx.record.bytecode, tx.record.linkReferences)
         }
@@ -224,8 +219,8 @@ class Recorder {
               isString = false
               value = JSON.stringify(value)
             }
-            for (var timestamp in self.data._createdContractsReverse) {
-              value = value.replace(new RegExp('created\\{' + timestamp + '\\}', 'g'), self.data._createdContractsReverse[timestamp])
+            for (var timestamp in this.data._createdContractsReverse) {
+              value = value.replace(new RegExp('created\\{' + timestamp + '\\}', 'g'), this.data._createdContractsReverse[timestamp])
             }
             if (!isString) value = JSON.parse(value)
             tx.record.parameters[index] = value
@@ -243,7 +238,7 @@ class Recorder {
       logCallBack(`(${index}) data: ${data.data}`)
       record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
 
-      self.blockchain.runTx(record, confirmationCb, continueCb, promptCb,
+      this.blockchain.runTx(record, confirmationCb, continueCb, promptCb,
         function (err, txResult, rawAddress) {
           if (err) {
             console.error(err)
@@ -252,14 +247,14 @@ class Recorder {
           if (rawAddress) {
             const address = helper.addressToString(rawAddress)
             // save back created addresses for the convertion from tokens to real adresses
-            self.data._createdContracts[address] = tx.timestamp
-            self.data._createdContractsReverse[tx.timestamp] = address
+            this.data._createdContracts[address] = tx.timestamp
+            this.data._createdContractsReverse[tx.timestamp] = address
             newContractFn(abi, address, record.contractName)
           }
           cb(err)
         }
       )
-    }, () => { self.setListen(true) })
+    }, () => { this.setListen(true) })
   }
 
   runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
