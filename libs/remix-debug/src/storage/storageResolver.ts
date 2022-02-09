@@ -133,7 +133,7 @@ export class StorageResolver {
         resolve([{}, null])
       } else {
         this.web3.debug.storageRangeAt(
-          tx.blockHash, tx.hash,
+          tx.blockHash, tx.transactionIndex,
           address,
           start,
           maxSize,
