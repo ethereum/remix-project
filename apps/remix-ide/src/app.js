@@ -18,6 +18,7 @@ import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, Fetch
 
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
+import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
@@ -142,6 +143,9 @@ class AppComponent {
     // ----------------- dGit provider ---------------------------------
     const dGitProvider = new DGitProvider()
 
+    // ----------------- Storage plugin ---------------------------------
+    const storagePlugin = new StoragePlugin()
+
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
@@ -214,6 +218,7 @@ class AppComponent {
       web3Provider,
       fetchAndCompile,
       dGitProvider,
+      storagePlugin,
       hardhatProvider,
       self.walkthroughService
     ])
@@ -327,7 +332,7 @@ class AppComponent {
     await self.appManager.activatePlugin(['settings', 'config'])
     await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await self.appManager.activatePlugin(['settings'])
-    await self.appManager.activatePlugin(['walkthrough'])
+    await self.appManager.activatePlugin(['walkthrough','storage'])
 
     self.appManager.on(
       'filePanel',
