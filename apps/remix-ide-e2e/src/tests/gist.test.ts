@@ -36,9 +36,9 @@ module.exports = {
       .addFile('File.sol', { content: '' })
       .executeScript(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
-      .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
-      .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
-      .openFile(`gist-${gistid}/README.txt`)
+      .waitForElementVisible(`[data-id="treeViewLitreeViewItem${gistid}"]`)
+      .click(`[data-id="treeViewLitreeViewItem${gistid}"]`)
+      .openFile(`${gistid}/README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
          .pause(2000)
