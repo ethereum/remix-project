@@ -13,15 +13,17 @@ const profile = {
   version: '0.0.1'
 }
 
+type GistCallBackFn = (gistId: string) => void
+
 export class GistHandler extends Plugin {
   constructor () {
     super(profile)
   }
 
-  async handleLoad (gistId: String | null, cb: Function) {
+  async handleLoad (gistId: string | null, cb: GistCallBackFn) {
     if (!cb) cb = () => {}
 
-    var loadingFromGist = false
+    let loadingFromGist = false
     if (!gistId) {
       loadingFromGist = true
       let value
@@ -83,9 +85,9 @@ export class GistHandler extends Plugin {
     return loadingFromGist
   }
 
-  load (gistId: String | null) {
+  load (gistId: string | null) {
     const self = this
-    return self.handleLoad(gistId, async (gistId: String | null) => {
+    return self.handleLoad(gistId, async (gistId: string | null) => {
       let data: any
       try {
         data = await (await fetch(`https://api.github.com/gists/${gistId}`)).json() as any
@@ -132,7 +134,7 @@ export class GistHandler extends Plugin {
 }
 
 const getGistId = (str) => {
-  var idr = /[0-9A-Fa-f]{8,}/
-  var match = idr.exec(str)
+  const idr = /[0-9A-Fa-f]{8,}/
+  const match = idr.exec(str)
   return match ? match[0] : null
 }

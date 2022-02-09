@@ -19,6 +19,7 @@ import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
 export { ICompilerApi, ConfigurationSettings } from './types/ICompilerApi'
+export { QueryParams } from './query-params'
 
 const helpers = {
   ui: uiHelper,
