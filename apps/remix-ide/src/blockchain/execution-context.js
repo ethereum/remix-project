@@ -50,6 +50,10 @@ export class ExecutionContext {
     return this.executionContext
   }
 
+  getSelectedAddress () {
+    return injectedProvider ? injectedProvider.selectedAddress : null
+  }
+
   getCurrentFork () {
     return this.currentFork
   }

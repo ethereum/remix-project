@@ -226,6 +226,10 @@ export class Blockchain extends Plugin {
     return this.executionContext.getProvider()
   }
 
+  getInjectedWeb3Address () {
+    return this.executionContext.getSelectedAddress()
+  }
+
   /**
    * return the fork name applied to the current envionment
    * @return {String} - fork name
