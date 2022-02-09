@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
@@ -11,7 +11,7 @@ export function AccountUI (props: AccountProps) {
     classList: '',
     title: ''
   })
-  const [message, setMessage] = useState('')
+  const messageRef = useRef('')
 
   useEffect(() => {
     if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
@@ -79,7 +79,7 @@ export function AccountUI (props: AccountProps) {
           setPassphrase={props.setPassphrase}
         />, 'OK', () => {
           props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
-            props.signMessageWithAddress(selectedAccount, message, signedMessagePrompt, props.passphrase)
+            props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
             props.setPassphrase('')
           }, 'Cancel', null)
         }, 'Cancel', () => {
@@ -88,7 +88,7 @@ export function AccountUI (props: AccountProps) {
     }
 
     props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
-      props.signMessageWithAddress(selectedAccount, message, signedMessagePrompt)
+      props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
     }, 'Cancel', null)
   }
 
@@ -101,7 +101,7 @@ export function AccountUI (props: AccountProps) {
   }
 
   const handleMessageInput = (e) => {
-    setMessage(e.target.value)
+    messageRef.current = e.target.value
   }
 
   const passphraseCreationPrompt = () => {
@@ -128,7 +128,7 @@ export function AccountUI (props: AccountProps) {
             rows={4}
             cols={50}
             onInput={handleMessageInput}
-            defaultValue={message}
+            defaultValue={messageRef.current}
           ></textarea>
         </div>
       </div>
