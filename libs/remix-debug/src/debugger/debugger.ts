@@ -68,7 +68,10 @@ export class Debugger {
     try {
       const address = this.debugger.traceManager.getCurrentCalledAddressAt(index)
       const compilationResultForAddress = await this.compilationResult(address)
-      if (!compilationResultForAddress) return
+      if (!compilationResultForAddress) {
+        this.event.trigger('newSourceLocation', [null])
+        return
+      }
 
       this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then(async (rawLocation) => {
         if (compilationResultForAddress && compilationResultForAddress.data) {
@@ -91,6 +94,7 @@ export class Debugger {
       })
       // })
     } catch (error) {
+      this.event.trigger('newSourceLocation', [null])
       return console.log(error)
     }
   }
