@@ -13,10 +13,11 @@ interface ICopyToClipboard {
   className?: string,
   title?: string,
   children?: JSX.Element,
-  getContent?: () => {}
+  getContent?: () => any
 }
 export const CopyToClipboard = (props: ICopyToClipboard) => {
-  let { content, tip = 'Copy', icon = 'fa-copy', direction = 'right', children, getContent, ...otherProps } = props
+  const { tip = 'Copy', icon = 'fa-copy', direction = 'right', getContent, children, ...otherProps } = props
+  let { content } = props
   const [message, setMessage] = useState(tip)
 
   const copyData = () => {

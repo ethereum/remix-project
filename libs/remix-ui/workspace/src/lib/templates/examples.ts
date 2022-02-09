@@ -331,7 +331,7 @@ To run a script, right click on file name in the file explorer and click 'Run'. 
 Output from script will appear in remix terminal.
 `
 
-module.exports = {
+export const examples = {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
   owner: { name: 'contracts/2_Owner.sol', content: owner },
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },

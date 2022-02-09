@@ -1,6 +1,6 @@
 import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import QueryParams from './lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
 const _paq = window._paq = window._paq || []
 

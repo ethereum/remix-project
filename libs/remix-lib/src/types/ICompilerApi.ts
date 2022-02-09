@@ -34,7 +34,7 @@ export interface ICompilerApi {
     open: (file: string) => void
     saveCurrentFile: () => void
 
-    logToTerminal: (log: terminalLog) => {}
+    logToTerminal: (log: terminalLog) => void
 
     compileWithHardhat: (configPath: string) => Promise<string>
 }

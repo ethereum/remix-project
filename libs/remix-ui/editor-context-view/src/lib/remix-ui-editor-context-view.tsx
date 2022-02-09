@@ -10,7 +10,7 @@ export type astNode = {
   id: number,
   children?: Array<any>,
   typeDescriptions: any,
-  nodeType: String,
+  nodeType: string,
   src: string // e.g "142:1361:0"
 }
 
@@ -21,7 +21,7 @@ export type nodePositionLight = {
 }
 
 export type astNodeLight = {
-  fileTarget: String,
+  fileTarget: string,
   nodeId: number,
   position: nodePositionLight
 }
@@ -39,7 +39,7 @@ export interface RemixUiEditorContextViewProps {
   openFile: (fileName: string) => void,
   getLastCompilationResult: () => any,
   offsetToLineColumn: (position: any, file: any, sources: any, asts: any) => any,
-  getCurrentFileName: () => String
+  getCurrentFileName: () => string
   onContextListenerChanged: (listener: onContextListenerChangedListener) => void
   onCurrentFileChanged: (listener: ononCurrentFileChangedListener) => void
   referencesOf: (nodes: astNode) => Array<astNode>

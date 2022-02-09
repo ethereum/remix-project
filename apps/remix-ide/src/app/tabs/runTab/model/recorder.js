@@ -178,7 +178,7 @@ class Recorder {
   run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
     this.setListen(false)
     logCallBack(`Running ${records.length} transaction(s) ...`)
-    async.eachOfSeries(records, function (tx, index, cb) {
+    async.eachOfSeries(records, (tx, index, cb) => {
       var record = this.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
@@ -239,7 +239,7 @@ class Recorder {
       record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
 
       this.blockchain.runTx(record, confirmationCb, continueCb, promptCb,
-        function (err, txResult, rawAddress) {
+        (err, txResult, rawAddress) => {
           if (err) {
             console.error(err)
             return logCallBack(err + '. Execution failed at ' + index)

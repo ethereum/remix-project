@@ -4,8 +4,8 @@ import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-const examples = require('../../../../../../apps/remix-ide/src/app/editor/examples')
-const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
+import { examples } from '../templates/examples'
+import { QueryParams } from '@remix-project/remix-lib'
 
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
@@ -69,9 +69,15 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: '
   }
 }
 
+export type UrlParametersType = {
+  gist: string,
+  code: string,
+  url: string
+}
+
 export const loadWorkspacePreset = async (template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
   const workspaceProvider = plugin.fileProviders.workspace
-  const params = queryParams.get()
+  const params = queryParams.get() as UrlParametersType
 
   switch (template) {
     case 'code-template':

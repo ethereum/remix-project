@@ -1,16 +1,15 @@
-import React, { useState } from 'react'  // eslint-disable-line
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import helper from 'apps/remix-ide/src/lib/helper'
+import React from 'react'  // eslint-disable-line
+import { shortenHexData } from '@remix-ui/helper'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import showTable from './Table'
+import { execution } from '@remix-project/remix-lib'
 
-const remixLib = require('@remix-project/remix-lib')
-const typeConversion = remixLib.execution.typeConversion
+const typeConversion = execution.typeConversion
 
 const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDetails, modal }) => {
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const from = tx.from ? tx.from : ' - '
-  const input = tx.input ? helper.shortenHexData(tx.input) : ''
+  const input = tx.input ? shortenHexData(tx.input) : ''
   const txType = 'call'
 
   const debug = (event, tx) => {
