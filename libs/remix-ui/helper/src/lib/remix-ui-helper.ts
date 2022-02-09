@@ -94,3 +94,8 @@ export const is0XPrefixed = (value) => {
 export const isHexadecimal = (value) => {
   return /^[0-9a-fA-F]+$/.test(value) && (value.length % 2 === 0)
 }
+
+export const isValidHash  = (hash) =>  { // 0x prefixed, hexadecimal, 64digit
+  const hexValue = hash.slice(2, hash.length)
+  return is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
+}
