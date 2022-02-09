@@ -11,6 +11,7 @@ import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
+import { AstWalker } from '@remix-project/remix-astwalker'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -27,7 +28,7 @@ const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
 
-const QueryParams = require('./lib/query-params')
+import { QueryParams } from '@remix-project/remix-lib'
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
@@ -185,7 +186,7 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener()
+    const contextualListener = new EditorContextListener(new AstWalker())
 
     this.notification = new NotificationPlugin()
 

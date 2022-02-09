@@ -5,7 +5,7 @@ import { PluginClient } from '@remixproject/plugin'
 import { existsSync, readFileSync, readdirSync, unlink } from 'fs'
 import { OutputStandard } from '../types' // eslint-disable-line
 import * as utils from '../utils'
-const { spawn, execSync } = require('child_process')
+const { spawn, execSync } = require('child_process') // eslint-disable-line
 
 export class SlitherClient extends PluginClient {
   methods: Array<string>
@@ -73,7 +73,7 @@ export class SlitherClient extends PluginClient {
   analyse (filePath: string, compilerConfig: Record<string, any>) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
-        const errMsg: string = '[Slither Analysis]: Cannot analyse in read-only mode'
+        const errMsg = '[Slither Analysis]: Cannot analyse in read-only mode'
         return reject(new Error(errMsg))
       }
       const options = { cwd: this.currentSharedFolder, shell: true }
@@ -136,7 +136,7 @@ export class SlitherClient extends PluginClient {
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
       const outputFile: string = 'remix-slitherReport_' + Math.floor(Date.now() / 1000) + '.json'
-      const cmd: string = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
+      const cmd = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
       // get too big and hangs the process. We process analysis from the report file only

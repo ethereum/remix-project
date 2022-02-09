@@ -22,7 +22,7 @@ export class DebuggerSolidityLocals {
 
   init (sourceLocation) {
     this._sourceLocation = sourceLocation
-    var decodeTimeout = null
+    let decodeTimeout = null
     if (!this.storageResolver) {
       return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
     }
@@ -76,11 +76,11 @@ export class DebuggerSolidityLocals {
       if (error) {
         return error
       }
-      var stack = result[0].value
-      var memory = result[1].value
-      var calldata = result[3].value
+      const stack = result[0].value
+      const memory = result[1].value
+      const calldata = result[3].value
       try {
-        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
+        const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
         solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, calldata, sourceLocation, cursor).then((locals) => {
           if (!cursor) {
             if (!locals['error']) {

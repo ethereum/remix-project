@@ -64,7 +64,7 @@ const clearPayLoad = async (browser: NightwatchBrowser) => {
   })
 }
 
-const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => {
+const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => { // eslint-disable-line
   return new Promise((resolve) => {
     browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).pause(100)
       .click(`//*[@data-id='${buttonText}']`, async () => {
@@ -107,7 +107,7 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
  * @return {Promise}
  */
 
-const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => {
+const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => { // eslint-disable-line
   if (payload) {
     await setPayload(browser, payload)
   } else {

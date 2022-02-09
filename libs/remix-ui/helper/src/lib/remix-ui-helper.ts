@@ -99,3 +99,10 @@ export const isValidHash  = (hash) =>  { // 0x prefixed, hexadecimal, 64digit
   const hexValue = hash.slice(2, hash.length)
   return is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
 }
+
+export const shortenHexData = (data) => {
+  if (!data) return ''
+  if (data.length < 5) return data
+  const len = data.length
+  return data.slice(0, 5) + '...' + data.slice(len - 5, len)
+}

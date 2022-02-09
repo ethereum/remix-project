@@ -369,7 +369,7 @@ export class TxListener {
     const abiCoder = new ethers.utils.AbiCoder()
     const decoded = abiCoder.decode(inputTypes, data)
     const ret = {}
-    for (var k in abi.inputs) {
+    for (const k in abi.inputs) {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]
     }
     return ret

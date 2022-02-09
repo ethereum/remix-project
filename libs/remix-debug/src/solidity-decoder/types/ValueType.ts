@@ -27,7 +27,7 @@ export class ValueType {
     */
   async decodeFromStorage (location, storageResolver) {
     try {
-      var value = await extractHexValue(location, storageResolver, this.storageBytes)
+      const value = await extractHexValue(location, storageResolver, this.storageBytes)
       return { value: this.decodeValue(value), type: this.typeName }
     } catch (e) {
       console.log(e)

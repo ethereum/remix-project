@@ -243,7 +243,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const isSolFileSelected = (currentFile: string = '') => {
+  const isSolFileSelected = (currentFile = '') => {
     if (!currentFile) currentFile = api.currentFile
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
