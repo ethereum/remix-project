@@ -32,7 +32,7 @@ function mapOptimize (v: string) {
   return optimize[v]
 }
 
-const version = require('../package.json').version
+const version = require('../package.json').version // eslint-disable-line
 
 commander.version(version)
 

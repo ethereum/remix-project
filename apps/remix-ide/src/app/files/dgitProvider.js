@@ -61,6 +61,7 @@ class DGitProvider extends Plugin {
       corsProxy: 'https://corsproxy.remixproject.org/',
       http,
       onAuth: url => {
+        url
         const auth = {
           username: input.token,
           password: ''
@@ -122,6 +123,7 @@ class DGitProvider extends Plugin {
     try {
       remotes = await git.listRemotes({ ...await this.getGitConfig() })
     } catch (e) {
+      console.log(e)
     }
     return remotes
   }
@@ -196,7 +198,7 @@ class DGitProvider extends Plugin {
 
   async setIpfsConfig (config) {
     this.ipfsconfig = config
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(this.checkIpfsConfig())
     })
   }
@@ -409,7 +411,7 @@ class DGitProvider extends Plugin {
     } catch (error) {
       throw new Error(error)
     }
-  };
+  }
 
   async importIPFSFiles (config, cid, workspace) {
     const ipfs = IpfsHttpClient(config)
@@ -450,7 +452,7 @@ class DGitProvider extends Plugin {
       }
       _xLen = ((localStorage[_x].length + _x.length) * 2)
       _lsTotal += _xLen
-    };
+    }
     return (_lsTotal / 1024).toFixed(2)
   }
 

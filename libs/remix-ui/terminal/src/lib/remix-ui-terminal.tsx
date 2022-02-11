@@ -105,7 +105,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
 
     registerCommandAction('script', function execute (args, scopedCommands) {
-      var script = String(args[0])
+      const script = String(args[0])
       _shell(script, scopedCommands, function (error, output) {
         if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
         if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
@@ -282,7 +282,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       const filterUndefined = (el) => el !== undefined && el !== null
       return function logger (args) {
         const types = args.filter(filterUndefined).map(type => type)
-        const values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
+        const values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) { // eslint-disable-line
           if (typeof args[idx] === 'string') {
             const el = document.createElement('div')
             el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')

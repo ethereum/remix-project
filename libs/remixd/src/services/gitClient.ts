@@ -1,6 +1,6 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
-const { spawn } = require('child_process')
+const { spawn } = require('child_process') // eslint-disable-line
 
 export class GitClient extends PluginClient {
   methods: Array<string>

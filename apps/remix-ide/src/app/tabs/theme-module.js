@@ -1,6 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import QueryParams from '../../lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 const _paq = window._paq = window._paq || []
