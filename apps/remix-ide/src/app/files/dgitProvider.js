@@ -91,9 +91,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
   }
 
@@ -102,9 +101,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
   }
 
@@ -113,9 +111,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
   }
 
@@ -142,9 +139,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
     return status
   }
@@ -253,9 +249,8 @@ class DGitProvider extends Plugin {
     }
 
     const result = await git.clone(cmd)
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
     return result
   }
@@ -289,9 +284,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig()
     }
     const result = await git.pull(cmd)
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
     return result
   }
@@ -309,9 +303,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig()
     }
     const result = await git.fetch(cmd)
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
     return result
   }
@@ -490,9 +483,8 @@ class DGitProvider extends Plugin {
     } else {
       result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
     }
-    const self = this
     setTimeout(async () => {
-      await self.call('fileManager', 'refresh')
+      await this.call('fileManager', 'refresh')
     }, 1000)
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
