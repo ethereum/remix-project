@@ -190,6 +190,5 @@ const fileRenamed = async (oldPath: string) => {
 }
 
 const rootFolderChanged = async (path) => {
-  console.log('rootFolderChanged', path)
   await dispatch(rootFolderChangedSuccess(path))
 }
