@@ -45,13 +45,13 @@ export function tryConvertAsciiFormat (memorySlot) {
  */
 export function formatCss (css1, css2) {
   let ret = ''
-  for (const arg in arguments) {
-    for (const k in arguments[arg]) {
-      if (arguments[arg][k] && ret.indexOf(k) === -1) {
+  for (const arg in arguments) { // eslint-disable-line
+    for (const k in arguments[arg]) { // eslint-disable-line
+      if (arguments[arg][k] && ret.indexOf(k) === -1) { // eslint-disable-line
         if (k.indexOf('*') === 0) {
-          ret += arguments[arg][k]
+          ret += arguments[arg][k] // eslint-disable-line
         } else {
-          ret += k + ':' + arguments[arg][k] + ';'
+          ret += k + ':' + arguments[arg][k] + ';' // eslint-disable-line
         }
       }
     }

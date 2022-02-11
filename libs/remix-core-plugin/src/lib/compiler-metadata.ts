@@ -27,11 +27,11 @@ export class CompilerMetadata extends Plugin {
   }
 
   onActivation () {
-    var self = this
+    const self = this
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data) => {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source)
-      var path = self._extractPathOf(source.target)
+      const path = self._extractPathOf(source.target)
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
@@ -44,23 +44,23 @@ export class CompilerMetadata extends Plugin {
   }
 
   _extractPathOf (file) {
-    var reg = /(.*)(\/).*/
-    var path = reg.exec(file)
+    const reg = /(.*)(\/).*/
+    const path = reg.exec(file)
     return path ? path[1] : '/'
   }
 
   async _setArtefacts (content, contract, path) {
     content = content || '{}'
-    var metadata
+    let metadata
     try {
       metadata = JSON.parse(content)
     } catch (e) {
       console.log(e)
     }
-    var fileName = this._JSONFileName(path, contract.name)
-    var metadataFileName = this._MetadataFileName(path, contract.name)
+    const fileName = this._JSONFileName(path, contract.name)
+    const metadataFileName = this._MetadataFileName(path, contract.name)
 
-    var deploy = metadata.deploy || {}
+    const deploy = metadata.deploy || {}
     this.networks.forEach((network) => {
       deploy[network] = this._syncContext(contract, deploy[network] || {})
     })
@@ -73,7 +73,7 @@ export class CompilerMetadata extends Plugin {
     }
     if (parsedMetadata) await this.call('fileManager', 'writeFile', metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
 
-    var data = {
+    const data = {
       deploy,
       data: {
         bytecode: contract.object.evm.bytecode,
@@ -87,14 +87,14 @@ export class CompilerMetadata extends Plugin {
   }
 
   _syncContext (contract, metadata) {
-    var linkReferences = metadata.linkReferences
-    var autoDeployLib = metadata.autoDeployLib
+    let linkReferences = metadata.linkReferences
+    let autoDeployLib = metadata.autoDeployLib
     if (!linkReferences) linkReferences = {}
     if (autoDeployLib === undefined) autoDeployLib = true
 
-    for (var libFile in contract.object.evm.bytecode.linkReferences) {
+    for (const libFile in contract.object.evm.bytecode.linkReferences) {
       if (!linkReferences[libFile]) linkReferences[libFile] = {}
-      for (var lib in contract.object.evm.bytecode.linkReferences[libFile]) {
+      for (const lib in contract.object.evm.bytecode.linkReferences[libFile]) {
         if (!linkReferences[libFile][lib]) {
           linkReferences[libFile][lib] = '<address>'
         }

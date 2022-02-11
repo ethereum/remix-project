@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
-import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
+import { checkSpecialChars, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
@@ -243,7 +243,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const isSolFileSelected = (currentFile: string = '') => {
+  const isSolFileSelected = (currentFile = '') => {
     if (!currentFile) currentFile = api.currentFile
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
@@ -350,7 +350,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       url = customUrl
       api.setCompilerParameters({ version: selectedVersion })
     } else {
-      if (helper.checkSpecialChars(selectedVersion)) {
+      if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
       }
       if (selectedVersion === 'builtin' || selectedVersion.indexOf('soljson') === 0) {
@@ -606,7 +606,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
               { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-              Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
+              Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>
         </header>

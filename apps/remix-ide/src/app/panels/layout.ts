@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { Profile } from '@remixproject/plugin-utils'
 import { EventEmitter } from 'events'
-import QueryParams from '../../lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 
 const profile: Profile = {
   name: 'layout',
@@ -19,6 +19,12 @@ interface panels {
   editor: panelState
   main: panelState
   terminal: panelState
+}
+
+export type PanelConfiguration = {
+  minimizeterminal: boolean,
+  minimizesidepanel: boolean,
+  embed: boolean
 }
 
 export class Layout extends Plugin {
@@ -77,7 +83,7 @@ export class Layout extends Plugin {
       }
     })
     const queryParams = new QueryParams()
-    const params = queryParams.get()
+    const params = queryParams.get() as PanelConfiguration
     if (params.minimizeterminal || params.embed) {
       this.panels.terminal.minimized = true
       this.event.emit('change', this.panels)
