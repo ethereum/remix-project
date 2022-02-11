@@ -185,7 +185,7 @@ export class BreakpointManager {
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
   remove (sourceLocation) {
-    var sources = this.breakpoints[sourceLocation.fileName]
+    const sources = this.breakpoints[sourceLocation.fileName]
     if (!sources) {
       return
     }
