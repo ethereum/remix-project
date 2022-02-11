@@ -322,19 +322,19 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
-    await self.appManager.activatePlugin(['layout'])
-    await self.appManager.activatePlugin(['notification'])
-    await self.appManager.activatePlugin(['editor'])
-    await self.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
-    await self.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
-    await self.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
-    await self.appManager.activatePlugin(['home'])
-    await self.appManager.activatePlugin(['settings', 'config'])
-    await self.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
-    await self.appManager.activatePlugin(['settings'])
-    await self.appManager.activatePlugin(['walkthrough','storage'])
+    await this.appManager.activatePlugin(['layout'])
+    await this.appManager.activatePlugin(['notification'])
+    await this.appManager.activatePlugin(['editor'])
+    await this.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
+    await this.appManager.activatePlugin(['home'])
+    await this.appManager.activatePlugin(['settings', 'config'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['settings'])
+    await this.appManager.activatePlugin(['walkthrough','storage'])
 
-    self.appManager.on(
+    this.appManager.on(
       'filePanel',
       'workspaceInitializationCompleted',
       async () => {
