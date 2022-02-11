@@ -1,9 +1,8 @@
-import React, { useState } from 'react' // eslint-disable-line
+import React from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
-import helper from 'apps/remix-ide/src/lib/helper'
-
-const remixLib = require('@remix-project/remix-lib')
-const typeConversion = remixLib.execution.typeConversion
+import { shortenHexData } from '@remix-ui/helper'
+import { execution } from '@remix-project/remix-lib'
+const typeConversion = execution.typeConversion
 
 const showTable = (opts, showTableHash) => {
   let msg = ''
@@ -184,7 +183,7 @@ const showTable = (opts, showTableHash) => {
               data-id={`txLoggerTableHash${opts.hash}`}
               data-shared={`pair_${opts.hash}`}
             >
-              {helper.shortenHexData(opts.input)}
+              {shortenHexData(opts.input)}
               <CopyToClipboard content={opts.input} />
             </td>
           </tr>

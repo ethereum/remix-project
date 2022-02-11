@@ -303,7 +303,7 @@ export class Blockchain extends Plugin {
     },
     (data, runTxCallback) => {
       // called for libraries deployment
-      this.runTx(data, confirmationCb, runTxCallback, promptCb, () => {})
+      this.runTx(data, confirmationCb, runTxCallback, promptCb, () => { /* Do nothing. */ })
     })
   }
 
@@ -422,72 +422,70 @@ export class Blockchain extends Plugin {
   }
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
-    const self = this
     waterfall([
-      function getGasLimit (next) {
-        if (self.transactionContextAPI.getGasLimit) {
-          return self.transactionContextAPI.getGasLimit(next)
+      (next) => { // getGasLimit
+        if (this.transactionContextAPI.getGasLimit) {
+          return this.transactionContextAPI.getGasLimit(next)
         }
         next(null, 3000000)
       },
-      function queryValue (gasLimit, next) {
+      (gasLimit, next) => { // queryValue
         if (args.value) {
           return next(null, args.value, gasLimit)
         }
-        if (args.useCall || !self.transactionContextAPI.getValue) {
+        if (args.useCall || !this.transactionContextAPI.getValue) {
           return next(null, 0, gasLimit)
         }
-        self.transactionContextAPI.getValue(function (err, value) {
+        this.transactionContextAPI.getValue(function (err, value) {
           next(err, value, gasLimit)
         })
       },
-      function getAccount (value, gasLimit, next) {
+      (value, gasLimit, next) => { // getAccount
         if (args.from) {
           return next(null, args.from, value, gasLimit)
         }
-        if (self.transactionContextAPI.getAddress) {
-          return self.transactionContextAPI.getAddress(function (err, address) {
+        if (this.transactionContextAPI.getAddress) {
+          return this.transactionContextAPI.getAddress(function (err, address) {
             next(err, address, value, gasLimit)
           })
         }
-        self.getAccounts(function (err, accounts) {
+        this.getAccounts(function (err, accounts) {
           const address = accounts[0]
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          // if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
-          if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
+          if (this.executionContext.isVM() && !this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
             return next('Invalid account selected')
           }
           next(null, address, value, gasLimit)
         })
       },
-      function runTransaction (fromAddress, value, gasLimit, next) {
+      (fromAddress, value, gasLimit, next) => { // runTransaction
         const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         if (!tx.timestamp) tx.timestamp = Date.now()
 
         const timestamp = tx.timestamp
-        self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-        self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
+        this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+        this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           async (error, result) => {
             if (error) return next(error)
 
-            const isVM = self.executionContext.isVM()
+            const isVM = this.executionContext.isVM()
             if (isVM && tx.useCall) {
               try {
-                result.transactionHash = await self.web3().eth.getHashFromTagBySimulator(timestamp)
+                result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
               } catch (e) {
                 console.log('unable to retrieve back the "call" hash', e)
               }
             }
             const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+            this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
 
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
               else {
-                try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
+                try { error = 'error: ' + JSON.stringify(error) } catch (e) { console.log(e) }
               }
             }
             next(error, result, tx)

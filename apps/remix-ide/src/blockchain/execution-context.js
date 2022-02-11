@@ -129,9 +129,9 @@ export class ExecutionContext {
 
   async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
     const context = value.context
-    if (!cb) cb = () => {}
-    if (!confirmCb) confirmCb = () => {}
-    if (!infoCb) infoCb = () => {}
+    if (!cb) cb = () => { /* Do nothing. */ }
+    if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
+    if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (context === 'vm') {
       this.executionContext = context
       this.currentFork = value.fork
