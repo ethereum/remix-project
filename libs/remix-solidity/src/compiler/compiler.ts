@@ -103,7 +103,7 @@ export class Compiler {
 
   onInternalCompilerLoaded (): void {
     if (this.state.worker === null) {
-      const compiler: any = typeof (window) !== 'undefined' && window['Module'] ? require('solc/wrapper')(window['Module']) : require('solc')
+      const compiler: any = typeof (window) !== 'undefined' && window['Module'] ? require('solc/wrapper')(window['Module']) : require('solc') // eslint-disable-line
       this.state.compileJSON = (source: SourceWithTarget) => {
         const missingInputs: string[] = []
         const missingInputsCallback = (path: string) => {
@@ -170,7 +170,7 @@ export class Compiler {
 
   loadRemoteVersion (version: string): void {
     console.log(`Loading remote solc version ${version} ...`)
-    const compiler: any = require('solc')
+    const compiler: any = require('solc') // eslint-disable-line
     compiler.loadRemoteVersion(version, (err, remoteCompiler) => {
       if (err) {
         console.error('Error in loading remote solc compiler: ', err)

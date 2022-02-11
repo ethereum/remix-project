@@ -62,7 +62,7 @@ export class TraceCache {
       if (!validReturnStep) {
         this.currentCall.call.reverted = reverted
       }
-      var parent = this.currentCall.parent
+      const parent = this.currentCall.parent
       if (parent) this.currentCall = { call: parent.call, parent: parent.parent }
       return
     }
@@ -123,12 +123,12 @@ export class TraceCache {
 
   accumulateStorageChanges (index, address, storage) {
     const ret = Object.assign({}, storage)
-    for (var k in this.storageChanges) {
+    for (const k in this.storageChanges) {
       const changesIndex = this.storageChanges[k]
       if (changesIndex > index) {
         return ret
       }
-      var sstore = this.sstore[changesIndex]
+      const sstore = this.sstore[changesIndex]
       if (sstore.address === address && sstore.key) {
         ret[sstore.hashedKey] = {
           key: sstore.key,

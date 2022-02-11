@@ -12,7 +12,7 @@ import * as program from 'commander'
 
 async function warnLatestVersion () {
   const latest = await latestVersion('@remix-project/remixd')
-  const pjson = require('../../package.json')
+  const pjson = require('../../package.json') // eslint-disable-line
   if (semver.eq(latest, pjson.version)) {
     console.log('\x1b[32m%s\x1b[0m', `[INFO] you are using the latest version ${latest}`)
   } else if (semver.gt(latest, pjson.version)) {
@@ -37,7 +37,7 @@ const ports = {
   folder: 65520
 }
 
-const killCallBack: Array<Function> = []
+const killCallBack: Array<any> = [] // any is function
 function startService<S extends 'git' | 'hardhat' | 'slither' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
   const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
@@ -54,7 +54,7 @@ function errorHandler (error: any, service: string) {
 }
 
 (async () => {
-  const { version } = require('../../package.json')
+  const { version } = require('../../package.json') // eslint-disable-line
   program.version(version, '-v, --version')
 
   program
