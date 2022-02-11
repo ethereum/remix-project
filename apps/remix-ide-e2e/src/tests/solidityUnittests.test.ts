@@ -263,7 +263,7 @@ module.exports = {
       .removeFile('tests/ballotFailedLog_test.sol', 'workspace_new')
   },
 
-  'Debug tests using debugger #group5': function (browser: NightwatchBrowser) {
+  'Debug tests using debugger #group7': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
