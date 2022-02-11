@@ -69,3 +69,12 @@ export const envChangeNotification = (env: { context: string, fork: string }, fr
     </span>
   </div>
 )
+
+export const storageFullMessage = () => (
+  <div>
+    <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+    <span className="font-weight-bold">
+      <span>Cannot save this file due full LocalStorage. Backup existing files and free up some space.</span>
+    </span>
+  </div>
+)
