@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from 'react';
-import { Theme, ThemeModule } from '../../types/theme-module';
+import React, { useEffect, useState } from 'react';
+import { ThemeModule } from '../../types/theme-module';
 import './remix-ui-theme-module.module.css';
 
 /* eslint-disable-next-line */

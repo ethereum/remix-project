@@ -85,7 +85,7 @@ export class StorageResolver {
    * - If @arg slot is not cached, the corresponding value will be resolved and the next 1000 slots.
    */
   async storageRangeInternal (self, slotKey, tx, stepIndex, address) {
-    var cached = this.fromCache(self, address)
+    const cached = this.fromCache(self, address)
     if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
       return cached.storage
     }

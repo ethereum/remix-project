@@ -48,7 +48,7 @@ export class TraceManager {
         this.isLoading = false
         return true
       }
-      var mes = tx.hash + ' is not a contract invocation or contract creation.'
+      const mes = tx.hash + ' is not a contract invocation or contract creation.'
       console.log(mes)
       this.isLoading = false
       throw new Error(mes)
@@ -290,7 +290,7 @@ export class TraceManager {
   waterfall (calls, stepindex, cb) {
     const ret = []
     let retError = null
-    for (var call in calls) {
+    for (const call in calls) {
       calls[call].apply(this, [stepindex, function (error, result) {
         retError = error
         ret.push({ error: error, value: result })

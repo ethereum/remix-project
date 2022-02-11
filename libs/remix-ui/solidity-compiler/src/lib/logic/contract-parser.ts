@@ -47,7 +47,7 @@ export function parseContracts (contractName, contract, source) {
 }
 
 const retrieveMetadataHash = function (bytecode) {
-  var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
+  let match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
   if (!match) {
     match = /a265627a7a72305820([0-9a-f]{64})6c6578706572696d656e74616cf50037$/.exec(bytecode)
   }
