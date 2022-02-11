@@ -87,7 +87,7 @@ class FileProvider {
   }
 
   get (path, cb) {
-    cb = cb || function () {}
+    cb = cb || function () { /* do nothing. */ }
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
@@ -98,7 +98,7 @@ class FileProvider {
   }
 
   set (path, content, cb) {
-    cb = cb || function () {}
+    cb = cb || function () { /* do nothing. */ }
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) {
@@ -207,8 +207,8 @@ class FileProvider {
    * @param {Function} visitFolder is a function called for each visited folders
    */
   _copyFolderToJsonInternal (path, visitFile, visitFolder) {
-    visitFile = visitFile || (() => {})
-    visitFolder = visitFolder || (() => {})
+    visitFile = visitFile || function () { /* do nothing. */ }
+    visitFolder = visitFolder || function () { /* do nothing. */ }
     return new Promise((resolve, reject) => {
       const json = {}
       path = this.removePrefix(path)
@@ -245,8 +245,8 @@ class FileProvider {
    * @param {Function} visitFolder is a function called for each visited folders
    */
   copyFolderToJson (path, visitFile, visitFolder) {
-    visitFile = visitFile || (() => {})
-    visitFolder = visitFolder || (() => {})
+    visitFile = visitFile || function () { /* do nothing. */ }
+    visitFolder = visitFolder || function () { /* do nothing. */ }
     return this._copyFolderToJsonInternal(path, visitFile, visitFolder)
   }
 

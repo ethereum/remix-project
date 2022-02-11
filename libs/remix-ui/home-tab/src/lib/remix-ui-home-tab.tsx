@@ -5,7 +5,7 @@ import JSZip from 'jszip'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
-import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 import { ThemeContext, themes } from './themeContext'
 declare global {
   interface Window {
@@ -186,7 +186,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       try {
         node.dispatchEvent(new MouseEvent('click'))
       } catch (e) {
-        var evt = document.createEvent('MouseEvents')
+        const evt = document.createEvent('MouseEvents')
         evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
           20, false, false, false, false, 0, null)
         node.dispatchEvent(evt)
@@ -202,9 +202,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         zip.file(path, content)
       })
       zip.generateAsync({ type: 'blob' }).then(function (blob) {
-        var today = new Date()
-        var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-        var time = today.getHours() + 'h' + today.getMinutes() + 'min'
+        const today = new Date()
+        const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+        const time = today.getHours() + 'h' + today.getMinutes() + 'min'
         saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
       }).catch((e) => {
         plugin.call('notification', 'toast', e.message)

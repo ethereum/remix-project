@@ -14,7 +14,7 @@ function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
 }
 
 export function writeTestAccountsContract (accounts: string[]) {
-  const testAccountContract = require('../sol/tests_accounts.sol')
+  const testAccountContract = require('../sol/tests_accounts.sol') // eslint-disable-line
   let body = `address[${accounts.length}] memory accounts;`
   if (!accounts.length) body += ';'
   else {
@@ -152,7 +152,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
       if (result.error) error.push(result.error)
       const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
       if (errors.length > 0) {
-        if (!isBrowser) require('signale').fatal(errors)
+        if (!isBrowser) require('signale').fatal(errors) // eslint-disable-line
         return cb(new CompilationErrors(errors))
       }
       cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
@@ -217,7 +217,7 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
     if (result.error) error.push(result.error)
     const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
-      if (!isBrowser) require('signale').fatal(errors)
+      if (!isBrowser) require('signale').fatal(errors) // eslint-disable-line
       return cb(new CompilationErrors(errors))
     }
     cb(err, result.contracts, result.sources) // return callback with contract details & ASTs

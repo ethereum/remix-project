@@ -10,13 +10,13 @@ export function toInt (h) {
   return h
 }
 
-export var stringify = convertToString
+export const stringify = convertToString
 
 function convertToString (v) {
   try {
     if (v instanceof Array) {
       const ret = []
-      for (var k in v) {
+      for (const k in v) {
         ret.push(convertToString(v[k]))
       }
       return ret

@@ -14,9 +14,9 @@ export const matched = (arr, value) => arr.map(x => Object.keys(x).some(x => x.s
 
 const findDeep = (object, fn, found = { break: false, value: undefined }) => {
   if (typeof object !== 'object' || object === null) return
-  for (var i in object) {
+  for (const i in object) {
     if (found.break) break
-    var el = object[i]
+    let el = object[i]
     if (el && el.innerText !== undefined && el.innerText !== null) el = el.innerText
     if (fn(el, i, object)) {
       found.value = el
