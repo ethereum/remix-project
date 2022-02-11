@@ -6,9 +6,9 @@ import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-li
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
 import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
-const helper = require('../../../../../apps/remix-ide/src/lib/helper')
 const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
@@ -171,7 +171,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         txNumber: txNumber
       }
     })
-    if (!helper.isValidHash(txNumber)) {
+    if (!isValidHash(txNumber)) {
       setState(prevState => {
         return {
           ...prevState,

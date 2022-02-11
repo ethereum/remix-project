@@ -87,6 +87,7 @@ class FileProvider {
   }
 
   async get (path, cb) {
+    cb = cb || function () { /* do nothing. */ }
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     try {
@@ -100,6 +101,7 @@ class FileProvider {
   }
 
   async set (path, content, cb) {
+    cb = cb || function () { /* do nothing. */ }
     var unprefixedpath = this.removePrefix(path)
     const exists = await window.remixFileSystem.exists(unprefixedpath)
     if (exists && await window.remixFileSystem.readFile(unprefixedpath, 'utf8') === content) {
@@ -211,8 +213,8 @@ class FileProvider {
    * @param {Function} visitFolder is a function called for each visited folders
    */
   async _copyFolderToJsonInternal (path, visitFile, visitFolder) {
-    visitFile = visitFile || (() => { })
-    visitFolder = visitFolder || (() => { })
+    visitFile = visitFile || function () { /* do nothing. */ }
+    visitFolder = visitFolder || function () { /* do nothing. */ }
 
     const json = {}
     path = this.removePrefix(path)
@@ -248,8 +250,8 @@ class FileProvider {
    * @param {Function} visitFolder is a function called for each visited folders
    */
   async copyFolderToJson (path, visitFile, visitFolder) {
-    visitFile = visitFile || (() => { })
-    visitFolder = visitFolder || (() => { })
+    visitFile = visitFile || function () { /* do nothing. */ }
+    visitFolder = visitFolder || function () { /* do nothing. */ }
     return await this._copyFolderToJsonInternal(path, visitFile, visitFolder)
   }
 

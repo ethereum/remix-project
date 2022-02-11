@@ -55,8 +55,8 @@ export class DebuggerStepManager {
           this.revertionPoint = this.currentCall.return
           return this.event.trigger('revertWarning', [revertedReason])
         }
-        for (var k = callsPath.length - 2; k >= 0; k--) {
-          var parent = callsPath[k]
+        for (let k = callsPath.length - 2; k >= 0; k--) {
+          const parent = callsPath[k]
           if (!parent.reverted) continue
           this.revertionPoint = parent.return
           this.event.trigger('revertWarning', ['parenthasthrown'])
@@ -139,7 +139,7 @@ export class DebuggerStepManager {
 
   jumpOut (solidityMode) {
     if (!this.traceManager.isLoaded()) return
-    var step = this.traceManager.findStepOut(this.currentStepIndex)
+    let step = this.traceManager.findStepOut(this.currentStepIndex)
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 0)
     }
@@ -200,7 +200,7 @@ export class DebuggerStepManager {
     if (!this.debugger.callTree.reducedTrace.length) {
       return value
     }
-    var nextSource = util.findClosestIndex(value, this.debugger.callTree.reducedTrace)
+    let nextSource = util.findClosestIndex(value, this.debugger.callTree.reducedTrace)
     nextSource = nextSource + incr
     if (nextSource <= 0) {
       nextSource = 0

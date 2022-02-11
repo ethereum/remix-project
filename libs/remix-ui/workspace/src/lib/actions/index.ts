@@ -9,10 +9,17 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin 
 export * from './events'
 export * from './workspace'
 
-const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
+import { QueryParams } from '@remix-project/remix-lib'
+
 const queryParams = new QueryParams()
 
 let plugin, dispatch: React.Dispatch<any>
+
+export type UrlParametersType = {
+  gist: string,
+  code: string,
+  url: string
+}
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
@@ -21,7 +28,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     setPlugin(plugin, dispatch)
     const workspaceProvider = filePanelPlugin.fileProviders.workspace
     const localhostProvider = filePanelPlugin.fileProviders.localhost
-    const params = queryParams.get()
+    const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
 
     dispatch(setWorkspaces(workspaces))
@@ -84,6 +91,12 @@ export const removeInputField = async (path: string) => {
   dispatch(removeInputFieldSuccess(path))
 }
 
+export type SolidityConfiguration = {
+  version: string,
+  optimize: string,
+  runs: string
+}
+
 export const publishToGist = async (path?: string, type?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
@@ -97,8 +110,9 @@ export const publishToGist = async (path?: string, type?: string) => {
     if (!accessToken) {
       dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => {}))
     } else {
+      const params = queryParams.get() as SolidityConfiguration
       const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
-        queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
+      params.version + '&optimize=' + params.optimize + '&runs=' + params.runs + '&gist='
       const gists = new Gists({ token: accessToken })
 
       if (id) {

@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import QueryParams from '../../lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 import Registry from '../state/registry'
 
 const profile = {

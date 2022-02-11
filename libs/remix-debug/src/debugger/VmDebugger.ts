@@ -113,11 +113,11 @@ export class VmDebuggerLogic {
         const address = this._traceManager.getCurrentCalledAddressAt(index)
         if (!this.storageResolver) return
 
-        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
+        const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
 
         storageViewer.storageRange().then((storage) => {
           if (this.stepManager.currentStepIndex === index) {
-            var header = storageViewer.isComplete(address) ? '[Completely Loaded]' : '[Partially Loaded]'
+            const header = storageViewer.isComplete(address) ? '[Completely Loaded]' : '[Partially Loaded]'
             this.event.trigger('traceManagerStorageUpdate', [storage, header])
           }
         }).catch((_error) => {
@@ -197,10 +197,10 @@ export class VmDebuggerLogic {
       if (index === this.traceLength - 1) {
         return this.event.trigger('traceStorageUpdate', [{}])
       }
-      var storageJSON = {}
-      for (var k in this.addresses) {
-        var address = this.addresses[k]
-        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
+      const storageJSON = {}
+      for (const k in this.addresses) {
+        const address = this.addresses[k]
+        const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
         try {
           storageJSON[address] = await storageViewer.storageRange()
         } catch (e) {

@@ -9,8 +9,14 @@ const profile = {
   methods: ['resolve', 'resolveAndSave', 'isExternalUrl']
 }
 
+export type ResolvedImport = {
+  content: string,
+  cleanUrl: string
+  type: string
+}
+
 export class CompilerImports extends Plugin {
-  previouslyHandled: {}
+  previouslyHandled: Record<string, ResolvedImport>
   urlResolver: any
   constructor () {
     super(profile)
@@ -64,9 +70,9 @@ export class CompilerImports extends Plugin {
     if (!loadingCb) loadingCb = () => {}
     if (!cb) cb = () => {}
 
-    var self = this
+    const self = this
     if (force) delete this.previouslyHandled[url]
-    var imported = this.previouslyHandled[url]
+    const imported = this.previouslyHandled[url]
     if (imported) {
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)
     }

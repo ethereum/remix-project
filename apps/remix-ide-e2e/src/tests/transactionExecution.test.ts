@@ -202,10 +202,10 @@ module.exports = {
       .addFile('Storage.sol', sources[6]['Storage.sol'])
       .addFile('Owner.sol', sources[6]['Owner.sol'])
       .clickLaunchIcon('udapp')
-      .createContract('42')
+      .createContract('42, 24')
       .openFile('Storage.sol')
       .clickLaunchIcon('udapp')
-      .createContract('') // this creation will fail if the component hasn't been properly reset.
+      .createContract('102') // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })
       .testFunction('last', // we check if the contract is actually reachable.
@@ -375,7 +375,7 @@ contract C {
           /**
            * @dev Set contract deployer as owner
            */
-          constructor(uint p) {
+          constructor(uint p, uint o) {
               owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor
               emit OwnerSet(address(0), owner);
           }
@@ -411,6 +411,10 @@ contract C {
       contract Storage {
 
           uint256 number;
+
+          constructor(uint p) {
+
+          }
 
           /**
            * @dev Store value in variable

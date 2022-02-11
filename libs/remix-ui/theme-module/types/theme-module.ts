@@ -1,10 +1,10 @@
 import { Plugin } from "@remixproject/engine/lib/abstract";
 import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class ThemeModule extends Plugin<any, any> {
+export interface ThemeModule extends Plugin<any, any> {
     currentThemeState: Record<string, unknown>;
+    constructor(registry: any): any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    constructor(registry: any);
     events: EventEmitter;
     _deps: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

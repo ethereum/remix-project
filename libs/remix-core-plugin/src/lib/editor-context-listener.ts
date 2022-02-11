@@ -2,7 +2,6 @@
 import { Plugin } from '@remixproject/engine'
 
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-const { AstWalker } = require('@remix-project/remix-astwalker')
 
 const profile = {
   name: 'contextualListener',
@@ -19,7 +18,7 @@ export class EditorContextListener extends Plugin {
   _activeHighlights: Array<any>
   astWalker: any
   currentPosition: any
-  currentFile: String
+  currentFile: string
   nodes: Array<any>
   results: any
   estimationObj: any
@@ -28,7 +27,7 @@ export class EditorContextListener extends Plugin {
   contract: any
   activated: boolean
 
-  constructor () {
+  constructor (astWalker) {
     super(profile)
     this.activated = false
     this._index = {
@@ -37,7 +36,7 @@ export class EditorContextListener extends Plugin {
     }
     this._activeHighlights = []
 
-    this.astWalker = new AstWalker()
+    this.astWalker = astWalker
   }
 
   onActivation () {
