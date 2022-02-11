@@ -11,6 +11,7 @@ import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
+import { AstWalker } from '@remix-project/remix-astwalker'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -28,7 +29,7 @@ const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
 
-const QueryParams = require('./lib/query-params')
+import { QueryParams } from '@remix-project/remix-lib'
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
@@ -52,10 +53,9 @@ const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 class AppComponent {
   constructor () {
-    const self = this
-    self.appManager = new RemixAppManager({})
-    self.queryParams = new QueryParams()
-    self._components = {}
+    this.appManager = new RemixAppManager({})
+    this.queryParams = new QueryParams()
+    this._components = {}
     // setup storage
     const configStorage = new Storage('config-v0.8:')
 
@@ -64,54 +64,55 @@ class AppComponent {
     Registry.getInstance().put({ api: config, name: 'config' })
 
     // load file system
-    self._components.filesProviders = {}
-    self._components.filesProviders.browser = new FileProvider('browser')
+    this._components.filesProviders = {}
+    this._components.filesProviders.browser = new FileProvider('browser')
     Registry.getInstance().put({
-      api: self._components.filesProviders.browser,
+      api: this._components.filesProviders.browser,
       name: 'fileproviders/browser'
     })
-    self._components.filesProviders.localhost = new RemixDProvider(
-      self.appManager
+    this._components.filesProviders.localhost = new RemixDProvider(
+      this.appManager
     )
     Registry.getInstance().put({
-      api: self._components.filesProviders.localhost,
+      api: this._components.filesProviders.localhost,
       name: 'fileproviders/localhost'
     })
-    self._components.filesProviders.workspace = new WorkspaceFileProvider()
+    this._components.filesProviders.workspace = new WorkspaceFileProvider()
     Registry.getInstance().put({
-      api: self._components.filesProviders.workspace,
+      api: this._components.filesProviders.workspace,
       name: 'fileproviders/workspace'
     })
 
     Registry.getInstance().put({
-      api: self._components.filesProviders,
+      api: this._components.filesProviders,
       name: 'fileproviders'
     })
   }
 
   async run () {
-    const self = this
     // APP_MANAGER
-    const appManager = self.appManager
-    const pluginLoader = self.appManager.pluginLoader
-    self.panels = {}
-    self.workspace = pluginLoader.get()
-    self.engine = new RemixEngine()
-    self.engine.register(appManager)
+    const appManager = this.appManager
+    const pluginLoader = this.appManager.pluginLoader
+    this.panels = {}
+    this.workspace = pluginLoader.get()
+    this.engine = new RemixEngine()
+    this.engine.register(appManager);
+
+
 
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
       'remix-beta.ethereum.org': 25,
       'remix.ethereum.org': 23
     }
-    self.showMatamo =
+    this.showMatamo =
       matomoDomains[window.location.hostname] &&
       !Registry.getInstance()
         .get('config')
         .api.exists('settings/matomo-analytics')
-    self.walkthroughService = new WalkthroughService(
+    this.walkthroughService = new WalkthroughService(
       appManager,
-      self.showMatamo
+      this.showMatamo
     )
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
@@ -125,10 +126,10 @@ class AppComponent {
 
     // SERVICES
     // ----------------- gist service ---------------------------------
-    self.gistHandler = new GistHandler()
+    this.gistHandler = new GistHandler()
     // ----------------- theme service ---------------------------------
-    self.themeModule = new ThemeModule()
-    Registry.getInstance().put({ api: self.themeModule, name: 'themeModule' })
+    this.themeModule = new ThemeModule()
+    Registry.getInstance().put({ api: this.themeModule, name: 'themeModule' })
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
@@ -189,24 +190,24 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener()
+    const contextualListener = new EditorContextListener(new AstWalker())
 
-    self.notification = new NotificationPlugin()
+    this.notification = new NotificationPlugin()
 
     const configPlugin = new ConfigPlugin()
-    self.layout = new Layout()
+    this.layout = new Layout()
     
     const permissionHandler = new PermissionHandlerPlugin()
 
-    self.engine.register([
+    this.engine.register([
       permissionHandler,
-      self.layout,
-      self.notification,
-      self.gistHandler,
+      this.layout,
+      this.notification,
+      this.gistHandler,
       configPlugin,
       blockchain,
       contentImport,
-      self.themeModule,
+      this.themeModule,
       editor,
       fileManager,
       compilerMetadataGenerator,
@@ -220,46 +221,46 @@ class AppComponent {
       dGitProvider,
       storagePlugin,
       hardhatProvider,
-      self.walkthroughService
+      this.walkthroughService
     ])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    Registry.getInstance().put({ api: self.mainview, name: 'mainview' })
+    Registry.getInstance().put({ api: this.mainview, name: 'mainview' })
     const tabProxy = new TabProxy(fileManager, editor)
-    self.engine.register([appPanel, tabProxy])
+    this.engine.register([appPanel, tabProxy])
 
     // those views depend on app_manager
-    self.menuicons = new VerticalIcons()
-    self.sidePanel = new SidePanel()
-    self.hiddenPanel = new HiddenPanel()
+    this.menuicons = new VerticalIcons()
+    this.sidePanel = new SidePanel()
+    this.hiddenPanel = new HiddenPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(
       appManager,
-      self.engine
+      this.engine
     )
     const filePanel = new FilePanel(appManager)
     const landingPage = new LandingPage(
       appManager,
-      self.menuicons,
+      this.menuicons,
       fileManager,
       filePanel,
       contentImport
     )
-    self.settings = new SettingsTab(
+    this.settings = new SettingsTab(
       Registry.getInstance().get('config').api,
       editor,
       appManager
     )
 
-    self.engine.register([
-      self.menuicons,
+    this.engine.register([
+      this.menuicons,
       landingPage,
-      self.hiddenPanel,
-      self.sidePanel,
+      this.hiddenPanel,
+      this.sidePanel,
       filePanel,
       pluginManagerComponent,
-      self.settings
+      this.settings
     ])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
@@ -288,7 +289,7 @@ class AppComponent {
       contentImport
     )
 
-    self.engine.register([
+    this.engine.register([
       compileTab,
       run,
       debug,
@@ -300,7 +301,7 @@ class AppComponent {
       filePanel.slitherHandle
     ])
 
-    self.layout.panels = {
+    this.layout.panels = {
       tabs: { plugin: tabProxy, active: true },
       editor: { plugin: editor, active: true },
       main: { plugin: appPanel, active: false },
@@ -311,14 +312,13 @@ class AppComponent {
   async activate () {
     const queryParams = new QueryParams()
     const params = queryParams.get()
-    const self = this
-
+    
     if (isElectron()) {
-      self.appManager.activatePlugin('remixd')
+      this.appManager.activatePlugin('remixd')
     }
 
     try {
-      self.engine.register(await self.appManager.registeredPlugins())
+      this.engine.register(await this.appManager.registeredPlugins())
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
@@ -338,20 +338,20 @@ class AppComponent {
       'filePanel',
       'workspaceInitializationCompleted',
       async () => {
-        await self.appManager.registerContextMenuItems()
+        await this.appManager.registerContextMenuItems()
       }
     )
 
-    await self.appManager.activatePlugin(['filePanel'])
+    await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
-    self.appManager.on('editor', 'editorMounted', () => {
-      if (Array.isArray(self.workspace)) {
-        self.appManager
-          .activatePlugin(self.workspace)
+    this.appManager.on('editor', 'editorMounted', () => {
+      if (Array.isArray(this.workspace)) {
+        this.appManager
+          .activatePlugin(this.workspace)
           .then(async () => {
             try {
               if (params.deactivate) {
-                await self.appManager.deactivatePlugin(
+                await this.appManager.deactivatePlugin(
                   params.deactivate.split(',')
                 )
               }
@@ -360,21 +360,21 @@ class AppComponent {
             }
             if (params.code) {
               // if code is given in url we focus on solidity plugin
-              self.menuicons.select('solidity')
+              this.menuicons.select('solidity')
             } else {
               // If plugins are loaded from the URL params, we focus on the last one.
               if (
-                self.appManager.pluginLoader.current === 'queryParams' &&
-                self.workspace.length > 0
-              ) { self.menuicons.select(self.workspace[self.workspace.length - 1]) }
+                this.appManager.pluginLoader.current === 'queryParams' &&
+                this.workspace.length > 0
+              ) { this.menuicons.select(this.workspace[this.workspace.length - 1]) }
             }
 
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                self.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
+                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
-                self.appManager.call(...callDetails).catch(console.error)
+                this.appManager.call(...callDetails).catch(console.error)
               }
             }
           })
@@ -382,7 +382,7 @@ class AppComponent {
       }
     })
     // activate solidity plugin
-    self.appManager.activatePlugin(['solidity', 'udapp'])
+    this.appManager.activatePlugin(['solidity', 'udapp'])
     // Load and start the service who manager layout and frame
   }
 }

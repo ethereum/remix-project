@@ -142,7 +142,7 @@ export function nodesAtPosition (astNodeType, position, ast) {
   const astWalker = new AstWalker()
   const found = []
   const callback = function (node) {
-    var nodeLocation = sourceLocationFromAstNode(node)
+    const nodeLocation = sourceLocationFromAstNode(node)
     if (!nodeLocation) {
       return
     }

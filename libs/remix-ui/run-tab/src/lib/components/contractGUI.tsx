@@ -16,6 +16,7 @@ export function ContractGUI (props: ContractGUIProps) {
     dataId: string
   }>({ title: '', content: '', classList: '', dataId: '' })
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
+  const basicInputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
     if (props.title) {
@@ -26,6 +27,10 @@ export function ContractGUI (props: ContractGUIProps) {
       setTitle(props.funcABI.type === 'receive' ? '(receive)' : '(fallback)')
     }
     setBasicInput('')
+    // we have the reset the fields before reseting the previous references.
+    basicInputRef.current.value = ''
+    multiFields.current.filter((el) => el !== null && el !== undefined).forEach((el) => el.value = '')
+    multiFields.current = []
   }, [props.title, props.funcABI])
 
   useEffect(() => {
@@ -166,6 +171,7 @@ export function ContractGUI (props: ContractGUIProps) {
           placeholder={props.inputs}
           title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
           onChange={handleBasicInput}
+          ref={basicInputRef}
           style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
         <i
           className="fas fa-angle-down udapp_methCaret"

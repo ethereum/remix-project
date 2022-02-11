@@ -77,7 +77,7 @@ export class CodeManager {
       const code = await this.codeResolver.resolveCode(address)
       return code
     }
-    var codes = this.codeResolver.getExecutingCodeFromCache(address)
+    let codes = this.codeResolver.getExecutingCodeFromCache(address)
     if (codes) {
       return codes
     }

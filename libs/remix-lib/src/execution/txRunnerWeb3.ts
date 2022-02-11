@@ -52,7 +52,7 @@ export class TxRunnerWeb3 {
         return callback(err, resp)
       }
       this.event.trigger('transactionBroadcasted', [resp])
-      var listenOnResponse = () => {
+      const listenOnResponse = () => {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())

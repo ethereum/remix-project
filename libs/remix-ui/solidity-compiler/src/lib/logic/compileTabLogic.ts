@@ -1,8 +1,6 @@
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
-import { getValidLanguage } from '@remix-project/remix-solidity'
-
-const Compiler = require('@remix-project/remix-solidity').Compiler
-const EventEmitter = require('events')
+import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
+import { EventEmitter } from 'events'
 
 declare global {
   interface Window {
@@ -132,7 +130,7 @@ export class CompileTabLogic {
       }
       // TODO readd saving current file
       this.api.saveCurrentFile()
-      var currentFile = this.api.currentFile
+      const currentFile = this.api.currentFile
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err)

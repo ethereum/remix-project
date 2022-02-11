@@ -81,7 +81,7 @@ export class Debugger {
               sources[genSource.name] = { content: genSource.contents }
             }
           }
-          var lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
+          const lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
           this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address])
         } else {
           this.event.trigger('newSourceLocation', [null])

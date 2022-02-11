@@ -7,8 +7,7 @@ import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
-import { RemixUiThemeModule } from '@remix-ui/theme-module'
-import { ThemeModule } from 'libs/remix-ui/theme-module/types/theme-module'
+import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
