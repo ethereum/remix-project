@@ -3,8 +3,7 @@ import { Bee } from '@ethersphere/bee-js'
 import type { UploadResult } from '@ethersphere/bee-js'
 
 // public gateway node address
-// TODO should change to https://api.ethswarm.org/
-const publicBeeNode = new Bee('https://bee-9.gateway.ethswarm.org/')
+const publicBeeNode = new Bee('https://api.gateway.ethswarm.org/')
 
 // on the public gateway the postage stamp id is not relevant, so we use all zeroes
 const defaultPostageStampId = '0000000000000000000000000000000000000000000000000000000000000000'
