@@ -10,14 +10,14 @@ export const ViewPluginUI = (props: IViewPluginUI) => {
     const [state, setState] = useState<any>(null)
   
     useEffect(() => {
-      console.log(props.plugin)
+      // console.log(props.plugin)
       if(props.plugin.setDispatch){
         props.plugin.setDispatch(setState)
       }
     }, [])
   
     useEffect(() => {
-      console.log(state)
+      // console.log(state)
     }, [state])
   
     return (
