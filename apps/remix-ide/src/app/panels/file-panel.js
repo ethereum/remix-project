@@ -58,18 +58,8 @@ module.exports = class Filepanel extends ViewPlugin {
     this.currentWorkspaceMetadata = {}
   }
 
-  onActivation () {
-    this.renderComponent()
-  }
-
   render () {
-    return this.el
-  }
-
-  renderComponent () {
-    ReactDOM.render(
-      <FileSystemProvider plugin={this} />
-      , this.el)
+    return <div id='fileExplorerView'><FileSystemProvider plugin={this} /></div>
   }
 
   /**
