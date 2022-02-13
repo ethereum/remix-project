@@ -40,9 +40,6 @@ export class RunTab extends ViewPlugin {
     this.el = document.createElement('div')
   }
 
-  onActivation () {
-    this.renderComponent()
-  }
 
   setupEvents () {
     this.blockchain.events.on('newTransaction', (tx, receipt) => {
@@ -86,14 +83,9 @@ export class RunTab extends ViewPlugin {
   }
 
   render () {
-    return this.el
+    return  <RunTabUI plugin={this} />
   }
 
-  renderComponent () {
-    ReactDOM.render(
-      <RunTabUI plugin={this} />
-      , this.el)
-  }
 
   onReady (api) {
     this.REACT_API = api
