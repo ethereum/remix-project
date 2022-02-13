@@ -82,10 +82,6 @@ class PluginManagerComponent extends ViewPlugin {
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
-  onActivation () {
-
-  }
-
   setDispatch (dispatch) {
     this.dispatch = dispatch
     this.renderComponent()

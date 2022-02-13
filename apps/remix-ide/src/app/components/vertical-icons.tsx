@@ -6,6 +6,7 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 import { Profile } from '@remixproject/plugin-utils'
+import { ViewPluginUI } from '../plugins/ViewPluginUI'
 
 const profile = {
   name: 'menuicons',
@@ -111,10 +112,16 @@ export class VerticalIcons extends Plugin {
     this.events.emit('toggleContent', name)
   }
 
-  render (state: any) {
+  updateComponent(state: any){
     return  <div id='icon-panel'><RemixUiVerticalIconsPanel
     verticalIconsPlugin={state.verticalIconsPlugin}
     icons={state.icons}
-  /></div>
+    /></div>
+  }
+
+  render() {      
+    return (
+        <ViewPluginUI plugin={this} />
+    );
   }
 }
