@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
+import { ViewReactPlugin } from '../plugins/viewReactPlugin'
 
 const profile = {
   name: 'settings',
@@ -19,7 +20,7 @@ const profile = {
   permission: true
 }
 
-module.exports = class SettingsTab extends ViewPlugin {
+module.exports = class SettingsTab extends ViewReactPlugin {
   config: any = {}
   editor: any
   private _deps: {
