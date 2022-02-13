@@ -15,6 +15,7 @@ const profile = {
 
 export class HiddenPanel extends AbstractPanel {
   el: HTMLElement
+  dispatch: React.Dispatch<any> = () => {}
   constructor () {
     super(profile)
     this.el = document.createElement('div')
@@ -27,11 +28,17 @@ export class HiddenPanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  render () {
-    return this.el
+  render (state: any) {
+    return <div className='pluginsContainer'><RemixPluginPanel header={<></>} plugins={state.plugins}/></div> 
+  }
+
+  setDispatch (dispatch: React.Dispatch<any>) {
+    this.dispatch = dispatch
   }
 
   renderComponent () {
-    ReactDOM.render(<RemixPluginPanel header={<></>} plugins={this.plugins}/>, this.el)
+    this.dispatch({
+      plugins: this.plugins,
+    })
   }
 }

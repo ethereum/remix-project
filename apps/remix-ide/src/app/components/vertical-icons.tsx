@@ -20,6 +20,7 @@ export class VerticalIcons extends Plugin {
   events: EventEmitter
   htmlElement: HTMLDivElement
   icons: Record<string, IconRecord> = {}
+  dispatch: React.Dispatch<any> = () => {}
   constructor () {
     super(profile)
     this.events = new EventEmitter()
@@ -46,12 +47,15 @@ export class VerticalIcons extends Plugin {
       ...divived.filter((value) => { return !value.isRequired })
     ]
 
-    ReactDOM.render(
-      <RemixUiVerticalIconsPanel
-        verticalIconsPlugin={this}
-        icons={sorted}
-      />,
-      this.htmlElement)
+    this.dispatch({
+      verticalIconsPlugin: this,
+      icons: sorted
+    })
+
+  }
+
+  setDispatch (dispatch: React.Dispatch<any>) {
+    this.dispatch = dispatch
   }
 
   onActivation () {
@@ -107,7 +111,10 @@ export class VerticalIcons extends Plugin {
     this.events.emit('toggleContent', name)
   }
 
-  render () {
-    return this.htmlElement
+  render (state: any) {
+    return  <div id='icon-panel'><RemixUiVerticalIconsPanel
+    verticalIconsPlugin={state.verticalIconsPlugin}
+    icons={state.icons}
+  /></div>
   }
 }
