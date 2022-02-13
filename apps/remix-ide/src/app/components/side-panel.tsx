@@ -86,12 +86,12 @@ export class SidePanel extends AbstractPanel {
 
   render() {      
     return (
-        <ViewPluginUI plugin={this} />
+      <section className='panel plugin-manager'> <ViewPluginUI plugin={this} /></section>
     );
   }
 
   updateComponent(state: any) {
-    return <section className='panel plugin-manager'> <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} /> </section>
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} />
   }
 
   renderComponent() {
