@@ -83,7 +83,7 @@ export class RunTab extends ViewPlugin {
   }
 
   render () {
-    return  <RunTabUI plugin={this} />
+    return  <div><RunTabUI plugin={this} /></div>
   }
 
 

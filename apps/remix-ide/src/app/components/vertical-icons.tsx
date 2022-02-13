@@ -113,15 +113,15 @@ export class VerticalIcons extends Plugin {
   }
 
   updateComponent(state: any){
-    return  <div id='icon-panel'><RemixUiVerticalIconsPanel
+    return  <RemixUiVerticalIconsPanel
     verticalIconsPlugin={state.verticalIconsPlugin}
     icons={state.icons}
-    /></div>
+    />
   }
 
   render() {      
     return (
-        <ViewPluginUI plugin={this} />
+      <div id='icon-panel'><ViewPluginUI plugin={this} /></div>
     );
   }
 }
