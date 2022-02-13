@@ -88,8 +88,8 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   updateComponent(state){
-    return <div id='pluginManager'><RemixUiPluginManager
-      pluginComponent={state}/></div>
+    return <RemixUiPluginManager
+      pluginComponent={state}/>
   }
 
   renderComponent () {
@@ -98,7 +98,7 @@ class PluginManagerComponent extends ViewPlugin {
 
   render () {
     return (
-        <ViewPluginUI plugin={this} />
+      <div id='pluginManager'><ViewPluginUI plugin={this} /></div>
     );
     
   }

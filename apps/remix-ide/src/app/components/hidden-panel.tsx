@@ -30,7 +30,7 @@ export class HiddenPanel extends AbstractPanel {
   }
 
   updateComponent (state: any) {
-    return <div className='pluginsContainer'><RemixPluginPanel header={<></>} plugins={state.plugins}/></div> 
+    return <RemixPluginPanel header={<></>} plugins={state.plugins}/>
   }
 
   setDispatch (dispatch: React.Dispatch<any>) {
@@ -39,7 +39,7 @@ export class HiddenPanel extends AbstractPanel {
 
   render() {      
     return (
-        <ViewPluginUI plugin={this} />
+      <div className='pluginsContainer'><ViewPluginUI plugin={this} /></div>
     );
   }
 
