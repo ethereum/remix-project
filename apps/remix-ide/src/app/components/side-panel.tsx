@@ -17,6 +17,7 @@ const sidePanel = {
 
 export class SidePanel extends AbstractPanel {
   sideelement: any
+  dispatch: React.Dispatch<any> = () => {}
   constructor() {
     super(sidePanel)
     this.sideelement = document.createElement('section')
@@ -78,11 +79,17 @@ export class SidePanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  render() {
-    return this.sideelement
+  setDispatch (dispatch: React.Dispatch<any>) {
+    this.dispatch = dispatch
+  }
+
+  render(state: any) {
+    return <section className='panel plugin-manager'> <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} /> </section>
   }
 
   renderComponent() {
-    ReactDOM.render(<RemixPluginPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins} />, this.sideelement)
+    this.dispatch({
+      plugins: this.plugins
+    })
   }
 }
