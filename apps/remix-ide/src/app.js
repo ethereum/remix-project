@@ -109,7 +109,6 @@ class AppComponent {
       !Registry.getInstance()
         .get('config')
         .api.exists('settings/matomo-analytics')
-        this.showMatamo = true
     this.walkthroughService = new WalkthroughService(
       appManager,
       this.showMatamo
