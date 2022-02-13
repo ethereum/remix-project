@@ -64,7 +64,7 @@ module.exports = {
       })
   },
 
-  'Record more than one contract': !function (browser: NightwatchBrowser) {
+  'Record more than one contract': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     browser
       .click('*[data-id="deployAndRunClearInstances"]')
