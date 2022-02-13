@@ -32,9 +32,6 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.useMatomoAnalytics = null
   }
 
-  onActivation () {
-  }
-
   render() {
     return (
       <div id='settingsTab'>
