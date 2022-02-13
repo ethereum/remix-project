@@ -42,9 +42,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   renderComponent () {
-    ReactDOM.render(
-      <SolidityCompiler api={this}/>
-      , this.el)
+    console.log('rendering compile tab')
   }
 
   onCurrentFileChanged () {
@@ -68,9 +66,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   render () {
-    this.renderComponent()
-
-    return this.el
+    return <div id='compileTabView'><SolidityCompiler api={this}/></div>
   }
 
   async compileWithParameters (compilationTargets, settings) {
