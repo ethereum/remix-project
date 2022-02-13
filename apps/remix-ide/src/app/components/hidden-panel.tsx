@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import * as packageJson from '../../../../../package.json'
 import { RemixPluginPanel } from '@remix-ui/panel'
+import { ViewPluginUI } from '../plugins/ViewPluginUI'
 
 const profile = {
   name: 'hiddenPanel',
@@ -28,12 +29,18 @@ export class HiddenPanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  render (state: any) {
+  updateComponent (state: any) {
     return <div className='pluginsContainer'><RemixPluginPanel header={<></>} plugins={state.plugins}/></div> 
   }
 
   setDispatch (dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
+  }
+
+  render() {      
+    return (
+        <ViewPluginUI plugin={this} />
+    );
   }
 
   renderComponent () {

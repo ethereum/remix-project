@@ -69,46 +69,18 @@ const RemixApp = (props: IRemixAppUi) => {
       <MatomoDialog hide={!appReady}></MatomoDialog>
 
       <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-        <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light"><ViewPluginUI plugin={props.app.menuicons}></ViewPluginUI></div>
-        <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}><ViewPluginUI plugin={props.app.sidePanel}></ViewPluginUI></div>
+        <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light">{props.app.menuicons.render()}</div>
+        <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
         <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
         <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
           <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
         </div>
       </div>
-      <div><ViewPluginUI plugin={props.app.hiddenPanel}></ViewPluginUI></div>
+      <div>{props.app.hiddenPanel.render()}</div>
       <AppDialogs></AppDialogs>
       <DialogViewPlugin></DialogViewPlugin>
     </AppProvider>
   )
 }
-
-export interface IViewPluginUI {
-  plugin: any
-}
-
-export const ViewPluginUI = (props: IViewPluginUI) => {
-
-  const [state, setState] = useState<any>(null)
-
-  useEffect(() => {
-    // console.log(props.plugin)
-    if(props.plugin.setDispatch){
-      props.plugin.setDispatch(setState)
-    }
-  }, [])
-
-  useEffect(() => {
-    // console.log(state)
-  }, [state])
-
-  return (
-    <>{state? 
-      props.plugin.render(state)
-    :<></>
-    }</>
-  )
-}
-
 
 export default RemixApp
