@@ -5,6 +5,7 @@ import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
 import { ViewReactPlugin } from '../plugins/viewReactPlugin'
+import { ViewPluginUI } from '../plugins/ViewPluginUI'
 
 const profile = {
   name: 'settings',
@@ -47,8 +48,7 @@ module.exports = class SettingsTab extends ViewReactPlugin {
     this.renderComponent()
   }
 
-  render() {  
-    
+  render() {      
     return (
       <div id='settingsTab'>
         <ViewPluginUI plugin={this} />
@@ -57,7 +57,6 @@ module.exports = class SettingsTab extends ViewReactPlugin {
   }
 
   updateComponent(state: any){
-    console.log('updateComponent', state)
     return <RemixUiSettings
     config={state.config}
     editor={state.editor}
@@ -68,7 +67,6 @@ module.exports = class SettingsTab extends ViewReactPlugin {
   }
 
   renderComponent () {
-    console.log('dispatching', this.useMatomoAnalytics, this.dispatch)
     this.dispatch(this)
   }
 
@@ -77,39 +75,10 @@ module.exports = class SettingsTab extends ViewReactPlugin {
   }
 
   updateMatomoAnalyticsChoice (isChecked) {
-    console.log('update matomo')
     this.config.set('settings/matomo-analytics', isChecked)
     this.useMatomoAnalytics = isChecked
     this.dispatch({
       ...this
     })
   }
-}
-
-
-export interface IViewPluginUI {
-  plugin: any
-}
-
-export const ViewPluginUI = (props: IViewPluginUI) => {
-
-  const [state, setState] = useState<any>(null)
-
-  useEffect(() => {
-    console.log(props.plugin)
-    if(props.plugin.setDispatch){
-      props.plugin.setDispatch(setState)
-    }
-  }, [])
-
-  useEffect(() => {
-    console.log(state)
-  }, [state])
-
-  return (
-    <>{state? 
-      <div>{props.plugin.updateComponent(state)}</div>
-    :<></>
-    }</>
-  )
 }
