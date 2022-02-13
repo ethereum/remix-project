@@ -33,11 +33,19 @@ module.exports = class SettingsTab extends ViewPlugin {
   }
 
   onActivation () {
-    this.renderComponent()
   }
 
-  render () {
-    return this.element
+  render() {
+    return (
+      <div id='settingsTab'>
+      <RemixUiSettings
+        config={this.config}
+        editor={this.editor}
+        _deps={this._deps}
+        useMatomoAnalytics={this.useMatomoAnalytics}
+      />
+      </div>
+    );
   }
 
   renderComponent () {

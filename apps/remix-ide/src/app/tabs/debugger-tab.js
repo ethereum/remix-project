@@ -51,9 +51,8 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
       this.call('notification', 'toast', sourceVerificationNotAvailableToastMsg())
     })
-
-    this.renderComponent()
-    return this.el
+    
+    return <DebuggerUI debuggerAPI={this} />
   }
 
   showMessage (title, message) {
@@ -68,9 +67,4 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     }
   }
 
-  renderComponent () {
-    ReactDOM.render(
-      <DebuggerUI debuggerAPI={this} />
-      , this.el)
-  }
 }
