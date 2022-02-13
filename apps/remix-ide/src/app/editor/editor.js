@@ -61,6 +61,12 @@ class Editor extends Plugin {
 
     // to be implemented by the react component
     this.api = {}
+    this.dispatch = null
+  }
+
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
   }
 
   render () {
