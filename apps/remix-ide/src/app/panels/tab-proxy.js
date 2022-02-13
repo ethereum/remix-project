@@ -11,7 +11,6 @@ const profile = {
   kind: 'other'
 }
 
-// @todo(#650) Merge this with MainPanel into one plugin
 export class TabProxy extends Plugin {
   constructor (fileManager, editor) {
     super(profile)
