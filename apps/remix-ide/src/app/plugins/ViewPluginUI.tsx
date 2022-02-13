@@ -22,7 +22,7 @@ export const ViewPluginUI = (props: IViewPluginUI) => {
   
     return (
       <>{state? 
-        <div>{props.plugin.updateComponent(state)}</div>
+        <>{props.plugin.updateComponent(state)}</>
       :<></>
       }</>
     )
