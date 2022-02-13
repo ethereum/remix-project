@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
@@ -8,6 +8,7 @@ import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import { AppContext } from './context/context'
+import { RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 
 interface IRemixAppUi {
   app: any
@@ -17,31 +18,10 @@ const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const sidePanelRef = useRef(null)
-  const mainPanelRef = useRef(null)
   const iconPanelRef = useRef(null)
   const hiddenPanelRef = useRef(null)
 
   useEffect(() => {
-    if (sidePanelRef.current) {
-      if (props.app.sidePanel) {
-        sidePanelRef.current.appendChild(props.app.sidePanel.render())
-      }
-    }
-    if (mainPanelRef.current) {
-      if (props.app.mainview) {
-        mainPanelRef.current.appendChild(props.app.mainview.render())
-      }
-    }
-    if (iconPanelRef.current) {
-      if (props.app.menuicons) {
-        iconPanelRef.current.appendChild(props.app.menuicons.render())
-      }
-    }
-    if (hiddenPanelRef.current) {
-      if (props.app.hiddenPanel) {
-        hiddenPanelRef.current.appendChild(props.app.hiddenPanel.render())
-      }
-    }
     async function activateApp () {
       props.app.themeModule.initTheme(() => {
         setAppReady(true)
@@ -53,6 +33,11 @@ const RemixApp = (props: IRemixAppUi) => {
       activateApp()
     }
   }, [])
+
+
+  useEffect(() => {
+    console.log(props.app.menuicons)
+  }, [props.app.menuicons])
 
   function setListeners () {
     props.app.sidePanel.events.on('toggle', () => {
@@ -73,9 +58,6 @@ const RemixApp = (props: IRemixAppUi) => {
   }
 
   const components = {
-    iconPanel: <div ref={iconPanelRef} id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light"></div>,
-    sidePanel: <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}></div>,
-    mainPanel: <div ref={mainPanelRef} id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'></div>,
     hiddenPanel: <div ref={hiddenPanelRef}></div>
   }
 
@@ -93,18 +75,46 @@ const RemixApp = (props: IRemixAppUi) => {
       <MatomoDialog hide={!appReady}></MatomoDialog>
 
       <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-        {components.iconPanel}
-        {components.sidePanel}
+        <div ref={iconPanelRef} id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light"><ViewPluginUI plugin={props.app.menuicons}></ViewPluginUI></div>
+        <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}><ViewPluginUI plugin={props.app.sidePanel}></ViewPluginUI></div>
         <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
         <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
           <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
         </div>
       </div>
-      {components.hiddenPanel}
+      <div ref={hiddenPanelRef}><ViewPluginUI plugin={props.app.hiddenPanel}></ViewPluginUI></div>
       <AppDialogs></AppDialogs>
       <DialogViewPlugin></DialogViewPlugin>
     </AppProvider>
   )
 }
+
+interface IViewPluginUI {
+  plugin: any
+}
+
+export const ViewPluginUI = (props: IViewPluginUI) => {
+
+  const [state, setState] = useState<any>(null)
+
+  useEffect(() => {
+    console.log(props.plugin)
+    if(props.plugin.setDispatch){
+      props.plugin.setDispatch(setState)
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log(state)
+  }, [state])
+
+  return (
+    <>{state? 
+      props.plugin.render(state)
+    :<></>
+    }</>
+  )
+}
+
 
 export default RemixApp
