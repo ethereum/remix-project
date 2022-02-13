@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
+import { ViewReactPlugin } from '../../plugins/viewReactPlugin'
 
 const profile = {
   name: 'home',
@@ -15,7 +16,7 @@ const profile = {
   location: 'mainPanel',
   version: packageJson.version
 }
-export class LandingPage extends ViewPlugin {
+export class LandingPage extends ViewReactPlugin {
   constructor (appManager, verticalIcons, fileManager, filePanel, contentImport) {
     super(profile)
     this.profile = profile
@@ -35,5 +36,5 @@ export class LandingPage extends ViewPlugin {
     plugin={this}
   /></div>
   }
-  
+
 }
