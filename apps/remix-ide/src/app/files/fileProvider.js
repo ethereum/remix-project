@@ -108,22 +108,20 @@ class FileProvider {
       if (cb) cb()
       return null
     }
-
-    await this.createDir(path.substr(0, path.lastIndexOf('/')), async () => {
-      try {
-        await window.remixFileSystem.writeFile(unprefixedpath, content, 'utf8')
-      } catch (e) {
-        if (cb) cb(e)
-        return false
-      }
-      if (!exists) {
-        this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
-      } else {
-        this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
-      }
-      if (cb) cb()
-      return true
-    })
+    await this.createDir(path.substr(0, path.lastIndexOf('/')))
+    try {
+      await window.remixFileSystem.writeFile(unprefixedpath, content, 'utf8')
+    } catch (e) {
+      if (cb) cb(e)
+      return false
+    }
+    if (!exists) {
+      this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
+    } else {
+      this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
+    }
+    if (cb) cb()
+    return true
   }
 
   async createDir (path, cb) {
