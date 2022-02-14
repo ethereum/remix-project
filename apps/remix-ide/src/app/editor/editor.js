@@ -69,15 +69,7 @@ class Editor extends Plugin {
   setDispatch (dispatch) {
     this.dispatch = dispatch
 
-    this.ref.currentContent = () => this.currentContent() // used by e2e test
-    this.ref.setCurrentContent = (value) => {
-      if (this.sessions[this.currentFile]) {
-        this.sessions[this.currentFile].setValue(value)
-        this._onChange(this.currentFile)
-      }
-    }
-    this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
-    this.ref.getCursorPosition = () => this.getCursorPosition()
+
   }
 
   updateComponent(state) {
@@ -109,7 +101,18 @@ class Editor extends Plugin {
     this.el.gotoLine = (line, column) => this.gotoLine(line, column || 0)
     this.el.getCursorPosition = () => this.getCursorPosition() */
 
-    return <div ref={(element)=>{ this.ref = element}} id='editorView'>
+    return <div ref={(element)=>{ 
+      this.ref = element
+      this.ref.currentContent = () => this.currentContent() // used by e2e test
+      this.ref.setCurrentContent = (value) => {
+        if (this.sessions[this.currentFile]) {
+          this.sessions[this.currentFile].setValue(value)
+          this._onChange(this.currentFile)
+        }
+      }
+      this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
+      this.ref.getCursorPosition = () => this.getCursorPosition()
+    }} id='editorView'>
       <ViewPluginUI plugin={this} />
       </div>
   }
