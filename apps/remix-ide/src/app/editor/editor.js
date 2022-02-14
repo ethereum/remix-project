@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import { ViewPluginUI } from '../plugins/ViewPluginUI'
 
 const EventManager = require('../../lib/events')
 
@@ -62,15 +63,39 @@ class Editor extends Plugin {
     // to be implemented by the react component
     this.api = {}
     this.dispatch = null
+    this.ref = null
   }
 
   setDispatch (dispatch) {
     this.dispatch = dispatch
-    this.renderComponent()
+
+    this.ref.currentContent = () => this.currentContent() // used by e2e test
+    this.ref.setCurrentContent = (value) => {
+      if (this.sessions[this.currentFile]) {
+        this.sessions[this.currentFile].setValue(value)
+        this._onChange(this.currentFile)
+      }
+    }
+    this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
+    this.ref.getCursorPosition = () => this.getCursorPosition()
+  }
+
+  updateComponent(state) {
+    console.log(state)
+    return <EditorUI
+    editorAPI={state.api}
+    themeType={state.currentThemeType}
+    currentFile={state.currentFile}
+    sourceAnnotationsPerFile={state.sourceAnnotationsPerFile}
+    markerPerFile={state.markerPerFile}
+    events={state.events}
+    plugin={state.plugin}
+  />
   }
 
   render () {
-    if (this.el) return this.el
+    
+/*     if (this.el) return this.el
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'editorView')
@@ -82,22 +107,23 @@ class Editor extends Plugin {
       }
     }
     this.el.gotoLine = (line, column) => this.gotoLine(line, column || 0)
-    this.el.getCursorPosition = () => this.getCursorPosition()
-    return this.el
+    this.el.getCursorPosition = () => this.getCursorPosition() */
+
+    return <div ref={(element)=>{ this.ref = element}} id='editorView'>
+      <ViewPluginUI plugin={this} />
+      </div>
   }
 
   renderComponent () {
-    ReactDOM.render(
-      <EditorUI
-        editorAPI={this.api}
-        themeType={this.currentThemeType}
-        currentFile={this.currentFile}
-        sourceAnnotationsPerFile={this.sourceAnnotationsPerFile}
-        markerPerFile={this.markerPerFile}
-        events={this.events}
-        plugin={this}
-      />
-      , this.el)
+    this.dispatch({
+      api: this.api,
+      currentThemeType: this.currentThemeType,
+      currentFile: this.currentFile,
+      sourceAnnotationsPerFile: this.sourceAnnotationsPerFile,
+      markerPerFile: this.markerPerFile,
+      events: this.events,
+      plugin: this
+    })
   }
 
   triggerEvent (name, params) {
