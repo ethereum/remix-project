@@ -5,7 +5,7 @@ import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
 import { fileChangedToastMsg } from '@remix-ui/helper'
-const helper = require('../../lib/helper.js')
+import helper from '../../lib/helper.js'
 
 /*
   attach to files event (removed renamed)
@@ -442,9 +442,9 @@ class FileManager extends Plugin {
       }
       this.openFile(newName)
     } else {
-      for (var k in this.openedFiles) {
+      for (const k in this.openedFiles) {
         if (k.indexOf(oldName + '/') === 0) {
-          var newAbsolutePath = k.replace(oldName, newName)
+          const newAbsolutePath = k.replace(oldName, newName)
           this.openedFiles[newAbsolutePath] = newAbsolutePath
           delete this.openedFiles[k]
           if (this._deps.config.get('currentFile') === k) {
@@ -459,7 +459,7 @@ class FileManager extends Plugin {
   }
 
   currentFileProvider() {
-    var path = this.currentPath()
+    const path = this.currentPath()
     if (path) {
       return this.fileProviderOf(path)
     }
@@ -493,13 +493,13 @@ class FileManager extends Plugin {
   }
 
   currentPath() {
-    var currentFile = this._deps.config.get('currentFile')
+    const currentFile = this._deps.config.get('currentFile')
     return this.extractPathOf(currentFile)
   }
 
   extractPathOf(file) {
-    var reg = /(.*)(\/).*/
-    var path = reg.exec(file)
+    const reg = /(.*)(\/).*/
+    const path = reg.exec(file)
     return path ? path[1] : '/'
   }
 
@@ -544,19 +544,6 @@ class FileManager extends Plugin {
     })
   }
 
-  _saveAsCopy(path, content) {
-    const fileProvider = this.fileProviderOf(path)
-    if (fileProvider) {
-      helper.createNonClashingNameAsync(path, this, '', (error, copyName) => {
-        if (error) {
-          copyName = path + '.' + this.currentRequest.from
-        }
-        this._setFileInternal(copyName, content)
-        this.openFile(copyName)
-      })
-    }
-  }
-
   /**
    * Try to resolve the given file path (the actual path in the file system)
    * e.g if it's specified a github link, npm library, or any external content,
@@ -588,7 +575,7 @@ class FileManager extends Plugin {
   }
 
   removeTabsOf(provider) {
-    for (var tab in this.openedFiles) {
+    for (const tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
         this.fileRemovedEvent(tab)
       }
@@ -722,11 +709,11 @@ class FileManager extends Plugin {
   }
 
   async saveCurrentFile() {
-    var currentFile = this._deps.config.get('currentFile')
+    const currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
-      var input = this.editor.get(currentFile)
+      const input = this.editor.get(currentFile)
       if ((input !== null) && (input !== undefined)) {
-        var provider = this.fileProviderOf(currentFile)
+        const provider = this.fileProviderOf(currentFile)
         if (provider) {
           await provider.set(currentFile, input)
           this.emit('fileSaved', currentFile)
@@ -738,14 +725,16 @@ class FileManager extends Plugin {
   }
 
   async syncEditor(path) {
-    var currentFile = this._deps.config.get('currentFile')
+    const currentFile = this._deps.config.get('currentFile')
     if (path !== currentFile) return
-    var provider = this.fileProviderOf(currentFile)
+    const provider = this.fileProviderOf(currentFile)
     if (provider) {
-      await provider.get(currentFile, (error, content) => {
-        if (error) console.log(error)
+      try{
+        const content = await provider.get(currentFile)
         this.editor.setText(content)
-      })
+      }catch(error){
+        console.log(error)
+      }
     } else {
       console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
     }
@@ -755,7 +744,6 @@ class FileManager extends Plugin {
     const self = this
     if (!fileProvider) fileProvider = 'workspace'
     if (override === undefined) override = false
-    console.log('setBatchFiles', filesSet, fileProvider, override)
     for (const file of Object.keys(filesSet)) {
       if (override) {
         try {
@@ -765,29 +753,29 @@ class FileManager extends Plugin {
         }
         await self.syncEditor(fileProvider + file)
       } else {
-
-        helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
-          async (error, name) => {
-            if (error) {
-              this.call('notification', 'alert', {
-                id: 'fileManagerAlert',
-                message: 'Unexpected error loading file ' + file + ': ' + error
-              })
-            } else if (helper.checkSpecialChars(name)) {
-              this.call('notification', 'alert', {
-                id: 'fileManagerAlert',
-                message: 'Special characters are not allowed in file names.'
-              })
-            } else {
-              try {
-                await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
-              } catch (e) {
-                return callback(e.message || e)
-              }
-              self.syncEditor(fileProvider + name)
+        try{
+          const name = await helper.createNonClashingNameAsync(file, self._deps.filesProviders[fileProvider])
+          if (helper.checkSpecialChars(name)) {
+            this.call('notification', 'alert', {
+              id: 'fileManagerAlert',
+              message: 'Special characters are not allowed in file names.'
+            })
+          } else {
+            try {
+              await self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            } catch (e) {
+              return callback(e.message || e)
             }
+            self.syncEditor(fileProvider + name)
           }
-        )
+        }catch(error){
+          if (error) {
+            this.call('notification', 'alert', {
+              id: 'fileManagerAlert',
+              message: 'Unexpected error loading file ' + file + ': ' + error
+            })
+          }
+        }
       }
     }
     callback()
