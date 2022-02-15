@@ -20,7 +20,6 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-
     steps:
       - checkout
 

@@ -17,10 +17,12 @@ export class CompileTabLogic {
   public language: string
   public compilerImport
   public event
+  public evmVersions: Array<string>
 
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+    this.evmVersions = ['default', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
   init () {
@@ -34,8 +36,12 @@ export class CompileTabLogic {
     this.compiler.set('runs', this.runs)
 
     this.evmVersion = this.api.getCompilerParameters().evmVersion
-    if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
-      this.evmVersion = null
+    if (
+      this.evmVersion === 'undefined' || 
+      this.evmVersion === 'null' || 
+      !this.evmVersion || 
+      !this.evmVersions.includes(this.evmVersion)) {
+        this.evmVersion = null
     }
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)

@@ -180,11 +180,11 @@ class Editor extends Plugin {
     if (this.saveTimeout) {
       window.clearTimeout(this.saveTimeout)
     }
-    this.triggerEvent('contentChanged', [])
 
     this.saveTimeout = window.setTimeout(() => {
+      this.triggerEvent('contentChanged', [])
       this.triggerEvent('requiringToSaveCurrentfile', [])
-    }, 5000)
+    }, 500)
   }
 
   _switchSession (path) {
