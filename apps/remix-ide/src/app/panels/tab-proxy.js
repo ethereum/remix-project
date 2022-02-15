@@ -1,8 +1,7 @@
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 const EventEmitter = require('events')
 const helper = require('../../lib/helper')
 
@@ -329,6 +328,6 @@ export class TabProxy extends Plugin {
   }
 
   renderTabsbar () {
-    return <div><ViewPluginUI plugin={this} /></div>
+    return <div><PluginViewWrapper plugin={this} /></div>
   }
 }

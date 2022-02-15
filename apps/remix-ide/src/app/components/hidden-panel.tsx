@@ -1,10 +1,9 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import ReactDOM from 'react-dom' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import * as packageJson from '../../../../../package.json'
 import { RemixPluginPanel } from '@remix-ui/panel'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'hiddenPanel',
@@ -39,7 +38,7 @@ export class HiddenPanel extends AbstractPanel {
 
   render() {      
     return (
-      <div className='pluginsContainer'><ViewPluginUI plugin={this} /></div>
+      <div className='pluginsContainer'><PluginViewWrapper plugin={this} /></div>
     );
   }
 

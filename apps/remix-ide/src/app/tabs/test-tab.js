@@ -1,13 +1,12 @@
 /* global */
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 import { TestTabLogic } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 
 import { ViewPlugin } from '@remixproject/engine-web'
 import helper from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
@@ -137,7 +136,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   render () {
     this.onActivationInternal()
-    return <div><ViewPluginUI plugin={this} /></div>
+    return <div><PluginViewWrapper plugin={this} /></div>
   }
 
   updateComponent(state) {

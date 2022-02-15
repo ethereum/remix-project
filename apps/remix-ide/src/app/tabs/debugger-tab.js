@@ -3,7 +3,6 @@ import { DebuggerApiMixin } from '@remixproject/debugger-plugin' // eslint-disab
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import * as remixBleach from '../../lib/remixBleach'
 import { compilationFinishedToastMsg, compilingToastMsg, localCompilationToastMsg, notFoundToastMsg, sourceVerificationNotAvailableToastMsg } from '@remix-ui/helper'
 const css = require('./styles/debugger-tab-styles')

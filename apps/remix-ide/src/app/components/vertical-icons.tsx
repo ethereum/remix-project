@@ -1,12 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import ReactDOM from 'react-dom'
 import packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 import { Profile } from '@remixproject/plugin-utils'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'menuicons',
@@ -121,7 +120,7 @@ export class VerticalIcons extends Plugin {
 
   render() {      
     return (
-      <div id='icon-panel'><ViewPluginUI plugin={this} /></div>
+      <div id='icon-panel'><PluginViewWrapper plugin={this} /></div>
     );
   }
 }
