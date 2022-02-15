@@ -230,6 +230,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
 
+    setTimeout(async() => {
     try {
       await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
         listenToEvents(debuggerInstance, currentReceipt)
@@ -257,6 +258,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
       })
     }
+  }, 300)
   }
 
   const debug = (txHash, web3?) => {

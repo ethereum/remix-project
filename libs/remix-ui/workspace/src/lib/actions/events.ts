@@ -154,7 +154,6 @@ const folderAdded = async (folderPath: string) => {
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
-
       resolve(fileTree)
     })
   })
