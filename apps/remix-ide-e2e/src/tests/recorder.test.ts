@@ -11,7 +11,7 @@ module.exports = {
     return sources
   },
 
-  'Test Recorder': function (browser: NightwatchBrowser) {
+  'Run Scenario': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
       .pause(5000)
@@ -34,7 +34,10 @@ module.exports = {
           .perform(() => done())
       })
       .click('*[data-id="deployAndRunClearInstances"]')
-      .testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
+
+    },
+    'Save scenario': function (browser: NightwatchBrowser) {
+      browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
       .createContract('12')
       .clickInstance(0)
@@ -45,7 +48,7 @@ module.exports = {
         const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
 
         modalOk.click()
-      })
+      }).pause(1000)
       .getEditorValue(function (result) {
         const parsed = JSON.parse(result)
         browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
