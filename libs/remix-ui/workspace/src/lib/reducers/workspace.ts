@@ -656,14 +656,22 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
   if (state.mode === 'browser') {
     if (payload.path === state.browser.currentWorkspace) {
       let files = normalize(payload.fileTree, payload.path, payload.type)
-
       files = _.merge(files, state.browser.files[state.browser.currentWorkspace])
       if (deletePath) delete files[deletePath]
       return { [state.browser.currentWorkspace]: files }
     } else {
       let files = state.browser.files
       const _path = splitPath(state, payload.path)
-      const prevFiles = _.get(files, _path)
+      let prevFiles = _.get(files, _path)
+
+      if (!prevFiles) {
+        const object = {}; let o = object
+        for (const pa of _path) {
+          o = o[pa] = {}
+        }
+        files = _.defaultsDeep(files, object)
+        prevFiles = _.get(files, _path)
+      }
 
       if (prevFiles) {
         prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)

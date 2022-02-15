@@ -46,9 +46,9 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
     dispatch(createWorkspaceSuccess(workspaceName))
-    plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
-    plugin.setWorkspaces(await getWorkspaces())
-    plugin.workspaceCreated(workspaceName)
+    await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+    await plugin.setWorkspaces(await getWorkspaces())
+    await plugin.workspaceCreated(workspaceName)
     if (!isEmpty) await loadWorkspacePreset('default-template')
     cb && cb(null, workspaceName)
   }).catch((error) => {
@@ -90,14 +90,14 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
           path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
           content = atob(params.code)
-          workspaceProvider.set(path, content)
+          await workspaceProvider.set(path, content)
         }
         if (params.url) {
           const data = await plugin.call('contentImport', 'resolve', params.url)
 
           path = data.cleanUrl
           content = data.content
-          workspaceProvider.set(path, content)
+          await workspaceProvider.set(path, content)
         }
         return path
       } catch (e) {
@@ -152,7 +152,7 @@ export const workspaceExists = async (name: string) => {
   const browserProvider = plugin.fileProviders.browser
   const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
 
-  return browserProvider.exists(workspacePath)
+  return await browserProvider.exists(workspacePath)
 }
 
 export const fetchWorkspaceDirectory = async (path: string) => {
@@ -178,8 +178,8 @@ export const fetchWorkspaceDirectory = async (path: string) => {
 export const renameWorkspace = async (oldName: string, workspaceName: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   await renameWorkspaceFromProvider(oldName, workspaceName)
   await dispatch(setRenameWorkspace(oldName, workspaceName))
-  plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
-  plugin.workspaceRenamed(oldName, workspaceName)
+  await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+  await plugin.workspaceRenamed(oldName, workspaceName)
   cb && cb(null, workspaceName)
 }
 
@@ -190,9 +190,9 @@ export const renameWorkspaceFromProvider = async (oldName: string, workspaceName
   const browserProvider = plugin.fileProviders.browser
   const workspaceProvider = plugin.fileProviders.workspace
   const workspacesPath = workspaceProvider.workspacesPath
-  browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
-  workspaceProvider.setWorkspace(workspaceName)
-  plugin.setWorkspaces(await getWorkspaces())
+  await browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
+  await workspaceProvider.setWorkspace(workspaceName)
+  await plugin.setWorkspaces(await getWorkspaces())
 }
 
 export const deleteWorkspace = async (workspaceName: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
@@ -206,8 +206,8 @@ const deleteWorkspaceFromProvider = async (workspaceName: string) => {
   const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
   await plugin.fileManager.closeAllFiles()
-  plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
-  plugin.setWorkspaces(await getWorkspaces())
+  await plugin.fileProviders.browser.remove(workspacesPath + '/' + workspaceName)
+  await plugin.setWorkspaces(await getWorkspaces())
 }
 
 export const switchToWorkspace = async (name: string) => {
@@ -219,15 +219,15 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('localhost'))
     plugin.emit('setWorkspace', { name: null, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
-    plugin.fileProviders.workspace.clearWorkspace()
-    plugin.setWorkspace({ name: null, isLocalhost: false })
+    await plugin.fileProviders.workspace.clearWorkspace()
+    await plugin.setWorkspace({ name: null, isLocalhost: false })
     dispatch(setCurrentWorkspace(null))
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
-    plugin.setWorkspace({ name, isLocalhost: false })
+    await plugin.setWorkspace({ name, isLocalhost: false })
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace(name))
     dispatch(setReadOnlyMode(false))
@@ -239,7 +239,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   // the files module. Please ask the user here if they want to overwrite
   // a file and then just use `files.add`. The file explorer will
   // pick that up via the 'fileAdded' event from the files module.
-  [...target.files].forEach((file) => {
+  [...target.files].forEach(async (file) => {
     const workspaceProvider = plugin.fileProviders.workspace
     const loadFile = (name: string): void => {
       const fileReader = new FileReader()
@@ -248,11 +248,12 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         if (checkSpecialChars(file.name)) {
           return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => {}))
         }
-        const success = await workspaceProvider.set(name, event.target.result)
-
-        if (!success) {
+        try {
+          await workspaceProvider.set(name, event.target.result)
+        } catch (error) {
           return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => {}))
         }
+
         const config = plugin.registry.get('config').api
         const editor = plugin.registry.get('editor').api
 
@@ -265,18 +266,13 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
     }
     const name = targetFolder === '/' ? file.name : `${targetFolder}/${file.name}`
 
-    workspaceProvider.exists(name).then(exist => {
-      if (!exist) {
+    if (!await workspaceProvider.exists(name)) {
+      loadFile(name)
+    } else {
+      dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
         loadFile(name)
-      } else {
-        dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
-          loadFile(name)
-        }, () => {}))
-      }
-    }).catch(error => {
-      cb && cb(error)
-      if (error) console.log(error)
-    })
+      }, () => {}))
+    }
   })
 }
 
@@ -295,7 +291,7 @@ export const getWorkspaces = async (): Promise<string[]> | undefined => {
       })
     })
 
-    plugin.setWorkspaces(workspaces)
+    await plugin.setWorkspaces(workspaces)
     return workspaces
   } catch (e) {}
 }

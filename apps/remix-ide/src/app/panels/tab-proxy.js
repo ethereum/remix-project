@@ -1,9 +1,8 @@
 import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
-import { PluginViewWrapper } from '@remix-ui/helper'
+import { PluginViewWrapper, getPathIcon } from '@remix-ui/helper'
 const EventEmitter = require('events')
-const helper = require('../../lib/helper')
 
 const profile = {
   name: 'tabs',
@@ -70,13 +69,13 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(workspacePath)
           return
         }
-        this.addTab(workspacePath, '', () => {
-          this.fileManager.open(file)
+        this.addTab(workspacePath, '', async () => {
+          await this.fileManager.open(file)
           this.event.emit('openFile', file)
           this.emit('openFile', file)
         },
-        () => {
-          this.fileManager.closeFile(file)
+        async () => {
+          await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
           this.emit('closeFile', file)
         })
@@ -88,13 +87,13 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(path)
           return
         }
-        this.addTab(path, '', () => {
-          this.fileManager.open(file)
+        this.addTab(path, '', async () => {
+          await this.fileManager.open(file)
           this.event.emit('openFile', file)
           this.emit('openFile', file)
         },
-        () => {
-          this.fileManager.closeFile(file)
+        async () => {
+          await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
           this.emit('closeFile', file)
         })
@@ -197,12 +196,12 @@ export class TabProxy extends Plugin {
   }
 
   renameTab (oldName, newName) {
-    this.addTab(newName, '', () => {
-      this.fileManager.open(newName)
+    this.addTab(newName, '', async () => {
+      await this.fileManager.open(newName)
       this.event.emit('openFile', newName)
     },
-    () => {
-      this.fileManager.closeFile(newName)
+    async () => {
+      await this.fileManager.closeFile(newName)
       this.event.emit('closeFile', newName)
       this.emit('closeFile', newName)
     })
@@ -231,7 +230,7 @@ export class TabProxy extends Plugin {
             title,
             icon,
             tooltip: name,
-            iconClass: helper.getPathIcon(name)
+            iconClass: getPathIcon(name)
           })
           formatPath.shift()
           if (formatPath.length > 0) {
@@ -247,7 +246,7 @@ export class TabProxy extends Plugin {
                 title: duplicateTabTitle,
                 icon,
                 tooltip: duplicateTabName,
-                iconClass: helper.getPathIcon(duplicateTabName)
+                iconClass: getPathIcon(duplicateTabName)
               }
             }
           }
@@ -261,7 +260,7 @@ export class TabProxy extends Plugin {
         title,
         icon,
         tooltip: name,
-        iconClass: helper.getPathIcon(name)
+        iconClass: getPathIcon(name)
       })
     }
 

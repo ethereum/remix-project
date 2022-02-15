@@ -680,7 +680,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             title="Generate sample test file."
             disabled={disableGenerateButton}
             onClick={async () => {
-              testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
+              await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
               await updateForNewCurrent()
             }}
           >
