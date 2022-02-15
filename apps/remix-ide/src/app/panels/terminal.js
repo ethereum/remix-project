@@ -113,7 +113,6 @@ class Terminal extends Plugin {
   }
 
   updateComponent(state) {
-    console.log("render terminal")
     return <RemixUiTerminal
     plugin={state.plugin}
     onReady={state.onReady}
