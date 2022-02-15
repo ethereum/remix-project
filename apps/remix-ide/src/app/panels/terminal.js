@@ -9,6 +9,7 @@ const vm = require('vm')
 const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
+import { ViewPluginUI } from '../components/ViewPluginUI'
 
 const KONSOLES = []
 
@@ -79,9 +80,12 @@ class Terminal extends Plugin {
       this.call('menuicons', 'select', 'debugger')
       this.call('debugger', 'debug', hash)
     })
+    this.dispatch = null
+    
   }
+  
 
-  onActivation () {
+  onActivation() {
     this.renderComponent()
   }
 
@@ -100,19 +104,28 @@ class Terminal extends Plugin {
     this.terminalApi.log(message)
   }
 
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+  }
+
   render () {
-    return this.element
+    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><ViewPluginUI plugin={this}/></div>
+  }
+
+  updateComponent(state) {
+    console.log("render terminal")
+    return <RemixUiTerminal
+    plugin={state.plugin}
+    onReady={state.onReady}
+  />
   }
 
   renderComponent () {
     const onReady = (api) => { this.terminalApi = api }
-    ReactDOM.render(
-      <RemixUiTerminal
-        plugin={this}
-        onReady={onReady}
-      />,
-      this.element
-    )
+    this.dispatch({
+      plugin: this,
+      onReady: onReady
+    })
   }
 
   scroll2bottom () {
