@@ -91,10 +91,9 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
         path = data.cleanUrl
         content = data.content
-        if (typeof content === 'object') {
+        if (content && typeof content === 'object') {
           const standardInput = content as JSONStandardInput
           if (standardInput.language && standardInput.language === "Solidity" && standardInput.sources) {
-            const obj = standardInput.sources as any
             for (let [fname, source] of Object.entries(standardInput.sources)) {
               await workspaceProvider.set(fname, source.content)
             }
