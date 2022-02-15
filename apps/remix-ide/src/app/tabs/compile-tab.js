@@ -41,7 +41,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   renderComponent () {
-    console.log('rendering compile tab')
+    // empty method, is a state update needed?
   }
 
   onCurrentFileChanged () {
