@@ -119,7 +119,7 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion),
         runs
       }
-      this.testRunner.runTestSources(runningTest, compilerConfig, () => {}, () => {}, null, (error, result) => {
+      this.testRunner.runTestSources(runningTest, compilerConfig, () => { /* Do nothing. */ }, () => { /* Do nothing. */ }, null, (error, result) => {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {

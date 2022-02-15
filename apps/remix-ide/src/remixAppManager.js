@@ -1,14 +1,13 @@
-/* global localStorage, fetch */
 import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import QueryParams from './lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
 const _paq = window._paq = window._paq || []
 
 const requiredModules = [ // services + layout views + system views
   'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'gistHandler', 'layout', 'notification', 'permissionhandler', 'walkthrough']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'gistHandler', 'layout', 'notification', 'permissionhandler', 'walkthrough', 'storage']
 
 const dependentModules = ['git', 'hardhat', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
@@ -174,7 +173,7 @@ class PluginLoader {
     }
 
     this.loaders.queryParams = {
-      set: () => {},
+      set: () => {  /* Do nothing. */ },
       get: () => {
         const { activate } = queryParams.get()
         if (!activate) return []

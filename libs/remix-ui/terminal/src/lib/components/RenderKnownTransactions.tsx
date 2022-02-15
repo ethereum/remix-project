@@ -1,12 +1,10 @@
 
-import React, { useState } from 'react' // eslint-disable-line
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import React from 'react' // eslint-disable-line
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
-
-const remixLib = require('@remix-project/remix-lib')
-const typeConversion = remixLib.execution.typeConversion
+import { execution } from '@remix-project/remix-lib'
+const typeConversion = execution.typeConversion
 
 const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails, modal, provider }) => {
   const debug = (event, tx) => {

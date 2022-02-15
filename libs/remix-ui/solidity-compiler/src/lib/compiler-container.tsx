@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
-import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
+import { checkSpecialChars, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
@@ -74,7 +74,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const params = api.getCompilerParameters()
           const optimize = params.optimize
           const runs = params.runs as string
-          const evmVersion = params.evmVersion
+          const evmVersion = compileTabLogic.evmVersions.includes(params.evmVersion) ? params.evmVersion : 'default'
           const language = getValidLanguage(params.language)
 
           return {
@@ -243,7 +243,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const isSolFileSelected = (currentFile: string = '') => {
+  const isSolFileSelected = (currentFile = '') => {
     if (!currentFile) currentFile = api.currentFile
     if (!currentFile) return false
     const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
@@ -350,7 +350,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       url = customUrl
       api.setCompilerParameters({ version: selectedVersion })
     } else {
-      if (helper.checkSpecialChars(selectedVersion)) {
+      if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
       }
       if (selectedVersion === 'builtin' || selectedVersion.indexOf('soljson') === 0) {
@@ -547,16 +547,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
             <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
-              <option data-id={state.evmVersion === 'default' ? 'selected' : ''} value="default">compiler default</option>
-              <option data-id={state.evmVersion === 'london' ? 'selected' : ''} value="london">london</option>
-              <option data-id={state.evmVersion === 'berlin' ? 'selected' : ''} value="berlin">berlin</option>
-              <option data-id={state.evmVersion === 'istanbul' ? 'selected' : ''} value="istanbul">istanbul</option>
-              <option data-id={state.evmVersion === 'petersburg' ? 'selected' : ''} value="petersburg">petersburg</option>
-              <option data-id={state.evmVersion === 'constantinople' ? 'selected' : ''} value="constantinople">constantinople</option>
-              <option data-id={state.evmVersion === 'byzantium' ? 'selected' : ''} value="byzantium">byzantium</option>
-              <option data-id={state.evmVersion === 'spuriousDragon' ? 'selected' : ''} value="spuriousDragon">spuriousDragon</option>
-              <option data-id={state.evmVersion === 'tangerineWhistle' ? 'selected' : ''} value="tangerineWhistle">tangerineWhistle</option>
-              <option data-id={state.evmVersion === 'homestead' ? 'selected' : ''} value="homestead">homestead</option>
+              {compileTabLogic.evmVersions.map((version) => (<option data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
             </select>
           </div>
           <div className="mt-3">
@@ -606,7 +597,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
               { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-              Compile { typeof state.compiledFileName === 'string' ? helper.extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
+              Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>
         </header>

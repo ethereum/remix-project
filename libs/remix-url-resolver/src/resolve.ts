@@ -54,7 +54,7 @@ export class RemixURLResolver {
     }
     // eslint-disable-next-line no-useless-catch
     try {
-      const req: string = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
+      const req = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
       const response: AxiosResponse = await axios.get(req)
       return { content: response.data, cleanUrl: root + '/' + filePath }
     } catch (e) {
