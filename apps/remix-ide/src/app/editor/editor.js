@@ -70,7 +70,6 @@ class Editor extends Plugin {
   }
 
   updateComponent(state) {
-    console.log(state)
     return <EditorUI
     editorAPI={state.api}
     themeType={state.currentThemeType}
