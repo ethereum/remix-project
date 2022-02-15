@@ -1,9 +1,8 @@
 import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
-import ReactDOM from 'react-dom' // eslint-disable-line
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'mainPanel',
@@ -60,7 +59,7 @@ export class MainPanel extends AbstractPanel {
     }
 
     render() {      
-      return <div style={{height: '100%', width: '100%'}} data-id='mainPanelPluginsContainer'><ViewPluginUI plugin={this} /></div>
+      return <div style={{height: '100%', width: '100%'}} data-id='mainPanelPluginsContainer'><PluginViewWrapper plugin={this} /></div>
     }
 
     updateComponent (state: any) {
