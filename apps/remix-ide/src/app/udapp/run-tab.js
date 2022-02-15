@@ -1,5 +1,4 @@
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'

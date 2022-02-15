@@ -1,15 +1,15 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
+import { PluginViewWrapper } from '@remix-ui/helper'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
-import { ViewPluginUI } from '../components/ViewPluginUI'
+
 
 const KONSOLES = []
 
@@ -109,7 +109,7 @@ class Terminal extends Plugin {
   }
 
   render () {
-    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><ViewPluginUI plugin={this}/></div>
+    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this}/></div>
   }
 
   updateComponent(state) {
