@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom' // eslint-disable-line
 import { AbstractPanel } from './panel'
 import * as packageJson from '../../../../../package.json'
 import { RemixPluginPanel } from '@remix-ui/panel'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 
 const profile = {
   name: 'hiddenPanel',

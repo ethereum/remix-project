@@ -5,7 +5,7 @@ import { AbstractPanel } from './panel'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 // const csjs = require('csjs-inject')
 
 const sidePanel = {

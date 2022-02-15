@@ -5,7 +5,7 @@ import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
 import { ViewReactPlugin } from '../plugins/viewReactPlugin'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 
 const profile = {
   name: 'settings',
