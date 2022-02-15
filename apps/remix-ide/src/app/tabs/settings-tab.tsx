@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react' // eslint-disable-line
+import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
-import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
-import { ViewReactPlugin } from '../plugins/viewReactPlugin'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'settings',
@@ -21,7 +19,7 @@ const profile = {
   permission: true
 }
 
-module.exports = class SettingsTab extends ViewReactPlugin {
+module.exports = class SettingsTab extends ViewPlugin {
   config: any = {}
   editor: any
   private _deps: {
@@ -51,7 +49,7 @@ module.exports = class SettingsTab extends ViewReactPlugin {
   render() {      
     return (
       <div id='settingsTab'>
-        <ViewPluginUI plugin={this} />
+        <PluginViewWrapper plugin={this} />
       </div>
     );
   }

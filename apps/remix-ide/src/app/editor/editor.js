@@ -1,10 +1,9 @@
 'use strict'
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const EventManager = require('../../lib/events')
 
@@ -111,7 +110,7 @@ class Editor extends Plugin {
       this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
       this.ref.getCursorPosition = () => this.getCursorPosition()
     }} id='editorView'>
-      <ViewPluginUI plugin={this} />
+      <PluginViewWrapper plugin={this} />
       </div>
   }
 

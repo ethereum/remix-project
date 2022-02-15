@@ -4,7 +4,7 @@ import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 var EventManager = require('../../lib/events')
 
@@ -61,7 +61,7 @@ class AnalysisTab extends ViewPlugin {
   }
 
   render () {
-    return <div id='staticAnalyserView'><ViewPluginUI plugin={this} /></div>
+    return <div id='staticAnalyserView'><PluginViewWrapper plugin={this} /></div>
   }
 
   updateComponent(state) {

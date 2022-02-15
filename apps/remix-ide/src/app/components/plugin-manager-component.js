@@ -1,9 +1,8 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 const _paq = window._paq = window._paq || []
 
 const profile = {
@@ -98,7 +97,7 @@ class PluginManagerComponent extends ViewPlugin {
 
   render () {
     return (
-      <div id='pluginManager'><ViewPluginUI plugin={this} /></div>
+      <div id='pluginManager'><PluginViewWrapper plugin={this} /></div>
     );
     
   }

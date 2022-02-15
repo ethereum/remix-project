@@ -1,11 +1,10 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { AbstractPanel } from './panel'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
-import { ViewPluginUI } from '../components/ViewPluginUI'
+import { PluginViewWrapper } from '@remix-ui/helper'
 // const csjs = require('csjs-inject')
 
 const sidePanel = {
@@ -86,7 +85,7 @@ export class SidePanel extends AbstractPanel {
 
   render() {      
     return (
-      <section className='panel plugin-manager'> <ViewPluginUI plugin={this} /></section>
+      <section className='panel plugin-manager'> <PluginViewWrapper plugin={this} /></section>
     );
   }
 

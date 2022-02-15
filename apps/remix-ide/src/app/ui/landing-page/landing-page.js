@@ -1,10 +1,8 @@
 /* global */
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
-import { ViewReactPlugin } from '../../plugins/viewReactPlugin'
 
 const profile = {
   name: 'home',
@@ -16,7 +14,7 @@ const profile = {
   location: 'mainPanel',
   version: packageJson.version
 }
-export class LandingPage extends ViewReactPlugin {
+export class LandingPage extends ViewPlugin {
   constructor (appManager, verticalIcons, fileManager, filePanel, contentImport) {
     super(profile)
     this.profile = profile
@@ -32,7 +30,7 @@ export class LandingPage extends ViewReactPlugin {
   }
 
   render () {
-    return <div id='landingPageHomeContainer' className='remixui_homeContainer justify-content-between bg-light d-flex' data-id='landingPageHomeContainer'>      <RemixUiHomeTab
+    return <div id='landingPageHomeContainer' className='remixui_homeContainer justify-content-between bg-light d-flex' data-id='landingPageHomeContainer'><RemixUiHomeTab
     plugin={this}
   /></div>
   }
