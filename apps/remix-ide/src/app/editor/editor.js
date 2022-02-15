@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 
 const EventManager = require('../../lib/events')
 
@@ -68,8 +68,6 @@ class Editor extends Plugin {
 
   setDispatch (dispatch) {
     this.dispatch = dispatch
-
-
   }
 
   updateComponent(state) {

@@ -6,7 +6,7 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 import { Profile } from '@remixproject/plugin-utils'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 
 const profile = {
   name: 'menuicons',
