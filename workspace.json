@@ -1196,11 +1196,6 @@
         "linter": "eslint"
       }
     },
-    "@nrwl/cypress": {
-      "cypress-project": {
-        "linter": "eslint"
-      }
-    },
     "@nrwl/react": {
       "application": {
         "style": "css",
