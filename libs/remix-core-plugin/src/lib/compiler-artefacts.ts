@@ -75,11 +75,11 @@ export class CompilerArtefacts extends Plugin {
   getArtefactsByContractName (contractName) {
     const contractsDataByFilename = this.getAllContractDatas()
     const contractsData = Object.values(contractsDataByFilename)
-    if(contractsData && contractsData.length) {
+    if (contractsData && contractsData.length) {
       const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
-      if (index != -1) return contractsData[index][contractName]
+      if (index !== -1) return contractsData[index][contractName]
       else throw new Error(`Could not find artifacts for ${contractName}. Make sure it is compiled.`)
-    } else throw new Error(`No contract compiled`)
+    } else throw new Error('No contract compiled')
   }
 
   getCompilerAbstract (file) {
