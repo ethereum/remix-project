@@ -4,7 +4,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName'],
   events: [],
   version: '0.0.1'
 }
@@ -70,6 +70,16 @@ export class CompilerArtefacts extends Plugin {
       Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
     }
     return contractsData
+  }
+
+  getArtefactsByContractName (contractName) {
+    const contractsDataByFilename = this.getAllContractDatas()
+    const contractsData = Object.values(contractsDataByFilename)
+    if(contractsData && contractsData.length) {
+      const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
+      if (index != -1) return contractsData[index][contractName]
+      else throw new Error(`Could not find artifacts for ${contractName}. Make sure it is compiled.`)
+    } else throw new Error(`No contract compiled`)
   }
 
   getCompilerAbstract (file) {
