@@ -2,8 +2,8 @@ import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
+import { getPathIcon } from '@remix-ui/helper'
 const EventEmitter = require('events')
-const helper = require('../../lib/helper')
 
 const profile = {
   name: 'tabs',
@@ -231,7 +231,7 @@ export class TabProxy extends Plugin {
             title,
             icon,
             tooltip: name,
-            iconClass: helper.getPathIcon(name)
+            iconClass: getPathIcon(name)
           })
           formatPath.shift()
           if (formatPath.length > 0) {
@@ -247,7 +247,7 @@ export class TabProxy extends Plugin {
                 title: duplicateTabTitle,
                 icon,
                 tooltip: duplicateTabName,
-                iconClass: helper.getPathIcon(duplicateTabName)
+                iconClass: getPathIcon(duplicateTabName)
               }
             }
           }
@@ -261,7 +261,7 @@ export class TabProxy extends Plugin {
         title,
         icon,
         tooltip: name,
-        iconClass: helper.getPathIcon(name)
+        iconClass: getPathIcon(name)
       })
     }
 
