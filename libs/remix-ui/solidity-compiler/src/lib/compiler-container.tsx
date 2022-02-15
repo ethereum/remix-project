@@ -74,7 +74,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const params = api.getCompilerParameters()
           const optimize = params.optimize
           const runs = params.runs as string
-          const evmVersion = params.evmVersion
+          const evmVersion = compileTabLogic.evmVersions.includes(params.evmVersion) ? params.evmVersion : 'default'
           const language = getValidLanguage(params.language)
 
           return {
@@ -547,16 +547,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
             <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
-              <option data-id={state.evmVersion === 'default' ? 'selected' : ''} value="default">compiler default</option>
-              <option data-id={state.evmVersion === 'london' ? 'selected' : ''} value="london">london</option>
-              <option data-id={state.evmVersion === 'berlin' ? 'selected' : ''} value="berlin">berlin</option>
-              <option data-id={state.evmVersion === 'istanbul' ? 'selected' : ''} value="istanbul">istanbul</option>
-              <option data-id={state.evmVersion === 'petersburg' ? 'selected' : ''} value="petersburg">petersburg</option>
-              <option data-id={state.evmVersion === 'constantinople' ? 'selected' : ''} value="constantinople">constantinople</option>
-              <option data-id={state.evmVersion === 'byzantium' ? 'selected' : ''} value="byzantium">byzantium</option>
-              <option data-id={state.evmVersion === 'spuriousDragon' ? 'selected' : ''} value="spuriousDragon">spuriousDragon</option>
-              <option data-id={state.evmVersion === 'tangerineWhistle' ? 'selected' : ''} value="tangerineWhistle">tangerineWhistle</option>
-              <option data-id={state.evmVersion === 'homestead' ? 'selected' : ''} value="homestead">homestead</option>
+              {compileTabLogic.evmVersions.map((version) => (<option data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
             </select>
           </div>
           <div className="mt-3">
