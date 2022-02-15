@@ -3,7 +3,7 @@ import { AbstractPanel } from './panel'
 import ReactDOM from 'react-dom' // eslint-disable-line
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 
 const profile = {
   name: 'mainPanel',

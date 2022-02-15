@@ -3,7 +3,7 @@ import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-import { ViewPluginUI } from '../plugins/ViewPluginUI'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 const _paq = window._paq = window._paq || []
 
 const profile = {
