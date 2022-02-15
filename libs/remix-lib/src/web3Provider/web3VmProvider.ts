@@ -152,7 +152,7 @@ export class Web3VmProvider {
       const log = data.execResult.logs[l]
       const topics = []
       if (log[1].length > 0) {
-        for (var k in log[1]) {
+        for (const k in log[1]) {
           topics.push('0x' + log[1][k].toString('hex'))
         }
       } else {

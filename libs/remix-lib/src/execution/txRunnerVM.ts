@@ -106,7 +106,7 @@ export class TxRunnerVM {
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
 
-      var block = Block.fromBlockData({
+      const block = Block.fromBlockData({
         header: {
           timestamp: timestamp || (new Date().getTime() / 1000 | 0),
           number: self.blockNumber,

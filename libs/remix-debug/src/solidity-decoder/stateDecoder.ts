@@ -10,8 +10,8 @@ import { computeOffsets } from './decodeInfo'
   */
 export async function decodeState (stateVars, storageResolver) {
   const ret = {}
-  for (var k in stateVars) {
-    var stateVar = stateVars[k]
+  for (const k in stateVars) {
+    const stateVar = stateVars[k]
     try {
       const decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
       decoded.constant = stateVar.constant

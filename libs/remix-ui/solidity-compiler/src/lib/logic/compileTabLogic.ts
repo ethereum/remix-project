@@ -1,8 +1,6 @@
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
-import { getValidLanguage } from '@remix-project/remix-solidity'
-
-const Compiler = require('@remix-project/remix-solidity').Compiler
-const EventEmitter = require('events')
+import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
+import { EventEmitter } from 'events'
 
 declare global {
   interface Window {
@@ -19,10 +17,12 @@ export class CompileTabLogic {
   public language: string
   public compilerImport
   public event
+  public evmVersions: Array<string>
 
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+    this.evmVersions = ['default', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
   init () {
@@ -36,8 +36,12 @@ export class CompileTabLogic {
     this.compiler.set('runs', this.runs)
 
     this.evmVersion = this.api.getCompilerParameters().evmVersion
-    if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
-      this.evmVersion = null
+    if (
+      this.evmVersion === 'undefined' || 
+      this.evmVersion === 'null' || 
+      !this.evmVersion || 
+      !this.evmVersions.includes(this.evmVersion)) {
+        this.evmVersion = null
     }
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
@@ -132,7 +136,7 @@ export class CompileTabLogic {
       }
       // TODO readd saving current file
       this.api.saveCurrentFile()
-      var currentFile = this.api.currentFile
+      const currentFile = this.api.currentFile
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err)

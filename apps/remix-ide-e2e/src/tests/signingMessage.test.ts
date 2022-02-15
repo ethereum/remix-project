@@ -23,6 +23,8 @@ module.exports = {
         console.log('signature', signature)
         browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
         browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
+        // we check here that the input is strictly "test message"
+        browser.assert.equal(signature.value, '0xaa8873317ebf3f34fbcc0eab3e9808d851352674c28a3d6b88dc84db6e10fc183a45bcec983a105964a13b54f18e43eceae29d982bf379826fb7ecfe0d42c6ba1b', 'signature should be tied to the input "test message"')
       })
       .addFile('signMassage.sol', sources[0]['signMassage.sol'])
       .openFile('signMassage.sol')

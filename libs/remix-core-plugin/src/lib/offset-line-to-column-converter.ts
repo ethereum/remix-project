@@ -11,7 +11,7 @@ const profile = {
 }
 
 export class OffsetToLineColumnConverter extends Plugin {
-  lineBreakPositionsByContent: {}
+  lineBreakPositionsByContent: Record<number, Array<number>>
   sourceMappingDecoder: any
   constructor () {
     super(profile)
@@ -36,7 +36,7 @@ export class OffsetToLineColumnConverter extends Plugin {
         // if we don't have ast, we process the only one available content (applicable also for compiler older than 0.4.12)
         this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[sourcesArray[0]].content)
       } else {
-        for (var filename in asts) {
+        for (const filename in asts) {
           const source = asts[filename]
           if (source.id === file) {
             this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)

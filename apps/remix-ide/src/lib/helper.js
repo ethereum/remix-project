@@ -64,7 +64,6 @@ module.exports = {
 
     do {
       const isDuplicate = await fileManager.exists(name + counter + prefix + '.' + ext)
-
       if (isDuplicate) counter = (counter | 0) + 1
       else exist = false
     } while (exist)

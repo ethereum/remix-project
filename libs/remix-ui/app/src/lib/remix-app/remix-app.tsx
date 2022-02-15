@@ -7,6 +7,7 @@ import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
+import { AppContext } from './context/context'
 
 interface IRemixAppUi {
   app: any
@@ -96,7 +97,7 @@ const RemixApp = (props: IRemixAppUi) => {
         {components.sidePanel}
         <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
         <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
-          <RemixUIMainPanel></RemixUIMainPanel>
+          <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
         </div>
       </div>
       {components.hiddenPanel}
