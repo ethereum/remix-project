@@ -37,7 +37,7 @@ export function encodeData (funABI, values, contractbyteCode) {
 */
 export function encodeParams (params, funAbi, callback) {
   let data: Buffer | string = ''
-  let dataHex: string = ''
+  let dataHex = ''
   let funArgs
   if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature
@@ -167,7 +167,7 @@ export function encodeConstructorCallAndDeployLibraries (contractName, contract,
 export function buildData (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
   let funArgs = []
   let data: Buffer | string = ''
-  let dataHex: string = ''
+  let dataHex = ''
 
   if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature

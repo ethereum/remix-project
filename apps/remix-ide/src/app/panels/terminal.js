@@ -117,6 +117,7 @@ class Terminal extends Plugin {
 
   scroll2bottom () {
     setTimeout(function () {
+      // do nothing.
     }, 0)
   }
 }

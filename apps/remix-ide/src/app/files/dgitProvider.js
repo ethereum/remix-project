@@ -51,8 +51,8 @@ class DGitProvider extends Plugin {
   async getGitConfig () {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     return {
-      fs: window.remixFileSystem,
-      dir: workspace.absolutePath
+      fs: window.remixFileSystemCallback,
+      dir: addSlash(workspace.absolutePath)
     }
   }
 
@@ -61,6 +61,7 @@ class DGitProvider extends Plugin {
       corsProxy: 'https://corsproxy.remixproject.org/',
       http,
       onAuth: url => {
+        url
         const auth = {
           username: input.token,
           password: ''
@@ -90,7 +91,9 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
   }
 
   async rm (cmd) {
@@ -98,7 +101,9 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
   }
 
   async checkout (cmd) {
@@ -106,7 +111,9 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
   }
 
   async log (cmd) {
@@ -122,6 +129,7 @@ class DGitProvider extends Plugin {
     try {
       remotes = await git.listRemotes({ ...await this.getGitConfig() })
     } catch (e) {
+      console.log(e)
     }
     return remotes
   }
@@ -131,7 +139,9 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
     return status
   }
 
@@ -196,7 +206,7 @@ class DGitProvider extends Plugin {
 
   async setIpfsConfig (config) {
     this.ipfsconfig = config
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(this.checkIpfsConfig())
     })
   }
@@ -239,7 +249,9 @@ class DGitProvider extends Plugin {
     }
 
     const result = await git.clone(cmd)
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
     return result
   }
 
@@ -272,7 +284,9 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig()
     }
     const result = await git.pull(cmd)
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
     return result
   }
 
@@ -289,7 +303,9 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig()
     }
     const result = await git.fetch(cmd)
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
     return result
   }
 
@@ -299,7 +315,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`${workspace.absolutePath}/${file}`)
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
       const ob = {
         path: file,
         content: c
@@ -319,10 +335,10 @@ class DGitProvider extends Plugin {
     this.filesToSend = []
 
     const data = new FormData()
-    files.forEach(async (file) => {
-      const c = window.remixFileSystem.readFileSync(`${workspace.absolutePath}/${file}`)
+    for (const file of files) {
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
       data.append('file', new Blob([c]), `base/${file}`)
-    })
+    }
     // get last commit data
     let ob
     try {
@@ -409,7 +425,7 @@ class DGitProvider extends Plugin {
     } catch (error) {
       throw new Error(error)
     }
-  };
+  }
 
   async importIPFSFiles (config, cid, workspace) {
     const ipfs = IpfsHttpClient(config)
@@ -428,10 +444,10 @@ class DGitProvider extends Plugin {
         }
         const dir = path.dirname(file.path)
         try {
-          this.createDirectories(`${workspace.absolutePath}/${dir}`)
+          await this.createDirectories(`${workspace.absolutePath}/${dir}`)
         } catch (e) { throw new Error(e) }
         try {
-          window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
+          await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
         } catch (e) { throw new Error(e) }
       }
     } catch (e) {
@@ -450,7 +466,7 @@ class DGitProvider extends Plugin {
       }
       _xLen = ((localStorage[_x].length + _x.length) * 2)
       _lsTotal += _xLen
-    };
+    }
     return (_lsTotal / 1024).toFixed(2)
   }
 
@@ -467,7 +483,9 @@ class DGitProvider extends Plugin {
     } else {
       result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
     }
-    await this.call('fileManager', 'refresh')
+    setTimeout(async () => {
+      await this.call('fileManager', 'refresh')
+    }, 1000)
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
 
@@ -495,7 +513,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`${workspace.absolutePath}/${file}`)
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
       zip.file(file, c)
     }
     await zip.generateAsync({
@@ -515,8 +533,8 @@ class DGitProvider extends Plugin {
       if (i > 0) previouspath = '/' + directories.slice(0, i).join('/')
       const finalPath = previouspath + '/' + directories[i]
       try {
-        if (!window.remixFileSystem.existsSync(finalPath)) {
-          window.remixFileSystem.mkdirSync(finalPath)
+        if (!await window.remixFileSystem.exists(finalPath)) {
+          await window.remixFileSystem.mkdir(finalPath)
         }
       } catch (e) {
         console.log(e)
@@ -545,6 +563,11 @@ class DGitProvider extends Plugin {
     }
     return result
   }
+}
+
+const addSlash = (file) => {
+  if (!file.startsWith('/'))file = '/' + file
+  return file
 }
 
 const normalize = (filesList) => {

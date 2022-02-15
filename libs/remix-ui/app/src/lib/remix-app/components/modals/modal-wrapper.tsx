@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ModalDialog } from '@remix-ui/modal-dialog'
-import { ModalDialogProps } from 'libs/remix-ui/modal-dialog/src/lib/types'
+import { ModalDialog, ModalDialogProps } from '@remix-ui/modal-dialog'
 import { ModalTypes } from '../../types'
 
 interface ModalWrapperProps extends ModalDialogProps {

@@ -1,17 +1,16 @@
 import React from 'react' // eslint-disable-line
-import helper from 'apps/remix-ide/src/lib/helper'
-
-const remixLib = require('@remix-project/remix-lib')
-const typeConversion = remixLib.execution.typeConversion
+import { shortenHexData } from '@remix-ui/helper'
+import { execution } from '@remix-project/remix-lib'
+const typeConversion = execution.typeConversion
 
 const Context = ({ opts, provider }: { opts, provider: string }) => {
   const data = opts.tx || ''
-  const from = opts.from ? helper.shortenHexData(opts.from) : ''
+  const from = opts.from ? shortenHexData(opts.from) : ''
   let to = opts.to
-  if (data.to) to = to + ' ' + helper.shortenHexData(data.to)
+  if (data.to) to = to + ' ' + shortenHexData(data.to)
   const val = data.value
-  let hash = data.hash ? helper.shortenHexData(data.hash) : ''
-  const input = data.input ? helper.shortenHexData(data.input) : ''
+  let hash = data.hash ? shortenHexData(data.hash) : ''
+  const input = data.input ? shortenHexData(data.input) : ''
   const logs = opts.logs && opts.logs.decoded && opts.logs.decoded.length ? opts.logs.decoded.length : 0
   const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
@@ -44,7 +43,7 @@ const Context = ({ opts, provider }: { opts, provider: string }) => {
         </span>
       </div>)
   } else {
-    hash = helper.shortenHexData(data.blockHash)
+    hash = shortenHexData(data.blockHash)
     return (
       <div>
         <span>

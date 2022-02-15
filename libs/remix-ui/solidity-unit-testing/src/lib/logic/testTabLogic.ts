@@ -38,20 +38,23 @@ export class TestTabLogic {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    generateTestFile (errorCb:any) {
+    async generateTestFile (errorCb:any) {
         let fileName = this.fileManager.currentFile()
         const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
         if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'
-        const fileProvider = this.fileManager.fileProviderOf(this.currentPath)
+        const fileProvider = await this.fileManager.fileProviderOf(this.currentPath)
         if (!fileProvider) return
         const splittedFileName = fileName.split('/')
         const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
-        this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error: Error, newFile: string) => {
+        this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', async (error: Error, newFile: string) => {
             if (error) return errorCb('Failed to create file. ' + newFile + ' ' + error)
-            const isFileCreated = fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))
-            if (!isFileCreated) return errorCb('Failed to create test file ' + newFile)
-            this.fileManager.open(newFile)
-            this.fileManager.syncEditor(newFile)
+            try{
+                await fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))
+                await this.fileManager.open(newFile)
+                await this.fileManager.syncEditor(newFile)
+            }catch(e){
+                return errorCb('Failed to create test file ' + newFile)
+            }
         })
     }
 

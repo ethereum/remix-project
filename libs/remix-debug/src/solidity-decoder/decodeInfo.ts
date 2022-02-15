@@ -27,7 +27,7 @@ function mapping (type, stateDefinitions, contractName) {
   const keyType = parseType(keyTypeName, stateDefinitions, contractName, 'storage')
   const valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
 
-  var underlyingTypes = {
+  const underlyingTypes = {
     keyType: keyType,
     valueType: valueType
   }
@@ -329,9 +329,9 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
     offset: 0,
     slot: 0
   }
-  for (var i in types) {
-    var variable = types[i]
-    var type = parseType(variable.typeDescriptions.typeString, stateDefinitions, contractName, location)
+  for (const i in types) {
+    const variable = types[i]
+    const type = parseType(variable.typeDescriptions.typeString, stateDefinitions, contractName, location)
     if (!type) {
       console.log('unable to retrieve decode info of ' + variable.typeDescriptions.typeString)
       return null
