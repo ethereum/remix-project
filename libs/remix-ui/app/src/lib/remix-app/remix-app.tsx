@@ -32,11 +32,6 @@ const RemixApp = (props: IRemixAppUi) => {
     }
   }, [])
 
-
-  useEffect(() => {
-    console.log(props.app.menuicons)
-  }, [props.app.menuicons])
-
   function setListeners () {
     props.app.sidePanel.events.on('toggle', () => {
       setHideSidePanel(prev => {

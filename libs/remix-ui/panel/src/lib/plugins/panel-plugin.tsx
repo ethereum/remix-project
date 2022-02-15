@@ -13,11 +13,6 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
     
     const ref:any = panelRef || localRef
     if (ref.current) {
-      if(React.isValidElement(props.pluginRecord.view)) {
-        // console.log('is REACT element', props.pluginRecord.profile.name)
-      }else{
-        console.info('is HTML element', props.pluginRecord.profile.name)
-      }
       if (props.pluginRecord.view) {
         if (React.isValidElement(props.pluginRecord.view)) {
           setView(props.pluginRecord.view)
