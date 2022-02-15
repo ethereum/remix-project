@@ -2,6 +2,7 @@ import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
+import { ViewPluginUI } from '../components/ViewPluginUI'
 const EventEmitter = require('events')
 const helper = require('../../lib/helper')
 
@@ -22,6 +23,7 @@ export class TabProxy extends Plugin {
     this._handlers = {}
     this.loadedTabs = []
     this.el = document.createElement('div')
+    this.dispatch = null
   }
 
   onActivation () {
@@ -285,6 +287,15 @@ export class TabProxy extends Plugin {
     this.handlers[type] = fn
   }
 
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
+  }
+
+  updateComponent(state) {
+    return <TabsUI tabs={state.loadedTabs} onSelect={state.onSelect} onClose={state.onClose} onZoomIn={state.onZoomIn} onZoomOut={state.onZoomOut} onReady={state.onReady} />
+  }
+
   renderComponent () {
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
@@ -307,12 +318,17 @@ export class TabProxy extends Plugin {
 
     const onReady = (api) => { this.tabsApi = api }
 
-    ReactDOM.render(
-      <TabsUI tabs={this.loadedTabs} onSelect={onSelect} onClose={onClose} onZoomIn={onZoomIn} onZoomOut={onZoomOut} onReady={onReady} />
-      , this.el)
+    this.dispatch({
+      loadedTabs: this.loadedTabs,
+      onSelect,
+      onClose,
+      onZoomIn,
+      onZoomOut,
+      onReady
+    })
   }
 
   renderTabsbar () {
-    return this.el
+    return <div><ViewPluginUI plugin={this} /></div>
   }
 }
