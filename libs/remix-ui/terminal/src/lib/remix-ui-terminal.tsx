@@ -142,7 +142,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       if (cb) cb()
       return
     }
-
     provider.get(file, (error, content) => {
       console.log({ content })
       if (error) {

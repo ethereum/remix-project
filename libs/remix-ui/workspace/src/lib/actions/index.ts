@@ -42,7 +42,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace('code-sample'))
       const filePath = await loadWorkspacePreset('code-template')
-      plugin.on('editor', 'editorMounted', () => plugin.fileManager.openFile(filePath))
+      plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
     } else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'default-template')
@@ -229,7 +229,7 @@ export const copyFile = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
   try {
-    fileManager.copyFile(src, dest)
+    await fileManager.copyFile(src, dest)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
   }
@@ -239,7 +239,7 @@ export const copyFolder = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
   try {
-    fileManager.copyDir(src, dest)
+    await fileManager.copyDir(src, dest)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
   }
@@ -257,11 +257,11 @@ export const runScript = async (path: string) => {
 }
 
 export const emitContextMenuEvent = async (cmd: customAction) => {
-  plugin.call(cmd.id, cmd.name, cmd)
+  await plugin.call(cmd.id, cmd.name, cmd)
 }
 
 export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
-  plugin.fileManager.open(path)
+  await plugin.fileManager.open(path)
   dispatch(focusElement([{ key: path, type }]))
 }
 
@@ -269,10 +269,10 @@ export const handleExpandPath = (paths: string[]) => {
   dispatch(setExpandPath(paths))
 }
 
-const packageGistFiles = (directory) => {
+const packageGistFiles = async (directory) => {
+  const workspaceProvider = plugin.fileProviders.workspace
+  const isFile = await workspaceProvider.isFile(directory)
   return new Promise((resolve, reject) => {
-    const workspaceProvider = plugin.fileProviders.workspace
-    const isFile = workspaceProvider.isFile(directory)
     const ret = {}
 
     if (isFile) {

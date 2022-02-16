@@ -636,13 +636,13 @@ export const runTransactions = (
   )
 }
 
-const saveScenario = (newPath: string, provider, promptCb, cb) => {
+const saveScenario = async (newPath: string, provider, promptCb, cb) => {
   const txJSON = JSON.stringify(plugin.recorder.getAll(), null, 2)
 
-  promptCb(() => {
+  promptCb(async () => {
     try {
-      if (!provider.set(newPath, txJSON)) return cb('Failed to create file ' + newPath)
-      plugin.fileManager.open(newPath)
+      await provider.set(newPath, txJSON)
+      await plugin.fileManager.open(newPath)
     } catch (error) {
       if (error) return cb('Failed to create file. ' + newPath + ' ' + error)
     }
@@ -651,7 +651,7 @@ const saveScenario = (newPath: string, provider, promptCb, cb) => {
 
 export const storeScenario = async (prompt: (msg: string, defaultValue: string) => JSX.Element) => {
   const path = plugin.fileManager.currentPath()
-  const fileProvider = plugin.fileManager.fileProviderOf(path)
+  const fileProvider = await plugin.fileManager.fileProviderOf(path)
 
   if (!fileProvider) return displayNotification('Alert', 'Invalid File Provider', 'OK', null)
   const newPath = await createNonClashingNameAsync(path + '/' + plugin.REACT_API.recorder.pathToScenario, plugin.fileManager)

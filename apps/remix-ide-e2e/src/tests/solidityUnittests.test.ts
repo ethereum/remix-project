@@ -263,7 +263,7 @@ module.exports = {
       .removeFile('tests/ballotFailedLog_test.sol', 'workspace_new')
   },
 
-  'Debug tests using debugger #group5': function (browser: NightwatchBrowser) {
+  'Debug tests using debugger #group7': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
@@ -288,9 +288,10 @@ module.exports = {
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
-      .pause(1000)
+      .pause(5000)
       .checkVariableDebug('soliditylocals', locals)
-      .clickLaunchIcon('solidityUnitTesting')
+      .pause(5000)
+      .clickLaunchIcon('solidityUnitTesting').pause(2000)
       .scrollAndClick('#Check_winning_proposal_passed')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
@@ -301,8 +302,8 @@ module.exports = {
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
       // remix_test.sol should be opened in editor
       .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
-      .pause(1000)
-      .clickLaunchIcon('solidityUnitTesting')
+      .pause(5000)
+      .clickLaunchIcon('solidityUnitTesting').pause(2000)
       .scrollAndClick('#Check_winning_proposal_again')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
@@ -311,9 +312,9 @@ module.exports = {
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
-      .pause(1000)
-      .clickLaunchIcon('solidityUnitTesting')
-      .scrollAndClick('#Check_winnin_proposal_with_return_value')
+      .pause(5000)
+      .clickLaunchIcon('solidityUnitTesting').pause(5000)
+      .scrollAndClick('#Check_winnin_proposal_with_return_value').pause(5000)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
       // eslint-disable-next-line dot-notation
