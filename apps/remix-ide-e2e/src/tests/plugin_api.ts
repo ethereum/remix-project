@@ -235,7 +235,9 @@ module.exports = {
   },
   'Should write to file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileSaved', args: ['README.txt'] }, ['README.txt', 'test'])
-    await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'README.txt')
+    browser.pause(4000, async () => {
+      await clickAndCheckLog(browser, 'fileManager:getFile', 'test', null, 'README.txt')
+    })
   },
   'Should set file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:setFile', null, { event: 'fileAdded', args: ['new.sol'] }, ['new.sol', 'test'])
