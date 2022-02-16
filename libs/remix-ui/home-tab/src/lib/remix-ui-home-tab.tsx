@@ -297,7 +297,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
           <div className="ml-3">
-            <div className="mb-5">
+            <div className="mb-3">
               <h4>Featured Plugins</h4>
               <div className="d-flex flex-row pt-2">
                 <ThemeContext.Provider value={ state.themeQuality }>
