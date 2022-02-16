@@ -65,11 +65,10 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
         <button className='btn btn-primary btn-sm navigator jumpButton fas fa-step-forward' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" title='Jump to the next breakpoint' onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled}></button>
       </div>
       <div id='reverted' style={{ display: revertedReason === '' ? 'none' : 'block' }}>
-        <button id='jumptoexception' title='Jump to exception' className='btn btn-danger btn-sm navigator button fas fa-exclamation-triangle' onClick={() => { jumpToException && jumpToException() }} disabled={state.jumpOutDisabled}>
-        </button>
-        <span>State changes made during this call will be reverted.</span>
-        <span id='outofgas' style={{ display: revertedReason === 'outofgas' ? 'inline' : 'none' }}>This call will run out of gas.</span>
-        <span id='parenthasthrown' style={{ display: revertedReason === 'parenthasthrown' ? 'inline' : 'none' }}>The parent call will throw an exception</span>
+        <span className='text-warning'>This call has reverted, state changes made during the call will be reverted.</span>        
+        <span className='text-warning' id='outofgas' style={{ display: revertedReason === 'outofgas' ? 'inline' : 'none' }}>This call will run out of gas.</span>
+        <span className='text-warning' id='parenthasthrown' style={{ display: revertedReason === 'parenthasthrown' ? 'inline' : 'none' }}>The parent call will throw an exception</span>
+        <div className='text-warning'>Click <u className="cursorPointerRemixDebugger" role="button" onClick={() => { jumpToException && jumpToException() }}>here</u> to jump where the call reverted.</div>
       </div>
     </div>
   )
