@@ -64,7 +64,7 @@ const clearPayLoad = async (browser: NightwatchBrowser) => {
   })
 }
 
-const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => {
+const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => { // eslint-disable-line
   return new Promise((resolve) => {
     browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).pause(100)
       .click(`//*[@data-id='${buttonText}']`, async () => {
@@ -107,7 +107,7 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
  * @return {Promise}
  */
 
-const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => {
+const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => { // eslint-disable-line
   if (payload) {
     await setPayload(browser, payload)
   } else {
@@ -235,7 +235,9 @@ module.exports = {
   },
   'Should write to file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:writeFile', null, { event: 'fileSaved', args: ['README.txt'] }, ['README.txt', 'test'])
-    await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'README.txt')
+    browser.pause(4000, async () => {
+      await clickAndCheckLog(browser, 'fileManager:getFile', 'test', null, 'README.txt')
+    })
   },
   'Should set file #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:setFile', null, { event: 'fileAdded', args: ['new.sol'] }, ['new.sol', 'test'])
