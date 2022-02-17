@@ -77,7 +77,7 @@ export class CompilerArtefacts extends Plugin {
     const contractsData = Object.values(contractsDataByFilename)
     if (contractsData && contractsData.length) {
       const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
-      if (index !== -1) return contractsData[index][contractName]
+      if (index !== -1) return { abi: contractsData[index][contractName].abi, bytecode: contractsData[index][contractName].evm.bytecode.object }
       else throw new Error(`Could not find artifacts for ${contractName}. Make sure it is compiled.`)
     } else throw new Error('No contract compiled')
   }

@@ -704,7 +704,14 @@ class FileManager extends Plugin {
     return collectList(path)
   }
 
-  isRemixDActive() {
+  async fileList (dirPath) {
+    const paths: any = await this.readdir(dirPath)
+    for( const path in paths)
+      if(paths[path].isDirectory) delete paths[path]
+    return paths
+  }
+
+  isRemixDActive () {
     return this.appManager.isActive('remixd')
   }
 
