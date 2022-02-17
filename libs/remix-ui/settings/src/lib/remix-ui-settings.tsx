@@ -203,19 +203,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   )
 
-  const themes = () => {
-    const themes = props._deps.themeModule.getThemes()
-    if (themes) {
-      return themes.map((aTheme, index) => (
-        <div className="radio custom-control custom-radio mb-1 form-check" key={index}>
-          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name }/>
-          <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${aTheme.name}`} htmlFor={aTheme.name}>{aTheme.name} ({aTheme.quality})</label>
-        </div>
-      )
-      )
-    }
-  }
-
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
@@ -223,14 +210,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {gistToken()}
       {swarmSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
-      <div className="border-top">
-        <div className="card-body pt-3 pb-2">
-          <h6 className="card-title">Themes</h6>
-          <div className="card-text themes-container">
-            {themes()}
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
