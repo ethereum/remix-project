@@ -11,7 +11,6 @@ import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './s
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
   *
-  * - Web3Providers - define which environment (web3) the transaction will be retrieved from
   * - TraceManager - Load / Analyze the trace and retrieve details of specific test
   * - CodeManager - Retrieve loaded byte code and help to resolve AST item from vmtrace index
   * - SolidityProxy - Basically used to extract state variable from AST
