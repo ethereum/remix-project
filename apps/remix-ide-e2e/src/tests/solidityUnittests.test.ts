@@ -283,9 +283,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="dropdownPanelSolidityLocals"]').pause(1000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '315' }) // It only moves slider to 315 but vm traces are not updated
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .goToVMTraceStep(316)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
       .pause(5000)
@@ -295,9 +293,7 @@ module.exports = {
       .scrollAndClick('#Check_winning_proposal_passed')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '1450' })
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .goToVMTraceStep(1451)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
       // remix_test.sol should be opened in editor
@@ -307,9 +303,7 @@ module.exports = {
       .scrollAndClick('#Check_winning_proposal_again')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '1150' })
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .goToVMTraceStep(1151)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
       .pause(5000)
@@ -317,9 +311,7 @@ module.exports = {
       .scrollAndClick('#Check_winnin_proposal_with_return_value').pause(5000)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '320' })
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+      .goToVMTraceStep(321)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
       .clickLaunchIcon('filePanel')
       .pause(2000)

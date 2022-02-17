@@ -23,11 +23,6 @@
       ui: uiHelper,
       compiler: compilerHelper
     },
-    vm: {
-      Web3Providers: Web3Providers,
-      DummyProvider: DummyProvider,
-      Web3VMProvider: Web3VmProvider
-    },
     Storage: Storage,
     util: util,
     execution: {
