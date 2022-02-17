@@ -72,14 +72,29 @@ export class CompilerArtefacts extends Plugin {
     return contractsData
   }
 
-  getArtefactsByContractName (contractName) {
+  async getArtefactsFromFE (path, contractName) {
+    const dirList = await this.call('fileManager', 'dirList', path)
+    if(dirList.includes(path + '/artifacts')) {
+      const fileList = await this.call('fileManager', 'fileList', path + '/artifacts')
+      const artefactsFilePaths = fileList.filter(filePath => {
+        const filenameArr = filePath.split('/')
+        const filename = filenameArr[filenameArr.length - 1]
+        if (filename === `${contractName}.json` || filename === `${contractName}_metadata.json`) return true
+      })
+      const content = await this.call('fileManager', 'readFile', artefactsFilePaths[1])
+      const artifacts = JSON.parse(content)
+      return { abi: artifacts.abi, bytecode: artifacts.data.bytecode.object }
+    }
+  }
+
+  async getArtefactsByContractName (contractName) {
     const contractsDataByFilename = this.getAllContractDatas()
     const contractsData = Object.values(contractsDataByFilename)
     if (contractsData && contractsData.length) {
       const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
       if (index !== -1) return { abi: contractsData[index][contractName].abi, bytecode: contractsData[index][contractName].evm.bytecode.object }
       else throw new Error(`Could not find artifacts for ${contractName}. Make sure it is compiled.`)
-    } else throw new Error('No contract compiled')
+    } else await this.getArtefactsFromFE ('contracts', contractName)
   }
 
   getCompilerAbstract (file) {
