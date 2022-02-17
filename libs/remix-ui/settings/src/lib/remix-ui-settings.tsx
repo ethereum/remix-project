@@ -22,7 +22,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [, dispatch] = useReducer(settingReducer, initialState)
   const [state, dispatchToast] = useReducer(toastReducer, toastInitialState)
   const [tokenValue, setTokenValue] = useState('')
-  const [themeName, setThemeName] = useState('')
+  const [themeName, ] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
 
