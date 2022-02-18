@@ -80,12 +80,12 @@ export class CompilerArtefacts extends Plugin {
         const artefactsFilePaths = fileList.filter(filePath => {
           const filenameArr = filePath.split('/')
           const filename = filenameArr[filenameArr.length - 1]
-          if (filename === `${contractName}.json` || filename === `${contractName}_metadata.json`) return true
+          if (filename === `${contractName}_fullOP.json`) return true
         })
         if (artefactsFilePaths && artefactsFilePaths.length) {
-          const content = await this.call('fileManager', 'readFile', artefactsFilePaths[1])
+          const content = await this.call('fileManager', 'readFile', artefactsFilePaths[0])
           const artifacts = JSON.parse(content)
-          return { abi: artifacts.abi, bytecode: artifacts.data.bytecode.object }
+          return artifacts
         } else {
           for (const dirPath of dirList) {
             const result = await this.getArtefactsFromFE (dirPath, contractName)
@@ -106,7 +106,7 @@ export class CompilerArtefacts extends Plugin {
     const contractsData = Object.values(contractsDataByFilename)
     if (contractsData && contractsData.length) {
       const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
-      if (index !== -1) return { abi: contractsData[index][contractName].abi, bytecode: contractsData[index][contractName].evm.bytecode.object }
+      if (index !== -1) return contractsData[index][contractName]
       else {
         const result = await this.getArtefactsFromFE ('contracts', contractName)
         if (result) return result
