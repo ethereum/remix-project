@@ -1,14 +1,15 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
+import { PluginViewWrapper } from '@remix-ui/helper'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
+
 
 const KONSOLES = []
 
@@ -79,9 +80,12 @@ class Terminal extends Plugin {
       this.call('menuicons', 'select', 'debugger')
       this.call('debugger', 'debug', hash)
     })
+    this.dispatch = null
+    
   }
+  
 
-  onActivation () {
+  onActivation() {
     this.renderComponent()
   }
 
@@ -100,19 +104,27 @@ class Terminal extends Plugin {
     this.terminalApi.log(message)
   }
 
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+  }
+
   render () {
-    return this.element
+    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this}/></div>
+  }
+
+  updateComponent(state) {
+    return <RemixUiTerminal
+    plugin={state.plugin}
+    onReady={state.onReady}
+  />
   }
 
   renderComponent () {
     const onReady = (api) => { this.terminalApi = api }
-    ReactDOM.render(
-      <RemixUiTerminal
-        plugin={this}
-        onReady={onReady}
-      />,
-      this.element
-    )
+    this.dispatch({
+      plugin: this,
+      onReady: onReady
+    })
   }
 
   scroll2bottom () {
