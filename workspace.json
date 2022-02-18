@@ -1108,6 +1108,21 @@
         }
       }
     },
+    "remix-ui-search": {
+      "root": "libs/remix-ui/search",
+      "sourceRoot": "libs/remix-ui/search/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/search/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/search/**/*"]
+          }
+        }
+      }
+    },
     "remix-ui-panel": {
       "root": "libs/remix-ui/panel",
       "sourceRoot": "libs/remix-ui/panel/src",

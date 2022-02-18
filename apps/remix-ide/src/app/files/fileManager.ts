@@ -19,7 +19,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'findInFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -394,6 +394,14 @@ class FileManager extends Plugin {
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+
+  async findInFile(query) {
+    const browserProvider = this.getProvider('browser')
+    await browserProvider.copyFolderToJson('/.workspaces/default_workspace', ({ path, content }) => {
+      console.log(path, content)
+    })
   }
 
   init() {
