@@ -23,7 +23,7 @@ export class CompilerMetadata extends Plugin {
   }
 
   _MetadataFileName (path, contractName) {
-    return this.joinPath(path, this.innerPath, contractName + '_metadata.json')
+    return this.joinPath(path, this.innerPath, contractName + '_compResult.json')
   }
 
   onActivation () {
@@ -51,27 +51,21 @@ export class CompilerMetadata extends Plugin {
 
   async _setArtefacts (content, contract, path) {
     content = content || '{}'
+    const fileName = this._JSONFileName(path, contract.name)
+    const metadataFileName = this._MetadataFileName(path, contract.name)
+
+    if (contract && contract.object) await this.call('fileManager', 'writeFile', metadataFileName, JSON.stringify(contract.object, null, '\t'))
+
     let metadata
     try {
       metadata = JSON.parse(content)
     } catch (e) {
       console.log(e)
     }
-    const fileName = this._JSONFileName(path, contract.name)
-    const metadataFileName = this._MetadataFileName(path, contract.name)
-
     const deploy = metadata.deploy || {}
     this.networks.forEach((network) => {
       deploy[network] = this._syncContext(contract, deploy[network] || {})
     })
-
-    let parsedMetadata
-    try {
-      parsedMetadata = JSON.parse(contract.object.metadata)
-    } catch (e) {
-      console.log(e)
-    }
-    if (parsedMetadata) await this.call('fileManager', 'writeFile', metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
 
     const data = {
       deploy,
