@@ -96,6 +96,7 @@
     "nightwatch_local_verticalIconscontextmenu": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/verticalIconsPanel.test.js --env=chrome",
     "nightwatch_local_pluginApi": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/plugin_api_*.js --env=chrome",
     "nightwatch_local_migrate_filesystem": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/migrateFileSystem.test.js --env=chrome",
+    "nightwatch_local_stress_editor": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/stress.editor.js --env=chromeDesktop",
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "remixd": "nx build remixd && chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:8080",
     "selenium": "selenium-standalone start",
