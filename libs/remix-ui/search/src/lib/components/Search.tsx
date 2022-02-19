@@ -1,23 +1,21 @@
-import React, { useContext, useEffect, useReducer } from 'react'
-import { SearchContext, SearchProvider } from '../context/context'
-import { SearchingInitialState, SearchReducer } from '../reducers/Reducer'
+import React from 'react'
+import { SearchProvider } from '../context/context'
 import { Find } from './Find'
-import { Replace } from './Replace'
 import { Results } from './results/Results'
+import '../search.css'
+import { Include } from './Include'
+import { Exclude } from './Exclude'
 
 export const SearchTab = props => {
 
 const plugin = props.plugin
 
-useEffect(() => {
-    console.log (plugin)
-},[])
-
 return (
     <>
-      <SearchProvider>
+      <SearchProvider plugin={plugin}>
         <Find></Find>
-        <Replace></Replace>
+        <Include></Include>
+        <Exclude></Exclude>
         <Results plugin={plugin}></Results>
       </SearchProvider>
     </>
