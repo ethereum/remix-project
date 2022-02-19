@@ -1,9 +1,12 @@
 import React from 'react'
 import { createContext, useReducer } from 'react'
+import { findLinesInStringWithMatch } from '../components/results/SearchHelper'
 import {
   SearchingInitialState,
   SearchReducer,
   SearchResult,
+  SearchResultLine,
+  SearchResultLineLine,
   SearchState
 } from '../reducers/Reducer'
 
@@ -17,6 +20,8 @@ export interface SearchingStateInterface {
   setRegex: (value: boolean) => void,
   setWholeWord: (value: boolean) => void,
   setSearchResults: (value: SearchResult[]) => void,
+  findText: (path: string) => Promise<SearchResultLine[]>,
+  hightLightInPath: (path:SearchResult, line:SearchResultLineLine) => void,
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -24,13 +29,15 @@ export const SearchContext = createContext<SearchingStateInterface>(null)
 export const SearchProvider = ({
   children = [],
   reducer = SearchReducer,
-  initialState = SearchingInitialState
+  initialState = SearchingInitialState,
+  plugin = undefined
 } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const value = {
     state,
     setFind: (value: string) => {
+      console.log('setFind: ' + value)
       dispatch({
         type: 'SET_FIND',
         payload: value
@@ -77,7 +84,23 @@ export const SearchProvider = ({
         type: 'SET_SEARCH_RESULTS',
         payload: value
       })
-    } 
+    },
+    findText : async (path: string) => {
+      if(!plugin) return
+      try {
+        if(state.find.length < 3) return
+        const text = await plugin.call('fileManager', 'readFile', path)
+        const re = new RegExp(state.find, 'gi')
+        const result: SearchResultLine[] = findLinesInStringWithMatch(text, re)
+        // console.log(result, path)
+        return result
+      } catch (e) {}
+    },
+    hightLightInPath: async(result: SearchResult, line: SearchResultLineLine) => {
+      await plugin.call('editor', 'discardHighlight')
+      await plugin.call('editor', 'highlight', line.position, result.path)
+    }
+
   }
 
   return (
