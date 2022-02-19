@@ -171,6 +171,7 @@
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
     "express-ws": "^4.0.0",
+    "file-path-filter": "^3.0.2",
     "file-saver": "^2.0.5",
     "form-data": "^4.0.0",
     "fs-extra": "^3.0.1",

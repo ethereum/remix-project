@@ -4,9 +4,25 @@ interface Action {
     payload: any
 }
 
+interface position {
+    start: {
+      line: number
+      column: number
+    },
+    end: {
+      line: number
+      column: number
+    }
+  }
+
+export interface SearchResultLineLine {
+    left: any,
+    center: any,
+    right: any,
+    position: position
+}
 export interface SearchResultLine {
-    lineNumber: number
-    text: string
+    lines: SearchResultLineLine[]
 }
 
 export interface SearchResult {
@@ -33,38 +49,37 @@ export const SearchingInitialState: SearchState = {
 }
 
 export const SearchReducer = (state: SearchState = SearchingInitialState, action: Action) => {
-    console.log(state)
     switch (action.type) {
         case 'SET_FIND':
             return {
                 ...state,
                 find: action.payload,
             }
-            break;
+
         case 'SET_REPLACE':
             return {
                 ...state,
                 replace: action.payload,
             }
-            break;
+
         case 'SET_INCLUDE':
             return {
                 ...state,
                 include: action.payload,
             }
-            break;
+
         case 'SET_EXCLUDE':
             return {
                 ...state,
                 exclude: action.payload,
             }
-            break;
+
         case 'SET_SEARCH_RESULTS':
             return {
                 ...state,
                 searchResults: action.payload,
             }
-            break;
+
         default:
     }
 }

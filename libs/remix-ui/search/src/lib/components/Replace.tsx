@@ -1,16 +1,22 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Replace = props => {
-  const { state, setReplace } = useContext(SearchContext)
-
+  const { setReplace } = useContext(SearchContext)
   const change = e => {
-    setReplace(e.target.value)
+    const timeOutId = setTimeout(() => setReplace(e.target.value), 500)
+    return () => clearTimeout(timeOutId)
   }
 
   return (
     <>
-      <input placeholder='Replace' className="form-control" onChange={change}></input>
+      <div className="find-part">
+        <input
+          placeholder="Replace"
+          className="form-control"
+          onChange={change}
+        ></input>
+      </div>
     </>
   )
 }
