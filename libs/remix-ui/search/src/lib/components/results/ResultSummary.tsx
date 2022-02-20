@@ -31,7 +31,7 @@ export const ResultSummary = (props: ResultSummaryProps) => {
           key={props.searchResult.filename}
           className='search_line  pb-1'
         >
-          <div className='summary_left'>{lineItem.left.substring(lineItem.left.length - 20)}</div>
+          <div className='summary_left'>{lineItem.left.substring(lineItem.left.length - 20).trimStart()}</div>
           <mark className={`summary_center ${state.replace? 'replace_strike':''}`}>{lineItem.center}</mark>
           {state.replace? <mark className='replacement'>{state.replace}</mark>:<></>}
           <div className='summary_right'>{lineItem.right.substring(0, 100)}</div>
