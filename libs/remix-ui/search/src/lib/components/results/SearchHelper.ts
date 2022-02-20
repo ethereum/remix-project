@@ -54,7 +54,7 @@ export const findLinesInStringWithMatch = (str: string, re: RegExp) => {
 
 const matchesInString = (str: string, re: RegExp) => {
     let a: RegExpExecArray
-    let results:RegExpExecArray[] = [];
+    const results:RegExpExecArray[] = [];
     while ((a = re.exec(str || '')) !== null) {
         results.push(a);
     }

@@ -5,7 +5,7 @@ import {
   SearchReducer,
 } from '../reducers/Reducer'
 import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState } from '../types'
-const filePathFilter = require('@jsdevtools/file-path-filter')
+import { filePathFilter } from '@jsdevtools/file-path-filter'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -125,7 +125,7 @@ export const SearchProvider = ({
     replaceText: async(result: SearchResult, line: SearchResultLineLine) => {
       await plugin.call('editor', 'discardHighlight')
       await plugin.call('editor', 'highlight', line.position, result.path)
-      let content = await plugin.call('fileManager', 'readFile', result.path)
+      const content = await plugin.call('fileManager', 'readFile', result.path)
       await plugin.call('fileManager','setFile', result.path, replaceTextInLine(content, line, state.replace))
     }
   }
