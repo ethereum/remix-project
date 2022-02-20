@@ -11,6 +11,7 @@ export const Include = props => {
   return (
     <>
       <div className="find-part">
+        <label>include</label>
         <input
           placeholder="Include ie contracts/**/*.sol"
           className="form-control"

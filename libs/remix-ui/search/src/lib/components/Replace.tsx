@@ -11,6 +11,7 @@ export const Replace = props => {
   return (
     <>
       <div className="find-part">
+      <label>replace</label>
         <input
           placeholder="Replace"
           className="form-control"
