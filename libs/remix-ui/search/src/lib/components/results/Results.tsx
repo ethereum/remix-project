@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { SearchContext } from '../../context/context'
 import { ResultItem } from './ResultItem'
-interface ResultsProps {
-}
 
-export const Results = (props: ResultsProps) => {
+export const Results = () => {
   const { state} = useContext(SearchContext)
   const [alertText, setAlertText] = useState('')
 
