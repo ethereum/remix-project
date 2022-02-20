@@ -1,4 +1,42 @@
-import { SearchResultLineLine } from "../../reducers/Reducer"
+import { EOL } from 'os'
+import { SearchResultLineLine } from '../../types'
+
+
+export const getDirectory = async (dir: string, plugin: any) => {
+    let result = []
+    const files = await plugin.call('fileManager', 'readdir', dir)
+    const fileArray = normalize(files)
+    for (const fi of fileArray) {
+      if (fi) {
+        const type = fi.data.isDirectory
+        if (type === true) {
+          result = [...result, ...(await getDirectory(`${fi.filename}`, plugin))]
+        } else {
+          result = [...result, fi.filename]
+        }
+      }
+    }
+    return result
+  }
+
+  const normalize = filesList => {
+    const folders = []
+    const files = []
+    Object.keys(filesList || {}).forEach(key => {
+      if (filesList[key].isDirectory) {
+        folders.push({
+          filename: key,
+          data: filesList[key]
+        })
+      } else {
+        files.push({
+          filename: key,
+          data: filesList[key]
+        })
+      }
+    })
+    return [...folders, ...files]
+  }
 
 export const findLinesInStringWithMatch = (str: string, re: RegExp) => {
     return str
@@ -43,3 +81,28 @@ const splitLines = (matchResult: RegExpExecArray[], lineNumber: number) => {
         return result
     })
 }
+
+function getEOL(text) {
+    const m = text.match(/\r\n|\n/g);
+    const u = m && m.filter(a => a === '\n').length;
+    const w = m && m.length - u;
+    if (u === w) {
+        return EOL; // use the OS default
+    }
+    return u > w ? '\n' : '\r\n';
+}
+
+
+export const replaceTextInLine = (str: string, searchResultLine: SearchResultLineLine, newText: string) => {
+    return str
+    .split(/\r?\n/)
+    .map(function (line, i) {
+        if (i === searchResultLine.position.start.line) {
+            return searchResultLine.left + newText + searchResultLine.right
+        }
+        return line
+    }).join(getEOL(str))
+}
+
+
+
