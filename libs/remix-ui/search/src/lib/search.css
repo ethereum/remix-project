@@ -19,8 +19,70 @@
 
 .find-part {
     display: flex;
+    flex-direction: column;
+    padding: 2px;
 }
 
 .controls {
     display: flex;
+}
+
+.search_tab .search_line_container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.search_tab .search_line {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+.search_tab .search_control {
+    flex-grow: 0;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.summary_right {
+    min-width: 0;
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.search_tab .replace_strike {
+    text-decoration: line-through;
+}
+
+.summary_left {
+    white-space: pre;
+}
+
+.search_tab mark {
+    padding: 0;
+}
+
+.search_tab .search_line_container .search_control {
+    display: none;
+}
+
+.search_tab .search_line_container:hover .search_control {
+    display: block;
+}
+
+.search_tab .search_line_container:hover .search_line {
+    width: 93%;
+}
+
+.search-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.search_tab .checked {
+    background-color: var(--secondary);
 }

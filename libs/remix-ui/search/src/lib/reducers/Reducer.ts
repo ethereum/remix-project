@@ -1,52 +1,4 @@
-
-interface Action {
-    type: string
-    payload: any
-}
-
-interface position {
-    start: {
-      line: number
-      column: number
-    },
-    end: {
-      line: number
-      column: number
-    }
-  }
-
-export interface SearchResultLineLine {
-    left: any,
-    center: any,
-    right: any,
-    position: position
-}
-export interface SearchResultLine {
-    lines: SearchResultLineLine[]
-}
-
-export interface SearchResult {
-    filename: string,
-    path: string,
-    lines: SearchResultLine[],
-    searchComplete: boolean
-}    
-
-export interface SearchState  {
-    find: string,
-    searchResults: SearchResult[],
-    replace: string,
-    include: string,
-    exclude: string,
-}
-
-export const SearchingInitialState: SearchState = {
-    find: '',
-    replace: '',
-    include: '',
-    exclude: '',
-    searchResults: []
-}
+import { Action, SearchingInitialState, SearchState } from "../types"
 
 export const SearchReducer = (state: SearchState = SearchingInitialState, action: Action) => {
     switch (action.type) {
@@ -54,6 +6,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             return {
                 ...state,
                 find: action.payload,
+                timeStamp: Date.now()
             }
 
         case 'SET_REPLACE':
@@ -66,12 +19,14 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             return {
                 ...state,
                 include: action.payload,
+                timeStamp: Date.now()
             }
 
         case 'SET_EXCLUDE':
             return {
                 ...state,
                 exclude: action.payload,
+                timeStamp: Date.now()
             }
 
         case 'SET_SEARCH_RESULTS':
@@ -79,7 +34,29 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 ...state,
                 searchResults: action.payload,
             }
-
+        case 'TOGGLE_CASE_SENSITIVE':
+            return {
+                ...state,
+                casesensitive: !state.casesensitive,
+                timeStamp: Date.now()
+            }
+        case 'TOGGLE_MATCH_WHOLE_WORD':
+            return {
+                ...state,
+                matchWord: !state.matchWord,
+                timeStamp: Date.now()
+            }            
+        case 'RELOAD_FILE':
+            if (state.searchResults) {
+                const findFile = state.searchResults.find(file => file.filename === action.payload)
+                if (findFile) findFile.timeStamp = Date.now()
+            }
+            return {
+                ...state,
+            }
         default:
+            return {
+                ...state,
+            }
     }
 }
