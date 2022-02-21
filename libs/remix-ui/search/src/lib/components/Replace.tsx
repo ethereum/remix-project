@@ -14,6 +14,7 @@ export const Replace = props => {
       <div className="find-part">
       <label>replace</label>
         <input
+          id='search_replace'
           placeholder="Replace"
           className="form-control"
           onChange={change}

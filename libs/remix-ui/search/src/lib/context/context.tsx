@@ -128,8 +128,8 @@ export const SearchProvider = ({
         let flags = 'g'
         let find = state.find
         if (!state.casesensitive) flags += 'i'
-        if (state.matchWord) find = `\\b${find}\\b`
         if (!state.useRegExp) find = escapeRegExp(find)
+        if (state.matchWord) find = `\\b${find}\\b`
         const re = new RegExp(find, flags)
         const result: SearchResultLine[] = findLinesInStringWithMatch(text, re)
         return result

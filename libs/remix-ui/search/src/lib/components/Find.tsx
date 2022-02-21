@@ -21,12 +21,14 @@ export const Find = props => {
         <label>search</label>
         <div className="search-input">
           <input
+            id='search_input'
             placeholder="Search"
             className="form-control"
             onChange={change}
           ></input>
           <div className="controls">
             <div
+              data-id='search_case_sensitive'
               title="Match Case"
               className={`monaco-custom-checkbox codicon codicon-case-sensitive ${
                 state.casesensitive ? 'checked' : ''
@@ -40,6 +42,7 @@ export const Find = props => {
               }}
             ></div>
             <div
+              data-id='search_whole_word'
               title="Match Whole Word"
               className={`monaco-custom-checkbox codicon codicon-whole-word ${
                 state.matchWord ? 'checked' : ''
@@ -53,6 +56,7 @@ export const Find = props => {
               }}
             ></div>
             <div
+              data-id='search_use_regex'
               title="Use Regular Expression"
               className={`monaco-custom-checkbox codicon codicon-regex ${
                 state.useRegExp ? 'checked' : ''

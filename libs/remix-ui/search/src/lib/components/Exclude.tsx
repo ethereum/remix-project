@@ -20,6 +20,7 @@ export const Exclude = props => {
       <div className="find-part">
         <label>exclude</label>
         <input
+          id='search_exclude'
           placeholder="Exclude ie .git/**/*"
           className="form-control"
           onChange={change}
