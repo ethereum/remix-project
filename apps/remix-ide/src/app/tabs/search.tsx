@@ -1,7 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { PluginViewWrapper } from '@remix-ui/helper'
 import { SearchTab } from '@remix-ui/search'
 const profile = {
     name: 'search',
@@ -17,12 +16,11 @@ const profile = {
   }
 
 export class SearchPlugin extends ViewPlugin {
-    dispatch: React.Dispatch<any> = () => {}
+
     constructor () {
       super(profile)
     }
     
-
     render() {      
         return (
           <div id='searchTab'>
