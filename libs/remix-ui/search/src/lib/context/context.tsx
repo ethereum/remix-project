@@ -1,28 +1,38 @@
 import React, { useEffect } from 'react'
 import { createContext, useReducer } from 'react'
-import { findLinesInStringWithMatch, getDirectory, replaceTextInLine } from '../components/results/SearchHelper'
 import {
-  SearchReducer,
-} from '../reducers/Reducer'
-import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState } from '../types'
+  findLinesInStringWithMatch,
+  getDirectory,
+  replaceTextInLine
+} from '../components/results/SearchHelper'
+import { SearchReducer } from '../reducers/Reducer'
+import {
+  SearchState,
+  SearchResult,
+  SearchResultLine,
+  SearchResultLineLine,
+  SearchingInitialState
+} from '../types'
 import { filePathFilter } from '@jsdevtools/file-path-filter'
+import { escapeRegExp } from 'lodash'
 
 export interface SearchingStateInterface {
   state: SearchState
   setFind: (value: string) => void
   setReplace: (value: string) => void
-  setInclude: (value: string) => void,
-  setExclude: (value: string) => void,
-  setCaseSensitive: (value: boolean) => void,
-  setRegex: (value: boolean) => void,
-  setWholeWord: (value: boolean) => void,
-  setSearchResults: (value: SearchResult[]) => void,
-  findText: (path: string) => Promise<SearchResultLine[]>,
-  hightLightInPath: (result:SearchResult, line:SearchResultLineLine) => void,
-  replaceText: (result: SearchResult, line: SearchResultLineLine) => void,
-  reloadFile: (file:string) => void,
-  toggleCaseSensitive: () => void,
-  toggleMatchWholeWord: () => void,
+  setInclude: (value: string) => void
+  setExclude: (value: string) => void
+  setCaseSensitive: (value: boolean) => void
+  setRegex: (value: boolean) => void
+  setWholeWord: (value: boolean) => void
+  setSearchResults: (value: SearchResult[]) => void
+  findText: (path: string) => Promise<SearchResultLine[]>
+  hightLightInPath: (result: SearchResult, line: SearchResultLineLine) => void
+  replaceText: (result: SearchResult, line: SearchResultLineLine) => void
+  reloadFile: (file: string) => void
+  toggleCaseSensitive: () => void
+  toggleMatchWholeWord: () => void
+  toggleUseRegex: () => void
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -86,10 +96,16 @@ export const SearchProvider = ({
         payload: value
       })
     },
-    reloadFile: async (file:string) => {
+    reloadFile: async (file: string) => {
       dispatch({
         type: 'RELOAD_FILE',
         payload: file
+      })
+    },
+    toggleUseRegex: () => {
+      dispatch({
+        type: 'TOGGLE_USE_REGEX',
+        payload: undefined
       })
     },
     toggleCaseSensitive: () => {
@@ -104,29 +120,47 @@ export const SearchProvider = ({
         payload: undefined
       })
     },
-    findText : async (path: string) => {
-      if(!plugin) return
+    findText: async (path: string) => {
+      if (!plugin) return
       try {
-        if(state.find.length < 3) return
+        if (state.find.length < 3) return
         const text = await plugin.call('fileManager', 'readFile', path)
         let flags = 'g'
         let find = state.find
-        if(!state.casesensitive) flags += 'i'
-        if(state.matchWord) find = `\\b${find}\\b`
+        if (!state.casesensitive) flags += 'i'
+        if (state.matchWord) find = `\\b${find}\\b`
+        if (!state.useRegExp) find = escapeRegExp(find)
         const re = new RegExp(find, flags)
         const result: SearchResultLine[] = findLinesInStringWithMatch(text, re)
         return result
       } catch (e) {}
     },
-    hightLightInPath: async(result: SearchResult, line: SearchResultLineLine) => {
+    hightLightInPath: async (
+      result: SearchResult,
+      line: SearchResultLineLine
+    ) => {
       await plugin.call('editor', 'discardHighlight')
       await plugin.call('editor', 'highlight', line.position, result.path)
     },
-    replaceText: async(result: SearchResult, line: SearchResultLineLine) => {
-      await plugin.call('editor', 'discardHighlight')
-      await plugin.call('editor', 'highlight', line.position, result.path)
-      const content = await plugin.call('fileManager', 'readFile', result.path)
-      await plugin.call('fileManager','setFile', result.path, replaceTextInLine(content, line, state.replace))
+    replaceText: async (result: SearchResult, line: SearchResultLineLine) => {
+      try {
+        await plugin.call('editor', 'discardHighlight')
+        await plugin.call('editor', 'highlight', line.position, result.path)
+        const content = await plugin.call(
+          'fileManager',
+          'readFile',
+          result.path
+        )
+
+        await plugin.call(
+          'fileManager',
+          'setFile',
+          result.path,
+          replaceTextInLine(content, line, state.replace)
+        )
+      } catch (e) {
+        throw new Error(e)
+      }
     }
   }
 
@@ -172,8 +206,6 @@ export const SearchProvider = ({
       })()
     }
   }, [state.timeStamp])
-
-
 
   return (
     <>

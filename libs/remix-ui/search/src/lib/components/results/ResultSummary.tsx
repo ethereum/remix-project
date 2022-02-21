@@ -17,7 +17,11 @@ export const ResultSummary = (props: ResultSummaryProps) => {
 
   const replace = async (line: SearchResultLineLine) => {
     props.setLoading(true)
-    await replaceText(props.searchResult, line)
+    try{
+      await replaceText(props.searchResult, line)
+    }catch(e){
+      props.setLoading(false) 
+    }
   }
 
   return (
