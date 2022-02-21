@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Find = props => {
@@ -9,10 +9,10 @@ export const Find = props => {
     toggleMatchWholeWord,
     toggleUseRegex
   } = useContext(SearchContext)
-  let timeOutId: any = null
+  const timeOutId = useRef(null)
   const change = e => {
-    clearTimeout(timeOutId)
-    timeOutId = setTimeout(() => setFind(e.target.value), 500)
+    clearTimeout(timeOutId.current)
+    timeOutId.current = setTimeout(() => setFind(e.target.value), 500)
   }
 
   return (

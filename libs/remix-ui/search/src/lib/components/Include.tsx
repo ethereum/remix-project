@@ -1,14 +1,14 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Include = props => {
   const { setInclude } = useContext(SearchContext)
   const [str, setStr] = useState<string>('')
-  let timeOutId: any = null
+  const timeOutId = useRef(null)
   const change = e => {
     setStr(e.target.value)
-    clearTimeout(timeOutId)
-    timeOutId = setTimeout(() => setInclude(e.target.value), 500)
+    clearTimeout(timeOutId.current)
+    timeOutId.current = setTimeout(() => setInclude(e.target.value), 500)
   }
 
   return (
