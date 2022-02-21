@@ -40,6 +40,12 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 casesensitive: !state.casesensitive,
                 timeStamp: Date.now()
             }
+        case 'TOGGLE_USE_REGEX':
+            return {
+                ...state,
+                useRegExp: !state.useRegExp,
+                timeStamp: Date.now()
+            }
         case 'TOGGLE_MATCH_WHOLE_WORD':
             return {
                 ...state,
