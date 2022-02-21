@@ -26,6 +26,7 @@ export interface ICompilerApi {
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
+    onFileClosed: (name: string) => void
 
     resolveContentAndSave: (url: string) => Promise<string>
     fileExists: (file: string) => Promise<boolean>

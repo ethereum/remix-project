@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
-import { SolidityCompilerProps } from './types'
+import { CompileErrors, SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { ContractSelection } from './contract-selection' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
@@ -9,7 +9,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { api, api: { currentFile, compileTabLogic, contractsDetails, contractMap, compileErrors, configurationSettings } } = props
+  const { api, api: { currentFile, compileTabLogic, contractsDetails, contractMap, configurationSettings } } = props
   const [state, setState] = useState({
     isHardhatProject: false,
     currentFile,
@@ -32,6 +32,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
+  const [compileErrors, setCompileErrors] = useState<CompileErrors>(api.compileErrors)
 
   useEffect(() => {
     (async () => {
@@ -63,12 +64,19 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setState(prevState => {
       return { ...prevState, currentFile: '' }
     })
+    setCompileErrors({} as CompileErrors)
   }
 
   api.onCompilationFinished = (contractsDetails: any, contractMap: any) => {
     setState(prevState => {
       return { ...prevState, contractsDetails, contractMap }
     })
+    setCompileErrors(api.compileErrors)
+  }
+
+  api.onFileClosed = (name) => {
+    console.log('path/name: ', name, currentFile)
+    if (name === currentFile) setCompileErrors({} as CompileErrors)
   }
 
   const toast = (message: string) => {
