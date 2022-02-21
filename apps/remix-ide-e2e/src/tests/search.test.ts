@@ -12,7 +12,8 @@ module.exports = {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
         .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'read').pause(1000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'CONTRACTS/3_BALLOT.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', 'contracts', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', 'README.TXT', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', 'file must')
         .waitForElementContainsText('*[data-id="search_results"]', 'be compiled')
@@ -29,10 +30,11 @@ module.exports = {
         .waitForElementVisible('*[id="search_input"]')
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', '^contract').pause(1000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'CONTRACTS/3_BALLOT.SOL', 60000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'CONTRACTS/2_OWNER.SOL', 60000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'CONTRACTS/1_STORAGE.SOL', 60000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'TESTS/4_BALLOT_TEST.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', '2_OWNER.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', '1_STORAGE.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', '4_BALLOT_TEST.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', 'tests', 60000)
         .elements('css selector','.search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)
         })
@@ -49,8 +51,9 @@ module.exports = {
         .elements('css selector','.search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
         })
-        .waitForElementContainsText('*[data-id="search_results"]', 'SCRIPTS/DEPLOY_ETHERS.JS', 60000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'SCRIPTS/DEPLOY_WEB3.JS', 60000)    
+        .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_ETHERS.JS', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_WEB3.JS', 60000) 
+        .waitForElementContainsText('*[data-id="search_results"]', 'scripts', 60000)  
     },
     'Should find matchword': function (browser: NightwatchBrowser) {
         browser
