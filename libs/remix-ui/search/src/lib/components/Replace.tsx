@@ -3,9 +3,10 @@ import { SearchContext } from '../context/context'
 
 export const Replace = props => {
   const { setReplace } = useContext(SearchContext)
+  let timeOutId: any = null
   const change = e => {
-    const timeOutId = setTimeout(() => setReplace(e.target.value), 500)
-    return () => clearTimeout(timeOutId)
+    clearTimeout(timeOutId)
+    timeOutId = setTimeout(() => setReplace(e.target.value), 500)
   }
 
   return (

@@ -4,10 +4,11 @@ import { SearchContext } from '../context/context'
 export const Exclude = props => {
   const { setExclude, state } = useContext(SearchContext)
   const [str, setStr] = useState<string>('.git/**/*,.deps/**/*')
+  let timeOutId: any = null
   const change = e => {
     setStr(e.target.value)
-    const timeOutId = setTimeout(() => setExclude(e.target.value), 500)
-    return () => clearTimeout(timeOutId)
+    clearTimeout(timeOutId)
+    timeOutId = setTimeout(() => setExclude(e.target.value), 500)
   }
 
   useEffect(() => {
