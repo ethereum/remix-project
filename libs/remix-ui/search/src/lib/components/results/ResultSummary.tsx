@@ -10,7 +10,6 @@ interface ResultSummaryProps {
 
 export const ResultSummary = (props: ResultSummaryProps) => {
   const { hightLightInPath, replaceText, state } = useContext(SearchContext)
-
   const selectLine = async (line: SearchResultLineLine) => {
     await hightLightInPath(props.searchResult, line)
   }
@@ -32,6 +31,7 @@ export const ResultSummary = (props: ResultSummaryProps) => {
           onClick={async () => {
             selectLine(lineItem)
           }}
+          data-id={`${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`}
           key={props.searchResult.filename}
           className='search_line  pb-1'
         >
@@ -41,7 +41,7 @@ export const ResultSummary = (props: ResultSummaryProps) => {
           <div className='summary_right'>{lineItem.right.substring(0, 100)}</div>
         </div>
         <div className='search_control'>
-        <div title="Replace" onClick={async () => {
+        <div title="Replace" data-id={`replace-${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`} onClick={async () => {
             replace(lineItem)
           }} className="codicon codicon-find-replace" role="button" aria-label="Replace" aria-disabled="false"></div>
         </div>
