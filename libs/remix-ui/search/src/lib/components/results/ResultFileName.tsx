@@ -17,7 +17,7 @@ export const ResultFileName = (props: ResultItemProps) => {
   return (
     <>
       {icon ? <div className={`${icon} caret caret_tv`}></div> : null}
-      <div className="search_file_name ml-2">
+      <div title={props.file.filename} className="search_file_name ml-2">
         {props.file.filename}
       </div>
     </>
