@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { createContext, useReducer } from 'react'
 import {
   findLinesInStringWithMatch,
@@ -44,8 +44,8 @@ export const SearchProvider = ({
   plugin = undefined
 } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  let reloadTimeOut: any = null
 
+  const reloadTimeOut = useRef(null)
   const value = {
     state,
     setFind: (value: string) => {
@@ -165,8 +165,8 @@ export const SearchProvider = ({
   }
 
   const reloadStateForFile = async (file: string) => {
-    clearTimeout(reloadTimeOut)
-    reloadTimeOut = setTimeout(async () => {
+    clearTimeout(reloadTimeOut.current)
+    reloadTimeOut.current = setTimeout(async () => {
       await value.reloadFile(file)
     }, 1000)
   }

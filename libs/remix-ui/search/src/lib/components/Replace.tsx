@@ -1,12 +1,12 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Replace = props => {
   const { setReplace } = useContext(SearchContext)
-  let timeOutId: any = null
+  const timeOutId = useRef(null)
   const change = e => {
-    clearTimeout(timeOutId)
-    timeOutId = setTimeout(() => setReplace(e.target.value), 500)
+    clearTimeout(timeOutId.current)
+    timeOutId.current = setTimeout(() => setReplace(e.target.value), 500)
   }
 
   return (
