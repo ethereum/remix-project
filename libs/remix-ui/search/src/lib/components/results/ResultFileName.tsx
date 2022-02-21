@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchResult } from '../../types'
 import { getPathIcon } from '@remix-ui/helper'
+import * as path from 'path'
 interface ResultItemProps {
   file: SearchResult
 }
@@ -12,13 +13,16 @@ export const ResultFileName = (props: ResultItemProps) => {
     if (props.file && props.file.path) {
       setIcon(getPathIcon(props.file.path))
     }
+    // remove path from string
+    // const path = props.file.path.split('/').slice(0, -1).join('/')
   }, [props.file])
 
   return (
     <>
       {icon ? <div className={`${icon} caret caret_tv`}></div> : null}
       <div title={props.file.filename} className="search_file_name ml-2">
-        {props.file.filename}
+        {path.basename(props.file.path)}
+        <span className='dirname pl-1 text-muted text-lowercase'>{path.dirname(props.file.path)}</span>
       </div>
     </>
   )
