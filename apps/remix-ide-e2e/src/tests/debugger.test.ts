@@ -40,8 +40,8 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
       .goToVMTraceStep(51)
-      .click('*[data-id="dropdownPanelSolidityLocals"]')
-      .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
+      .waitForElementContainsText('*[data-id="solidityLocals"]', 'toast', 60000)
+      .waitForElementContainsText('*[data-id="solidityLocals"]', '999', 60000)
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
   },
 
@@ -227,8 +227,23 @@ module.exports = {
       .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
       .pause(10000)
       .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
-      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
-      .end()
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })      
+  },
+
+  'Should debug reverted transactions #group5': function (browser: NightwatchBrowser) {
+    browser
+      .testContracts('reverted.sol', sources[6]['reverted.sol'], ['A', 'B', 'C'])
+      .clickLaunchIcon('udapp')
+      .selectContract('A')
+      .createContract('')
+      .pause(500)
+      .clickInstance(0)
+      .clickFunction('callA - transact (not payable)')
+      .debugTransaction(1)
+      .goToVMTraceStep(79)
+      .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
+      .click('*[data-id="debugGoToRevert"]')
+      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '117 REVERT')
   }
 }
 
@@ -351,6 +366,46 @@ const sources = [
           }
       }
       `
+    }
+  },
+  {
+    'reverted.sol': {
+      content: `contract A {
+        B b;
+        uint p;
+        constructor () {
+            b = new B();
+        }
+        function callA() public {
+            p = 123;
+            try b.callB() {
+                
+            }
+            catch (bytes memory reason) {
+    
+            }
+        }
+    }
+    
+    contract B {
+        C c;
+        uint p;
+        constructor () {
+            c = new C();
+        }
+        function callB() public {
+            p = 124;
+            revert("revert!");
+            c.callC();
+        }
+    }
+    
+    contract C {
+        uint p;
+        function callC() public {
+            p = 125;
+        }
+    }`
     }
   }
 ]
