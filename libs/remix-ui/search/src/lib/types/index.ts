@@ -40,6 +40,7 @@ export interface SearchState {
     exclude: string,
     casesensitive: boolean,
     matchWord: boolean,
+    useRegExp: boolean,
     timeStamp: number
 }
 
@@ -51,5 +52,6 @@ export const SearchingInitialState: SearchState = {
     searchResults: [],
     casesensitive: false,
     matchWord: false,
+    useRegExp: false,
     timeStamp: 0
 }

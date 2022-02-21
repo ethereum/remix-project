@@ -5,6 +5,7 @@
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
     cursor: pointer;
+    align-items: center;
 }
 
 .wrap_summary {
@@ -85,4 +86,10 @@
 
 .search_tab .checked {
     background-color: var(--secondary);
+}
+
+.search_tab .search_file_name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-transform: uppercase;
 }
