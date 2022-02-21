@@ -3,9 +3,10 @@ import { SearchContext } from '../context/context'
 
 export const Include = props => {
   const { setInclude } = useContext(SearchContext)
+  let timeOutId: any = null
   const change = e => {
-    const timeOutId = setTimeout(() => setInclude(e.target.value), 500)
-    return () => clearTimeout(timeOutId)
+    clearTimeout(timeOutId)
+    timeOutId = setTimeout(() => setInclude(e.target.value), 500)
   }
 
   return (
