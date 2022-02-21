@@ -8,7 +8,6 @@ export const allPrograms = [
 export const allCommands = [
   { 'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.' },
   { 'remix.exeCurrent()': 'Run the script currently displayed in the editor.' },
-  // { 'remix.help()': 'Display this help message.' },
   { 'remix.loadgist(id)': 'Load a gist in the file explorer.' },
   // { 'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.' },
 
