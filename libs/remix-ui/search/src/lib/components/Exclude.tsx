@@ -12,7 +12,7 @@ export const Exclude = props => {
   }
 
   useEffect(() => {
-    setExclude('.git/**')
+    setExclude(str)
   }, [])
 
   return (
