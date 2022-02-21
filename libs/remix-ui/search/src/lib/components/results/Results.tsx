@@ -3,16 +3,10 @@ import { SearchContext } from '../../context/context'
 import { ResultItem } from './ResultItem'
 
 export const Results = () => {
-  const { state} = useContext(SearchContext)
-  const [alertText, setAlertText] = useState('')
+  const { state } = useContext(SearchContext)
 
   return (
     <>
-      {alertText ? (
-        <div className="alert alert-success mt-1" role="alert">
-          {alertText}
-        </div>
-      ) : null}
       {state.searchResults &&
         state.searchResults.map((result, index) => {
           return <ResultItem key={index} file={result} />
