@@ -1,10 +1,10 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { AbstractPanel } from './panel'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
+import { PluginViewWrapper } from '@remix-ui/helper'
 // const csjs = require('csjs-inject')
 
 const sidePanel = {
@@ -17,6 +17,7 @@ const sidePanel = {
 
 export class SidePanel extends AbstractPanel {
   sideelement: any
+  dispatch: React.Dispatch<any> = () => {}
   constructor() {
     super(sidePanel)
     this.sideelement = document.createElement('section')
@@ -78,11 +79,23 @@ export class SidePanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  render() {
-    return this.sideelement
+  setDispatch (dispatch: React.Dispatch<any>) {
+    this.dispatch = dispatch
+  }
+
+  render() {      
+    return (
+      <section className='panel plugin-manager'> <PluginViewWrapper plugin={this} /></section>
+    );
+  }
+
+  updateComponent(state: any) {
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} />
   }
 
   renderComponent() {
-    ReactDOM.render(<RemixPluginPanel header={<RemixUIPanelHeader plugins={this.plugins}></RemixUIPanelHeader>} plugins={this.plugins} />, this.sideelement)
+    this.dispatch({
+      plugins: this.plugins
+    })
   }
 }
