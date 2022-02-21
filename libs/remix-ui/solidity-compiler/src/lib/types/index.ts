@@ -24,3 +24,14 @@ export interface ContractSelectionProps {
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
 }
+
+interface CompileError {
+  mode?: string,
+  severity?: string,
+  formattedMessage?: string,
+  type?: string
+}
+export interface CompileErrors {
+  error: CompileError,
+  errors: CompileError[]
+}

@@ -21,6 +21,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onCompilationFinished: (contractsDetails: any, contractMap: any) => void
   onSessionSwitched: () => void
   onContentChanged: () => void
+  onFileClosed: (name: string) => void
 
   initCompilerApi () {
     this.configurationSettings = null
@@ -248,6 +249,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onNoFileSelected) this.onNoFileSelected()
     }
     this.on('fileManager', 'noFileSelected', this.data.eventHandlers.onNoFileSelected)
+
+    this.data.eventHandlers.onFileClosed = (name: string) => {
+      this.onFileClosed(name)
+    }
+
+    this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       this.compileErrors = data
