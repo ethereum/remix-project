@@ -2,7 +2,6 @@ import { ViewPlugin } from '@remixproject/engine-web'
 
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
 import Registry from '../state/registry'
 import { RemixdHandle } from '../plugins/remixd-handle'
@@ -58,18 +57,8 @@ module.exports = class Filepanel extends ViewPlugin {
     this.currentWorkspaceMetadata = {}
   }
 
-  onActivation () {
-    this.renderComponent()
-  }
-
   render () {
-    return this.el
-  }
-
-  renderComponent () {
-    ReactDOM.render(
-      <FileSystemProvider plugin={this} />
-      , this.el)
+    return <div id='fileExplorerView'><FileSystemProvider plugin={this} /></div>
   }
 
   /**
