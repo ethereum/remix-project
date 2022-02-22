@@ -179,12 +179,7 @@ export const SearchProvider = ({
   }
 
   const reloadStateForFile = async (file: string) => {
-    //clearTimeout(reloadTimeOut.current)
-    console.log('reload file', file)
-    //reloadTimeOut.current = setTimeout(async () => {
-      console.log('calling file', file)
       await value.reloadFile(file)
-    //}, 1000)
   }
 
   useEffect(() => {
