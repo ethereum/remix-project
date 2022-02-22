@@ -22,6 +22,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onSessionSwitched: () => void
   onContentChanged: () => void
   onFileClosed: (name: string) => void
+  statusChanged: (data: { key: string, title?: string, type?: string }) => void
 
   initCompilerApi () {
     this.configurationSettings = null
@@ -190,31 +191,31 @@ export const CompilerApiMixin = (Base) => class extends Base {
   resetResults () {
     this.currentFile = ''
     this.contractsDetails = {}
-    this.emit('statusChanged', { key: 'none' })
+    this.statusChanged({ key: 'none' })
     if (this.onResetResults) this.onResetResults()
   }
 
   listenToEvents () {
     this.on('editor', 'contentChanged', () => {
-      this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
+      this.statusChanged({ key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
       if (this.onContentChanged) this.onContentChanged()
     })
 
     this.data.eventHandlers.onLoadingCompiler = (url) => {
       this.data.loading = true
       this.data.loadingUrl = url
-      this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
+      this.statusChanged({ key: 'loading', title: 'loading compiler...', type: 'info' })
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
     this.data.eventHandlers.onCompilerLoaded = () => {
       this.data.loading = false
-      this.emit('statusChanged', { key: 'none' })
+      this.statusChanged({ key: 'none' })
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 
     this.data.eventHandlers.onStartingCompilation = () => {
-      this.emit('statusChanged', { key: 'loading', title: 'compiling...', type: 'info' })
+      this.statusChanged({ key: 'loading', title: 'compiling...', type: 'info' })
     }
 
     this.data.eventHandlers.onRemoveAnnotations = () => {
@@ -262,12 +263,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data)
         if (data.errors && data.errors.length > 0) {
-          this.emit('statusChanged', {
+          this.statusChanged({
             key: data.errors.length,
             title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.emit('statusChanged', { key: 'succeed', title: 'compilation successful', type: 'success' })
+        } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
         // Store the contracts
         this.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
@@ -279,7 +280,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
         })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
-        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
+        this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
       this.contractMap = {}

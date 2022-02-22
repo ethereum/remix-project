@@ -38,6 +38,8 @@ export interface ICompilerApi {
     logToTerminal: (log: terminalLog) => void
 
     compileWithHardhat: (configPath: string) => Promise<string>
+    statusChanged: (data: { key: string, title?: string, type?: string }) => void,
+    emit: (key: string, ...payload: any) => void
 }
 
 export type terminalLog = {

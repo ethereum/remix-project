@@ -33,6 +33,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
   const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
+  const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string, title?: string, type?: string }>>({})
 
   useEffect(() => {
     (async () => {
@@ -40,6 +41,14 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       setHideWarnings(hide)
     })()
   }, [])
+
+  useEffect(() => {
+    if (badgeStatus[currentFile]) {
+      api.emit('statusChanged', badgeStatus[currentFile])
+    } else {
+      api.emit('statusChanged', { key: 'none' })
+    }
+  }, [badgeStatus[currentFile], currentFile])
 
   api.onCurrentFileChanged = (currentFile: string) => {
     setState(prevState => {
@@ -75,7 +84,14 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   }
 
   api.onFileClosed = (name) => {
-    if (name === currentFile) setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
+    if (name === currentFile) {
+      setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
+      setBadgeStatus({ ...badgeStatus, [currentFile]: { key: 'none' } })
+    }
+  }
+
+  api.statusChanged = (data: { key: string, title?: string, type?: string }) => {
+    setBadgeStatus({ ...badgeStatus, [currentFile]: data })
   }
 
   const toast = (message: string) => {
