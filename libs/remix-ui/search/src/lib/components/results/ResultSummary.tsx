@@ -1,4 +1,5 @@
-import { useDialogDispatchers } from 'libs/remix-ui/app/src/lib/remix-app/context/provider'
+
+import { useDialogDispatchers } from '@remix-ui/app'
 import React, { useContext } from 'react'
 import { SearchContext } from '../../context/context'
 import { SearchResult, SearchResultLine, SearchResultLineLine } from '../../types'
