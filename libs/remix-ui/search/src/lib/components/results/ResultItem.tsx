@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { SearchContext } from '../../context/context'
 import { SearchResult, SearchResultLine } from '../../types'
 import { ResultFileName } from './ResultFileName'
@@ -9,14 +9,22 @@ interface ResultItemProps {
 }
 
 export const ResultItem = (props: ResultItemProps) => {
-  const { state, findText } = useContext(SearchContext)
+  const { state, findText, disableForceReload } = useContext(SearchContext)
   const [loading, setLoading] = useState<boolean>(false)
   const [lines, setLines] = useState<SearchResultLine[]>([])
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
+  const reloadTimeOut = useRef(null)
 
   useEffect(() => {
     reload()
   }, [props.file.timeStamp])
+
+  useEffect(() => {
+    if(props.file.forceReload){
+      clearTimeout(reloadTimeOut.current)
+      reloadTimeOut.current = setTimeout(() => reload(), 1000)
+    }
+  }, [props.file.forceReload])
 
   const toggleClass = () => {
     setToggleExpander(!toggleExpander)
@@ -30,6 +38,7 @@ export const ResultItem = (props: ResultItemProps) => {
     findText(props.file.filename).then(res => {
       setLines(res)
       setLoading(false)
+      disableForceReload(props.file.filename)
     })
   }
 

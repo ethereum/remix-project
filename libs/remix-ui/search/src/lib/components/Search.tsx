@@ -6,6 +6,7 @@ import '../search.css'
 import { Include } from './Include'
 import { Exclude } from './Exclude'
 import { Replace } from './Replace'
+import { OverWriteCheck } from './OverWriteCheck'
 
 export const SearchTab = props => {
 
@@ -19,6 +20,7 @@ return (
         <Replace></Replace>
         <Include></Include>
         <Exclude></Exclude>
+        <OverWriteCheck></OverWriteCheck>
         <Results></Results>
       </SearchProvider>
     </div>

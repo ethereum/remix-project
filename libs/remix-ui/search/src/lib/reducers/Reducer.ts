@@ -51,11 +51,24 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 ...state,
                 matchWord: !state.matchWord,
                 timeStamp: Date.now()
-            }            
+            }
+        case 'SET_REPLACE_WITHOUT_CONFIRMATION': 
+            return {
+                ...state,
+                replaceWithOutConfirmation: action.payload,
+            }
+        case 'DISABLE_FORCE_RELOAD':
+            if (state.searchResults) {
+                const findFile = state.searchResults.find(file => file.filename === action.payload)
+                if (findFile) findFile.forceReload = false
+            }
+            return {
+                ...state,
+            }
         case 'RELOAD_FILE':
             if (state.searchResults) {
                 const findFile = state.searchResults.find(file => file.filename === action.payload)
-                if (findFile) findFile.timeStamp = Date.now()
+                if (findFile) findFile.forceReload = true
             }
             return {
                 ...state,
