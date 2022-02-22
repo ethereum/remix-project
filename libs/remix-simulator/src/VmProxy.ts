@@ -1,12 +1,16 @@
-import { hexListFromBNs, formatMemory } from '../util'
-import { normalizeHexAddress } from '../helpers/uiHelper'
-import { ConsoleLogs } from '../helpers/hhconsoleSigs'
+import {  util } from '@remix-project/remix-lib'
+const { hexListFromBNs, formatMemory } = util
+import { helpers } from '@remix-project/remix-lib'
+const  { normalizeHexAddress } = helpers.ui
+import { ConsoleLogs } from '@remix-project/remix-lib'
 import { toChecksumAddress, BN, bufferToHex, Address } from 'ethereumjs-util'
 import Web3 from 'web3'
 import { ethers } from 'ethers'
+import { VMContext } from './vm-context'
 
-export class Web3VmProvider {
-  web3
+export class VmProxy {
+  vmContext: VMContext
+  web3: Web3
   vm
   vmTraces
   txs
@@ -38,7 +42,8 @@ export class Web3VmProvider {
   blocks
   latestBlockNumber
 
-  constructor () {
+  constructor (vmContext: VMContext) {
+    this.vmContext = vmContext
     this.web3 = new Web3()
     this.vm = null
     this.vmTraces = {}
@@ -66,15 +71,15 @@ export class Web3VmProvider {
     this.lastProcessedStorageTxHash = {}
     this.sha3Preimages = {}
     // util
-    this.sha3 = (...args) => this.web3.utils.sha3(...args)
-    this.toHex = (...args) => this.web3.utils.toHex(...args)
-    this.toAscii = (...args) => this.web3.utils.hexToAscii(...args)
-    this.fromAscii = (...args) => this.web3.utils.asciiToHex(...args)
-    this.fromDecimal = (...args) => this.web3.utils.numberToHex(...args)
-    this.fromWei = (...args) => this.web3.utils.fromWei(...args)
-    this.toWei = (...args) => this.web3.utils.toWei(...args)
-    this.toBigNumber = (...args) => this.web3.utils.toBN(...args)
-    this.isAddress = (...args) => this.web3.utils.isAddress(...args)
+    this.sha3 = (...args) => this.web3.utils.sha3.apply(this, args)
+    this.toHex = (...args) => this.web3.utils.toHex.apply(this, args)
+    this.toAscii = (...args) => this.web3.utils.toAscii.apply(this, args)
+    this.fromAscii = (...args) => this.web3.utils.fromAscii.apply(this, args)
+    this.fromDecimal = (...args) => this.web3.utils.fromDecimal.apply(this, args)
+    this.fromWei = (...args) => this.web3.utils.fromWei.apply(this, args)
+    this.toWei = (...args) => this.web3.utils.toWei.apply(this, args)
+    this.toBigNumber = (...args) => this.web3.utils.toBN.apply(this, args)
+    this.isAddress = (...args) => this.web3.utils.isAddress.apply(this, args)
     this.utils = Web3.utils || []
     this.txsMapBlock = {}
     this.blocks = {}
@@ -289,16 +294,22 @@ export class Web3VmProvider {
     }
   }
 
-  storageRangeAt (blockNumber, txIndex, address, start, maxLength, cb) { // txIndex is the hash in the case of the VM
+  storageRangeAt (blockNumber, txIndex, address, start, maxLength, cb) {
     // we don't use the range params here
     address = toChecksumAddress(address)
 
+    let txHash
     if (txIndex === 'latest') {
-      txIndex = this.lastProcessedStorageTxHash[address]
+      txHash = this.lastProcessedStorageTxHash[address]
+    } else {
+      const block = this.vmContext.blocks[blockNumber]
+      txHash = '0x' + block.transactions[txIndex].hash().toString('hex')
     }
+    
+    
 
-    if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
-      const storage = this.storageCache[txIndex][address]
+    if (this.storageCache[txHash] && this.storageCache[txHash][address]) {
+      const storage = this.storageCache[txHash][address]
       return cb(null, {
         storage: JSON.parse(JSON.stringify(storage)),
         nextKey: null
