@@ -33,6 +33,8 @@ export interface SearchingStateInterface {
   toggleCaseSensitive: () => void
   toggleMatchWholeWord: () => void
   toggleUseRegex: () => void
+  setReplaceWithoutConfirmation: (value: boolean) => void
+  disableForceReload: (file: string) => void
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -120,6 +122,18 @@ export const SearchProvider = ({
         payload: undefined
       })
     },
+    setReplaceWithoutConfirmation: (value: boolean) => {
+      dispatch({
+        type: 'SET_REPLACE_WITHOUT_CONFIRMATION',
+        payload: value
+      })
+    },
+    disableForceReload: (file: string) => {
+      dispatch({
+        type: 'DISABLE_FORCE_RELOAD',
+        payload: file
+      })
+    },
     findText: async (path: string) => {
       if (!plugin) return
       try {
@@ -165,10 +179,12 @@ export const SearchProvider = ({
   }
 
   const reloadStateForFile = async (file: string) => {
-    clearTimeout(reloadTimeOut.current)
-    reloadTimeOut.current = setTimeout(async () => {
+    //clearTimeout(reloadTimeOut.current)
+    console.log('reload file', file)
+    //reloadTimeOut.current = setTimeout(async () => {
+      console.log('calling file', file)
       await value.reloadFile(file)
-    }, 1000)
+    //}, 1000)
   }
 
   useEffect(() => {
@@ -198,7 +214,8 @@ export const SearchProvider = ({
             filename: file,
             lines: [],
             path: file,
-            timeStamp: Date.now()
+            timeStamp: Date.now(),
+            forceReload: false
           }
           return r
         })
