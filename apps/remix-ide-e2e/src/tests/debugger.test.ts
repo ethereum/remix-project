@@ -39,12 +39,9 @@ module.exports = {
   'Should debug transaction using slider #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '50' }) // It only moves slider to 50 but vm traces are not updated
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-      .pause(2000)
-      .click('*[data-id="dropdownPanelSolidityLocals"]')
-      .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
+      .goToVMTraceStep(51)
+      .waitForElementContainsText('*[data-id="solidityLocals"]', 'toast', 60000)
+      .waitForElementContainsText('*[data-id="solidityLocals"]', '999', 60000)
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
   },
 
@@ -159,10 +156,7 @@ module.exports = {
       .pause(2000)
       .debugTransaction(0)
       .waitForElementVisible('*[data-id="slider"]').pause(2000)
-      // .setValue('*[data-id="slider"]', '5000') // Like this, setValue doesn't work properly for input type = range
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '7450' }).pause(10000) // It only moves slider to 7450 but vm traces are not updated
-      .setValue('*[data-id="slider"]', new Array(3).fill(browser.Keys.RIGHT_ARROW)) // This will press NEXT 3 times and will update the trace details
+      .goToVMTraceStep(7453)
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
       .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
@@ -210,15 +204,7 @@ module.exports = {
       .pause(3000)
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.getElementById('slider')['value'] = '153' }) // It only moves slider to 153 but vm traces are not updated
-      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-      .pause(1000)
-    /*
-      setting the slider to 5 leads to "vm trace step: 91" for chrome and "vm trace step: 92" for firefox
-      => There is something going wrong with the nightwatch API here.
-      As we are only testing if debugger is active, this is ok to keep that for now.
-    */
+      .goToVMTraceStep(154)
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
@@ -241,8 +227,23 @@ module.exports = {
       .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
       .pause(10000)
       .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
-      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
-      .end()
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })      
+  },
+
+  'Should debug reverted transactions #group5': function (browser: NightwatchBrowser) {
+    browser
+      .testContracts('reverted.sol', sources[6]['reverted.sol'], ['A', 'B', 'C'])
+      .clickLaunchIcon('udapp')
+      .selectContract('A')
+      .createContract('')
+      .pause(500)
+      .clickInstance(0)
+      .clickFunction('callA - transact (not payable)')
+      .debugTransaction(1)
+      .goToVMTraceStep(79)
+      .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
+      .click('*[data-id="debugGoToRevert"]')
+      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '117 REVERT')
   }
 }
 
@@ -365,6 +366,46 @@ const sources = [
           }
       }
       `
+    }
+  },
+  {
+    'reverted.sol': {
+      content: `contract A {
+        B b;
+        uint p;
+        constructor () {
+            b = new B();
+        }
+        function callA() public {
+            p = 123;
+            try b.callB() {
+                
+            }
+            catch (bytes memory reason) {
+    
+            }
+        }
+    }
+    
+    contract B {
+        C c;
+        uint p;
+        constructor () {
+            c = new C();
+        }
+        function callB() public {
+            p = 124;
+            revert("revert!");
+            c.callC();
+        }
+    }
+    
+    contract C {
+        uint p;
+        function callC() public {
+            p = 125;
+        }
+    }`
     }
   }
 ]
