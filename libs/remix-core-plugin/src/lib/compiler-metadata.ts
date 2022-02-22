@@ -27,7 +27,7 @@ export class CompilerMetadata extends Plugin {
   }
 
   _OutputFileName (path, target) {
-    return this.joinPath(path, this.innerPath, 'output/' +  target.replace('/', '_') + '.json')
+    return this.joinPath(path, this.innerPath, 'output/' +  target.replace(/\//g, '_') + '.json')
   }
 
   onActivation () {
