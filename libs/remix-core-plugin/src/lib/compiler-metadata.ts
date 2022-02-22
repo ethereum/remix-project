@@ -26,8 +26,8 @@ export class CompilerMetadata extends Plugin {
     return this.joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
-  _OutputFileName (path, contractName) {
-    return this.joinPath(path, this.innerPath, contractName + '_fullOP.json')
+  _OutputFileName (path, target) {
+    return this.joinPath(path, this.innerPath, 'output/' +  target.replace('/', '_') + '.json')
   }
 
   onActivation () {
@@ -36,6 +36,8 @@ export class CompilerMetadata extends Plugin {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source)
       const path = self._extractPathOf(source.target)
+      const outputFileName = this._OutputFileName(path, source.target)
+      await this.call('fileManager', 'writeFile', outputFileName, JSON.stringify(data, null, '\t'))
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
@@ -57,9 +59,6 @@ export class CompilerMetadata extends Plugin {
     content = content || '{}'
     const fileName = this._JSONFileName(path, contract.name)
     const metadataFileName = this._MetadataFileName(path, contract.name)
-    const opFileName = this._OutputFileName(path, contract.name)
-
-    if (contract && contract.object) await this.call('fileManager', 'writeFile', opFileName, JSON.stringify(contract.object, null, '\t'))
 
     let metadata
     try {
