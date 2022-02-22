@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext } from 'react'
 import { SearchContext } from '../context/context'
 
 export const OverWriteCheck = props => {
