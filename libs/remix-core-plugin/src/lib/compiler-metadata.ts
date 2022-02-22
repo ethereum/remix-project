@@ -29,7 +29,7 @@ export class CompilerMetadata extends Plugin {
   _OutputFileName (path, target) {
     const paths = target.split('/')
     const fileName = paths[paths.length - 1]
-    return this.joinPath(path, this.innerPath, 'output/' +  fileName + '.json')
+    return this.joinPath(path, this.innerPath, 'build-info/' +  fileName + '.json')
   }
 
   onActivation () {
