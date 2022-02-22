@@ -13,8 +13,6 @@ export const ResultFileName = (props: ResultItemProps) => {
     if (props.file && props.file.path) {
       setIcon(getPathIcon(props.file.path))
     }
-    // remove path from string
-    // const path = props.file.path.split('/').slice(0, -1).join('/')
   }, [props.file])
 
   return (
