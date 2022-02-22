@@ -19,7 +19,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -704,7 +704,14 @@ class FileManager extends Plugin {
     return collectList(path)
   }
 
-  isRemixDActive() {
+  async fileList (dirPath) {
+    const paths: any = await this.readdir(dirPath)
+    for( const path in paths)
+      if(paths[path].isDirectory) delete paths[path]
+    return Object.keys(paths)
+  }
+
+  isRemixDActive () {
     return this.appManager.isActive('remixd')
   }
 

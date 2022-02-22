@@ -382,7 +382,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const handleAutoComplete = () => (
     <div
       className='remix_ui_terminal_popup bg-light ml-4 p-2 position-absolute text-left '
-      style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 2)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}
+      style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 0)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}
     >
       <div>
         {autoCompletState.data._options.map((item, index) => {

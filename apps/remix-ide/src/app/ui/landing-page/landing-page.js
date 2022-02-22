@@ -1,6 +1,5 @@
 /* global */
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
@@ -31,15 +30,9 @@ export class LandingPage extends ViewPlugin {
   }
 
   render () {
-    this.renderComponent()
-    return this.el
+    return <div id='landingPageHomeContainer' className='remixui_homeContainer justify-content-between bg-light d-flex' data-id='landingPageHomeContainer'><RemixUiHomeTab
+    plugin={this}
+  /></div>
   }
 
-  renderComponent () {
-    ReactDOM.render(
-      <RemixUiHomeTab
-        plugin={this}
-      />
-      , this.el)
-  }
 }
