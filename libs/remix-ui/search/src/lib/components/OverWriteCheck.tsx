@@ -21,7 +21,7 @@ export const OverWriteCheck = props => {
           />
           <label
             htmlFor='confirm_replace'
-            data-id="compilerNightliesBuild"
+            data-id="confirm_replace_label"
             className="form-check-label custom-control-label"
           >
             replace without confirmation
