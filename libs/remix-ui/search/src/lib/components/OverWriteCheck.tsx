@@ -5,7 +5,6 @@ export const OverWriteCheck = props => {
   const { setReplaceWithoutConfirmation } = useContext(SearchContext)
 
   const change = e => {
-    console.log(e.target.checked)
     setReplaceWithoutConfirmation(e.target.checked)
   }
 
