@@ -20,3 +20,7 @@
 }
 .navigator:hover {
 }
+
+.cursorPointerRemixDebugger {
+    cursor: pointer;
+}
