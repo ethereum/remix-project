@@ -56,18 +56,19 @@ export class EventsDecoder {
     return eventsABI
   }
 
-  _event (hash, eventsABI) {
-    for (const k in eventsABI) {
-      if (eventsABI[k][hash]) {
-        const event = eventsABI[k][hash]
-        for (const input of event.inputs) {
-          if (input.type === 'function') {
-            input.type = 'bytes24'
-            input.baseType = 'bytes24'
-          }
+  _event (hash: string, eventsABI: Record<string, unknown>, contractName: string) {
+    const events = eventsABI[contractName]
+    if (!events) return null
+
+    if (events[hash]) {
+      const event = events[hash]
+      for (const input of event.inputs) {
+        if (input.type === 'function') {
+          input.type = 'bytes24'
+          input.baseType = 'bytes24'
         }
-        return event
       }
+      return event
     }
     return null
   }
@@ -94,7 +95,7 @@ export class EventsDecoder {
       // [address, topics, mem]
       const log = logs[i]
       const topicId = log.topics[0]
-      const eventAbi = this._event(topicId.replace('0x', ''), eventsABI)
+      const eventAbi = this._event(topicId.replace('0x', ''), eventsABI, contractName)
       if (eventAbi) {
         const decodedlog = eventAbi.abi.parseLog(log)
         const decoded = {}
