@@ -39,7 +39,8 @@ export class CompilerMetadata extends Plugin {
       const compiler = new CompilerAbstract(languageVersion, data, source)
       const path = self._extractPathOf(source.target)
       const outputFileName = this._OutputFileName(path, source.target)
-      await this.call('fileManager', 'writeFile', outputFileName, JSON.stringify(data, null, '\t'))
+      const buildData = { output: data }
+      await this.call('fileManager', 'writeFile', outputFileName, JSON.stringify(buildData, null, '\t'))
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
