@@ -29,7 +29,7 @@ export const ResultSummary = (props: ResultSummaryProps) => {
     if(state.replaceWithOutConfirmation){
       confirmReplace(line)
     }else{
-      modal({ id: 'matomoModal', title: 'Replace', message: `Are you sure you want to replace '${line.center}' by '${state.replace}' in ${props.searchResult.filename}?`, okLabel: 'Yes', okFn: confirmReplace, cancelLabel: 'No', cancelFn: ()=>{}, data: line })
+      modal({ id: 'confirmreplace', title: 'Replace', message: `Are you sure you want to replace '${line.center}' by '${state.replace}' in ${props.searchResult.filename}?`, okLabel: 'Yes', okFn: confirmReplace, cancelLabel: 'No', cancelFn: ()=>{}, data: line })
     }
   }
 

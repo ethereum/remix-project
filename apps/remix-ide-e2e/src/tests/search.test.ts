@@ -72,12 +72,28 @@ module.exports = {
         .moveToElement('*[data-id="contracts/2_Owner.sol-30-71"]', 10, 10)
         .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-30-71"]')
         .click('*[data-id="replace-contracts/2_Owner.sol-30-71"]').pause(2000).
+        modalFooterOKClick('confirmreplace').pause(2000).
         getEditorValue((content) => {
             browser.assert.ok(content.includes('replacing deployer for a constructor'), 'should replace text ok')
         })
     },
+    'Should replace text without confirmation': function (browser: NightwatchBrowser) {
+        browser.click('*[data-id="confirm_replace_label"]').pause(500)
+        .clearValue('*[id="search_input"]')
+        .setValue('*[id="search_input"]', 'replacing').pause(1000)
+        .setValue('*[id="search_replace"]', '2').pause(1000)
+        .waitForElementVisible('*[data-id="contracts/2_Owner.sol-30-71"]')
+        .moveToElement('*[data-id="contracts/2_Owner.sol-30-71"]', 10, 10)
+        .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-30-71"]')
+        .click('*[data-id="replace-contracts/2_Owner.sol-30-71"]').pause(2000).
+        getEditorValue((content) => {
+            browser.assert.ok(content.includes('replacing2 deployer for a constructor'), 'should replace text ok')
+        })
+    },
     'Should find text with include': function (browser: NightwatchBrowser) {
         browser
+        .clearValue('*[id="search_input"]')
+        .setValue('*[id="search_input"]', 'contract').pause(1000)
         .setValue('*[id="search_include"]', 'contracts/**').pause(2000)
         .elements('css selector','.search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)
