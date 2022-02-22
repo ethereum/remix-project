@@ -32,7 +32,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
-  const [compileErrors, setCompileErrors] = useState<CompileErrors>(api.compileErrors)
+  const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
 
   useEffect(() => {
     (async () => {
@@ -64,19 +64,18 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setState(prevState => {
       return { ...prevState, currentFile: '' }
     })
-    setCompileErrors({} as CompileErrors)
+    setCompileErrors({} as Record<string, CompileErrors>)
   }
 
   api.onCompilationFinished = (contractsDetails: any, contractMap: any) => {
     setState(prevState => {
       return { ...prevState, contractsDetails, contractMap }
     })
-    setCompileErrors(api.compileErrors)
+    setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
   }
 
   api.onFileClosed = (name) => {
-    console.log('path/name: ', name, currentFile)
-    if (name === currentFile) setCompileErrors({} as CompileErrors)
+    if (name === currentFile) setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
   }
 
   const toast = (message: string) => {
@@ -129,20 +128,22 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       <div id="compileTabView">
         <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
         <ContractSelection api={api} contractMap={contractMap} contractsDetails={contractsDetails} modal={modal} />
-        <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
-          <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
-          { compileErrors.error && <Renderer message={compileErrors.error.formattedMessage || compileErrors.error} plugin={api} opt={{ type: compileErrors.error.severity || 'error', errorType: compileErrors.error.type }} /> }
-          { compileErrors.error && (compileErrors.error.mode === 'panic') && modal('Error', panicMessage(compileErrors.error.formattedMessage), 'Close', null) }
-          { compileErrors.errors && compileErrors.errors.length && compileErrors.errors.map((err, index) => {
-            if (hideWarnings) {
-              if (err.severity !== 'warning') {
+        { compileErrors[currentFile] &&
+          <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
+            <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
+            { compileErrors[currentFile].error && <Renderer message={compileErrors[currentFile].error.formattedMessage || compileErrors[currentFile].error} plugin={api} opt={{ type: compileErrors[currentFile].error.severity || 'error', errorType: compileErrors[currentFile].error.type }} /> }
+            { compileErrors[currentFile].error && (compileErrors[currentFile].error.mode === 'panic') && modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null) }
+            { compileErrors[currentFile].errors && compileErrors[currentFile].errors.length && compileErrors[currentFile].errors.map((err, index) => {
+              if (hideWarnings) {
+                if (err.severity !== 'warning') {
+                  return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
+                }
+              } else {
                 return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
               }
-            } else {
-              return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
-            }
-          }) }
-        </div>
+            }) }
+          </div>
+        }
       </div>
       <Toaster message={state.toasterMsg} />
       <ModalDialog
