@@ -29,7 +29,8 @@ export interface SearchResult {
     filename: string,
     path: string,
     lines: SearchResultLine[],
-    timeStamp: number
+    timeStamp: number,
+    forceReload: boolean
 }
 
 export interface SearchState {
@@ -40,8 +41,9 @@ export interface SearchState {
     exclude: string,
     casesensitive: boolean,
     matchWord: boolean,
+    replaceWithOutConfirmation: boolean,
     useRegExp: boolean,
-    timeStamp: number
+    timeStamp: number,
 }
 
 export const SearchingInitialState: SearchState = {
@@ -53,5 +55,6 @@ export const SearchingInitialState: SearchState = {
     casesensitive: false,
     matchWord: false,
     useRegExp: false,
+    replaceWithOutConfirmation: false,
     timeStamp: 0
 }

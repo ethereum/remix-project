@@ -1,3 +1,4 @@
+import { useDialogDispatchers } from 'libs/remix-ui/app/src/lib/remix-app/context/provider'
 import React, { useContext } from 'react'
 import { SearchContext } from '../../context/context'
 import { SearchResult, SearchResultLine, SearchResultLineLine } from '../../types'
@@ -10,16 +11,25 @@ interface ResultSummaryProps {
 
 export const ResultSummary = (props: ResultSummaryProps) => {
   const { hightLightInPath, replaceText, state } = useContext(SearchContext)
+  const { modal } = useDialogDispatchers()
   const selectLine = async (line: SearchResultLineLine) => {
     await hightLightInPath(props.searchResult, line)
   }
 
-  const replace = async (line: SearchResultLineLine) => {
+  const confirmReplace = async (line: SearchResultLineLine) => {
     props.setLoading(true)
     try{
       await replaceText(props.searchResult, line)
     }catch(e){
       props.setLoading(false) 
+    }
+  }
+
+  const replace = async (line: SearchResultLineLine) => {
+    if(state.replaceWithOutConfirmation){
+      confirmReplace(line)
+    }else{
+      modal({ id: 'matomoModal', title: 'Replace', message: `Are you sure you want to replace '${line.center}' by '${state.replace}' in ${props.searchResult.filename}?`, okLabel: 'Yes', okFn: confirmReplace, cancelLabel: 'No', cancelFn: ()=>{}, data: line })
     }
   }
 
