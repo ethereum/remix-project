@@ -200,10 +200,14 @@ export const SearchProvider = ({
       (async () => {
         const res = await getDirectory('/', plugin)
         const pathFilter: any = {}
-        if (state.include)
-          pathFilter.include = state.include.split(',').map(i => i.trim())
-        if (state.exclude)
+        if (state.include){
+          const inc = state.include.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
+          pathFilter.include = inc.split(',').map(i => i.trim())
+        }
+        if (state.exclude){
+          const exc = state.exclude.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
           pathFilter.exclude = state.exclude.split(',').map(i => i.trim())
+        }
         const ob = res.filter(filePathFilter(pathFilter)).map(file => {
           const r: SearchResult = {
             filename: file,
