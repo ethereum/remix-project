@@ -86,6 +86,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   getFileManagerMode () {
+    this.emit()
     return this.fileManager.mode
   }
 
