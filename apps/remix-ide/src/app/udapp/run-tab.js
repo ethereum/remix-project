@@ -1,5 +1,4 @@
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
@@ -40,9 +39,6 @@ export class RunTab extends ViewPlugin {
     this.el = document.createElement('div')
   }
 
-  onActivation () {
-    this.renderComponent()
-  }
 
   setupEvents () {
     this.blockchain.events.on('newTransaction', (tx, receipt) => {
@@ -86,14 +82,9 @@ export class RunTab extends ViewPlugin {
   }
 
   render () {
-    return this.el
+    return  <div><RunTabUI plugin={this} /></div>
   }
 
-  renderComponent () {
-    ReactDOM.render(
-      <RunTabUI plugin={this} />
-      , this.el)
-  }
 
   onReady (api) {
     this.REACT_API = api
