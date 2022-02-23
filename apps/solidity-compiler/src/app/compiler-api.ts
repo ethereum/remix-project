@@ -4,21 +4,22 @@ import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
-  contractMap: {
-    file: string
-  } | Record<string, any>
-
+  compilationDetails: {
+    contractMap: {
+      file: string
+    } | Record<string, any>,
+    contractsDetails: Record<string, any>,
+    target?: string
+  }
   compileErrors: any
   compileTabLogic: CompileTabLogic
-  contractsDetails: Record<string, any>
-
   configurationSettings: ConfigurationSettings
 
   onCurrentFileChanged: (fileName: string) => void
-  onResetResults: () => void
+  // onResetResults: () => void
   onSetWorkspace: (workspace: any) => void
   onNoFileSelected: () => void
-  onCompilationFinished: (contractsDetails: any, contractMap: any) => void
+  onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
   onContentChanged: () => void
   onFileClosed: (name: string) => void
@@ -33,14 +34,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
       contractEl: null
     }
 
-    this.contractsDetails = {}
+    this.compilationDetails = {
+      contractsDetails:{},
+      contractMap: {}
+    }
     this.data = {
       eventHandlers: {},
       loading: false
     }
-
-    this.contractMap = {}
-    this.contractsDetails = {}
 
     this.compileErrors = {}
     this.compiledFileName = ''
@@ -190,9 +191,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   resetResults () {
     this.currentFile = ''
-    this.contractsDetails = {}
+    this.compilationDetails = {
+      contractsDetails: {},
+      contractMap: {}
+    }
     this.statusChanged({ key: 'none' })
-    if (this.onResetResults) this.onResetResults()
+    // if (this.onResetResults) this.onResetResults()
   }
 
   listenToEvents () {
@@ -270,9 +274,9 @@ export const CompilerApiMixin = (Base) => class extends Base {
           })
         } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
         // Store the contracts
-        this.contractsDetails = {}
+        this.compilationDetails.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
-          this.contractsDetails[contract.name] = parseContracts(
+          this.compilationDetails.contractsDetails[contract.name] = parseContracts(
             contract.name,
             contract.object,
             this.compiler.getSource(contract.file)
@@ -283,9 +287,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
         this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
-      this.contractMap = {}
-      if (success) this.compiler.visitContracts((contract) => { this.contractMap[contract.name] = contract })
-      if (this.onCompilationFinished) this.onCompilationFinished(this.contractsDetails, this.contractMap)
+      this.compilationDetails.contractMap = {}
+      if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
+      this.compilationDetails.target = source.target
+      if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
     }
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
