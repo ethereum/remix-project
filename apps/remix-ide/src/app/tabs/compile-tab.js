@@ -1,6 +1,5 @@
 /* global */
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin' // eslint-disable-line
@@ -42,9 +41,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   renderComponent () {
-    ReactDOM.render(
-      <SolidityCompiler api={this}/>
-      , this.el)
+    // empty method, is a state update needed?
   }
 
   onCurrentFileChanged () {
@@ -72,9 +69,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   render () {
-    this.renderComponent()
-
-    return this.el
+    return <div id='compileTabView'><SolidityCompiler api={this}/></div>
   }
 
   async compileWithParameters (compilationTargets, settings) {
