@@ -1,6 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { createHash } from 'crypto'
 
 const profile = {
   name: 'compilerMetadata',
@@ -26,21 +27,13 @@ export class CompilerMetadata extends Plugin {
     return this.joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
-  _OutputFileName (path, target) {
-    const paths = target.split('/')
-    const fileName = paths[paths.length - 1]
-    return this.joinPath(path, this.innerPath, 'build-info/' +  fileName + '.json')
-  }
-
   onActivation () {
     const self = this
-    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data) => {
+    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source)
       const path = self._extractPathOf(source.target)
-      const outputFileName = this._OutputFileName(path, source.target)
-      const buildData = { output: data }
-      await this.call('fileManager', 'writeFile', outputFileName, JSON.stringify(buildData, null, '\t'))
+      await this.setBuildInfo(version, input, data, path)
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
@@ -50,6 +43,23 @@ export class CompilerMetadata extends Plugin {
         })()
       })
     })
+  }
+
+  async setBuildInfo (version, input, output, path) {
+    input = JSON.parse(input)
+    const solcLongVersion = version.replace('.Emscripten.clang', '')
+    const solcVersion = solcLongVersion.substring(0, solcLongVersion.indexOf('+commit'))
+    const format = 'hh-sol-build-info-1'
+    const json = JSON.stringify({
+      _format: format,
+      solcVersion,
+      solcLongVersion,
+      input
+    })
+    const id =  createHash('md5').update(Buffer.from(json)).digest().toString('hex')
+    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' +  id + '.json')
+    const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+    await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
   }
 
   _extractPathOf (file) {
