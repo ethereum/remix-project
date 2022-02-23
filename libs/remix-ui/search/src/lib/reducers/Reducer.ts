@@ -33,6 +33,12 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             return {
                 ...state,
                 searchResults: action.payload,
+                count: 0
+            }
+        case 'UPDATE_COUNT':
+            return {
+                ...state,
+                count: state.count + parseInt(action.payload)
             }
         case 'TOGGLE_CASE_SENSITIVE':
             return {
