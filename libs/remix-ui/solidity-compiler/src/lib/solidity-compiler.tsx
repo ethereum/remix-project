@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
-import { CompileErrors, SolidityCompilerProps } from './types'
+import { CompileErrors, ContractsFile, SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { ContractSelection } from './contract-selection' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
@@ -9,12 +9,10 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { api, api: { currentFile, compileTabLogic, contractsDetails, contractMap, configurationSettings } } = props
+  const { api, api: { currentFile, compileTabLogic, configurationSettings } } = props
   const [state, setState] = useState({
     isHardhatProject: false,
     currentFile,
-    contractsDetails: {},
-    contractMap: {},
     loading: false,
     compileTabLogic: null,
     compiler: null,
@@ -34,6 +32,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
   const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
   const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string, title?: string, type?: string }>>({})
+  const [contractsFile, setContractsFile] = useState<ContractsFile>({})
 
   useEffect(() => {
     (async () => {
@@ -50,15 +49,16 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     }
   }, [badgeStatus[currentFile], currentFile])
 
+  // Return the file name of a path: ex "browser/ballot.sol" -> "ballot.sol"
+  const getFileName = (path) => {
+    const part = path.split('/')
+
+    return part[part.length - 1]
+  }
+
   api.onCurrentFileChanged = (currentFile: string) => {
     setState(prevState => {
       return { ...prevState, currentFile }
-    })
-  }
-
-  api.onResetResults = () => {
-    setState(prevState => {
-      return { ...prevState, currentFile: '', contractsDetails: {}, contractMap: {} }
     })
   }
 
@@ -76,10 +76,16 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setCompileErrors({} as Record<string, CompileErrors>)
   }
 
-  api.onCompilationFinished = (contractsDetails: any, contractMap: any) => {
-    setState(prevState => {
-      return { ...prevState, contractsDetails, contractMap }
-    })
+  api.onCompilationFinished = (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }) => {
+    const { contractMap, contractsDetails, target } = compilationDetails
+    const contractList = contractMap ? Object.keys(contractMap).map((key) => {
+      return {
+        name: key,
+        file: getFileName(contractMap[key].file)
+        }
+    }) : []
+
+    setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails } })
     setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
   }
 
@@ -143,7 +149,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     <>
       <div id="compileTabView">
         <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
-        <ContractSelection api={api} contractMap={contractMap} contractsDetails={contractsDetails} modal={modal} />
+        { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
         { compileErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
             <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
