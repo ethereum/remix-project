@@ -18,6 +18,7 @@ export const ResultItem = (props: ResultItemProps) => {
   const reloadTimeOut = useRef(null)
   const subscribed = useRef(true)
 
+
   useEffect(() => {
     reload()
   }, [props.file.timeStamp])
@@ -48,7 +49,13 @@ export const ResultItem = (props: ResultItemProps) => {
     findText(props.file.filename).then(res => {
       if (subscribed.current) {
         setLines(res)
-        if (res) updateCount(res.length)
+        if (res) {
+          let count = 0
+          res.forEach(line => {
+            count += line.lines.length
+          })
+          updateCount(count, props.file.filename)
+        }
         setLoading(false)
         disableForceReload(props.file.filename)
       }
@@ -71,7 +78,7 @@ export const ResultItem = (props: ResultItemProps) => {
             <ResultFileName file={props.file} />
             <div className="result_count">
               <div className="result_count_number badge badge-pill badge-secondary">
-                {lines.length}
+                {props.file.count}
               </div>
             </div>
           </div>

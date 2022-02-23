@@ -32,6 +32,7 @@ export interface SearchResult {
     lines: SearchResultLine[],
     timeStamp: number,
     forceReload: boolean,
+    count: number
 }
 
 export interface SearchState {

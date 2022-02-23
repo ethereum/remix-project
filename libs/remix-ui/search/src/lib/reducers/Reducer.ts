@@ -36,9 +36,19 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 count: 0
             }
         case 'UPDATE_COUNT':
+            const findFile = state.searchResults.find(file => file.filename === action.payload.file)
+            let count = 0
+            if (findFile) {
+                findFile.count = action.payload.count
+            }
+            state.searchResults.forEach(file => {
+                if (file.count) {
+                    count += file.count
+                }
+            })
             return {
                 ...state,
-                count: state.count + parseInt(action.payload)
+                count: count
             }
         case 'TOGGLE_CASE_SENSITIVE':
             return {
