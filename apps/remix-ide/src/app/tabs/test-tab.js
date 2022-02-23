@@ -1,12 +1,12 @@
 /* global */
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { SolidityUnitTesting } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 import { TestTabLogic } from '@remix-ui/solidity-unit-testing' // eslint-disable-line
 
 import { ViewPlugin } from '@remixproject/engine-web'
 import helper from '../../lib/helper'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 
@@ -34,6 +34,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.allFilesInvolved = ['.deps/remix-tests/remix_tests.sol', '.deps/remix-tests/remix_accounts.sol']
     this.element = document.createElement('div')
+    this.dispatch = null
   }
 
   onActivationInternal () {
@@ -128,15 +129,25 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent('tests')
+  }
+
   render () {
     this.onActivationInternal()
-    this.renderComponent('tests')
-    return this.element
+    return <div><PluginViewWrapper plugin={this} /></div>
+  }
+
+  updateComponent(state) {
+    return <SolidityUnitTesting testTab={state.testTab} helper={state.helper} initialPath={state.testDirPath} />
   }
 
   renderComponent (testDirPath) {
-    ReactDOM.render(
-      <SolidityUnitTesting testTab={this} helper={helper} initialPath={testDirPath} />
-      , this.element)
+    this.dispatch({
+      testTab: this,
+      helper: this.helper,
+      testDirPath: testDirPath
+    })
   }
 }
