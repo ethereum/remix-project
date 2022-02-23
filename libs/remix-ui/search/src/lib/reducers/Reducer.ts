@@ -36,19 +36,23 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 count: 0
             }
         case 'UPDATE_COUNT':
-            const findFile = state.searchResults.find(file => file.filename === action.payload.file)
-            let count = 0
-            if (findFile) {
-                findFile.count = action.payload.count
-            }
-            state.searchResults.forEach(file => {
-                if (file.count) {
-                    count += file.count
+            if (state.searchResults) {
+                const findFile = state.searchResults.find(file => file.filename === action.payload.file)
+                let count = 0
+                if (findFile) {
+                    findFile.count = action.payload.count
                 }
-            })
-            return {
-                ...state,
-                count: count
+                state.searchResults.forEach(file => {
+                    if (file.count) {
+                        count += file.count
+                    }
+                })
+                return {
+                    ...state,
+                    count: count
+                }
+            } else {
+                return state
             }
         case 'TOGGLE_CASE_SENSITIVE':
             return {
@@ -68,7 +72,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 matchWord: !state.matchWord,
                 timeStamp: Date.now()
             }
-        case 'SET_REPLACE_WITHOUT_CONFIRMATION': 
+        case 'SET_REPLACE_WITHOUT_CONFIRMATION':
             return {
                 ...state,
                 replaceWithOutConfirmation: action.payload,
