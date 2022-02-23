@@ -9,18 +9,21 @@ interface ResultItemProps {
 }
 
 export const ResultItem = (props: ResultItemProps) => {
-  const { state, findText, disableForceReload } = useContext(SearchContext)
+  const { state, findText, disableForceReload, updateCount } = useContext(
+    SearchContext
+  )
   const [loading, setLoading] = useState<boolean>(false)
   const [lines, setLines] = useState<SearchResultLine[]>([])
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const reloadTimeOut = useRef(null)
+  const subscribed = useRef(true)
 
   useEffect(() => {
     reload()
   }, [props.file.timeStamp])
 
   useEffect(() => {
-    if(props.file.forceReload){
+    if (props.file.forceReload) {
       clearTimeout(reloadTimeOut.current)
       reloadTimeOut.current = setTimeout(() => reload(), 1000)
     }
@@ -34,11 +37,21 @@ export const ResultItem = (props: ResultItemProps) => {
     reload()
   }, [state.find])
 
+  useEffect(() => {
+    subscribed.current = true
+    return () => {
+      subscribed.current = false
+    }
+  }, [])
+
   const reload = () => {
     findText(props.file.filename).then(res => {
-      setLines(res)
-      setLoading(false)
-      disableForceReload(props.file.filename)
+      if (subscribed.current) {
+        setLines(res)
+        if (res) updateCount(res.length)
+        setLoading(false)
+        disableForceReload(props.file.filename)
+      }
     })
   }
 
@@ -56,6 +69,11 @@ export const ResultItem = (props: ResultItemProps) => {
               ></i>
             </button>{' '}
             <ResultFileName file={props.file} />
+            <div className="result_count">
+              <div className="result_count_number badge badge-pill badge-secondary">
+                {lines.length}
+              </div>
+            </div>
           </div>
           {loading ? <div className="loading">Loading...</div> : null}
           {!toggleExpander && !loading ? (

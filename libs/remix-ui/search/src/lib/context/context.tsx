@@ -35,6 +35,7 @@ export interface SearchingStateInterface {
   toggleUseRegex: () => void
   setReplaceWithoutConfirmation: (value: boolean) => void
   disableForceReload: (file: string) => void
+  updateCount: (count: number) => void
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -134,6 +135,12 @@ export const SearchProvider = ({
         payload: file
       })
     },
+    updateCount: (count: number) => {
+      dispatch({
+        type: 'UPDATE_COUNT',
+        payload: count
+      })
+    },
     findText: async (path: string) => {
       if (!plugin) return
       try {
@@ -214,7 +221,7 @@ export const SearchProvider = ({
             lines: [],
             path: file,
             timeStamp: Date.now(),
-            forceReload: false
+            forceReload: false,
           }
           return r
         })

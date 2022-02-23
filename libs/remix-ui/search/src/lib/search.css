@@ -93,3 +93,14 @@
     overflow: hidden;
     text-transform: uppercase;
 }
+
+.search_tab  .result_count {
+    flex-grow: 1;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search_tab .result_count_number {
+    font-size: x-small;
+}
