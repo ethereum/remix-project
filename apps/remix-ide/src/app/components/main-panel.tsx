@@ -1,8 +1,8 @@
 import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
-import ReactDOM from 'react-dom' // eslint-disable-line
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'mainPanel',
@@ -14,12 +14,17 @@ const profile = {
 
 export class MainPanel extends AbstractPanel {
     element: HTMLDivElement
+    dispatch: React.Dispatch<any> = () => {}
     constructor (config) {
       super(profile)
       this.element = document.createElement('div')
       this.element.setAttribute('data-id', 'mainPanelPluginsContainer')
       this.element.setAttribute('style', 'height: 100%; width: 100%;')
       // this.config = config
+    }
+
+    setDispatch (dispatch: React.Dispatch<any>) {
+      this.dispatch = dispatch
     }
 
     onActivation () {
@@ -47,11 +52,17 @@ export class MainPanel extends AbstractPanel {
       this.renderComponent()
     }
 
-    render () {
-      return this.element
+    renderComponent () {
+      this.dispatch({
+        plugins: this.plugins
+      })
     }
 
-    renderComponent () {
-      ReactDOM.render(<RemixPluginPanel header={<></>} plugins={this.plugins}/>, this.element)
+    render() {      
+      return <div style={{height: '100%', width: '100%'}} data-id='mainPanelPluginsContainer'><PluginViewWrapper plugin={this} /></div>
+    }
+
+    updateComponent (state: any) {
+      return <RemixPluginPanel header={<></>} plugins={state.plugins}/>
     }
 }
