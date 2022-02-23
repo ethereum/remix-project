@@ -1,9 +1,9 @@
 import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
-import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'settings',
@@ -20,6 +20,15 @@ const profile = {
 }
 
 module.exports = class SettingsTab extends ViewPlugin {
+  config: any = {}
+  editor: any
+  private _deps: {
+    themeModule: any // eslint-disable-line
+    
+  }
+  element: HTMLDivElement
+  public useMatomoAnalytics: any
+  dispatch: React.Dispatch<any> = () => {}
   constructor (config, editor) {
     super(profile)
     this.config = config
@@ -32,24 +41,31 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.useMatomoAnalytics = null
   }
 
-  onActivation () {
+  setDispatch (dispatch: React.Dispatch<any>) {
+    this.dispatch = dispatch
     this.renderComponent()
   }
 
-  render () {
-    return this.element
+  render() {      
+    return (
+      <div id='settingsTab'>
+        <PluginViewWrapper plugin={this} />
+      </div>
+    );
+  }
+
+  updateComponent(state: any){
+    return <RemixUiSettings
+    config={state.config}
+    editor={state.editor}
+    _deps={state._deps}
+    useMatomoAnalytics={state.useMatomoAnalytics}
+    themeModule = {state._deps.themeModule}
+  />
   }
 
   renderComponent () {
-    ReactDOM.render(
-      <RemixUiSettings
-        config = { this.config }
-        editor = { this.editor }
-        _deps = { this._deps }
-        useMatomoAnalytics = {this.useMatomoAnalytics}
-      />,
-      this.element
-    )
+    this.dispatch(this)
   }
 
   get (key) {
@@ -59,6 +75,8 @@ module.exports = class SettingsTab extends ViewPlugin {
   updateMatomoAnalyticsChoice (isChecked) {
     this.config.set('settings/matomo-analytics', isChecked)
     this.useMatomoAnalytics = isChecked
-    this.renderComponent()
+    this.dispatch({
+      ...this
+    })
   }
 }

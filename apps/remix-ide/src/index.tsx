@@ -33,9 +33,9 @@ import ('./app').then((AppComponent) => {
   const appComponent = new AppComponent.default()
   appComponent.run().then(() => {
     render(
-      <React.StrictMode>
+      <>
           <RemixApp app={appComponent} />
-      </React.StrictMode>,
+      </>,
       document.getElementById('root')
     )
   })

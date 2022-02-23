@@ -32,7 +32,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     toastMessage: '',
     validationError: '',
     txNumberIsEmpty: true,
-    isLocalNodeUsed: false
+    isLocalNodeUsed: false,
+    sourceLocationStatus: ''
   })
 
   useEffect(() => {
@@ -87,7 +88,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
-      if (!lineColumnPos) return
+      if (!lineColumnPos) {        
+        await debuggerModule.discardHighlight()
+        setState(prevState => {
+          return { ...prevState, sourceLocationStatus: 'Source location not available.' }
+        })
+        return
+      }
       const contracts = await debuggerModule.fetchContractAndCompile(
         address || currentReceipt.contractAddress || currentReceipt.to,
         currentReceipt)
@@ -113,6 +120,9 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           }
         }
         if (path) {
+          setState(prevState => {
+            return { ...prevState, sourceLocationStatus: '' }
+          })
           await debuggerModule.discardHighlight()
           await debuggerModule.highlight(lineColumnPos, path)
         }
@@ -138,6 +148,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
   const unloadRequested = (blockNumber, txIndex, tx) => {
     unLoad()
+    setState(prevState => {
+      return {
+        ...prevState,
+        sourceLocationStatus: ''
+      }
+    })
   }
 
   const unLoad = () => {
@@ -168,7 +184,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     setState(prevState => {
       return {
         ...prevState,
-        txNumber: txNumber
+        txNumber: txNumber,
+        sourceLocationStatus: ''
       }
     })
     if (!isValidHash(txNumber)) {
@@ -266,7 +283,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return {
         ...prevState,
         validationError: '',
-        txNumber: txHash
+        txNumber: txHash,
+        sourceLocationStatus: ''
       }
     })
     startDebugging(null, txHash, null, web3)
@@ -315,6 +333,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
+        { state.debugging && state.sourceLocationStatus && <div className="text-warning"><i className="fas fa-exclamation-triangle" aria-hidden="true"></i> {state.sourceLocationStatus}</div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }
         { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>
