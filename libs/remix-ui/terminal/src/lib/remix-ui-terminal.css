@@ -53,6 +53,9 @@ element.style {
 .remix_ui_terminal_block > pre {
   max-height        : 200px;
 }
+.remix_ui_terminal_welcome {
+  font-weight: bold;
+}
 .remix_ui_terminal_cli {
   white-space       : nowrap;
   line-height       : 1.7em;

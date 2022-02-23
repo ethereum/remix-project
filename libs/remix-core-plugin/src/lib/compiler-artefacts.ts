@@ -4,7 +4,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName'],
   events: [],
   version: '0.0.1'
 }
@@ -70,6 +70,53 @@ export class CompilerArtefacts extends Plugin {
       Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
     }
     return contractsData
+  }
+
+  async getArtefactsFromFE (path, contractName) {
+    const dirList = await this.call('fileManager', 'dirList', path)
+    if(dirList && dirList.length) {
+      if(dirList.includes(path + '/artifacts')) {
+        const fileList = await this.call('fileManager', 'fileList', path + '/artifacts')
+        const artefactsFilePaths = fileList.filter(filePath => {
+          const filenameArr = filePath.split('/')
+          const filename = filenameArr[filenameArr.length - 1]
+          if (filename === `${contractName}.json` || filename === `${contractName}_metadata.json`) return true
+        })
+        if (artefactsFilePaths && artefactsFilePaths.length) {
+          const content = await this.call('fileManager', 'readFile', artefactsFilePaths[1])
+          const artifacts = JSON.parse(content)
+          return { abi: artifacts.abi, bytecode: artifacts.data.bytecode.object }
+        } else {
+          for (const dirPath of dirList) {
+            const result = await this.getArtefactsFromFE (dirPath, contractName)
+            if (result) return result
+          }
+        }
+      } else {
+        for (const dirPath of dirList) {
+          const result = await this.getArtefactsFromFE (dirPath, contractName)
+          if (result) return result
+        }
+      }
+    } else return
+  }
+
+  async getArtefactsByContractName (contractName) {
+    const contractsDataByFilename = this.getAllContractDatas()
+    const contractsData = Object.values(contractsDataByFilename)
+    if (contractsData && contractsData.length) {
+      const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
+      if (index !== -1) return { abi: contractsData[index][contractName].abi, bytecode: contractsData[index][contractName].evm.bytecode.object }
+      else {
+        const result = await this.getArtefactsFromFE ('contracts', contractName)
+        if (result) return result
+        else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
+      }
+    } else {
+      const result = await this.getArtefactsFromFE ('contracts', contractName)
+      if (result) return result
+      else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
+    }  
   }
 
   getCompilerAbstract (file) {
