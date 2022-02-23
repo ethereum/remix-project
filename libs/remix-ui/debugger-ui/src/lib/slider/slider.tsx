@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
 
 export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   const [state, setState] = useState({
     currentValue: 0
   })
+
+  const onChangeId = useRef(null)
 
   useEffect(() => {
     setValue(sliderValue)
@@ -18,9 +20,16 @@ export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   }
 
   const handleChange = (e) => {
-    const value = parseInt(e.target.value)
-
-    setValue(value)
+    if (onChangeId.current) {
+      window.clearTimeout(onChangeId.current)
+    }
+    ((value) => {
+      onChangeId.current = setTimeout(() => {
+        console.log(value)
+        value = parseInt(value)
+        setValue(value)
+      }, 100)
+    })(e.target.value)    
   }
 
   return (

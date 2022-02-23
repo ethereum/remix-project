@@ -1,8 +1,8 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import {RemixUiPluginManager} from '@remix-ui/plugin-manager' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
+import { PluginViewWrapper } from '@remix-ui/helper'
 const _paq = window._paq = window._paq || []
 
 const profile = {
@@ -31,6 +31,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.inactivePlugins = []
     this.activeProfiles = this.appManager.actives
     this._paq = _paq
+    this.dispatch = null
     this.listenOnEvent()
   }
 
@@ -40,7 +41,7 @@ class PluginManagerComponent extends ViewPlugin {
    * RemixAppManager
    * @param {string} name name of Plugin
    */
-  isActive (name) {
+  isActive = (name) =>{
     return this.appManager.actives.includes(name)
   }
 
@@ -49,7 +50,7 @@ class PluginManagerComponent extends ViewPlugin {
    * RemixAppManager to enable plugin activation
    * @param {string} name name of Plugin
    */
-  activateP (name) {
+  activateP = (name) => {
     this.appManager.activatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
@@ -60,7 +61,7 @@ class PluginManagerComponent extends ViewPlugin {
    * @param {Profile} pluginName
    * @returns {void}
    */
-  async activateAndRegisterLocalPlugin (localPlugin) {
+  activateAndRegisterLocalPlugin = async (localPlugin) => {
     if (localPlugin) {
       this.engine.register(localPlugin)
       this.appManager.activatePlugin(localPlugin.profile.name)
@@ -75,28 +76,33 @@ class PluginManagerComponent extends ViewPlugin {
    * of the plugin
    * @param {string} name name of Plugin
    */
-  deactivateP (name) {
+  deactivateP = (name) => {
     this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
-  onActivation () {
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
     this.renderComponent()
   }
 
+  updateComponent(state){
+    return <RemixUiPluginManager
+      pluginComponent={state}/>
+  }
+
   renderComponent () {
-    ReactDOM.render(
-      <RemixUiPluginManager
-        pluginComponent={this}
-      />,
-      this.htmlElement)
+    if(this.dispatch) this.dispatch({...this, activePlugins: this.activePlugins, inactivePlugins: this.inactivePlugins})
   }
 
   render () {
-    return this.htmlElement
+    return (
+      <div id='pluginManager'><PluginViewWrapper plugin={this} /></div>
+    );
+    
   }
 
-  getAndFilterPlugins (filter) {
+  getAndFilterPlugins = (filter) => {
     this.filter = typeof filter === 'string' ? filter.toLowerCase() : this.filter
 
     const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
