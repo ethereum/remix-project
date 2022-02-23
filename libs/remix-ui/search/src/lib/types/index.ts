@@ -1,3 +1,4 @@
+import { count } from "console";
 
 export interface Action {
     type: string
@@ -30,7 +31,7 @@ export interface SearchResult {
     path: string,
     lines: SearchResultLine[],
     timeStamp: number,
-    forceReload: boolean
+    forceReload: boolean,
 }
 
 export interface SearchState {
@@ -44,6 +45,8 @@ export interface SearchState {
     replaceWithOutConfirmation: boolean,
     useRegExp: boolean,
     timeStamp: number,
+    count: number,
+    maxResults: number
 }
 
 export const SearchingInitialState: SearchState = {
@@ -56,5 +59,7 @@ export const SearchingInitialState: SearchState = {
     matchWord: false,
     useRegExp: false,
     replaceWithOutConfirmation: false,
-    timeStamp: 0
+    timeStamp: 0,
+    count: 0,
+    maxResults: 500
 }
