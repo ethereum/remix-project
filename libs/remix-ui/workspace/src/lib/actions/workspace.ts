@@ -4,8 +4,10 @@ import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
+import { JSONStandardInput } from '../types'
 import { examples } from '../templates/examples'
 import { QueryParams } from '@remix-project/remix-lib'
+
 
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
@@ -81,29 +83,39 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
   switch (template) {
     case 'code-template':
-      // creates a new workspace code-sample and loads code from url params.
-      try {
-        let path = ''; let content = ''
+    // creates a new workspace code-sample and loads code from url params.
+    try {
+      let path = ''; let content = ''
+      
+      if (params.code) {
+        const hash = bufferToHex(keccakFromString(params.code))
 
-        if (params.code) {
-          const hash = bufferToHex(keccakFromString(params.code))
-
-          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-          content = atob(params.code)
-          await workspaceProvider.set(path, content)
-        }
-        if (params.url) {
-          const data = await plugin.call('contentImport', 'resolve', params.url)
-
-          path = data.cleanUrl
-          content = data.content
-          await workspaceProvider.set(path, content)
-        }
-        return path
-      } catch (e) {
-        console.error(e)
+        path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+        content = atob(params.code)
+        workspaceProvider.set(path, content)
       }
-      break
+      if (params.url) {
+        const data = await plugin.call('contentImport', 'resolve', params.url)
+
+        path = data.cleanUrl
+        content = data.content
+        if (content && typeof content === 'object') {
+          const standardInput = content as JSONStandardInput
+          if (standardInput.language && standardInput.language === "Solidity" && standardInput.sources) {
+            for (const [fname, source] of Object.entries(standardInput.sources)) {
+              await workspaceProvider.set(fname, source.content)
+            }
+          }
+          return Object.keys(standardInput.sources)[0]
+        } else {
+          workspaceProvider.set(path, content)
+        }
+      }
+      return path
+    } catch (e) {
+      console.error(e)
+    }
+    break
 
     case 'gist-template':
       // creates a new workspace gist-sample and get the file from gist
