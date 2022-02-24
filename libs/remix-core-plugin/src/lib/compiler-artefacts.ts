@@ -72,51 +72,48 @@ export class CompilerArtefacts extends Plugin {
     return contractsData
   }
 
-  async getArtefactsFromFE (path, contractName) {
+  getAllContractArtefactsfromOutput (contractsOutput, contractName) {
+    let contractArtefacts = {}
+    for (const filename in contractsOutput) {
+      if(Object.keys(contractsOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = contractsOutput[filename][contractName]
+    }
+    return contractArtefacts
+  }
+
+  async getArtefactsFromFE (path, contractName, contractArtefacts) {
     const dirList = await this.call('fileManager', 'dirList', path)
     if(dirList && dirList.length) {
-      if(dirList.includes(path + '/artifacts')) {
-        const fileList = await this.call('fileManager', 'fileList', path + '/artifacts')
-        const artefactsFilePaths = fileList.filter(filePath => {
-          const filenameArr = filePath.split('/')
-          const filename = filenameArr[filenameArr.length - 1]
-          if (filename === `${contractName}_fullOP.json`) return true
-        })
-        if (artefactsFilePaths && artefactsFilePaths.length) {
-          const content = await this.call('fileManager', 'readFile', artefactsFilePaths[0])
-          const artifacts = JSON.parse(content)
-          return artifacts
-        } else {
-          for (const dirPath of dirList) {
-            const result = await this.getArtefactsFromFE (dirPath, contractName)
-            if (result) return result
+      for (const dirPath of dirList) {
+        if(dirPath === path + '/artifacts' && await this.call('fileManager', 'exists', dirPath + '/build-info')) {
+          const buildFileList = await this.call('fileManager', 'fileList', dirPath + '/build-info')
+          for (const buildFile of buildFileList) {
+            let content = await this.call('fileManager', 'readFile', buildFile)
+            if (content) content = JSON.parse(content)
+            const contracts = content.output.contracts
+            const artefacts = this.getAllContractArtefactsfromOutput(contracts, contractName)
+            Object.assign(contractArtefacts, artefacts)
           }
-        }
-      } else {
-        for (const dirPath of dirList) {
-          const result = await this.getArtefactsFromFE (dirPath, contractName)
-          if (result) return result
-        }
-      }
-    } else return
-  }
+      } else await this.getArtefactsFromFE (dirPath, contractName, contractArtefacts)
+    } 
+  } else return
+}
 
   async getArtefactsByContractName (contractName) {
     const contractsDataByFilename = this.getAllContractDatas()
-    const contractsData = Object.values(contractsDataByFilename)
-    if (contractsData && contractsData.length) {
-      const index = contractsData.findIndex((contractsObj) => Object.keys(contractsObj).includes(contractName))
-      if (index !== -1) return contractsData[index][contractName]
-      else {
-        const result = await this.getArtefactsFromFE ('contracts', contractName)
-        if (result) return result
-        else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
-      }
-    } else {
-      const result = await this.getArtefactsFromFE ('contracts', contractName)
-      if (result) return result
-      else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
-    }  
+    let contractArtefacts
+    contractArtefacts = this.getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
+    let keys = Object.keys(contractArtefacts)
+    if (!keys.length) {
+      await this.getArtefactsFromFE ('contracts', contractName, contractArtefacts)
+      keys = Object.keys(contractArtefacts)
+    }
+    if (keys.length === 1) return contractArtefacts[keys[0]]
+    else {
+      throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
+        Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
+        ${keys.join()}\n
+        OR just compile the required contract again`)
+    }
   }
 
   getCompilerAbstract (file) {
