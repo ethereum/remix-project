@@ -9,7 +9,8 @@ import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription
+  isFunctionDescription,
+  CompilerInput
 } from './types'
 
 /*
@@ -134,7 +135,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?, version?): void {
+  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -183,7 +184,7 @@ export class Compiler {
             return { error: 'Deferred import' }
           }
           let result: CompilationResult = {}
-          let input
+          let input: string
           try {
             if (source && source.sources) {
               const { optimize, runs, evmVersion, language } = this.state
