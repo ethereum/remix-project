@@ -2,7 +2,16 @@ import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
-
+export interface JSONStandardInput {
+  language: "Solidity";
+  settings?: any,
+  sources: {
+    [globalName: string]: {
+      keccak256?: string;
+      content: string;
+    },
+  };
+}
 export type MenuItems = action[]
 export interface WorkspaceProps {
   plugin: {
