@@ -48,15 +48,19 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.renderComponent()
   }
 
-  onResetResults () {
-    this.renderComponent()
-  }
+  // onResetResults () {
+  //   this.renderComponent()
+  // }
 
   onSetWorkspace () {
     this.renderComponent()
   }
 
   onNoFileSelected () {
+    this.renderComponent()
+  }
+
+  onFileClosed () {
     this.renderComponent()
   }
 
