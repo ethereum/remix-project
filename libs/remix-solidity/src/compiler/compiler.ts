@@ -148,7 +148,7 @@ export class Compiler {
     if (!noFatalErrors) {
       // There are fatal errors, abort here
       this.state.lastCompilationResult = null
-      this.event.trigger('compilationFinished', [false, data, source])
+      this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
       this.internalCompile(source.sources, missingInputs)
