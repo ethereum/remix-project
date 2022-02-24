@@ -72,7 +72,7 @@ export class CompilerArtefacts extends Plugin {
     return contractsData
   }
 
-  getAllContractArtefactsfromOutput (contractsOutput, contractName) {
+  _getAllContractArtefactsfromOutput (contractsOutput, contractName) {
     const contractArtefacts = {}
     for (const filename in contractsOutput) {
       if(Object.keys(contractsOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = contractsOutput[filename][contractName]
@@ -80,7 +80,7 @@ export class CompilerArtefacts extends Plugin {
     return contractArtefacts
   }
 
-  async getArtefactsFromFE (path, contractName, contractArtefacts) {
+  async _getArtefactsFromFE (path, contractName, contractArtefacts) {
     const dirList = await this.call('fileManager', 'dirList', path)
     if(dirList && dirList.length) {
       for (const dirPath of dirList) {
@@ -90,13 +90,13 @@ export class CompilerArtefacts extends Plugin {
             let content = await this.call('fileManager', 'readFile', buildFile)
             if (content) content = JSON.parse(content)
             const contracts = content.output.contracts
-            const artefacts = this.getAllContractArtefactsfromOutput(contracts, contractName)
+            const artefacts = this._getAllContractArtefactsfromOutput(contracts, contractName)
             Object.assign(contractArtefacts, artefacts)
           }
-      } else await this.getArtefactsFromFE (dirPath, contractName, contractArtefacts)
-    } 
-  } else return
-}
+        } else await this._getArtefactsFromFE (dirPath, contractName, contractArtefacts)
+      } 
+    } else return
+  }
 
   async getArtefactsByContractName (contractName) {
     const contractsDataByFilename = this.getAllContractDatas()
@@ -108,15 +108,15 @@ export class CompilerArtefacts extends Plugin {
         return contractsDataByFilename[filename][contract]
       else {
         const allContractsData = {}
-        await this.getArtefactsFromFE ('contracts', contract, allContractsData)
+        await this._getArtefactsFromFE ('contracts', contract, allContractsData)
         if(allContractsData[contractName]) return allContractsData[contractName]
         else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
       }
     } else {
-      const contractArtefacts = this.getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
+      const contractArtefacts = this._getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
       let keys = Object.keys(contractArtefacts)
       if (!keys.length) {
-        await this.getArtefactsFromFE ('contracts', contractName, contractArtefacts)
+        await this._getArtefactsFromFE ('contracts', contractName, contractArtefacts)
         keys = Object.keys(contractArtefacts)
       }
       if (keys.length === 1) return contractArtefacts[keys[0]]
