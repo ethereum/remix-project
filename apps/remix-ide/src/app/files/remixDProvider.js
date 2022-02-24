@@ -105,7 +105,7 @@ module.exports = class RemixDProvider extends FileProvider {
       const file = await this._appManager.call('remixd', 'get', { path: unprefixedpath })
       this.filesContent[path] = file.content
       if (file.readonly) { this._readOnlyFiles[path] = 1 }
-      if(cb) return cb(null, file.content)
+      if(cb) cb(null, file.content)
       return file.content
     } catch(error) {
       if (error) console.log(error)
