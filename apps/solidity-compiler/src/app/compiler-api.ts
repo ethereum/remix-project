@@ -4,23 +4,26 @@ import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
-  contractMap: {
-    file: string
-  } | Record<string, any>
-
+  compilationDetails: {
+    contractMap: {
+      file: string
+    } | Record<string, any>,
+    contractsDetails: Record<string, any>,
+    target?: string
+  }
   compileErrors: any
   compileTabLogic: CompileTabLogic
-  contractsDetails: Record<string, any>
-
   configurationSettings: ConfigurationSettings
 
   onCurrentFileChanged: (fileName: string) => void
-  onResetResults: () => void
+  // onResetResults: () => void
   onSetWorkspace: (workspace: any) => void
   onNoFileSelected: () => void
-  onCompilationFinished: (contractsDetails: any, contractMap: any) => void
+  onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
   onContentChanged: () => void
+  onFileClosed: (name: string) => void
+  statusChanged: (data: { key: string, title?: string, type?: string }) => void
 
   initCompilerApi () {
     this.configurationSettings = null
@@ -31,14 +34,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
       contractEl: null
     }
 
-    this.contractsDetails = {}
+    this.compilationDetails = {
+      contractsDetails:{},
+      contractMap: {}
+    }
     this.data = {
       eventHandlers: {},
       loading: false
     }
-
-    this.contractMap = {}
-    this.contractsDetails = {}
 
     this.compileErrors = {}
     this.compiledFileName = ''
@@ -188,32 +191,35 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   resetResults () {
     this.currentFile = ''
-    this.contractsDetails = {}
-    this.emit('statusChanged', { key: 'none' })
-    if (this.onResetResults) this.onResetResults()
+    this.compilationDetails = {
+      contractsDetails: {},
+      contractMap: {}
+    }
+    this.statusChanged({ key: 'none' })
+    // if (this.onResetResults) this.onResetResults()
   }
 
   listenToEvents () {
     this.on('editor', 'contentChanged', () => {
-      this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
+      this.statusChanged({ key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
       if (this.onContentChanged) this.onContentChanged()
     })
 
     this.data.eventHandlers.onLoadingCompiler = (url) => {
       this.data.loading = true
       this.data.loadingUrl = url
-      this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
+      this.statusChanged({ key: 'loading', title: 'loading compiler...', type: 'info' })
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
     this.data.eventHandlers.onCompilerLoaded = () => {
       this.data.loading = false
-      this.emit('statusChanged', { key: 'none' })
+      this.statusChanged({ key: 'none' })
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 
     this.data.eventHandlers.onStartingCompilation = () => {
-      this.emit('statusChanged', { key: 'loading', title: 'compiling...', type: 'info' })
+      this.statusChanged({ key: 'loading', title: 'compiling...', type: 'info' })
     }
 
     this.data.eventHandlers.onRemoveAnnotations = () => {
@@ -249,22 +255,28 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
     this.on('fileManager', 'noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
+    this.data.eventHandlers.onFileClosed = (name: string) => {
+      this.onFileClosed(name)
+    }
+
+    this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
+
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       this.compileErrors = data
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data)
         if (data.errors && data.errors.length > 0) {
-          this.emit('statusChanged', {
+          this.statusChanged({
             key: data.errors.length,
             title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.emit('statusChanged', { key: 'succeed', title: 'compilation successful', type: 'success' })
+        } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
         // Store the contracts
-        this.contractsDetails = {}
+        this.compilationDetails.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
-          this.contractsDetails[contract.name] = parseContracts(
+          this.compilationDetails.contractsDetails[contract.name] = parseContracts(
             contract.name,
             contract.object,
             this.compiler.getSource(contract.file)
@@ -272,12 +284,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
         })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
-        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
+        this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
-      this.contractMap = {}
-      if (success) this.compiler.visitContracts((contract) => { this.contractMap[contract.name] = contract })
-      if (this.onCompilationFinished) this.onCompilationFinished(this.contractsDetails, this.contractMap)
+      this.compilationDetails.contractMap = {}
+      if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
+      this.compilationDetails.target = source.target
+      if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
     }
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
