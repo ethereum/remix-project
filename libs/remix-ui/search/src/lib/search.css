@@ -1,4 +1,4 @@
-.search_result_item_title {
+.search_plugin_search_result_item_title {
     display: flex;
     -webkit-user-select: none; /* Safari */        
     -moz-user-select: none; /* Firefox */
@@ -8,7 +8,7 @@
     align-items: center;
 }
 
-.wrap_summary {
+.search_plugin_wrap_summary {
     overflow: hidden;
     white-space: nowrap;
     -webkit-user-select: none; /* Safari */        
@@ -18,89 +18,89 @@
     cursor: pointer;
 }
 
-.find-part {
+.search_plugin_find-part {
     display: flex;
     flex-direction: column;
     padding: 2px;
 }
 
-.controls {
+.search_plugin_controls {
     display: flex;
 }
 
-.search_tab .search_line_container {
+.search_plugin_search_tab .search_plugin_search_line_container {
     display: flex;
     flex-direction: row;
     position: relative;
 }
 
-.search_tab .search_line {
+.search_plugin_search_tab .search_plugin_search_line {
     width: 100%;
     overflow: hidden;
     display: flex;
 }
 
-.search_tab .search_control {
+.search_plugin_search_tab .search_plugin_search_control {
     flex-grow: 0;
     position: absolute;
     right: 0px;
     top: 0px;
 }
 
-.summary_right {
+.search_plugin_summary_right {
     min-width: 0;
     white-space: pre;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.search_tab .replace_strike {
+.search_plugin_search_tab .search_plugin_replace_strike {
     text-decoration: line-through;
 }
 
-.summary_left {
+.search_plugin_summary_left {
     white-space: pre;
 }
 
-.search_tab mark {
+.search_plugin_search_tab mark {
     padding: 0;
 }
 
-.search_tab .search_line_container .search_control {
+.search_plugin_search_tab .search_plugin_search_line_container .search_plugin_search_control {
     display: none;
 }
 
-.search_tab .search_line_container:hover .search_control {
+.search_plugin_search_tab .search_plugin_search_line_container:hover .search_plugin_search_control {
     display: block;
 }
 
-.search_tab .search_line_container:hover .search_line {
+.search_plugin_search_tab .search_plugin_search_line_container:hover .search_plugin_search_line {
     width: 93%;
 }
 
-.search-input {
+.search_plugin_search-input {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.search_tab .checked {
+.search_plugin_search_tab .checked {
     background-color: var(--secondary);
 }
 
-.search_tab .search_file_name {
+.search_plugin_search_tab .search_plugin_search_file_name {
     text-overflow: ellipsis;
     overflow: hidden;
     text-transform: uppercase;
 }
 
-.search_tab  .result_count {
+.search_plugin_search_tab  .search_plugin_result_count {
     flex-grow: 1;
     text-align: right;
     display: flex;
     justify-content: flex-end;
 }
 
-.search_tab .result_count_number {
+.search_plugin_search_tab .search_plugin_result_count_number {
     font-size: x-small;
 }

@@ -6,7 +6,7 @@ export const Results = () => {
   const { state } = useContext(SearchContext)
   return (
     <div data-id='search_results'>
-      {state.find ? <div className='result_count_number badge badge-pill badge-secondary'>{state.count} results</div>: null}
+      {state.find ? <div className='search_plugin_result_count_number badge badge-pill badge-secondary'>{state.count} results</div>: null}
       {state.count < state.maxResults && state.searchResults &&
         state.searchResults.map((result, index) => {
           return <ResultItem key={index} file={result} />
