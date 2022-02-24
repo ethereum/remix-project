@@ -107,7 +107,7 @@ export class CompilerArtefacts extends Plugin {
       if(Object.keys(contractsDataByFilename).includes(filename) && contractsDataByFilename[filename][contract]) 
         return contractsDataByFilename[filename][contract]
       else {
-        let allContractsData = {}
+        const allContractsData = {}
         await this.getArtefactsFromFE ('contracts', contract, allContractsData)
         if(allContractsData[contractName]) return allContractsData[contractName]
         else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
