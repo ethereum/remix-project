@@ -100,20 +100,33 @@ export class CompilerArtefacts extends Plugin {
 
   async getArtefactsByContractName (contractName) {
     const contractsDataByFilename = this.getAllContractDatas()
-    // let contractArtefacts
-    const  contractArtefacts = this.getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
-    let keys = Object.keys(contractArtefacts)
-    if (!keys.length) {
-      await this.getArtefactsFromFE ('contracts', contractName, contractArtefacts)
-      keys = Object.keys(contractArtefacts)
+    if (contractName.includes(':')) {
+      const nameArr = contractName.split(':')
+      const filename = nameArr[0]
+      const contract = nameArr[1]
+      if(Object.keys(contractsDataByFilename).includes(filename) && contractsDataByFilename[filename][contract]) 
+        return contractsDataByFilename[filename][contract]
+      else {
+        let allContractsData = {}
+        await this.getArtefactsFromFE ('contracts', contract, allContractsData)
+        if(allContractsData[contractName]) return allContractsData[contractName]
+        else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
+      }
+    } else {
+      const contractArtefacts = this.getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
+      let keys = Object.keys(contractArtefacts)
+      if (!keys.length) {
+        await this.getArtefactsFromFE ('contracts', contractName, contractArtefacts)
+        keys = Object.keys(contractArtefacts)
+      }
+      if (keys.length === 1) return contractArtefacts[keys[0]]
+      else if (keys.length > 1) {
+        throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
+          Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
+          ${keys.join()}\n
+          OR just compile the required contract again`)
+      } else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
     }
-    if (keys.length === 1) return contractArtefacts[keys[0]]
-    else if (keys.length > 1) {
-      throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
-        Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
-        ${keys.join()}\n
-        OR just compile the required contract again`)
-    } else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
   }
 
   getCompilerAbstract (file) {
