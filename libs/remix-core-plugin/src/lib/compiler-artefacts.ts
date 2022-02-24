@@ -108,12 +108,12 @@ export class CompilerArtefacts extends Plugin {
       keys = Object.keys(contractArtefacts)
     }
     if (keys.length === 1) return contractArtefacts[keys[0]]
-    else {
+    else if (keys.length > 1) {
       throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
         Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
         ${keys.join()}\n
         OR just compile the required contract again`)
-    }
+    } else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
   }
 
   getCompilerAbstract (file) {
