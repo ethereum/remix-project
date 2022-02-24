@@ -20,7 +20,7 @@ module.exports = {
         .waitForElementContainsText('*[data-id="search_results"]', 'that person al')
         .waitForElementContainsText('*[data-id="search_results"]', 'sender.voted')
         .waitForElementContainsText('*[data-id="search_results"]', 'read')
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
         })
     },
@@ -35,7 +35,7 @@ module.exports = {
         .waitForElementContainsText('*[data-id="search_results"]', '1_STORAGE.SOL', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', '4_BALLOT_TEST.SOL', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', 'tests', 60000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)
         })
     },
@@ -43,12 +43,12 @@ module.exports = {
         browser
         .waitForElementVisible('*[data-id="search_use_regex"]').click('*[data-id="search_use_regex"]')
         .waitForElementVisible('*[data-id="search_case_sensitive"]').click('*[data-id="search_case_sensitive"]')
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 0)
         })        
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'Contract').pause(1000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
         })
         .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_ETHERS.JS', 60000)
@@ -61,7 +61,7 @@ module.exports = {
         .waitForElementVisible('*[data-id="search_whole_word"]').click('*[data-id="search_whole_word"]')
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'contract').pause(1000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 27)
         })
     },
@@ -95,7 +95,7 @@ module.exports = {
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'contract').pause(1000)
         .setValue('*[id="search_include"]', 'contracts/**').pause(2000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)
         })
     },
@@ -103,11 +103,11 @@ module.exports = {
         browser
         .clearValue('*[id="search_include"]').pause(2000)
         .setValue('*[id="search_include"]', '**').pause(2000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 26)
         })
         .setValue('*[id="search_exclude"]', ',contracts/**').pause(2000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 22)
         })
     },
@@ -115,7 +115,7 @@ module.exports = {
         browser
         .waitForElementVisible('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'nodata').pause(1000)
-        .elements('css selector','.search_line', (res) => {
+        .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 0)
         })
     }
