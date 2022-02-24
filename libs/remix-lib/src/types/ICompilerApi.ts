@@ -1,11 +1,14 @@
 export interface ICompilerApi {
     currentFile: string
-    contractMap: {
-      file: string
-    } | Record<string, any>
+    compilationDetails: {
+        contractMap: {
+            file: string
+        } | Record<string, any>,
+        contractsDetails: Record<string, any>,
+        target?: string
+    }
     compileErrors: any
     compileTabLogic: any
-    contractsDetails: Record<string, any>
     configurationSettings: ConfigurationSettings
 
     getCompilerParameters: () => ConfigurationSettings
@@ -20,12 +23,13 @@ export interface ICompilerApi {
     getCompilationResult: () => any
 
     onCurrentFileChanged: (fileName: string) => void
-    onResetResults: () => void,
+    // onResetResults: () => void,
     onSetWorkspace: (workspace: any) => void
     onNoFileSelected: () => void
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
+    onFileClosed: (name: string) => void
 
     resolveContentAndSave: (url: string) => Promise<string>
     fileExists: (file: string) => Promise<boolean>
@@ -37,6 +41,8 @@ export interface ICompilerApi {
     logToTerminal: (log: terminalLog) => void
 
     compileWithHardhat: (configPath: string) => Promise<string>
+    statusChanged: (data: { key: string, title?: string, type?: string }) => void,
+    emit?: (key: string, ...payload: any) => void
 }
 
 export type terminalLog = {
