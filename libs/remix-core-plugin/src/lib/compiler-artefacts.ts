@@ -73,7 +73,7 @@ export class CompilerArtefacts extends Plugin {
   }
 
   getAllContractArtefactsfromOutput (contractsOutput, contractName) {
-    let contractArtefacts = {}
+    const contractArtefacts = {}
     for (const filename in contractsOutput) {
       if(Object.keys(contractsOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = contractsOutput[filename][contractName]
     }
@@ -100,8 +100,8 @@ export class CompilerArtefacts extends Plugin {
 
   async getArtefactsByContractName (contractName) {
     const contractsDataByFilename = this.getAllContractDatas()
-    let contractArtefacts
-    contractArtefacts = this.getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
+    // let contractArtefacts
+    const  contractArtefacts = this.getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
     let keys = Object.keys(contractArtefacts)
     if (!keys.length) {
       await this.getArtefactsFromFE ('contracts', contractName, contractArtefacts)
