@@ -14,7 +14,7 @@ const plugin = props.plugin
 
 return (
     <>
-    <div className="search_tab pl-2 pr-2">
+    <div className="search_plugin_search_tab pl-2 pr-2">
       <SearchProvider plugin={plugin}>
         <Find></Find>
         <Replace></Replace>

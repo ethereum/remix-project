@@ -37,21 +37,21 @@ export const ResultSummary = (props: ResultSummaryProps) => {
   return (
     <>
       {props.line.lines.map((lineItem, index) => (
-        <div className='search_line_container' key={index}>
+        <div className='search_plugin_search_line_container' key={index}>
         <div
           onClick={async () => {
             selectLine(lineItem)
           }}
           data-id={`${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`}
           key={props.searchResult.filename}
-          className='search_line  pb-1'
+          className='search_plugin_search_line  pb-1'
         >
-          <div className='summary_left'>{lineItem.left.substring(lineItem.left.length - 20).trimStart()}</div>
-          <mark className={`summary_center ${state.replace? 'replace_strike':''}`}>{lineItem.center}</mark>
-          {state.replace? <mark className='replacement'>{state.replace}</mark>:<></>}
-          <div className='summary_right'>{lineItem.right.substring(0, 100)}</div>
+          <div className='search_plugin_summary_left'>{lineItem.left.substring(lineItem.left.length - 20).trimStart()}</div>
+          <mark className={`search_plugin_summary_center ${state.replace? 'search_plugin_replace_strike':''}`}>{lineItem.center}</mark>
+          {state.replace? <mark className='search_plugin_replacement'>{state.replace}</mark>:<></>}
+          <div className='search_plugin_summary_right'>{lineItem.right.substring(0, 100)}</div>
         </div>
-        <div className='search_control'>
+        <div className='search_plugin_search_control'>
         <div title="Replace" data-id={`replace-${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`} onClick={async () => {
             replace(lineItem)
           }} className="codicon codicon-find-replace" role="button" aria-label="Replace" aria-disabled="false"></div>

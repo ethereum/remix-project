@@ -17,16 +17,16 @@ export const Find = props => {
 
   return (
     <>
-      <div className="find-part">
+      <div className="search_plugin_find-part">
         <label>search</label>
-        <div className="search-input">
+        <div className="search_plugin_search-input">
           <input
             id='search_input'
             placeholder="Search"
             className="form-control"
             onChange={change}
           ></input>
-          <div className="controls">
+          <div className="search_plugin_controls">
             <div
               data-id='search_case_sensitive'
               title="Match Case"
