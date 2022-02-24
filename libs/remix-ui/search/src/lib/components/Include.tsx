@@ -13,7 +13,7 @@ export const Include = props => {
 
   return (
     <>
-      <div className="find-part">
+      <div className="search_plugin_find-part">
         <label>include</label>
         <input
           id='search_include'

@@ -66,7 +66,7 @@ export const ResultItem = (props: ResultItemProps) => {
     <>
       {lines && lines.length ? (
         <>
-          <div onClick={toggleClass} className="search_result_item_title">
+          <div onClick={toggleClass} className="search_plugin_search_result_item_title">
             <button className="btn">
               <i
                 className={`fas ${
@@ -76,15 +76,15 @@ export const ResultItem = (props: ResultItemProps) => {
               ></i>
             </button>{' '}
             <ResultFileName file={props.file} />
-            <div className="result_count">
-              <div className="result_count_number badge badge-pill badge-secondary">
+            <div className="search_plugin_result_count">
+              <div className="search_plugin_result_count_number badge badge-pill badge-secondary">
                 {props.file.count}
               </div>
             </div>
           </div>
           {loading ? <div className="loading">Loading...</div> : null}
           {!toggleExpander && !loading ? (
-            <div className="p-1 wrap_summary">
+            <div className="p-1 search_plugin_wrap_summary">
               {lines.map((line, index) => (
                 <ResultSummary
                   setLoading={setLoading}

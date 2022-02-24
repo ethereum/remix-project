@@ -17,7 +17,7 @@ export const Exclude = props => {
 
   return (
     <>
-      <div className="find-part">
+      <div className="search_plugin_find-part">
         <label>exclude</label>
         <input
           id='search_exclude'
