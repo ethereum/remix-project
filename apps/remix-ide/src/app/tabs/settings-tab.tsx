@@ -47,11 +47,9 @@ module.exports = class SettingsTab extends ViewPlugin {
   }
 
   render() {      
-    return (
-      <div id='settingsTab'>
+    return <div id='settingsTab'>
         <PluginViewWrapper plugin={this} />
       </div>
-    );
   }
 
   updateComponent(state: any){
