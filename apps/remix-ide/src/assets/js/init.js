@@ -1,5 +1,5 @@
 /* eslint-disable prefer-promise-reject-errors */
-function urlParams () {
+function urlParams() {
   var qs = window.location.hash.substr(1)
 
   if (window.location.search.length > 0) {
@@ -42,8 +42,8 @@ for (const k in assets[versionToLoad]) {
 
 window.onload = () => {
   // eslint-disable-next-line no-undef
-  class RemixFileSystem extends LightningFS {
-    constructor (...t) {
+  class IndexedDBFS extends LightningFS {
+    constructor(...t) {
       super(...t)
       this.addSlash = (file) => {
         if (!file.startsWith('/')) file = '/' + file
@@ -86,22 +86,90 @@ window.onload = () => {
     }
   }
 
-  function loadApp () {
+  function loadApp() {
     const app = document.createElement('script')
     app.setAttribute('src', versions[versionToLoad])
     document.body.appendChild(app)
   }
 
-  window.remixFileSystemCallback = new RemixFileSystem()
-  window.remixFileSystemCallback.init('RemixFileSystem').then(() => {
-    window.remixFileSystem = window.remixFileSystemCallback.promises
-    // check if .workspaces is present in indexeddb
-    window.remixFileSystem.stat('.workspaces').then((dir) => {
-      if (dir.isDirectory()) loadApp()
-    }).catch(() => {
-      // no indexeddb .workspaces -> run migration
-      // eslint-disable-next-line no-undef
-      migrateFilesFromLocalStorage(loadApp)
+  async function ReadWriteTest(fs) {
+    try {
+      console.log(await fs.readdir('/'))
+      const str = 'Hello World'
+      await fs.writeFile('/test.txt', str , 'utf8')
+      if(await fs.readFile('/test.txt', 'utf8') === str){
+        console.log('Read/Write Test Passed')
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  try {
+    // localStorage
+    // eslint-disable-next-line no-undef
+    BrowserFS.install(window)
+    // eslint-disable-next-line no-undef
+    BrowserFS.configure({
+      fs: 'LocalStorage'
+    }, async function (e) {
+      if (e) {
+        console.log('BROWSEFS Error: ' + e)
+      } else {
+        window.remixLocalStorage = { ...window.require('fs') }
+        window.remixLocalStorageCallBack = window.require('fs')
+        window.remixLocalStorage.readdir = window.remixLocalStorage.readdirSync
+        window.remixLocalStorage.readFile = window.remixLocalStorage.readFileSync
+        window.remixLocalStorage.writeFile = window.remixLocalStorage.writeFileSync
+        window.remixLocalStorage.stat = window.remixLocalStorage.statSync
+        window.remixLocalStorage.unlink = window.remixLocalStorage.unlinkSync
+        window.remixLocalStorage.rmdir = window.remixLocalStorage.rmdirSync
+        window.remixLocalStorage.mkdir = window.remixLocalStorage.mkdirSync
+        window.remixLocalStorage.rename = window.remixLocalStorage.renameSync
+        window.remixLocalStorage.exists = window.remixLocalStorage.existsSync
+        //loadApp()
+        console.log('BrowserFS is ready!')
+        await ReadWriteTest(window.remixLocalStorage)
+      }
     })
-  })
+  } catch (e) {
+    console.log('BrowserFS is not ready!')
+  }
+  if (!window.indexedDB) {
+    console.log("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
+  }
+  var request = window.indexedDB.open("RemixTestDataBase", 3);
+  console.log(request)
+  request.onerror = event => {
+    // Do something with request.errorCode!
+    console.log('INDEEDDB ERROR')
+  };
+  request.onsuccess = event => {
+    // Do something with request.result!
+    console.log("INDEEDDB SUCCESS")
+    window.indexedDB.deleteDatabase("RemixTestDataBase");
+    activateIndexedDB()
+  };
+
+  function activateIndexedDB() {
+    // indexedDB
+    window.remixIndexedDBCallBack = new IndexedDBFS()
+    window.remixIndexedDBCallBack.init('RemixFileSystem').then(async () => {
+      window.remixIndexedDB = window.remixIndexedDBCallBack.promises
+      // check if .workspaces is present in indexeddb
+      console.log('indexeddb ready')
+      await ReadWriteTest(window.remixIndexedDB)
+      window.remixIndexedDB.stat('.workspaces').then((dir) => {
+        console.log(dir)
+        // if (dir.isDirectory()) loadApp()
+      }).catch((e) => {
+        console.log('error creating .workspaces', e)
+        // no indexeddb .workspaces -> run migration
+        // eslint-disable-next-line no-undef
+        //migrateFilesFromLocalStorage(loadApp)
+      })
+    }).catch((e) => {
+      console.log('INDEEDDB ERROR: ' + e)
+    })
+  }
 }
