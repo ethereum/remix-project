@@ -42,7 +42,7 @@ export class EditorContextListener extends Plugin {
   onActivation () {
     this.on('editor', 'contentChanged', () => { this._stopHighlighting() })
 
-    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
       if (languageVersion.indexOf('soljson') !== 0) return
       this._stopHighlighting()
       this._index = {

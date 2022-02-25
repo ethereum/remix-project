@@ -24,12 +24,12 @@ export class CompilerArtefacts extends Plugin {
   }
 
   onActivation () {
-    const saveCompilationPerFileResult = (file, source, languageVersion, data) => {
-      this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source)
+    const saveCompilationPerFileResult = (file, source, languageVersion, data, input?) => {
+      this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
     }
 
-    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source, input)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
@@ -48,9 +48,9 @@ export class CompilerArtefacts extends Plugin {
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
-    this.on('solidityUnitTesting', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
-      saveCompilationPerFileResult(file, source, languageVersion, data)
+    this.on('solidityUnitTesting', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source, input)
+      saveCompilationPerFileResult(file, source, languageVersion, data, input)
     })
   }
 
