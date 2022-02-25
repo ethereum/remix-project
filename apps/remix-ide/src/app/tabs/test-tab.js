@@ -89,12 +89,12 @@ module.exports = class TestTab extends ViewPlugin {
       this.createTestLibs()
     })
 
-    this.testRunner.event.on('compilationFinished', (success, data, source) => {
+    this.testRunner.event.on('compilationFinished', (success, data, source, input, version) => {
       if (success) {
         this.allFilesInvolved.push(...Object.keys(data.sources))
         // forwarding the event to the appManager infra
         // This is listened by compilerArtefacts to show data while debugging
-        this.emit('compilationFinished', source.target, source, 'soljson', data)
+        this.emit('compilationFinished', source.target, source, 'soljson', data, input, version)
       }
     })
   }
