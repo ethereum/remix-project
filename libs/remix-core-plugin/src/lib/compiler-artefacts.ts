@@ -53,11 +53,19 @@ export class CompilerArtefacts extends Plugin {
       saveCompilationPerFileResult(file, source, languageVersion, data, input)
     })
   }
-
+  
+  /**
+   * Get artefacts for last compiled contract 
+   * * @returns last compiled contract compiler abstract
+   */
   getLastCompilationResult () {
     return this.compilersArtefacts.__last
   }
 
+  /**
+   * Get compilation output for contracts compiled during a session of Remix IDE
+   * @returns compilatin output
+   */
   getAllContractDatas () {
     const contractsData = {}
     Object.keys(this.compilersArtefactsPerFile).map((targetFile) => {
@@ -72,51 +80,75 @@ export class CompilerArtefacts extends Plugin {
     return contractsData
   }
 
-  _getAllContractArtefactsfromOutput (contractsOutput, contractName) {
+  /**
+   * Get a particular contract output/artefacts from a compiler output of a Solidity file compilation
+   * @param compilerOutput compiler output 
+   * @param contractName contract name
+   * @returns arefacts object, with fully qualified name (e.g; contracts/1_Storage.sol:Storage) as key
+   */
+  _getAllContractArtefactsfromOutput (compilerOutput, contractName) {
     const contractArtefacts = {}
-    for (const filename in contractsOutput) {
-      if(Object.keys(contractsOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = contractsOutput[filename][contractName]
+    for (const filename in compilerOutput) {
+      if(Object.keys(compilerOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = compilerOutput[filename][contractName]
     }
     return contractArtefacts
   }
 
-  async _getArtefactsFromFE (path, contractName, contractArtefacts) {
+  /**
+   * Populate resultant object with a particular contract output/artefacts by processing all the artifacts stored in file explorer
+   * @param path path to start looking from
+   * @param contractName contract to be looked for
+   * @param contractArtefacts populated resultant artefacts object, with fully qualified name (e.g: contracts/1_Storage.sol:Storage) as key
+   * Once method execution completes, contractArtefacts object will hold all possible artefacts for contract
+   */
+  async _populateAllContractArtefactsFromFE (path, contractName, contractArtefacts) {
     const dirList = await this.call('fileManager', 'dirList', path)
     if(dirList && dirList.length) {
       for (const dirPath of dirList) {
+        // check if directory contains an 'artifacts' folder and a 'build-info' folder inside 'artifacts'
         if(dirPath === path + '/artifacts' && await this.call('fileManager', 'exists', dirPath + '/build-info')) {
           const buildFileList = await this.call('fileManager', 'fileList', dirPath + '/build-info')
+          // process each build-info file to populate the artefacts for contractName
           for (const buildFile of buildFileList) {
             let content = await this.call('fileManager', 'readFile', buildFile)
             if (content) content = JSON.parse(content)
-            const contracts = content.output.contracts
-            const artefacts = this._getAllContractArtefactsfromOutput(contracts, contractName)
+            const compilerOutput = content.output.contracts
+            const artefacts = this._getAllContractArtefactsfromOutput(compilerOutput, contractName)
+            // populate the resultant object with artefacts
             Object.assign(contractArtefacts, artefacts)
           }
-        } else await this._getArtefactsFromFE (dirPath, contractName, contractArtefacts)
+        } else await this._populateAllContractArtefactsFromFE (dirPath, contractName, contractArtefacts)
       } 
     } else return
   }
 
-  async getArtefactsByContractName (contractName) {
+  /**
+   * Get artefacts for a contract (called by script-runner)
+   * @param name contract name or fully qualified name i.e. <filename>:<contractname> e.g: contracts/1_Storage.sol:Storage 
+   * @returns artefacts for the contract
+   */
+  async getArtefactsByContractName (name) {
     const contractsDataByFilename = this.getAllContractDatas()
-    if (contractName.includes(':')) {
-      const nameArr = contractName.split(':')
+    // check if name is a fully qualified name
+    if (name.includes(':')) {
+      const fullyQualifiedName = name
+      const nameArr = fullyQualifiedName.split(':')
       const filename = nameArr[0]
       const contract = nameArr[1]
       if(Object.keys(contractsDataByFilename).includes(filename) && contractsDataByFilename[filename][contract]) 
         return contractsDataByFilename[filename][contract]
       else {
         const allContractsData = {}
-        await this._getArtefactsFromFE ('contracts', contract, allContractsData)
-        if(allContractsData[contractName]) return allContractsData[contractName]
-        else throw new Error(`Could not find artifacts for ${contractName}. Compile contract to generate artifacts.`)
+        await this._populateAllContractArtefactsFromFE ('contracts', contract, allContractsData)
+        if(allContractsData[fullyQualifiedName]) return allContractsData[fullyQualifiedName]
+        else throw new Error(`Could not find artifacts for ${fullyQualifiedName}. Compile contract to generate artifacts.`)
       }
     } else {
+      const contractName = name
       const contractArtefacts = this._getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
       let keys = Object.keys(contractArtefacts)
       if (!keys.length) {
-        await this._getArtefactsFromFE ('contracts', contractName, contractArtefacts)
+        await this._populateAllContractArtefactsFromFE ('contracts', contractName, contractArtefacts)
         keys = Object.keys(contractArtefacts)
       }
       if (keys.length === 1) return contractArtefacts[keys[0]]
