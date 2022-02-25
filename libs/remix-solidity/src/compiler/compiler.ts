@@ -9,8 +9,7 @@ import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription,
-  CompilerInput
+  isFunctionDescription
 } from './types'
 
 /*
@@ -38,7 +37,7 @@ export class Compiler {
       }
     }
 
-    this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget) => {
+    this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget, input: string, version: string) => {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
@@ -71,7 +70,7 @@ export class Compiler {
     this.gatherImports(files, missingInputs, (error, input) => {
       if (error) {
         this.state.lastCompilationResult = null
-        this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files])
+        this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files, input, this.state.currentVersion])
       } else if (this.state.compileJSON && input) { this.state.compileJSON(input) }
     })
   }
