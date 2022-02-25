@@ -544,7 +544,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     )
                   } else {
                     return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg ? msg.toString().replace(/,/g, '') : msg }</span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg? msg.toString() : null}</span></div>
                     )
                   }
                 })
