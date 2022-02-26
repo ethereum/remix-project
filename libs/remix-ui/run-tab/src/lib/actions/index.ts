@@ -66,7 +66,7 @@ const setupEvents = () => {
 
   plugin.on('manager', 'pluginDeactivated', removePluginProvider.bind(plugin))
 
-  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult(file, source, languageVersion, data, input))
 
   plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
 
@@ -301,9 +301,9 @@ export const signMessageWithAddress = (account: string, message: string, modalCo
   })
 }
 
-const broadcastCompilationResult = (file, source, languageVersion, data) => {
+const broadcastCompilationResult = (file, source, languageVersion, data, input?) => {
   // TODO check whether the tab is configured
-  const compiler = new CompilerAbstract(languageVersion, data, source)
+  const compiler = new CompilerAbstract(languageVersion, data, source, input)
 
   plugin.compilersArtefacts[languageVersion] = compiler
   plugin.compilersArtefacts.__last = compiler

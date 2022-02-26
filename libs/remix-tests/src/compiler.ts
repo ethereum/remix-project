@@ -142,7 +142,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
       },
       function doCompilation (next) {
         // @ts-ignore
-        compiler.event.register('compilationFinished', this, (success, data, source) => {
+        compiler.event.register('compilationFinished', this, (success, data, source, input, version) => {
           next(null, data)
         })
         compiler.compile(sources, filepath)
@@ -201,10 +201,10 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
       }
     },
     (next) => {
-      const compilationFinishedCb = (success, data, source) => {
+      const compilationFinishedCb = (success, data, source, input, version) => {
         // data.error usually exists for exceptions like worker error etc.
         if (!data.error) UTRunner.compiler = compiler
-        if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source)
+        if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source, input, version)
         next(null, data)
       }
       compiler.event.unregister('compilationFinished', compilationFinishedCb)

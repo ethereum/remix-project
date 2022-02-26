@@ -45,6 +45,7 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
             cmd: 'compiled',
             job: data.job,
             data: compileJSON(data.input),
+            input: data.input,
             missingInputs: missingInputs
           })
         }

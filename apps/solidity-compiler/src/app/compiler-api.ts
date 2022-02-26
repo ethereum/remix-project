@@ -261,11 +261,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
-    this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
+    this.data.eventHandlers.onCompilationFinished = (success, data, source, input, version) => {
       this.compileErrors = data
       if (success) {
         // forwarding the event to the appManager infra
-        this.emit('compilationFinished', source.target, source, 'soljson', data)
+        this.emit('compilationFinished', source.target, source, 'soljson', data, input, version)
         if (data.errors && data.errors.length > 0) {
           this.statusChanged({
             key: data.errors.length,

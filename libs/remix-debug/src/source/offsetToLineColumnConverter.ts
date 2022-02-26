@@ -8,7 +8,7 @@ export class OffsetToColumnConverter {
   constructor (compilerEvent) {
     this.lineBreakPositionsByContent = {}
     if (compilerEvent) {
-      compilerEvent.register('compilationFinished', (success, data, source) => {
+      compilerEvent.register('compilationFinished', (success, data, source, input, version) => {
         this.clear()
       })
     }
