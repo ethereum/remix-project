@@ -37,7 +37,7 @@ export class Compiler {
       }
     }
 
-    this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget) => {
+    this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget, input: string, version: string) => {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
@@ -70,7 +70,7 @@ export class Compiler {
     this.gatherImports(files, missingInputs, (error, input) => {
       if (error) {
         this.state.lastCompilationResult = null
-        this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files])
+        this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files, input, this.state.currentVersion])
       } else if (this.state.compileJSON && input) { this.state.compileJSON(input) }
     })
   }
@@ -111,16 +111,17 @@ export class Compiler {
           return { error: 'Deferred import' }
         }
         let result: CompilationResult = {}
+        let input
         try {
           if (source && source.sources) {
             const { optimize, runs, evmVersion, language } = this.state
-            const input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
           result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
         }
-        this.onCompilationFinished(result, missingInputs, source)
+        this.onCompilationFinished(result, missingInputs, source, input, this.state.currentVersion)
       }
       this.onCompilerLoaded(compiler.version())
     }
@@ -133,7 +134,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget): void {
+  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -146,7 +147,7 @@ export class Compiler {
     if (!noFatalErrors) {
       // There are fatal errors, abort here
       this.state.lastCompilationResult = null
-      this.event.trigger('compilationFinished', [false, data, source])
+      this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
       this.internalCompile(source.sources, missingInputs)
@@ -159,7 +160,7 @@ export class Compiler {
           source: source
         }
       }
-      this.event.trigger('compilationFinished', [true, data, source])
+      this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
   }
 
@@ -182,16 +183,17 @@ export class Compiler {
             return { error: 'Deferred import' }
           }
           let result: CompilationResult = {}
+          let input: string
           try {
             if (source && source.sources) {
               const { optimize, runs, evmVersion, language } = this.state
-              const input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+              input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
             }
           } catch (exception) {
             result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
           }
-          this.onCompilationFinished(result, missingInputs, source)
+          this.onCompilationFinished(result, missingInputs, source, input, version)
         }
         this.onCompilerLoaded(version)
       }
@@ -273,7 +275,7 @@ export class Compiler {
               sources = jobs[data.job].sources
               delete jobs[data.job]
             }
-            this.onCompilationFinished(result, data.missingInputs, sources)
+            this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
           }
           break
         }
