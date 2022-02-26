@@ -310,9 +310,9 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting').pause(5000)
       .scrollAndClick('#Check_winnin_proposal_with_return_value').pause(5000)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalWithReturnValue()', 60000)
       .goToVMTraceStep(321)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalWithReturnValue()', 60000)
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')
@@ -572,7 +572,7 @@ const sources = [
               Assert.equal(ballotToTest.winningProposal(), uint(1), "proposal at index 0 should be the winning proposal");
           }
           
-          function checkWinninProposalWithReturnValue () public view returns (bool) {
+          function checkWinningProposalWithReturnValue () public view returns (bool) {
               return ballotToTest.winningProposal() == 0;
           }
       }`
