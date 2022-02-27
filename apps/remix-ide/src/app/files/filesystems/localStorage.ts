@@ -10,10 +10,9 @@ export class localStorageFS extends fileSystem {
         const me = this
         return new Promise((resolve, reject) => {
             try {
-                // eslint-disable-next-line no-undef
-                BrowserFS.install(window)
-                // eslint-disable-next-line no-undef
-                BrowserFS.configure({
+                const w = window as any
+                w.BrowserFS.install(window)
+                w.BrowserFS.configure({
                     fs: 'LocalStorage'
                 }, async function (e) {
                     if (e) {
