@@ -75,7 +75,7 @@ export class indexedDBFileSystem extends fileSystem {
                 this.available = false
                 reject('No indexedDB on window')
             }
-            const request = window.indexedDB.open("RemixTestDataBase", 3);
+            const request = window.indexedDB.open("RemixTestDataBase");
             request.onerror = () => {
                 this.available = false
                 reject('Error creating test database')
