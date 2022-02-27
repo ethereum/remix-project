@@ -6,7 +6,7 @@ import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'
 import { fileSystemUtility } from '../files/filesystems/fileSystemUtility'
-import './preload.css'
+import './styles/preload.css'
 
 export const Preload = () => {
 
