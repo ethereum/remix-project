@@ -33,10 +33,13 @@ export class ThemeModule extends Plugin {
     this._deps = {
       config: Registry.getInstance().get('config').api
     }
-    this.themes = themes.reduce((acc, theme) => {
-      theme.url = window.location.origin + window.location.pathname + theme.url
-      return { ...acc, [theme.name.toLocaleLowerCase()]: theme }
-    }, {})
+    this.themes = {}
+    themes.map((theme) => {
+      this.themes[theme.name.toLocaleLowerCase()] = {
+       ...theme,
+        url: window.location.origin + window.location.pathname + theme.url
+      }
+    })
     this._paq = _paq
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = queryTheme && queryTheme.toLocaleLowerCase()
@@ -65,6 +68,7 @@ export class ThemeModule extends Plugin {
   initTheme (callback) { // callback is setTimeOut in app.js which is always passed
     if (callback) this.initCallback = callback
     if (this.active) {
+      document.getElementById('theme-link') ? document.getElementById('theme-link').remove():null
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
 
@@ -93,9 +97,9 @@ export class ThemeModule extends Plugin {
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
-    document.getElementById('theme-link').remove()
-    const theme = document.createElement('link')
+    document.getElementById('theme-link') ? document.getElementById('theme-link').remove():null
 
+    const theme = document.createElement('link')
     theme.setAttribute('rel', 'stylesheet')
     theme.setAttribute('href', nextTheme.url)
     theme.setAttribute('id', 'theme-link')
