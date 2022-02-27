@@ -54,10 +54,10 @@ export class fileSystems {
         this.fileSystems = {}
     }
 
-    addFileSystem = async (fs: fileSystem) => {
+    addFileSystem = async (fs: fileSystem): Promise<boolean> => {
         try {
             this.fileSystems[fs.name] = fs
-            if (await fs.test()) await fs.load()
+            await fs.test() && await fs.load()
             console.log(fs.name + ' is loaded...')
             return true
         } catch (e) {
