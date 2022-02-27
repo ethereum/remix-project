@@ -50,7 +50,7 @@ export const Preload = () => {
         await setFileSystems()
     }
 
-    const setFileSystems = async () => {
+    const setFileSystems = async() => {
         const fsLoaded = await remixFileSystems.current.setFileSystem([remixIndexedDB.current, localStorageFileSystem.current])
         if (fsLoaded) {
             console.log(fsLoaded.name + ' activated')
@@ -64,8 +64,10 @@ export const Preload = () => {
         async function loadStorage() {
             await remixFileSystems.current.addFileSystem(remixIndexedDB.current)
             await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)
-            await remixIndexedDB.current.checkWorkspaces()
-            remixIndexedDB.current.hasWorkSpaces ? await setFileSystems() : setShowDownloader(true)
+            remixIndexedDB.current.loaded && await remixIndexedDB.current.checkWorkspaces()
+            localStorageFileSystem.current.loaded && await localStorageFileSystem.current.checkWorkspaces()
+            remixIndexedDB.current.loaded && ( (remixIndexedDB.current.hasWorkSpaces || !localStorageFileSystem.current.hasWorkSpaces)? await setFileSystems():setShowDownloader(true))
+            !remixIndexedDB.current.loaded && await setFileSystems()
         }
         loadStorage()
     }, [])
