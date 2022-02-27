@@ -5,7 +5,7 @@ import * as packageJson from '../../../../../package.json'
 import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'
-import { fileSystemUtility } from '../files/filesystems/migrateFileSystem'
+import { fileSystemUtility } from '../files/filesystems/fileSystemUtility'
 import './preload.css'
 
 export const Preload = () => {
@@ -37,10 +37,6 @@ export const Preload = () => {
     const downloadBackup = async () => {
         const fsUtility = new fileSystemUtility()
         await fsUtility.downloadBackup(remixFileSystems.current.fileSystems['localstorage'])
-        await migrateAndLoad()
-    }
-
-    const skipBackup = async () => {
         await migrateAndLoad()
     }
 
@@ -97,7 +93,7 @@ export const Preload = () => {
                     <br></br>
                     You don't need to do anything else, your files will be available when the app loads.
                     <div onClick={async () => { await downloadBackup() }} className='btn btn-primary mt-1'>download backup</div>
-                    <div onClick={async () => { await skipBackup() }} className='btn btn-primary mt-1'>skip backup</div>
+                    <div onClick={async () => { await migrateAndLoad() }} className='btn btn-primary mt-1'>skip backup</div>
                 </div> : null}
             {(supported && !error && !showDownloader) ?
                 <div>
