@@ -16,6 +16,7 @@ export const Preload = () => {
     const remixFileSystems = useRef<fileSystems>(new fileSystems())
     const remixIndexedDB = useRef<fileSystem>(new indexedDBFileSystem())
     const localStorageFileSystem = useRef<fileSystem>(new localStorageFS())
+    // url parameters to e2e test the fallbacks and error warnings
     const testmigrationFallback = useRef<boolean>(window.location.hash.includes('e2e_testmigration_fallback=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:')
     const testmigrationResult =  useRef<boolean>(window.location.hash.includes('e2e_testmigration=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:')
     const testBlockStorage =  useRef<boolean>(window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:')
@@ -52,8 +53,6 @@ export const Preload = () => {
     }
 
     const setFileSystems = async() => {
-        // url parameters to e2e test the fallbacks and error warnings
-
         const fsLoaded = await remixFileSystems.current.setFileSystem([(testmigrationFallback.current || testBlockStorage.current)? null: remixIndexedDB.current, testBlockStorage.current? null:localStorageFileSystem.current])
         if (fsLoaded) {
             console.log(fsLoaded.name + ' activated')
@@ -63,9 +62,7 @@ export const Preload = () => {
         }
     }
 
-    const testmigration = async() => {
-        // load dummy data for e2e test
-        
+    const testmigration = async() => {        
         const fsUtility = new fileSystemUtility()
         if (testmigrationResult.current) {
             fsUtility.populateWorkspace(migrationTestData, remixFileSystems.current.fileSystems['localstorage'].fs)

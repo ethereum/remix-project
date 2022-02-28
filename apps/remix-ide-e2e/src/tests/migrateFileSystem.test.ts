@@ -14,7 +14,17 @@ module.exports = {
       .waitForElementVisible('[id="remixTourSkipbtn"]')
       .click('[id="remixTourSkipbtn"]')
   },
-  'should have indexedDB storage in terminal #group1': function (browser: NightwatchBrowser) {
+  'Should load the testmigration url and refresh and still have test data #group7': function (browser: NightwatchBrowser) {
+    browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
+      .pause(6000)
+      .switchBrowserTab(0)
+      .maximizeWindow()
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .click('*[data-id="skipbackup-btn"]')
+      .waitForElementVisible('[id="remixTourSkipbtn"]')
+      .click('[id="remixTourSkipbtn"]').refresh()
+  },
+  'should have indexedDB storage in terminal #group1 #group7': function (browser: NightwatchBrowser) {
     browser.assert.containsText('*[data-id="terminalJournal"]', 'indexedDB')
   },
   'Should fallback to localstorage with default data #group2': function (browser: NightwatchBrowser) {
@@ -69,12 +79,12 @@ module.exports = {
       })
   },
   // these are test data entries
-  'Should have a workspace_test #group1 #group3 #group5': function (browser: NightwatchBrowser) {
+  'Should have a workspace_test #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_test"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest_contracts"]')
   },
-  'Should have a sol file with test data #group1 #group3 #group5': function (browser: NightwatchBrowser) {
+  'Should have a sol file with test data #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="treeViewLitreeViewItemtest_contracts"]')
       .openFile('test_contracts/1_Storage.sol')
@@ -82,7 +92,7 @@ module.exports = {
         browser.assert.equal(content, 'testing')
       })
   },
-  'Should have a artifacts file with JSON test data #group1 #group3 #group5': function (browser: NightwatchBrowser) {
+  'Should have a artifacts file with JSON test data #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="treeViewLitreeViewItemtest_contracts/artifacts"]')
       .openFile('test_contracts/artifacts/Storage_metadata.json')
@@ -91,7 +101,7 @@ module.exports = {
         browser.assert.equal(metadata.test, 'data')
       })
   },
-  'Should have a empty workspace #group1 #group3 #group5': function (browser: NightwatchBrowser) {
+  'Should have a empty workspace #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="workspacesSelect"] option[value="emptyspace"]')
   },
@@ -102,6 +112,15 @@ module.exports = {
       .switchBrowserTab(0)
       .maximizeWindow()
       .assert.containsText('.alert-warning', 'Your browser does not support')
+  },
+  'Should with errors #group6': function (browser: NightwatchBrowser) {
+    browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
+      .pause(6000)
+      .switchBrowserTab(0)
+      .maximizeWindow().execute('delete window.localStorage')
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .click('*[data-id="skipbackup-btn"]')
+      .assert.containsText('.alert-danger', 'An unknown error')
   },
 
 }
