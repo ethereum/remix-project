@@ -28,8 +28,6 @@ class Editor extends Plugin {
     // Init
     this.event = new EventManager()
     this.sessions = {}
-    this.sourceAnnotationsPerFile = {}
-    this.markerPerFile = {}
     this.readOnlySessions = {}
     this.previousInput = ''
     this.saveTimeout = null
@@ -74,8 +72,6 @@ class Editor extends Plugin {
     editorAPI={state.api}
     themeType={state.currentThemeType}
     currentFile={state.currentFile}
-    sourceAnnotationsPerFile={state.sourceAnnotationsPerFile}
-    markerPerFile={state.markerPerFile}
     events={state.events}
     plugin={state.plugin}
   />
@@ -108,6 +104,10 @@ class Editor extends Plugin {
       }
       this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
       this.ref.getCursorPosition = () => this.getCursorPosition()
+      this.ref.addMarkerPerFile = (marker, filePath) => this.addMarkerPerFile(marker, filePath)
+      this.ref.addSourceAnnotationsPerFile = (annotation, filePath) => this.addSourceAnnotationsPerFile(annotation, filePath)      
+      this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)      
+      this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
     }} id='editorView'>
       <PluginViewWrapper plugin={this} />
       </div>
@@ -118,8 +118,6 @@ class Editor extends Plugin {
       api: this.api,
       currentThemeType: this.currentThemeType,
       currentFile: this.currentFile,
-      sourceAnnotationsPerFile: this.sourceAnnotationsPerFile,
-      markerPerFile: this.markerPerFile,
       events: this.events,
       plugin: this
     })
@@ -410,27 +408,12 @@ class Editor extends Plugin {
     if (filePath && !this.sessions[filePath]) throw new Error('file not found' + filePath)
     const path = filePath || this.currentFile
 
-    const currentAnnotations = this[typeOfDecoration][path]
-    if (!currentAnnotations) return
-
-    const newAnnotations = []
-    for (const annotation of currentAnnotations) {
-      if (annotation.from !== plugin) newAnnotations.push(annotation)
-    }
-
-    this[typeOfDecoration][path] = newAnnotations
-    this.renderComponent()
+    this.api.clearDecorationsByPlugin(path, plugin, typeOfDecoration)
   }
 
-  keepDecorationsFor (name, typeOfDecoration) {
+  keepDecorationsFor (plugin, typeOfDecoration) {
     if (!this.currentFile) return
-    if (!this[typeOfDecoration][this.currentFile]) return
-
-    const annotations = this[typeOfDecoration][this.currentFile]
-    for (const annotation of annotations) {
-      annotation.hide = annotation.from !== name
-    }
-    this.renderComponent()
+    this.api.keepDecorationsFor(this.currentFile, plugin, typeOfDecoration)
   }
 
   /**
@@ -473,10 +456,16 @@ class Editor extends Plugin {
     const path = filePath || this.currentFile
 
     const { from } = this.currentRequest
-    if (!this[typeOfDecoration][path]) this[typeOfDecoration][path] = []
     decoration.from = from
-    this[typeOfDecoration][path].push(decoration)
-    this.renderComponent()
+
+    if (typeOfDecoration === 'markerPerFile') {
+      this.api.addMarkerPerFile(decoration, path)
+      return
+    }
+    if (typeOfDecoration === 'sourceAnnotationsPerFile') {
+      this.api.addSourceAnnotationsPerFile(decoration, path)
+      return
+    }
   }
 
   /**

@@ -5,10 +5,12 @@ export class CompilerAbstract {
   languageversion: any
     data: any
     source: any
-    constructor (languageversion, data, source) {
+    input: any
+    constructor (languageversion, data, source, input?) {
       this.languageversion = languageversion
       this.data = data
       this.source = source // source code
+      this.input = input // source code
     }
 
     getContracts () {
@@ -25,6 +27,10 @@ export class CompilerAbstract {
 
     getData () {
       return this.data
+    }
+
+    getInput () {
+      return this.input
     }
 
     getAsts () {

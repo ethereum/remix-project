@@ -1,6 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { createHash } from 'crypto'
 
 const profile = {
   name: 'compilerMetadata',
@@ -28,10 +29,11 @@ export class CompilerMetadata extends Plugin {
 
   onActivation () {
     const self = this
-    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data) => {
+    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
-      const compiler = new CompilerAbstract(languageVersion, data, source)
+      const compiler = new CompilerAbstract(languageVersion, data, source, input)
       const path = self._extractPathOf(source.target)
+      await this.setBuildInfo(version, input, data, path)
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
@@ -43,6 +45,23 @@ export class CompilerMetadata extends Plugin {
     })
   }
 
+  async setBuildInfo (version, input, output, path) {
+    input = JSON.parse(input)
+    const solcLongVersion = version.replace('.Emscripten.clang', '')
+    const solcVersion = solcLongVersion.substring(0, solcLongVersion.indexOf('+commit'))
+    const format = 'hh-sol-build-info-1'
+    const json = JSON.stringify({
+      _format: format,
+      solcVersion,
+      solcLongVersion,
+      input
+    })
+    const id =  createHash('md5').update(Buffer.from(json)).digest().toString('hex')
+    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' +  id + '.json')
+    const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+    await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+  }
+
   _extractPathOf (file) {
     const reg = /(.*)(\/).*/
     const path = reg.exec(file)
@@ -51,14 +70,15 @@ export class CompilerMetadata extends Plugin {
 
   async _setArtefacts (content, contract, path) {
     content = content || '{}'
+    const fileName = this._JSONFileName(path, contract.name)
+    const metadataFileName = this._MetadataFileName(path, contract.name)
+
     let metadata
     try {
       metadata = JSON.parse(content)
     } catch (e) {
       console.log(e)
     }
-    const fileName = this._JSONFileName(path, contract.name)
-    const metadataFileName = this._MetadataFileName(path, contract.name)
 
     const deploy = metadata.deploy || {}
     this.networks.forEach((network) => {
