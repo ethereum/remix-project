@@ -547,7 +547,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
             <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
-              {compileTabLogic.evmVersions.map((version) => (<option data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
+              {compileTabLogic.evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
             </select>
           </div>
           <div className="mt-3">
