@@ -104,6 +104,21 @@ module.exports = {
       .verify.elementPresent('#runs:disabled')
       .click('[for="optimize"')
       .verify.attributeEquals('#runs', 'value', '200')
+  },
+
+  'Should load json files from link passed in remix URL': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://localhost:8080/#optimize=false&runs=200&evmVersion=null&version=soljson-v0.6.12+commit.27d51765.js&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
+      .refresh()
+      .pause(5000)
+      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="code-sample"]')
+      .openFile('@openzeppelin')
+      .openFile('@openzeppelin/contracts')
+      .openFile('@openzeppelin/contracts/access')
+      .openFile('@openzeppelin/contracts/access/AccessControl.sol')
+      .openFile('contracts')
+      .openFile('contracts/governance')
+      .openFile('contracts/governance/UnionGovernor.sol')
       .end()
   }
 }
