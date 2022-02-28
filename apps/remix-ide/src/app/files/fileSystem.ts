@@ -43,6 +43,7 @@ export class fileSystem {
         const w = (window as any)
         if (!this.loaded) return false
         w.remixFileSystem = this.fs
+        w.remixFileSystem.name = this.name
         w.remixFileSystemCallback = this.fsCallBack
         return true
     }
@@ -72,7 +73,7 @@ export class fileSystems {
      */
     setFileSystem = async (filesystems?: fileSystem[]): Promise<fileSystem> => {
         for (const fs of filesystems) {
-            if (this.fileSystems[fs.name]) {
+            if (fs && this.fileSystems[fs.name]) {
                 const result = await this.fileSystems[fs.name].set()
                 if (result) return this.fileSystems[fs.name]
             }

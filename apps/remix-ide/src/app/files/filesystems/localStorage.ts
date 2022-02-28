@@ -16,7 +16,7 @@ export class localStorageFS extends fileSystem {
                     fs: 'LocalStorage'
                 }, async function (e) {
                     if (e) {
-                        console.log('BROWSEFS Error: ' + e)
+                        console.log('BrowserFS Error: ' + e)
                         reject(e)
                     } else {
                         me.fs = { ...window.require('fs') }
