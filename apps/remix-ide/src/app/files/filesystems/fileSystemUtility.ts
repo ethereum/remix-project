@@ -18,7 +18,6 @@ export class fileSystemUtility {
                 return true
             }
 
-            await this.populateWorkspace(testData, fsFrom.fs)
             const fromFiles = await this.copyFolderToJson('/', null, null, fsFrom.fs)
             console.log(fsFrom.name, hashMessage(JSON.stringify(fromFiles)), fromFiles)
             await this.populateWorkspace(fromFiles, fsTo.fs)
@@ -150,7 +149,7 @@ export class fileSystemUtility {
 
 
 /* eslint-disable no-template-curly-in-string */
-const testData = {
+export const migrationTestData = {
     '.workspaces': {
         children: {
             '.workspaces/default_workspace': {
