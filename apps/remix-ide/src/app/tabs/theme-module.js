@@ -31,7 +31,7 @@ export class ThemeModule extends Plugin {
     super(profile)
     this.events = new EventEmitter()
     this._deps = {
-      config: Registry.getInstance().get('config').api
+      config: Registry.getInstance().get('config') && Registry.getInstance().get('config').api
     }
     this.themes = {}
     themes.map((theme) => {
@@ -44,7 +44,7 @@ export class ThemeModule extends Plugin {
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = queryTheme && queryTheme.toLocaleLowerCase()
     queryTheme = this.themes[queryTheme] ? queryTheme : null
-    let currentTheme = this._deps.config.get('settings/theme')
+    let currentTheme = (this._deps.config && this._deps.config.get('settings/theme')) || null
     currentTheme = currentTheme && currentTheme.toLocaleLowerCase()
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.currentThemeState = { queryTheme, currentTheme }

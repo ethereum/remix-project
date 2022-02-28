@@ -8,16 +8,15 @@ import Config from './config'
 import Registry from './app/state/registry'
 import { Storage } from '@remix-project/remix-lib'
 
-(async function () {
-
+(async function() {
   // load current theme befor anything else
   try {
     const configStorage = new Storage('config-v0.8:')
-    const config = new Config(configStorage)
+    const config = new Config(configStorage);
     Registry.getInstance().put({ api: config, name: 'config' })
-    const theme = new ThemeModule()
-    theme.initTheme()
-  } catch (e) { }
+  } catch (e) {}
+  const theme = new ThemeModule()
+  theme.initTheme()
 
   render(
     <React.StrictMode>
@@ -25,7 +24,4 @@ import { Storage } from '@remix-project/remix-lib'
     </React.StrictMode>,
     document.getElementById('root')
   )
-
 })()
-
-
