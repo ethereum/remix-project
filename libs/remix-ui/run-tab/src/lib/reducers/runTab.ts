@@ -1,10 +1,19 @@
+import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData } from '../types'
-
 interface Action {
   type: string
   payload: any
 }
+export interface Contract {
+  name: string,
+  alias: string,
+  file: string,
+  compiler: CompilerAbstract
+}
 
+export interface ContractList {
+  [file: string]: Contract[]
+}
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
@@ -46,10 +55,13 @@ export interface RunTabState {
   matchPassphrase: string,
   contracts: {
     contractList: {
-      name: string,
-      alias: string,
-      file: string
-    }[],
+      [file: string]: {
+        name: string,
+        alias: string,
+        file: string,
+        compiler: CompilerAbstract
+      }[]
+    },
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
     compilationCount: number,
@@ -141,7 +153,7 @@ export const runTabInitialState: RunTabState = {
   passphrase: '',
   matchPassphrase: '',
   contracts: {
-    contractList: [],
+    contractList: {},
     loadType: 'other',
     currentFile: '',
     compilationCount: 0,
@@ -438,13 +450,13 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case 'FETCH_CONTRACT_LIST_SUCCESS': {
-      const payload: { name: string, alias: string, file: string }[] = action.payload
+      const payload: ContractList = action.payload
 
       return {
         ...state,
         contracts: {
           ...state.contracts,
-          contractList: payload,
+          contractList: { ...state.contracts.contractList, ...payload },
           isSuccessful: true,
           isRequesting: false,
           error: null
