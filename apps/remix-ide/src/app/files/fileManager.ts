@@ -608,9 +608,10 @@ class FileManager extends Plugin {
       this.events.emit('noFileSelected')
     } else {
       file = this.normalize(file)
-      await this.saveCurrentFile()
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
+      await this.saveCurrentFile()
+      if (this.currentFile() === file) return
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
