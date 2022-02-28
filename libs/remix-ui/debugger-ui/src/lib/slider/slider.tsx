@@ -25,6 +25,8 @@ export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
     setValue(parseInt(e.target.value))
   }
 
+  if (slider.current) slider.current.internal_onmouseup = handleChange
+
   return (
     <div>
       <input id='slider'
