@@ -35,19 +35,24 @@ export const Preload = () => {
     }
 
     const downloadBackup = async () => {
+        setShowDownloader(false)
         const fsUtility = new fileSystemUtility()
         await fsUtility.downloadBackup(remixFileSystems.current.fileSystems['localstorage'])
         await migrateAndLoad()
     }
 
     const migrateAndLoad = async () => {
+        setShowDownloader(false)
         const fsUtility = new fileSystemUtility()
         await fsUtility.migrate(localStorageFileSystem.current, remixIndexedDB.current)
         await setFileSystems()
     }
 
     const setFileSystems = async() => {
-        const fsLoaded = await remixFileSystems.current.setFileSystem([remixIndexedDB.current, localStorageFileSystem.current])
+        // url parameters to e2e test the fallbacks and error warnings
+        const testmigrationFallback = window.location.hash.includes('e2e_testmigration_fallback=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
+        const testBlockStorage = window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
+        const fsLoaded = await remixFileSystems.current.setFileSystem([(testmigrationFallback || testBlockStorage)? null: remixIndexedDB.current, testBlockStorage? null:localStorageFileSystem.current])
         if (fsLoaded) {
             console.log(fsLoaded.name + ' activated')
             loadAppComponent()
@@ -102,8 +107,8 @@ export const Preload = () => {
                     This app will be updated now. Please download a backup of your files now to make sure you don't lose your work.
                     <br></br>
                     You don't need to do anything else, your files will be available when the app loads.
-                    <div onClick={async () => { await downloadBackup() }} className='btn btn-primary mt-1'>download backup</div>
-                    <div onClick={async () => { await migrateAndLoad() }} className='btn btn-primary mt-1'>skip backup</div>
+                    <div onClick={async () => { await downloadBackup() }} data-id='downloadbackup-btn' className='btn btn-primary mt-1'>download backup</div>
+                    <div onClick={async () => { await migrateAndLoad() }} data-id='skipbackup-btn' className='btn btn-primary mt-1'>skip backup</div>
                 </div> : null}
             {(supported && !error && !showDownloader) ?
                 <div>
