@@ -50,7 +50,7 @@ export const listenToEvents = (compileTabLogic: CompileTabLogic, api) => (dispat
     dispatch(setCompilerMode('compilerLoaded'))
   })
 
-  compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
-    dispatch(setCompilerMode('compilationFinished', success, data, source))
+  compileTabLogic.compiler.event.register('compilationFinished', (success, data, source, input, version) => {
+    dispatch(setCompilerMode('compilationFinished', success, data, source, input, version))
   })
 }
