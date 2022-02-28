@@ -5,7 +5,7 @@ import * as packageJson from '../../../../../package.json'
 import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'
-import { fileSystemUtility } from '../files/filesystems/fileSystemUtility'
+import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
 
 export const Preload = () => {
@@ -56,10 +56,20 @@ export const Preload = () => {
         }
     }
 
+    const testmigration = async() => {
+        // load dummy data for e2e test
+        const testmigration = window.location.hash.includes('e2e_testmigration=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
+        const fsUtility = new fileSystemUtility()
+        if (testmigration) {
+            fsUtility.populateWorkspace(migrationTestData, remixFileSystems.current.fileSystems['localstorage'].fs)
+        }
+    }
+
     useEffect(() => {
         async function loadStorage() {
             await remixFileSystems.current.addFileSystem(remixIndexedDB.current)
             await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)
+            await testmigration()
             remixIndexedDB.current.loaded && await remixIndexedDB.current.checkWorkspaces()
             localStorageFileSystem.current.loaded && await localStorageFileSystem.current.checkWorkspaces()
             remixIndexedDB.current.loaded && ( (remixIndexedDB.current.hasWorkSpaces || !localStorageFileSystem.current.hasWorkSpaces)? await setFileSystems():setShowDownloader(true))
