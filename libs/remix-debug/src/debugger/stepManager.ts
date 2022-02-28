@@ -121,6 +121,7 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, -1)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
@@ -136,6 +137,7 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 1)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
@@ -146,12 +148,14 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 0)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
 
   jumpTo (step) {
     if (!this.traceManager.inRange(step)) return
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
