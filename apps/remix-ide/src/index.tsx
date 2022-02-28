@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react'
+import React from 'react'
 import { render } from 'react-dom'
 import './index.css'
 import { ThemeModule } from './app/tabs/theme-module'
