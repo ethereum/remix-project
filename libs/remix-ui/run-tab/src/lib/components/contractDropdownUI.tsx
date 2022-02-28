@@ -95,10 +95,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [contractList])
 
   const initSelectedContract = () => {
-    if (contractList[currentFile] && contractList[currentFile].length > 0) {
-      const contract = contractList[currentFile].find(contract => contract.alias === selectedContract)
+    const contracts = contractList[currentFile]
+  
+    if (contracts && contracts.length > 0) {
+      const contract = contracts.find(contract => contract.alias === selectedContract)
 
-      if (!selectedContract || !contract) setSelectedContract(contractList[currentFile][0].alias)
+      if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
     }
   }
 
@@ -202,16 +204,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       <label className="udapp_settingsLabel">Contract</label>
       <div className="udapp_subcontainer">
         <select value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
-          { contractList[currentFile] && contractList[currentFile].map((contract, index) => {
+          { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
         </select>
-        { (contractList[currentFile] && contractList[currentFile].length <= 0) && <i style={{ display: compFails }} title="No contract compiled yet or compilation failed. Please check the compile tab for more information." className="m-2 ml-3 fas fa-times-circle udapp_errorIcon" ></i> }
+        { (contractList[currentFile] || []).length <= 0 && <i style={{ display: compFails }} title="No contract compiled yet or compilation failed. Please check the compile tab for more information." className="m-2 ml-3 fas fa-times-circle udapp_errorIcon" ></i> }
         <span className="py-1" style={{ display: abiLabel.display }}>{ abiLabel.content }</span>
       </div>
       <div>
         <div className="udapp_deployDropdown">
-          { contractList[currentFile] && contractList[currentFile].length <= 0 ? 'No compiled contracts'
+          { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
               <ContractGUI title='Deploy' funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
