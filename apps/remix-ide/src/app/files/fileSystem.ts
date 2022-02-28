@@ -15,20 +15,6 @@ export class fileSystem {
         this.hasWorkSpaces = false
         this.loaded = false
     }
-    ReadWriteTest = async () => {
-        try {
-            const str = 'Hello World'
-            await this.fs.writeFile('/test.txt', str, 'utf8')
-            if (await this.fs.readFile('/test.txt', 'utf8') === str) {
-                console.log('Read/Write Test Passed')
-                return true
-            }
-            await this.fs.remove('/test.txt', 'utf8')
-        } catch (e) {
-            console.log(e)
-        }
-        return false
-    }
 
     checkWorkspaces = async () => {
         try {
