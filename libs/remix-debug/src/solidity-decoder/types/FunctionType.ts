@@ -7,6 +7,6 @@ export class FunctionType extends ValueType {
   }
 
   decodeValue (value) {
-    return value
+    return 'at program counter ' + value
   }
 }
