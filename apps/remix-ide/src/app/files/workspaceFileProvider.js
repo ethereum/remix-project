@@ -32,6 +32,7 @@ class WorkspaceFileProvider extends FileProvider {
 
   removePrefix (path) {
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
+    path = path.replace(/^\.\/+/, '') // remove ./ from start of string
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     const splitPath = path.split('/')
 
