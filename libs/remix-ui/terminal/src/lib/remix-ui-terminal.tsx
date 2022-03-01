@@ -46,6 +46,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
+  const [storage, setStorage] = useState<any>(null)
   const [autoCompletState, setAutoCompleteState] = useState({
     activeSuggestion: 0,
     data: {
@@ -419,9 +420,18 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
+
+    (async()=>{
+      const storage = await props.plugin.call('storage','getStorage')
+      console.log(storage)
+      setStorage(storage)
+    })()
+
     props.plugin.on('layout', 'change', (panels) => {
       setIsOpen(!panels.terminal.minimized)
     })
+
+    
 
     return () => {
       props.plugin.off('layout', 'change')
@@ -477,7 +487,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }
         <div className="position-relative d-flex flex-column-reverse h-100">
           <div id='journal' className='remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0' data-id='terminalJournal'>
-            {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
+            {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === EMPTY_BLOCK) {
                 return (
