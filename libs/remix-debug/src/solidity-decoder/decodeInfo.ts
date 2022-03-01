@@ -11,6 +11,7 @@ import { Struct as StructType } from './types/Struct'
 import { Int as IntType } from './types/Int'
 import { Uint as UintType } from './types/Uint'
 import { Mapping as MappingType } from './types/Mapping'
+import { FunctionType } from './types/FunctionType'
 import { extractLocation, removeLocation } from './types/util'
 
 /**
@@ -76,6 +77,10 @@ function address (type) {
   */
 function bool (type) {
   return new BoolType()
+}
+
+function functionType (type, stateDefinitions, contractName, location) {
+  return new FunctionType(type, stateDefinitions, contractName, location)
 }
 
 /**
@@ -300,7 +305,8 @@ function parseType (type, stateDefinitions, contractName, location) {
     struct: struct,
     int: int,
     uint: uint,
-    mapping: mapping
+    mapping: mapping,
+    function: functionType
   }
   const currentType = typeClass(type)
   if (currentType === null) {
