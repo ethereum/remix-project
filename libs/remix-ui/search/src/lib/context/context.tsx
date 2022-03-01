@@ -205,17 +205,17 @@ export const SearchProvider = ({
   useEffect(() => {
     if (state.find) {
       (async () => {
-        const res = await getDirectory('/', plugin)
+        const files = await getDirectory('/', plugin)
         const pathFilter: any = {}
         if (state.include){
-          const inc = state.include.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
-          pathFilter.include = inc.split(',').map(i => i.trim())
+          const includeWithGlobalExpression = state.include.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
+          pathFilter.include = includeWithGlobalExpression.split(',').map(i => i.trim())
         }
         if (state.exclude){
-          const exc = state.exclude.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
-          pathFilter.exclude = state.exclude.split(',').map(i => i.trim())
+          const excludeWithGlobalExpression = state.exclude.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
+          pathFilter.exclude = excludeWithGlobalExpression.split(',').map(i => i.trim())
         }
-        const ob = res.filter(filePathFilter(pathFilter)).map(file => {
+        const filteredFiles = files.filter(filePathFilter(pathFilter)).map(file => {
           const r: SearchResult = {
             filename: file,
             lines: [],
@@ -226,7 +226,7 @@ export const SearchProvider = ({
           }
           return r
         })
-        value.setSearchResults(ob)
+        value.setSearchResults(filteredFiles)
       })()
     }
   }, [state.timeStamp])
