@@ -19,3 +19,8 @@
     opacity: 1;
     position: absolute;
 }
+
+.inline-class {
+    background: var(--primary) !important;
+    color: var(--text) !important;
+}
