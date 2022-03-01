@@ -263,7 +263,7 @@ export const EditorUI = (props: EditorUIProps) => {
         range: new monacoRef.current.Range(decoration.position.start.line + 1, decoration.position.start.column + 1, decoration.position.end.line + 1, decoration.position.end.column + 1),
         options: {
           isWholeLine,
-          inlineClassName: `alert-info border-0 highlightLine${decoration.position.start.line + 1}`
+          linesDecorationsClassName: `alert-info border-0 selectionHighlight highlightLine${decoration.position.start.line + 1}`
         }
       }
     }
