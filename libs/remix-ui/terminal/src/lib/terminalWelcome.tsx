@@ -1,16 +1,10 @@
 import React, { useEffect } from 'react' // eslint-disable-line
 
 const TerminalWelcomeMessage = ({ packageJson, storage }) => {
-
-  useEffect(() => {
-    console.log(storage)
-  }, [
-    storage
-  ])
   return (
     <div className="remix_ui_terminal_block px-4 " data-id="block_null">
       <div className="remix_ui_terminal_welcome"> Welcome to Remix {packageJson} </div><br />
-      <div className="">Your files are stored in {(window as any).remixFileSystem.name}, {storage && storage.usage} used</div><br />
+      <div className="">Your files are stored in {(window as any).remixFileSystem.name}, {storage} used</div><br />
       <div>You can use this terminal to: </div>
       <ul className='ml-0 mr-4'>
         <li>Check transactions details and start debugging.</li>
