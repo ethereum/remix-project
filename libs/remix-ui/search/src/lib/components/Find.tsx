@@ -1,7 +1,7 @@
 import React, { useContext, useRef } from 'react'
 import { SearchContext } from '../context/context'
 
-export const Find = props => {
+export const Find = () => {
   const {
     setFind,
     state,
