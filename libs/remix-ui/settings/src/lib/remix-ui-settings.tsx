@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, matomoAnalytics, swarmSettingsTitle, textDark, textSecondary, warnText, wordWrapText } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle } from './constants'
 
 import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast } from './settingsAction'
@@ -21,19 +21,28 @@ export interface RemixUiSettingsProps {
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [, dispatch] = useReducer(settingReducer, initialState)
   const [state, dispatchToast] = useReducer(toastReducer, toastInitialState)
-  const [tokenValue, setTokenValue] = useState('')
+  const [tokenValue, setTokenValue] = useState({})
   const [themeName, ] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
 
   useEffect(() => {
-    const token = props.config.get('settings/gist-access-token')
+    const token = props.config.get('settings/' + labels['gist'].key)
     if (token === undefined) {
       props.config.set('settings/generate-contract-metadata', true)
       dispatch({ type: 'contractMetadata', payload: { name: 'contractMetadata', isChecked: true, textClass: textDark } })
     }
     if (token) {
-      setTokenValue(token)
+      setTokenValue(prevState => {
+        return { ...prevState, gist: token }
+      })
+    }
+
+    const etherscantoken = props.config.get('settings/' + labels['etherscan'].key)
+    if (etherscantoken) {
+      setTokenValue(prevState => {
+        return { ...prevState, etherscan: etherscantoken }
+      })
     }
     const configPrivateBeeAddress = props.config.get('settings/swarm-private-bee-address')
     if (configPrivateBeeAddress) {
@@ -125,42 +134,48 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     )
   }
 
-  const saveToken = () => {
-    saveTokenToast(props.config, dispatchToast, tokenValue)
+  // api key settings
+  const saveToken = (type: string) => {
+    saveTokenToast(props.config, dispatchToast, tokenValue[type], labels[type].key)
   }
 
-  const removeToken = () => {
-    setTokenValue('')
-    removeTokenToast(props.config, dispatchToast)
+  const removeToken = (type: string) => {
+    setTokenValue(prevState => {
+      return { ...prevState, type: ''}
+    })
+    removeTokenToast(props.config, dispatchToast, labels[type].key)
   }
 
   const handleSaveTokenState = useCallback(
-    (event) => {
-      setTokenValue(event.target.value)
+    (event, type) => {
+      setTokenValue(prevState => {
+        return { ...prevState, [type]: event.target.value}
+      })
     },
     [tokenValue]
   )
 
-  const gistToken = () => (
+  const token = (type: string) => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ gitAccessTokenTitle }</h6>
-        <p className="mb-1">{ gitAccessTokenText }</p>
-        <p className="">{ gitAccessTokenText2 }</p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">{ gitAccessTokenLink }</a></p>
+        <h6 className="card-title">{ labels[type].title }</h6>
+        <p className="mb-1">{ labels[type].message1 }</p>
+        <p className="">{ labels[type].message2 }</p>
+        <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{ labels[type].link }</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={handleSaveTokenState} value={ tokenValue } />
+            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] } />
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue} data-id='copyToClipboardCopyIcon' />
-              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken()} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={() => removeToken()}>Remove</button>
+              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
+              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={() => removeToken('gist')}>Remove</button>
             </div>
           </div></div>
       </div>
     </div>
   )
 
+  // swarm settings
   const handleSavePrivateBeeAddress = useCallback(
     (event) => {
       setPrivateBeeAddress(event.target.value)
@@ -206,8 +221,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
-      {generalConfig()}
-      {gistToken()}
+      {generalConfig()}     
+      {token('gist')}
+      {token('etherscan')}
       {swarmSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
     </div>

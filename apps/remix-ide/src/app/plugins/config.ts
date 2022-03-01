@@ -18,7 +18,8 @@ export class ConfigPlugin extends Plugin {
     const queryParams = new QueryParams()
     const params = queryParams.get()
     const config = Registry.getInstance().get('config').api
-    const param = params[name] ? params[name] : config.get(name)
+    let param = params[name] ? params[name] : config.get(name)
+    param = param ? param : config.get('settings/' + name)
     if (param === 'true') return true
     if (param === 'false') return false
     return param

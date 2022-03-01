@@ -3,6 +3,8 @@ import { Plugin } from '@remixproject/engine'
 import { compile } from '@remix-project/remix-solidity'
 import { util } from '@remix-project/remix-lib'
 import { toChecksumAddress } from 'ethereumjs-util'
+import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
+import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
 
 const profile = {
   name: 'fetchAndCompile',
@@ -68,48 +70,28 @@ export class FetchAndCompile extends Plugin {
 
     let data
     try {
-      data = await this.call('sourcify', 'fetchByNetwork', contractAddress, network.id)
+      data = await fetchContractFromSourcify(this, network, contractAddress, targetPath)
     } catch (e) {
-      setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
-      this.unresolvedAddresses.push(contractAddress)
-      return localCompilation()
+      console.log(e) // and fallback to getting the compilation result from etherscan
     }
-    if (!data || !data.metadata) {
+
+    if (!data) {
+      try {
+        data = await fetchContractFromEtherscan(this, network, contractAddress, targetPath)
+      } catch (e) {
+        setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
+        this.unresolvedAddresses.push(contractAddress)
+        return localCompilation()    
+      }
+    }
+
+    if (!data) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0)
       this.unresolvedAddresses.push(contractAddress)
       return localCompilation()
     }
-
-    // set the solidity contract code using metadata
-    await this.call('fileManager', 'setFile', `${targetPath}/${network.id}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
-    const compilationTargets = {}
-    for (let file in data.metadata.sources) {
-      const urls = data.metadata.sources[file].urls
-      for (const url of urls) {
-        if (url.includes('ipfs')) {
-          const stdUrl = `ipfs://${url.split('/')[2]}`
-          const source = await this.call('contentImport', 'resolve', stdUrl)
-          if (await this.call('contentImport', 'isExternalUrl', file)) {
-            // nothing to do, the compiler callback will handle those
-          } else {
-            file = file.replace('browser/', '') // should be fixed in the remix IDE end.
-            const path = `${targetPath}/${network.id}/${contractAddress}/${file}`
-            await this.call('fileManager', 'setFile', path, source.content)
-            compilationTargets[path] = { content: source.content }
-          }
-          break
-        }
-      }
-    }
-
-    // compile
-    const settings = {
-      version: data.metadata.compiler.version,
-      language: data.metadata.language,
-      evmVersion: data.metadata.settings.evmVersion,
-      optimize: data.metadata.settings.optimizer.enabled,
-      runs: data.metadata.settings.optimizer.runs
-    }
+    const { settings, compilationTargets } = data
+   
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
       const compData = await compile(
