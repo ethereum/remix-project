@@ -422,8 +422,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   useEffect(() => {
 
     (async()=>{
-      const storage = await props.plugin.call('storage','getStorage')
-      console.log(storage)
+      const storage = await props.plugin.call('storage', 'formatString', await props.plugin.call('storage','getStorage'))
       setStorage(storage)
     })()
 

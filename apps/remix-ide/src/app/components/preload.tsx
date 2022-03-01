@@ -7,6 +7,7 @@ import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'
 import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
+const _paq = window._paq = window._paq || []
 
 export const Preload = () => {
 
@@ -33,6 +34,7 @@ export const Preload = () => {
                 )
             })
         }).catch(err => {
+            _paq.push(['_trackEvent', 'Preload', 'error', err && err.message])
             console.log('Error loading Remix:', err)
             setError(true)
         })
@@ -48,7 +50,8 @@ export const Preload = () => {
     const migrateAndLoad = async () => {
         setShowDownloader(false)
         const fsUtility = new fileSystemUtility()
-        await fsUtility.migrate(localStorageFileSystem.current, remixIndexedDB.current)
+        const migrationResult = await fsUtility.migrate(localStorageFileSystem.current, remixIndexedDB.current)
+        _paq.push(['_trackEvent', 'Migrate', 'result', migrationResult?'success' : 'fail'])
         await setFileSystems()
     }
 
@@ -56,23 +59,25 @@ export const Preload = () => {
         const fsLoaded = await remixFileSystems.current.setFileSystem([(testmigrationFallback.current || testBlockStorage.current)? null: remixIndexedDB.current, testBlockStorage.current? null:localStorageFileSystem.current])
         if (fsLoaded) {
             console.log(fsLoaded.name + ' activated')
+            _paq.push(['_trackEvent', 'Storage', 'activate', fsLoaded.name])
             loadAppComponent()
         } else {
+            _paq.push(['_trackEvent', 'Storage', 'error', 'no supported storage'])
             setSupported(false)
         }
     }
 
     const testmigration = async() => {        
-        const fsUtility = new fileSystemUtility()
         if (testmigrationResult.current) {
+            const fsUtility = new fileSystemUtility()
             fsUtility.populateWorkspace(migrationTestData, remixFileSystems.current.fileSystems['localstorage'].fs)
         }
     }
 
     useEffect(() => {
         async function loadStorage() {
-            await remixFileSystems.current.addFileSystem(remixIndexedDB.current)
-            await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)
+            await remixFileSystems.current.addFileSystem(remixIndexedDB.current) || _paq.push(['_trackEvent', 'Storage', 'error', 'indexedDB not supported'])
+            await remixFileSystems.current.addFileSystem(localStorageFileSystem.current) || _paq.push(['_trackEvent', 'Storage', 'error', 'localstorage not supported'])
             await testmigration()
             remixIndexedDB.current.loaded && await remixIndexedDB.current.checkWorkspaces()
             localStorageFileSystem.current.loaded && await localStorageFileSystem.current.checkWorkspaces()
