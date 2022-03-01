@@ -206,7 +206,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
         const time = today.getHours() + 'h' + today.getMinutes() + 'min'
         saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
+        _paq.push(['_trackEvent', 'Backup', 'download', 'home'])
       }).catch((e) => {
+        _paq.push(['_trackEvent', 'Backup', 'error', e.message])
         plugin.call('notification', 'toast', e.message)
       })
     } catch (e) {
