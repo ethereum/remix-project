@@ -75,6 +75,8 @@ const setupEvents = () => {
 
   plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
 
+  plugin.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(env)
