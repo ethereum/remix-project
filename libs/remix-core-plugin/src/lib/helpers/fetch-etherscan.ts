@@ -7,13 +7,15 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
     const endpoint = network.id == 1 ? 'api.etherscan.io' : 'api-' + network.name + '.etherscan.io'
     data = await fetch('https://' + endpoint + '/api?module=contract&action=getsourcecode&address='  + contractAddress + '&apikey=' + etherscanKey)
     data = await data.json()
-    if (data.message !== 'OK') throw new Error('unable to retrieve contract data ' + data.message)
-    if (data.result.length) {
-      if (data.result[0].SourceCode === '') throw new Error('contract not verified')
-      if (data.result[0].SourceCode.startsWith('{')) {
-        data.result[0].SourceCode = JSON.parse(data.result[0].SourceCode.replace(/(?:\r\n|\r|\n)/g, '').replace(/^{{/,'{').replace(/}}$/,'}'))
-      }
-    } 
+    // etherscan api doc https://docs.etherscan.io/api-endpoints/contracts
+    if (data.message === 'OK' && data.status === "1") {
+      if (data.result.length) {
+        if (data.result[0].SourceCode === '') throw new Error('contract not verified')
+        if (data.result[0].SourceCode.startsWith('{')) {
+          data.result[0].SourceCode = JSON.parse(data.result[0].SourceCode.replace(/(?:\r\n|\r|\n)/g, '').replace(/^{{/,'{').replace(/}}$/,'}'))
+        }
+      } 
+    } else throw new Error('unable to retrieve contract data ' + data.message)
   }
 
   if (!data || !data.result) {
@@ -24,7 +26,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
     const fileName = `${targetPath}/${network.id}/${contractAddress}/${data.result[0].ContractName}.sol`
     await plugin.call('fileManager', 'setFile', fileName , data.result[0].SourceCode)
     compilationTargets[fileName] = { content: data.result[0].SourceCode }
-  } else if (typeof data.result[0].SourceCode == 'object') {
+  } else if (data.result[0].SourceCode && typeof data.result[0].SourceCode == 'object') {
     const sources = data.result[0].SourceCode.sources
     for (let [file, source] of Object.entries(sources)) { // eslint-disable-line
       file = file.replace('browser/', '') // should be fixed in the remix IDE end.
