@@ -145,7 +145,7 @@ export class CompilerArtefacts extends Plugin {
       else {
         const allContractsData = {}
         await this._populateAllContractArtefactsFromFE ('contracts', contract, allContractsData)
-        if(allContractsData[fullyQualifiedName]) return allContractsData[fullyQualifiedName]
+        if(allContractsData[fullyQualifiedName]) return { fullyQualifiedName, artefact: allContractsData[fullyQualifiedName]}
         else throw new Error(`Could not find artifacts for ${fullyQualifiedName}. Compile contract to generate artifacts.`)
       }
     } else {
@@ -156,7 +156,7 @@ export class CompilerArtefacts extends Plugin {
         await this._populateAllContractArtefactsFromFE ('contracts', contractName, contractArtefacts)
         keys = Object.keys(contractArtefacts)
       }
-      if (keys.length === 1) return contractArtefacts[keys[0]]
+      if (keys.length === 1) return { fullyQualifiedName: keys[0], artefact: contractArtefacts[keys[0]] }
       else if (keys.length > 1) {
         throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
           Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
