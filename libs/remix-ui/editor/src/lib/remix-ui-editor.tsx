@@ -40,6 +40,11 @@ type sourceMarker = {
 
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
+export type DecorationsReturn = {
+  currentDecorations: Array<string>
+  registeredDecorations?: Array<any>
+}
+
 /* eslint-disable-next-line */
 export interface EditorUIProps {
   contextualListener: any
@@ -61,10 +66,9 @@ export interface EditorUIProps {
     getFontSize: () => number,
     getValue: (uri: string) => string
     getCursorPosition: () => cursorPosition
-    addMarkerPerFile: (marker: sourceMarker, filePath: string) => void
-    addSourceAnnotationsPerFile: (annotations: sourceAnnotation, filePath: string) => void 
-    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string) => void
-    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string) => void
+    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   }
 }
 
@@ -73,8 +77,8 @@ export const EditorUI = (props: EditorUIProps) => {
   const editorRef = useRef(null)
   const monacoRef = useRef(null)
   const currentFileRef = useRef('')
-  const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
-  const registeredDecorations = useRef({}) // registered decorations
+  // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
+  // const registeredDecorations = useRef({}) // registered decorations
   
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
@@ -265,57 +269,55 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string) => {
+  props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
     const model = editorModelsState[filePath]?.model
     if (!model) return
     const decorations = []
     const newRegisteredDecorations = []
-    if (registeredDecorations.current[filePath]) {
-      for (const decoration of registeredDecorations.current[filePath]) {
+    if (registeredDecorations) {
+      for (const decoration of registeredDecorations) {
         if (decoration.type === typeOfDecoration && decoration.value.from !== plugin) {
           decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration))
           newRegisteredDecorations.push(decoration)
         }
       }
     }
-    currentDecorations.current[typeOfDecoration][filePath] = model.deltaDecorations(currentDecorations.current[typeOfDecoration][filePath], decorations)
-    registeredDecorations.current[filePath] = newRegisteredDecorations
+    return {
+      currentDecorations: model.deltaDecorations(currentDecorations, decorations),
+      registeredDecorations: newRegisteredDecorations
+    }
   }
   
-  props.editorAPI.keepDecorationsFor = (filePath: string, plugin: string, typeOfDecoration: string) => {
+  props.editorAPI.keepDecorationsFor = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
     const model = editorModelsState[filePath]?.model
     if (!model) return
     const decorations = []
-    if (registeredDecorations.current[filePath]) {
-      for (const decoration of registeredDecorations.current[filePath]) {
-        if (decoration.type === typeOfDecoration && decoration.value.from === plugin) {
+    if (registeredDecorations) {
+      for (const decoration of registeredDecorations) {
+        if (decoration.value.from === plugin) {
           decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration))
         }
       }
     }
-    currentDecorations.current[typeOfDecoration][filePath] = model.deltaDecorations(currentDecorations.current[typeOfDecoration][filePath], decorations)
+    return {
+      currentDecorations: model.deltaDecorations(currentDecorations, decorations)
+    }
   }
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return
+    if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
 
-    if (!registeredDecorations.current[filePath]) registeredDecorations.current[filePath] = []
-    registeredDecorations.current[filePath].push({ value: decoration, type: typeOfDecoration })
-    if (!currentDecorations.current[typeOfDecoration][filePath]) currentDecorations.current[typeOfDecoration][filePath] = []
-
-    currentDecorations.current[typeOfDecoration][filePath].push(...model.deltaDecorations([], [monacoDecoration]))  
+    return {
+      currentDecorations: model.deltaDecorations([], [monacoDecoration]),
+      registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
+    }
   }
   
-  props.editorAPI.addSourceAnnotationsPerFile = (annotation: sourceAnnotation, filePath: string) => {   
-    addDecoration(annotation, filePath, 'sourceAnnotationsPerFile')
+  props.editorAPI.addDecoration = (marker: sourceMarker, filePath: string, typeOfDecoration: string) => {
+    return addDecoration(marker, filePath, typeOfDecoration)
   }
-
-  props.editorAPI.addMarkerPerFile = (marker: sourceMarker, filePath: string) => {
-    addDecoration(marker, filePath, 'markerPerFile')
-  }
-
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
     if (!editorRef.current) return
