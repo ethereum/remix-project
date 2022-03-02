@@ -333,6 +333,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage'])
+    // await this.appManager.activatePlugin(['scriptRunner'])
 
     this.appManager.on(
       'filePanel',
