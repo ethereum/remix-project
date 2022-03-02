@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ContractData, ContractDropdownProps, FuncABI } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
@@ -26,6 +26,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
+  const contractsRef = useRef<HTMLSelectElement>(null)
   const { contractList, loadType, currentFile, compilationCount } = props.contracts
 
   useEffect(() => {
@@ -101,6 +102,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       const contract = contracts.find(contract => contract.alias === selectedContract)
 
       if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
+      contractsRef.current.focus()
+      setTimeout(() => {
+        contractsRef.current.blur()
+      }, 1000)
     }
   }
 
@@ -203,7 +208,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <label className="udapp_settingsLabel">Contract</label>
       <div className="udapp_subcontainer">
-        <select value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+        <select ref={contractsRef} value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
