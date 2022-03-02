@@ -127,7 +127,7 @@ jobs:
       - run: npm install
       - run:
           name: Start Selenium
-          command: npx selenium-standalone start 
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
       - store_test_results:
