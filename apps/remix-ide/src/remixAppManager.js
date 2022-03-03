@@ -149,6 +149,16 @@ export class RemixAppManager extends PluginManager {
       pattern: [],
       sticky: true
     })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'nahmii-compiler',
+      name: 'compileCustomAction',
+      label: 'Compile for Nahmii',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true
+    })
   }
 }
 
