@@ -81,13 +81,13 @@ const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitR
 const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
   return new Promise((resolve) => {
     browser.frameParent(() => {
-      browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible:any) => {
+      browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
         if (visible.status && visible.status === -1) {
-        // @ts-ignore
+          // @ts-ignore
           browser.frame(0, () => { resolve(true) })
         } else {
           browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
-          // @ts-ignore
+            // @ts-ignore
             browser.frame(0, () => { resolve(true) })
           })
         }
@@ -190,7 +190,7 @@ module.exports = {
         })
         .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
         .rightClick('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
-        // @ts-ignore
+          // @ts-ignore
           browser.click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
             await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [] }, null, null)
           })
@@ -378,12 +378,30 @@ module.exports = {
 
   // MODAL
 
-  'Should open 2 alert in a row and trigger 2 toaster in between #group9': function (browser: NightwatchBrowser) {
+  'Should open alerts from script #group9': function (browser: NightwatchBrowser) {
     browser
       .frameParent()
       .useCss()
       .addFile('test_modal.js', { content: testModalToasterApi })
       .executeScript('remix.execute(\'test_modal.js\')')
+      .useCss()
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
+      .modalFooterOKClick('test_id_1_')
+      // check the script runner notifications
+      .waitForElementVisible('*[data-id="test_id_2_ModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="test_id_2_ModalDialogModalBody-react"]', 'message 2')
+      .modalFooterOKClick('test_id_2_')
+      .waitForElementVisible('*[data-id="test_id_3_ModalDialogModalBody-react"]')
+      .modalFooterOKClick('test_id_3_')
+      .journalLastChildIncludes('default value... ') // check the return value of the prompt
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
+
+  },
+  'Should open 2 alerts from localplugin #group9': function (browser: NightwatchBrowser) {
+    browser
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
@@ -398,21 +416,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]', 'message from local plugin')
       .modalFooterOKClick('test_id_1_local_plugin')
-      // check the script runner notifications
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]')
-      .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
-      .modalFooterOKClick('test_id_1_')
-      .waitForElementVisible('*[data-id="test_id_2_ModalDialogModalBody-react"]')
-      .assert.containsText('*[data-id="test_id_2_ModalDialogModalBody-react"]', 'message 2')
-      .modalFooterOKClick('test_id_2_')
-      .waitForElementVisible('*[data-id="test_id_3_ModalDialogModalBody-react"]')
-      .modalFooterOKClick('test_id_3_')
-      .journalLastChildIncludes('default value... ') // check the return value of the prompt
       // check the toasters
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
   }
 }
 

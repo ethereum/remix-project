@@ -13,7 +13,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     type: '',
     errFile: ''
   })
-  const [classList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
+  const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   const [close, setClose] = useState(false)
 
   useEffect(() => {
@@ -47,6 +47,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     setMessageText(text)
     setEditorOptions(opt)
     setClose(false)
+    setClassList(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   }, [message, opt])
 
   const getPositionDetails = (msg: string) => {
