@@ -19,9 +19,13 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
         }
       }
     }
-  }
+  }  
   if (opts.evmVersion) {
-    o.settings.evmVersion = opts.evmVersion
+    if (opts.evmVersion.toLowerCase() == 'default') {
+      opts.evmVersion = null
+    } else {
+      o.settings.evmVersion = opts.evmVersion
+    }
   }
   if (opts.language) {
     o.language = opts.language
