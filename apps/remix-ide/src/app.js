@@ -338,7 +338,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search'])
-    await this.appManager.activatePlugin(['scriptRunner'])
+    this.appManager.activatePlugin(['scriptRunner']) // don't await to not slowdown the loading.
 
     this.appManager.on(
       'filePanel',
