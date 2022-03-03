@@ -26,14 +26,14 @@ export class fileSystemUtility {
                 console.log('file migration successful')
                 return true
             } else {
-                _paq.push(['_trackEvent', 'Migrate', 'error', 'hash mismatch'])
+                _paq.push(['trackEvent', 'Migrate', 'error', 'hash mismatch'])
                 console.log('file migration failed falling back to ' + fsFrom.name)
                 fsTo.loaded = false
                 return false
             }
         } catch (err) {
             console.log(err)
-            _paq.push(['_trackEvent', 'Migrate', 'error', err && err.message])
+            _paq.push(['trackEvent', 'Migrate', 'error', err && err.message])
             console.log('file migration failed falling back to ' + fsFrom.name)
             fsTo.loaded = false
             return false
@@ -52,9 +52,9 @@ export class fileSystemUtility {
             const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
             const time = today.getHours() + 'h' + today.getMinutes() + 'min'
             this.saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
-            _paq.push(['_trackEvent','Backup','download','preload'])
+            _paq.push(['trackEvent','Backup','download','preload'])
         } catch (err) {
-            _paq.push(['_trackEvent','Backup','error',err && err.message])
+            _paq.push(['trackEvent','Backup','error',err && err.message])
             console.log(err)
         }
     }
