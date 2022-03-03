@@ -34,7 +34,7 @@ export const Preload = () => {
                 )
             })
         }).catch(err => {
-            _paq.push(['_trackEvent', 'Preload', 'error', err && err.message])
+            _paq.push(['trackEvent', 'Preload', 'error', err && err.message])
             console.log('Error loading Remix:', err)
             setError(true)
         })
@@ -51,7 +51,7 @@ export const Preload = () => {
         setShowDownloader(false)
         const fsUtility = new fileSystemUtility()
         const migrationResult = await fsUtility.migrate(localStorageFileSystem.current, remixIndexedDB.current)
-        _paq.push(['_trackEvent', 'Migrate', 'result', migrationResult?'success' : 'fail'])
+        _paq.push(['trackEvent', 'Migrate', 'result', migrationResult?'success' : 'fail'])
         await setFileSystems()
     }
 
@@ -59,10 +59,10 @@ export const Preload = () => {
         const fsLoaded = await remixFileSystems.current.setFileSystem([(testmigrationFallback.current || testBlockStorage.current)? null: remixIndexedDB.current, testBlockStorage.current? null:localStorageFileSystem.current])
         if (fsLoaded) {
             console.log(fsLoaded.name + ' activated')
-            _paq.push(['_trackEvent', 'Storage', 'activate', fsLoaded.name])
+            _paq.push(['trackEvent', 'Storage', 'activate', fsLoaded.name])
             loadAppComponent()
         } else {
-            _paq.push(['_trackEvent', 'Storage', 'error', 'no supported storage'])
+            _paq.push(['trackEvent', 'Storage', 'error', 'no supported storage'])
             setSupported(false)
         }
     }
@@ -76,8 +76,8 @@ export const Preload = () => {
 
     useEffect(() => {
         async function loadStorage() {
-            await remixFileSystems.current.addFileSystem(remixIndexedDB.current) || _paq.push(['_trackEvent', 'Storage', 'error', 'indexedDB not supported'])
-            await remixFileSystems.current.addFileSystem(localStorageFileSystem.current) || _paq.push(['_trackEvent', 'Storage', 'error', 'localstorage not supported'])
+            await remixFileSystems.current.addFileSystem(remixIndexedDB.current) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
+            await remixFileSystems.current.addFileSystem(localStorageFileSystem.current) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])
             await testmigration()
             remixIndexedDB.current.loaded && await remixIndexedDB.current.checkWorkspaces()
             localStorageFileSystem.current.loaded && await localStorageFileSystem.current.checkWorkspaces()
