@@ -52,6 +52,11 @@ export class CompilerArtefacts extends Plugin {
       this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source, input)
       saveCompilationPerFileResult(file, source, languageVersion, data, input)
     })
+
+    this.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) => {
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      saveCompilationPerFileResult(file, source, languageVersion, data)
+    })
   }
   
   /**

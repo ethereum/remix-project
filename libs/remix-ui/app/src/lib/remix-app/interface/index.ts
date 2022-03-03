@@ -15,7 +15,8 @@ export interface AppModal {
     defaultValue?: string
     hideFn?: () => void,
     resolve?: (value?:any) => void,
-    next?: () => void
+    next?: () => void,
+    data?: any
 }
 
 export interface AlertModal {

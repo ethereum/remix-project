@@ -14,5 +14,6 @@ export interface ModalDialogProps {
   handleHide: (hideState?: boolean) => void,
   children?: React.ReactNode,
   resolve?: (value?:any) => void,
-  next?: () => void
+  next?: () => void,
+  data?: any
 }

@@ -8,6 +8,7 @@ import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractData, FuncABI, MainnetPrompt } from '../types'
+import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
 
 const txFormat = remixLib.execution.txFormat
 declare global {
@@ -74,6 +75,8 @@ const setupEvents = () => {
 
   plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
 
+  plugin.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
+
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(env)
@@ -95,6 +98,7 @@ const setupEvents = () => {
     } else {
       dispatch(setLoadType('other'))
     }
+    dispatch(setCurrentFile(currentFile))
   })
 
   plugin.recorder.event.register('recorderCountChange', (count) => {
@@ -309,10 +313,10 @@ const broadcastCompilationResult = (file, source, languageVersion, data, input?)
   plugin.compilersArtefacts.__last = compiler
 
   const contracts = getCompiledContracts(compiler).map((contract) => {
-    return { name: languageVersion, alias: contract.name, file: contract.file }
+    return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
   })
 
-  dispatch(fetchContractListSuccess(contracts))
+  dispatch(fetchContractListSuccess({ [file]: contracts }))
   dispatch(setCurrentFile(file))
 }
 
@@ -343,9 +347,9 @@ const getCompiledContracts = (compiler) => {
   return contracts
 }
 
-export const getSelectedContract = (contractName: string, compilerAtributeName: string) => {
+export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType) => {
   if (!contractName) return null
-  const compiler = plugin.compilersArtefacts[compilerAtributeName]
+  // const compiler = plugin.compilersArtefacts[compilerAtributeName]
 
   if (!compiler) return null
 
@@ -571,8 +575,9 @@ export const loadAddress = (contract: ContractData, address: string) => {
          return addInstance({ abi, address, name: '<at address>' })
        } else if (loadType === 'instance') {
          if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
-         const compiler = plugin.REACT_API.contracts.contractList.find(item => item.alias === contract.name)
-         const contractData = getSelectedContract(contract.name, compiler.name)
+         const currentFile = plugin.REACT_API.contracts.currentFile
+         const compiler = plugin.REACT_API.contracts.contractList[currentFile].find(item => item.alias === contract.name)
+         const contractData = getSelectedContract(contract.name, compiler.compiler)
          return addInstance({ contractData, address, name: contract.name })
        }
      }
