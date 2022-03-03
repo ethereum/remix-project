@@ -5,7 +5,7 @@ export const fetchContractFromSourcify = async (plugin, network, contractAddress
   try {
     data = await plugin.call('sourcify', 'fetchByNetwork', contractAddress, network.id)
   } catch (e) {
-    console.log(e) // and fallback to getting the compilation result from etherscan
+    console.log(e)
   }
 
   if (!data || !data.metadata) {
