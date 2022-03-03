@@ -25,6 +25,9 @@ class Editor extends Plugin {
       remixDark: 'remix-dark'
     }
 
+    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+
     // Init
     this.event = new EventManager()
     this.sessions = {}
@@ -104,8 +107,7 @@ class Editor extends Plugin {
       }
       this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
       this.ref.getCursorPosition = () => this.getCursorPosition()
-      this.ref.addMarkerPerFile = (marker, filePath) => this.addMarkerPerFile(marker, filePath)
-      this.ref.addSourceAnnotationsPerFile = (annotation, filePath) => this.addSourceAnnotationsPerFile(annotation, filePath)      
+      this.ref.addDecoration = (marker, filePath, typeOfDecoration) => this.addDecoration(marker, filePath, typeOfDecoration)
       this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)      
       this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
     }} id='editorView'>
@@ -408,12 +410,15 @@ class Editor extends Plugin {
     if (filePath && !this.sessions[filePath]) throw new Error('file not found' + filePath)
     const path = filePath || this.currentFile
 
-    this.api.clearDecorationsByPlugin(path, plugin, typeOfDecoration)
+    const { currentDecorations, registeredDecorations } = this.api.clearDecorationsByPlugin(path, plugin, typeOfDecoration, this.registeredDecorations[typeOfDecoration][filePath] || [], this.currentDecorations[typeOfDecoration][filePath] || [])
+    this.currentDecorations[typeOfDecoration][filePath] = currentDecorations
+    this.registeredDecorations[typeOfDecoration][filePath] = registeredDecorations
   }
 
   keepDecorationsFor (plugin, typeOfDecoration) {
     if (!this.currentFile) return
-    this.api.keepDecorationsFor(this.currentFile, plugin, typeOfDecoration)
+    const { currentDecorations } = this.api.keepDecorationsFor(this.currentFile, plugin, typeOfDecoration, this.registeredDecorations[typeOfDecoration][this.currentFile] || [], this.currentDecorations[typeOfDecoration][this.currentFile] || [])
+    this.currentDecorations[typeOfDecoration][this.currentFile] = currentDecorations
   }
 
   /**
@@ -458,14 +463,11 @@ class Editor extends Plugin {
     const { from } = this.currentRequest
     decoration.from = from
 
-    if (typeOfDecoration === 'markerPerFile') {
-      this.api.addMarkerPerFile(decoration, path)
-      return
-    }
-    if (typeOfDecoration === 'sourceAnnotationsPerFile') {
-      this.api.addSourceAnnotationsPerFile(decoration, path)
-      return
-    }
+    const { currentDecorations, registeredDecorations } = this.api.addDecoration(decoration, path, typeOfDecoration)
+    if (!this.registeredDecorations[typeOfDecoration][filePath]) this.registeredDecorations[typeOfDecoration][filePath] = []    
+    this.registeredDecorations[typeOfDecoration][filePath].push(...registeredDecorations)
+    if (!this.currentDecorations[typeOfDecoration][filePath]) this.currentDecorations[typeOfDecoration][filePath] = []
+    this.currentDecorations[typeOfDecoration][filePath].push(...currentDecorations)
   }
 
   /**
@@ -495,7 +497,7 @@ class Editor extends Plugin {
   discardHighlight () {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'markerPerFile')
+      this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 }
