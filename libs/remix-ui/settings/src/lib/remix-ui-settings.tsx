@@ -141,7 +141,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const removeToken = (type: string) => {
     setTokenValue(prevState => {
-      return { ...prevState, type: ''}
+      return { ...prevState, [type]: ''}
     })
     removeTokenToast(props.config, dispatchToast, labels[type].key)
   }
@@ -166,9 +166,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="text-secondary mb-0 h6">
             <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] } />
             <div className="d-flex justify-content-end pt-2">
-              <CopyToClipboard content={tokenValue} data-id='copyToClipboardCopyIcon' />
+              <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={() => removeToken('gist')}>Remove</button>
+              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={() => removeToken(type)}>Remove</button>
             </div>
           </div></div>
       </div>
