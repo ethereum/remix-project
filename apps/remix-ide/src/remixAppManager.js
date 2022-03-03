@@ -132,7 +132,6 @@ export class RemixAppManager extends PluginManager {
       }
     }
     return plugins.map(plugin => {
-      if (plugin.name === 'scriptRunner') plugin.url = 'https://script-runner.surge.sh'
       return new IframePlugin(plugin)
       // return new IframeReactPlugin(plugin)
     })
