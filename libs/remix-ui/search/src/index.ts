@@ -1,0 +1,1 @@
+export { SearchTab } from './lib/components/Search';
