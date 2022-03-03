@@ -15,18 +15,18 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
     })
   }
 
-  const modal = (data: AppModal) => {
-    const { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue, hideFn } = data
+  const modal = (modalData: AppModal) => {
+    const { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue, hideFn, data } = modalData
     return new Promise((resolve, reject) => {
       dispatch({
         type: modalActionTypes.setModal,
-        payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue, hideFn, resolve, next: onNextFn }
+        payload: { id, title, message, okLabel, okFn, cancelLabel, cancelFn, modalType: modalType || ModalTypes.default, defaultValue: defaultValue, hideFn, resolve, next: onNextFn, data }
       })
     })
   }
 
-  const alert = (data: AlertModal) => {
-    return modal({ id: data.id, title: data.title || 'Alert', message: data.message || data.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
+  const alert = (modalData: AlertModal) => {
+    return modal({ id: modalData.id, title: modalData.title || 'Alert', message: modalData.message || modalData.title, okLabel: 'OK', okFn: (value?:any) => {}, cancelLabel: '', cancelFn: () => {} })
   }
 
   const handleHideModal = () => {
