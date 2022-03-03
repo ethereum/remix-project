@@ -144,6 +144,11 @@ class Editor extends Plugin {
       this.currentThemeType = theme.quality
       this.renderComponent()
     })
+    this.on('fileManager', 'fileClosed', (name) => {
+      if (name === this.currentFile) {
+        this.currentFile = null
+      }
+    })
     try {
       this.currentThemeType = (await this.call('theme', 'currentTheme')).quality
     } catch (e) {
