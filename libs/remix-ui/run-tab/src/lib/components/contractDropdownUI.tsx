@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ContractData, ContractDropdownProps, FuncABI } from '../types'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
@@ -26,6 +26,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
+  const contractsRef = useRef<HTMLSelectElement>(null)
   const { contractList, loadType, currentFile, compilationCount } = props.contracts
 
   useEffect(() => {
@@ -75,11 +76,11 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [loadType, currentFile, compilationCount])
 
   useEffect(() => {
-    if (selectedContract) {
-      const contract = contractList.find(contract => contract.alias === selectedContract)
+    if (selectedContract && contractList[currentFile]) {
+      const contract = contractList[currentFile].find(contract => contract.alias === selectedContract)
 
       if (contract) {
-        const loadedContractData = props.getSelectedContract(selectedContract, contract.name)
+        const loadedContractData = props.getSelectedContract(selectedContract, contract.compiler)
 
         if (loadedContractData) {
           setLoadedContractData(loadedContractData)
@@ -95,10 +96,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [contractList])
 
   const initSelectedContract = () => {
-    if (contractList.length > 0) {
-      const contract = contractList.find(contract => contract.alias === selectedContract)
+    const contracts = contractList[currentFile]
+  
+    if (contracts && contracts.length > 0) {
+      const contract = contracts.find(contract => contract.alias === selectedContract)
 
-      if (!selectedContract || !contract) setSelectedContract(contractList[0].alias)
+      if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
+      contractsRef.current.focus()
+      setTimeout(() => {
+        contractsRef.current.blur()
+      }, 1000)
     }
   }
 
@@ -201,17 +208,17 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <label className="udapp_settingsLabel">Contract</label>
       <div className="udapp_subcontainer">
-        <select value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
-          { contractList.map((contract, index) => {
+        <select ref={contractsRef} value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+          { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
         </select>
-        { (contractList.length <= 0) && <i style={{ display: compFails }} title="No contract compiled yet or compilation failed. Please check the compile tab for more information." className="m-2 ml-3 fas fa-times-circle udapp_errorIcon" ></i> }
+        { (contractList[currentFile] || []).length <= 0 && <i style={{ display: compFails }} title="No contract compiled yet or compilation failed. Please check the compile tab for more information." className="m-2 ml-3 fas fa-times-circle udapp_errorIcon" ></i> }
         <span className="py-1" style={{ display: abiLabel.display }}>{ abiLabel.content }</span>
       </div>
       <div>
         <div className="udapp_deployDropdown">
-          { contractList.length <= 0 ? 'No compiled contracts'
+          { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
               <ContractGUI title='Deploy' funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">

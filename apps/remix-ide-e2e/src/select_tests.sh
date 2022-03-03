@@ -26,7 +26,7 @@ do
 done
 npm run build:e2e
 PS3='Select a test or command: '
-TESTFILES=( $(grep -IRiL "disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort ) )
+TESTFILES=( $(grep -IRiL "disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test\|plugin_api" | sort ) )
 
 # declare -p TESTFILES
 TESTFILES+=("list")
