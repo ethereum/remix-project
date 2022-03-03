@@ -549,7 +549,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     )
                   } else if (typeof msg === 'object') {
                     return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg.value && typeof msg.value !== 'object' ? parse(msg.value) : JSON.stringify(msg) } </span></div>
                     )
                   } else {
                     return (
