@@ -16,7 +16,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
         }
       } 
     } else throw new Error('unable to retrieve contract data ' + data.message)
-  }
+  } else throw new Error('unable to try fetching the source code from etherscan: etherscan access token not found. please go to the Remix settings page and provide an access token.')
 
   if (!data || !data.result) {
     return null

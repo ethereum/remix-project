@@ -91,7 +91,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       if (!lineColumnPos) {        
         await debuggerModule.discardHighlight()
         setState(prevState => {
-          return { ...prevState, sourceLocationStatus: 'Source location not available.' }
+          return { ...prevState, sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the etherscan access token is provided in the settings.' }
         })
         return
       }
