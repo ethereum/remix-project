@@ -193,6 +193,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               <span>Publish on Ipfs</span>
               <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
             </button>
+            <button id="publishOnSwarm" className="btn btn-secondary btn-block" title="Publish on Swarm" onClick={() => { handlePublishToStorage('swarm') }}>
+              <span>Publish on Swarm</span>
+              <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
+            </button>
             <button data-id="compilation-details" className="btn btn-secondary btn-block" title="Display Contract Details" onClick={() => { details() }}>
               Compilation Details
             </button>
