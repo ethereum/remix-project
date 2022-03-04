@@ -139,7 +139,11 @@ class Editor extends Plugin {
     this.on('sidePanel', 'pluginDisabled', (name) => {
       this.clearAllDecorationsFor(name)
     })
-
+    this.on('fileManager', 'fileClosed', (name) => {
+      if (name === this.currentFile) {
+        this.currentFile = null
+      }
+    })
     this.on('theme', 'themeLoaded', (theme) => {
       this.currentThemeType = theme.quality
       this.renderComponent()
