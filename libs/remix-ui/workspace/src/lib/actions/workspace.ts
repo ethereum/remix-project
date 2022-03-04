@@ -99,7 +99,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
         path = data.cleanUrl
         content = data.content
-        if (content && typeof content === 'object') {
+        if (content && typeof content === 'object' && !Array.isArray(content)) {
           const standardInput = content as JSONStandardInput
           if (standardInput.language && standardInput.language === "Solidity" && standardInput.sources) {
             for (const [fname, source] of Object.entries(standardInput.sources)) {
