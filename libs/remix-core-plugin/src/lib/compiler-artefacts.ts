@@ -1,10 +1,11 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
+import { util } from '@remix-project/remix-lib'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress'],
   events: [],
   version: '0.0.1'
 }
@@ -72,15 +73,27 @@ export class CompilerArtefacts extends Plugin {
    * @returns compilatin output
    */
   getAllContractDatas () {
+    return this.filterAllContractDatas(() => true)
+  }
+
+  /**
+   * filter compilation output for contracts compiled during a session of Remix IDE
+   * @returns compilatin output
+   */
+   filterAllContractDatas (filter) {
     const contractsData = {}
     Object.keys(this.compilersArtefactsPerFile).map((targetFile) => {
       const contracts = this.compilersArtefactsPerFile[targetFile].getContracts()
-      Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
+      Object.keys(contracts).map((file) => {
+        if (filter(file, contracts[file])) contractsData[file] = contracts[file]
+      })
     })
     // making sure we save last compilation result in there
     if (this.compilersArtefacts.__last) {
       const contracts = this.compilersArtefacts.__last.getContracts()
-      Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
+      Object.keys(contracts).map((file) => {
+        if (filter(file, contracts[file])) contractsData[file] = contracts[file]
+      })
     }
     return contractsData
   }
@@ -181,5 +194,21 @@ export class CompilerArtefacts extends Plugin {
 
   get (key) {
     return this.compilersArtefacts[key]
+  }
+
+  async getContractDataFromAddress (address) {
+    const code = await this.call('blockchain', 'getCode', address)
+    let found
+    this.filterAllContractDatas((file, contractsData) => {
+      for (let name of Object.keys(contractsData)) {
+        const contract = contractsData[name]
+        if (util.compareByteCode(code, '0x' + contract.evm.deployedBytecode.object)) {
+          found = { name, contract }
+          return true
+        }
+      }
+      return true
+    })
+    return found
   }
 }

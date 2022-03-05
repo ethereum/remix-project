@@ -34,7 +34,7 @@ export class CompilerMetadata extends Plugin {
       const compiler = new CompilerAbstract(languageVersion, data, source, input)
       const path = self._extractPathOf(source.target)
       await this.setBuildInfo(version, input, data, path)
-      compiler.visitContracts((contract) => {
+      compiler.visitContracts(async (contract) => {
         if (contract.file !== source.target) return
         (async () => {
           const fileName = self._JSONFileName(path, contract.name)
@@ -42,6 +42,7 @@ export class CompilerMetadata extends Plugin {
           await this._setArtefacts(content, contract, path)
         })()
       })
+      this.emit('artefactsUpdated')
     })
   }
 
@@ -103,7 +104,7 @@ export class CompilerMetadata extends Plugin {
       },
       abi: contract.object.abi
     }
-    await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))
+    await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))    
   }
 
   _syncContext (contract, metadata) {
