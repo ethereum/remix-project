@@ -261,7 +261,20 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
-    this.data.eventHandlers.onCompilationFinished = (success, data, source, input, version) => {
+    this.on('compilerMetadata', 'artefactsUpdated', async () => {
+      if (afterCompilationAction === 82) { // r
+        afterCompilationAction = null
+        const path = await this.getAppParameter('live-script')
+        if (path) {
+          const content = await this.call('fileManager', 'readFile', path)
+          await this.call('udapp', 'clearAllInstances')
+          this.call('scriptRunner', 'execute', content)
+        }
+      }
+    })
+
+    let afterCompilationAction
+    this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data
       if (success) {
         // forwarding the event to the appManager infra
@@ -290,7 +303,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.compilationDetails.contractMap = {}
       if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
       this.compilationDetails.target = source.target
-      if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
+      if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)     
     }
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
@@ -307,6 +320,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.data.eventHandlers.onKeyDown = async (e) => {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83 && this.currentFile !== '') {
+        e.preventDefault()
+        this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
+      }
+      // ctrl+r or command+r
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 82 && this.currentFile !== '') {
+        afterCompilationAction = e.keyCode
         e.preventDefault()
         this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
       }
