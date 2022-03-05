@@ -319,15 +319,22 @@ export const CompilerApiMixin = (Base) => class extends Base {
     // Run the compiler instead of trying to save the website
     this.data.eventHandlers.onKeyDown = async (e) => {
       // ctrl+s or command+s
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 83 && this.currentFile !== '') {
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 83 && this.currentFile && this.currentFile.endsWith('.sol')) {
         e.preventDefault()
         this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
       }
       // ctrl+r or command+r
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 82 && this.currentFile !== '') {
-        afterCompilationAction = e.keyCode
-        e.preventDefault()
-        this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 82) {
+        if (this.currentFile && this.currentFile.endsWith('.sol')) {
+          e.preventDefault()
+          afterCompilationAction = e.keyCode
+          this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
+        } else if (this.currentFile && this.currentFile.endsWith('.js')) {
+          e.preventDefault()
+          const content = await this.call('fileManager', 'readFile', this.currentFile)
+          await this.call('udapp', 'clearAllInstances')
+          this.call('scriptRunner', 'execute', content)
+        }
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
