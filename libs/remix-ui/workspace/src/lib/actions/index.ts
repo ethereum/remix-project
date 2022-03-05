@@ -267,6 +267,10 @@ export const runScriptWithMocha = async (path: string) => {
   })
 }
 
+export const runAfterCompilation = async (path: string) => {
+  plugin.call('config', 'setAppParameter', 'live-script', path)
+}
+
 export const emitContextMenuEvent = async (cmd: customAction) => {
   await plugin.call(cmd.id, cmd.name, cmd)
 }

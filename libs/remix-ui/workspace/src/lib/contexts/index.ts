@@ -26,6 +26,7 @@ export const FileSystemContext = createContext<{
   dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
   dispatchRunScript: (path: string) => Promise<void>,
   dispatchRunScriptWithMocha: (path: string) => Promise<void>,
+  dispatchRunAfterCompilation: (path: string) => Promise<void>,
   dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
   dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>

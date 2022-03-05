@@ -37,6 +37,12 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: ''
 }, {
+  id: 'runAfterCompilation',
+  name: 'Run after compilation',
+  extension: ['.js'],
+  multiselect: false,
+  label: ''
+}, {
   id: 'pushChangesToGist',
   name: 'Push changes to gist',
   type: ['gist'],

@@ -229,6 +229,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const runAfterCompilation = async (path: string) => {
+    try {
+      props.dispatchRunAfterCompilation(path)
+    } catch (error) {
+      props.toast('Run script with Mocha failed')
+    }
+  }
+
   const emitContextMenuEvent = (cmd: customAction) => {
     try {
       props.dispatchEmitContextMenuEvent(cmd)
@@ -463,6 +471,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           renamePath={editModeOn}
           runScript={runScript}
           runScriptWithMocha={runScriptWithMocha}
+          runAfterCompilation={runAfterCompilation}
           copy={handleCopyClick}
           paste={handlePasteClick}
           emit={emitContextMenuEvent}
