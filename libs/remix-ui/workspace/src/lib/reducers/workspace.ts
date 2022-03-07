@@ -641,7 +641,7 @@ const removeInputField = (state: BrowserState, path: string): { [x: string]: Rec
     files = _.setWith(files, _path, {
       isDirectory: true,
       path,
-      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      name: extractNameFromKey(path),
       type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
       child: prevFiles ? prevFiles.child : {}
     }, Object)
@@ -742,7 +742,7 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
     if (filesList[key].isDirectory) {
       folders[extractNameFromKey(key)] = {
         path,
-        name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+        name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory,
         type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
       }

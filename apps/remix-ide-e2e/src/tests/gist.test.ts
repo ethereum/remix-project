@@ -36,9 +36,9 @@ module.exports = {
       .addFile('File.sol', { content: '' })
       .executeScript(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
-      .waitForElementVisible(`[data-id="treeViewLitreeViewItem${gistid}"]`)
-      .click(`[data-id="treeViewLitreeViewItem${gistid}"]`)
-      .openFile(`${gistid}/README.txt`)
+      .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      .openFile(`gist-${gistid}/README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
          .pause(2000)
@@ -140,9 +140,9 @@ module.exports = {
       })
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
-      .openFile(`${testData.validGistId}/README.txt`)
-      .waitForElementVisible(`div[title='default_workspace/${testData.validGistId}/README.txt']`)
-      .assert.containsText(`div[title='default_workspace/${testData.validGistId}/README.txt'] > span`, 'README.txt')
+      .openFile(`gist-${testData.validGistId}/README.txt`)
+      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
+      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
       .end()
   }
 }
