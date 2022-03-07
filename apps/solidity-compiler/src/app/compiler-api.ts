@@ -261,15 +261,20 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
+    let postCompilationAction
     this.on('compilerMetadata', 'artefactsUpdated', async () => {
-      if (!await this.getAppParameter('live-mode')) return
-      const path = await this.getAppParameter('live-mode-script')
-      if (path) {
-        await this.call('terminal', 'log', `running ${path} ...`)
-        const content = await this.call('fileManager', 'readFile', path)
-        await this.call('udapp', 'clearAllInstances')
-        this.call('scriptRunner', 'execute', content)
+      if (postCompilationAction === 69) {
+        postCompilationAction = null
+        if (!await this.getAppParameter('live-mode')) return
+        const path = await this.getAppParameter('live-mode-script')
+        if (path) {
+          await this.call('terminal', 'log', `running ${path} ...`)
+          const content = await this.call('fileManager', 'readFile', path)
+          await this.call('udapp', 'clearAllInstances')
+          this.call('scriptRunner', 'execute', content)
+        }
       }
+      postCompilationAction = null    
     })
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
@@ -318,15 +323,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.data.eventHandlers.onKeyDown = async (e) => {
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83 && this.currentFile && this.currentFile.endsWith('.sol')) {
         // ctrl+s or command+s
+        postCompilationAction = e.keyCode
         e.preventDefault()
         this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
-      } else if ((e.metaKey || e.ctrlKey) && e.keyCode === 69 && this.currentFile && this.currentFile.endsWith('.js')) {
+      } else if ((e.metaKey || e.ctrlKey) && e.keyCode === 69 && this.currentFile && this.currentFile.endsWith('.sol')) {
         // ctrl+e or command+e
+        postCompilationAction = e.keyCode
         e.preventDefault()
-        this.call('terminal', 'log', `running ${this.currentFile} ...`)
-        const content = await this.call('fileManager', 'readFile', this.currentFile)
-        await this.call('udapp', 'clearAllInstances')
-        this.call('scriptRunner', 'execute', content)
+        this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)

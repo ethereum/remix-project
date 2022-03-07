@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, liveModeSettingsText, liveModeText, liveModeText2, liveModeText4, liveModeText3, liveModeText5, liveModeSettingsTitle } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, liveModeText, liveModeText2, liveModeText4, liveModeText3, liveModeText5, liveModeSettingsTitle } from './constants'
 
 import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, liveMode, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast } from './settingsAction'
