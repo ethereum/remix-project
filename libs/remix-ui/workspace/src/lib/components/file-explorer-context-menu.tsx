@@ -12,7 +12,7 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, runScriptWithMocha, emit, pageX, pageY, path, type, focus, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
   useEffect(() => {
     contextMenuRef.current.focus()
@@ -97,10 +97,6 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             case 'Run':
               _paq.push(['trackEvent', 'fileExplorer', 'runScript'])
               runScript(path)
-              break
-            case 'Run with Mocha':
-              _paq.push(['trackEvent', 'fileExplorer', 'runScriptWithMocha'])
-              runScriptWithMocha(path)
               break
             case 'Copy':
               copy(path, type)
