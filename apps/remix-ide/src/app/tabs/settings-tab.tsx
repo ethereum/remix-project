@@ -41,6 +41,14 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.useMatomoAnalytics = null
   }
 
+  onActivation() {
+    this.on('config', 'parameterChanged', () => {
+      this.dispatch({
+        ...this
+      })
+    })
+  }
+
   setDispatch (dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
     this.renderComponent()

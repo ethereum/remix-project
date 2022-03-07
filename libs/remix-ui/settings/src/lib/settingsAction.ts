@@ -8,6 +8,11 @@ declare global {
 
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
+export const liveMode = (config, checked, dispatch) => {
+  config.set('settings/live-mode', checked)
+  dispatch({ type: 'liveMode', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
 export const generateContractMetadat = (config, checked, dispatch) => {
   config.set('settings/generate-contract-metadata', checked)
   dispatch({ type: 'contractMetadata', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })

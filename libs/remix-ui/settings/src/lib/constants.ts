@@ -17,6 +17,13 @@ export const enablePersonalModeText = ' Enable Personal Mode for web3 provider. 
 export const matomoAnalytics = 'Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about '
 export const swarmSettingsTitle = 'Swarm Settings'
 export const swarmSettingsText = 'Swarm Settings'
+export const liveModeSettingsTitle = 'Live Mode'
+export const liveModeSettingsText = 'Live Mode'
+export const liveModeText = 'This allows to automatically run a script each time the compilation is finished and successfull. You can use the script to:'
+export const liveModeText2 = 'Run any transaction in order to set the contract in the state you want it to be.'
+export const liveModeText3 = 'Run a Mocha test suite.'
+export const liveModeText4 = 'Note that The run & deploy view will be cleared of all the current instances.'
+export const liveModeText5 = 'From the file explorer, right click on the file and click "run after compilation" to select a script. At the moment, the following script will be run:'
 export const labels = {
     'gist': {
         'link': gitAccessTokenLink,

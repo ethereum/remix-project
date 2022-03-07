@@ -262,18 +262,16 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
     this.on('compilerMetadata', 'artefactsUpdated', async () => {
-      if (afterCompilationAction === 82) { // r
-        afterCompilationAction = null
-        const path = await this.getAppParameter('live-script')
-        if (path) {
-          const content = await this.call('fileManager', 'readFile', path)
-          await this.call('udapp', 'clearAllInstances')
-          this.call('scriptRunner', 'execute', content)
-        }
+      if (!await this.getAppParameter('live-mode')) return
+      const path = await this.getAppParameter('live-mode-script')
+      if (path) {
+        await this.call('terminal', 'log', `running ${path} ...`)
+        const content = await this.call('fileManager', 'readFile', path)
+        await this.call('udapp', 'clearAllInstances')
+        this.call('scriptRunner', 'execute', content)
       }
     })
 
-    let afterCompilationAction
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data
       if (success) {
@@ -318,23 +316,17 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     // Run the compiler instead of trying to save the website
     this.data.eventHandlers.onKeyDown = async (e) => {
-      // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83 && this.currentFile && this.currentFile.endsWith('.sol')) {
+        // ctrl+s or command+s
         e.preventDefault()
         this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
-      }
-      // ctrl+r or command+r
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 82) {
-        if (this.currentFile && this.currentFile.endsWith('.sol')) {
-          e.preventDefault()
-          afterCompilationAction = e.keyCode
-          this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
-        } else if (this.currentFile && this.currentFile.endsWith('.js')) {
-          e.preventDefault()
-          const content = await this.call('fileManager', 'readFile', this.currentFile)
-          await this.call('udapp', 'clearAllInstances')
-          this.call('scriptRunner', 'execute', content)
-        }
+      } else if ((e.metaKey || e.ctrlKey) && e.keyCode === 69 && this.currentFile && this.currentFile.endsWith('.js')) {
+        // ctrl+e or command+e
+        e.preventDefault()
+        this.call('terminal', 'log', `running ${this.currentFile} ...`)
+        const content = await this.call('fileManager', 'readFile', this.currentFile)
+        await this.call('udapp', 'clearAllInstances')
+        this.call('scriptRunner', 'execute', content)
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)

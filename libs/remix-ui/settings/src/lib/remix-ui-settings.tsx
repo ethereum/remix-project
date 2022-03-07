@@ -1,10 +1,10 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, liveModeSettingsText, liveModeText, liveModeText2, liveModeText4, liveModeText3, liveModeText5, liveModeSettingsTitle } from './constants'
 
 import './remix-ui-settings.css'
-import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast } from './settingsAction'
+import { ethereumVM, generateContractMetadat, liveMode, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
@@ -68,6 +68,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
 
+  const onchangeLiveMode = (event) => {
+    liveMode(props.config, event.target.checked, dispatch)
+  }
+
   const onchangeOption = (event) => {
     ethereumVM(props.config, event.target.checked, dispatch)
   }
@@ -92,15 +96,35 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
   }
 
+  const renderLiveMode = () => (
+    <div className="border-top">
+    <div className="card-body pt-3 pb-2">
+      <h6 className="card-title">{liveModeSettingsTitle}</h6>
+      <div className="mt-2 custom-control custom-checkbox mb-1">
+      <input onChange={onchangeLiveMode} id="liveMode" data-id="settingsTabLiveMode" type="checkbox" className="custom-control-input" name="liveMode" checked = { props.config.get('settings/live-mode') || false }/>
+        <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/live-mode')}`} data-id="settingsTabLiveModeLabel" htmlFor="liveMode">
+              <p className="mb-1">{ liveModeText }</p>
+              <ul>
+                <li>{ liveModeText2 }</li>
+                <li>{ liveModeText3 }</li>
+              </ul>
+              <p className="">{ liveModeText4 }</p>
+              <p className="">{ liveModeText5 }</p>
+              <i>{props.config.get('settings/live-mode-script')}</i>
+        </label>
+      </div>     
+      </div></div>    
+   ) 
+
   const generalConfig = () => {
     const isMetadataChecked = props.config.get('settings/generate-contract-metadata') || false
     const isEthereumVMChecked = props.config.get('settings/always-use-vm') || false
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
-
+    
     return (
-      <div className="$border-top">
+      <div className="border-top">
         <div className="card-body pt-3 pb-2">
           <h6 className="card-title">General settings</h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
@@ -215,15 +239,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
       </div>
     </div>
-
   )
-
+  
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
-      {generalConfig()}     
+      {generalConfig()}
+      {renderLiveMode()}
       {token('gist')}
-      {token('etherscan')}
+      {token('etherscan')}      
       {swarmSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
     </div>

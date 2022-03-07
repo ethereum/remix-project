@@ -27,5 +27,6 @@ export class ConfigPlugin extends Plugin {
   setAppParameter (name: string, value: any) {
     const config = Registry.getInstance().get('config').api
     config.set(name, value)
+    this.emit('parameterChanged', name, value)
   }
 }

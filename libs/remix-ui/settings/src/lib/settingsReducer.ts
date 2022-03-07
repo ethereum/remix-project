@@ -3,6 +3,11 @@ import { textSecondary } from './constants'
 export const initialState = {
   elementState: [
     {
+      name: 'liveMode',
+      isChecked: false,
+      textClass: textSecondary
+    },
+    {
       name: 'contractMetadata',
       isChecked: false,
       textClass: textSecondary
@@ -32,6 +37,16 @@ export const initialState = {
 
 export const settingReducer = (state, action) => {
   switch (action.type) {
+    case 'liveMode':
+      state.elementState.map(element => {
+        if (element.name === 'liveMode') {
+          element.isChecked = action.payload.isChecked
+          element.textClass = action.payload.textClass
+        }
+      })
+      return {
+        ...state
+      }
     case 'contractMetadata':
       state.elementState.map(element => {
         if (element.name === 'contractMetadata') {
