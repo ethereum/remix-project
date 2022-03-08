@@ -183,6 +183,8 @@ jobs:
       xcode: 12.5.1 # indicate your selected version of Xcode
     steps: # a series of commands to run
       - checkout  # pull down code from your version control system.
+      - run: defaults write com.apple.Safari AllowRemoteAutomation 1
+      - run: npm -v
 
   remix-ide-plugin-api:
     docker:
