@@ -42,7 +42,6 @@ export class CompilerMetadata extends Plugin {
           await this._setArtefacts(content, contract, path)
         })()
       })
-      this.emit('artefactsUpdated')
     })
   }
 
@@ -105,6 +104,7 @@ export class CompilerMetadata extends Plugin {
       abi: contract.object.abi
     }
     await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))    
+    this.emit('artefactsUpdated', fileName, contract)
   }
 
   _syncContext (contract, metadata) {
