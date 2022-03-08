@@ -60,7 +60,7 @@ export class TxListener {
       // in VM mode
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
-      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+      if (this._loopId) return // we seems to already listen on a "web3" network
 
       let returnValue
       let execResult
@@ -95,7 +95,7 @@ export class TxListener {
       // in VM mode
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
-      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+      if (this._loopId) return // we seems to already listen on a "web3" network
       this.executionContext.web3().eth.getTransaction(txResult.transactionHash, async (error, tx) => {
         if (error) return console.log(error)
 
