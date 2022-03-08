@@ -207,6 +207,10 @@ jobs:
           command: npm run selenium
           background: true
       - run: npm run nightwatch_local_ballot_safari
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
