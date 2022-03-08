@@ -185,7 +185,7 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-    parallelism: 2
+    parallelism: 1
     steps: # a series of commands to run
       - checkout  # pull down code from your version control system.
       - run: defaults write com.apple.Safari AllowRemoteAutomation 1
