@@ -185,6 +185,7 @@ jobs:
       - checkout  # pull down code from your version control system.
       - run: defaults write com.apple.Safari AllowRemoteAutomation 1
       - run: npm -v
+      - run: npm run selenium-install
 
   remix-ide-plugin-api:
     docker:
