@@ -197,7 +197,7 @@ jobs:
           paths:
             - node_modules
       - run: npm run selenium-install
-      - run: npm run downloadsolc_assets      
+      - run: npm run downloadsolc_assets_mac      
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: npm run build:libs
