@@ -188,7 +188,14 @@ jobs:
     steps: # a series of commands to run
       - checkout  # pull down code from your version control system.
       - run: defaults write com.apple.Safari AllowRemoteAutomation 1
-      - run: npm i
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
       - run: npm run selenium-install
 
   remix-ide-plugin-api:
