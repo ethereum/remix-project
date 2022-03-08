@@ -205,6 +205,7 @@ jobs:
           command: npm run selenium
           background: true
       - run: sudo safaridriver --enable
+      - run: defaults write com.apple.Safari AllowRemoteAutomation 1
       - run: npm run nightwatch_local_ballot_safari
   remix-ide-plugin-api:
     docker:
