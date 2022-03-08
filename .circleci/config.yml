@@ -189,7 +189,7 @@ jobs:
     parallelism: 1
     steps: # a series of commands to run
       - checkout  # pull down code from your version control system.
-      - macos/add-uitest-permissions
+      - macos/add-safari-permissions
       - restore_cache:
           key: macos-deps-{{ checksum "package.json" }}
       - run: npm install
