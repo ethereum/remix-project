@@ -178,6 +178,12 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
+  remix-ide-safari: # your job name
+    macos:
+      xcode: 12.5.1 # indicate your selected version of Xcode
+    steps: # a series of commands to run
+      - checkout  # pull down code from your version control system.
+
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
@@ -337,50 +343,52 @@ workflows:
   version: 2
   build_all:
     jobs:
-      - build
-      - lint:
-          requires:
-            - build
-      - remix-libs:
-          requires:
-            - build
-      - remix-ide-plugin-api:
-          requires:
-            - build
-      - remix-ide-chrome:
-          requires:
-            - build
-      - remix-ide-firefox:
-          requires:
-            - build
-      - deploy-remix-live:          
-          requires:
-            - lint
-            - remix-libs
-            - remix-ide-chrome
-            - remix-ide-firefox
-            - remix-ide-plugin-api
-          filters:
-            branches:
-              only: remix_live
-      - deploy-remix-alpha:          
-          requires:
-            - lint
-            - remix-libs
-            - remix-ide-chrome
-            - remix-ide-firefox
-            - remix-ide-plugin-api
-          filters:
-            branches:
-              only: master
-      - deploy-remix-beta:          
-          requires:
-            - lint
-            - remix-libs
-            - remix-ide-chrome
-            - remix-ide-firefox
-            - remix-ide-plugin-api
-          filters:
-            branches:
-              only: remix_beta
+      - remix-ide-safari
+      # - build
+    
+      # - lint:
+      #     requires:
+      #       - build
+      # - remix-libs:
+      #     requires:
+      #       - build
+      # - remix-ide-plugin-api:
+      #     requires:
+      #       - build
+      # - remix-ide-chrome:
+      #     requires:
+      #       - build
+      # - remix-ide-firefox:
+      #     requires:
+      #       - build
+      # - deploy-remix-live:          
+      #     requires:
+      #       - lint
+      #       - remix-libs
+      #       - remix-ide-chrome
+      #       - remix-ide-firefox
+      #       - remix-ide-plugin-api
+      #     filters:
+      #       branches:
+      #         only: remix_live
+      # - deploy-remix-alpha:          
+      #     requires:
+      #       - lint
+      #       - remix-libs
+      #       - remix-ide-chrome
+      #       - remix-ide-firefox
+      #       - remix-ide-plugin-api
+      #     filters:
+      #       branches:
+      #         only: master
+      # - deploy-remix-beta:          
+      #     requires:
+      #       - lint
+      #       - remix-libs
+      #       - remix-ide-chrome
+      #       - remix-ide-firefox
+      #       - remix-ide-plugin-api
+      #     filters:
+      #       branches:
+      #         only: remix_beta
               
