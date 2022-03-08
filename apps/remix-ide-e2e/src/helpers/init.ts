@@ -6,10 +6,10 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(6000)
+    .maximizeWindow()
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
-    .maximizeWindow()
     .fullscreenWindow(() => {
       if (preloadPlugins) {
         initModules(browser, () => {

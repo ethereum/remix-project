@@ -189,6 +189,7 @@ jobs:
     steps: # a series of commands to run
       - checkout  # pull down code from your version control system.
       - run: defaults write com.apple.Safari AllowRemoteAutomation 1
+      - run: sudo safaridriver --enable
       - restore_cache:
           key: macos-deps-{{ checksum "package.json" }}
       - run: npm install
