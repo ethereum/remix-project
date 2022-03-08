@@ -208,11 +208,11 @@ export const SearchProvider = ({
         const files = await getDirectory('/', plugin)
         const pathFilter: any = {}
         if (state.include){
-          const includeWithGlobalExpression = state.include.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
+          const includeWithGlobalExpression = state.include.replaceAll(/(\*\.)/g, '**/*.')
           pathFilter.include = includeWithGlobalExpression.split(',').map(i => i.trim())
         }
         if (state.exclude){
-          const excludeWithGlobalExpression = state.exclude.replaceAll(/(?<!\/)(\*\.)/g, '**/*.')
+          const excludeWithGlobalExpression = state.exclude.replaceAll(/(\*\.)/g, '**/*.')
           pathFilter.exclude = excludeWithGlobalExpression.split(',').map(i => i.trim())
         }
         const filteredFiles = files.filter(filePathFilter(pathFilter)).map(file => {
