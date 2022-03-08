@@ -180,7 +180,7 @@ jobs:
 
   remix-ide-safari: # your job name
     macos:
-      xcode: 13.3.0 # indicate your selected version of Xcode
+      xcode: 12.5.1 # indicate your selected version of Xcode
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
