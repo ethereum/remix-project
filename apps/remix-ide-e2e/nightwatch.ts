@@ -78,6 +78,14 @@ module.exports = {
       }
     },
 
+    safari: {
+      desiredCapabilities: {
+        "browserName": "safari",
+        "javascriptEnabled": true,
+        "acceptSslCerts": true
+      }
+    },
+
     firefox: {
       desiredCapabilities: {
         browserName: 'firefox',
