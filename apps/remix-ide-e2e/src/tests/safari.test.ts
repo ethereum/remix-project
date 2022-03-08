@@ -13,6 +13,6 @@ module.exports = {
   },
 
   testMe: function(browser: NightwatchBrowser) {
-    browser.waitForElementVisible('[id="remixTourSkipbtn"]')
+    browser.waitForElementPresent('[id="remixTourSkipbtn"]')
   }
 }
