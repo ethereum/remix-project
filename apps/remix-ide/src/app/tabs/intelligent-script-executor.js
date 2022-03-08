@@ -2,7 +2,7 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 
 export const profile = {
-  name: 'IntelligentScriptExecutor',
+  name: 'intelligentScriptExecutor',
   displayName: 'Intelligent Script Executor',
   description: 'after each compilation, run the script defined in Natspec.',
   methods: [],
