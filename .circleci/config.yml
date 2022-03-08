@@ -206,6 +206,10 @@ jobs:
           name: Start Selenium
           command: npm run selenium
           background: true
+      - run: 
+          name: Start Remix
+          command: npm run serve:production
+          background: true
       - run: npm run nightwatch_local_ballot_safari
       - store_test_results:
           path: ./reports/tests
