@@ -8,6 +8,7 @@ module.exports = {
     .url('http://127.0.0.1:8080')
     .pause(6000)
     .maximizeWindow().perform(() => {
+        console.log(browser.globals)
         done()
     })
   },
