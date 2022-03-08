@@ -190,11 +190,10 @@ jobs:
       - checkout  # pull down code from your version control system.
       - run: defaults write com.apple.Safari AllowRemoteAutomation 1
       - restore_cache:
-          keys:
-            - macos-deps-{{ checksum "package-lock.json" }}
+          key: macos-deps-{{ checksum "package.json" }}
       - run: npm install
       - save_cache:
-          key: macos-deps-{{ checksum "package-lock.json" }}
+          key: macos-deps-{{ checksum "package.json" }}
           paths:
             - node_modules
       - run: npm run selenium-install
