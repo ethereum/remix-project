@@ -180,7 +180,7 @@ jobs:
 
   remix-ide-safari: # your job name
     macos:
-      xcode: 12.5.1 # indicate your selected version of Xcode
+      xcode: 13.3.0 # indicate your selected version of Xcode
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
@@ -188,8 +188,6 @@ jobs:
     parallelism: 1
     steps: # a series of commands to run
       - checkout  # pull down code from your version control system.
-      - run: defaults write com.apple.Safari AllowRemoteAutomation 1
-      - run: sudo safaridriver --enable
       - restore_cache:
           key: macos-deps-{{ checksum "package.json" }}
       - run: npm install
@@ -207,7 +205,6 @@ jobs:
           command: npm run selenium
           background: true
       - run: sudo safaridriver --enable
-      - run: defaults write com.apple.Safari AllowRemoteAutomation 1
       - run: npm run nightwatch_local_ballot_safari
   remix-ide-plugin-api:
     docker:
