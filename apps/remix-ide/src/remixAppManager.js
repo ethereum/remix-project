@@ -13,7 +13,7 @@ const requiredModules = [ // services + layout views + system views
 const dependentModules = ['git', 'hardhat', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification', 'intelligentScriptExecutor']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
