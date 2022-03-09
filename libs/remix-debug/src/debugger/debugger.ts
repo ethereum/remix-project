@@ -47,7 +47,16 @@ export class Debugger {
     })
 
     this.breakPointManager.event.register('breakpointStep', (step) => {
+      this.event.trigger('breakpointStep', [])
       this.step_manager.jumpTo(step)
+    })
+
+    this.breakPointManager.event.register('noBreakpointHit', (step) => {
+      this.event.trigger('noBreakpointHit', [])
+    })
+
+    this.breakPointManager.event.register('locatingBreakpoint', () => {
+      this.event.trigger('locatingBreakpoint', [])
     })
 
     this.debugger.setBreakpointManager(this.breakPointManager)
