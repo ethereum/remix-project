@@ -34,6 +34,7 @@
     --light:#222;
     --dark:#adafae;
     --body-bg: #060606;
+    --text-bg-mark: #fcf8e3;
     --breakpoint-xs:0;
     --breakpoint-sm:576px;
     --breakpoint-md:768px;
@@ -335,7 +336,7 @@ hr {
 }
 .mark,mark {
     padding:.2em;
-    background-color:#fcf8e3
+    background-color:var(--text-bg-mark);
 }
 .list-unstyled {
     padding-left:0;
