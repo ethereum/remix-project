@@ -1,4 +1,3 @@
-
 import { Plugin } from '@remixproject/engine'
 import { compile } from '@remix-project/remix-solidity'
 import { util } from '@remix-project/remix-lib'
@@ -76,6 +75,7 @@ export class FetchAndCompile extends Plugin {
       }
     }
 
+    targetPath = `${targetPath}/${network.id}/${contractAddress}`
     let data
     try {
       data = await fetchContractFromSourcify(this, network, contractAddress, targetPath)
@@ -108,7 +108,15 @@ export class FetchAndCompile extends Plugin {
       const compData = await compile(
         compilationTargets,
         settings,
-        async (url, cb) => await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+        async (url, cb) => {
+          // we first try to resolve the content from the compilation target using a more appropiate path
+          const path = `${targetPath}/${url}`
+          if (compilationTargets[path] && compilationTargets[path].content) {
+            return cb(null, compilationTargets[path].content)
+          } else {
+            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+          }
+        })
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     } catch (e) {
