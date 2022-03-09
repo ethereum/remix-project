@@ -277,11 +277,6 @@ function testDebugging (debugManager) {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
     }})
 
-    breakPointManager.event.register('managersChanged', () => {
-      const {traceManager, callTree, solidityProxy} = debugManager
-      breakPointManager.setManagers({traceManager, callTree, solidityProxy})
-    })
-
     breakPointManager.add({fileName: 'test.sol', row: 38})
 
     breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
