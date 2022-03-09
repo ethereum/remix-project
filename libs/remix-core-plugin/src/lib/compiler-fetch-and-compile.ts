@@ -8,7 +8,7 @@ import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
 
 const profile = {
   name: 'fetchAndCompile',
-  methods: ['resolve'],
+  methods: ['resolve', 'clearCache'],
   version: '0.0.1'
 }
 
@@ -19,6 +19,14 @@ export class FetchAndCompile extends Plugin {
     super(profile)
     this.unresolvedAddresses = []
     this.sourceVerifierNetWork = ['Main', 'Rinkeby', 'Ropsten', 'Goerli']
+  }
+
+  /**
+   * Clear the cache
+   *
+   */
+  async clearCache () {
+    this.unresolvedAddresses = []
   }
 
   /**
