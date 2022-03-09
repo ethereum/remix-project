@@ -277,7 +277,7 @@ function testDebugging (debugManager) {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
     }})
 
-    breakPointManager.add({fileName: 0, row: 38})
+    breakPointManager.add({fileName: 'test.sol', row: 39})
 
     breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
       console.log('breakpointHit')
