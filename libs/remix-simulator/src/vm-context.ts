@@ -2,11 +2,15 @@
 'use strict'
 import Web3 from 'web3'
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
-import { vm as remixLibVm, execution } from '@remix-project/remix-lib'
+import { execution } from '@remix-project/remix-lib'
+const { LogsManager } = execution
+import { VmProxy } from './VmProxy'
 import VM from '@ethereumjs/vm'
 import Common from '@ethereumjs/common'
 import StateManager from '@ethereumjs/vm/dist/state/stateManager'
 import { StorageDump } from '@ethereumjs/vm/dist/state/interface'
+import { Block } from '@ethereumjs/block'
+import { Transaction } from '@ethereumjs/tx'
 
 /*
   extend vm state manager and instanciate VM
@@ -75,6 +79,13 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 }
 
+export type CurrentVm = {
+  vm: VM,
+  web3vm: VmProxy,
+  stateManager: StateManagerCommonStorageDump,
+  common: Common
+}
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -82,15 +93,14 @@ export class VMContext {
   currentFork: string
   blockGasLimitDefault: number
   blockGasLimit: number
-  customNetWorks
-  blocks
-  latestBlockNumber
-  blockByTxHash
-  txByHash
-  currentVm
-  web3vm
-  logsManager
-  exeResults
+  blocks: Record<string, Block>
+  latestBlockNumber: string
+  blockByTxHash: Record<string, Block>
+  txByHash: Record<string, Transaction>
+  currentVm: CurrentVm
+  web3vm: VmProxy
+  logsManager: any // LogsManager 
+  exeResults: Record<string, Transaction>
 
   constructor (fork?) {
     this.blockGasLimitDefault = 4300000
@@ -98,11 +108,11 @@ export class VMContext {
     this.currentFork = fork || 'london'
     this.currentVm = this.createVm(this.currentFork)
     this.blocks = {}
-    this.latestBlockNumber = 0
+    this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
     this.txByHash = {}
     this.exeResults = {}
-    this.logsManager = new execution.LogsManager()
+    this.logsManager = new LogsManager()
   }
 
   createVm (hardfork) {
@@ -115,7 +125,9 @@ export class VMContext {
       allowUnlimitedContractSize: true
     })
 
-    const web3vm = new remixLibVm.Web3VMProvider()
+    // VmProxy and VMContext are very intricated.
+    // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
+    const web3vm = new VmProxy(this)
     web3vm.setVM(vm)
     return { vm, web3vm, stateManager, common }
   }
@@ -140,7 +152,7 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block) {
+  addBlock (block: Block) {
     let blockNumber = '0x' + block.header.number.toString('hex')
     if (blockNumber === '0x') {
       blockNumber = '0x0'

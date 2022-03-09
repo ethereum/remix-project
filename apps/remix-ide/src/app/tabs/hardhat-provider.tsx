@@ -49,11 +49,13 @@ export class HardhatProvider extends Plugin {
   }
 
   hardhatProviderDialogBody (): JSX.Element {
-    return (<div> Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
-          <div className="border p-1">npx hardhat node</div>       
-        For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>       
-        Hardhat JSON-RPC Endpoint
-      </div>)
+    return (
+      <div> Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
+        <div className="border p-1">npx hardhat node</div>       
+        For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
+        <div>Hardhat JSON-RPC Endpoint:</div>
+      </div>
+    )
   }
 
   sendAsync (data: JsonDataRequest): Promise<any> {

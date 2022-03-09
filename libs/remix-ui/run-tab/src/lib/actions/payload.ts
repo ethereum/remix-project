@@ -1,3 +1,4 @@
+import { ContractList } from '../reducers/runTab'
 import { ContractData } from '../types'
 
 export const fetchAccountsListRequest = () => {
@@ -137,7 +138,7 @@ export const fetchContractListRequest = () => {
   }
 }
 
-export const fetchContractListSuccess = (contracts: { name: string, alias: string, file: string }[]) => {
+export const fetchContractListSuccess = (contracts: ContractList) => {
   return {
     type: 'FETCH_CONTRACT_LIST_SUCCESS',
     payload: contracts

@@ -10,6 +10,7 @@ interface ModalWrapperProps extends ModalDialogProps {
 const ModalWrapper = (props: ModalWrapperProps) => {
   const [state, setState] = useState<ModalDialogProps>()
   const ref = useRef()
+  const data = useRef()
 
   const onFinishPrompt = async () => {
     if (ref.current === undefined) {
@@ -21,7 +22,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   }
 
   const onOkFn = async () => {
-    (props.okFn) ? props.okFn() : props.resolve(true)
+    (props.okFn) ? props.okFn(data.current) : props.resolve(data.current || true)
   }
 
   const onCancelFn = async () => {
@@ -37,6 +38,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   }
 
   useEffect(() => {
+    data.current = props.data
     if (props.modalType) {
       switch (props.modalType) {
         case ModalTypes.prompt:

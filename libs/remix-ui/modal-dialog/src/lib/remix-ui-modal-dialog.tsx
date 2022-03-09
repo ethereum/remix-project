@@ -37,7 +37,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       modal.current.addEventListener('blur', handleBlur)
     }
     return () => {
-      modal.current.removeEventListener('blur', handleBlur)
+      modal.current && modal.current.removeEventListener('blur', handleBlur)
     }
   }, [modal.current])
 

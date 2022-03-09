@@ -46,6 +46,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const [clearConsole, setClearConsole] = useState(false)
   const [paste, setPaste] = useState(false)
+  const [storage, setStorage] = useState<any>(null)
   const [autoCompletState, setAutoCompleteState] = useState({
     activeSuggestion: 0,
     data: {
@@ -382,7 +383,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const handleAutoComplete = () => (
     <div
       className='remix_ui_terminal_popup bg-light ml-4 p-2 position-absolute text-left '
-      style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 2)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}
+      style={{ display: (autoCompletState.showSuggestions && autoCompletState.userInput !== '' && (autoCompletState.userInput.length > 0)) && autoCompletState.data._options.length > 0 ? 'block' : 'none' }}
     >
       <div>
         {autoCompletState.data._options.map((item, index) => {
@@ -419,9 +420,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
+
+    (async()=>{
+      const storage = await props.plugin.call('storage', 'formatString', await props.plugin.call('storage','getStorage'))
+      setStorage(storage)
+    })()
+
     props.plugin.on('layout', 'change', (panels) => {
       setIsOpen(!panels.terminal.minimized)
     })
+
+    
 
     return () => {
       props.plugin.off('layout', 'change')
@@ -477,7 +486,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }
         <div className="position-relative d-flex flex-column-reverse h-100">
           <div id='journal' className='remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0' data-id='terminalJournal'>
-            {!clearConsole && <TerminalWelcomeMessage packageJson={version}/>}
+            {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version}/>}
             {newstate.journalBlocks && newstate.journalBlocks.map((x, index) => {
               if (x.name === EMPTY_BLOCK) {
                 return (
@@ -540,11 +549,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     )
                   } else if (typeof msg === 'object') {
                     return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg.value ? parse(msg.value) : JSON.stringify(msg) } </span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg.value && typeof msg.value !== 'object' ? parse(msg.value) : JSON.stringify(msg) } </span></div>
                     )
                   } else {
                     return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg ? msg.toString().replace(/,/g, '') : msg }</span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg? msg.toString() : null}</span></div>
                     )
                   }
                 })

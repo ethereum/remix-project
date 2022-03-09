@@ -51,15 +51,18 @@ export class DebuggerStepManager {
       this.traceManager.buildCallPath(index).then((callsPath) => {
         this.currentCall = callsPath[callsPath.length - 1]
         if (this.currentCall.reverted) {
-          const revertedReason = this.currentCall.outofgas ? 'outofgas' : ''
+          const revertedReason = this.currentCall.outofgas ? 'outofgas' : 'reverted'
           this.revertionPoint = this.currentCall.return
-          return this.event.trigger('revertWarning', [revertedReason])
+          this.event.trigger('revertWarning', [revertedReason])
+          return 
         }
         for (let k = callsPath.length - 2; k >= 0; k--) {
           const parent = callsPath[k]
-          if (!parent.reverted) continue
-          this.revertionPoint = parent.return
-          this.event.trigger('revertWarning', ['parenthasthrown'])
+          if (parent.reverted) {
+            this.revertionPoint = parent.return
+            this.event.trigger('revertWarning', ['parenthasthrown'])
+            return
+          }
         }
         this.event.trigger('revertWarning', [''])
       }).catch((error) => {
@@ -118,6 +121,7 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, -1)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
@@ -133,6 +137,7 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 1)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
@@ -143,12 +148,14 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 0)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
 
   jumpTo (step) {
     if (!this.traceManager.inRange(step)) return
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }

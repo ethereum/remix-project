@@ -127,7 +127,7 @@ export function Workspace () {
               </label>
               <span className="remixui_menu">
                 <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST}
                   id='workspaceCreate'
                   data-id='workspaceCreate'
                   onClick={(e) => {
@@ -198,6 +198,7 @@ export function Workspace () {
                     dispatchCopyFolder={global.dispatchCopyFolder}
                     dispatchPublishToGist={global.dispatchPublishToGist}
                     dispatchRunScript={global.dispatchRunScript}
+                    dispatchRunScriptWithMocha={global.dispatchRunScriptWithMocha}
                     dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
                     dispatchHandleClickFile={global.dispatchHandleClickFile}
                     dispatchSetFocusElement={global.dispatchSetFocusElement}
@@ -233,6 +234,7 @@ export function Workspace () {
                         dispatchCopyFolder={global.dispatchCopyFolder}
                         dispatchPublishToGist={global.dispatchPublishToGist}
                         dispatchRunScript={global.dispatchRunScript}
+                        dispatchRunScriptWithMocha={global.dispatchRunScriptWithMocha}
                         dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
                         dispatchHandleClickFile={global.dispatchHandleClickFile}
                         dispatchSetFocusElement={global.dispatchSetFocusElement}

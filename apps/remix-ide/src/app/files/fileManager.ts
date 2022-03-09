@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
-import { fileChangedToastMsg } from '@remix-ui/helper'
+import { fileChangedToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 
 /*
@@ -19,7 +19,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -608,9 +608,10 @@ class FileManager extends Plugin {
       this.events.emit('noFileSelected')
     } else {
       file = this.normalize(file)
-      await this.saveCurrentFile()
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
+      await this.saveCurrentFile()
+      if (this.currentFile() === file) return
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
@@ -704,7 +705,14 @@ class FileManager extends Plugin {
     return collectList(path)
   }
 
-  isRemixDActive() {
+  async fileList (dirPath) {
+    const paths: any = await this.readdir(dirPath)
+    for( const path in paths)
+      if(paths[path].isDirectory) delete paths[path]
+    return Object.keys(paths)
+  }
+
+  isRemixDActive () {
     return this.appManager.isActive('remixd')
   }
 
@@ -715,8 +723,22 @@ class FileManager extends Plugin {
       if ((input !== null) && (input !== undefined)) {
         const provider = this.fileProviderOf(currentFile)
         if (provider) {
-          await provider.set(currentFile, input)
+          // use old content as default if save operation fails.
+          provider.get(currentFile, (error, oldContent) => {
+            provider.set(currentFile, input, (error) => {
+              if (error) {
+                if (error.message ) this.call('notification', 'toast', 
+                  error.message.indexOf(
+                    'LocalStorage is full') !== -1 ? storageFullMessage()
+                    : error.message
+                )
+                provider.set(currentFile, oldContent)
+                return console.error(error)
+              } else {
           this.emit('fileSaved', currentFile)
+              }
+            })
+          })
         } else {
           console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
         }
@@ -731,7 +753,7 @@ class FileManager extends Plugin {
     if (provider) {
       try{
         const content = await provider.get(currentFile)
-        this.editor.setText(content)
+        if(content) this.editor.setText(content)
       }catch(error){
         console.log(error)
       }

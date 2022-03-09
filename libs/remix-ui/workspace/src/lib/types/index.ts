@@ -2,7 +2,16 @@ import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
-
+export interface JSONStandardInput {
+  language: "Solidity";
+  settings?: any,
+  sources: {
+    [globalName: string]: {
+      keccak256?: string;
+      content: string;
+    },
+  };
+}
 export type MenuItems = action[]
 export interface WorkspaceProps {
   plugin: {
@@ -78,6 +87,7 @@ export interface FileExplorerProps {
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
+    dispatchRunScriptWithMocha: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
     dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
     dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
@@ -108,6 +118,7 @@ export interface FileExplorerContextMenuProps {
     publishFolderToGist?: (path?: string, type?: string) => void,
     publishFileToGist?: (path?: string, type?: string) => void,
     runScript?: (path: string) => void,
+    runScriptWithMocha?: (path: string) => void,
     emit?: (cmd: customAction) => void,
     pageX: number,
     pageY: number,

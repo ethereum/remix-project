@@ -38,15 +38,12 @@ type sourceMarker = {
   hide: boolean
 }
 
-type sourceAnnotationMap = {
-  [key: string]: [sourceAnnotation];
-}
-
-type sourceMarkerMap = {
-  [key: string]: [sourceMarker];
-}
-
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
+
+export type DecorationsReturn = {
+  currentDecorations: Array<string>
+  registeredDecorations?: Array<any>
+}
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
@@ -54,8 +51,6 @@ export interface EditorUIProps {
   activated: boolean
   themeType: string
   currentFile: string
-  sourceAnnotationsPerFile: sourceAnnotationMap
-  markerPerFile: sourceMarkerMap
   events: {
     onBreakPointAdded: (file: string, line: number) => void
     onBreakPointCleared: (file: string, line: number) => void
@@ -71,17 +66,20 @@ export interface EditorUIProps {
     getFontSize: () => number,
     getValue: (uri: string) => string
     getCursorPosition: () => cursorPosition
+    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   }
 }
 
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
-  const [currentAnnotations, setCurrentAnnotations] = useState({})
-  const [currentMarkers, setCurrentMarkers] = useState({})
   const editorRef = useRef(null)
   const monacoRef = useRef(null)
   const currentFileRef = useRef('')
-
+  // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
+  // const registeredDecorations = useRef({}) // registered decorations
+  
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
   const formatColor = (name) => {
@@ -226,55 +224,6 @@ export const EditorUI = (props: EditorUIProps) => {
     defineAndSetTheme(monacoRef.current)
   })
 
-  const setAnnotationsbyFile = (uri) => {
-    if (props.sourceAnnotationsPerFile[uri]) {
-      const model = editorModelsState[uri]?.model
-      const newAnnotations = []
-      for (const annotation of props.sourceAnnotationsPerFile[uri]) {
-        if (!annotation.hide) {
-          newAnnotations.push({
-            range: new monacoRef.current.Range(annotation.row + 1, 1, annotation.row + 1, 1),
-            options: {
-              isWholeLine: false,
-              glyphMarginHoverMessage: { value: (annotation.from ? `from ${annotation.from}:\n` : '') + annotation.text },
-              glyphMarginClassName: `fal fa-exclamation-square text-${annotation.type === 'error' ? 'danger' : (annotation.type === 'warning' ? 'warning' : 'info')}`
-            }
-          })
-        }
-      }
-      setCurrentAnnotations(prevState => {
-        prevState[uri] = model.deltaDecorations(currentAnnotations[uri] || [], newAnnotations)
-        return prevState
-      })
-    }
-  }
-
-  const setMarkerbyFile = (uri) => {
-    if (props.markerPerFile[uri]) {
-      const model = editorModelsState[uri]?.model
-      const newMarkers = []
-      for (const marker of props.markerPerFile[uri]) {
-        if (!marker.hide) {
-          let isWholeLine = false
-          if (marker.position.start.line === marker.position.end.line && marker.position.end.column - marker.position.start.column < 3) {
-            // in this case we force highlighting the whole line (doesn't make sense to highlight 2 chars)
-            isWholeLine = true
-          }
-          newMarkers.push({
-            range: new monacoRef.current.Range(marker.position.start.line + 1, marker.position.start.column + 1, marker.position.end.line + 1, marker.position.end.column + 1),
-            options: {
-              isWholeLine,
-              inlineClassName: `alert-info border-0 highlightLine${marker.position.start.line + 1}`
-            }
-          })
-        }
-      }
-      setCurrentMarkers(prevState => {
-        prevState[uri] = model.deltaDecorations(currentMarkers[uri] || [], newMarkers)
-        return prevState
-      })
-    }
-  }
 
   useEffect(() => {
     if (!editorRef.current) return
@@ -286,18 +235,89 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
-    }
-    setAnnotationsbyFile(props.currentFile)
-    setMarkerbyFile(props.currentFile)
+    }    
   }, [props.currentFile])
 
-  useEffect(() => {
-    setAnnotationsbyFile(props.currentFile)
-  }, [JSON.stringify(props.sourceAnnotationsPerFile)])
+  const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
+    if (typeOfDecoration === 'sourceAnnotationsPerFile') {
+      decoration = decoration as sourceAnnotation
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(decoration.row + 1, 1, decoration.row + 1, 1),
+        options: {
+          isWholeLine: false,
+          glyphMarginHoverMessage: { value: (decoration.from ? `from ${decoration.from}:\n` : '') + decoration.text },
+          glyphMarginClassName: `fal fa-exclamation-square text-${decoration.type === 'error' ? 'danger' : (decoration.type === 'warning' ? 'warning' : 'info')}`
+        }
+      }
+    }
+    if (typeOfDecoration === 'markerPerFile') {
+      decoration = decoration as sourceMarker
+      let isWholeLine = false
+      if (decoration.position.start.line === decoration.position.end.line && decoration.position.end.column - decoration.position.start.column < 3) {
+        // in this case we force highlighting the whole line (doesn't make sense to highlight 2 chars)
+        isWholeLine = true
+      }
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(decoration.position.start.line + 1, decoration.position.start.column + 1, decoration.position.end.line + 1, decoration.position.end.column + 1),
+        options: {
+          isWholeLine,
+          inlineClassName: `inline-class border-0 selectionHighlight highlightLine${decoration.position.start.line + 1}`
+        }
+      }
+    }
+  }
 
-  useEffect(() => {
-    setMarkerbyFile(props.currentFile)
-  }, [JSON.stringify(props.markerPerFile)])
+  props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
+    const model = editorModelsState[filePath]?.model
+    if (!model) return
+    const decorations = []
+    const newRegisteredDecorations = []
+    if (registeredDecorations) {
+      for (const decoration of registeredDecorations) {
+        if (decoration.type === typeOfDecoration && decoration.value.from !== plugin) {
+          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration))
+          newRegisteredDecorations.push(decoration)
+        }
+      }
+    }
+    return {
+      currentDecorations: model.deltaDecorations(currentDecorations, decorations),
+      registeredDecorations: newRegisteredDecorations
+    }
+  }
+  
+  props.editorAPI.keepDecorationsFor = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
+    const model = editorModelsState[filePath]?.model
+    if (!model) return
+    const decorations = []
+    if (registeredDecorations) {
+      for (const decoration of registeredDecorations) {
+        if (decoration.value.from === plugin) {
+          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration))
+        }
+      }
+    }
+    return {
+      currentDecorations: model.deltaDecorations(currentDecorations, decorations)
+    }
+  }
+
+  const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
+    const model = editorModelsState[filePath]?.model
+    if (!model) return { currentDecorations: [] }
+    const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
+
+    return {
+      currentDecorations: model.deltaDecorations([], [monacoDecoration]),
+      registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
+    }
+  }
+  
+  props.editorAPI.addDecoration = (marker: sourceMarker, filePath: string, typeOfDecoration: string) => {
+    return addDecoration(marker, filePath, typeOfDecoration)
+  }
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
     if (!editorRef.current) return

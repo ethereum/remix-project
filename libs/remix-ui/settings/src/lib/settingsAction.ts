@@ -41,12 +41,18 @@ export const useMatomoAnalytics = (config, checked, dispatch) => {
   }
 }
 
-export const saveTokenToast = (config, dispatch, tokenValue) => {
-  config.set('settings/gist-access-token', tokenValue)
+export const saveTokenToast = (config, dispatch, tokenValue, key) => {
+  config.set('settings/' + key, tokenValue)
   dispatch({ type: 'save', payload: { message: 'Access token has been saved' } })
 }
 
-export const removeTokenToast = (config, dispatch) => {
-  config.set('settings/gist-access-token', '')
+export const removeTokenToast = (config, dispatch, key) => {
+  config.set('settings/' + key, '')
   dispatch({ type: 'removed', payload: { message: 'Access token removed' } })
+}
+
+export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, postageStampId) => {
+  config.set('settings/swarm-private-bee-address', privateBeeAddress)
+  config.set('settings/swarm-postage-stamp-id', postageStampId)
+  dispatch({ type: 'save', payload: { message: 'Swarm settings have been saved' } })
 }

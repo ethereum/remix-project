@@ -1,3 +1,5 @@
+import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
+import { ContractList } from '../reducers/runTab'
 import { RunTab } from './run-tab'
 export interface RunTabProps {
   plugin: RunTab
@@ -147,11 +149,7 @@ export type MainnetPrompt = (
 export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
-    contractList: {
-      name: string,
-      alias: string,
-      file: string
-    }[],
+    contractList: ContractList,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
     compilationCount: number,
@@ -159,7 +157,7 @@ export interface ContractDropdownProps {
     isSuccessful: boolean,
     error: string
   },
-  getSelectedContract: (contractName: string, compilerAtributeName: string) => ContractData,
+  getSelectedContract: (contractName: string, compiler: CompilerAbstract) => ContractData,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,
   setPassphrase: (passphrase: string) => void,
