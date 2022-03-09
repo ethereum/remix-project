@@ -271,7 +271,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return
+    if (!model) return {
+      currentDecorations: [],
+      registeredDecorations: []
+    }
     const decorations = []
     const newRegisteredDecorations = []
     if (registeredDecorations) {
@@ -290,7 +293,9 @@ export const EditorUI = (props: EditorUIProps) => {
   
   props.editorAPI.keepDecorationsFor = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return
+    if (!model) return {
+      currentDecorations: []
+    }
     const decorations = []
     if (registeredDecorations) {
       for (const decoration of registeredDecorations) {
