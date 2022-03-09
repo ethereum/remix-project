@@ -114,7 +114,7 @@ export class BreakpointManager {
         }
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           lineHadBreakpoint = true
-          if (direction === 1 && this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
+          if (this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
             return
           }
         }
