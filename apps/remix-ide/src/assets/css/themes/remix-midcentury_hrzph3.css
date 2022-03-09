@@ -22,6 +22,7 @@
   --dark: #01414E;
   --text: #11556c;
   --body-bg: #DBE2E0;
+  --text-bg-mark: #fcf8e3;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -477,7 +478,7 @@ small,
 mark,
 .mark {
   padding: 0.2em;
-  background-color: #fcf8e3;
+  background-color: var(--text-bg-mark);
 }
 
 .list-unstyled {

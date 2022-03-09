@@ -21,6 +21,6 @@
 }
 
 .inline-class {
-    background: var(--primary) !important;
-    color: var(--text) !important;
+    background: var(--text-bg-mark) !important;
+    color: var(--body-bg) !important;
 }
