@@ -198,7 +198,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">{ swarmSettingsTitle }</h6>
-        <div className=""><label>PRIVATE BEE ADDRESS:</label>
+        <div className="pt-2"><label>PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={ privateBeeAddress } />
           </div>
