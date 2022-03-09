@@ -87,6 +87,7 @@ export class BreakpointManager {
     *
     */
   async jump (fromStep, direction, defaultToLimit, trace) {
+    this.event.trigger('locatingBreakpoint', [])
     let sourceLocation
     let previousSourceLocation
     let currentStep = fromStep + direction
@@ -120,7 +121,7 @@ export class BreakpointManager {
       }
       currentStep += direction
     }
-    this.event.trigger('NoBreakpointHit', [])
+    this.event.trigger('noBreakpointHit', [])
     if (!defaultToLimit) {
       return
     }
