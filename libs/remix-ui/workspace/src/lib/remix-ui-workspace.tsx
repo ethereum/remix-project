@@ -198,7 +198,6 @@ export function Workspace () {
                     dispatchCopyFolder={global.dispatchCopyFolder}
                     dispatchPublishToGist={global.dispatchPublishToGist}
                     dispatchRunScript={global.dispatchRunScript}
-                    dispatchRunScriptWithMocha={global.dispatchRunScriptWithMocha}
                     dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
                     dispatchHandleClickFile={global.dispatchHandleClickFile}
                     dispatchSetFocusElement={global.dispatchSetFocusElement}
@@ -234,7 +233,6 @@ export function Workspace () {
                         dispatchCopyFolder={global.dispatchCopyFolder}
                         dispatchPublishToGist={global.dispatchPublishToGist}
                         dispatchRunScript={global.dispatchRunScript}
-                        dispatchRunScriptWithMocha={global.dispatchRunScriptWithMocha}
                         dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
                         dispatchHandleClickFile={global.dispatchHandleClickFile}
                         dispatchSetFocusElement={global.dispatchSetFocusElement}
