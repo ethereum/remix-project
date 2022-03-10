@@ -39,7 +39,7 @@ export class StoragePlugin extends Plugin {
       if (!localStorage.hasOwnProperty(_x)) {
         continue
       }
-      _xLen = ((localStorage[_x].length + _x.length) * 2)
+      _xLen = ((localStorage[_x].length + _x.length))
       _lsTotal += _xLen
     }
     return (_lsTotal / 1024).toFixed(2)
