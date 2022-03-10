@@ -13,7 +13,7 @@ export const fetchContractFromSourcify = async (plugin, network, contractAddress
   }
 
   // set the solidity contract code using metadata
-  await plugin.call('fileManager', 'setFile', `${targetPath}/${network.id}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
+  await plugin.call('fileManager', 'setFile', `${targetPath}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
   for (let file in data.metadata.sources) {
     const urls = data.metadata.sources[file].urls
     for (const url of urls) {
@@ -24,7 +24,7 @@ export const fetchContractFromSourcify = async (plugin, network, contractAddress
         if (await plugin.call('contentImport', 'isExternalUrl', file)) {
           // nothing to do, the compiler callback will handle those
         } else {
-          const path = `${targetPath}/${network.id}/${contractAddress}/${file}`
+          const path = `${targetPath}/${file}`
           await plugin.call('fileManager', 'setFile', path, source.content)
           compilationTargets[path] = { content: source.content }
         }

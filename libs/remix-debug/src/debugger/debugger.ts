@@ -41,13 +41,16 @@ export class Debugger {
       }
     })
 
-    this.breakPointManager.event.register('managersChanged', () => {
-      const { traceManager, callTree, solidityProxy } = this.debugger
-      this.breakPointManager.setManagers({ traceManager, callTree, solidityProxy })
-    })
-
     this.breakPointManager.event.register('breakpointStep', (step) => {
       this.step_manager.jumpTo(step)
+    })
+
+    this.breakPointManager.event.register('noBreakpointHit', (step) => {
+      this.event.trigger('noBreakpointHit', [])
+    })
+
+    this.breakPointManager.event.register('locatingBreakpoint', () => {
+      this.event.trigger('locatingBreakpoint', [])
     })
 
     this.debugger.setBreakpointManager(this.breakPointManager)
