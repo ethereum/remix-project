@@ -116,7 +116,7 @@ export class GistHandler extends Plugin {
       const obj: StringByString = {}
       Object.keys(data.files).forEach((element) => {
         const path = element.replace(/\.\.\./g, '/')
-        obj['/' + gistId + '/' + path] = data.files[element]
+        obj['/gist-' + gistId + '/' + path] = data.files[element]
       })
       this.call('fileManager', 'setBatchFiles', obj, 'workspace', true, async (errorSavingFiles: any) => {
         if (errorSavingFiles) {
