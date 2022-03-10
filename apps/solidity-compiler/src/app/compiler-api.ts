@@ -293,7 +293,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
       // set annotations
       if (data.errors) {
-        for (let error of data.errors) {
+        for (const error of data.errors) {
           let pos = helper.getPositionDetails(error.formattedMessage)
           if (pos.errFile) {
             pos = {
