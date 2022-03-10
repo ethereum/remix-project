@@ -146,7 +146,7 @@ module.exports = class TestTab extends ViewPlugin {
   renderComponent (testDirPath) {
     this.dispatch({
       testTab: this,
-      helper: this.helper,
+      helper: helper,
       testDirPath: testDirPath
     })
   }
