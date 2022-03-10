@@ -119,12 +119,11 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
   },
-  'Run tests using Mocha script and check result is logged in the terminal #group4': function (browser: NightwatchBrowser) {
+  'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="treeViewDivtreeViewItem"]')
       .addFile('scripts/storage.test.js', { content: storageMochaTests })
       .pause(1000)
-      .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
