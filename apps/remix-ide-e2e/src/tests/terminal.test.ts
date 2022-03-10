@@ -104,7 +104,7 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
-      .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
+      .click('*[data-id="compilerContainerCompileBtn"]').pause(20000) // compile Owner
       .executeScript('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
@@ -118,6 +118,28 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+  },
+  'Run tests using Mocha script and check result is logged in the terminal #group4': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="treeViewDivtreeViewItem"]')
+      .addFile('scripts/storage.test.js', { content: storageMochaTests })
+      .pause(1000)
+      .click('[data-id="treeViewDivtreeViewItemcontracts"]')
+      .openFile('contracts/1_Storage.sol')
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(10000) // compile Storage
+      .executeScript('remix.execute(\'scripts/storage.test.js\')')
+      .pause(5000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ fail test updating and retrieving updated value')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 55')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 56')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '2 passing, 1 failing')
   },
 
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
@@ -260,6 +282,44 @@ const deployWithEthersJs = `
         console.log(e.message)
     }
 })()`
+
+const storageMochaTests = `
+const { expect } = require("chai");
+
+describe("Storage", function () {
+  it("test initial value", async function () {
+    // Make sure contract is compiled and artifacts are generated
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let storage = await Storage.deploy();
+    console.log('storage contract Address: ' + storage.address);
+    await storage.deployed()
+    expect((await storage.retrieve()).toNumber()).to.equal(0);
+  });
+
+  it("test updating and retrieving updated value", async function () {
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let storage = await Storage.deploy();
+    await storage.deployed()
+    const setValue = await storage.store(56);
+    await setValue.wait();
+    expect((await storage.retrieve()).toNumber()).to.equal(56);
+  });
+
+  it("fail test updating and retrieving updated value", async function () {
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let storage = await Storage.deploy();
+    await storage.deployed()
+    const setValue = await storage.store(56);
+    await setValue.wait();
+    expect((await storage.retrieve()).toNumber(), 'incorrect number').to.equal(55);
+  });
+});`
 
 const hardhatLog = `
 // SPDX-License-Identifier: GPL-3.0
