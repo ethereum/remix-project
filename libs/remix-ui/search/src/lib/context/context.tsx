@@ -202,18 +202,28 @@ export const SearchProvider = ({
     }
   }, [])
 
+  //*.sol, **/*.txt, contracts/*
+  const setGlobalExpression = (paths: string) => {
+    const results = []
+    paths.split(',').forEach(path => {
+      path = path.trim()
+      if(path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
+      if(path.endsWith('/*') && !path.endsWith('/**/*')) path = path.replace(/(\*)/g, '**/*.*')
+      results.push(path)
+    })
+    return results
+  }
+
   useEffect(() => {
     if (state.find) {
       (async () => {
         const files = await getDirectory('/', plugin)
         const pathFilter: any = {}
         if (state.include){
-          const includeWithGlobalExpression = state.include.replaceAll(/(\*\.)/g, '**/*.')
-          pathFilter.include = includeWithGlobalExpression.split(',').map(i => i.trim())
+          pathFilter.include = setGlobalExpression(state.include)
         }
         if (state.exclude){
-          const excludeWithGlobalExpression = state.exclude.replaceAll(/(\*\.)/g, '**/*.')
-          pathFilter.exclude = excludeWithGlobalExpression.split(',').map(i => i.trim())
+          pathFilter.exclude = setGlobalExpression(state.exclude)
         }
         const filteredFiles = files.filter(filePathFilter(pathFilter)).map(file => {
           const r: SearchResult = {
