@@ -42,7 +42,6 @@ export class Debugger {
     })
 
     this.breakPointManager.event.register('breakpointStep', (step) => {
-      this.event.trigger('breakpointStep', [])
       this.step_manager.jumpTo(step)
     })
 
