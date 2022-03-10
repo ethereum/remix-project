@@ -23,7 +23,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
   }
 
   if (typeof data.result[0].SourceCode === 'string') {
-    const fileName = `${targetPath}/${network.id}/${contractAddress}/${data.result[0].ContractName}.sol`
+    const fileName = `${targetPath}/${data.result[0].ContractName}.sol`
     await plugin.call('fileManager', 'setFile', fileName , data.result[0].SourceCode)
     compilationTargets[fileName] = { content: data.result[0].SourceCode }
   } else if (data.result[0].SourceCode && typeof data.result[0].SourceCode == 'object') {
@@ -34,7 +34,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
       if (await plugin.call('contentImport', 'isExternalUrl', file)) {
         // nothing to do, the compiler callback will handle those
       } else {        
-        const path = `${targetPath}/${network.id}/${contractAddress}/${file}`
+        const path = `${targetPath}/${file}`
         const content = (source as any).content
         await plugin.call('fileManager', 'setFile', path, content)
         compilationTargets[path] = { content }
