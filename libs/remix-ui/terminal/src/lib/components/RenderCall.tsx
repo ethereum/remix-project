@@ -34,7 +34,7 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
         <div className='remix_ui_terminal_buttons'>
           <div className="remix_ui_terminal_debug btn btn-primary btn-sm" onClick={(event) => debug(event, tx)}>Debug</div>
         </div>
-        <i className="remix_ui_terminal_arrow fas fa-angle-down"></i>
+        <i className={`remix_ui_terminal_arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>
       {showTableHash.includes(tx.hash) ? showTable({
         hash: tx.hash,

@@ -256,17 +256,6 @@ export const runScript = async (path: string) => {
   })
 }
 
-export const runScriptWithMocha = async (path: string) => {
-  const provider = plugin.fileManager.currentFileProvider()
-  provider.get(path, (error, content: string) => {
-    if (error) {
-      return dispatch(displayPopUp(error))
-    }
-    if (content) content = content + '\n' + 'mocha.run()'
-    plugin.call('scriptRunner', 'execute', content)
-  })
-}
-
 export const emitContextMenuEvent = async (cmd: customAction) => {
   await plugin.call(cmd.id, cmd.name, cmd)
 }
