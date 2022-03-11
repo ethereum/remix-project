@@ -20,7 +20,6 @@ export class TabProxy extends Plugin {
     this._view = {}
     this._handlers = {}
     this.loadedTabs = []
-    this.el = document.createElement('div')
     this.dispatch = null
     this.themeQuality = 'dark'
   }
