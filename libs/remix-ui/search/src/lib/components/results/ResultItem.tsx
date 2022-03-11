@@ -86,12 +86,13 @@ export const ResultItem = (props: ResultItemProps) => {
           {!toggleExpander && !loading ? (
             <div className="p-1 search_plugin_wrap_summary">
               {lines.map((line, index) => (
+                index < state.maxLines ? 
                 <ResultSummary
                   setLoading={setLoading}
                   key={index}
                   searchResult={props.file}
                   line={line}
-                />
+                />: null
               ))}
             </div>
           ) : null}

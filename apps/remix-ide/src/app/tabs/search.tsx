@@ -4,7 +4,7 @@ import React from 'react' // eslint-disable-line
 import { SearchTab } from '@remix-ui/search'
 const profile = {
     name: 'search',
-    displayName: 'Search',
+    displayName: 'Search in files',
     methods: [''],
     events: [],
     icon: 'assets/img/Search_Icon.svg',

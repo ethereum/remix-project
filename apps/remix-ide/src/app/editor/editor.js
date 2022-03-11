@@ -12,7 +12,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'getCursorPosition']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition']
 }
 
 class Editor extends Plugin {
@@ -388,6 +388,20 @@ class Editor extends Plugin {
     if (!this.activated) return
     this.emit('focus')
     this.emit('revealLine', line + 1, col)
+  }
+
+  /**
+   * Reveals the range in the editor.
+   * @param {number} startLineNumber
+   * @param {number} startColumn
+   * @param {number} endLineNumber
+   * @param {number} endColumn
+   */
+  revealRange (startLineNumber, startColumn, endLineNumber, endColumn) {
+    if (!this.activated) return
+    this.emit('focus')
+    console.log(startLineNumber, startColumn, endLineNumber, endColumn)
+    this.emit('revealRange', startLineNumber, startColumn, endLineNumber, endColumn)
   }
 
   /**
