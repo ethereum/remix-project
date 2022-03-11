@@ -67,6 +67,8 @@ module.exports = {
     },
     'Should replace text': function (browser: NightwatchBrowser) {
         browser
+        .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
+        .waitForElementVisible('*[id="search_replace"]')
         .setValue('*[id="search_replace"]', 'replacing').pause(1000)
         .waitForElementVisible('*[data-id="contracts/2_Owner.sol-30-71"]')
         .moveToElement('*[data-id="contracts/2_Owner.sol-30-71"]', 10, 10)

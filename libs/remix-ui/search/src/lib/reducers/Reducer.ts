@@ -15,6 +15,12 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 replace: action.payload,
             }
 
+        case 'SET_REPLACE_ENABLED':
+            return {
+                ...state,
+                replaceEnabled: action.payload,
+            }
+            
         case 'SET_INCLUDE':
             return {
                 ...state,

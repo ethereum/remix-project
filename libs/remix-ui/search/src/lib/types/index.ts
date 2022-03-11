@@ -39,6 +39,7 @@ export interface SearchState {
     find: string,
     searchResults: SearchResult[],
     replace: string,
+    replaceEnabled: boolean,
     include: string,
     exclude: string,
     casesensitive: boolean,
@@ -48,6 +49,8 @@ export interface SearchState {
     timeStamp: number,
     count: number,
     maxResults: number
+    maxFiles: number,
+    maxLines: number
 }
 
 export const SearchingInitialState: SearchState = {
@@ -55,6 +58,7 @@ export const SearchingInitialState: SearchState = {
     replace: '',
     include: '',
     exclude: '',
+    replaceEnabled: false,
     searchResults: [],
     casesensitive: false,
     matchWord: false,
@@ -62,5 +66,7 @@ export const SearchingInitialState: SearchState = {
     replaceWithOutConfirmation: false,
     timeStamp: 0,
     count: 0,
-    maxResults: 500
+    maxResults: 1500,
+    maxFiles: 100,
+    maxLines: 200
 }
