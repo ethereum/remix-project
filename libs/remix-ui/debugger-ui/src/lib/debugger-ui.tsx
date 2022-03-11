@@ -87,6 +87,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
+    debuggerInstance.event.register('locatingBreakpoint', async (isActive) => {
+      setState(prevState => {
+        return { ...prevState, sourceLocationStatus: 'Locating breakpoint, this might take a while...' }
+      })
+    })
+
+    debuggerInstance.event.register('noBreakpointHit', async (isActive) => {
+      setState(prevState => {
+        return { ...prevState, sourceLocationStatus: '' }
+      })
+    })
+
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
       if (!lineColumnPos) {        
         await debuggerModule.discardHighlight()
