@@ -127,6 +127,11 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   }
 
   debug (hash, web3?) {
+    try {
+      this.call('fetchAndCompile', 'clearCache')
+    } catch (e) {
+      console.error(e)
+    }
     this.debugHash = hash
     if (web3) this._web3 = web3
     else this._web3 = this.initialWeb3
