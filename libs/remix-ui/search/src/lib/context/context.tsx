@@ -20,6 +20,7 @@ export interface SearchingStateInterface {
   state: SearchState
   setFind: (value: string) => void
   setReplace: (value: string) => void
+  setReplaceEnabled: (value: boolean) => void
   setInclude: (value: string) => void
   setExclude: (value: string) => void
   setCaseSensitive: (value: boolean) => void
@@ -60,6 +61,12 @@ export const SearchProvider = ({
     setReplace: (value: string) => {
       dispatch({
         type: 'SET_REPLACE',
+        payload: value
+      })
+    },
+    setReplaceEnabled: (value: boolean) => {
+      dispatch({
+        type: 'SET_REPLACE_ENABLED',
         payload: value
       })
     },
@@ -144,7 +151,7 @@ export const SearchProvider = ({
     findText: async (path: string) => {
       if (!plugin) return
       try {
-        if (state.find.length < 3) return
+        if (state.find.length < 1) return
         const text = await plugin.call('fileManager', 'readFile', path)
         let flags = 'g'
         let find = state.find
@@ -162,6 +169,7 @@ export const SearchProvider = ({
     ) => {
       await plugin.call('editor', 'discardHighlight')
       await plugin.call('editor', 'highlight', line.position, result.path)
+      await plugin.call('editor', 'revealRange', line.position.start.line, line.position.start.column, line.position.end.line, line.position.end.column)
     },
     replaceText: async (result: SearchResult, line: SearchResultLineLine) => {
       try {
