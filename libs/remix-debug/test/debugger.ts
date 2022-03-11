@@ -277,22 +277,15 @@ function testDebugging (debugManager) {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
     }})
 
-    breakPointManager.event.register('managersChanged', () => {
-      const {traceManager, callTree, solidityProxy} = debugManager
-      breakPointManager.setManagers({traceManager, callTree, solidityProxy})
-    })
-
-    breakPointManager.add({fileName: 'test.sol', row: 38})
+    breakPointManager.add({fileName: 'test.sol', row: 39})
 
     breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
-      console.log('breakpointHit')
       t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 1153, length: 6, file: 0, jump: '-' }))
       t.equal(step, 212)
     })
 
     breakPointManager.event.register('noBreakpointHit', function () {
       t.end('noBreakpointHit')
-      console.log('noBreakpointHit')
     })
     breakPointManager.jumpNextBreakpoint(0, true)
   })

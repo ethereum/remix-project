@@ -4,7 +4,7 @@ import { update } from 'solc/abi'
 import * as webworkify from 'webworkify-webpack'
 import compilerInput from './compiler-input'
 import EventManager from '../lib/eventManager'
-import txHelper from './txHelper'
+import txHelper from './helper'
 import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
