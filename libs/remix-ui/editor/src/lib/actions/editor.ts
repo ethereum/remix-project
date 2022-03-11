@@ -1,3 +1,5 @@
+import { IRange } from "monaco-editor";
+
 export interface Action {
   type: string;
   payload: Record<string, any>
@@ -47,6 +49,27 @@ export const reducerActions = (models = initialState, action: Action) => {
       const column = action.payload.column
       editor.revealLine(line)
       editor.setPosition({ column, lineNumber: line })
+      return models
+    }
+    case 'REVEAL_RANGE': {
+      if (!editor) return models
+      const range: IRange = {
+        startLineNumber: action.payload.startLineNumber +1,
+        startColumn: action.payload.startColumn,
+        endLineNumber: action.payload.endLineNumber + 1,
+        endColumn: action.payload.endColumn
+      }
+      // reset to start of line
+      if(action.payload.startColumn < 100){
+        editor.revealRange({
+          startLineNumber: range.startLineNumber,
+          startColumn: 1,
+          endLineNumber: range.endLineNumber,
+          endColumn: 1
+        })
+      }else{
+        editor.revealRangeInCenter(range)
+      }
       return models
     }
     case 'FOCUS': {
@@ -101,6 +124,20 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
     dispatch({
       type: 'REVEAL_LINE',
       payload: { line, column },
+      monaco,
+      editor
+    })
+  })
+
+  plugin.on('editor', 'revealRange', (startLineNumber, startColumn, endLineNumber, endColumn) => {
+    dispatch({
+      type: 'REVEAL_RANGE',
+      payload: { 
+        startLineNumber,
+        startColumn,
+        endLineNumber,
+        endColumn
+       },
       monaco,
       editor
     })
