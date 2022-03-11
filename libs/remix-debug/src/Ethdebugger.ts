@@ -64,7 +64,6 @@ export class Ethdebugger {
       this.solidityProxy,
       this.codeManager,
       { ...this.opts, includeLocalVariables })
-    this.event.trigger('managersChanged')
   }
 
   resolveStep (index) {
