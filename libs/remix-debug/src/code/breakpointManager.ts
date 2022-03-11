@@ -87,6 +87,7 @@ export class BreakpointManager {
     *
     */
   async jump (fromStep, direction, defaultToLimit, trace) {
+    this.event.trigger('locatingBreakpoint', [])
     let sourceLocation
     let previousSourceLocation
     let currentStep = fromStep + direction
@@ -113,14 +114,14 @@ export class BreakpointManager {
         }
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           lineHadBreakpoint = true
-          if (direction === 1 && this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
+          if (this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
             return
           }
         }
       }
       currentStep += direction
     }
-    this.event.trigger('NoBreakpointHit', [])
+    this.event.trigger('noBreakpointHit', [])
     if (!defaultToLimit) {
       return
     }
@@ -172,6 +173,7 @@ export class BreakpointManager {
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
   add (sourceLocation) {
+    sourceLocation.row -= 1
     if (!this.breakpoints[sourceLocation.fileName]) {
       this.breakpoints[sourceLocation.fileName] = []
     }
@@ -185,6 +187,7 @@ export class BreakpointManager {
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
   remove (sourceLocation) {
+    sourceLocation.row -= 1
     const sources = this.breakpoints[sourceLocation.fileName]
     if (!sources) {
       return
