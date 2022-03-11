@@ -1,4 +1,4 @@
-import { compile } from '@remix-project/remix-solidity'
+import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 
@@ -261,7 +261,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
-    this.data.eventHandlers.onCompilationFinished = (success, data, source, input, version) => {
+    this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data
       if (success) {
         // forwarding the event to the appManager infra
@@ -291,6 +291,21 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
       this.compilationDetails.target = source.target
       if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
+      // set annotations
+      if (data.errors) {
+        for (const error of data.errors) {
+          let pos = helper.getPositionDetails(error.formattedMessage)
+          if (pos.errFile) {
+            pos = {
+              row: pos.errLine,
+              column: pos.errCol,
+              text: error.formattedMessage,
+              type: error.severity
+            }
+            await this.call('editor', 'addAnnotation', pos, pos.errFile)
+          }
+        }
+      }     
     }
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
