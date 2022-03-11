@@ -64,6 +64,7 @@
 
 .search_plugin_search_tab mark {
     padding: 0;
+    white-space: pre;
 }
 
 .search_plugin_search_tab .search_plugin_search_line_container .search_plugin_search_control {
