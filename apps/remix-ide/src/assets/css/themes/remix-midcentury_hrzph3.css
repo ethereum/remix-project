@@ -15,13 +15,14 @@
   --primary: #5F5E2C;
   --secondary: #e2f5f2;
   --success: #01670f;
-  --info: #69c7e9;
+  --info: #259bc5;
   --warning: #f5ba30;
   --danger: #E64F29;
   --light: #eeede9;
   --dark: #01414E;
   --text: #11556c;
   --body-bg: #DBE2E0;
+  --text-bg-mark: #fcf8e3;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -477,7 +478,7 @@ small,
 mark,
 .mark {
   padding: 0.2em;
-  background-color: #fcf8e3;
+  background-color: var(--text-bg-mark);
 }
 
 .list-unstyled {
