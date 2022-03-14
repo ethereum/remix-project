@@ -4,3 +4,4 @@ export { default as CompilerInput, getValidLanguage } from './compiler/compiler-
 export { CompilerAbstract } from './compiler/compiler-abstract'
 export * from './compiler/types'
 export { promisedMiniXhr, pathToURL, baseURLBin, baseURLWasm, canUseWorker, urlFromVersion } from './compiler/compiler-utils'
+export { default as helper } from './compiler/helper'

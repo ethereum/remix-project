@@ -56,21 +56,22 @@ export class EventsDecoder {
     return eventsABI
   }
 
-  _event (hash: string, eventsABI: Record<string, unknown>, contractName: string) {
-    const events = eventsABI[contractName]
-    if (!events) return null
-
-    if (events[hash]) {
-      const event = events[hash]
-      for (const input of event.inputs) {
-        if (input.type === 'function') {
-          input.type = 'bytes24'
-          input.baseType = 'bytes24'
+  _event (hash, eventsABI) {
+    // get all the events responding to that hash.
+    const contracts = []
+    for (const k in eventsABI) {
+      if (eventsABI[k][hash]) {
+        const event = eventsABI[k][hash]
+        for (const input of event.inputs) {
+          if (input.type === 'function') {
+            input.type = 'bytes24'
+            input.baseType = 'bytes24'
+          }
         }
+        contracts.push(event)
       }
-      return event
     }
-    return null
+    return contracts
   }
 
   _stringifyBigNumber (value): string {
@@ -95,16 +96,23 @@ export class EventsDecoder {
       // [address, topics, mem]
       const log = logs[i]
       const topicId = log.topics[0]
-      const eventAbi = this._event(topicId.replace('0x', ''), eventsABI, contractName)
-      if (eventAbi) {
-        const decodedlog = eventAbi.abi.parseLog(log)
-        const decoded = {}
-        for (const v in decodedlog.args) {
-          decoded[v] = this._stringifyEvent(decodedlog.args[v])
+      const eventAbis = this._event(topicId.replace('0x', ''), eventsABI)
+      for (const eventAbi of eventAbis) {
+        try {
+          if (eventAbi) {
+            const decodedlog = eventAbi.abi.parseLog(log)
+            const decoded = {}
+            for (const v in decodedlog.args) {
+              decoded[v] = this._stringifyEvent(decodedlog.args[v])
+            }
+            events.push({ from: log.address, topic: topicId, event: eventAbi.event, args: decoded })
+          } else {
+            events.push({ from: log.address, data: log.data, topics: log.topics })
+          }
+          break // if one of the iteration is successful
+        } catch (e) {
+          continue
         }
-        events.push({ from: log.address, topic: topicId, event: eventAbi.event, args: decoded })
-      } else {
-        events.push({ from: log.address, data: log.data, topics: log.topics })
       }
     }
     cb(null, { decoded: events, raw: logs })

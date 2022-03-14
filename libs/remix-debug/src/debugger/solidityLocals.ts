@@ -10,6 +10,7 @@ export class DebuggerSolidityLocals {
   traceManager
   tx
   _sourceLocation
+  decodeTimeout
 
   constructor (tx, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
@@ -18,21 +19,21 @@ export class DebuggerSolidityLocals {
     this.storageResolver = null
     this.traceManager = _traceManager
     this.tx = tx
+    this.decodeTimeout = null
   }
 
   init (sourceLocation) {
     this._sourceLocation = sourceLocation
-    let decodeTimeout = null
     if (!this.storageResolver) {
       return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
     }
-    if (decodeTimeout) {
-      window.clearTimeout(decodeTimeout)
+    if (this.decodeTimeout) {
+      window.clearTimeout(this.decodeTimeout)
     }
     this.event.trigger('solidityLocalsUpdating')
-    decodeTimeout = setTimeout(() => {
+    this.decodeTimeout = setTimeout(() => {
       this.decode(sourceLocation)
-    }, 500)
+    }, 1000)
   }
 
   decode (sourceLocation, cursor?) {
