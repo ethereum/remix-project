@@ -85,7 +85,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
     case 'code-template':
     // creates a new workspace code-sample and loads code from url params.
     try {
-      let path = ''; let content = ''
+      let path = ''; let content
       
       if (params.code) {
         const hash = bufferToHex(keccakFromString(params.code))
@@ -99,15 +99,20 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
         path = data.cleanUrl
         content = data.content
-        if (content && typeof content === 'object') {
-          const standardInput = content as JSONStandardInput
-          if (standardInput.language && standardInput.language === "Solidity" && standardInput.sources) {
+
+        try {
+          content = JSON.parse(content) as any
+          if (content.language && content.language === "Solidity" && content.sources) {
+            const standardInput: JSONStandardInput = content as JSONStandardInput
             for (const [fname, source] of Object.entries(standardInput.sources)) {
               await workspaceProvider.set(fname, source.content)
             }
+            return Object.keys(standardInput.sources)[0]
+          } else {
+            workspaceProvider.set(path, JSON.stringify(content))
           }
-          return Object.keys(standardInput.sources)[0]
-        } else {
+        } catch (e) {
+          console.log(e)
           workspaceProvider.set(path, content)
         }
       }
