@@ -89,15 +89,19 @@ export class Debugger {
           }
           const lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
           this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address])
+          this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [rawLocation])
         } else {
           this.event.trigger('newSourceLocation', [null])
+          this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
         }
       }).catch((_error) => {
         this.event.trigger('newSourceLocation', [null])
+        this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
       })
       // })
     } catch (error) {
       this.event.trigger('newSourceLocation', [null])
+      this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
       return console.log(error)
     }
   }
@@ -132,13 +136,6 @@ export class Debugger {
 
   async debugTx (tx, loadingCb) {
     this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
-
-    this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-      if (!this.debugger.solidityProxy.contracts) return
-      this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
-        this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
-      })
-    })
 
     this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
     this.vmDebuggerLogic.start()
