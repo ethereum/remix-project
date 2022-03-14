@@ -208,6 +208,7 @@ export const EditorUI = (props: EditorUIProps) => {
         'editor.lineHighlightBorder': secondaryColor,
         'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
         'editorGutter.background': lightColor,
+        //'editor.selectionHighlightBackground': secondaryColor,
         'minimap.background': lightColor,
         'menu.foreground': textColor,
         'menu.background': textbackground,
@@ -254,7 +255,8 @@ export const EditorUI = (props: EditorUIProps) => {
     if (typeOfDecoration === 'markerPerFile') {
       decoration = decoration as sourceMarker
       let isWholeLine = false
-      if (decoration.position.start.line === decoration.position.end.line && decoration.position.end.column - decoration.position.start.column < 3) {
+      if ((decoration.position.start.line === decoration.position.end.line && decoration.position.end.column - decoration.position.start.column < 2) ||
+        (decoration.position.start.line !== decoration.position.end.line)) {
         // in this case we force highlighting the whole line (doesn't make sense to highlight 2 chars)
         isWholeLine = true
       }
@@ -263,7 +265,7 @@ export const EditorUI = (props: EditorUIProps) => {
         range: new monacoRef.current.Range(decoration.position.start.line + 1, decoration.position.start.column + 1, decoration.position.end.line + 1, decoration.position.end.column + 1),
         options: {
           isWholeLine,
-          inlineClassName: `inline-class border-0 selectionHighlight highlightLine${decoration.position.start.line + 1}`
+          inlineClassName: `${isWholeLine ? 'alert-info' : 'inline-class'}  border-0 highlightLine${decoration.position.start.line + 1}`
         }
       }
     }
