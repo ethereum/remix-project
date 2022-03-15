@@ -11,31 +11,179 @@ module.exports = {
 
   'Should create 10 files, reload, and check if the files are saved': function (browser: NightwatchBrowser) {
     const contents = {}
-    const checkContent = function (i, done) {
+    const checkContent = (i, done) => {
       const name = 'test_' + i + '.sol'
       browser
         .openFile(name)
         .pause(500)
         .getEditorValue((content) => {
           browser.assert.ok(content === contents[i])
+          browser.assert.ok(content === contents[i])
           done()
         })
     }
-    browser.clickLaunchIcon('filePanel').perform((done) => {
-      let contentEditSet = content.slice()
-      for (let i = 0; i < 10; i++) {
-        contentEditSet += contentEditSet
-        contents[i] = contentEditSet
+    const fillContent = (content, mul) => {
+        let localContent = content
+        mul = 3 * mul
+        for (let k = 0 ; k < mul; k++) {
+            localContent += content
+        }
+        return localContent
+    }
+    browser.clickLaunchIcon('filePanel')
+    .perform((done) => {
+        const i = 0
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-          .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-          .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-          .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
-          .setEditorValue(contentEditSet)
-      }
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
       done()
-    }).pause(10000).refresh()
+    }).perform((done) => {
+        const i = 1
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 2
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 3
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 4
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 5
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 6
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 7
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 8
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    }).perform((done) => {
+        const i = 9
+        const localContent = fillContent(content, i)
+        contents[i] = localContent
+        const name = 'test_' + i + '.sol'
+        browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
+            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .getText('.remix_ui_terminal_block', (result) => {
+                console.log(result)
+            })
+            .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+            .setEditorValue(localContent)
+      done()
+    })
+    .pause(10000)
+      .refresh()
       .perform(done => checkContent(0, done))
       .perform(done => checkContent(1, done))
       .perform(done => checkContent(2, done))
