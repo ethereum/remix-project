@@ -3,6 +3,7 @@ import { createContext, useReducer } from 'react'
 import {
   findLinesInStringWithMatch,
   getDirectory,
+  replaceAllInFile,
   replaceTextInLine
 } from '../components/results/SearchHelper'
 import { SearchReducer } from '../reducers/Reducer'
@@ -11,7 +12,8 @@ import {
   SearchResult,
   SearchResultLine,
   SearchResultLineLine,
-  SearchingInitialState
+  SearchingInitialState,
+  undoBufferRecord
 } from '../types'
 import { filePathFilter } from '@jsdevtools/file-path-filter'
 import { escapeRegExp } from 'lodash'
@@ -29,7 +31,7 @@ export interface SearchingStateInterface {
   setSearchResults: (value: SearchResult[]) => void
   findText: (path: string) => Promise<SearchResultLine[]>
   hightLightInPath: (result: SearchResult, line: SearchResultLineLine) => void
-  replaceText: (result: SearchResult, line: SearchResultLineLine) => void
+  replaceText: (result: SearchResult, line: SearchResultLineLine) => Promise<void>
   reloadFile: (file: string) => void
   toggleCaseSensitive: () => void
   toggleMatchWholeWord: () => void
@@ -37,6 +39,9 @@ export interface SearchingStateInterface {
   setReplaceWithoutConfirmation: (value: boolean) => void
   disableForceReload: (file: string) => void
   updateCount: (count: number, file: string) => void
+  replaceAllInFile: (result: SearchResult) => Promise<void> 
+  undoReplace: (buffer: undoBufferRecord) => Promise<void>
+  clearUndo: () => void
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -145,7 +150,7 @@ export const SearchProvider = ({
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
-        payload: {count, file}
+        payload: { count, file }
       })
     },
     findText: async (path: string) => {
@@ -153,15 +158,9 @@ export const SearchProvider = ({
       try {
         if (state.find.length < 1) return
         const text = await plugin.call('fileManager', 'readFile', path)
-        let flags = 'g'
-        let find = state.find
-        if (!state.casesensitive) flags += 'i'
-        if (!state.useRegExp) find = escapeRegExp(find)
-        if (state.matchWord) find = `\\b${find}\\b`
-        const re = new RegExp(find, flags)
-        const result: SearchResultLine[] = findLinesInStringWithMatch(text, re)
+        const result: SearchResultLine[] = findLinesInStringWithMatch(text, createRegExFromFind())
         return result
-      } catch (e) {}
+      } catch (e) { }
     },
     hightLightInPath: async (
       result: SearchResult,
@@ -180,26 +179,81 @@ export const SearchProvider = ({
           'readFile',
           result.path
         )
-
+        const replaced = replaceTextInLine(content, line, state.replace)
         await plugin.call(
           'fileManager',
           'setFile',
           result.path,
-          replaceTextInLine(content, line, state.replace)
+          replaced
         )
+        setUndoState(content, replaced, result.path)
       } catch (e) {
         throw new Error(e)
       }
+    },
+    replaceAllInFile: async (result: SearchResult) => {
+      await plugin.call('editor', 'discardHighlight')
+      const content = await plugin.call(
+        'fileManager',
+        'readFile',
+        result.path
+      )
+      const replaced = replaceAllInFile(content, createRegExFromFind(), state.replace)
+      await plugin.call(
+        'fileManager',
+        'setFile',
+        result.path,
+        replaced
+      )
+      await plugin.call(
+        'fileManager',
+        'open',
+        result.path
+      )
+      setUndoState(content, replaced, result.path)
+    },
+    undoReplace: async (buffer: undoBufferRecord) => {
+      const content = await plugin.call(
+        'fileManager',
+        'readFile',
+        buffer.path
+      )
+      if (buffer.newContent !== content) {
+        value.clearUndo()
+        throw new Error('Can not undo replace, file has been changed.')
+
+      }
+      await plugin.call(
+        'fileManager',
+        'setFile',
+        buffer.path,
+        buffer.oldContent
+      )
+      await plugin.call(
+        'fileManager',
+        'open',
+        buffer.path
+      )
+      value.clearUndo()
+    },
+    clearUndo: () => {
+      dispatch ({
+        type: 'CLEAR_UNDO',
+        payload: undefined
+      })
     }
   }
 
+
+
   const reloadStateForFile = async (file: string) => {
-      await value.reloadFile(file)
+    await value.reloadFile(file)
   }
 
   useEffect(() => {
     plugin.on('filePanel', 'setWorkspace', () => {
       value.setSearchResults(null)
+      value.clearUndo()
     })
     plugin.on('fileManager', 'fileSaved', async file => {
       await reloadStateForFile(file)
@@ -215,11 +269,35 @@ export const SearchProvider = ({
     const results = []
     paths.split(',').forEach(path => {
       path = path.trim()
-      if(path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
-      if(path.endsWith('/*') && !path.endsWith('/**/*')) path = path.replace(/(\*)/g, '**/*.*')
+      if (path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
+      if (path.endsWith('/*') && !path.endsWith('/**/*')) path = path.replace(/(\*)/g, '**/*.*')
       results.push(path)
     })
     return results
+  }
+
+  const setUndoState = async (oldContent: string, newContent: string, path: string) => {
+    const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+    const undo = {
+      oldContent,
+      newContent,
+      path,
+      workspace
+    }
+    dispatch({
+      type: 'SET_UNDO',
+      payload: undo
+    })
+  }
+
+  const createRegExFromFind = () => {
+    let flags = 'g'
+    let find = state.find
+    if (!state.casesensitive) flags += 'i'
+    if (!state.useRegExp) find = escapeRegExp(find)
+    if (state.matchWord) find = `\\b${find}\\b`
+    const re = new RegExp(find, flags)
+    return re
   }
 
   useEffect(() => {
@@ -227,10 +305,10 @@ export const SearchProvider = ({
       (async () => {
         const files = await getDirectory('/', plugin)
         const pathFilter: any = {}
-        if (state.include){
+        if (state.include) {
           pathFilter.include = setGlobalExpression(state.include)
         }
-        if (state.exclude){
+        if (state.exclude) {
           pathFilter.exclude = setGlobalExpression(state.exclude)
         }
         const filteredFiles = files.filter(filePathFilter(pathFilter)).map(file => {

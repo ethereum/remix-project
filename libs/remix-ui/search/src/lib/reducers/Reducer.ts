@@ -1,4 +1,4 @@
-import { Action, SearchingInitialState, SearchState } from "../types"
+import { Action, SearchingInitialState, SearchState, undoBufferRecord } from "../types"
 
 export const SearchReducer = (state: SearchState = SearchingInitialState, action: Action) => {
     switch (action.type) {
@@ -41,21 +41,50 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 searchResults: action.payload,
                 count: 0
             }
+        case 'SET_UNDO': {
+            const undoState = {
+                newContent : action.payload.newContent,
+                oldContent: action.payload.oldContent,
+                path: action.payload.path,
+                workspace: action.payload.workspace,
+                timeStamp: Date.now()
+            }
+            state.undoBuffer = [undoState]
+            return {
+                ...state,
+            }    
+        }
+        case 'CLEAR_UNDO': {
+            state.undoBuffer = []
+            return {
+                ...state,
+            }
+        }
         case 'UPDATE_COUNT':
             if (state.searchResults) {
                 const findFile = state.searchResults.find(file => file.filename === action.payload.file)
                 let count = 0
+                let fileCount = 0
+                let clipped = false
                 if (findFile) {
                     findFile.count = action.payload.count
                 }
                 state.searchResults.forEach(file => {
-                    if (file.count) {
-                        count += file.count
+                    if (file.count) {          
+                        if(file.count > state.maxLines) {
+                            clipped = true
+                            count += state.maxLines
+                        }else{
+                            count += file.count   
+                        }   
+                        fileCount++
                     }
                 })
                 return {
                     ...state,
-                    count: count
+                    count: count,
+                    fileCount,
+                    clipped
                 }
             } else {
                 return state
