@@ -311,6 +311,29 @@ const deployWithEthers = `// Right click on the script name and hit "Run" to exe
     }
 })()`
 
+const storageTestJs = `// Right click on the script name and hit "Run" to execute
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+describe("Storage", function () {
+  it("test initial value", async function () {
+    const Storage = await ethers.getContractFactory("Storage");
+    const storage = await Storage.deploy();
+    await storage.deployed();
+    console.log('storage deployed at:'+ storage.address)
+    expect((await storage.retrieve()).toNumber()).to.equal(0);
+  });
+   it("test updating and retrieving updated value", async function () {
+    const Storage = await ethers.getContractFactory("Storage");
+    const storage = await Storage.deploy();
+    await storage.deployed();
+    const storage2 = await ethers.getContractAt("Storage", storage.address);
+    const setValue = await storage2.store(56);
+    await setValue.wait();
+    expect((await storage2.retrieve()).toNumber()).to.equal(56);
+  });
+});`
+
 const readme = `REMIX EXAMPLE PROJECT
 
 Remix example project is present when Remix loads for the very first time or there are no files existing in the File Explorer. 
@@ -337,6 +360,7 @@ export const examples = {
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
   deployWithWeb3: { name: 'scripts/deploy_web3.js', content: deployWithWeb3 },
   deployWithEthers: { name: 'scripts/deploy_ethers.js', content: deployWithEthers },
+  storageTestJs: { name: 'scripts/storage.test.js', content: storageTestJs },
   ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
   readme: { name: 'README.txt', content: readme }
 }
