@@ -31,7 +31,7 @@ module.exports = {
       .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(
+        browser.assert.ok(content && content.indexOf(
           'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol') !== -1,
         'code has not been loaded')
       })
@@ -45,7 +45,7 @@ module.exports = {
       .pause(5000)
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(
+        browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
         'url has not been loaded')
       })
@@ -59,7 +59,7 @@ module.exports = {
       .pause(5000)
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(
+        browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
         'code has not been loaded')
       })
