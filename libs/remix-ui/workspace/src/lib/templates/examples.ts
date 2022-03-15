@@ -334,24 +334,32 @@ describe("Storage", function () {
   });
 });`
 
-const readme = `REMIX EXAMPLE PROJECT
+const readme = `REMIX DEFAULT WORKSPACE
 
-Remix example project is present when Remix loads for the very first time or there are no files existing in the File Explorer. 
-It contains 3 directories:
+Remix default workspace is present when:
+i. Remix loads for the very first time 
+ii. A new workspace is created
+iii. There are no files existing in the File Explorer
+
+This workspace contains 3 directories:
 
 1. 'contracts': Holds three contracts with different complexity level, denoted with number prefix in file name.
-2. 'scripts': Holds two scripts to deploy a contract. It is explained below.
+2. 'scripts': Holds two scripts to deploy a contract & one to unit test a contract. It is explained below.
 3. 'tests': Contains one test file for 'Ballot' contract with unit tests in Solidity.
 
 SCRIPTS
 
-The 'scripts' folder contains example async/await scripts for deploying the 'Storage' contract.
+The 'scripts' folder contains two example async/await scripts for deploying the 'Storage' contract.
 For the deployment of any other contract, 'contractName' and 'constructorArgs' should be updated (along with other code if required). 
-Scripts have full access to the web3.js and ethers.js libraries.
+
+Also, there is a script containing some unit tests for Storage contract.
 
 To run a script, right click on file name in the file explorer and click 'Run'. Remember, Solidity file must already be compiled.
-
 Output from script will appear in remix terminal.
+
+Please note, 'require' statement is supported in a limited manner for Remix supported modules.
+For now, modules supported by Remix are ethers, web3, swarmgw, chai, remix and hardhat only for hardhat.ethers object/plugin.
+For unsupported modules, an error like this will be thrown: '<module_name> module require is not supported by Remix IDE will be shown.'
 `
 
 export const examples = {
