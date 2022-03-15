@@ -8,6 +8,7 @@ import { Exclude } from './Exclude'
 import { Replace } from './Replace'
 import { OverWriteCheck } from './OverWriteCheck'
 import { FindContainer } from './FindContainer'
+import { Undo } from './Undo'
 
 export const SearchTab = props => {
 
@@ -21,6 +22,7 @@ return (
         <Include></Include>
         <Exclude></Exclude>
         <OverWriteCheck></OverWriteCheck>
+        <Undo></Undo>
         <Results></Results>
       </SearchProvider>
     </div>
