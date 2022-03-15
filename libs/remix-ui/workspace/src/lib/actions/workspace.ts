@@ -92,7 +92,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
 
         path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
         content = atob(params.code)
-        workspaceProvider.set(path, content)
+        await workspaceProvider.set(path, content)
       }
       if (params.url) {
         const data = await plugin.call('contentImport', 'resolve', params.url)
@@ -109,11 +109,11 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
             }
             return Object.keys(standardInput.sources)[0]
           } else {
-            workspaceProvider.set(path, JSON.stringify(content))
+            await workspaceProvider.set(path, JSON.stringify(content))
           }
         } catch (e) {
           console.log(e)
-          workspaceProvider.set(path, content)
+          await workspaceProvider.set(path, content)
         }
       }
       return path
