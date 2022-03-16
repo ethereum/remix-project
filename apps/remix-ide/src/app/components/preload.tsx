@@ -99,7 +99,7 @@ export const Preload = () => {
             </div>
             {!supported ?
                 <div className='preload-info-container alert alert-warning'>
-                    Your browser does not support any of the filesytems required by Remix.
+                    Your browser does not support any of the filesystems required by Remix.
                     Either change the settings in your browser or use a supported browser.
                 </div> : null}
             {error ?
