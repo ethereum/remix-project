@@ -41,15 +41,25 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 searchResults: action.payload,
                 count: 0
             }
+        case 'SET_UNDO_ENABLED':
+            if(state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
+                state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].enabled = (action.payload.content === state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].newContent)
+                state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].visible = (action.payload.content !== state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].oldContent)
+            }
+            return {
+                ...state,
+            }
         case 'SET_UNDO': {
             const undoState = {
                 newContent : action.payload.newContent,
                 oldContent: action.payload.oldContent,
                 path: action.payload.path,
                 workspace: action.payload.workspace,
-                timeStamp: Date.now()
+                timeStamp: Date.now(),
+                enabled: true,
+                visible: true
             }
-            state.undoBuffer = [undoState]
+            state.undoBuffer[`${undoState.workspace}/${undoState.path}`] = undoState
             return {
                 ...state,
             }    
@@ -120,6 +130,16 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             return {
                 ...state,
             }
+        case 'SET_CURRENT_FILE':
+            return {
+                ...state,
+                currentFile: action.payload,
+            }
+        case 'SET_CURRENT_WORKSPACE':
+            return {
+                ...state,
+                workspace: action.payload,
+            }            
         case 'RELOAD_FILE':
             if (state.searchResults) {
                 const findFile = state.searchResults.find(file => file.filename === action.payload)

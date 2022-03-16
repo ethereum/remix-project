@@ -147,6 +147,18 @@ export const SearchProvider = ({
         payload: file
       })
     },
+    setCurrentFile: (file: string) => {
+      dispatch({
+        type: 'SET_CURRENT_FILE',
+        payload: file
+      })
+    },
+    setCurrentWorkspace: (workspace: any) => {
+      dispatch({
+        type: 'SET_CURRENT_WORKSPACE',
+        payload: workspace
+      })
+    },
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
@@ -212,6 +224,16 @@ export const SearchProvider = ({
       )
       setUndoState(content, replaced, result.path)
     },
+    setUndoEnabled: (path:string, workspace: string, content: string) => {
+      dispatch({
+        type: 'SET_UNDO_ENABLED',
+        payload: {
+          path,
+          workspace,
+          content
+        }
+      })
+    },
     undoReplace: async (buffer: undoBufferRecord) => {
       const content = await plugin.call(
         'fileManager',
@@ -219,9 +241,7 @@ export const SearchProvider = ({
         buffer.path
       )
       if (buffer.newContent !== content) {
-        value.clearUndo()
         throw new Error('Can not undo replace, file has been changed.')
-
       }
       await plugin.call(
         'fileManager',
@@ -234,7 +254,6 @@ export const SearchProvider = ({
         'open',
         buffer.path
       )
-      value.clearUndo()
     },
     clearUndo: () => {
       dispatch ({
@@ -251,13 +270,20 @@ export const SearchProvider = ({
   }
 
   useEffect(() => {
-    plugin.on('filePanel', 'setWorkspace', () => {
+    plugin.on('filePanel', 'setWorkspace', async (workspace) => {
       value.setSearchResults(null)
       value.clearUndo()
+      value.setCurrentWorkspace(workspace.name)
     })
     plugin.on('fileManager', 'fileSaved', async file => {
       await reloadStateForFile(file)
+      await checkUndoState(file)
     })
+    plugin.on('fileManager', 'currentFileChanged', async file => {
+      value.setCurrentFile(file)
+      await checkUndoState(file)
+    })
+    
     return () => {
       plugin.off('fileManager', 'fileChanged')
       plugin.off('filePanel', 'setWorkspace')
@@ -276,13 +302,28 @@ export const SearchProvider = ({
     return results
   }
 
+  const checkUndoState = async (path: string) => {
+    if (!plugin) return
+    try {
+      const content = await plugin.call(
+        'fileManager',
+        'readFile',
+        path
+      )
+      const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+      value.setUndoEnabled(path, workspace.name, content)
+    } catch (e) { 
+      console.log(e)
+    }
+  }
+
   const setUndoState = async (oldContent: string, newContent: string, path: string) => {
     const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
     const undo = {
       oldContent,
       newContent,
       path,
-      workspace
+      workspace: workspace.name
     }
     dispatch({
       type: 'SET_UNDO',

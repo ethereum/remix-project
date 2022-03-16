@@ -122,3 +122,15 @@
     align-items: center;
     cursor:  pointer !important;
 }
+
+.search_plugin_wrap_summary_replace {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.undo-button {
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
