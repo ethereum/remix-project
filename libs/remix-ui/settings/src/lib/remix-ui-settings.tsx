@@ -105,7 +105,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <div title="Reset to Default settings, this will trigger a page reload." className='d-flex justify-content-end pr-4'>
           <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
                 try {
-                  props.config.clear()
+                  if ((window as any).remixFileSystem.name === 'indexedDB') {
+                    props.config.clear()
+                    try {
+                      localStorage.clear() // remove the whole storage
+                    } catch (e) {
+                      console.log(e)
+                    }
+                  } else {
+                    props.config.clear() // remove only the remix settings
+                  }
                   refresh(resetState + 1)
                 } catch (e) {
                   console.log(e)
