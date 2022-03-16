@@ -20,14 +20,15 @@ export class TabProxy extends Plugin {
     this._view = {}
     this._handlers = {}
     this.loadedTabs = []
-    this.el = document.createElement('div')
     this.dispatch = null
+    this.themeQuality = 'dark'
   }
 
   onActivation () {
     this.on('theme', 'themeChanged', (theme) => {
+      this.themeQuality = theme.quality
       // update invert for all icons
-      this.updateImgStyles()
+      this.renderComponent()
     })
 
     this.on('fileManager', 'filesAllClosed', () => {
@@ -157,13 +158,6 @@ export class TabProxy extends Plugin {
     this.tabsApi.activateTab(name)
   }
 
-  updateImgStyles () {
-    const images = this.el.getElementsByClassName('iconImage')
-    for (const element of images) {
-      this.call('theme', 'fixInvert', element)
-    }
-  }
-
   switchTab (tabName) {
     if (this._handlers[tabName]) {
       this._handlers[tabName].switchTo()
@@ -265,7 +259,6 @@ export class TabProxy extends Plugin {
     }
 
     this.renderComponent()
-    this.updateImgStyles()
     this._handlers[name] = { switchTo, close }
   }
 
@@ -277,7 +270,6 @@ export class TabProxy extends Plugin {
       return tab.name !== name
     })
     this.renderComponent()
-    this.updateImgStyles()
     if (previous) this.switchTab(previous.name)
   }
 
@@ -291,7 +283,7 @@ export class TabProxy extends Plugin {
   }
 
   updateComponent(state) {
-    return <TabsUI tabs={state.loadedTabs} onSelect={state.onSelect} onClose={state.onClose} onZoomIn={state.onZoomIn} onZoomOut={state.onZoomOut} onReady={state.onReady} />
+    return <TabsUI tabs={state.loadedTabs} onSelect={state.onSelect} onClose={state.onClose} onZoomIn={state.onZoomIn} onZoomOut={state.onZoomOut} onReady={state.onReady} themeQuality={state.themeQuality} />
   }
 
   renderComponent () {
@@ -322,7 +314,8 @@ export class TabProxy extends Plugin {
       onClose,
       onZoomIn,
       onZoomOut,
-      onReady
+      onReady,
+      themeQuality: this.themeQuality
     })
   }
 
