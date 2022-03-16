@@ -100,7 +100,7 @@ const Icon = ({
         id={`verticalIconsKind${name}`}
         ref={iconRef}
       >
-        <img className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}`:''}`} src={icon} alt={name} />
+        <img data-id={iconRecord.active ? `selected`: ''} className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}`:''}`} src={icon} alt={name} />
           <Badge
             badgeStatus={badgeStatus}
           />

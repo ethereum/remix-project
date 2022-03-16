@@ -20,15 +20,7 @@ module.exports = {
         on_failure: true,
         on_error: true
       },
-      desiredCapabilities: {
-        browserName: 'firefox',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
-        'moz:firefoxOptions': {
-          args: ['-headless']
-        }
-      },
-      exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.spec.ts']
+      exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts']
     },
 
     chrome: {
