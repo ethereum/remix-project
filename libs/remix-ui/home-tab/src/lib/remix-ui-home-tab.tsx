@@ -197,6 +197,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     try {
       plugin.call('notification', 'toast', 'preparing files for download, please wait..')
       const zip = new JSZip()
+      zip.file("readme.txt", "This is a Remix backup file.\nThis zip should be used by the restore backup tool in Remix.\nThe .workspaces directory contains your workspaces.")
       const browserProvider = fileManager.getProvider('browser')
       await browserProvider.copyFolderToJson('/', ({ path, content }) => {
         zip.file(path, content)
