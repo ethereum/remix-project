@@ -3,6 +3,7 @@
 import { CompilerImports } from '@remix-project/core-plugin'
 const EventManager = require('events')
 const remixLib = require('@remix-project/remix-lib')
+const pathModule = require('path')
 const Storage = remixLib.Storage
 
 class FileProvider {
@@ -307,6 +308,14 @@ class FileProvider {
 
   _normalizePath (path) {
     return this.type + path
+  }
+
+  isSubDirectory (parent, child) {
+    if (!parent) return false
+    if (parent === child) return true
+    const relative = pathModule.relative(parent, child)
+
+    return !!relative && relative.split(pathModule.sep)[0] !== '..'
   }
 }
 
