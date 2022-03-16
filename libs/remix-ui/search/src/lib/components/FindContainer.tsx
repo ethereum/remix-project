@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { SearchContext } from '../context/context'
 import { Find } from './Find'
+import { OverWriteCheck } from './OverWriteCheck'
 import { Replace } from './Replace'
 
 export const FindContainer = props => {
@@ -26,7 +27,8 @@ export const FindContainer = props => {
       ></div>
       <div className="search_plugin_find_container_internal">
         <Find></Find>
-        {expanded ? <Replace></Replace> : null}
+        {expanded ? 
+        <><Replace></Replace><OverWriteCheck></OverWriteCheck></> : null}
       </div>
     </div>
   )
