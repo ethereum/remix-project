@@ -1,6 +1,5 @@
 'use strict'
 const FileProvider = require('./fileProvider')
-const pathModule = require('path')
 
 module.exports = class RemixDProvider extends FileProvider {
   constructor (appManager) {
@@ -207,13 +206,5 @@ module.exports = class RemixDProvider extends FileProvider {
     const unprefixedpath = this.removePrefix(path)
     if (!this._isReady) throw new Error('provider not ready')
     return await this._appManager.call('remixd', 'isFile', { path: unprefixedpath })
-  }
-
-  isSubDirectory (parent, child) {
-    if (!parent) return false
-    if (parent === child) return true
-    const relative = pathModule.relative(parent, child)
-
-    return !!relative && relative.split(pathModule.sep)[0] !== '..'
   }
 }
