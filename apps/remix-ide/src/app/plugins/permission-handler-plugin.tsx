@@ -14,8 +14,10 @@ const profile = {
 export class PermissionHandlerPlugin extends Plugin {
     permissions: any
     currentVersion: number
+    fallbackMemory: boolean
     constructor() {
         super(profile)
+        this.fallbackMemory = false
         this.permissions = this._getFromLocal()
         this.currentVersion = 1
         // here we remove the old permissions saved before adding 'permissionVersion'
@@ -27,6 +29,7 @@ export class PermissionHandlerPlugin extends Plugin {
     }
 
     _getFromLocal() {
+        if (this.fallbackMemory) return this.permissions
         const permission = localStorage.getItem('plugins/permissions')
         return permission ? JSON.parse(permission) : {}
     }
@@ -36,6 +39,7 @@ export class PermissionHandlerPlugin extends Plugin {
         try {
             localStorage.setItem('plugins/permissions', permissions)
         } catch (e) {
+            this.fallbackMemory = true
             console.log(e)
         }
     }
