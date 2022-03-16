@@ -15,7 +15,6 @@ module.exports = {
       const name = 'test_' + i + '.sol'
       browser
         .openFile(name)
-        .pause(500)
         .getEditorValue((content) => {
           browser.assert.ok(content === contents[i])
           browser.assert.ok(content === contents[i])
