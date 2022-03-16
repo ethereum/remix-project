@@ -33,7 +33,11 @@ export class PermissionHandlerPlugin extends Plugin {
 
     persistPermissions() {
         const permissions = JSON.stringify(this.permissions)
-        localStorage.setItem('plugins/permissions', permissions)
+        try {
+            localStorage.setItem('plugins/permissions', permissions)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     switchMode (from: Profile, to: Profile, method: string, set: boolean) {
