@@ -17,7 +17,6 @@ function Config (storage) {
   } catch (exception) {
      /* Do nothing. */ 
   }
-
   this.exists = function (key) {
     return this.items[key] !== undefined
   }
@@ -34,6 +33,11 @@ function Config (storage) {
     } catch (exception) {
        /* Do nothing. */ 
     }
+  }
+
+  this.clear = function () {
+    this.items = {}
+    storage.remove(CONFIG_FILE)
   }
 
   this.getUnpersistedProperty = function (key) {
