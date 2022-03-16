@@ -49,14 +49,6 @@ class WorkspaceFileProvider extends FileProvider {
     return ret
   }
 
-  isSubDirectory (parent, child) {
-    if (!parent) return false
-    if (parent === child) return true
-    const relative = pathModule.relative(parent, child)
-
-    return !!relative && relative.split(pathModule.sep)[0] !== '..'
-  }
-
   resolveDirectory (path, callback) {
     super.resolveDirectory(path, (error, files) => {
       if (error) return callback(error)
