@@ -25,13 +25,20 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName, ] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
+  const [resetState, refresh] = useState(0)
+
+  const initValue = () => {
+    const metadataConfig =  props.config.get('settings/generate-contract-metadata')
+    if (metadataConfig === undefined || metadataConfig === null) generateContractMetadat(props.config, true, dispatch)
+
+    const javascriptVM = props.config.get('settings/always-use-vm')
+    if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
+  }
+  useEffect(() => initValue(), [resetState, props.config])
+  useEffect(() => initValue(), [])
 
   useEffect(() => {
     const token = props.config.get('settings/' + labels['gist'].key)
-    if (token === undefined) {
-      props.config.set('settings/generate-contract-metadata', true)
-      dispatch({ type: 'contractMetadata', payload: { name: 'contractMetadata', isChecked: true, textClass: textDark } })
-    }
     if (token) {
       setTokenValue(prevState => {
         return { ...prevState, gist: token }
@@ -57,12 +64,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   useEffect(() => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
   }, [props.useMatomoAnalytics])
-
-  useEffect(() => {
-    const javascriptVM = props.config.get('settings/always-use-vm')
-
-    if ((javascriptVM === null) || (javascriptVM === undefined)) ethereumVM(props.config, true, dispatch)
-  }, [props.config])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
