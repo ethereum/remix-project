@@ -21,6 +21,8 @@
 }
 
 .inline-class {
-    background: var(--primary) !important;
-    color: var(--text) !important;
+    background: var(--info) !important;
+    color: var(--white) !important;
+    filter: opacity(0.5);
+    font-weight: bolder;
 }
