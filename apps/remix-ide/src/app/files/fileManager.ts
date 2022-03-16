@@ -272,7 +272,13 @@ class FileManager extends Plugin {
       await this._handleIsDir(src, `Cannot copy from ${src}. Path is not a directory.`)
       await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
       await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
-      await this.inDepthCopy(src, dest)
+
+      const provider = this.fileProviderOf(src)
+      if (provider.isSubDirectory(src, dest)) {
+        this.call('notification', 'toast', 'File(s) to paste is an ancestor of the destination folder')
+      } else {
+        await this.inDepthCopy(src, dest)
+      }
     } catch (e) {
       throw new Error(e)
     }

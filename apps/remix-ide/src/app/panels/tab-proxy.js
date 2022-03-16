@@ -190,15 +190,6 @@ export class TabProxy extends Plugin {
   }
 
   renameTab (oldName, newName) {
-    this.addTab(newName, '', async () => {
-      await this.fileManager.open(newName)
-      this.event.emit('openFile', newName)
-    },
-    async () => {
-      await this.fileManager.closeFile(newName)
-      this.event.emit('closeFile', newName)
-      this.emit('closeFile', newName)
-    })
     this.removeTab(oldName)
   }
 
