@@ -40,9 +40,10 @@ export interface undoBufferRecord {
     path: string,
     newContent: string,
     timeStamp: number,
-    oldContent: string
+    oldContent: string,
+    enabled: boolean,
+    visible: boolean
 }
-
 export interface SearchState {
     find: string,
     searchResults: SearchResult[],
@@ -60,7 +61,9 @@ export interface SearchState {
     maxFiles: number,
     maxLines: number
     clipped: boolean,
-    undoBuffer: undoBufferRecord[],
+    undoBuffer: Record<string, undoBufferRecord>[],
+    currentFile: string,
+    workspace: string
 }
 
 export const SearchingInitialState: SearchState = {
@@ -80,5 +83,7 @@ export const SearchingInitialState: SearchState = {
     maxFiles: 5000,
     maxLines: 5000,
     clipped: false,
-    undoBuffer: null
+    undoBuffer: null,
+    currentFile: '',
+    workspace: ''
 }

@@ -104,7 +104,11 @@ export const ResultItem = (props: ResultItemProps) => {
           {loading ? <div className="loading">Loading...</div> : null}
           {!toggleExpander && !loading ? (
             <div className="search_plugin_wrap_summary">
-              {state.replaceEnabled? <div onClick={async() => replace()} className='btn btn-secondary btn-block mb-2 btn-sm'>Replace all</div>:null}
+              {state.replaceEnabled? 
+                <div className="search_plugin_wrap_summary_replace">
+                  <div data-id={`replace-all-${props.file.filename}`} onClick={async() => replace()} className='btn btn-secondary mb-2 btn-sm'>Replace all</div>
+                </div>
+              :null}
               {lines.map((line, index) => (   
                 index < state.maxLines ? 
                 <ResultSummary
