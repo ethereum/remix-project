@@ -31,7 +31,7 @@ module.exports = {
       .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(
+        browser.assert.ok(content && content.indexOf(
           'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol') !== -1,
         'code has not been loaded')
       })
@@ -45,7 +45,7 @@ module.exports = {
       .pause(5000)
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(
+        browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
         'url has not been loaded')
       })
@@ -59,7 +59,7 @@ module.exports = {
       .pause(5000)
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(
+        browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
         'code has not been loaded')
       })
@@ -108,7 +108,7 @@ module.exports = {
 
   'Should load json files from link passed in remix URL': function (browser: NightwatchBrowser) {
     browser
-      .url('http://localhost:8080/#optimize=false&runs=200&evmVersion=null&version=soljson-v0.6.12+commit.27d51765.js&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
+      .url('http://127.0.0.1:8080/#optimize=false&runs=200&evmVersion=null&version=soljson-v0.6.12+commit.27d51765.js&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refresh()
       .pause(5000)
       .waitForElementPresent('*[data-id="workspacesSelect"] option[value="code-sample"]')
