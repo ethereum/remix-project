@@ -6,7 +6,7 @@ fs.readdirSync(testFolder).forEach(file => {
     const content = fs.readFileSync(testFolder + file, 'utf8')
     const matches = content.match(/group\d+/g)
     if (matches) {
-      const disabled = content.includes('@disabled: true')
+      const disabled = content.includes('\'@disabled\': true') || content.includes('\'@disabled\':true')
       if (!disabled) {
         console.log(`WARNING ${file} has group tests but is not disabled`)
       }
