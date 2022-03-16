@@ -11,7 +11,7 @@ export const OverWriteCheck = props => {
   return (
     <>
       {state.replaceEnabled ? (
-        <div className="search_plugin_find-part pl-3">
+        <div className="search_plugin_find-part">
           <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
             <input
               className="mr-2 custom-control-input"
