@@ -16,12 +16,11 @@ const plugin = props.plugin
 
 return (
     <>
-    <div className="search_plugin_search_tab pl-2 pr-2">
+    <div className="search_plugin_search_tab px-2">
       <SearchProvider plugin={plugin}>
         <FindContainer></FindContainer>
         <Include></Include>
         <Exclude></Exclude>
-        <OverWriteCheck></OverWriteCheck>
         <Undo></Undo>
         <Results></Results>
       </SearchProvider>
