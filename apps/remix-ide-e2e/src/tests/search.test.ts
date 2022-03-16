@@ -220,11 +220,11 @@ module.exports = {
         .clearValue('*[id="search_include"]').pause(2000)
         .setValue('*[id="search_include"]', '**').pause(2000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 26)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 28)
         })
         .setValue('*[id="search_exclude"]', ',contracts/**').pause(2000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 22)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 24)
         })
     },
     'should clear search': function (browser: NightwatchBrowser) {
