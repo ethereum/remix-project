@@ -223,17 +223,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <h6 className="card-title">{ localStorageTitle }</h6>
         <div className="">
           <div className="mb-0">            
-            <span><i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
-              Clearing the local storage will delete Remix settings. This will <i>not</i> remove your working files.
-            </span>
-            <br />
             <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
               try {
                 localStorage.clear()
               } catch (e) {
                 console.log(e)
               }
-            }}>Clear Local Storage</button>
+            }}>Reset</button>
           </div>
         </div>        
       </div>
