@@ -17,6 +17,7 @@ function Config (storage) {
   } catch (exception) {
      /* Do nothing. */ 
   }
+
   this.exists = function (key) {
     return this.items[key] !== undefined
   }

@@ -17,7 +17,6 @@ export const enablePersonalModeText = ' Enable Personal Mode for web3 provider. 
 export const matomoAnalytics = 'Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about '
 export const swarmSettingsTitle = 'Swarm Settings'
 export const swarmSettingsText = 'Swarm Settings'
-export const localStorageTitle = 'Restore Default Settings'
 export const labels = {
     'gist': {
         'link': gitAccessTokenLink,
