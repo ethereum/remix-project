@@ -18,7 +18,6 @@ export const Find = () => {
   return (
     <>
       <div className="search_plugin_find-part">
-        <label>search</label>
         <div className="search_plugin_search-input">
           <input
             id='search_input'
