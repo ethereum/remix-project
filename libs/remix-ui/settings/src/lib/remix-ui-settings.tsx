@@ -102,7 +102,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     return (
       <div className="$border-top">
-        <div title="Reset to Default settings, this will trigger a page reload." className='d-flex justify-content-end pr-4'>
+        <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
           <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
                 try {
                   if ((window as any).remixFileSystem.name === 'indexedDB') {
