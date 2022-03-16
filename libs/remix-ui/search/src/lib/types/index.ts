@@ -35,10 +35,20 @@ export interface SearchResult {
     count: number
 }
 
+export interface undoBufferRecord {
+    workspace: string,
+    path: string,
+    newContent: string,
+    timeStamp: number,
+    oldContent: string,
+    enabled: boolean,
+    visible: boolean
+}
 export interface SearchState {
     find: string,
     searchResults: SearchResult[],
     replace: string,
+    replaceEnabled: boolean,
     include: string,
     exclude: string,
     casesensitive: boolean,
@@ -47,7 +57,13 @@ export interface SearchState {
     useRegExp: boolean,
     timeStamp: number,
     count: number,
-    maxResults: number
+    fileCount: number,
+    maxFiles: number,
+    maxLines: number
+    clipped: boolean,
+    undoBuffer: Record<string, undoBufferRecord>[],
+    currentFile: string,
+    workspace: string
 }
 
 export const SearchingInitialState: SearchState = {
@@ -55,6 +71,7 @@ export const SearchingInitialState: SearchState = {
     replace: '',
     include: '',
     exclude: '',
+    replaceEnabled: false,
     searchResults: [],
     casesensitive: false,
     matchWord: false,
@@ -62,5 +79,11 @@ export const SearchingInitialState: SearchState = {
     replaceWithOutConfirmation: false,
     timeStamp: 0,
     count: 0,
-    maxResults: 500
+    fileCount: 0,
+    maxFiles: 5000,
+    maxLines: 5000,
+    clipped: false,
+    undoBuffer: null,
+    currentFile: '',
+    workspace: ''
 }

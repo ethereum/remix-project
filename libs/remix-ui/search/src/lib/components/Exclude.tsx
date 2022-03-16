@@ -17,8 +17,8 @@ export const Exclude = props => {
 
   return (
     <>
-      <div className="search_plugin_find-part">
-        <label>exclude</label>
+      <div className="search_plugin_find-part pl-3">
+        <label className='mt-2'>Files to exclude</label>
         <input
           id='search_exclude'
           placeholder="Exclude ie .git/**/*"

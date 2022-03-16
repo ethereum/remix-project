@@ -129,7 +129,7 @@ class DGitProvider extends Plugin {
     try {
       remotes = await git.listRemotes({ ...await this.getGitConfig() })
     } catch (e) {
-      console.log(e)
+      // do nothing
     }
     return remotes
   }
