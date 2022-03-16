@@ -286,7 +286,7 @@ module.exports = {
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['scripts/storage.test.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], null, null)
   },
 
   'Should stage contract #group3': async function (browser: NightwatchBrowser) {
