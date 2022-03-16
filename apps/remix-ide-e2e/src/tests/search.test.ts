@@ -63,7 +63,7 @@ module.exports = {
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'contract').pause(1000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 27)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 29)
         })
     },
     'Should replace text': function (browser: NightwatchBrowser) {
