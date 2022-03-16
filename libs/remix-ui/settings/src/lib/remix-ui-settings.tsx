@@ -101,6 +101,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     return (
       <div className="$border-top">
+        <div title="Reset to Default settings, this will trigger a page reload." className='d-flex justify-content-end pr-4'>
+          <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
+                try {
+                  props.config.clear()
+                  refresh(resetState + 1)
+                } catch (e) {
+                  console.log(e)
+                }
+              }}>Reset to Default settings</button>
+        </div>
         <div className="card-body pt-3 pb-2">
           <h6 className="card-title">General settings</h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
@@ -217,25 +227,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     </div>
   )
 
-  const clearStorage = () => (
-    <div className="border-top">
-      <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ localStorageTitle }</h6>
-        <div className="">
-          <div className="mb-0">            
-            <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
-              try {
-                localStorage.clear()
-              } catch (e) {
-                console.log(e)
-              }
-            }}>Reset</button>
-          </div>
-        </div>        
-      </div>
-    </div>
-  )
-
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
@@ -244,7 +235,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {token('etherscan')}
       {swarmSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
-      {clearStorage()}
     </div>
   )
 }
