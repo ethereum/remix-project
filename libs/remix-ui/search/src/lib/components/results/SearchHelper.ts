@@ -92,6 +92,9 @@ function getEOL(text) {
     return u > w ? '\n' : '\r\n';
 }
 
+export const replaceAllInFile = (string: string, re:RegExp, newText: string) => {
+  return string.replace(re, newText)
+}
 
 export const replaceTextInLine = (str: string, searchResultLine: SearchResultLineLine, newText: string) => {
     return str
