@@ -21,7 +21,7 @@
 .search_plugin_find-part {
     display: flex;
     flex-direction: column;
-    padding: 2px;
+    padding-top: 5px;
 }
 
 .search_plugin_controls {
