@@ -21,7 +21,7 @@
 .search_plugin_find-part {
     display: flex;
     flex-direction: column;
-    padding: 2px;
+    padding-top: 5px;
 }
 
 .search_plugin_controls {
@@ -64,6 +64,7 @@
 
 .search_plugin_search_tab mark {
     padding: 0;
+    white-space: pre;
 }
 
 .search_plugin_search_tab .search_plugin_search_line_container .search_plugin_search_control {
@@ -103,4 +104,33 @@
 
 .search_plugin_search_tab .search_plugin_result_count_number {
     font-size: x-small;
+}
+
+.search_plugin_find_container {
+    display: flex;
+    flex-direction: row;
+}
+
+.search_plugin_find_container_internal {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.search_plugin_find_container_arrow {
+    display: flex !important;
+    align-items: center;
+    cursor:  pointer !important;
+}
+
+.search_plugin_wrap_summary_replace {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.undo-button {
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
