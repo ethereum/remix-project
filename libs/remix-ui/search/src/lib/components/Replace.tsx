@@ -11,7 +11,7 @@ export const Replace = props => {
 
   return (
     <>
-      <div className="search_plugin_find-part">
+      <div className="search_plugin_find-part ">
       <label className='d-none'>replace in files</label>
         <input
           id='search_replace'
