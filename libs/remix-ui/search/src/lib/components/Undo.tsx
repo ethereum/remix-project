@@ -21,7 +21,7 @@ export const Undo = () => {
 
     return (<>
         {state.undoBuffer && state.undoBuffer.length > 0 ?
-            <button onClick={async() => await undo()} className="btn btn-primary btn-block">
+            <button onClick={async() => await undo()} className="btn btn-secondary btn-block">
                 <div className="fas fa-undo mr-2"></div>
                 Undo changes to {state.undoBuffer[0].path}
             </button> : null}
