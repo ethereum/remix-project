@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, localStorageTitle } from './constants'
 
 import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast } from './settingsAction'
@@ -198,7 +198,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">{ swarmSettingsTitle }</h6>
-        <div className="pt-2"><label>PRIVATE BEE ADDRESS:</label>
+        <div className="pt-2 mb-1"><label>PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={ privateBeeAddress } />
           </div>
@@ -215,7 +215,29 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
       </div>
     </div>
+  )
 
+  const clearStorage = () => (
+    <div className="border-top">
+      <div className="card-body pt-3 pb-2">
+        <h6 className="card-title">{ localStorageTitle }</h6>
+        <div className="">
+          <div className="mb-0">            
+            <span><i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+              Clearing the local storage will delete Remix settings. This will <i>not</i> remove your working files.
+            </span>
+            <br />
+            <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
+              try {
+                localStorage.clear()
+              } catch (e) {
+                console.log(e)
+              }
+            }}>Clear Local Storage</button>
+          </div>
+        </div>        
+      </div>
+    </div>
   )
 
   return (
@@ -226,6 +248,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {token('etherscan')}
       {swarmSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
+      {clearStorage()}
     </div>
   )
 }
