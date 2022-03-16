@@ -7,7 +7,7 @@ const profile = {
     displayName: 'Search in files',
     methods: [''],
     events: [],
-    icon: 'assets/img/Search_Icon.svg',
+    icon: 'assets/img/search_icon.webp',
     description: '',
     kind: '',
     location: 'sidePanel',
