@@ -19,5 +19,6 @@
 
 .preload-logo {
     min-width: 200px;
+    max-width: 240px;
     padding-bottom: 1.5rem !important;
 }
