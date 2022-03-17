@@ -5,13 +5,14 @@ import { customAction } from '@remixproject/plugin-api/lib/file-system/file-pane
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
+import { QueryParams } from '@remix-project/remix-lib'
+import JSZip from 'jszip'
 
 export * from './events'
 export * from './workspace'
 
-import { QueryParams } from '@remix-project/remix-lib'
-
 const queryParams = new QueryParams()
+const _paq = window._paq = window._paq || []
 
 let plugin, dispatch: React.Dispatch<any>
 
@@ -269,6 +270,33 @@ export const handleExpandPath = (paths: string[]) => {
   dispatch(setExpandPath(paths))
 }
 
+export const handleDownloadFiles = async () => {
+  try {
+    plugin.call('notification', 'toast', 'preparing files for download, please wait..')
+    const zip = new JSZip()
+
+    zip.file("readme.txt", "This is a Remix backup file.\nThis zip should be used by the restore backup tool in Remix.\nThe .workspaces directory contains your workspaces.")
+    const browserProvider = plugin.fileManager.getProvider('browser')
+
+    await browserProvider.copyFolderToJson('/', ({ path, content }) => {
+      zip.file(path, content)
+    })
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      const today = new Date()
+      const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+      const time = today.getHours() + 'h' + today.getMinutes() + 'min'
+
+      saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
+      _paq.push(['trackEvent', 'Backup', 'download', 'home'])
+    }).catch((e) => {
+      _paq.push(['trackEvent', 'Backup', 'error', e.message])
+      plugin.call('notification', 'toast', e.message)
+    })
+  } catch (e) {
+    plugin.call('notification', 'toast', e.message)
+  }
+}
+
 const packageGistFiles = async (directory) => {
   const workspaceProvider = plugin.fileProviders.workspace
   const isFile = await workspaceProvider.isFile(directory)
@@ -343,4 +371,24 @@ const getOriginalFiles = async (id) => {
   const res = await fetch(url)
   const data = await res.json()
   return data.files || []
+}
+
+const saveAs = (blob, name) => {
+  const node = document.createElement('a')
+
+  node.download = name
+  node.rel = 'noopener'
+  node.href = URL.createObjectURL(blob)
+  setTimeout(function () { URL.revokeObjectURL(node.href) }, 4E4) // 40s
+  setTimeout(function () {
+    try {
+      node.dispatchEvent(new MouseEvent('click'))
+    } catch (e) {
+      const evt = document.createEvent('MouseEvents')
+
+      evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
+        20, false, false, false, false, 0, null)
+      node.dispatchEvent(evt)
+    }
+  }, 0) // 40s
 }
