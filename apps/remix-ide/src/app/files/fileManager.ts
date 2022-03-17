@@ -410,6 +410,9 @@ class FileManager extends Plugin {
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
+
+    this._deps.config.set('currentFile', '') // make sure we remove the current file from the previous session
+
     this._deps.browserExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
     this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.localhostExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
