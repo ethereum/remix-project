@@ -5,6 +5,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
         case 'SET_FIND':
             return {
                 ...state,
+                searchResults: null,
                 find: action.payload,
                 timeStamp: Date.now()
             }
@@ -64,6 +65,21 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 ...state,
             }    
         }
+        case 'CLEAR_STATS':
+            return {
+                ...state,
+                count: 0,
+                fileCount: 0,
+                searchResults: null,
+                searching: null
+            }
+
+        case 'SET_SEARCHING':
+            return {
+                ...state,
+                searching: action.payload,
+            }
+            
         case 'CLEAR_UNDO': {
             state.undoBuffer = []
             return {
@@ -81,12 +97,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 }
                 state.searchResults.forEach(file => {
                     if (file.count) {          
-                        if(file.count > state.maxLines) {
-                            clipped = true
-                            count += state.maxLines
-                        }else{
-                            count += file.count   
-                        }   
+                        count += file.count    
                         fileCount++
                     }
                 })
@@ -99,6 +110,13 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             } else {
                 return state
             }
+
+        case 'SET_CLIPPED':
+            return {
+                ...state,
+                clipped: action.payload
+            }
+
         case 'TOGGLE_CASE_SENSITIVE':
             return {
                 ...state,
