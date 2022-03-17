@@ -40,7 +40,8 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             return {
                 ...state,
                 searchResults: action.payload,
-                count: 0
+                count: 0,
+                run: true
             }
         case 'SET_UNDO_ENABLED':
             if(state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
@@ -116,7 +117,11 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 ...state,
                 clipped: action.payload
             }
-
+        case 'SET_RUN':
+            return {
+                ...state,
+                run: action.payload
+            }
         case 'TOGGLE_CASE_SENSITIVE':
             return {
                 ...state,
