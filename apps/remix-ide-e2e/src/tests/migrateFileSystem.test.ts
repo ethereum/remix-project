@@ -113,7 +113,7 @@ module.exports = {
       .maximizeWindow()
       .assert.containsText('.alert-warning', 'Your browser does not support')
   },
-  'Should with errors #group6': function (browser: NightwatchBrowser) {
+  'Should with errors #group6': !function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
       .pause(6000)
       .switchBrowserTab(0)
