@@ -32,7 +32,7 @@ export const ResultItem = (props: ResultItemProps) => {
       clearTimeout(reloadTimeOut.current)
       clearTimeout(loadTimeout.current)
       subscribed.current = true
-      reloadTimeOut.current = setTimeout(() => reload(), 1000)
+      reloadTimeOut.current = setTimeout(() => reload(0), 1000)
     }
   }, [props.file.forceReload])
 
@@ -96,8 +96,8 @@ export const ResultItem = (props: ResultItemProps) => {
     })
   }
 
-  const reload = () => {
-    loadTimeout.current = setTimeout(doLoad, 150 * props.index)
+  const reload = (time?: number) => {
+    loadTimeout.current = setTimeout(doLoad, 150 * (time | props.index))
   }
 
   return (
