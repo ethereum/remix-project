@@ -45,7 +45,7 @@ export interface SearchingStateInterface {
   replaceAllInFile: (result: SearchResult) => Promise<void>
   undoReplace: (buffer: undoBufferRecord) => Promise<void>
   clearUndo: () => void
-  cancelSearch: () => Promise<void>
+  cancelSearch: (clearResults?:boolean) => Promise<void>
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -177,6 +177,13 @@ export const SearchProvider = ({
       })
     },
 
+    setRun(value: boolean) {
+      dispatch({
+        type: 'SET_RUN',
+        payload: value
+      })
+    },
+
     findText: async (path: string) => {
       if (!plugin) return
       try {
@@ -191,6 +198,7 @@ export const SearchProvider = ({
         clearSearchingTimeout.current = setTimeout(() => value.setSearching(null), 500)
         return result
       } catch (e) {
+        console.log(e)
         value.setSearching(null)
         // do nothing
       }
@@ -275,9 +283,10 @@ export const SearchProvider = ({
       })
     },
 
-    cancelSearch: async () => {
+    cancelSearch: async (clearResults: boolean = true) => {
       plugin.cancel('fileManager')
-      value.clearStats()
+      if(clearResults) value.clearStats()
+      value.setRun(false)
     },
 
     setClipped: (value: boolean) => {
@@ -305,6 +314,7 @@ export const SearchProvider = ({
     })
     plugin.on('fileManager', 'fileAdded', async file => {
       setFiles(await getDirectory('/', plugin))
+      await reloadStateForFile(file)
     })
     plugin.on('fileManager', 'currentFileChanged', async file => {
       value.setCurrentFile(file)
@@ -372,7 +382,7 @@ export const SearchProvider = ({
   useEffect(() => {
     if(state.count>500) {
       value.setClipped(true)
-      value.cancelSearch()
+      value.cancelSearch(false)
     }
   }, [state.count])
 

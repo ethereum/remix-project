@@ -4,12 +4,16 @@ import { SearchContext } from '../context/context'
 export const Exclude = props => {
   const { setExclude, cancelSearch } = useContext(SearchContext)
   const [excludeInput, setExcludeInput] = useState<string>('.*/**/*')
-  const timeOutId = useRef(null)
+
   const change = async e => {
     setExcludeInput(e.target.value)
-    clearTimeout(timeOutId.current)
     await cancelSearch()
-    timeOutId.current = setTimeout(() => setExclude(e.target.value), 500)
+  }
+  
+  const handleKeypress = async e => {
+    if (e.charCode === 13 || e.keyCode === 13) {
+      await setExclude(excludeInput)
+    }
   }
 
   useEffect(() => {
@@ -21,9 +25,10 @@ export const Exclude = props => {
       <div className="search_plugin_find-part pl-3">
         <label className='mt-2'>Files to exclude</label>
         <input
-          id='search_exclude'
+          id='search_exclude ( Enter to exclude )'
           placeholder="Exclude ie .git/**/*"
           className="form-control"
+          onKeyPress={handleKeypress}
           onChange={async(e) => change(e)}
           value={excludeInput}
         ></input>

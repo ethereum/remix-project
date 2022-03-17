@@ -6,7 +6,6 @@ import { Include } from './Include'
 import { Exclude } from './Exclude'
 import { FindContainer } from './FindContainer'
 import { Undo } from './Undo'
-import { CacncelSearch } from './CancelSearch'
 
 export const SearchTab = props => {
 
