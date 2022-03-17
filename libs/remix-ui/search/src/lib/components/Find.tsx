@@ -1,19 +1,27 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Find = () => {
   const {
     setFind,
+    cancelSearch,
     state,
     toggleCaseSensitive,
     toggleMatchWholeWord,
     toggleUseRegex
   } = useContext(SearchContext)
   const timeOutId = useRef(null)
-  const change = e => {
+  const [inputValue, setInputValue] = useState("");
+  const change = async(e) => {
+    setInputValue(e.target.value)
     clearTimeout(timeOutId.current)
-    timeOutId.current = setTimeout(() => setFind(e.target.value), 500)
+    await cancelSearch()
+    timeOutId.current = setTimeout(async () => await setFind(e.target.value), 500)
   }
+
+  useEffect(() =>{
+    setInputValue('')
+  },[state.workspace])
 
   return (
     <>
@@ -23,7 +31,8 @@ export const Find = () => {
             id='search_input'
             placeholder="Search"
             className="form-control"
-            onChange={change}
+            value={inputValue}
+            onChange={async(e) => await change(e)}
           ></input>
           <div className="search_plugin_controls">
             <div
