@@ -23,6 +23,8 @@ export const Preload = () => {
     const testBlockStorage =  useRef<boolean>(window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:')
 
     function loadAppComponent() {
+        setError(true)
+        return
         import('../../app').then((AppComponent) => {
             const appComponent = new AppComponent.default()
             appComponent.run().then(() => {
@@ -103,8 +105,22 @@ export const Preload = () => {
                     Either change the settings in your browser or use a supported browser.
                 </div> : null}
             {error ?
-                <div className='preload-info-container alert alert-danger'>
-                    An unknown error has occured loading the application.
+                <div className='preload-info-container alert alert-danger text-left'>
+                    An unknown error has occurred while loading the application.<br></br>
+                    Doing a hard refresh might fix this issue:<br></br>
+                    <div className='pt-2'>
+                    Windows:<br></br>
+                    - Chrome: CTRL + F5 or CTRL + Reload Button<br></br>
+                    - Firefox: CTRL + SHIFT + R or CTRL + F5<br></br>
+                    </div>
+                    <div className='pt-2'>
+                    MacOS:<br></br>
+                    - Chrome & FireFox: CMD + SHIFT + R or SHIFT + Reload Button<br></br>
+                    </div>
+                    <div className='pt-2'>
+                    Linux:<br></br>
+                    - Chrome & FireFox: CTRL + SHIFT + R<br></br>
+                    </div>
                 </div> : null}
             {showDownloader ?
                 <div className='preload-info-container alert alert-info'>
