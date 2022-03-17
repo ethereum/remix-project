@@ -37,7 +37,7 @@ This document includes:
  - git checkout origin/remix_beta
  - git checkout -b bumpVersion
  - update package.json version
- - remove package-lock.json version and generate a new one with `npm install`
+ - update version in package-lock.json
  - merge PR to origin/remix_beta
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
@@ -52,7 +52,7 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpDevVersion
  - update package.json version: bump the version and add the tag `dev` if not already present.
- - remove package-lock.json version and generate a new one with `npm install`
+ - update version in package-lock.json
  - create a PR and merge it to origin/master
  
 ## Remix IDE release Part 4. remix.ethereum.org update
@@ -73,7 +73,7 @@ This is not strictly speaking a release. Updating the remix site is done through
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version to the new version "vx.x.x-beta.1"
- - remove package-lock/json version and generate a new one with `npm install`
+ - update version in package-lock.json
  - merge PR
  - git fetch origin master
  - git checkout origin/master
