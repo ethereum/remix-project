@@ -7,6 +7,7 @@ import { ResultSummary } from './ResultSummary'
 
 interface ResultItemProps {
   file: SearchResult
+  index: number
 }
 
 export const ResultItem = (props: ResultItemProps) => {
@@ -17,6 +18,7 @@ export const ResultItem = (props: ResultItemProps) => {
   const [lines, setLines] = useState<SearchResultLine[]>([])
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const reloadTimeOut = useRef(null)
+  const loadTimeout = useRef(null)
   const subscribed = useRef(true)
   const { modal } = useDialogDispatchers()
 
@@ -27,6 +29,7 @@ export const ResultItem = (props: ResultItemProps) => {
   useEffect(() => {
     if (props.file.forceReload) {
       clearTimeout(reloadTimeOut.current)
+      clearTimeout(loadTimeout.current)
       reloadTimeOut.current = setTimeout(() => reload(), 1000)
     }
   }, [props.file.forceReload])
@@ -36,13 +39,10 @@ export const ResultItem = (props: ResultItemProps) => {
   }
 
   useEffect(() => {
-    reload()
-  }, [state.find])
-
-  useEffect(() => {
     subscribed.current = true
     return () => {
-      updateCount(0, props.file.filename)
+      clearTimeout(reloadTimeOut.current)
+      clearTimeout(loadTimeout.current)
       subscribed.current = false
     }
   }, [])
@@ -64,7 +64,7 @@ export const ResultItem = (props: ResultItemProps) => {
     }
   }
 
-  const reload = () => {
+  const doLoad = () => {
     findText(props.file.filename).then(res => {
       if (subscribed.current) {
         setLines(res)
@@ -78,7 +78,13 @@ export const ResultItem = (props: ResultItemProps) => {
         setLoading(false)
         disableForceReload(props.file.filename)
       }
+    }).catch((e) => {
+      console.error(e)
     })
+  }
+
+  const reload = () => {
+    loadTimeout.current = setTimeout(doLoad, 150 * props.index)
   }
 
   return (
@@ -110,13 +116,12 @@ export const ResultItem = (props: ResultItemProps) => {
                 </div>
               :null}
               {lines.map((line, index) => (   
-                index < state.maxLines ? 
                 <ResultSummary
                   setLoading={setLoading}
                   key={index}
                   searchResult={props.file}
                   line={line}
-                />: null
+                />
               ))}
             </div>
           ) : null}
