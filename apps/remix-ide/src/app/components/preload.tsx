@@ -6,7 +6,9 @@ import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'
 import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
+
 import './styles/preload.css'
+import AppComponent from '../../app'
 const _paq = window._paq = window._paq || []
 
 export const Preload = () => {
@@ -23,16 +25,14 @@ export const Preload = () => {
     const testBlockStorage =  useRef<boolean>(window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:')
 
     function loadAppComponent() {
-        import('../../app').then((AppComponent) => {
-            const appComponent = new AppComponent.default()
-            appComponent.run().then(() => {
-                render(
-                    <>
-                        <RemixApp app={appComponent} />
-                    </>,
-                    document.getElementById('root')
-                )
-            })
+        const appComponent = new AppComponent()
+        appComponent.run().then(() => {
+            render(
+                <>
+                    <RemixApp app={appComponent} />
+                </>,
+                document.getElementById('root')
+            )
         }).catch(err => {
             _paq.push(['trackEvent', 'Preload', 'error', err && err.message])
             console.log('Error loading Remix:', err)
