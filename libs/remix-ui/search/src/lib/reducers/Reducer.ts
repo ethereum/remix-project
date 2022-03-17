@@ -91,7 +91,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 const findFile = state.searchResults.find(file => file.filename === action.payload.file)
                 let count = 0
                 let fileCount = 0
-                let clipped = false
+                const clipped = false
                 if (findFile) {
                     findFile.count = action.payload.count
                 }
