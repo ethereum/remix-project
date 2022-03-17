@@ -65,6 +65,7 @@ export interface SearchState {
     currentFile: string,
     workspace: string,
     searching: string | null,
+    run: boolean,
 }
 
 export const SearchingInitialState: SearchState = {
@@ -87,5 +88,6 @@ export const SearchingInitialState: SearchState = {
     undoBuffer: null,
     currentFile: '',
     workspace: '',
-    searching: null
+    searching: null,
+    run: false,
 }

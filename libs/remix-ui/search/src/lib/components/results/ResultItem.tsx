@@ -28,8 +28,10 @@ export const ResultItem = (props: ResultItemProps) => {
 
   useEffect(() => {
     if (props.file.forceReload) {
+      console.log('force reload')
       clearTimeout(reloadTimeOut.current)
       clearTimeout(loadTimeout.current)
+      subscribed.current = true
       reloadTimeOut.current = setTimeout(() => reload(), 1000)
     }
   }, [props.file.forceReload])
@@ -46,6 +48,16 @@ export const ResultItem = (props: ResultItemProps) => {
       subscribed.current = false
     }
   }, [])
+
+  useEffect((): any => {
+    if(!state.run){
+      clearTimeout(reloadTimeOut.current)
+      clearTimeout(loadTimeout.current)
+      subscribed.current = false
+    } else {
+      subscribed.current = true
+    }
+  },[state.run])
 
   const confirmReplace = async () => {
     setLoading(true)
@@ -65,6 +77,7 @@ export const ResultItem = (props: ResultItemProps) => {
   }
 
   const doLoad = () => {
+    if(!subscribed.current) return
     findText(props.file.filename).then(res => {
       if (subscribed.current) {
         setLines(res)

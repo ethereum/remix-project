@@ -139,3 +139,6 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+.search_plugin_stop{
+    cursor: pointer;
+}
