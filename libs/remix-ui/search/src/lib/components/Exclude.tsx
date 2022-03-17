@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Exclude = props => {
-  const { setExclude, state } = useContext(SearchContext)
-  const [excludeInput, setExcludeInput] = useState<string>('.git/**/*,.deps/**/*')
+  const { setExclude, cancelSearch } = useContext(SearchContext)
+  const [excludeInput, setExcludeInput] = useState<string>('.*/**/*')
   const timeOutId = useRef(null)
-  const change = e => {
+  const change = async e => {
     setExcludeInput(e.target.value)
     clearTimeout(timeOutId.current)
+    await cancelSearch()
     timeOutId.current = setTimeout(() => setExclude(e.target.value), 500)
   }
 
@@ -23,7 +24,7 @@ export const Exclude = props => {
           id='search_exclude'
           placeholder="Exclude ie .git/**/*"
           className="form-control"
-          onChange={change}
+          onChange={async(e) => change(e)}
           value={excludeInput}
         ></input>
       </div>
