@@ -12,6 +12,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const { api, api: { currentFile, compileTabLogic, configurationSettings } } = props
   const [state, setState] = useState({
     isHardhatProject: false,
+    isTruffleProject: false,
     currentFile,
     loading: false,
     compileTabLogic: null,
@@ -64,8 +65,9 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   api.onSetWorkspace = async (isLocalhost: boolean) => {
     const isHardhat = isLocalhost && await compileTabLogic.isHardhatProject()
+    const isTruffle =  await compileTabLogic.isTruffleProject()
     setState(prevState => {
-      return { ...prevState, currentFile, isHardhatProject: isHardhat }
+      return { ...prevState, currentFile, isHardhatProject: isHardhat, isTruffleProject:  isTruffle }
     })
   }
 
@@ -148,7 +150,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   return (
     <>
       <div id="compileTabView">
-        <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
+        <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} isTruffleProject={state.isTruffleProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
         { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
         { compileErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">

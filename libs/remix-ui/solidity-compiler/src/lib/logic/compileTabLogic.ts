@@ -109,9 +109,16 @@ export class CompileTabLogic {
     } else return false
   }
 
-  runCompiler (hhCompilation) {
+  async isTruffleProject () {
+    return true
+    // if (this.api.getFileManagerMode() === 'localhost') {
+    //   return await this.api.fileExists('truffle.config.js')
+    // } else return false
+  }
+
+  runCompiler (externalCompType) {
     try {
-      if (this.api.getFileManagerMode() === 'localhost' && hhCompilation) {
+      if (this.api.getFileManagerMode() === 'localhost' && externalCompType === 'hardhat') {
         const { currentVersion, optimize, runs } = this.compiler.state
         if (currentVersion) {
           const fileContent = `module.exports = {
@@ -128,6 +135,30 @@ export class CompileTabLogic {
           this.api.writeFile(configFilePath, fileContent)
           _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
           this.api.compileWithHardhat(configFilePath).then((result) => {
+            this.api.logToTerminal({ type: 'info', value: result })
+          }).catch((error) => {
+            this.api.logToTerminal({ type: 'error', value: error })
+          })
+        }
+      } else if (externalCompType === 'truffle') {
+        const fileName = this.api.currentFile
+        const { currentVersion, optimize, runs, evmVersion} = this.compiler.state
+        if (currentVersion) {
+          const compConfig = {
+              compilers: {
+                solc: {
+                  version: `'${currentVersion.substring(0, currentVersion.indexOf('+commit'))}'`,
+                  settings: {
+                    optimizer: {
+                      enabled: optimize,
+                      runs: runs
+                    },
+                    evmVersion: evmVersion
+                  }
+                }
+              }
+            }
+          this.api.compileWithTruffle(fileName, compConfig).then((result) => {
             this.api.logToTerminal({ type: 'info', value: result })
           }).catch((error) => {
             this.api.logToTerminal({ type: 'error', value: error })

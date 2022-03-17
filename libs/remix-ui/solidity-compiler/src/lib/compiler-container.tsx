@@ -20,7 +20,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject, isTruffleProject } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -42,6 +42,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const [hhCompilation, sethhCompilation] = useState(false)
+  const [truffleCompilation, setTruffleCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
@@ -325,7 +326,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!isSolFileSelected()) return
 
     _setCompilerVersionFromPragma(currentFile)
-    compileTabLogic.runCompiler(hhCompilation)
+    let externalCompType
+    if (hhCompilation) externalCompType = 'hardhat'
+    else if (truffleCompilation) externalCompType = 'truffle'
+    compileTabLogic.runCompiler(externalCompType)
   }
 
   const _updateVersionSelector = (version, customUrl = '') => {
@@ -500,6 +504,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     api.setAppParameter('hardhat-compilation', checked)
   }
 
+  const updateTruffleCompilation = (event) => {
+    const checked = event.target.checked
+
+    setTruffleCompilation(checked)
+    api.setAppParameter('truffle-compilation', checked)
+  }
+
   /*
     The following functions map with the above event handlers.
     They are an external API for modifying the compiler configuration.
@@ -587,6 +598,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="overlay-tooltip">
                     <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>
+                  </Tooltip>
+                }>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                </OverlayTrigger>
+              </a>
+            </div>
+          }
+          {
+            isTruffleProject &&
+            <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
+              <input className="remixui_autocompile custom-control-input" onChange={updateTruffleCompilation} id="enableTruffle" type="checkbox" title="Enable Truffle Compilation" checked={truffleCompilation} />
+              <label className="form-check-label custom-control-label" htmlFor="enableTruffle">Enable Truffle Compilation</label>
+              <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/' target={'_blank'}>
+                <OverlayTrigger placement={'right'} overlay={
+                  <Tooltip className="text-nowrap" id="overlay-tooltip">
+                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Truffle Compilation</span>
                   </Tooltip>
                 }>
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
