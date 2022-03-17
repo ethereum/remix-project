@@ -25,7 +25,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName, ] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
-  const [resetState, refresh] = useState(0)
+  const [reset, setReset] = useState<boolean>(false)
 
   const initValue = () => {
     const metadataConfig =  props.config.get('settings/generate-contract-metadata')
@@ -34,7 +34,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const javascriptVM = props.config.get('settings/always-use-vm')
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
   }
-  useEffect(() => initValue(), [resetState, props.config])
+  useEffect(() => initValue(), [reset])
   useEffect(() => initValue(), [])
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                   } else {
                     props.config.clear() // remove only the remix settings
                   }
-                  refresh(resetState + 1)
+                  setReset(!reset)
                 } catch (e) {
                   console.log(e)
                 }
