@@ -63,7 +63,8 @@ export interface SearchState {
     clipped: boolean,
     undoBuffer: Record<string, undoBufferRecord>[],
     currentFile: string,
-    workspace: string
+    workspace: string,
+    searching: string | null,
 }
 
 export const SearchingInitialState: SearchState = {
@@ -85,5 +86,6 @@ export const SearchingInitialState: SearchState = {
     clipped: false,
     undoBuffer: null,
     currentFile: '',
-    workspace: ''
+    workspace: '',
+    searching: null
 }
