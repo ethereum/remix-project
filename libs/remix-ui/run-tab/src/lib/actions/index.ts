@@ -188,6 +188,7 @@ export const setGasFee = (value: number) => {
 
 const addPluginProvider = (profile) => {
   if (profile.kind === 'provider') {
+    console.log(profile);
     ((profile, app) => {
       const web3Provider = {
         async sendAsync (payload, callback) {
@@ -232,8 +233,8 @@ export const setNetworkNameFromProvider = (networkName: string) => {
 }
 
 const addExternalProvider = (network) => {
+  console.log('adding ext provider', network)
   dispatch(addProvider(network))
-  dispatch(displayPopUp(`${network.name} provider added`))
 }
 
 const removeExternalProvider = (name) => {
