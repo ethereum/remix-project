@@ -105,7 +105,7 @@ export class CompileTabLogic {
 
   async isHardhatProject () {
     if (this.api.getFileManagerMode() === 'localhost') {
-      return await this.api.fileExists('hardhat.config.js')
+      return await this.api.fileExists('hardhat.config.js') || await this.api.fileExists('hardhat.config.ts')
     } else return false
   }
 
