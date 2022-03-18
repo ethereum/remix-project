@@ -101,8 +101,8 @@ function errorHandler (error: any, service: string) {
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
       // Run hardhat service if a hardhat project is shared as folder
-      const hardhatConfigFilePath = absolutePath('./', program.sharedFolder) + '/hardhat.config.js'
-      const isHardhatProject = existsSync(hardhatConfigFilePath)
+      const hardhatConfigFilePath = absolutePath('./', program.sharedFolder)
+      const isHardhatProject = existsSync(hardhatConfigFilePath  + '/hardhat.config.js') || existsSync(hardhatConfigFilePath  + '/hardhat.config.ts')
       if (isHardhatProject) {
         startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
           if (error) {
