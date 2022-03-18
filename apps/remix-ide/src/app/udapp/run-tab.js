@@ -39,7 +39,6 @@ export class RunTab extends ViewPlugin {
     this.el = document.createElement('div')
   }
 
-
   setupEvents () {
     this.blockchain.events.on('newTransaction', (tx, receipt) => {
       this.emit('newTransaction', tx, receipt)
@@ -93,9 +92,12 @@ export class RunTab extends ViewPlugin {
     return  <div><RunTabUI plugin={this} /></div>
   }
 
-
   onReady (api) {
-    this.REACT_API = api
+    this.REACT_API = api    
+  }
+
+  onInitDone () {
+    this.call('manager', 'activatePlugin', 'hardhat-provider')
   }
 
   writeFile (fileName, content) {
