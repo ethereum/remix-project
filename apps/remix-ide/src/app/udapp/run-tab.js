@@ -96,8 +96,9 @@ export class RunTab extends ViewPlugin {
     this.REACT_API = api    
   }
 
-  onInitDone () {
-    this.call('manager', 'activatePlugin', 'hardhat-provider')
+  async onInitDone () {
+    await this.call('manager', 'activatePlugin', 'hardhat-provider')
+    await this.call('manager', 'activatePlugin', 'ganache-provider')
   }
 
   writeFile (fileName, content) {
