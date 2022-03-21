@@ -97,9 +97,36 @@ export class RunTab extends ViewPlugin {
   }
 
   async onInitDone () {
-    await this.call('manager', 'activatePlugin', 'hardhat-provider')
-    await this.call('manager', 'activatePlugin', 'ganache-provider')
     const udapp = this
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Hardhat Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('hardhat-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Ganache Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('ganache-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
     await this.call('blockchain', 'addProvider', {
       name: 'Wallet Connect',
       provider: {
