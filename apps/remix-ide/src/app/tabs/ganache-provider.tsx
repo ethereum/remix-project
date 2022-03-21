@@ -8,7 +8,7 @@ import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'ganache-provider',
-  displayName: 'Ganache',
+  displayName: 'Ganache Provider',
   kind: 'provider',
   description: 'Ganache',
   methods: ['sendAsync'],
