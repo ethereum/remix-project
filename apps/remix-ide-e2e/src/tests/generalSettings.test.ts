@@ -65,7 +65,7 @@ module.exports = {
 
   'Should load dark theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="settingsTabThemeLabelDark"]')
+      .scrollAndClick('*[data-id="settingsTabThemeLabelDark"]')
       .pause(2000)
       .checkElementStyle(':root', '--primary', remixIdeThemes.dark.primary)
       .checkElementStyle(':root', '--secondary', remixIdeThemes.dark.secondary)
@@ -77,7 +77,7 @@ module.exports = {
 
   'Should load light theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="settingsTabThemeLabelLight"]')
+      .scrollAndClick('*[data-id="settingsTabThemeLabelLight"]')
       .pause(2000)
       .checkElementStyle(':root', '--primary', remixIdeThemes.light.primary)
       .checkElementStyle(':root', '--secondary', remixIdeThemes.light.secondary)
@@ -89,7 +89,7 @@ module.exports = {
 
   'Should load Cerulean theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="settingsTabThemeLabelCerulean"]')
+      .scrollAndClick('*[data-id="settingsTabThemeLabelCerulean"]')
       .pause(5000)
       .checkElementStyle(':root', '--primary', remixIdeThemes.curelean.primary)
       .checkElementStyle(':root', '--secondary', remixIdeThemes.curelean.secondary)
@@ -101,7 +101,7 @@ module.exports = {
 
   'Should load Flatly theme ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="settingsTabThemeLabelFlatly"]')
+      .scrollAndClick('*[data-id="settingsTabThemeLabelFlatly"]')
       .pause(2000)
       .checkElementStyle(':root', '--primary', remixIdeThemes.flatly.primary)
       .checkElementStyle(':root', '--secondary', remixIdeThemes.flatly.secondary)
@@ -113,7 +113,7 @@ module.exports = {
 
   'Should load Spacelab theme ': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="settingsTabThemeLabelSpacelab"]')
+      .scrollAndClick('*[data-id="settingsTabThemeLabelSpacelab"]')
       .pause(2000)
       .checkElementStyle(':root', '--primary', remixIdeThemes.spacelab.primary)
       .checkElementStyle(':root', '--secondary', remixIdeThemes.spacelab.secondary)
@@ -125,7 +125,7 @@ module.exports = {
 
   'Should load Cyborg theme ': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="settingsTabThemeLabelCyborg"]')
+      .scrollAndClick('*[data-id="settingsTabThemeLabelCyborg"]')
       .pause(2000)
       .checkElementStyle(':root', '--primary', remixIdeThemes.cyborg.primary)
       .checkElementStyle(':root', '--secondary', remixIdeThemes.cyborg.secondary)

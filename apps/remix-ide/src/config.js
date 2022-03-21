@@ -36,6 +36,11 @@ function Config (storage) {
     }
   }
 
+  this.clear = function () {
+    this.items = {}
+    storage.remove(CONFIG_FILE)
+  }
+
   this.getUnpersistedProperty = function (key) {
     return this.unpersistedItems[key]
   }

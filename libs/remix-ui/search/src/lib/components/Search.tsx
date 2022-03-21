@@ -7,6 +7,8 @@ import { Include } from './Include'
 import { Exclude } from './Exclude'
 import { Replace } from './Replace'
 import { OverWriteCheck } from './OverWriteCheck'
+import { FindContainer } from './FindContainer'
+import { Undo } from './Undo'
 
 export const SearchTab = props => {
 
@@ -14,13 +16,12 @@ const plugin = props.plugin
 
 return (
     <>
-    <div className="search_plugin_search_tab pl-2 pr-2">
+    <div className="search_plugin_search_tab px-2">
       <SearchProvider plugin={plugin}>
-        <Find></Find>
-        <Replace></Replace>
+        <FindContainer></FindContainer>
         <Include></Include>
         <Exclude></Exclude>
-        <OverWriteCheck></OverWriteCheck>
+        <Undo></Undo>
         <Results></Results>
       </SearchProvider>
     </div>

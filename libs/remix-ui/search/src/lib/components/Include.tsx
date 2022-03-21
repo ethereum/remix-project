@@ -13,8 +13,8 @@ export const Include = props => {
 
   return (
     <>
-      <div className="search_plugin_find-part">
-        <label>include</label>
+      <div className="search_plugin_find-part pl-3">
+        <label className='mt-2'>Files to include</label>
         <input
           id='search_include'
           placeholder="Include ie contracts/**/*.sol"

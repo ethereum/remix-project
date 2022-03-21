@@ -25,13 +25,20 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName, ] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
+  const [resetState, refresh] = useState(0)
+
+  const initValue = () => {
+    const metadataConfig =  props.config.get('settings/generate-contract-metadata')
+    if (metadataConfig === undefined || metadataConfig === null) generateContractMetadat(props.config, true, dispatch)
+
+    const javascriptVM = props.config.get('settings/always-use-vm')
+    if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
+  }
+  useEffect(() => initValue(), [resetState, props.config])
+  useEffect(() => initValue(), [])
 
   useEffect(() => {
     const token = props.config.get('settings/' + labels['gist'].key)
-    if (token === undefined) {
-      props.config.set('settings/generate-contract-metadata', true)
-      dispatch({ type: 'contractMetadata', payload: { name: 'contractMetadata', isChecked: true, textClass: textDark } })
-    }
     if (token) {
       setTokenValue(prevState => {
         return { ...prevState, gist: token }
@@ -57,12 +64,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   useEffect(() => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
   }, [props.useMatomoAnalytics])
-
-  useEffect(() => {
-    const javascriptVM = props.config.get('settings/always-use-vm')
-
-    if ((javascriptVM === null) || (javascriptVM === undefined)) ethereumVM(props.config, true, dispatch)
-  }, [props.config])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
@@ -101,6 +102,25 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     return (
       <div className="$border-top">
+        <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
+          <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
+                try {
+                  if ((window as any).remixFileSystem.name === 'indexedDB') {
+                    props.config.clear()
+                    try {
+                      localStorage.clear() // remove the whole storage
+                    } catch (e) {
+                      console.log(e)
+                    }
+                  } else {
+                    props.config.clear() // remove only the remix settings
+                  }
+                  refresh(resetState + 1)
+                } catch (e) {
+                  console.log(e)
+                }
+              }}>Reset to Default settings</button>
+        </div>
         <div className="card-body pt-3 pb-2">
           <h6 className="card-title">General settings</h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
@@ -198,7 +218,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">{ swarmSettingsTitle }</h6>
-        <div className="pt-2"><label>PRIVATE BEE ADDRESS:</label>
+        <div className="pt-2 mb-1"><label>PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={ privateBeeAddress } />
           </div>
@@ -215,7 +235,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
       </div>
     </div>
-
   )
 
   return (
