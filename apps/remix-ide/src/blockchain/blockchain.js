@@ -22,7 +22,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider'],
   version: packageJson.version
 }
 
