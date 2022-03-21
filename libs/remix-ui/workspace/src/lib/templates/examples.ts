@@ -344,15 +344,15 @@ iii. There are no files existing in the File Explorer
 This workspace contains 3 directories:
 
 1. 'contracts': Holds three contracts with different complexity level, denoted with number prefix in file name.
-2. 'scripts': Holds two scripts to deploy a contract & one to unit test a contract. It is explained below.
-3. 'tests': Contains one test file for 'Ballot' contract with unit tests in Solidity.
+2. 'scripts': Holds two scripts to deploy a contract. It is explained below.
+3. 'tests': Contains one Solidity test file for 'Ballot' contract & one JS test file for 'Storage' contract
 
 SCRIPTS
 
 The 'scripts' folder contains two example async/await scripts for deploying the 'Storage' contract.
 For the deployment of any other contract, 'contractName' and 'constructorArgs' should be updated (along with other code if required). 
 
-Also, there is a script containing some unit tests for Storage contract.
+Also, there is a script containing some unit tests for Storage contract inside tests directory.
 
 To run a script, right click on file name in the file explorer and click 'Run'. Remember, Solidity file must already be compiled.
 Output from script will appear in remix terminal.
@@ -368,7 +368,7 @@ export const examples = {
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
   deployWithWeb3: { name: 'scripts/deploy_web3.js', content: deployWithWeb3 },
   deployWithEthers: { name: 'scripts/deploy_ethers.js', content: deployWithEthers },
-  storageTestJs: { name: 'scripts/storage.test.js', content: storageTestJs },
+  storageTestJs: { name: 'tests/storage.test.js', content: storageTestJs },
   ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
   readme: { name: 'README.txt', content: readme }
 }
