@@ -121,13 +121,13 @@ module.exports = {
   },
   'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
-      .addFile('scripts/storage2.test.js', { content: storageMochaTests })
+      .addFile('scripts/storage.test.js', { content: storageMochaTests })
       .pause(1000)
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile Storage
-      .executeScript('remix.execute(\'scripts/storage2.test.js\')')
+      .executeScript('remix.execute(\'scripts/storage.test.js\')')
       .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
