@@ -39,6 +39,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: 'Solidity',
     evmVersion: ''
   })
+  const [toggleExpander, setToggleExpander] = useState<boolean>(true)
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
@@ -145,6 +146,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setConfiguration(configurationSettings)
     }
   }, [configurationSettings])
+
+  const toggleClass = () => {
+    setToggleExpander(!toggleExpander)
+  }
 
   const _retrieveVersion = (version?) => {
     if (!version) version = state.selectedVersion
@@ -576,31 +581,38 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </select>
           </div>
           <div className="mt-3">
-            <p className="mt-2 remixui_compilerLabel">Compiler Configuration</p>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
-              <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
+            <div className="d-flex justify-content-between">
+              <label className="mt-1 remixui_compilerLabel" onClick={toggleClass}>Compiler Configuration</label>
+              <span data-id='compilerConfigUiTitleExpander' onClick={toggleClass}>
+                <i className={`fas ${!toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
+              </span>
             </div>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <div className="justify-content-between align-items-center d-flex">
-                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
-                <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
-                <input
-                  min="1"
-                  className="custom-select ml-2 remixui_runs"
-                  id="runs"
-                  placeholder="200"
-                  value={state.runs}
-                  type="number"
-                  title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
-                  onChange={(e) => onChangeRuns(e.target.value)}
-                  disabled={!state.optimize}
-                />
+            <div className={`border-dark pb-3 flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
+              <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+                <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
+                <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
               </div>
-            </div>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
-              <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
+              <div className="mt-1 remixui_compilerConfig custom-control custom-checkbox">
+                <div className="justify-content-between align-items-center d-flex">
+                  <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
+                  <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
+                  <input
+                    min="1"
+                    className="custom-select ml-2 remixui_runs"
+                    id="runs"
+                    placeholder="200"
+                    value={state.runs}
+                    type="number"
+                    title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
+                    onChange={(e) => onChangeRuns(e.target.value)}
+                    disabled={!state.optimize}
+                  />
+                </div>
+              </div>
+              <div className="mt-1 remixui_compilerConfig custom-control custom-checkbox">
+                <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
+                <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
+              </div>
             </div>
           </div>
           {
