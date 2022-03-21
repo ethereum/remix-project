@@ -1,5 +1,6 @@
 .remixui_label {
     margin-top        : 4px;
+    user-select: none;
 }
 .remixui_leaf {
     overflow          : hidden;
