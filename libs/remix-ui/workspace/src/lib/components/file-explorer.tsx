@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, SyntheticEvent } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
@@ -35,6 +35,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
+  const treeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -57,29 +58,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [props.focusEdit])
 
   useEffect(() => {
-    const keyPressHandler = (e: KeyboardEvent) => {
-      if (e.shiftKey) {
-        setState(prevState => {
-          return { ...prevState, ctrlKey: true }
-        })
+    if (treeRef.current) {
+      const keyPressHandler = (e: KeyboardEvent) => {
+        if (e.shiftKey) {
+          setState(prevState => {
+            return { ...prevState, ctrlKey: true }
+          })
+        }
+      }
+  
+      const keyUpHandler = (e: KeyboardEvent) => {
+        if (!e.shiftKey) {
+          setState(prevState => {
+            return { ...prevState, ctrlKey: false }
+          })
+        }
+      }
+      const targetDocument = treeRef.current
+  
+      targetDocument.addEventListener('keydown', keyPressHandler)
+      targetDocument.addEventListener('keyup', keyUpHandler)
+      targetDocument.focus()
+      return () => {
+        targetDocument.removeEventListener('keydown', keyPressHandler)
+        targetDocument.removeEventListener('keyup', keyUpHandler)
       }
     }
-
-    const keyUpHandler = (e: KeyboardEvent) => {
-      if (!e.shiftKey) {
-        setState(prevState => {
-          return { ...prevState, ctrlKey: false }
-        })
-      }
-    }
-
-    document.addEventListener('keydown', keyPressHandler)
-    document.addEventListener('keyup', keyUpHandler)
-    return () => {
-      document.removeEventListener('keydown', keyPressHandler)
-      document.removeEventListener('keyup', keyUpHandler)
-    }
-  }, [])
+  }, [treeRef.current])
 
   useEffect(() => {
     if (canPaste) {
@@ -406,7 +411,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   return (
-    <div>
+    <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
           controlBehaviour={true}
