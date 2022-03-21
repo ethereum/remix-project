@@ -133,6 +133,7 @@ export class RemixAppManager extends PluginManager {
       }
     }
     return plugins.map(plugin => {
+      if (plugin.name === 'walletconnect') plugin.url = 'http://127.0.0.1:8081'
       return new IframePlugin(plugin)
       // return new IframeReactPlugin(plugin)
     })
