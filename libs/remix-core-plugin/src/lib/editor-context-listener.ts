@@ -55,10 +55,16 @@ export class EditorContextListener extends Plugin {
     setInterval(async () => {
       const compilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
       if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
+        let currentFile
+        try {
+          currentFile = await this.call('fileManager', 'file')
+        } catch (error) {
+          if (error.message !== 'Error: No such file or directory No file selected') throw error
+        }
         this._highlightItems(
           await this.call('editor', 'getCursorPosition'),
           compilationResult,
-          await this.call('fileManager', 'file')
+          currentFile
         )
       }
     }, 1000)
