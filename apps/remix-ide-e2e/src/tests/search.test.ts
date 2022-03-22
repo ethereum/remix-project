@@ -33,7 +33,7 @@ module.exports = {
         .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', '2_OWNER.SOL', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', '1_STORAGE.SOL', 60000)
-        .waitForElementContainsText('*[data-id="search_results"]', '4_BALLOT_TEST.SOL', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', 'BALLOT_TEST.SOL', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', 'tests', 60000)
         .elements('css selector','.search_plugin_search_line', (res) => {
             Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)

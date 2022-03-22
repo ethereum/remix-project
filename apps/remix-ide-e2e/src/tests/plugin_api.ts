@@ -286,14 +286,14 @@ module.exports = {
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
   },
 
   'Should stage contract #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 2], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/4_Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 2], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
   },
   'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
@@ -323,7 +323,7 @@ module.exports = {
   },
 
   'Should test from path with solidityUnitTesting #group5': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'solidityUnitTesting:testFromPath', '"totalPassing":2,"totalFailing":0', null, 'tests/4_Ballot_test.sol')
+    await clickAndCheckLog(browser, 'solidityUnitTesting:testFromPath', '"totalPassing":2,"totalFailing":0', null, 'tests/Ballot_test.sol')
   },
 
   'Should deactivate solidityUnitTesting #group5': async function (browser: NightwatchBrowser) {

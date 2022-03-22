@@ -374,6 +374,6 @@ export const examples = {
   deployWithWeb3: { name: 'scripts/deploy_web3.js', content: deployWithWeb3 },
   deployWithEthers: { name: 'scripts/deploy_ethers.js', content: deployWithEthers },
   storageTestJs: { name: 'tests/storage.test.js', content: storageTestJs },
-  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
+  ballot_test: { name: 'tests/Ballot_test.sol', content: ballotTest },
   readme: { name: 'README.txt', content: readme }
 }

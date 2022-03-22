@@ -211,7 +211,7 @@ module.exports = {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
         console.log('result', result)
-        browser.assert.equal(result.value, '122')
+        browser.assert.equal(result.value, '153')
       })
       .currentSelectedFileIs('2_Owner.sol') // make sure the current file has been properly changed
       .click('.contextview [data-action="next"]')
