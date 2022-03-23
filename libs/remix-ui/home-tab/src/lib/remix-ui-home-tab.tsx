@@ -219,6 +219,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
 
   const restoreBackupZip = async () => {
     await plugin.appManager.activatePlugin(['restorebackupzip'])
+    await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
     plugin.verticalIcons.select('restorebackupzip')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
   }
