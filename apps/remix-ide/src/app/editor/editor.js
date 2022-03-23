@@ -48,7 +48,8 @@ class Editor extends Plugin {
       json: 'json',
       abi: 'json',
       rs: 'rust',
-      cairo: 'cairo'
+      cairo: 'cairo',
+      ts: 'typescript'
     }
 
     this.activated = false
