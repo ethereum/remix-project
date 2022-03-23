@@ -193,13 +193,13 @@ module.exports = {
       .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 
-  'Should run a script right after compilation #group5': function (browser: NightwatchBrowser) {
+  'Should run a script right after compilation #group6': function (browser: NightwatchBrowser) {
     browser
       .addFile('storage.sol', { content: scriptAutoExec.contract } )
       .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
       .openFile('storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, 'e'])
-      .journalChildIncludes('147', { shouldHaveOnlyOneOccurence: true })
+      .journalLastChildIncludes('147')
   }
 }
 

@@ -358,7 +358,7 @@ module.exports = {
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonhardhat-provider"]')
       .clickLaunchIcon('udapp')
       .click('*[data-id="Hardhat Provider"]')
-      .modalFooterOKClick('hardhat-provider')
+      .modalFooterOKClick('hardhatprovider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
       .clickLaunchIcon('localPlugin')
       .useXpath()
