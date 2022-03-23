@@ -2,12 +2,16 @@ import { Action, SearchingInitialState, SearchState, undoBufferRecord } from "..
 
 export const SearchReducer = (state: SearchState = SearchingInitialState, action: Action) => {
     switch (action.type) {
+        case 'START_SEARCH':
+            return {
+                ...state,
+                timeStamp: Date.now()
+            }
         case 'SET_FIND':
             return {
                 ...state,
                 searchResults: null,
-                find: action.payload,
-                timeStamp: Date.now()
+                find: action.payload
             }
 
         case 'SET_REPLACE':
@@ -26,14 +30,12 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
             return {
                 ...state,
                 include: action.payload,
-                timeStamp: Date.now()
             }
 
         case 'SET_EXCLUDE':
             return {
                 ...state,
                 exclude: action.payload,
-                timeStamp: Date.now()
             }
 
         case 'SET_SEARCH_RESULTS':
