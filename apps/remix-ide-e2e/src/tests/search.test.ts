@@ -49,10 +49,11 @@ module.exports = {
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'Contract').pause(1000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 9)
         })
         .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_ETHERS.JS', 60000)
-        .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_WEB3.JS', 60000) 
+        .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_WEB3.JS', 60000)
+        .waitForElementContainsText('*[data-id="search_results"]', 'STORAGE.TEST.JS', 60000)
         .waitForElementContainsText('*[data-id="search_results"]', 'scripts', 60000)  
     },
     'Should find matchword': function (browser: NightwatchBrowser) {
@@ -62,7 +63,7 @@ module.exports = {
         .clearValue('*[id="search_input"]')
         .setValue('*[id="search_input"]', 'contract').pause(1000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 27)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 29)
         })
     },
     'Should replace text': function (browser: NightwatchBrowser) {
@@ -219,11 +220,11 @@ module.exports = {
         .clearValue('*[id="search_include"]').pause(2000)
         .setValue('*[id="search_include"]', '**').pause(2000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 26)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 28)
         })
         .setValue('*[id="search_exclude"]', ',contracts/**').pause(2000)
         .elements('css selector','.search_plugin_search_line', (res) => {
-            Array.isArray(res.value) && browser.assert.equal(res.value.length, 22)
+            Array.isArray(res.value) && browser.assert.equal(res.value.length, 24)
         })
     },
     'should clear search': function (browser: NightwatchBrowser) {

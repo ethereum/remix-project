@@ -21,7 +21,8 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   useEffect(() => {
     const storageService = async () => {
       if ((contract.metadata === undefined || contract.metadata.length === 0)) {
-        modal('Publish To Storage', 'This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
+        modal('Publish To Storage', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.')
+                                    
       } else {
         if (storage === 'swarm') {
           try {

@@ -311,24 +311,55 @@ const deployWithEthers = `// Right click on the script name and hit "Run" to exe
     }
 })()`
 
-const readme = `REMIX EXAMPLE PROJECT
+const storageTestJs = `// Right click on the script name and hit "Run" to execute
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-Remix example project is present when Remix loads for the very first time or there are no files existing in the File Explorer. 
-It contains 3 directories:
+describe("Storage", function () {
+  it("test initial value", async function () {
+    const Storage = await ethers.getContractFactory("Storage");
+    const storage = await Storage.deploy();
+    await storage.deployed();
+    console.log('storage deployed at:'+ storage.address)
+    expect((await storage.retrieve()).toNumber()).to.equal(0);
+  });
+   it("test updating and retrieving updated value", async function () {
+    const Storage = await ethers.getContractFactory("Storage");
+    const storage = await Storage.deploy();
+    await storage.deployed();
+    const storage2 = await ethers.getContractAt("Storage", storage.address);
+    const setValue = await storage2.store(56);
+    await setValue.wait();
+    expect((await storage2.retrieve()).toNumber()).to.equal(56);
+  });
+});`
+
+const readme = `REMIX DEFAULT WORKSPACE
+
+Remix default workspace is present when:
+i. Remix loads for the very first time 
+ii. A new workspace is created
+iii. There are no files existing in the File Explorer
+
+This workspace contains 3 directories:
 
 1. 'contracts': Holds three contracts with different complexity level, denoted with number prefix in file name.
 2. 'scripts': Holds two scripts to deploy a contract. It is explained below.
-3. 'tests': Contains one test file for 'Ballot' contract with unit tests in Solidity.
+3. 'tests': Contains one Solidity test file for 'Ballot' contract & one JS test file for 'Storage' contract
 
 SCRIPTS
 
-The 'scripts' folder contains example async/await scripts for deploying the 'Storage' contract.
+The 'scripts' folder contains two example async/await scripts for deploying the 'Storage' contract.
 For the deployment of any other contract, 'contractName' and 'constructorArgs' should be updated (along with other code if required). 
-Scripts have full access to the web3.js and ethers.js libraries.
+
+Also, there is a script containing some unit tests for Storage contract inside tests directory.
 
 To run a script, right click on file name in the file explorer and click 'Run'. Remember, Solidity file must already be compiled.
-
 Output from script will appear in remix terminal.
+
+Please note, 'require' statement is supported in a limited manner for Remix supported modules.
+For now, modules supported by Remix are ethers, web3, swarmgw, chai, remix and hardhat only for hardhat.ethers object/plugin.
+For unsupported modules, an error like this will be thrown: '<module_name> module require is not supported by Remix IDE will be shown.'
 `
 
 export const examples = {
@@ -337,6 +368,7 @@ export const examples = {
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
   deployWithWeb3: { name: 'scripts/deploy_web3.js', content: deployWithWeb3 },
   deployWithEthers: { name: 'scripts/deploy_ethers.js', content: deployWithEthers },
+  storageTestJs: { name: 'tests/storage.test.js', content: storageTestJs },
   ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
   readme: { name: 'README.txt', content: readme }
 }
