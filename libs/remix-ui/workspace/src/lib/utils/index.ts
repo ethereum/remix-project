@@ -27,7 +27,7 @@ export const contextMenuActions: MenuItems = [{
 }, {
   id: 'run',
   name: 'Run',
-  extension: ['.js'],
+  extension: ['.js', '.ts'],
   multiselect: false,
   label: ''
 }, {
