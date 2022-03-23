@@ -61,8 +61,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         /.(.vy)$/.exec(currentFile) || // vyper
         /.(.lex)$/.exec(currentFile) || // lexon
         /.(.contract)$/.exec(currentFile)) {
+      setAbiLabel({
+        display: 'none',
+        content: ''
+      })
       if (!selectedContract) enableAtAddress(false)
     } else {
+      setAbiLabel({
+        display: 'none',
+        content: ''
+      })
       if (!selectedContract) enableAtAddress(false)
     }
     if (currentFile) {
