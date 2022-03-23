@@ -5,6 +5,7 @@ export const Find = () => {
   const {
     setFind,
     cancelSearch,
+    startSearch,
     state,
     toggleCaseSensitive,
     toggleMatchWholeWord,
@@ -19,8 +20,9 @@ export const Find = () => {
 
   const handleKeypress = async e => {
     if (e.charCode === 13 || e.keyCode === 13) {
-      await setFind(inputValue)
+      startSearch()
     }
+    await setFind(inputValue)
   }
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export const Find = () => {
             className="form-control"
             value={inputValue}
             onChange={async e => await change(e)}
-            onKeyPress={handleKeypress}
+            onKeyUp={handleKeypress}
           ></input>
           <div className="search_plugin_controls">
             <div

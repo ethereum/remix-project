@@ -2,15 +2,16 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Include = props => {
-  const { setInclude, cancelSearch } = useContext(SearchContext)
+  const { setInclude, cancelSearch, startSearch } = useContext(SearchContext)
   const [includeInput, setIncludeInput] = useState<string>('*.sol, *.js')
   const change = async e => {
     setIncludeInput(e.target.value)
     await cancelSearch()
   }
   const handleKeypress = async e => {
+    await setInclude(includeInput)
     if (e.charCode === 13 || e.keyCode === 13) {
-      await setInclude(includeInput)
+      startSearch()
     }
   }
 
@@ -27,7 +28,7 @@ export const Include = props => {
           placeholder="Include ie *.sol ( Enter to include )"
           className="form-control"
           onChange={async(e) => change(e)}
-          onKeyPress={handleKeypress}
+          onKeyUp={handleKeypress}
           value={includeInput}
         ></input>
       </div>
