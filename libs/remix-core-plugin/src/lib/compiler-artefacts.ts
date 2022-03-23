@@ -200,7 +200,7 @@ export class CompilerArtefacts extends Plugin {
     const code = await this.call('blockchain', 'getCode', address)
     let found
     this.filterAllContractDatas((file, contractsData) => {
-      for (let name of Object.keys(contractsData)) {
+      for (const name of Object.keys(contractsData)) {
         const contract = contractsData[name]
         if (util.compareByteCode(code, '0x' + contract.evm.deployedBytecode.object)) {
           found = { name, contract }
