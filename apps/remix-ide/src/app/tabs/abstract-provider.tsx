@@ -1,18 +1,7 @@
-import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
-import React from 'react' // eslint-disable-line
 import { Blockchain } from '../../blockchain/blockchain'
 import { ethers } from 'ethers'
-
-const profile = {
-  name: 'hardhat-provider',
-  displayName: 'Hardhat Provider',
-  kind: 'provider',
-  description: 'Hardhat provider',
-  methods: ['sendAsync'],
-  version: packageJson.version
-}
 
 type JsonDataRequest = {
   id: number,
