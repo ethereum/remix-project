@@ -283,7 +283,7 @@ export const SearchProvider = ({
       })
     },
 
-    cancelSearch: async (clearResults: boolean = true) => {
+    cancelSearch: async (clearResults = true) => {
       plugin.cancel('fileManager')
       if(clearResults) value.clearStats()
       value.setRun(false)
