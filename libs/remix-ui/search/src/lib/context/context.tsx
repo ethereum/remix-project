@@ -46,6 +46,7 @@ export interface SearchingStateInterface {
   undoReplace: (buffer: undoBufferRecord) => Promise<void>
   clearUndo: () => void
   cancelSearch: (clearResults?:boolean) => Promise<void>
+  startSearch: () => void
 }
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
@@ -174,6 +175,13 @@ export const SearchProvider = ({
       dispatch({
         type: 'SET_SEARCHING',
         payload: file
+      })
+    },
+
+    startSearch: () => {
+      dispatch({
+        type: 'START_SEARCH',
+        payload: undefined
       })
     },
 
