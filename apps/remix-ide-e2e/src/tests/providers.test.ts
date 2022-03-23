@@ -21,6 +21,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="ganache-providerModalDialogModalBody-react"]', 'Error while connecting to the provider')
       .modalFooterOKClick('ganache-provider')
       .waitForElementNotVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
+      .pause(1000)
   },
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect': function (browser: NightwatchBrowser) {

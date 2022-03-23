@@ -206,7 +206,6 @@ export const setNetworkNameFromProvider = (networkName: string) => {
 }
 
 const addExternalProvider = (network) => {
-  console.log('adding ext provider', network)
   dispatch(addProvider(network))
 }
 
