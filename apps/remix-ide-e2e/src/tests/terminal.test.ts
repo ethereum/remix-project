@@ -190,7 +190,16 @@ module.exports = {
       .waitForElementVisible('*[data-id="terminalCli"]')
       .click('*[data-id="terminalCli"]')
       .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
-      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]').end()
+      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
+  },
+
+  'Should run a script right after compilation #group5': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('storage.sol', { content: scriptAutoExec.contract } )
+      .addFile('autoExec.js', { content: scriptAutoExec.script } )
+      .openFile('storage.sol')
+      .sendKeys('body', [browser.Keys.CONTROL, 'e'])
+      .journalChildIncludes('147', { shouldHaveOnlyOneOccurence: true })
   }
 }
 
@@ -484,3 +493,113 @@ contract OwnerTest {
         return owner;
     }
 }`
+
+const scriptAutoExec = {
+  contract: `
+  
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+library lib {
+    function test () public view returns (uint) {
+        return 147;
+    }
+}
+/**
+ * @title Storage
+ * @dev Store & retrieve value inr a variable
+ */
+contract Storage {
+
+    uint256 number;
+
+    /**
+     * @dev Store valrue in variable
+     * @param num value to store
+     */
+    function store(uint256 num) public {        
+        number = num;        
+    }
+
+    /**
+     * @dev Return value 
+     * @return value of 'number'
+     */
+    function retrieve() public view returns (uint256){
+        return number;
+    }
+
+    function getFromLib() public view returns (uint) {
+        return lib.test();
+    }
+}`,
+  script: `
+  // Right click on the script name and hit "Run" to execute
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+(async () => {
+    try {
+        // function getContractFactoryFromArtifact(artifact: Artifact, signer?: ethers.Signer): Promise<ethers.ContractFactory>;
+
+        // function getContractFactoryFromArtifact(artifact: Artifact, factoryOptions: FactoryOptions): Promise<ethers.ContractFactory>;
+        
+        const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/lib.json'))
+        console.log('deploying lib:')
+        
+        const artifactLib  = {
+            contractName: 'Lib',
+            sourceName: 'contracts/1_Storage.sol',
+            abi: metadataLib.abi,
+            bytecode: '0x' + metadataLib.data.bytecode.object,
+            deployedBytecode:  '0x' + metadataLib.data.deployedBytecode.object,
+            linkReferences: metadataLib.data.bytecode.linkReferences,
+            deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
+        }
+        const optionsLib = {}
+        
+        const factoryLib = await ethers.getContractFactoryFromArtifact(artifactLib, optionsLib)
+        
+        const lib = await factoryLib.deploy();
+
+        await lib.deployed()
+
+        console.log('lib deployed', lib.address)
+
+        const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Storage.json'))
+        const artifact  = {
+            contractName: 'Storage',
+            sourceName: 'contracts/1_Storage.sol',
+            abi: metadata.abi,
+            bytecode: '0x' + metadata.data.bytecode.object,
+            deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
+            linkReferences: metadata.data.bytecode.linkReferences,
+            deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
+        }
+        const options = {
+            libraries: { 
+                'lib': lib.address
+            }
+        }
+        
+        const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
+
+        const storage = await factory.deploy();
+        
+        await storage.deployed()
+
+        const storeValue = await storage.store(333);
+
+        // wait until the transaction is mined
+        await storeValue.wait();
+
+        console.log((await storage.getFromLib()).toString())
+        // expect((await storage.getFromLib()).toString()).to.equal('34');
+
+    } catch (e) {
+        console.error(e.message)
+    }
+  })()
+  `
+}
