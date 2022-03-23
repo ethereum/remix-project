@@ -27,9 +27,7 @@ module.exports = {
   'Should switch to ganache provider, use the default ganache URL and succeed to connect': function (browser: NightwatchBrowser) {
     browser.click('*[data-id="Ganache Provider"]')
     .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
-    .execute(() => {
-      (document.querySelector('*[data-id="ganache-providerModalDialogModalBody-react"] input') as any).focus()
-    }, [], () => {})
+    .modalFooterOKClick('ganache-provider')
     .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   }
 }
