@@ -14,6 +14,7 @@ export function parseContracts (contractName, contract, source) {
   }
 
   detail.abi = contract.abi
+  detail.storageLayout = contract.storageLayout
 
   if (contract.evm.bytecode.object) {
     detail.bytecode = contract.evm.bytecode
