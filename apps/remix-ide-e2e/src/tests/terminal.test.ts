@@ -195,10 +195,11 @@ module.exports = {
 
   'Should run a script right after compilation #group6': function (browser: NightwatchBrowser) {
     browser
-      .addFile('storage.sol', { content: scriptAutoExec.contract } )
+      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract } )
       .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
-      .openFile('storage.sol')
+      .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, 'e'])
+      .pause(5000)
       .journalLastChildIncludes('147')
   }
 }
