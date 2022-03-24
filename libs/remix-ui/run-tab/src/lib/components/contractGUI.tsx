@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
+import { ButtonGroup, Dropdown } from 'react-bootstrap'
 
 const txFormat = remixLib.execution.txFormat
 export function ContractGUI (props: ContractGUIProps) {
@@ -164,7 +165,14 @@ export function ContractGUI (props: ContractGUIProps) {
   return (
     <div className={`udapp_contractProperty ${(props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive') ? 'udapp_hasArgs' : ''}`}>
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
-        <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+        <Dropdown as={ButtonGroup}>
+          <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+          <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0 }} />
+          <Dropdown.Menu className="deploy-items border-0 bg-gray">
+            <Dropdown.Item active>&#10003; Deploy</Dropdown.Item>
+            <Dropdown.Item>Deploy with Proxy</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
         <input
           className="form-control"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
