@@ -183,7 +183,7 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
 
   async.waterfall([
     (next) => {
-      if (!deepequal(UTRunner.compilerConfig, newCompConfig)) {
+      if (!compiler || !deepequal(UTRunner.compilerConfig, newCompConfig)) {
         UTRunner.compilerConfig = newCompConfig
         const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = newCompConfig
         compiler = new RemixCompiler(importFileCb)
