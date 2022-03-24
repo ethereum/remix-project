@@ -162,7 +162,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (!value) {
       enableAtAddress(false)
     } else {
-      if (atAddressOptions.disabled && (loadType === 'sol' || loadType === 'abi')) {
+      if (loadType === 'sol' || loadType === 'abi') {
         enableAtAddress(true)
       } else {
         enableAtAddress(false)
