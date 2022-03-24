@@ -38,7 +38,7 @@ This document includes:
  - git checkout -b bumpVersion
  - update package.json version
  - update version in package-lock.json
- - merge PR to origin/remix_beta
+ - merge PR to **origin/remix_beta**
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
  - git tag v(version-number)
