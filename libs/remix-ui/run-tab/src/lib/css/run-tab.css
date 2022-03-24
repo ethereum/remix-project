@@ -513,4 +513,17 @@
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+.deploy-items {
+  padding: 0.25rem 0.25rem;
+  border-radius: .25rem;
+}
+.deploy-items a {
+  border-radius: .25rem;
+  text-transform: none;
+  text-decoration: none;
+  font-weight: normal;
+  font-size: .8rem;
+  padding: 0.25rem 0.25rem;
+  width:auto;
+}
 
