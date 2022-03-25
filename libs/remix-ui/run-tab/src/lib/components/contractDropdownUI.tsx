@@ -102,10 +102,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       const contract = contracts.find(contract => contract.alias === selectedContract)
 
       if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
-      contractsRef.current.focus()
-      setTimeout(() => {
-        contractsRef.current.blur()
-      }, 1000)
+      // TODO highlight contractlist box with css.
     }
   }
 
