@@ -168,8 +168,8 @@ export function ContractGUI (props: ContractGUIProps) {
         <Dropdown as={ButtonGroup}>
           <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
           <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0 }} />
-          <Dropdown.Menu className="deploy-items border-0 bg-gray">
-            <Dropdown.Item active>&#10003; Deploy</Dropdown.Item>
+          <Dropdown.Menu className="deploy-items border-0">
+            <Dropdown.Item active={false}>&#10003; Deploy</Dropdown.Item>
             <Dropdown.Item>Deploy with Proxy</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
