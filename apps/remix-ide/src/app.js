@@ -362,7 +362,7 @@ class AppComponent {
             } catch (e) {
               console.log(e)
             }
-            if (params.code) {
+            if (params.code && (!params.activate || params.activate==='solidity')) {
               // if code is given in url we focus on solidity plugin
               this.menuicons.select('solidity')
             } else {
