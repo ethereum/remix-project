@@ -171,12 +171,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 }
               })
             })
-            result.report.map((item) => {
+            result.report.map(async (item) => {
               let location: any = {}
               let locationString = 'not available'
               let column = 0
               let row = 0
               let fileName = currentFile
+              let isLibrary = false
               if (item.location) {
                 const split = item.location.split(':')
                 const file = split[2]
@@ -195,6 +196,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 locationString = row + 1 + ':' + column + ':'
                 fileName = Object.keys(lastCompilationResult.sources)[file]
               }
+              if(fileName !== currentFile) {
+                const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+                if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+              }
               warningCount++
               const msg = message(result.name, item.warning, item.more, fileName, locationString)
               const options = {
@@ -202,6 +207,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 useSpan: true,
                 errFile: fileName,
                 fileName,
+                isLibrary,
                 errLine: row,
                 errCol: column,
                 item: item,
@@ -254,6 +260,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         locationString = row + 1 + ':' + column + ':'
                         fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
                       }
+                    }
+                    if(fileName !== currentFile) {
+                      console.log('inside ------------Slither')
+                      props.analysisModule.call('fileManager', 'getPathFromUrl', fileName).then(console.log)
                     }
                     warningCount++
                     const msg = message(item.title, item.description, item.more, fileName, locationString)
