@@ -145,7 +145,8 @@ export class Transactions {
           return cb(e.message)
         }        
       }
-      cb(null, result.result.execResult.gasUsed.toNumber())
+      const gasUsed = result.result.execResult.gasUsed.toNumber()
+      cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
   }
 
