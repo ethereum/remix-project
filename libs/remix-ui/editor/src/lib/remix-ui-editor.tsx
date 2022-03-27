@@ -4,8 +4,10 @@ import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
 import { cairoLang, cairoConf } from './cairoSyntax'
-import { ethers } from 'ethers'
+// import { ethersDTS, test } from './types'
+
 import './remix-ui-editor.css'
+import { loadTypes } from './types'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -223,7 +225,6 @@ export const EditorUI = (props: EditorUIProps) => {
   useEffect(() => {
     if (!monacoRef.current) return
     defineAndSetTheme(monacoRef.current)
-    monacoRef.current.languages.typescript.typescriptDefaults.addExtraLib('declare function require(module: string): any;')
   })
 
 
@@ -410,6 +411,8 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf)
+
+    loadTypes(monacoRef.current)
   }
 
   return (
