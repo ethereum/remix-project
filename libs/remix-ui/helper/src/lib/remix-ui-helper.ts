@@ -61,9 +61,10 @@ export const getPathIcon = (path: string) => {
           ? 'fab fa-js' : path.endsWith('.json')
             ? 'fas fa-brackets-curly' : path.endsWith('.vy')
               ? 'fak fa-vyper-mono' : path.endsWith('.lex')
-                ? 'fak fa-lexon' : path.endsWith('.contract')
-                  ? 'fab fa-ethereum' : path.endsWith('.cairo')
-                    ? 'fab fa-ethereum' : 'far fa-file' // TODO: add cairo icon
+                ? 'fak fa-lexon' : path.endsWith('ts')
+                 ? 'fab fa-ts' : path.endsWith('.contract')
+                   ? 'fab fa-ethereum' : path.endsWith('.cairo')
+                     ? 'fab fa-ethereum' : 'far fa-file' // TODO: add cairo icon
 }
 
 export const isNumeric = (value) => {
