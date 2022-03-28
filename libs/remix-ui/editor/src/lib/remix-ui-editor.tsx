@@ -7,7 +7,7 @@ import { cairoLang, cairoConf } from './cairoSyntax'
 // import { ethersDTS, test } from './types'
 
 import './remix-ui-editor.css'
-import { loadTypes } from './types'
+import { loadTypes } from './web-types'
 
 type cursorPosition = {
   startLineNumber: number,
