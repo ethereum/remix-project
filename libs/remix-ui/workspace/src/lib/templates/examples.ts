@@ -253,68 +253,81 @@ contract BallotTest {
     }
 }
 `
-const deployWithWeb3 = `// Right click on the script name and hit "Run" to execute
+const deployWithWeb3 = `import { deploy } from './web3.ts'
+
 (async () => {
     try {
-        console.log('Running deployWithWeb3 script...')
-        
-        const contractName = 'Storage' // Change this for other contract
-        const constructorArgs = []    // Put constructor args (if any) here for your contract
-    
-        // Note that the script needs the ABI which is generated from the compilation artifact.
-        // Make sure contract is compiled and artifacts are generated
-        const artifactsPath = \`browser/contracts/artifacts/\${contractName}.json\` // Change this for different path
+        const result = await deploy('Storage', [])
+        console.log(JSON.stringify(result, null, '\t')))
+        console.log(\`address: \${result.address\}\`)
+    } catch (e) {
+        console.log(e.message)
+    }
+})()`
 
-        const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
-        const accounts = await web3.eth.getAccounts()
-    
-        let contract = new web3.eth.Contract(metadata.abi)
-    
-        contract = contract.deploy({
-            data: metadata.data.bytecode.object,
-            arguments: constructorArgs
-        })
-    
-        const newContractInstance = await contract.send({
-            from: accounts[0],
-            gas: 1500000,
-            gasPrice: '30000000000'
-        })
-        console.log('Contract deployed at address: ', newContractInstance.options.address)
+const deployWithEthers = `import { deploy } from './ethers.ts'
+
+(async () => {
+    try {
+        const result = await deploy('Storage', [])
+        console.log(JSON.stringify(result, null, '\t'))
+        console.log(\`address: \${result.address\}\`)
     } catch (e) {
         console.log(e.message)
     }
   })()`
 
-const deployWithEthers = `// Right click on the script name and hit "Run" to execute
-(async () => {
-    try {
-        console.log('Running deployWithEthers script...')
+const libWeb3 = `
+export const deploy = async (contractName: string, arguments: Array<any>, from?: string, gas?: number) => {
     
-        const contractName = 'Storage' // Change this for other contract
-        const constructorArgs = []    // Put constructor args (if any) here for your contract
+    console.log(\`deploying \${contractName\}\`)
+    // Note that the script needs the ABI which is generated from the compilation artifact.
+    // Make sure contract is compiled and artifacts are generated
+    const artifactsPath = \`browser/contracts/artifacts/\${contractName\}.json\` // Change this for different path
 
-        // Note that the script needs the ABI which is generated from the compilation artifact.
-        // Make sure contract is compiled and artifacts are generated
-        const artifactsPath = \`browser/contracts/artifacts/\${contractName}.json\` // Change this for different path
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
+
+    const accounts = await web3.eth.getAccounts()
+
+    let contract = new web3.eth.Contract(metadata.abi)
+
+    contract = contract.deploy({
+        data: metadata.data.bytecode.object,
+        arguments
+    })
+
+    const newContractInstance = await contract.send({
+        from: from || accounts[0],
+        gas: gas || 1500000
+    })
+    return newContractInstance.options    
+}: Promise<any>`
+
+const libEthers = `
+export const deploy = async (contractName: string, arguments: Array<any>, from?: string) => {    
     
-        const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
-        // 'web3Provider' is a remix global variable object
-        const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    
-        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
-    
-        let contract = await factory.deploy(...constructorArgs);
-    
-        console.log('Contract Address: ', contract.address);
-    
-        // The contract is NOT deployed yet; we must wait until it is mined
-        await contract.deployed()
-        console.log('Deployment successful.')
-    } catch (e) {
-        console.log(e.message)
-    }
-})()`
+    console.log(\`deploying \${contractName\}\`)
+    // Note that the script needs the ABI which is generated from the compilation artifact.
+    // Make sure contract is compiled and artifacts are generated
+    const artifactsPath = \`browser/contracts/artifacts/\${contractName\}.json\` // Change this for different path
+
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
+    // 'web3Provider' is a remix global variable object
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+
+    let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+
+    let contract
+    if (from) {
+        contract = await factory.connect(from).deploy(...arguments);
+    } else {
+        contract = await factory.deploy(...arguments);
+    }    
+
+    // The contract is NOT deployed yet; we must wait until it is mined
+    await contract.deployed()
+    return contract
+}: Promise<any>`
 
 const storageTestJs = `// Right click on the script name and hit "Run" to execute
 const { expect } = require("chai");
@@ -371,9 +384,11 @@ export const examples = {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
   owner: { name: 'contracts/2_Owner.sol', content: owner },
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
-  deployWithWeb3: { name: 'scripts/deploy_web3.js', content: deployWithWeb3 },
-  deployWithEthers: { name: 'scripts/deploy_ethers.js', content: deployWithEthers },
   storageTestJs: { name: 'tests/storage.test.js', content: storageTestJs },
   ballot_test: { name: 'tests/Ballot_test.sol', content: ballotTest },
+  deployWithWeb3: { name: 'scripts/deploy_with_web3.ts', content: deployWithWeb3 },
+  deployWithEthers: { name: 'scripts/deploy_with_ethers.ts', content: deployWithEthers },
+  web3: { name: 'scripts/web3.ts', content: libWeb3 },
+  ethers: { name: 'scripts/ethers.ts', content: libEthers },
   readme: { name: 'README.txt', content: readme }
 }
