@@ -4,10 +4,31 @@ Release managers are responsible for the release management lifecycle, focusing 
 
 # Steps of Release Management
 
+## Pre release planning:
+In this stage, release manager and the team lead will elaborate a plan for the coming release. 
+This should take in account:
+ - the current issues list (a fair amount of time should be taken to go over the github issues).
+ - the current critical bugs.
+ - the current roadmap.
+ - each team member should be contacted in order to get different opinions feedback about what the next release should contains.
+
+During this phase the github project has to be filled issues that are going to be addressed.
+
 ## Release planning: 
-In this stage, release manager will elaborate a plan for the coming release. 
-Together with the team, the release manager will form a list of issues and PRs that should be addressed during the release.
+Together with the team, the release manager will refine the list of issues and PRs that should be addressed during the release.
 More generally and a non negligeable part of the planning is to properly ensure that bugs, issues that weren't totally identified in the roadmap, and the roadmap issues are still being processed as they should.
+During this phase, **all the current project issues have to be assigned.**
+
+After the release planning each one of us have to specify the effort need for each issue (1 - 2 - 3 - 5 - 8 - 13)
+
+## Release planning - refinement meeting:
+This meeting happens a few days after the release planning meeting.
+We check all the issues and associated effort and identify critical issues.
+e.g:
+ - issues that'll need to be splitted.
+ - issues that misses important information.
+ - issues that are dependent each others.
+ - issued that require different skills or that the team member is less available during this release.
 
 ## Configuring releases: 
 Release managers will oversee the various aspects of a project before it is due to be deployed, ensuring everyone is on track and meeting the agreed timeline.
@@ -40,6 +61,8 @@ The release manager is still responsible for ensuring a project is rolled out sm
  - In some really specific situation, it could be required to deploy intermediate releases (e.g critical bug fixes).
  - Planning, refinement, retrospective meetings have to be organized by the release manager and any other required meetings.
  - Release manager should feel free to implement new techniques and put their own finger print to their release, this could potentially benefit upcoming releases.
+ - During feature freeze, remix-beta should be updated every morning.
+ - A meeting with Andy and Rob should be organized for ensuring the beta test results are properly handled.
 
 ## Assignments:
 
