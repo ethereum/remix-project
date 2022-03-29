@@ -1,0 +1,88 @@
+{
+    "language": "Solidity",
+    "sources":
+    {
+      "myFile.sol":
+      {
+        "keccak256": "0x123...",
+        "urls": [
+          "bzzr://56ab...",
+          "ipfs://Qma...",
+          "/tmp/path/to/file.sol"
+        ]
+      },
+      "destructible":
+      {
+        "keccak256": "0x234...",
+        "content": "contract destructible is owned { function shutdown() { if (msg.sender == owner) selfdestruct(owner); } }"
+      }
+    },
+    "settings":
+    {
+      "stopAfter": "parsing",
+      "remappings": [ ":g=/dir" ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200,
+        "details": {
+          "peephole": true,
+          "inliner": true,
+          "jumpdestRemover": true,
+          "orderLiterals": false,
+          "deduplicate": false,
+          "cse": false,
+          "constantOptimizer": false,
+          "yul": false,
+          "yulDetails": {
+            "stackAllocation": true,
+            "optimizerSteps": "dhfoDgvulfnTUtnIf..."
+          }
+        }
+      },
+      "evmVersion": "byzantium",
+      "viaIR": true,
+      "debug": {
+        "revertStrings": "default",
+        "debugInfo": ["location", "snippet"]
+      },
+      "metadata": {
+        "useLiteralContent": true,
+        "bytecodeHash": "ipfs"
+      },
+      "libraries": {
+        
+        "myFile.sol": {
+          "MyLib": "0x123123..."
+        }
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "metadata", "evm.bytecode",
+            "evm.bytecode.sourceMap"
+          ],
+          "": [
+            "ast"
+          ]
+        },
+        "def": {
+          "MyContract": [ "abi", "evm.bytecode.opcodes" ]
+        }
+      },
+      "modelChecker":
+      {
+        "contracts":
+        {
+          "source1.sol": ["contract1"],
+          "source2.sol": ["contract2", "contract3"]
+        },
+        "divModNoSlacks": false,
+        "engine": "chc",
+        "invariants": ["contract", "reentrancy"],
+        "showUnproved": true,
+        "solvers": ["cvc4", "smtlib2", "z3"],
+        "targets": ["underflow", "overflow", "assert"],
+        "timeout": 20000
+      }
+    }
+  }
