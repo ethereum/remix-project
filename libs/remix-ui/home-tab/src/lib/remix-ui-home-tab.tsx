@@ -176,13 +176,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.verticalIcons.select('pluginManager')
   }
 
-  const restoreBackupZip = async () => {
-    await plugin.appManager.activatePlugin(['restorebackupzip'])
-    await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
-    plugin.verticalIcons.select('restorebackupzip')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
-  }
-
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
     setState(prevState => {
       return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples } }
@@ -294,10 +287,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
                   <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
-                </p>
-                <p className="mb-1">
-                  <i className="mr-1 far fa-upload"></i>
-                  <label className="ml-1 remixui_home_text" onClick={() => restoreBackupZip()}>Restore Backup</label>
                 </p>
                 <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
                 <div className="btn-group">
