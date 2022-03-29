@@ -1,4 +1,5 @@
 {
+    "_comment": "for foll description visit https://docs.soliditylang.org/en/develop/using-the-compiler.html?highlight=standard%20json#input-description",
     "language": "Solidity",
     "sources":
     {
@@ -6,15 +7,10 @@
       {
         "keccak256": "0x123...",
         "urls": [
-          "bzzr://56ab...",
-          "ipfs://Qma...",
-          "/tmp/path/to/file.sol"
         ]
       },
       "destructible":
       {
-        "keccak256": "0x234...",
-        "content": "contract destructible is owned { function shutdown() { if (msg.sender == owner) selfdestruct(owner); } }"
       }
     },
     "settings":
@@ -35,11 +31,10 @@
           "yul": false,
           "yulDetails": {
             "stackAllocation": true,
-            "optimizerSteps": "dhfoDgvulfnTUtnIf..."
           }
         }
       },
-      "evmVersion": "byzantium",
+      "evmVersion": "london",
       "viaIR": true,
       "debug": {
         "revertStrings": "default",
@@ -50,10 +45,6 @@
         "bytecodeHash": "ipfs"
       },
       "libraries": {
-        
-        "myFile.sol": {
-          "MyLib": "0x123123..."
-        }
       },
       "outputSelection": {
         "*": {
@@ -73,8 +64,6 @@
       {
         "contracts":
         {
-          "source1.sol": ["contract1"],
-          "source2.sol": ["contract2", "contract3"]
         },
         "divModNoSlacks": false,
         "engine": "chc",
