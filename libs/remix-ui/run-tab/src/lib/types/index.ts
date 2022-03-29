@@ -1,4 +1,5 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
+import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { ContractList } from '../reducers/runTab'
 import { RunTab } from './run-tab'
 export interface RunTabProps {
@@ -99,29 +100,6 @@ export interface ValueProps {
   setSendValue: (value: string) => void,
   sendValue: string,
   sendUnit: string
-}
-
-export interface FuncABI {
-  name: string,
-  type: string,
-  inputs: { name: string, type: string }[],
-  stateMutability: string,
-  payable: boolean,
-  constant: any
-}
-export interface ContractData {
-  name: string,
-  contract: any,
-  compiler: any,
-  abi: FuncABI[],
-  bytecodeObject: any,
-  bytecodeLinkReferences: any,
-  object: any,
-  deployedBytecode: any,
-  getConstructorInterface: () => any,
-  getConstructorInputs: () => any,
-  isOverSizeLimit: () => boolean,
-  metadata: any
 }
 
 export interface Tx {
