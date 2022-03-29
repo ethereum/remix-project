@@ -26,7 +26,7 @@ This meeting happens a few days after the release planning meeting.
 We check all the issues and associated effort and identify critical issues.
 e.g:
  - issues that'll need to be splitted.
- - issues that misses important information.
+ - issues that miss important information.
  - issues that are dependent each others.
  - issued that require different skills or that the team member is less available during this release.
 
