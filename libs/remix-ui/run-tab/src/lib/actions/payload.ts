@@ -1,5 +1,5 @@
 import { ContractList } from '../reducers/runTab'
-import { ContractData } from '../types'
+import { ContractData } from '@remix-project/core-plugin'
 
 export const fetchAccountsListRequest = () => {
   return {

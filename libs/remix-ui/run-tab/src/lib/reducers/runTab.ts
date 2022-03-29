@@ -1,5 +1,5 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
-import { ContractData } from '../types'
+import { ContractData } from '@remix-project/core-plugin'
 interface Action {
   type: string
   payload: any
