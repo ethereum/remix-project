@@ -190,7 +190,7 @@ module.exports = {
       .setEditorValue(BallotWithARefToOwner)
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]') // compile
-      .pause(2000)
+      .pause(6000)
       .execute(() => {
         (document.getElementById('editorView') as any).gotoLine(14, 6)
       }, [], () => {})
