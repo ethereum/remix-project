@@ -10,7 +10,7 @@ This should take in account:
  - the current issues list (a fair amount of time should be taken to go over the github issues).
  - the current critical bugs.
  - the current roadmap.
- - each team member should be contacted in order to get different opinions feedback about what the next release should contains.
+ - each team member should be contacted in order to get different opinions feedback about what the next release should contain.
 
 During this phase the github project has to be filled issues that are going to be addressed.
 
