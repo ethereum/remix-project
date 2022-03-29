@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractGUIProps } from '../types'
+import { ContractGUIProps, DeployOptions } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { ButtonGroup, Dropdown } from 'react-bootstrap'
 
@@ -16,6 +16,17 @@ export function ContractGUI (props: ContractGUIProps) {
     classList: string,
     dataId: string
   }>({ title: '', content: '', classList: '', dataId: '' })
+  const [deployOptions] = useState<{
+    title: DeployOptions,
+    active: boolean
+  }[]>([{
+    title: 'Deploy',
+    active: true
+  }, {
+    title: 'Deploy with Proxy',
+    active: false
+  }])
+  const [selectedDeployIndex, setSelectedDeployIndex] = useState<number>(0)
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
 
@@ -143,7 +154,7 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const handleActionClick = () => {
-    props.clickCallBack(props.funcABI.inputs, basicInput)
+    props.clickCallBack(props.funcABI.inputs, basicInput, props.isDeploy ? deployOptions[selectedDeployIndex].title : null)
   }
 
   const handleBasicInput = (e) => {
@@ -162,17 +173,25 @@ export function ContractGUI (props: ContractGUIProps) {
     }
   }
 
+  const setSelectedDeploy = (index: number) => {
+    setSelectedDeployIndex(index)
+  }
+
   return (
     <div className={`udapp_contractProperty ${(props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive') ? 'udapp_hasArgs' : ''}`}>
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
-        <Dropdown as={ButtonGroup}>
-          <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
-          <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0 }} />
-          <Dropdown.Menu className="deploy-items border-0">
-            <Dropdown.Item active={false}>&#10003; Deploy</Dropdown.Item>
-            <Dropdown.Item>Deploy with Proxy</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+        {
+          props.isDeploy ? 
+          <Dropdown as={ButtonGroup}>
+            <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{deployOptions[selectedDeployIndex].title}</button>
+            <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} />
+            <Dropdown.Menu className="deploy-items border-0">
+              {
+                deployOptions.map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { index === selectedDeployIndex ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
+              }
+            </Dropdown.Menu>
+          </Dropdown> : <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+        }
         <input
           className="form-control"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}

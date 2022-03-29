@@ -220,15 +220,18 @@ export interface Modal {
   cancelFn: () => void
 }
 
+export type DeployOptions = 'Deploy' | 'Deploy with Proxy'
+
 export interface ContractGUIProps {
   title?: string,
   funcABI: FuncABI,
   inputs: any,
-  clickCallBack: (inputs: { name: string, type: string }[], input: string) => void,
+  clickCallBack: (inputs: { name: string, type: string }[], input: string, deployMode?: DeployOptions) => void,
   widthClass?: string,
   evmBC: any,
   lookupOnly: boolean,
-  disabled?: boolean
+  disabled?: boolean,
+  isDeploy?: boolean
 }
 export interface MainnetProps {
   network: Network,
