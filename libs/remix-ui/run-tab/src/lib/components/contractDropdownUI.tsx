@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
-import { ContractDropdownProps } from '../types'
+import { ContractDropdownProps, DeployOptions } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
@@ -143,15 +143,20 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     }
   }
 
-  const clickCallback = (inputs, value) => {
-    createInstance(loadedContractData, value)
+  const clickCallback = (inputs, value, deployMode?: DeployOptions) => {
+    createInstance(loadedContractData, value, deployMode)
   }
 
-  const createInstance = (selectedContract, args) => {
+  const createInstance = (selectedContract, args, deployMode?: DeployOptions) => {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
+    if (deployMode === 'Deploy') {
+      props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
+    } else if (deployMode === 'Deploy with Proxy') {
+      // await deploy proxy first
+      props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
+    }
   }
 
   const atAddressChanged = (event) => {
@@ -226,7 +231,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <div className="udapp_deployDropdown">
           { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
-              <ContractGUI title='Deploy' funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
+              <ContractGUI title='Deploy' isDeploy={true} funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
                   id="deployAndRunPublishToIPFS"
