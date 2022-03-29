@@ -205,7 +205,7 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, tests: { isDirectory: true }, scripts: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -286,14 +286,14 @@ module.exports = {
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_with_ethers.ts', 0, 2, 0], ['scripts/deploy_with_web3.ts', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
   },
 
   'Should stage contract #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 2], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_ethers.js', 0, 2, 0], ['scripts/deploy_web3.js', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 2], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_with_ethers.ts', 0, 2, 0], ['scripts/deploy_with_web3.ts', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
   },
   'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
