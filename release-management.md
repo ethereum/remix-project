@@ -12,7 +12,7 @@ This should take in account:
  - the current roadmap.
  - each team member should be contacted in order to get different opinions feedback about what the next release should contain.
 
-During this phase the github project has to be filled issues that are going to be addressed.
+During this phase the github project has to be filled with the issues that are going to be addressed.
 
 ## Release planning: 
 Together with the team, the release manager will refine the list of issues and PRs that should be addressed during the release.
