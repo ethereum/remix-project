@@ -111,7 +111,7 @@ export const SearchProvider = ({
         payload: value
       })
     },
-    setSearchResults(value: SearchResult[]) {
+    setSearchResults(value: SearchResult[]) {     
       dispatch({
         type: 'SET_SEARCH_RESULTS',
         payload: value
@@ -285,6 +285,7 @@ export const SearchProvider = ({
     },
 
     clearStats: () => {
+      plugin.call('editor', 'discardHighlight')  
       dispatch({
         type: 'CLEAR_STATS',
         payload: undefined
@@ -320,6 +321,12 @@ export const SearchProvider = ({
       await reloadStateForFile(file)
       await checkUndoState(file)
     })
+    plugin.on('fileManager', 'rootFolderChanged', async file => {
+      const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+      if(workspace) value.setCurrentWorkspace(workspace.name)
+      setFiles(await getDirectory('/', plugin))
+    })
+    
     plugin.on('fileManager', 'fileAdded', async file => {
       setFiles(await getDirectory('/', plugin))
       await reloadStateForFile(file)
@@ -328,6 +335,13 @@ export const SearchProvider = ({
       value.setCurrentFile(file)
       await checkUndoState(file)
     })
+    async function fetchWorkspace() {
+      const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+      if(workspace) value.setCurrentWorkspace(workspace.name)
+      setFiles(await getDirectory('/', plugin))
+    }
+
+    fetchWorkspace()
 
     return () => {
       plugin.off('fileManager', 'fileChanged')
