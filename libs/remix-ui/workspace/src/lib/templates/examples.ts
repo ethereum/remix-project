@@ -253,6 +253,8 @@ contract BallotTest {
     }
 }
 `
+
+/* eslint-disable no-useless-escape */
 const deployWithWeb3 = `import { deploy } from './web3.ts'
 
 (async () => {
@@ -328,6 +330,7 @@ export const deploy = async (contractName: string, arguments: Array<any>, from?:
     await contract.deployed()
     return contract
 }: Promise<any>`
+/* eslint-enable no-useless-escape */
 
 const storageTestJs = `// Right click on the script name and hit "Run" to execute
 const { expect } = require("chai");
