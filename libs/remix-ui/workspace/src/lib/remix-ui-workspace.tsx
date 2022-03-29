@@ -58,6 +58,14 @@ export function Workspace () {
     }
   }
 
+  const restoreBackup = async () => {
+    try {
+      await global.dispatchHandleRestoreBackup()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const onFinishRenameWorkspace = async () => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
@@ -177,6 +185,16 @@ export function Workspace () {
                   }}
                   className='far fa-download remixui_menuicon'
                   title='Download Workspaces'>
+                </span>
+                <span
+                  id='workspacesRestore'
+                  data-id='workspacesRestore'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    restoreBackup()
+                  }}
+                  className='far fa-upload remixui_menuicon'
+                  title='Restore Workspaces Backup'>
                 </span>
               </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">

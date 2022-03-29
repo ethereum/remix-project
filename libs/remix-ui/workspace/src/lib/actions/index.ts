@@ -297,6 +297,12 @@ export const handleDownloadFiles = async () => {
   }
 }
 
+export const restoreBackupZip = async () => {
+  await plugin.appManager.activatePlugin(['restorebackupzip'])
+  plugin.verticalIcons.select('restorebackupzip')
+  _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
+}
+
 const packageGistFiles = async (directory) => {
   const workspaceProvider = plugin.fileProviders.workspace
   const isFile = await workspaceProvider.isFile(directory)
