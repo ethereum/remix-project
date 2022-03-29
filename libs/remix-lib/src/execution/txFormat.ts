@@ -96,7 +96,22 @@ export function encodeFunctionCall (params, funAbi, callback) {
 export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi, linkLibraries, linkReferences, callback) {
   encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
-    let bytecodeToDeploy = contract.evm.bytecode.object
+    linkLibraries(contract, linkLibraries, linkReferences, (error, bytecodeToDeploy) => {
+      callback(error, { dataHex: bytecodeToDeploy + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs, contractBytecode: contract.evm.bytecode.object })
+    })
+  })
+}
+
+/**
+* link with provided libraries if needed
+*
+* @param {Object} contract    - input paramater of the function to call
+* @param {Object} linkLibraries    - contains {linkReferences} object which list all the addresses to be linked
+* @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
+* @param {Function} callback    - callback
+*/
+export function linkLibraries (contract, linkLibraries, linkReferences, callback) {
+  let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       if (linkLibraries && linkReferences) {
         for (const libFile in linkLibraries) {
@@ -111,8 +126,7 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       return callback('Failed to link some libraries')
     }
-    return callback(null, { dataHex: bytecodeToDeploy + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs, contractBytecode: contract.evm.bytecode.object })
-  })
+    return callback(null, bytecodeToDeploy)
 }
 
 /**

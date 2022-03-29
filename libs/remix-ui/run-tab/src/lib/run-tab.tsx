@@ -7,7 +7,8 @@ import { ContractDropdownUI } from './components/contractDropdownUI'
 import { InstanceContainerUI } from './components/instanceContainerUI'
 import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
-import { ContractData, Modal, Network, RunTabProps, Tx } from './types'
+import { Modal, Network, RunTabProps, Tx } from './types'
+import { ContractData } from '@remix-project/core-plugin'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
   initRunTab, setAccount,

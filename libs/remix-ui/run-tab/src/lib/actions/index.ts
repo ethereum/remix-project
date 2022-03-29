@@ -7,7 +7,8 @@ import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, dis
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractData, FuncABI, MainnetPrompt } from '../types'
+import { MainnetPrompt } from '../types'
+import { ContractData, FuncABI,  } from '@remix-project/core-plugin'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
 
 const txFormat = remixLib.execution.txFormat
@@ -347,7 +348,7 @@ const getCompiledContracts = (compiler) => {
   return contracts
 }
 
-export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType) => {
+export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType): ContractData => {
   if (!contractName) return null
   // const compiler = plugin.compilersArtefacts[compilerAtributeName]
 
