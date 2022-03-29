@@ -12,6 +12,7 @@ import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 import { AstWalker } from '@remix-project/remix-astwalker'
+import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -268,6 +269,9 @@ class AppComponent {
     ])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
+    const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
+    const linkLibraries = new LinkLibraries(blockchain)
+    const deployLibraries = new DeployLibraries(blockchain)
     const compileTab = new CompileTab(
       Registry.getInstance().get('config').api,
       Registry.getInstance().get('filemanager').api
@@ -302,7 +306,10 @@ class AppComponent {
       filePanel.remixdHandle,
       filePanel.gitHandle,
       filePanel.hardhatHandle,
-      filePanel.slitherHandle
+      filePanel.slitherHandle,
+      linkLibraries,
+      deployLibraries,
+      openZeppelinProxy
     ])
 
     this.layout.panels = {
@@ -386,7 +393,7 @@ class AppComponent {
       }
     })
     // activate solidity plugin
-    this.appManager.activatePlugin(['solidity', 'udapp'])
+    this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])
     // Load and start the service who manager layout and frame
   }
 }
