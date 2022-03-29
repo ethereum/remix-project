@@ -1,0 +1,77 @@
+{
+    "_comment": "for foll description visit https://docs.soliditylang.org/en/develop/using-the-compiler.html?highlight=standard%20json#input-description",
+    "language": "Solidity",
+    "sources":
+    {
+      "myFile.sol":
+      {
+        "keccak256": "0x123...",
+        "urls": [
+        ]
+      },
+      "destructible":
+      {
+      }
+    },
+    "settings":
+    {
+      "stopAfter": "parsing",
+      "remappings": [ ":g=/dir" ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200,
+        "details": {
+          "peephole": true,
+          "inliner": true,
+          "jumpdestRemover": true,
+          "orderLiterals": false,
+          "deduplicate": false,
+          "cse": false,
+          "constantOptimizer": false,
+          "yul": false,
+          "yulDetails": {
+            "stackAllocation": true,
+          }
+        }
+      },
+      "evmVersion": "london",
+      "viaIR": true,
+      "debug": {
+        "revertStrings": "default",
+        "debugInfo": ["location", "snippet"]
+      },
+      "metadata": {
+        "useLiteralContent": true,
+        "bytecodeHash": "ipfs"
+      },
+      "libraries": {
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "metadata", "evm.bytecode",
+            "evm.bytecode.sourceMap"
+          ],
+          "": [
+            "ast"
+          ]
+        },
+        "def": {
+          "MyContract": [ "abi", "evm.bytecode.opcodes" ]
+        }
+      },
+      "modelChecker":
+      {
+        "contracts":
+        {
+        },
+        "divModNoSlacks": false,
+        "engine": "chc",
+        "invariants": ["contract", "reentrancy"],
+        "showUnproved": true,
+        "solvers": ["cvc4", "smtlib2", "z3"],
+        "targets": ["underflow", "overflow", "assert"],
+        "timeout": 20000
+      }
+    }
+  }
