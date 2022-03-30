@@ -72,8 +72,10 @@ export abstract class AbstractProvider extends Plugin {
           })()
         } catch (e) {
           // the modal has been canceled/hide
+          const result = data.method === 'net_listening' ? 'canceled' : []
+          resolve({ jsonrpc: '2.0', result: result, id: data.id })
           return
-        }        
+        }
         this.provider = new ethers.providers.JsonRpcProvider(value)
         this.sendAsyncInternal(data, resolve, reject)       
       } else {
