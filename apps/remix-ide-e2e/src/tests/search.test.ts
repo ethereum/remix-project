@@ -88,11 +88,11 @@ module.exports = {
         browser
             .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
             .waitForElementVisible('*[id="search_replace"]')
-            .setValue('*[id="search_replace"]', 'replacing').pause(1000)
-            .waitForElementVisible('*[data-id="contracts/2_Owner.sol-30-71"]')
-            .moveToElement('*[data-id="contracts/2_Owner.sol-30-71"]', 10, 10)
-            .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-30-71"]')
-            .click('*[data-id="replace-contracts/2_Owner.sol-30-71"]').pause(2000).
+            .setValue('*[id="search_replace"]', 'replacing').sendKeys('*[id="search_replace"]', browser.Keys.ENTER).pause(1000)
+            .waitForElementVisible('*[data-id="contracts/2_Owner.sol-33-71"]')
+            .moveToElement('*[data-id="contracts/2_Owner.sol-33-71"]', 10, 10)
+            .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-33-71"]')
+            .click('*[data-id="replace-contracts/2_Owner.sol-33-71"]').pause(2000).
             modalFooterOKClick('confirmreplace').pause(2000).
             getEditorValue((content) => {
                 browser.assert.ok(content.includes('replacing deployer for a constructor'), 'should replace text ok')
@@ -103,10 +103,10 @@ module.exports = {
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'replacing').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(1000)
             .setValue('*[id="search_replace"]', '2').pause(1000)
-            .waitForElementVisible('*[data-id="contracts/2_Owner.sol-30-71"]')
-            .moveToElement('*[data-id="contracts/2_Owner.sol-30-71"]', 10, 10)
-            .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-30-71"]')
-            .click('*[data-id="replace-contracts/2_Owner.sol-30-71"]').pause(2000).
+            .waitForElementVisible('*[data-id="contracts/2_Owner.sol-33-71"]')
+            .moveToElement('*[data-id="contracts/2_Owner.sol-33-71"]', 10, 10)
+            .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-33-71"]')
+            .click('*[data-id="replace-contracts/2_Owner.sol-33-71"]').pause(2000).
             getEditorValue((content) => {
                 browser.assert.ok(content.includes('replacing2 deployer for a constructor'), 'should replace text ok')
             })
