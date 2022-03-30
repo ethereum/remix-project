@@ -6,6 +6,7 @@ import { language, conf } from './syntax'
 import { cairoLang, cairoConf } from './cairoSyntax'
 
 import './remix-ui-editor.css'
+import { loadTypes } from './web-types'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -409,6 +410,8 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf)
+
+    loadTypes(monacoRef.current)
   }
 
   return (

@@ -252,7 +252,7 @@ export const runScript = async (path: string) => {
     if (error) {
       return dispatch(displayPopUp(error))
     }
-    plugin.call('scriptRunner', 'execute', content)
+    plugin.call('scriptRunner', 'execute', content, path)
   })
 }
 

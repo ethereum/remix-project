@@ -190,7 +190,7 @@ module.exports = {
       .setEditorValue(BallotWithARefToOwner)
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]') // compile
-      .pause(2000)
+      .pause(6000)
       .execute(() => {
         (document.getElementById('editorView') as any).gotoLine(14, 6)
       }, [], () => {})
@@ -211,7 +211,7 @@ module.exports = {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
         console.log('result', result)
-        browser.assert.equal(result.value, '122')
+        browser.assert.equal(result.value, '153')
       })
       .currentSelectedFileIs('2_Owner.sol') // make sure the current file has been properly changed
       .click('.contextview [data-action="next"]')
@@ -237,7 +237,7 @@ module.exports = {
         return (document.getElementById('editorView') as any).getCursorPosition()
       }, [], (result) => {
         console.log('result', result)
-        browser.assert.equal(result.value, '122')
+        browser.assert.equal(result.value, '153')
       })
       .end()
   }

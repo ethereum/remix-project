@@ -273,7 +273,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
     mode = {
       log: 'text-log',
-      info: 'text-info',
+      info: 'text-log',
       warn: 'text-warning',
       error: 'text-danger'
     }[mode] // defaults
