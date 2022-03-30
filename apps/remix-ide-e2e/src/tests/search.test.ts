@@ -33,11 +33,11 @@ module.exports = {
             .clearValue('*[id="search_include"]').pause(2000)
             .setValue('*[id="search_include"]', '**').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 46)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 44)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 40)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 38)
             })
             .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
             .clearValue('*[id="search_exclude"]').setValue('*[id="search_exclude"]', '.*/**/*')
@@ -65,14 +65,11 @@ module.exports = {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 0)
             })
             .clearValue('*[id="search_input"]')
-            .setValue('*[id="search_input"]', 'Contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(1000)
+            .setValue('*[id="search_input"]', 'Contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(3000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 9)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 3)
             })
-            .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_ETHERS.JS', 60000)
-            .waitForElementContainsText('*[data-id="search_results"]', 'DEPLOY_WEB3.JS', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', 'STORAGE.TEST.JS', 60000)
-            .waitForElementContainsText('*[data-id="search_results"]', 'scripts', 60000)
     },
     'Should find matchword': function (browser: NightwatchBrowser) {
         browser
@@ -81,7 +78,7 @@ module.exports = {
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 30)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 13)
             })
     },
     'Should replace text': function (browser: NightwatchBrowser) {
