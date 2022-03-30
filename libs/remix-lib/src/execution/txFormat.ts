@@ -93,10 +93,10 @@ export function encodeFunctionCall (params, funAbi, callback) {
 * @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
 * @param {Function} callback    - callback
 */
-export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi, linkLibraries, linkReferences, callback) {
+export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi, linkLibrariesAddresses, linkReferences, callback) {
   encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
-    linkLibraries(contract, linkLibraries, linkReferences, (error, bytecodeToDeploy) => {
+    linkLibraries(contract, linkLibrariesAddresses, linkReferences, (error, bytecodeToDeploy) => {
       callback(error, { dataHex: bytecodeToDeploy + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs, contractBytecode: contract.evm.bytecode.object })
     })
   })
