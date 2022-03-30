@@ -33,7 +33,7 @@ module.exports = {
             .clearValue('*[id="search_include"]').pause(2000)
             .setValue('*[id="search_include"]', '**').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 45)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 46)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
@@ -51,7 +51,7 @@ module.exports = {
             .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', '2_OWNER.SOL', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', '1_STORAGE.SOL', 60000)
-            .waitForElementContainsText('*[data-id="search_results"]', '4_BALLOT_TEST.SOL', 60000)
+            .waitForElementContainsText('*[data-id="search_results"]', 'BALLOT_TEST.SOL', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', 'tests', 60000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)
@@ -81,7 +81,7 @@ module.exports = {
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 29)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 30)
             })
     },
     'Should replace text': function (browser: NightwatchBrowser) {
