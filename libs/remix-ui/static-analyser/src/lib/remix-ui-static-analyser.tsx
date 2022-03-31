@@ -64,7 +64,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState(false)
-  const [showLibsWarning, setShowLibsWarning] = useState(false)
+  const [showLibsWarning, setShowLibsWarning] = useState(true)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
 
@@ -362,14 +362,22 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     if (showLibsWarning) setShowLibsWarning(false)
     else setShowLibsWarning(true)
     let newWarningState = {}
+    let newWarningCount = 0
     for (const category in allWarnings.current) {
       const warnings = allWarnings.current[category]
       newWarningState[category] = []
       for (const warning of warnings) {
-        if (showLibsWarning && warning.options.isLibrary) newWarningState[category].push(warning)
-        else if (!showLibsWarning && !warning.options.isLibrary) newWarningState[category].push(warning)
+        if (showLibsWarning && warning.options.isLibrary) {
+          newWarningCount++
+          newWarningState[category].push(warning)
+        }
+        else if (!showLibsWarning && !warning.options.isLibrary) {
+          newWarningCount++
+          newWarningState[category].push(warning)
+        }
       }
     }
+    props.event.trigger('staticAnaysisWarning', [newWarningCount])
     setWarningState(newWarningState)
   }
 
@@ -511,7 +519,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             {
               (Object.entries(warningState).map((element, index) => (
                 <div key={index}>
-                  <span className="text-dark h6">{element[0]}</span>
+                  {element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null}
                   {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
                     x.hasWarning ? ( // eslint-disable-next-line  dot-notation
                       <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
