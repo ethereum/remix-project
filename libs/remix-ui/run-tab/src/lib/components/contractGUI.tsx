@@ -16,17 +16,8 @@ export function ContractGUI (props: ContractGUIProps) {
     classList: string,
     dataId: string
   }>({ title: '', content: '', classList: '', dataId: '' })
-  const [deployOptions] = useState<{
-    title: DeployOptions,
-    active: boolean
-  }[]>([{
-    title: 'Deploy',
-    active: true
-  }, {
-    title: 'Deploy with Proxy',
-    active: false
-  }])
-  const [selectedDeployIndex, setSelectedDeployIndex] = useState<number>(0)
+  const [selectedDeployIndex, setSelectedDeployIndex] = useState<number[]>([])
+  const [showOptions, setShowOptions] = useState<boolean>(false)
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
 
@@ -154,7 +145,9 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const handleActionClick = () => {
-    props.clickCallBack(props.funcABI.inputs, basicInput, props.isDeploy ? deployOptions[selectedDeployIndex].title : null)
+    const deployMode = selectedDeployIndex.map(index => props.deployOptions[index].title)
+
+    props.clickCallBack(props.funcABI.inputs, basicInput, props.isDeploy ? deployMode : null)
   }
 
   const handleBasicInput = (e) => {
@@ -174,7 +167,16 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const setSelectedDeploy = (index: number) => {
-    setSelectedDeployIndex(index)
+    const indexes = selectedDeployIndex.slice()
+    const existingIndex = indexes.findIndex(value => value === index)
+
+    if (existingIndex > -1) indexes.splice(existingIndex, 1)
+    else indexes.push(index)
+    setSelectedDeployIndex(indexes)
+  }
+
+  const toggleOptions = () => {
+    setShowOptions(!showOptions)
   }
 
   return (
@@ -182,12 +184,12 @@ export function ContractGUI (props: ContractGUIProps) {
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
         {
           props.isDeploy ? 
-          <Dropdown as={ButtonGroup}>
-            <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{deployOptions[selectedDeployIndex].title}</button>
-            <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} />
+          <Dropdown as={ButtonGroup} show={showOptions}>
+            <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>Deploy</button>
+            <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} onClick={toggleOptions} />
             <Dropdown.Menu className="deploy-items border-0">
               {
-                deployOptions.map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { index === selectedDeployIndex ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
+                (props.deployOptions || []).map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { selectedDeployIndex.includes(index) ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
               }
             </Dropdown.Menu>
           </Dropdown> : <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
