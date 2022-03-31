@@ -76,9 +76,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     setWarningState({})
+    const runAnalysis = async () => {
+      await run(state.data, state.source, state.file)
+    }
     if (autoRun) {
       if (state.data !== null) {
-        run(state.data, state.source, state.file)
+        runAnalysis().catch(console.error);
       }
     } else {
       props.event.trigger('staticAnaysisWarning', [])
@@ -152,7 +155,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     setWarningState(groupedCategory)
   }
 
-  const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
+  const run = async (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (state.data !== null) {
       if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
         let warningCount = 0
@@ -161,8 +164,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
         // Remix Analysis
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithRemixAnalyzer'])
-        runner.run(lastCompilationResult, categoryIndex, results => {
-          results.map((result) => {
+        const results = runner.run(lastCompilationResult, categoryIndex)
+          for (const result of results) {
             let moduleName
             Object.keys(groupedModules).map(key => {
               groupedModules[key].forEach(el => {
@@ -171,7 +174,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 }
               })
             })
-            result.report.map(async (item) => {
+            for (const item of result.report) {
               let location: any = {}
               let locationString = 'not available'
               let column = 0
@@ -199,7 +202,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               if(fileName !== currentFile) {
                 const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
                 if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-              }
+              } 
               warningCount++
               const msg = message(result.name, item.warning, item.more, fileName, locationString)
               const options = {
@@ -218,8 +221,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }
               warningErrors.push(options)
               warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
-            })
-          })
+            }
+          }
           // Slither Analysis
           if (slitherEnabled) {
             props.analysisModule.call('solidity', 'getCompilerState').then((compilerState) => {
@@ -261,10 +264,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
                       }
                     }
-                    if(fileName !== currentFile) {
-                      console.log('inside ------------Slither')
-                      props.analysisModule.call('fileManager', 'getPathFromUrl', fileName).then(console.log)
-                    }
+
                     warningCount++
                     const msg = message(item.title, item.description, item.more, fileName, locationString)
                     const options = {
@@ -295,7 +295,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             showWarnings(warningMessage, 'warningModuleName')
             props.event.trigger('staticAnaysisWarning', [warningCount])
           }
-        })
       } else {
         if (categoryIndex.length) {
           warningContainer.current.innerText = 'No compiled AST available'
@@ -436,7 +435,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Autorun"
             onChange={() => {}}
           />
-          <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
+          <Button buttonText="Run" onClick={async () => await run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
         </div>
         { showSlither &&
           <div className="d-flex mt-2" id="enableSlitherAnalysis">

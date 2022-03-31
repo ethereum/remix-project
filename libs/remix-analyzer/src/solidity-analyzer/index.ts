@@ -15,13 +15,13 @@ export default class staticAnalysisRunner {
    * @param toRun module indexes (compiled from remix IDE)
    * @param callback callback
    */
-  run (compilationResult: CompilationResult, toRun: number[], callback: ((reports: AnalysisReport[]) => void)): void {
+  run (compilationResult: CompilationResult, toRun: number[]): AnalysisReport[] {
     const modules: ModuleObj[] = toRun.map((i) => {
       const Module = this.modules()[i]
       const m = new Module()
       return { name: m.name, mod: m }
     })
-    this.runWithModuleList(compilationResult, modules, callback)
+    return this.runWithModuleList(compilationResult, modules)
   }
 
   /**
@@ -30,7 +30,7 @@ export default class staticAnalysisRunner {
    * @param modules analysis module
    * @param callback callback
    */
-  runWithModuleList (compilationResult: CompilationResult, modules: ModuleObj[], callback: ((reports: AnalysisReport[]) => void)): void {
+  runWithModuleList (compilationResult: CompilationResult, modules: ModuleObj[]): AnalysisReport[] {
     let reports: AnalysisReport[] = []
     // Also provide convenience analysis via the AST walker.
     const walker = new AstWalker()
@@ -64,7 +64,7 @@ export default class staticAnalysisRunner {
       }
       return { name: item.name, report: report }
     }))
-    callback(reports)
+    return reports
   }
 
   /**
