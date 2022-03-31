@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useReducer, useRef } from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -64,10 +64,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState(false)
+  const [showLibsWarning, setShowLibsWarning] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
-
-  const warningContainer = React.useRef(null)
   const [warningState, setWarningState] = useState({})
+
+  const warningContainer = useRef(null)
+  const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   useEffect(() => {
@@ -152,6 +154,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
 
     const groupedCategory = groupBy(resultArray, groupByKey)
+    allWarnings.current = groupedCategory
     setWarningState(groupedCategory)
   }
 
@@ -355,6 +358,21 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
+  const handleShowLibsWarning = () => {
+    if (showLibsWarning) setShowLibsWarning(false)
+    else setShowLibsWarning(true)
+    let newWarningState = {}
+    for (const category in allWarnings.current) {
+      const warnings = allWarnings.current[category]
+      newWarningState[category] = []
+      for (const warning of warnings) {
+        if (showLibsWarning && warning.options.isLibrary) newWarningState[category].push(warning)
+        else if (!showLibsWarning && !warning.options.isLibrary) newWarningState[category].push(warning)
+      }
+    }
+    setWarningState(newWarningState)
+  }
+
   const categoryItem = (categoryId, item, i) => {
     return (
       <div className="form-check" key={i}>
@@ -478,6 +496,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {state.file}
         </span>
       </div>
+      <RemixUiCheckbox
+        id="showLibWarnings"
+        inputType="checkbox"
+        checked={showLibsWarning}
+        label="Show library files analysis"
+        onClick={handleShowLibsWarning}
+        onChange={() => {}}
+      />
       <br/>
       {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
