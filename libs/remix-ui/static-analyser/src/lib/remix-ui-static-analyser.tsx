@@ -64,7 +64,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState(false)
-  const [showLibsWarning, setShowLibsWarning] = useState(true)
+  let [showLibsWarning, setShowLibsWarning] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
 
@@ -136,6 +136,30 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
+  const filterWarnings = () => {
+    let newWarningState = {}
+    let newWarningCount = 0
+    if (showLibsWarning) {
+      for (const category in allWarnings.current)
+        newWarningCount = newWarningCount + allWarnings.current[category].length
+      newWarningState = allWarnings.current
+    }
+    else {
+      for (const category in allWarnings.current) {
+        const warnings = allWarnings.current[category]
+        newWarningState[category] = []
+        for (const warning of warnings) {
+          if (!warning.options.isLibrary) {
+            newWarningCount++
+            newWarningState[category].push(warning)
+          }
+        }
+      }
+    }
+    props.event.trigger('staticAnaysisWarning', [newWarningCount])
+    setWarningState(newWarningState)
+  }
+
   const showWarnings = (warningMessage, groupByKey) => {
     const resultArray = []
     warningMessage.map(x => {
@@ -155,7 +179,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
     const groupedCategory = groupBy(resultArray, groupByKey)
     allWarnings.current = groupedCategory
-    setWarningState(groupedCategory)
+    filterWarnings()
   }
 
   const run = async (lastCompilationResult, lastCompilationSource, currentFile) => {
@@ -206,7 +230,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
                 if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
               } 
-              warningCount++
               const msg = message(result.name, item.warning, item.more, fileName, locationString)
               const options = {
                 type: 'warning',
@@ -296,7 +319,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             })
           } else {
             showWarnings(warningMessage, 'warningModuleName')
-            props.event.trigger('staticAnaysisWarning', [warningCount])
           }
       } else {
         if (categoryIndex.length) {
@@ -359,26 +381,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const handleShowLibsWarning = () => {
-    if (showLibsWarning) setShowLibsWarning(false)
-    else setShowLibsWarning(true)
-    let newWarningState = {}
-    let newWarningCount = 0
-    for (const category in allWarnings.current) {
-      const warnings = allWarnings.current[category]
-      newWarningState[category] = []
-      for (const warning of warnings) {
-        if (showLibsWarning && warning.options.isLibrary) {
-          newWarningCount++
-          newWarningState[category].push(warning)
-        }
-        else if (!showLibsWarning && !warning.options.isLibrary) {
-          newWarningCount++
-          newWarningState[category].push(warning)
-        }
-      }
+    if (showLibsWarning) {
+      showLibsWarning = false
+      setShowLibsWarning(false)
+    } else {
+      showLibsWarning = true
+      setShowLibsWarning(true)
     }
-    props.event.trigger('staticAnaysisWarning', [newWarningCount])
-    setWarningState(newWarningState)
+    filterWarnings()
   }
 
   const categoryItem = (categoryId, item, i) => {
@@ -504,17 +514,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {state.file}
         </span>
       </div>
-      <RemixUiCheckbox
-        id="showLibWarnings"
-        inputType="checkbox"
-        checked={showLibsWarning}
-        label="Show library files analysis"
-        onClick={handleShowLibsWarning}
-        onChange={() => {}}
-      />
-      <br/>
       {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
+          <RemixUiCheckbox
+          id="showLibWarnings"
+          inputType="checkbox"
+          checked={showLibsWarning}
+          label="Show library files analysis"
+          onClick={handleShowLibsWarning}
+          onChange={() => {}}
+          />
+          <br/>
           <div className="mb-4">
             {
               (Object.entries(warningState).map((element, index) => (
