@@ -64,7 +64,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState(false)
-  let [showLibsWarning, setShowLibsWarning] = useState(false)
+  let [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
 
@@ -185,141 +185,142 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const run = async (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (state.data !== null) {
       if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
-        let warningCount = 0
         const warningMessage = []
         const warningErrors = []
 
         // Remix Analysis
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithRemixAnalyzer'])
         const results = runner.run(lastCompilationResult, categoryIndex)
-          for (const result of results) {
-            let moduleName
-            Object.keys(groupedModules).map(key => {
-              groupedModules[key].forEach(el => {
-                if (el.name === result.name) {
-                  moduleName = groupedModules[key][0].categoryDisplayName
-                }
-              })
+        for (const result of results) {
+          let moduleName
+          Object.keys(groupedModules).map(key => {
+            groupedModules[key].forEach(el => {
+              if (el.name === result.name) {
+                moduleName = groupedModules[key][0].categoryDisplayName
+              }
             })
-            for (const item of result.report) {
-              let location: any = {}
-              let locationString = 'not available'
-              let column = 0
-              let row = 0
-              let fileName = currentFile
-              let isLibrary = false
-              if (item.location) {
-                const split = item.location.split(':')
-                const file = split[2]
-                location = {
-                  start: parseInt(split[0]),
-                  length: parseInt(split[1])
-                }
-                location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-                  location,
-                  parseInt(file),
-                  lastCompilationSource.sources,
-                  lastCompilationResult.sources
-                )
-                row = location.start.line
-                column = location.start.column
-                locationString = row + 1 + ':' + column + ':'
-                fileName = Object.keys(lastCompilationResult.sources)[file]
+          })
+          for (const item of result.report) {
+            let location: any = {}
+            let locationString = 'not available'
+            let column = 0
+            let row = 0
+            let fileName = currentFile
+            let isLibrary = false
+
+            if (item.location) {
+              const split = item.location.split(':')
+              const file = split[2]
+              location = {
+                start: parseInt(split[0]),
+                length: parseInt(split[1])
               }
-              if(fileName !== currentFile) {
-                const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
-                if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-              } 
-              const msg = message(result.name, item.warning, item.more, fileName, locationString)
-              const options = {
-                type: 'warning',
-                useSpan: true,
-                errFile: fileName,
-                fileName,
-                isLibrary,
-                errLine: row,
-                errCol: column,
-                item: item,
-                name: result.name,
-                locationString,
-                more: item.more,
-                location: location
-              }
-              warningErrors.push(options)
-              warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+              location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                location,
+                parseInt(file),
+                lastCompilationSource.sources,
+                lastCompilationResult.sources
+              )
+              row = location.start.line
+              column = location.start.column
+              locationString = row + 1 + ':' + column + ':'
+              fileName = Object.keys(lastCompilationResult.sources)[file]
             }
+            if(fileName !== currentFile) {
+              const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+              if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+            } 
+            const msg = message(result.name, item.warning, item.more, fileName, locationString)
+            const options = {
+              type: 'warning',
+              useSpan: true,
+              errFile: fileName,
+              fileName,
+              isLibrary,
+              errLine: row,
+              errCol: column,
+              item: item,
+              name: result.name,
+              locationString,
+              more: item.more,
+              location: location
+            }
+            warningErrors.push(options)
+            warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
           }
-          // Slither Analysis
-          if (slitherEnabled) {
-            props.analysisModule.call('solidity', 'getCompilerState').then((compilerState) => {
-              const { currentVersion, optimize, evmVersion } = compilerState
-              props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
-              _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
-              props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(async (result) => {
-                if (result.status) {
-                  props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
-                  const report = result.data
-                  for (const item of report) {
-                    let location: any = {}
-                    let locationString = 'not available'
-                    let column = 0
-                    let row = 0
-                    let fileName = currentFile
+        }
+        // Slither Analysis
+        if (slitherEnabled) {
+          try {
+            const compilerState = await props.analysisModule.call('solidity', 'getCompilerState')
+            const { currentVersion, optimize, evmVersion } = compilerState
+            await props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
+            _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
+            const result = await props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion })
+            if (result.status) {
+              props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
+              const report = result.data
+              for (const item of report) {
+                let location: any = {}
+                let locationString = 'not available'
+                let column = 0
+                let row = 0
+                let fileName = currentFile
+                let isLibrary = false
 
-                    if (item.sourceMap && item.sourceMap.length) {
-                      let path = item.sourceMap[0].source_mapping.filename_relative
-                      let fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path)
-                      if (fileIndex === -1) {
-                        path = await props.analysisModule.call('fileManager', 'getUrlFromPath', path)
-                        fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path.file)
-                      }
-                      if (fileIndex >= 0) {
-                        location = {
-                          start: item.sourceMap[0].source_mapping.start,
-                          length: item.sourceMap[0].source_mapping.length
-                        }
-                        location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-                          location,
-                          fileIndex,
-                          lastCompilationSource.sources,
-                          lastCompilationResult.sources
-                        )
-                        row = location.start.line
-                        column = location.start.column
-                        locationString = row + 1 + ':' + column + ':'
-                        fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
-                      }
-                    }
-
-                    warningCount++
-                    const msg = message(item.title, item.description, item.more, fileName, locationString)
-                    const options = {
-                      type: 'warning',
-                      useSpan: true,
-                      errFile: fileName,
-                      fileName,
-                      errLine: row,
-                      errCol: column,
-                      item: { warning: item.description },
-                      name: item.title,
-                      locationString,
-                      more: item.more,
-                      location: location
-                    }
-                    warningErrors.push(options)
-                    warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
+                if (item.sourceMap && item.sourceMap.length) {
+                  let path = item.sourceMap[0].source_mapping.filename_relative
+                  let fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path)
+                  if (fileIndex === -1) {
+                    path = await props.analysisModule.call('fileManager', 'getUrlFromPath', path)
+                    fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path.file)
                   }
-                  showWarnings(warningMessage, 'warningModuleName')
-                  props.event.trigger('staticAnaysisWarning', [warningCount])
+                  if (fileIndex >= 0) {
+                    location = {
+                      start: item.sourceMap[0].source_mapping.start,
+                      length: item.sourceMap[0].source_mapping.length
+                    }
+                    location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                      location,
+                      fileIndex,
+                      lastCompilationSource.sources,
+                      lastCompilationResult.sources
+                    )
+                    row = location.start.line
+                    column = location.start.column
+                    locationString = row + 1 + ':' + column + ':'
+                    fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
+                  }
                 }
-              }).catch(() => {
-                props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
-                showWarnings(warningMessage, 'warningModuleName')
-              })
-            })
-          } else {
+                if(fileName !== currentFile) {
+                  const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+                  if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+                } 
+                const msg = message(item.title, item.description, item.more, fileName, locationString)
+                const options = {
+                  type: 'warning',
+                  useSpan: true,
+                  errFile: fileName,
+                  fileName,
+                  isLibrary,
+                  errLine: row,
+                  errCol: column,
+                  item: { warning: item.description },
+                  name: item.title,
+                  locationString,
+                  more: item.more,
+                  location: location
+                }
+                warningErrors.push(options)
+                warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
+              }
+              showWarnings(warningMessage, 'warningModuleName')
+            }
+          } catch(error) {
+            props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
             showWarnings(warningMessage, 'warningModuleName')
           }
+        } else showWarnings(warningMessage, 'warningModuleName')
       } else {
         if (categoryIndex.length) {
           warningContainer.current.innerText = 'No compiled AST available'
