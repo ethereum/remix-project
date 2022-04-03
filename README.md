@@ -42,7 +42,7 @@ Note: It contains the latest supported version of Solidity available at the time
 ```bash
 npm install -g @nrwl/cli
 ```
-* Clone the github repository (`wget` need to be installed first):
+* Clone the github repository:
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
@@ -52,8 +52,8 @@ git clone https://github.com/ethereum/remix-project.git
 cd remix-project
 npm install
 npm run build:libs // Build remix libs
-nx build
-nx serve
+npm run build
+npm run serve
 ```
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
