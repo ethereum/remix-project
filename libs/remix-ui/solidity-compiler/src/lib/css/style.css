@@ -154,6 +154,11 @@
 .remixui_iconbtn {
   margin-right: 0.3em;
 }
+.remixui_btnBlock {
+  display: block;
+  width: 100%;
+  word-wrap: break-word;
+}
 .remixui_errorBlobs {
   padding-left: 5px;
   padding-right: 5px;
