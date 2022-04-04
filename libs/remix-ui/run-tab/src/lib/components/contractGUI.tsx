@@ -183,13 +183,13 @@ export function ContractGUI (props: ContractGUIProps) {
     <div className={`udapp_contractProperty ${(props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive') ? 'udapp_hasArgs' : ''}`}>
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
         {
-          props.isDeploy ? 
+          props.isDeploy &&  (props.deployOptions || []).length > 0? 
           <Dropdown as={ButtonGroup} show={showOptions}>
             <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>Deploy</button>
             <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} onClick={toggleOptions} />
             <Dropdown.Menu className="deploy-items border-0">
               {
-                (props.deployOptions || []).map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { selectedDeployIndex.includes(index) ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
+                (props.deployOptions).map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { selectedDeployIndex.includes(index) ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
               }
             </Dropdown.Menu>
           </Dropdown> : <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>

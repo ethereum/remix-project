@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine';
-import { ContractData } from '../types/contract';
+import { ContractAST, ContractData } from '../types/contract';
 
 const proxyProfile = {
   name: 'openzeppelin-proxy',
@@ -7,6 +7,7 @@ const proxyProfile = {
   description: 'openzeppelin-proxy',
   methods: ['isConcerned', 'execute']
 };
+const UUPS = '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol'
 
 export class OpenZeppelinProxy extends Plugin {
   blockchain: any
@@ -15,8 +16,9 @@ export class OpenZeppelinProxy extends Plugin {
     this.blockchain = blockchain
   }
 
-  async isConcerned(contractData: ContractData): Promise<boolean> {
+  async isConcerned(ast: ContractAST): Promise<boolean> {
     // check in the AST if it's an upgradable contract
+    if (ast.nodes.find(node => node.absolutePath === UUPS)) return true
     return false
   }
 
