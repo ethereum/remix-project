@@ -2,10 +2,6 @@ import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
-import Schema from "@truffle/contract-schema"
-import Config from '@truffle/config'
-import { Compile } from "@truffle/compile-solidity"
-import { Shims } from "@truffle/compile-common"
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -105,34 +101,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('hardhat', 'compile', configFile)
   }
 
-  async compileWithTruffle (fileName, CompConfig) {
-    console.log('fileName-in compileWithTruffle-->', fileName)
-    console.log('config-in compileWithTruffle-->', CompConfig)
-
-    const sources = {
-      Example: await this.call('fileManager', 'getFile', fileName)
-    }
-    let config = Config.default().with(CompConfig)
-    console.log('config---->', config)
-    console.log('sources---->', sources)
-    // Compile first
-    const { compilations } = await Compile.sources({
-      sources,
-      options: config
-    });
-    console.log('compilations----->', compilations)
-    const { contracts } = compilations[0];
-    // use forEach
-    const exampleContract = contracts.find(
-      contract => contract.contractName === "Owner"
-    );
-    const compiled = Schema.normalize(
-      Shims.NewToLegacy.forContract(exampleContract)
-    );
-    if(!compiled.updatedAt) compiled.updatedAt = new Date().toISOString()
-    console.log('compiled----->', compiled)
-    return "done"
+  async compileWithTruffle (fileName, compConfig) {
+    console.log('Inside compileWithTruffle in compile-api', compConfig)
+    return await this.call('truffle', 'compile', fileName, compConfig)
   }
+
+  // async compileWithTruffle (fileName, CompConfig) {
+  
+  // }
 
   logToTerminal (content) {
     return this.call('terminal', 'log', content)

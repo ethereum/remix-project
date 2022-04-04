@@ -103,7 +103,11 @@ function errorHandler (error: any, service: string) {
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
 
-      startService('truffle', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+      startService('truffle', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
+        if (error) {
+          errorHandler(error, 'truffle')
+          return false
+        }
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
