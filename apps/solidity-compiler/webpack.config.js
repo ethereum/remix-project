@@ -7,7 +7,6 @@ module.exports = config => {
     ...nxWebpackConfig,
     node: {
       fs: 'empty',
-      path: 'empty',
       tls: 'empty',
       readline: 'empty',
       net: 'empty',
