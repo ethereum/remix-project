@@ -455,6 +455,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
+            title="Select all Remix analysis modules"
             checked={Object.values(groupedModules).map((value: any) => {
               return (value.map(x => {
                 return x._index.toString()
@@ -467,6 +468,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <RemixUiCheckbox
             id="autorunstaticanalysis"
             inputType="checkbox"
+            title="Run static analysis after the compilation"
             onClick={handleAutoRun}
             checked={autoRun}
             label="Autorun"
@@ -521,9 +523,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           id="showLibWarnings"
           name="showLibWarnings"
           categoryId="showLibWarnings"
+          title="when checked, the results are also displayed for external contract libraries"
           inputType="checkbox"
           checked={showLibsWarning}
-          label="Show library files analysis"
+          label="Display all results"
           onClick={handleShowLibsWarning}
           onChange={() => {}}
           />
