@@ -11,6 +11,7 @@ const UUPS = '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.so
 
 export class OpenZeppelinProxy extends Plugin {
   blockchain: any
+  kind: 'UUPS' | 'Transparent'
   constructor(blockchain) {
     super(proxyProfile)
     this.blockchain = blockchain
@@ -18,11 +19,19 @@ export class OpenZeppelinProxy extends Plugin {
 
   async isConcerned(ast: ContractAST): Promise<boolean> {
     // check in the AST if it's an upgradable contract
-    if (ast.nodes.find(node => node.absolutePath === UUPS)) return true
+    if (ast.nodes.find(node => node.absolutePath === UUPS)) {
+      this.kind = 'UUPS'
+      return true
+    }
     return false
   }
 
   async execute(contractData: ContractData, contractMetadata: any, compiledContracts: any) {
     // deploy the proxy, or use an existing one
+    if (this.kind === 'UUPS') this.deployUUPSProxy()
+  }
+
+  async deployUUPSProxy () {
+    
   }
 }

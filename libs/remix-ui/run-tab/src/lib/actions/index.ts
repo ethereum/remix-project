@@ -483,16 +483,17 @@ export const createInstance = async (
       return terminalLogger(log)
     }))
   }
-  deployContract(selectedContract, args, contractMetadata, compilerContracts, {
-    continueCb: (error, continueTxExecution, cancelCb) => {
-      continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
-    },
-    promptCb: (okCb, cancelCb) => {
-      promptHandler(passphrasePrompt, okCb, cancelCb)
-    },
-    statusCb,
-    finalCb
-  }, confirmationCb)
+  await plugin.call('openzeppelin-proxy', 'execute')
+  // deployContract(selectedContract, args, contractMetadata, compilerContracts, {
+  //   continueCb: (error, continueTxExecution, cancelCb) => {
+  //     continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
+  //   },
+  //   promptCb: (okCb, cancelCb) => {
+  //     promptHandler(passphrasePrompt, okCb, cancelCb)
+  //   },
+  //   statusCb,
+  //   finalCb
+  // }, confirmationCb)
 }
 
 const deployContract = (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
