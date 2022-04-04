@@ -135,7 +135,7 @@ export class SlitherClient extends PluginClient {
       }
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
-      const outputFile: string = 'remix-slither-report.json'
+      const outputFile = 'remix-slither-report.json'
       const cmd = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
