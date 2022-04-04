@@ -10,7 +10,7 @@ const requiredModules = [ // services + layout views + system views
   'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'gistHandler', 'layout',
   'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'intelligentScriptExecutor']
 
-const dependentModules = ['git', 'hardhat', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
+const dependentModules = ['git', 'hardhat', 'truffle', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification']

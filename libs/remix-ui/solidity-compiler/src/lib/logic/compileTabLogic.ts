@@ -141,6 +141,7 @@ export class CompileTabLogic {
           })
         }
       } else if (externalCompType === 'truffle') {
+        console.log('inside else if ----externalCompType---->', externalCompType)
         const fileName = this.api.currentFile
         const { currentVersion, optimize, runs, evmVersion} = this.compiler.state
         if (currentVersion) {
@@ -158,9 +159,11 @@ export class CompileTabLogic {
                 }
               }
             }
+          console.log('before compileWithTruffle call')
           this.api.compileWithTruffle(fileName, compConfig).then((result) => {
             this.api.logToTerminal({ type: 'info', value: result })
           }).catch((error) => {
+            console.log('errror------->', error)
             this.api.logToTerminal({ type: 'error', value: error })
           })
         }
