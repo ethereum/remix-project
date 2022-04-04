@@ -148,7 +148,8 @@ export interface ContractDropdownProps {
     contract: ContractData) => void,
     mainnetPrompt: MainnetPrompt,
     isOverSizePrompt: () => JSX.Element,
-    args) => void,
+    args,
+    deployMode: DeployMode[]) => void,
   ipfsCheckedState: boolean,
   setIpfsCheckedState: (value: boolean) => void,
   publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void,
@@ -159,7 +160,8 @@ export interface ContractDropdownProps {
   tooltip: (toasterMsg: string | JSX.Element) => void,
   loadAddress: (contract: ContractData, address: string) => void,
   networkName: string,
-  setNetworkName: (name: string) => void
+  setNetworkName: (name: string) => void,
+  deployOptions: DeployOptions[]
 }
 
 export interface RecorderProps {
