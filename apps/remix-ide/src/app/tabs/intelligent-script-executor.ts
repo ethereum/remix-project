@@ -26,18 +26,20 @@ export class IntelligentScriptExecutor extends Plugin {
           e.preventDefault()
           this.targetFileName = file
           await this.call('solidity', 'compile', file)
-        } else if (file.endsWith('.js')) {
+        } else if (file.endsWith('.js') || file.endsWith('.ts')) {
           e.preventDefault()
-          this.runScript(file)
+          this.runScript(file, false)
         }
       }
     }
   }
 
-  async runScript (fileName) {
+  async runScript (fileName, clearAllInstances) {
     await this.call('terminal', 'log', `running ${fileName} ...`)
     const content = await this.call('fileManager', 'readFile', fileName)
-    await this.call('udapp', 'clearAllInstances')
+    if (clearAllInstances) {
+      await this.call('udapp', 'clearAllInstances')
+    }
     await this.call('scriptRunner', 'execute', content)
   }
 
@@ -48,7 +50,7 @@ export class IntelligentScriptExecutor extends Plugin {
       if (this.targetFileName === contract.file && contract.object && contract.object.devdoc['custom:dev-run-script']) {
         this.targetFileName = null
         const file = contract.object.devdoc['custom:dev-run-script']
-        if (file) this.runScript(file)
+        if (file) this.runScript(file, true)
       }
     })
   }
