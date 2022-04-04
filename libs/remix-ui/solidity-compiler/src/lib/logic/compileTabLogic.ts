@@ -141,14 +141,13 @@ export class CompileTabLogic {
           })
         }
       } else if (externalCompType === 'truffle') {
-        console.log('inside else if ----externalCompType---->', externalCompType)
         const fileName = this.api.currentFile
         const { currentVersion, optimize, runs, evmVersion} = this.compiler.state
         if (currentVersion) {
           const compConfig = {
               compilers: {
                 solc: {
-                  version: `'${currentVersion.substring(0, currentVersion.indexOf('+commit'))}'`,
+                  version: `${currentVersion.substring(0, currentVersion.indexOf('+commit'))}`,
                   settings: {
                     optimizer: {
                       enabled: optimize,
@@ -159,11 +158,9 @@ export class CompileTabLogic {
                 }
               }
             }
-          console.log('before compileWithTruffle call')
           this.api.compileWithTruffle(fileName, compConfig).then((result) => {
             this.api.logToTerminal({ type: 'info', value: result })
           }).catch((error) => {
-            console.log('errror------->', error)
             this.api.logToTerminal({ type: 'error', value: error })
           })
         }
