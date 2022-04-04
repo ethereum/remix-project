@@ -46,10 +46,10 @@ export class IntelligentScriptExecutor extends Plugin {
 
     this.on('compilerMetadata', 'artefactsUpdated', async (fileName, contract) => {
       if (this.targetFileName === contract.file && contract.object && contract.object.devdoc['custom:dev-run-script']) {
+        this.targetFileName = null
         const file = contract.object.devdoc['custom:dev-run-script']
         if (file) this.runScript(file)
       }
-      this.targetFileName = null
     })
   }
 
