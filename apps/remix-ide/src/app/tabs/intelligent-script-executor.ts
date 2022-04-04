@@ -21,7 +21,7 @@ export class IntelligentScriptExecutor extends Plugin {
     this.executionListener = async (e) => {
       // ctrl+e or command+e
       const file = await this.call('fileManager', 'file')
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 69 && file !== '') {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.keyCode === 83 && file !== '') {
         if (file.endsWith('.sol')) {
           e.preventDefault()
           this.targetFileName = file
