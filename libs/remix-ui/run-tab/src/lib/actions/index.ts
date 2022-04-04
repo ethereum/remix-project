@@ -3,11 +3,11 @@ import React from 'react'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { addressToString, createNonClashingNameAsync, envChangeNotification, extractNameFromKey, shortenAddress, web3Dialog } from '@remix-ui/helper'
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, fetchContractListSuccess, hidePopUp, removeExistingInstance, removeProvider, resetUdapp, setBaseFeePerGas, setConfirmSettings, setCurrentFile, setDecodedResponse, setDeployOptions, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setLoadType, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setRecorderCount, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from './payload'
 import { RunTab } from '../types/run-tab'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { MainnetPrompt } from '../types'
+import { DeployMode, MainnetPrompt } from '../types'
 import { ContractData, FuncABI,  } from '@remix-project/core-plugin'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
 
@@ -287,7 +287,7 @@ export const signMessageWithAddress = (account: string, message: string, modalCo
   })
 }
 
-const broadcastCompilationResult = (file, source, languageVersion, data, input?) => {
+const broadcastCompilationResult = async (file, source, languageVersion, data, input?) => {
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
 
@@ -297,7 +297,10 @@ const broadcastCompilationResult = (file, source, languageVersion, data, input?)
   const contracts = getCompiledContracts(compiler).map((contract) => {
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
   })
+  const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file].ast)
 
+  if (isUpgradeable) dispatch(setDeployOptions([{ title: 'Deploy with Proxy', active: false }]))
+  else dispatch(setDeployOptions([]))
   dispatch(fetchContractListSuccess({ [file]: contracts }))
   dispatch(setCurrentFile(file))
 }
@@ -425,7 +428,8 @@ export const createInstance = async (
   contract: ContractData) => void,
   mainnetPrompt: MainnetPrompt,
   isOverSizePrompt: () => JSX.Element,
-  args) => {
+  args,
+  deployMode: DeployMode[]) => {
   const statusCb = (msg: string) => {
     const log = logBuilder(msg)
 
