@@ -443,7 +443,6 @@ export const createInstance = async (
       return terminalLogger(log)
     }
     addInstance({ contractData: contractObject, address, name: contractObject.name })
-
     const data = plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
@@ -453,6 +452,11 @@ export const createInstance = async (
     } else {
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
+    deployMode.forEach(async (mode) => {
+      const owner = plugin.REACT_API.accounts.selectedAccount
+    
+      if (mode === 'Deploy with Proxy') await plugin.call('openzeppelin-proxy', 'execute', address, owner)
+    })
   }
 
   let contractMetadata
@@ -483,17 +487,16 @@ export const createInstance = async (
       return terminalLogger(log)
     }))
   }
-  await plugin.call('openzeppelin-proxy', 'execute')
-  // deployContract(selectedContract, args, contractMetadata, compilerContracts, {
-  //   continueCb: (error, continueTxExecution, cancelCb) => {
-  //     continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
-  //   },
-  //   promptCb: (okCb, cancelCb) => {
-  //     promptHandler(passphrasePrompt, okCb, cancelCb)
-  //   },
-  //   statusCb,
-  //   finalCb
-  // }, confirmationCb)
+  deployContract(selectedContract, args, contractMetadata, compilerContracts, {
+    continueCb: (error, continueTxExecution, cancelCb) => {
+      continueHandler(gasEstimationPrompt, error, continueTxExecution, cancelCb)
+    },
+    promptCb: (okCb, cancelCb) => {
+      promptHandler(passphrasePrompt, okCb, cancelCb)
+    },
+    statusCb,
+    finalCb
+  }, confirmationCb)
 }
 
 const deployContract = (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {

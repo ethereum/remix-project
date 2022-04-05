@@ -134,6 +134,15 @@ export class Blockchain extends Plugin {
     })
   }
 
+  async deployProxy (proxyData) {
+    const args = {
+      useCall: false,
+      data: proxyData
+    }
+
+    this.runTx(args)
+  }
+
   createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
