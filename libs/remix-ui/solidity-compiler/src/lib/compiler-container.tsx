@@ -634,7 +634,25 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </span>
           </button>
           </OverlayTrigger>
+          <OverlayTrigger overlay={
+              <Tooltip  id="overlay-tooltip-keybinding">
+                <div className="remixui_tooltipCode" >
+                <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                <pre>
+                <code>
+                /**<br />
+                 * @title ContractName<br />
+                 * @dev ContractDescription<br />
+                 * @custom:dev-run-script file_path<br />
+                 */<br />
+                 contract ContractName {'{}'}<br />
+                </code>
+                </pre>
+                </div>
+              </Tooltip>
+            }>
           <span className="mt-2 text-dark">Ctrl+Shift+s for compiling and on the fly execution.</span>
+          </OverlayTrigger>          
         </header>
       </article>
     </section>
