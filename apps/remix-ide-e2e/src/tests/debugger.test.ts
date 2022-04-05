@@ -477,7 +477,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0x16be5c31014a7e1552d136f7ed7bc7788f3bb9e45e31b059df253173f2df31e7')
+      const result = await remix.call('debugger', 'getTrace', '0x65f0813753462414f9a91f0aabea946188327995f54b893b63a8d7ff186cfca3')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -486,7 +486,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0x16be5c31014a7e1552d136f7ed7bc7788f3bb9e45e31b059df253173f2df31e7')
+      const result = await remix.call('debugger', 'debug', '0x65f0813753462414f9a91f0aabea946188327995f54b893b63a8d7ff186cfca3')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)

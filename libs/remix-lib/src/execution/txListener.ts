@@ -60,7 +60,7 @@ export class TxListener {
       // in VM mode
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
-      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+      if (this._loopId) return // we seems to already listen on a "web3" network
 
       let returnValue
       let execResult
@@ -95,7 +95,7 @@ export class TxListener {
       // in VM mode
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
-      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+      if (this._loopId) return // we seems to already listen on a "web3" network
       this.executionContext.web3().eth.getTransaction(txResult.transactionHash, async (error, tx) => {
         if (error) return console.log(error)
 
@@ -133,7 +133,7 @@ export class TxListener {
     */
   init () {
     this.blocks = []
-    this.lastBlock = null
+    this.lastBlock = -1
   }
 
   /**
@@ -170,8 +170,7 @@ export class TxListener {
       this.executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
         if (this._loopId === null) return
         if (error) return console.log(error)
-        if (currentLoopId === this._loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
-          if (!this.lastBlock) this.lastBlock = blockNumber - 1
+        if (currentLoopId === this._loopId && blockNumber > this.lastBlock) {
           let current = this.lastBlock + 1
           this.lastBlock = blockNumber
           while (blockNumber >= current) {
