@@ -161,6 +161,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [compilerContainer.editor.mode])
 
   useEffect(() => {
+    compileTabLogic.setUseFileConfiguration(!manualConfig)
+    if (!manualConfig) compileTabLogic.setConfigFilePath(configFilePath)
+  }, [manualConfig])
+
+  useEffect(() => {
     if (configurationSettings) {
       setConfiguration(configurationSettings)
     }
@@ -176,18 +181,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setConfigFilePath(configFilePathInput.current.value)
   }
   const handleConfigPathChange = async () => {
-    if (await api.fileExists(configFilePathInput.current.value))
-      setConfigFilePath(configFilePathInput.current.value)
-    else {
-      modal(
-        'New configuration file', `The file "${configFilePathInput.current.value}"" you entered does not exist. Do you want to create a new one?`,
-        'Create',
-        async () => await createNewConfigFile(),
-        'Cancel',
-        () => {}
-      )
+    if (configFilePathInput.current.value !== '') {
+      if (await api.fileExists(configFilePathInput.current.value))
+        setConfigFilePath(configFilePathInput.current.value)
+      else {
+        modal(
+          'New configuration file', `The file "${configFilePathInput.current.value}"" you entered does not exist. Do you want to create a new one?`,
+          'Create',
+          async () => await createNewConfigFile(),
+          'Cancel',
+          () => {}
+        )
+      }
     }
+   
     setShowFilePathInput(false)
+    compileTabLogic.setConfigFilePath(configFilePath)
   }
 
   const _retrieveVersion = (version?) => {

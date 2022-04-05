@@ -31,6 +31,8 @@ export class Compiler {
       language: 'Solidity',
       compilationStartTime: null,
       target: null,
+      useFileConfiguration: false,
+      configFileContent: '',
       lastCompilationResult: {
         data: null,
         source: null
@@ -115,7 +117,13 @@ export class Compiler {
         try {
           if (source && source.sources) {
             const { optimize, runs, evmVersion, language } = this.state
-            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            let params = { optimize, runs, evmVersion, language }
+
+            if (this.state.useFileConfiguration) {
+              params = JSON.parse(this.state.configFileContent)
+            }
+            input = compilerInput(source.sources, params)
+
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
@@ -186,8 +194,13 @@ export class Compiler {
           let input: string
           try {
             if (source && source.sources) {
-              const { optimize, runs, evmVersion, language } = this.state
-              input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+              const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
+              let params = { optimize, runs, evmVersion, language }
+
+              if (useFileConfiguration) {
+                params = JSON.parse(configFileContent)
+              }
+              input = compilerInput(source.sources, params)
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
             }
           } catch (exception) {
@@ -291,6 +304,11 @@ export class Compiler {
       if (source && source.sources) {
         const { optimize, runs, evmVersion, language } = this.state
         jobs.push({ sources: source })
+        let params = { optimize, runs, evmVersion, language }
+
+        if (this.state.useFileConfiguration) {
+          params = JSON.parse(this.state.configFileContent)
+        }
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
