@@ -18,6 +18,8 @@ export class CompileTabLogic {
   public compilerImport
   public event
   public evmVersions: Array<string>
+  public useFileConfiguration: boolean
+  public configFilePath: string
 
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
@@ -46,6 +48,8 @@ export class CompileTabLogic {
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
+    this.useFileConfiguration = false
+    this.configFilePath = ''
     this.language = getValidLanguage(this.api.getCompilerParameters().language)
     if (this.language != null) {
       this.compiler.set('language', this.language)
@@ -56,6 +60,18 @@ export class CompileTabLogic {
     this.optimize = newOptimizeValue
     this.api.setCompilerParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
+  }
+
+  setUseFileConfiguration (useFileConfiguration) {
+    this.useFileConfiguration = useFileConfiguration
+    this.compiler.set('useFileConfiguration', useFileConfiguration)
+  }
+
+  setConfigFilePath (path) {
+    this.configFilePath = path
+    this.api.readFile(path).then( content => {
+      this.compiler.set('configFileContent', content)
+    })
   }
 
   setRuns (runs) {
