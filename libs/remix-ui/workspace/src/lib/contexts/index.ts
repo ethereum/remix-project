@@ -27,5 +27,7 @@ export const FileSystemContext = createContext<{
   dispatchRunScript: (path: string) => Promise<void>,
   dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
   dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>
-  dispatchHandleExpandPath: (paths: string[]) => Promise<void>
+  dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
+  dispatchHandleDownloadFiles: () => Promise<void>,
+  dispatchHandleRestoreBackup: () => Promise<void>
     }>(null)

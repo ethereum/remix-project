@@ -132,7 +132,7 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'contract deployment failed after trying twice', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'revert Deploy Failed', 120000)
   },
 
   'Should fail when parameters are passed to method in test contract #group3': function (browser: NightwatchBrowser) {
