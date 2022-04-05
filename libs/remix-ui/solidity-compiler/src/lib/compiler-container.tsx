@@ -7,7 +7,6 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
-import AutoPlacement from 'react-bootstrap/esm/Overlay'
 import { getValidLanguage } from '@remix-project/remix-solidity'
 
 import './css/style.css'
