@@ -1,10 +1,6 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
-import Schema from "@truffle/contract-schema"
-// import Config from '@truffle/config'
-const Config = require("@truffle/config")
-import { Compile } from "@truffle/compile-solidity"
-import { Shims } from "@truffle/compile-common"
+const { spawn } = require('child_process') // eslint-disable-line
 
 export class TruffleClient extends PluginClient {
   methods: Array<string>
@@ -24,36 +20,31 @@ export class TruffleClient extends PluginClient {
     this.currentSharedFolder = currentSharedFolder
   }
 
-  async compile (fileName: string, CompConfig) {
-    if (this.readOnly) {
-      const errMsg = '[Truffle Compilation]: Cannot compile in read-only mode'
-      return new Error(errMsg)
-    }
-    console.log('fileName-in compileWithTruffle-->', fileName)
-    console.log('config-in compileWithTruffle-->', CompConfig)
-
-    const sources = {
-      Example: await this.call('fileManager', 'getFile', fileName)
-    }
-    let config = Config.default().with(CompConfig)
-    console.log('config---->', config)
-    console.log('sources---->', sources)
-    // Compile first
-    const { compilations } = await Compile.sources({
-      sources,
-      options: config
-    });
-    console.log('compilations----->', compilations)
-    const { contracts } = compilations[0];
-    // use forEach
-    const exampleContract = contracts.find(
-      contract => contract.contractName === "Owner"
-    );
-    const compiled = Schema.normalize(
-      Shims.NewToLegacy.forContract(exampleContract)
-    );
-    if(!compiled.updatedAt) compiled.updatedAt = new Date().toISOString()
-    console.log('compiled----->', compiled)
-    return "done"
+  compile () {
+    return new Promise((resolve, reject) => {
+      if (this.readOnly) {
+        const errMsg = '[Truffle Compilation]: Cannot compile in read-only mode'
+        return reject(new Error(errMsg))
+      }
+      const cmd = `truffle compile`
+      const options = { cwd: this.currentSharedFolder, shell: true }
+      const child = spawn(cmd, options)
+      let result = ''
+      let error = ''
+      child.stdout.on('data', (data) => {
+        console.log('data in truffle-->', data)
+        const msg = `[Truffle Compilation]: ${data.toString()}`
+        console.log('\x1b[32m%s\x1b[0m', msg)
+        result += msg + '\n'
+      })
+      child.stderr.on('data', (err) => {
+        error += `[Truffle Compilation]: ${err.toString()} \n`
+      })
+      child.on('close', () => {
+        if (error && result) resolve(error + result)
+        else if (error) reject(error)
+        else resolve(result)
+      })
+    })
   }
 }

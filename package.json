@@ -159,8 +159,6 @@
     "@remixproject/plugin-utils": "^0.3.28",
     "@remixproject/plugin-webview": "^0.3.28",
     "@remixproject/plugin-ws": "^0.3.28",
-    "@truffle/compile-solidity": "^6.0.17",
-    "@truffle/contract-schema": "^3.4.6",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.2",
     "axios": ">=0.26.0",

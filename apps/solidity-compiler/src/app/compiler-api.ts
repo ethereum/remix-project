@@ -101,14 +101,9 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('hardhat', 'compile', configFile)
   }
 
-  async compileWithTruffle (fileName, compConfig) {
-    console.log('Inside compileWithTruffle in compile-api', compConfig)
-    return await this.call('truffle', 'compile', fileName, compConfig)
+  compileWithTruffle () {
+    return this.call('truffle', 'compile')
   }
-
-  // async compileWithTruffle (fileName, CompConfig) {
-  
-  // }
 
   logToTerminal (content) {
     return this.call('terminal', 'log', content)
