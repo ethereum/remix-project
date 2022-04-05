@@ -56,7 +56,12 @@ export class TxRunnerVM {
 
   runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
     const self = this
-    const account = self.vmaccounts[from]
+    let account
+    if (!from && useCall && Object.keys(self.vmaccounts).length) {
+      from = Object.keys(self.vmaccounts)[0]
+      account = self.vmaccounts[from]
+    } else account = self.vmaccounts[from] 
+    
     if (!account) {
       return callback('Invalid account selected')
     }

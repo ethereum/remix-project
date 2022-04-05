@@ -462,7 +462,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
               htmlFor="listenNetworkCheck"
             >
-              listen on network
+              listen on all transactions
             </label>
           </div>
           <div className="remix_ui_terminal_search d-flex align-items-center h-100">

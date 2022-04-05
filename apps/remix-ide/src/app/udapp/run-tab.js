@@ -18,7 +18,7 @@ const profile = {
   version: packageJson.version,
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode']
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance']
 }
 
 export class RunTab extends ViewPlugin {
@@ -62,6 +62,14 @@ export class RunTab extends ViewPlugin {
       env = typeof env === 'string' ? { context: env } : env
       this.emit('setEnvironmentModeReducer', env, this.currentRequest.from)
     }
+  }
+
+  clearAllInstances () {
+    this.emit('clearAllInstancesReducer')
+  }
+
+  addInstance (address, abi, name) {    
+    this.emit('addInstanceReducer', address, abi, name)
   }
 
   createVMAccount (newAccount) {
