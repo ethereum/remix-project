@@ -141,29 +141,11 @@ export class CompileTabLogic {
           })
         }
       } else if (externalCompType === 'truffle') {
-        const fileName = this.api.currentFile
-        const { currentVersion, optimize, runs, evmVersion} = this.compiler.state
-        if (currentVersion) {
-          const compConfig = {
-              compilers: {
-                solc: {
-                  version: `${currentVersion.substring(0, currentVersion.indexOf('+commit'))}`,
-                  settings: {
-                    optimizer: {
-                      enabled: optimize,
-                      runs: runs
-                    },
-                    evmVersion: evmVersion
-                  }
-                }
-              }
-            }
-          this.api.compileWithTruffle(fileName, compConfig).then((result) => {
+          this.api.compileWithTruffle().then((result) => {
             this.api.logToTerminal({ type: 'info', value: result })
           }).catch((error) => {
             this.api.logToTerminal({ type: 'error', value: error })
           })
-        }
       }
       // TODO readd saving current file
       this.api.saveCurrentFile()
