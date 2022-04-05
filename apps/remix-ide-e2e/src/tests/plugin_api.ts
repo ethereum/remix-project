@@ -355,7 +355,6 @@ module.exports = {
       .frameParent()
       .useCss()
       .clickLaunchIcon('pluginManager')
-      .scrollAndClick('[data-id="pluginManagerComponentActivateButtonhardhat-provider"]')
       .clickLaunchIcon('udapp')
       .click('*[data-id="Hardhat Provider"]')
       .modalFooterOKClick('hardhat-provider')
