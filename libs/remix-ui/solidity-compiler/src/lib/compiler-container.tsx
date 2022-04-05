@@ -623,7 +623,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           }
           <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip">
-                <span>hit Ctr+s for compiling</span>
+                <div className="text-left">
+                <div>Ctr+s for compiling</div>
+                <div>Ctrl+Shift+s for compiling and on the fly execution:</div>
+                <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                <pre>
+                  <code>
+                  /**<br />
+                  * @title ContractName<br />
+                  * @dev ContractDescription<br />
+                  * @custom:dev-run-script file_path<br />
+                  */<br />
+                  contract ContractName {'{}'}<br />
+                  </code>
+                </pre>
+                </div>
               </Tooltip>
             }>
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary d-block w-100 text-break remixui_disabled mb-1 mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
@@ -632,26 +646,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>
-          </OverlayTrigger>
-          <OverlayTrigger overlay={
-              <Tooltip  id="overlay-tooltip-keybinding">
-                <div className="remixui_tooltipCode" >
-                <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
-                <pre>
-                <code>
-                /**<br />
-                 * @title ContractName<br />
-                 * @dev ContractDescription<br />
-                 * @custom:dev-run-script file_path<br />
-                 */<br />
-                 contract ContractName {'{}'}<br />
-                </code>
-                </pre>
-                </div>
-              </Tooltip>
-            }>
-          <span className="mt-2 text-dark">Ctrl+Shift+s for compiling and on the fly execution.</span>
-          </OverlayTrigger>          
+          </OverlayTrigger>                   
         </header>
       </article>
     </section>
