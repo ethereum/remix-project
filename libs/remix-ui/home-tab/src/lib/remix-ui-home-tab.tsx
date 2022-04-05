@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
-import JSZip from 'jszip'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
@@ -176,53 +175,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const startPluginManager = async () => {
     plugin.verticalIcons.select('pluginManager')
   }
-  const saveAs = (blob, name) => {
-    const node = document.createElement('a')
-    node.download = name
-    node.rel = 'noopener'
-    node.href = URL.createObjectURL(blob)
-    setTimeout(function () { URL.revokeObjectURL(node.href) }, 4E4) // 40s
-    setTimeout(function () {
-      try {
-        node.dispatchEvent(new MouseEvent('click'))
-      } catch (e) {
-        const evt = document.createEvent('MouseEvents')
-        evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
-          20, false, false, false, false, 0, null)
-        node.dispatchEvent(evt)
-      }
-    }, 0) // 40s
-  }
-  const downloadFiles = async () => {
-    try {
-      plugin.call('notification', 'toast', 'preparing files for download, please wait..')
-      const zip = new JSZip()
-      zip.file("readme.txt", "This is a Remix backup file.\nThis zip should be used by the restore backup tool in Remix.\nThe .workspaces directory contains your workspaces.")
-      const browserProvider = fileManager.getProvider('browser')
-      await browserProvider.copyFolderToJson('/', ({ path, content }) => {
-        zip.file(path, content)
-      })
-      zip.generateAsync({ type: 'blob' }).then(function (blob) {
-        const today = new Date()
-        const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-        const time = today.getHours() + 'h' + today.getMinutes() + 'min'
-        saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
-        _paq.push(['trackEvent', 'Backup', 'download', 'home'])
-      }).catch((e) => {
-        _paq.push(['trackEvent', 'Backup', 'error', e.message])
-        plugin.call('notification', 'toast', e.message)
-      })
-    } catch (e) {
-      plugin.call('notification', 'toast', e.message)
-    }
-  }
-
-  const restoreBackupZip = async () => {
-    await plugin.appManager.activatePlugin(['restorebackupzip'])
-    await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
-    plugin.verticalIcons.select('restorebackupzip')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
-  }
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
     setState(prevState => {
@@ -335,14 +287,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
                   <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
-                </p>
-                <p className="mb-1">
-                  <i className="mr-1 far fa-download"></i>
-                  <label className="ml-1 remixui_home_text" onClick={() => downloadFiles()}>Download Backup</label>
-                </p>
-                <p className="mb-1">
-                  <i className="mr-1 far fa-upload"></i>
-                  <label className="ml-1 remixui_home_text" onClick={() => restoreBackupZip()}>Restore Backup</label>
                 </p>
                 <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
                 <div className="btn-group">

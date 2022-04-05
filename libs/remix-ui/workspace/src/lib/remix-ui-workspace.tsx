@@ -50,6 +50,22 @@ export function Workspace () {
     global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
   }
 
+  const downloadWorkspaces = async () => {
+    try {
+      await global.dispatchHandleDownloadFiles()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const restoreBackup = async () => {
+    try {
+      await global.dispatchHandleRestoreBackup()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const onFinishRenameWorkspace = async () => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
@@ -156,8 +172,29 @@ export function Workspace () {
                     e.stopPropagation()
                     deleteCurrentWorkspace()
                   }}
-                  className='fas fa-trash'
+                  className='fas fa-trash remixui_menuicon'
                   title='Delete'>
+                </span>
+                <span
+                  hidden={currentWorkspace === NO_WORKSPACE}
+                  id='workspacesDownload'
+                  data-id='workspacesDownload'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    downloadWorkspaces()
+                  }}
+                  className='far fa-download remixui_menuicon'
+                  title='Download Workspaces'>
+                </span>
+                <span
+                  id='workspacesRestore'
+                  data-id='workspacesRestore'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    restoreBackup()
+                  }}
+                  className='far fa-upload remixui_menuicon'
+                  title='Restore Workspaces Backup'>
                 </span>
               </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">

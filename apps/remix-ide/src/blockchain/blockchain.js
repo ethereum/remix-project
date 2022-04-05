@@ -22,7 +22,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: [],
+  methods: ['getCode', 'getTransactionReceipt'],
   version: packageJson.version
 }
 
@@ -390,6 +390,14 @@ export class Blockchain extends Plugin {
 
   pendingTransactionsCount () {
     return Object.keys(this.txRunner.pendingTxs).length
+  }
+
+  async getCode(address) {
+    return await this.web3().eth.getCode(address)
+  }
+
+  async getTransactionReceipt (hash) {
+    return await this.web3().eth.getTransactionReceipt(hash)
   }
 
   /**
