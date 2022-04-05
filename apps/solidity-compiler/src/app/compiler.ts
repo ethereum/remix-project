@@ -19,18 +19,14 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState']
 }
 
-const defaultAppParameters = {
-  hideWarnings: false,
-  autoCompile: false,
-  includeNightlies: false
-}
-
 const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
   version: 'soljson-v0.8.7+commit.e28d00a7',
   evmVersion: null, // compiler default
-  language: 'Solidity'
+  language: 'Solidity',
+  useFileConfiguration: false,
+  configFileContent: ''
 }
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
   constructor () {
@@ -48,7 +44,9 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
       optimize: localStorage.getItem('optimize') === 'true',
       version: localStorage.getItem('version') || defaultCompilerParameters.version,
       evmVersion: localStorage.getItem('evmVersion') || defaultCompilerParameters.evmVersion, // default
-      language: localStorage.getItem('language') || defaultCompilerParameters.language
+      language: localStorage.getItem('language') || defaultCompilerParameters.language,
+      useFileConfiguration: localStorage.getItem('useFileConfiguration') || defaultCompilerParameters.useFileConfiguration,
+      configFileContent: localStorage.getItem('configFileContent') || defaultCompilerParameters.configFileContent
     }
     return params
   }
