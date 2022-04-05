@@ -7,6 +7,7 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
+import AutoPlacement from 'react-bootstrap/esm/Overlay'
 import { getValidLanguage } from '@remix-project/remix-solidity'
 
 import './css/style.css'
@@ -621,12 +622,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </a>
             </div>
           }
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary d-block w-100 text-break remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
+          <OverlayTrigger overlay={
+              <Tooltip id="overlay-tooltip">
+                <span>hit Ctr+s for compiling</span>
+              </Tooltip>
+            }>
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary d-block w-100 text-break remixui_disabled mb-1 mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
               { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
               Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
             </span>
           </button>
+          </OverlayTrigger>
+          <span className="mt-2 text-dark">Ctrl+Shift+s for compiling and on the fly execution.</span>
         </header>
       </article>
     </section>
