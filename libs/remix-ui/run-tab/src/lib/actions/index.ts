@@ -83,6 +83,14 @@ const setupEvents = () => {
     setExecutionContext(env)
   })
 
+  plugin.on('udapp', 'clearAllInstancesReducer', () => {
+    dispatch(clearAllInstances())
+  })
+
+  plugin.on('udapp', 'addInstanceReducer', (address, abi, name) => {
+    addInstance({ abi, address, name })
+  })
+
   plugin.on('filePanel', 'setWorkspace', () => {
     dispatch(resetUdapp())
     resetAndInit()
@@ -549,7 +557,7 @@ export const updateTxFeeContent = (content: string) => {
   dispatch(setTxFeeContent(content))
 }
 
-const addInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> }) => {
+export const addInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> }) => {
   instance.decodedResponse = {}
   dispatch(addNewInstance(instance))
 }

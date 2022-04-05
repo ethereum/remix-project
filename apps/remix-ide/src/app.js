@@ -5,6 +5,7 @@ import { RemixAppManager } from './remixAppManager'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { Web3ProviderModule } from './app/tabs/web3-provider'
+import { IntelligentScriptExecutor } from './app/tabs/intelligent-script-executor'
 import { SidePanel } from './app/components/side-panel'
 import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
@@ -179,7 +180,8 @@ class AppComponent {
       api: offsetToLineColumnConverter,
       name: 'offsettolinecolumnconverter'
     })
-
+    // ----------------- run script after each compilation results -----------
+    const intelligentScriptExecutor = new IntelligentScriptExecutor()
     // -------------------Terminal----------------------------------------
     makeUdapp(blockchain, compilersArtefacts, domEl => terminal.logHtml(domEl))
     const terminal = new Terminal(
@@ -222,6 +224,7 @@ class AppComponent {
       contextualListener,
       terminal,
       web3Provider,
+      intelligentScriptExecutor,
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
@@ -343,7 +346,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage'])
+    await this.appManager.activatePlugin(['walkthrough','storage', 'intelligentScriptExecutor'])
 
     this.appManager.on(
       'filePanel',
