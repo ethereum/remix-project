@@ -5703,11 +5703,10 @@ a.close.disabled {
 }
 
 .tooltip-inner {
-  max-width: 200px;
   padding: 0.25rem 0.5rem;
   color: #eeede9;
   text-align: center;
-  background-color: #000;
+  background-color: var(--text-background);
   border-radius: 0.25rem;
 }
 
