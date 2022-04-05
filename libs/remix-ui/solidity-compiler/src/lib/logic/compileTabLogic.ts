@@ -110,10 +110,9 @@ export class CompileTabLogic {
   }
 
   async isTruffleProject () {
-    return true
-    // if (this.api.getFileManagerMode() === 'localhost') {
-    //   return await this.api.fileExists('truffle.config.js')
-    // } else return false
+    if (this.api.getFileManagerMode() === 'localhost') {
+      return await this.api.fileExists('truffle-config.js')
+    } else return false
   }
 
   runCompiler (externalCompType) {

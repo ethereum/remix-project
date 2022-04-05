@@ -102,15 +102,18 @@ function errorHandler (error: any, service: string) {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
-
-      startService('truffle', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
-        if (error) {
-          errorHandler(error, 'truffle')
-          return false
-        }
-        sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.sharedFolder(program.sharedFolder)
-      })
+      // Run truffle service if a truffle project is shared as folder
+      const truffleConfigFilePath = absolutePath('./', program.sharedFolder) + '/truffle-config.js'
+      if (existsSync(truffleConfigFilePath)) {
+        startService('truffle', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
+          if (error) {
+            errorHandler(error, 'truffle')
+            return false
+          }
+          sharedFolderClient.setWebSocket(ws)
+          sharedFolderClient.sharedFolder(program.sharedFolder)
+        })
+      }
       // Run hardhat service if a hardhat project is shared as folder
       const hardhatConfigFilePath = absolutePath('./', program.sharedFolder)
       const isHardhatProject = existsSync(hardhatConfigFilePath  + '/hardhat.config.js') || existsSync(hardhatConfigFilePath  + '/hardhat.config.ts')
