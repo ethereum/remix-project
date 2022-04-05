@@ -25,12 +25,15 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
             done()
           })
       } else {
+        const txtFile = name + '.txt'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-          .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+          .sendKeys('*[data-id$="/blank"] .remixui_items', txtFile)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
           .pause(2000)
-          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${txtFile}"]`, 60000)
+          .renamePath(txtFile, name.split('/').pop(), name)
+          .openFile(name)
           .setEditorValue(content.content)
           .pause(1000)
           .perform(function () {
