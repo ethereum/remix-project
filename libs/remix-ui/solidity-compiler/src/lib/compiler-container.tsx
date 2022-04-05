@@ -499,14 +499,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const updatehhCompilation = (event) => {
     const checked = event.target.checked
-
+    if (checked) setTruffleCompilation(false) // wayaround to reset the variable
     sethhCompilation(checked)
     api.setAppParameter('hardhat-compilation', checked)
   }
 
   const updateTruffleCompilation = (event) => {
     const checked = event.target.checked
-
+    if (checked) sethhCompilation(false) // wayaround to reset the variable
     setTruffleCompilation(checked)
     api.setAppParameter('truffle-compilation', checked)
   }
