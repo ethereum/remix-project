@@ -39,6 +39,7 @@ import "hardhat/console.sol";
 /**
  * @title Owner
  * @dev Set & change owner
+ * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract Owner {
 
@@ -92,6 +93,7 @@ pragma solidity >=0.7.0 <0.9.0;
 /** 
  * @title Ballot
  * @dev Implements voting process along with vote delegation
+ * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract Ballot {
    
