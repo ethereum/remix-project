@@ -53,3 +53,85 @@ export interface ContractAST {
         usedErrors?: any[]
     }[]
 }
+
+export interface ContractABI {
+    [key: string]: {
+        abi: ({
+            inputs: never[];
+            stateMutability: string;
+            type: string;
+            anonymous?: undefined;
+            name?: undefined;
+            outputs?: undefined;
+        } | {
+            anonymous: boolean;
+            inputs: {
+                indexed: boolean;
+                internalType: string;
+                name: string;
+                type: string;
+            }[];
+            name: string;
+            type: string;
+            stateMutability?: undefined;
+            outputs?: undefined;
+        } | {
+            inputs: {
+                internalType: string;
+                name: string;
+                type: string;
+            }[];
+            name: string;
+            outputs: {
+                internalType: string;
+                name: string;
+                type: string;
+            }[];
+            stateMutability: string;
+            type: string;
+            anonymous?: undefined;
+        })[];
+        devdoc: {
+            kind: string;
+            methods: {
+                [key: string]: {
+                    [key: string]: string
+                }
+            };
+            version: number;
+        };
+        evm: any
+        metadata: string;
+        storageLayout: {
+            storage: {
+                astId: number;
+                contract: string;
+                label: string;
+                offset: number;
+                slot: string;
+                type: string;
+            }[];
+            types: {
+                [key: string]: {
+                    base: string;
+                    encoding: string;
+                    label: string;
+                    numberOfBytes: string;
+                    members?: {
+                        astId: number;
+                        contract: string;
+                        label: string;
+                        offset: number;
+                        slot: string;
+                        type: string;
+                    }[];
+                };
+            };
+        };
+        userdoc: {
+            kind: string;
+            methods: any;
+            version: number;
+        };
+    };
+}
