@@ -48,7 +48,7 @@ export const FileLabel = (props: FileLabelProps) => {
 
   return (
     <div
-      className='remixui_items d-inline-block w-100'
+      className='remixui_items d-inline-block w-100 text-break'
       ref={isEditable ? labelRef : null}
       suppressContentEditableWarning={true}
       contentEditable={isEditable}
