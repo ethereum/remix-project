@@ -631,8 +631,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <OverlayTrigger overlay={
                 <Tooltip id="overlay-tooltip">
                   <div className="text-left">
-                  <div>Ctrl+s for compiling</div>
-                  <div>Ctrl+Shift+s for compiling and script execution:</div>
+                  <div><b>Ctrl+S</b> for compiling</div>
+                  <div><b>Ctrl+Shift+S</b> for compiling and script execution:</div>
                   <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
                   <pre>
                     <code>
@@ -647,7 +647,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   </div>
                 </Tooltip>
               }>
-              <i className="ml-2 mt-3 mb-1 fas fa-info"></i>
+              <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" ><i className="ml-2 mt-3 mb-1 fas fa-info"></i></a>
             </OverlayTrigger>
           </div>          
         </header>
