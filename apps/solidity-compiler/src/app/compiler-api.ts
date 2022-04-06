@@ -330,6 +330,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
         e.preventDefault()
         if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
         else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
+        else this.compileTabLogic.runCompiler(undefined)
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
