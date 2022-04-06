@@ -46,3 +46,9 @@ export function getValidLanguage (val: string): Language {
   }
   return null
 }
+
+export function compilerInputForConfigFile(sources: Source, opts)
+{
+  opts.sources = sources
+  return JSON.stringify(opts)
+}
