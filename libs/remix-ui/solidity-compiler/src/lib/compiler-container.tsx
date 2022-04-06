@@ -621,32 +621,35 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </a>
             </div>
           }
-          <OverlayTrigger overlay={
-              <Tooltip id="overlay-tooltip">
-                <div className="text-left">
-                <div>Ctrl+s for compiling</div>
-                <div>Ctrl+Shift+s for compiling and on the fly execution:</div>
-                <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
-                <pre>
-                  <code>
-                  /**<br />
-                  * @title ContractName<br />
-                  * @dev ContractDescription<br />
-                  * @custom:dev-run-script file_path<br />
-                  */<br />
-                  contract ContractName {'{}'}<br />
-                  </code>
-                </pre>
-                </div>
-              </Tooltip>
-            }>
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary d-block w-100 text-break remixui_disabled mb-1 mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
-            <span>
-              { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-              Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
-            </span>
-          </button>
-          </OverlayTrigger>                   
+          <div className='d-flex align-items-center'>
+            <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_solidityCompileButton d-inline-block remixui_disabled mb-1 mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
+              <span>
+                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
+                Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
+              </span>
+            </button>
+            <OverlayTrigger overlay={
+                <Tooltip id="overlay-tooltip">
+                  <div className="text-left">
+                  <div>Ctrl+s for compiling</div>
+                  <div>Ctrl+Shift+s for compiling and on the fly execution:</div>
+                  <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                  <pre>
+                    <code>
+                    /**<br />
+                    * @title ContractName<br />
+                    * @dev ContractDescription<br />
+                    * @custom:dev-run-script file_path<br />
+                    */<br />
+                    contract ContractName {'{}'}<br />
+                    </code>
+                  </pre>
+                  </div>
+                </Tooltip>
+              }>
+              <i className="ml-2 mt-3 mb-1 fas fa-info"></i>
+            </OverlayTrigger>
+          </div>          
         </header>
       </article>
     </section>
