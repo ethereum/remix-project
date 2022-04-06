@@ -33,6 +33,7 @@ const isElectron = require('is-electron')
 const remixLib = require('@remix-project/remix-lib')
 
 import { QueryParams } from '@remix-project/remix-lib'
+import { SearchPlugin } from './app/tabs/search'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -152,7 +153,7 @@ class AppComponent {
     const storagePlugin = new StoragePlugin()
 
     //----- search
-    // const search = new SearchPlugin()
+    const search = new SearchPlugin()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -233,6 +234,7 @@ class AppComponent {
       hardhatProvider,
       ganacheProvider,
       this.walkthroughService,
+      search
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -350,7 +352,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage', 'intelligentScriptExecutor'])
+    await this.appManager.activatePlugin(['walkthrough','storage', 'search','intelligentScriptExecutor'])
 
     this.appManager.on(
       'filePanel',
