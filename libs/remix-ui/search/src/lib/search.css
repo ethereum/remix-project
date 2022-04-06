@@ -134,3 +134,11 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+.search_plugin_search_indicator{
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.search_plugin_stop{
+    cursor: pointer;
+}
