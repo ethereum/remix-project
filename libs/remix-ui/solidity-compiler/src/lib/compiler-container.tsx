@@ -621,7 +621,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </a>
             </div>
           }
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary d-block w-100 text-break remixui_disabled mt-3" title="Compile" onClick={compile} disabled={disableCompileButton}>
             <span>
               { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
               Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
