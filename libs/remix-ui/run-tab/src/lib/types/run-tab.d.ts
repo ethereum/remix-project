@@ -34,6 +34,7 @@ export class RunTab extends ViewPlugin {
     udappUI: any;
     renderComponent(): void;
     onReady(api: any): void;
+    onInitDone(): void;
     recorder: Recorder;
 }
 import { ViewPlugin } from "@remixproject/engine-web/lib/view";

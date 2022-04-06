@@ -39,7 +39,6 @@ export class RunTab extends ViewPlugin {
     this.el = document.createElement('div')
   }
 
-
   setupEvents () {
     this.blockchain.events.on('newTransaction', (tx, receipt) => {
       this.emit('newTransaction', tx, receipt)
@@ -93,9 +92,54 @@ export class RunTab extends ViewPlugin {
     return  <div><RunTabUI plugin={this} /></div>
   }
 
-
   onReady (api) {
-    this.REACT_API = api
+    this.REACT_API = api    
+  }
+
+  async onInitDone () {
+    const udapp = this // eslint-disable-line
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Hardhat Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('hardhat-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Ganache Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('ganache-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Wallet Connect',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('walletconnect', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
   }
 
   writeFile (fileName, content) {
