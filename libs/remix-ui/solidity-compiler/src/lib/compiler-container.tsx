@@ -633,7 +633,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   <div className="text-left">
                   <div><b>Ctrl+S</b> for compiling</div>
                   <div><b>Ctrl+Shift+S</b> for compiling and script execution:</div>
-                  <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                  <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
                   <pre>
                     <code>
                     /**<br />
@@ -644,6 +644,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     contract ContractName {'{}'}<br />
                     </code>
                   </pre>
+                  Click to know more
                   </div>
                 </Tooltip>
               }>
