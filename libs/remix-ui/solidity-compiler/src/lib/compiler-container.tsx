@@ -624,7 +624,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip">
                 <div className="text-left">
-                <div>Ctr+s for compiling</div>
+                <div>Ctrl+s for compiling</div>
                 <div>Ctrl+Shift+s for compiling and on the fly execution:</div>
                 <div>choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
                 <pre>
