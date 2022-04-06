@@ -64,7 +64,7 @@ export const envChangeNotification = (env: { context: string, fork: string }, fr
     <span>
       { from + ' '}
       <span className="font-weight-bold text-warning">
-        is changing your environment to
+        set your environment to
       </span> {env && env.context}
     </span>
   </div>
