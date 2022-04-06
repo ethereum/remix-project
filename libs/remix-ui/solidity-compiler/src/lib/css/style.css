@@ -172,10 +172,8 @@
   -webkit-animation: spin 2s infinite linear;
 }
 
-.remixui_tooltipCode {
-  text-align: left !important;
-  width: 400px !important;
-  background-color: #000 !important;
+.remixui_solidityCompileButton {
+  width: 94%;  
 }
 
 @keyframes spin {
