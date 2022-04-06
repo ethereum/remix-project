@@ -5,7 +5,6 @@ import { customAction } from '@remixproject/plugin-api/lib/file-system/file-pane
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
-import { defaultContract, defaultScript } from '../templates/default'
 import { QueryParams } from '@remix-project/remix-lib'
 import JSZip from 'jszip'
 
@@ -173,14 +172,7 @@ export const clearPopUp = async () => {
 export const createNewFile = async (path: string, rootDir: string) => {
   const fileManager = plugin.fileManager
   const newName = await createNonClashingNameAsync(path, fileManager)
-  let content = ''
-  if (newName.endsWith('.sol')) { 
-    content = defaultContract
-  }
-  if (newName.endsWith('.js') || newName.endsWith('.ts')) { 
-    content = defaultScript
-  }
-  const createFile = await fileManager.writeFile(newName, content)
+  const createFile = await fileManager.writeFile(newName, '')
 
   if (!createFile) {
     return dispatch(displayPopUp('Failed to create file ' + newName))
