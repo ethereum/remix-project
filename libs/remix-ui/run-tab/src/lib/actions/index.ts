@@ -64,10 +64,6 @@ const setupEvents = () => {
 
   plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(name))
 
-  plugin.on('manager', 'pluginActivated', addPluginProvider.bind(plugin))
-
-  plugin.on('manager', 'pluginDeactivated', removePluginProvider.bind(plugin))
-
   plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult(file, source, languageVersion, data, input))
 
   plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult(file, source, languageVersion, data))
@@ -186,28 +182,6 @@ export const setGasFee = (value: number) => {
   dispatch(setGasLimit(value))
 }
 
-const addPluginProvider = (profile) => {
-  if (profile.kind === 'provider') {
-    ((profile, app) => {
-      const web3Provider = {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await app.call(profile.name, 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-      app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
-    })(profile, plugin)
-  }
-}
-
-const removePluginProvider = (profile) => {
-  if (profile.kind === 'provider') plugin.blockchain.removeProvider(profile.displayName)
-}
-
 const setFinalContext = () => {
   // set the final context. Cause it is possible that this is not the one we've originaly selected
   const value = _getProviderDropdownValue()
@@ -233,7 +207,6 @@ export const setNetworkNameFromProvider = (networkName: string) => {
 
 const addExternalProvider = (network) => {
   dispatch(addProvider(network))
-  dispatch(displayPopUp(`${network.name} provider added`))
 }
 
 const removeExternalProvider = (name) => {

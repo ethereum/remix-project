@@ -7,25 +7,26 @@ import { ethers } from 'ethers'
 import { AbstractProvider } from './abstract-provider'
 
 const profile = {
-  name: 'hardhat-provider',
-  displayName: 'Hardhat Provider',
+  name: 'ganache-provider',
+  displayName: 'Ganache Provider',
   kind: 'provider',
-  description: 'Hardhat provider',
+  description: 'Ganache',
   methods: ['sendAsync'],
   version: packageJson.version
 }
 
-export class HardhatProvider extends AbstractProvider {
+export class GanacheProvider extends AbstractProvider {
   constructor (blockchain) {
     super(profile, blockchain, 'http://127.0.0.1:8545')
   }
 
   body (): JSX.Element {
     return (
-      <div> Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
-        <div className="border p-1">npx hardhat node</div>       
-        For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
-        <div>Hardhat JSON-RPC Endpoint:</div>
+      <div> Note: To run Ganache on your system, run
+        <div className="border p-1">npm install -g ganache</div> 
+        <div className="border p-1">ganache</div>       
+        For more info, visit: <a href="https://github.com/trufflesuite/ganache" target="_blank">Ganache Documentation</a>
+        <div>Ganache JSON-RPC Endpoint:</div>
       </div>
     )
   }
