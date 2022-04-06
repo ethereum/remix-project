@@ -59,17 +59,19 @@ export class CompileAndRun extends Plugin {
     window.document.addEventListener('keydown', this.executionListener)
 
     this.on('compilerMetadata', 'artefactsUpdated', async (fileName, contract) => {
-      if (this.targetFileName === contract.file && contract.object && contract.object.devdoc['custom:dev-run-script']) {
-        this.targetFileName = null
-        const file = contract.object.devdoc['custom:dev-run-script']
-        if (file) {
-          this.runScript(file, true)
-          _paq.push(['trackEvent', 'ScriptExecutor', 'run_script_after_compile'])
+      if (this.targetFileName === contract.file) {
+        if (contract.object && contract.object.devdoc['custom:dev-run-script']) {
+          this.targetFileName = null
+          const file = contract.object.devdoc['custom:dev-run-script']
+          if (file) {
+            this.runScript(file, true)
+            _paq.push(['trackEvent', 'ScriptExecutor', 'run_script_after_compile'])
+          } else {
+            this.call('notification', 'toast', 'You have not set a script to run. Set it with @custom:dev-run-script NatSpec tag.')
+          }
         } else {
           this.call('notification', 'toast', 'You have not set a script to run. Set it with @custom:dev-run-script NatSpec tag.')
         }
-      } else {
-        this.call('notification', 'toast', 'You have not set a script to run. Set it with @custom:dev-run-script NatSpec tag.')
       }
     })
   }
