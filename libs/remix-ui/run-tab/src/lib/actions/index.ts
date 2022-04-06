@@ -298,6 +298,7 @@ const broadcastCompilationResult = async (file, source, languageVersion, data, i
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
   })
   const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file].ast)
+  console.log('data: ', data)
 
   if (isUpgradeable) dispatch(setDeployOptions([{ title: 'Deploy with Proxy', active: false }]))
   else dispatch(setDeployOptions([]))
