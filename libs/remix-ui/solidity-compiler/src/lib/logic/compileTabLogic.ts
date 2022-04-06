@@ -109,29 +109,43 @@ export class CompileTabLogic {
     } else return false
   }
 
-  runCompiler (hhCompilation) {
+  async isTruffleProject () {
+    if (this.api.getFileManagerMode() === 'localhost') {
+      return await this.api.fileExists('truffle-config.js')
+    } else return false
+  }
+
+  runCompiler (externalCompType) {
     try {
-      if (this.api.getFileManagerMode() === 'localhost' && hhCompilation) {
-        const { currentVersion, optimize, runs } = this.compiler.state
-        if (currentVersion) {
-          const fileContent = `module.exports = {
-            solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
-            settings: {
-              optimizer: {
-                enabled: ${optimize},
-                runs: ${runs}
+      if (this.api.getFileManagerMode() === 'localhost') {
+        if (externalCompType === 'hardhat') {
+          const { currentVersion, optimize, runs } = this.compiler.state
+          if (currentVersion) {
+            const fileContent = `module.exports = {
+              solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+              settings: {
+                optimizer: {
+                  enabled: ${optimize},
+                  runs: ${runs}
+                }
               }
             }
+            `
+            const configFilePath = 'remix-compiler.config.js'
+            this.api.writeFile(configFilePath, fileContent)
+            _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
+            this.api.compileWithHardhat(configFilePath).then((result) => {
+              this.api.logToTerminal({ type: 'info', value: result })
+            }).catch((error) => {
+              this.api.logToTerminal({ type: 'error', value: error })
+            })
           }
-          `
-          const configFilePath = 'remix-compiler.config.js'
-          this.api.writeFile(configFilePath, fileContent)
-          _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
-          this.api.compileWithHardhat(configFilePath).then((result) => {
-            this.api.logToTerminal({ type: 'info', value: result })
-          }).catch((error) => {
-            this.api.logToTerminal({ type: 'error', value: error })
-          })
+        } else if (externalCompType === 'truffle') {
+            this.api.compileWithTruffle().then((result) => {
+              this.api.logToTerminal({ type: 'info', value: result })
+            }).catch((error) => {
+              this.api.logToTerminal({ type: 'error', value: error })
+            })
         }
       }
       // TODO readd saving current file
