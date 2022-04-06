@@ -2,7 +2,7 @@
 
 import { update } from 'solc/abi'
 import * as webworkify from 'webworkify-webpack'
-import compilerInput from './compiler-input'
+import compilerInput, { compilerInputForConfigFile } from './compiler-input'
 import EventManager from '../lib/eventManager'
 import txHelper from './helper'
 import {
@@ -116,13 +116,13 @@ export class Compiler {
         let input
         try {
           if (source && source.sources) {
-            const { optimize, runs, evmVersion, language } = this.state
-            let params = { optimize, runs, evmVersion, language }
+            const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
 
-            if (this.state.useFileConfiguration) {
-              params = JSON.parse(this.state.configFileContent)
+            if (useFileConfiguration) {
+              input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+            } else {
+              input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
             }
-            input = compilerInput(source.sources, params)
 
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
@@ -195,12 +195,13 @@ export class Compiler {
           try {
             if (source && source.sources) {
               const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
-              let params = { optimize, runs, evmVersion, language }
 
               if (useFileConfiguration) {
-                params = JSON.parse(configFileContent)
+                input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+              } else {
+                input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
               }
-              input = compilerInput(source.sources, params)
+
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
             }
           } catch (exception) {
@@ -302,17 +303,21 @@ export class Compiler {
 
     this.state.compileJSON = (source: SourceWithTarget) => {
       if (source && source.sources) {
-        const { optimize, runs, evmVersion, language } = this.state
+        const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
-        let params = { optimize, runs, evmVersion, language }
+        let input
 
-        if (this.state.useFileConfiguration) {
-          params = JSON.parse(this.state.configFileContent)
+        if (useFileConfiguration) {
+          input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+        } else {
+          input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
         }
+
+
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
-          input: compilerInput(source.sources, { optimize, runs, evmVersion, language })
+          input: input
         })
       }
     }

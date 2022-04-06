@@ -48,30 +48,27 @@ export class CompileTabLogic {
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
-    this.useFileConfiguration = false
-    this.configFilePath = ''
+    this.useFileConfiguration = this.api.getCompilerParameters().useFileConfiguration
+    this.configFilePath = this.api.getCompilerParameters().configFilePath
     this.language = getValidLanguage(this.api.getCompilerParameters().language)
     if (this.language != null) {
       this.compiler.set('language', this.language)
     }
   }
 
-  setOptimize (newOptimizeValue) {
+  setOptimize (newOptimizeValue: boolean) {
     this.optimize = newOptimizeValue
     this.api.setCompilerParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
   }
 
-  setUseFileConfiguration (useFileConfiguration) {
+  setUseFileConfiguration (useFileConfiguration: boolean) {
     this.useFileConfiguration = useFileConfiguration
     this.compiler.set('useFileConfiguration', useFileConfiguration)
   }
 
   setConfigFilePath (path) {
     this.configFilePath = path
-    this.api.readFile(path).then( content => {
-      this.compiler.set('configFileContent', content)
-    })
   }
 
   setRuns (runs) {
@@ -111,6 +108,9 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
+        this.api.readFile(this.configFilePath).then( content => {
+          this.compiler.set('configFileContent', content)
+        })
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {
