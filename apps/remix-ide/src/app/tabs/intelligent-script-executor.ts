@@ -56,7 +56,9 @@ export class IntelligentScriptExecutor extends Plugin {
         if (file) {
           this.runScript(file, true)
           _paq.push(['trackEvent', 'ScriptExecutor', 'run_script_after_compile'])
-        } 
+        } else {
+          this.call('notification', 'toast', 'You have not set a script. Set it with @dev-run-script natspac tag.')
+        }
       }
     })
   }
