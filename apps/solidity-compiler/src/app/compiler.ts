@@ -26,7 +26,7 @@ const defaultCompilerParameters = {
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,
-  configFileContent: ''
+  configFilePath: ''
 }
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
   constructor () {
@@ -45,8 +45,8 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
       version: localStorage.getItem('version') || defaultCompilerParameters.version,
       evmVersion: localStorage.getItem('evmVersion') || defaultCompilerParameters.evmVersion, // default
       language: localStorage.getItem('language') || defaultCompilerParameters.language,
-      useFileConfiguration: localStorage.getItem('useFileConfiguration') || defaultCompilerParameters.useFileConfiguration,
-      configFileContent: localStorage.getItem('configFileContent') || defaultCompilerParameters.configFileContent
+      useFileConfiguration: localStorage.getItem('useFileConfiguration') == 'true',
+      configFilePath: localStorage.getItem('configFilePath') || defaultCompilerParameters.configFilePath
     }
     return params
   }

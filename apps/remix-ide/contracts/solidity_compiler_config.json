@@ -1,61 +1,65 @@
 {
-    "_comment": "For more info please visit https://docs.soliditylang.org/en/develop/using-the-compiler.html?highlight=standard%20json#input-description",
-    "language": "Solidity",
-    "settings":
-    {
-      "stopAfter": "parsing",
-      "remappings": [ ":g=/dir" ],
-      "optimizer": {
-        "enabled": false,
-        "runs": 200,
-        "details": {
-          "peephole": true,
-          "inliner": true,
-          "jumpdestRemover": true,
-          "orderLiterals": false,
-          "deduplicate": false,
-          "cse": false,
-          "constantOptimizer": false,
-          "yul": false,
-          "yulDetails": {
-            "stackAllocation": true,
-            "optimizerSteps": "dhfoDgvulfnTUtnIf..."
-          }
-        }
-      },
-      "evmVersion": "byzantium",
-      "viaIR": true,
-      "debug": {
-        "revertStrings": "default",
-        "debugInfo": ["location", "snippet"]
-      },
-      "metadata": {
-        "useLiteralContent": true,
-        "bytecodeHash": "ipfs"
-      },
-      "outputSelection": {
-        "*": {
-          "*": [
-            "metadata", "evm.bytecode",
-            "evm.bytecode.sourceMap"
-          ],
-          "": [
-            "ast"
-          ]
-        },
-        "def": {
-          "MyContract": [ "abi", "evm.bytecode.opcodes" ]
-        }
-      },
-      "modelChecker":
-      {
-        "divModNoSlacks": false,
-        "engine": "chc",
-        "invariants": ["contract", "reentrancy"],
-        "showUnproved": true,
-        "solvers": ["cvc4", "smtlib2", "z3"],
-        "targets": ["underflow", "overflow", "assert"],
-        "timeout": 20000
-      }
-    }
-  }
+	"language": "Solidity",
+	"settings": {
+		"remappings": [
+			":g=/dir"
+		],
+		"optimizer": {
+			"enabled": true,
+			"runs": 200,
+			"details": {
+				"peephole": true,
+				"inliner": true,
+				"jumpdestRemover": true,
+				"orderLiterals": false,
+				"deduplicate": false,
+				"cse": false,
+				"constantOptimizer": false,
+				"yul": false
+			}
+		},
+		"evmVersion": "byzantium",
+		"viaIR": true,
+		"debug": {
+			"revertStrings": "default"
+		},
+		"metadata": {
+			"useLiteralContent": true,
+			"bytecodeHash": "ipfs"
+		},
+		"outputSelection": {
+			"*": {
+				"*": [
+					"metadata",
+					"evm.bytecode",
+					"evm.bytecode.sourceMap"
+				],
+				"": [
+					"ast"
+				]
+			},
+			"def": {
+				"MyContract": [
+					"abi",
+					"evm.bytecode.opcodes"
+				]
+			}
+		},
+		"modelChecker": {
+			"divModNoSlacks": false,
+			"engine": "chc",
+			"showUnproved": true,
+			"solvers": [
+				"cvc4",
+				"smtlib2",
+				"z3"
+			],
+			"targets": [
+				"underflow",
+				"overflow",
+				"assert"
+			],
+			"timeout": 20000
+		}
+	}
+}
