@@ -66,10 +66,10 @@ export class CompileAndRun extends Plugin {
           this.runScript(file, true)
           _paq.push(['trackEvent', 'ScriptExecutor', 'run_script_after_compile'])
         } else {
-          this.call('notification', 'toast', 'You have not set a script to run. Set it with @dev-run-script natspac tag.')
+          this.call('notification', 'toast', 'You have not set a script to run. Set it with @custom:dev-run-script NatSpec tag.')
         }
       } else {
-        this.call('notification', 'toast', 'You have not set a script to run. Set it with @dev-run-script natspac tag.')
+        this.call('notification', 'toast', 'You have not set a script to run. Set it with @custom:dev-run-script NatSpec tag.')
       }
     })
   }
