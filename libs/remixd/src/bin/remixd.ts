@@ -25,6 +25,7 @@ async function warnLatestVersion () {
 const services = {
   git: (readOnly: boolean) => new servicesList.GitClient(readOnly),
   hardhat: (readOnly: boolean) => new servicesList.HardhatClient(readOnly),
+  truffle: (readOnly: boolean) => new servicesList.TruffleClient(readOnly),
   slither: (readOnly: boolean) => new servicesList.SlitherClient(readOnly),
   folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly)
 }
@@ -34,11 +35,12 @@ const ports = {
   git: 65521,
   hardhat: 65522,
   slither: 65523,
+  truffle: 65524,
   folder: 65520
 }
 
 const killCallBack: Array<any> = [] // any is function
-function startService<S extends 'git' | 'hardhat' | 'slither' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
+function startService<S extends 'git' | 'hardhat' | 'truffle' | 'slither' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
   const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
@@ -100,6 +102,18 @@ function errorHandler (error: any, service: string) {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
+      // Run truffle service if a truffle project is shared as folder
+      const truffleConfigFilePath = absolutePath('./', program.sharedFolder) + '/truffle-config.js'
+      if (existsSync(truffleConfigFilePath)) {
+        startService('truffle', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
+          if (error) {
+            errorHandler(error, 'truffle')
+            return false
+          }
+          sharedFolderClient.setWebSocket(ws)
+          sharedFolderClient.sharedFolder(program.sharedFolder)
+        })
+      }
       // Run hardhat service if a hardhat project is shared as folder
       const hardhatConfigFilePath = absolutePath('./', program.sharedFolder)
       const isHardhatProject = existsSync(hardhatConfigFilePath  + '/hardhat.config.js') || existsSync(hardhatConfigFilePath  + '/hardhat.config.ts')

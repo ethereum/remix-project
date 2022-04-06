@@ -1,3 +1,4 @@
+import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
@@ -98,6 +99,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   compileWithHardhat (configFile) {
     return this.call('hardhat', 'compile', configFile)
+  }
+
+  compileWithTruffle () {
+    return this.call('truffle', 'compile')
   }
 
   logToTerminal (content) {
@@ -323,7 +328,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
-        this.compileTabLogic.runCompiler(await this.getAppParameter('hardhat-compilation'))
+        if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
+        else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
