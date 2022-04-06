@@ -3,6 +3,7 @@
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
+const _paq = window._paq = window._paq || []
 
 let web3
 
@@ -128,6 +129,7 @@ export class ExecutionContext {
   }
 
   async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+    _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
@@ -220,7 +222,7 @@ export class ExecutionContext {
         cb()
       } else {
         web3.setProvider(oldProvider)
-        cb('Not possible to connect to the Web3 provider. Make sure the provider is running, a connection is open (via IPC or RPC) or that the provider plugin is properly configured.')
+        cb(`Not possible to connect to ${context}. Make sure the provider is running, a connection is open (via IPC or RPC) or that the provider plugin is properly configured.`)
       }
     })
   }
