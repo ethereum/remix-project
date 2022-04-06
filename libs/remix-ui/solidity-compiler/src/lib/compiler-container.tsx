@@ -647,7 +647,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   </div>
                 </Tooltip>
               }>
-              <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" ><i className="ml-2 mt-3 mb-1 fas fa-info"></i></a>
+              <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank" ><i className="ml-2 mt-3 mb-1 fas fa-info"></i></a>
             </OverlayTrigger>
           </div>          
         </header>
