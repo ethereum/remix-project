@@ -75,9 +75,6 @@ export class Layout extends Plugin {
         } else if (e.code === 'KeyA') {
           // Ctrl+Shift+A
           this.call('menuicons', 'select', 'pluginManager')
-        } else if (e.code === 'KeyS') {
-          //  Ctrl+Shift+S
-          this.call('menuicons', 'select', 'settings')
         }
         e.preventDefault()
       }
