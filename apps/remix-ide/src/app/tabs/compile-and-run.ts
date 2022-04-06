@@ -1,10 +1,15 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
 const _paq = window._paq = window._paq || []
 
 export const profile = {
-  name: 'intelligentScriptExecutor',
-  displayName: 'Intelligent Script Executor',
+  name: 'compileAndRun',
+  displayName: 'Compile and Run',
   description: 'after each compilation, run the script defined in Natspec.',
   methods: [],
   version: packageJson.version,
@@ -13,7 +18,7 @@ export const profile = {
 
 type listener = (event: KeyboardEvent) => void
 
-export class IntelligentScriptExecutor extends Plugin {
+export class CompileAndRun extends Plugin {
   executionListener: listener
   targetFileName: string
 
@@ -39,11 +44,15 @@ export class IntelligentScriptExecutor extends Plugin {
 
   async runScript (fileName, clearAllInstances) {
     await this.call('terminal', 'log', `running ${fileName} ...`)
-    const content = await this.call('fileManager', 'readFile', fileName)
-    if (clearAllInstances) {
-      await this.call('udapp', 'clearAllInstances')
-    }
-    await this.call('scriptRunner', 'execute', content)
+    try {
+      const content = await this.call('fileManager', 'readFile', fileName)
+      if (clearAllInstances) {
+        await this.call('udapp', 'clearAllInstances')
+      }
+      await this.call('scriptRunner', 'execute', content)
+    } catch (e) {
+      this.call('notification', 'toast', e.message || e)
+    }    
   }
 
   onActivation () {
@@ -57,8 +66,10 @@ export class IntelligentScriptExecutor extends Plugin {
           this.runScript(file, true)
           _paq.push(['trackEvent', 'ScriptExecutor', 'run_script_after_compile'])
         } else {
-          this.call('notification', 'toast', 'You have not set a script. Set it with @dev-run-script natspac tag.')
+          this.call('notification', 'toast', 'You have not set a script to run. Set it with @dev-run-script natspac tag.')
         }
+      } else {
+        this.call('notification', 'toast', 'You have not set a script to run. Set it with @dev-run-script natspac tag.')
       }
     })
   }
