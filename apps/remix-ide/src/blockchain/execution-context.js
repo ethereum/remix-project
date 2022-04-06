@@ -3,6 +3,7 @@
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
+const _paq = window._paq = window._paq || []
 
 let web3
 
@@ -128,6 +129,7 @@ export class ExecutionContext {
   }
 
   async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+    _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
