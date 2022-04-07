@@ -172,7 +172,7 @@
   -webkit-animation: spin 2s infinite linear;
 }
 
-.remixui_solidityCompileButton {
+.remixui_solidityCompileAndRunButton {
   width: 94%;  
 }
 
