@@ -3,7 +3,7 @@
 	"settings": {
 		"optimizer": {
 			"enabled": true,
-			"runs": 260
+			"runs": 200
 		},
 		"outputSelection": {
 			"*": {
