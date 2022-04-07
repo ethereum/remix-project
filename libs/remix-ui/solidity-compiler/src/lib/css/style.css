@@ -171,6 +171,11 @@
   -o-animation: spin 2s infinite linear;
   -webkit-animation: spin 2s infinite linear;
 }
+
+.remixui_solidityCompileAndRunButton {
+  width: 94%;  
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

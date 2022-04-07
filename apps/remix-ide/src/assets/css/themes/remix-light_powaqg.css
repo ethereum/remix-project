@@ -5697,12 +5697,11 @@ a.close.disabled {
 }
 
 .tooltip-inner {
-  max-width: 200px;
-  padding: 0.25rem 0.5rem;
-  color: #fff;
+  padding: .25rem .5rem;
+  color: var(--text);
   text-align: center;
-  background-color: #000;
-  border-radius: 0.25rem;
+  background-color: var(--light);
+  border-radius: .25rem
 }
 
 .popover {
