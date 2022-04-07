@@ -113,7 +113,7 @@ export class Compiler {
           return { error: 'Deferred import' }
         }
         let result: CompilationResult = {}
-        let input
+        let input = ""
         try {
           if (source && source.sources) {
             const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
@@ -124,6 +124,7 @@ export class Compiler {
               input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
             }
 
+            console.log("input = ", input)
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
@@ -191,7 +192,7 @@ export class Compiler {
             return { error: 'Deferred import' }
           }
           let result: CompilationResult = {}
-          let input: string
+          let input = ""
           try {
             if (source && source.sources) {
               const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
@@ -305,12 +306,17 @@ export class Compiler {
       if (source && source.sources) {
         const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
-        let input
+        let input = ""
 
-        if (useFileConfiguration) {
-          input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
-        } else {
-          input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+        try {
+          if (useFileConfiguration) {
+            input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+          } else {
+            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+          }
+        } catch (exception) {
+          this.onCompilationFinished({ error: { formattedMessage: exception.messsage } })
+          return
         }
 
 

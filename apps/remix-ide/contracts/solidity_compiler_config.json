@@ -1,65 +1,16 @@
 {
 	"language": "Solidity",
 	"settings": {
-		"remappings": [
-			":g=/dir"
-		],
 		"optimizer": {
 			"enabled": true,
-			"runs": 200,
-			"details": {
-				"peephole": true,
-				"inliner": true,
-				"jumpdestRemover": true,
-				"orderLiterals": false,
-				"deduplicate": false,
-				"cse": false,
-				"constantOptimizer": false,
-				"yul": false
-			}
-		},
-		"evmVersion": "byzantium",
-		"viaIR": true,
-		"debug": {
-			"revertStrings": "default"
-		},
-		"metadata": {
-			"useLiteralContent": true,
-			"bytecodeHash": "ipfs"
+			"runs": 260
 		},
 		"outputSelection": {
 			"*": {
-				"*": [
-					"metadata",
-					"evm.bytecode",
-					"evm.bytecode.sourceMap"
-				],
-				"": [
-					"ast"
-				]
-			},
-			"def": {
-				"MyContract": [
-					"abi",
-					"evm.bytecode.opcodes"
-				]
+			"": ["ast"],
+			"*": ["abi", "metadata", "devdoc", "userdoc", "storageLayout", "evm.legacyAssembly", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "evm.gasEstimates", "evm.assembly"]
 			}
 		},
-		"modelChecker": {
-			"divModNoSlacks": false,
-			"engine": "chc",
-			"showUnproved": true,
-			"solvers": [
-				"cvc4",
-				"smtlib2",
-				"z3"
-			],
-			"targets": [
-				"underflow",
-				"overflow",
-				"assert"
-			],
-			"timeout": 20000
-		}
+		"evmVersion": "byzantium"
 	}
 }
