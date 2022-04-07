@@ -50,6 +50,11 @@ export class CompileAndRun extends Plugin {
   async runScript (fileName, clearAllInstances) {
     await this.call('terminal', 'log', `running ${fileName} ...`)
     try {
+      const exists = await this.call('fileManager', 'exists', fileName)
+      if (!exists) {
+        await this.call('terminal', 'log', `${fileName} does not exist.`)
+        return
+      }
       const content = await this.call('fileManager', 'readFile', fileName)
       if (clearAllInstances) {
         await this.call('udapp', 'clearAllInstances')
