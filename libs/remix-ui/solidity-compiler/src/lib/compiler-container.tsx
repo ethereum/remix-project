@@ -27,6 +27,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
+    configFilePath: "/compiler_config.json",
+    useFileConfiguration: false,
     matomoAutocompileOnce: true,
     optimize: false,
     compileTimeout: null,
@@ -41,8 +43,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: 'Solidity',
     evmVersion: ''
   })
-  const [manualConfig, setManualConfig] = useState<boolean>(true)
-  const [configFilePath, setConfigFilePath] = useState<string>("/compiler_config.json")
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
 
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
@@ -54,15 +54,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
-    setConfigFilePath("/compiler_config.json")
+    api.setAppParameter('configFilePath', "/compiler_config.json")
     api.fileExists("/compiler_config.json").then((exists) => {
       if (!exists) createNewConfigFile()
       else {
         // what to do? discuss
       }
     })
-    setConfigFilePath("/compiler_config.json")
-    setManualConfig(false)
+    api.setAppParameter('configFilePath', "/compiler_config.json")
+    api.setAppParameter('useFileConfiguration', false)
     setShowFilePathInput(false)
   }, [workspaceName])
 
@@ -92,6 +92,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const autocompile = await api.getAppParameter('autoCompile') as boolean || false
         const hideWarnings = await api.getAppParameter('hideWarnings') as boolean || false
         const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
+        const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || true
+        let configFilePath = await api.getAppParameter('configFilePath')
+        console.log("in useeff init ", configFilePath)
+        if (!configFilePath || configFilePath == '') configFilePath = "/compiler_config.json"
 
         setState(prevState => {
           const params = api.getCompilerParameters()
@@ -105,6 +109,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             hideWarnings: hideWarnings,
             autoCompile: autocompile,
             includeNightlies: includeNightlies,
+            useFileConfiguration: useFileConfiguration,
+            configFilePath: configFilePath,
             optimize: optimize,
             runs: runs,
             evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default',
@@ -162,9 +168,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [compilerContainer.editor.mode])
 
   useEffect(() => {
-    compileTabLogic.setUseFileConfiguration(!manualConfig)
-    if (!manualConfig) compileTabLogic.setConfigFilePath(configFilePath)
-  }, [manualConfig])
+    compileTabLogic.setUseFileConfiguration(state.useFileConfiguration)
+    if (state.useFileConfiguration) compileTabLogic.setConfigFilePath(state.configFilePath)
+  }, [state.useFileConfiguration])
 
   useEffect(() => {
     if (configurationSettings) {
@@ -173,31 +179,48 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [configurationSettings])
 
   const toggleConfigType = () => {
-    setManualConfig(!manualConfig)
+    setState(prevState => {
+      return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
+    })
+    api.setAppParameter('useFileConfiguration', state.useFileConfiguration)
+
   }
 
   const createNewConfigFile = async () => {
     const configFileContent = JSON.stringify(json_config, null, '\t')
-    await api.writeFile(configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : configFilePath, configFileContent)
-    setConfigFilePath(configFilePathInput.current.value)
+    const filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
+    await api.writeFile(filePath, configFileContent)
+    console.log("createNewConfigFile ", filePath)
+    api.setAppParameter('configFilePath', filePath)
+    setState(prevState => {
+      return { ...prevState, configFilePath: filePath }
+    })
+    compileTabLogic.setConfigFilePath(filePath)
+    setShowFilePathInput(false)
   }
+
   const handleConfigPathChange = async () => {
     if (configFilePathInput.current.value !== '') {
-      if (await api.fileExists(configFilePathInput.current.value))
-        setConfigFilePath(configFilePathInput.current.value)
-      else {
+      if (await api.fileExists(configFilePathInput.current.value)) {
+        api.setAppParameter('configFilePath', configFilePathInput.current.value)
+        setState(prevState => {
+          return { ...prevState, configFilePath: configFilePathInput.current.value }
+        })
+        compileTabLogic.setConfigFilePath(configFilePathInput.current.value)
+
+        setShowFilePathInput(false)
+      } else {
         modal(
           'New configuration file', `The file "${configFilePathInput.current.value}" you entered does not exist. Do you want to create a new one?`,
           'Create',
           async () => await createNewConfigFile(),
           'Cancel',
-          () => {}
+          () => { 
+            setShowFilePathInput(false)
+          }
         )
       }
     }
-   
-    setShowFilePathInput(false)
-    compileTabLogic.setConfigFilePath(configFilePath)
   }
 
   const _retrieveVersion = (version?) => {
@@ -596,11 +619,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       <article>
         <header className='pt-0 remixui_compilerSection border-bottom'>
           <div className="d-flex remixui_compilerConfig custom-control custom-checkbox">
-            <input className="custom-control-input" type="checkbox" value="file" onChange={toggleConfigType} checked={!manualConfig} id="sCManualConfig" />
+            <input className="custom-control-input" type="checkbox" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="sCManualConfig" />
             <label className="font-weight-bold pt-1 form-check-label custom-control-label remixui_compilerLabel" htmlFor="sCManualConfig">Use configuration file</label>
           </div>
-          <div className={`pt-2 ml-3 ml-2 align-items-start flex-column ${!manualConfig ? 'd-flex' : 'd-none'}`}>
-            { !showFilePathInput && <span className="py-2 text-primary">{configFilePath}</span> }
+          <div className={`pt-2 ml-3 ml-2 align-items-start flex-column ${state.useFileConfiguration ? 'd-flex' : 'd-none'}`}>
+            { !showFilePathInput && <span className="py-2 text-primary">{state.configFilePath}</span> }
             <input
               ref={configFilePathInput}
               className={`py-0 my-0 ${showFilePathInput ? "d-flex" : "d-none"}`}
@@ -614,7 +637,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             />
             { !showFilePathInput && <button className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Set new config file</button> }
           </div>
-          <div className={`flex-column ${manualConfig ? 'd-flex' : 'd-none'}`}>
+          <div className={`flex-column ${!state.useFileConfiguration ? 'd-flex' : 'd-none'}`}>
             <div className="pl-0 d-flex remixui_compilerConfig custom-control custom-checkbox">
             </div>
             <div className="mb-2">

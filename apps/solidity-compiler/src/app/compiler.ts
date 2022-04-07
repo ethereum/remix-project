@@ -26,7 +26,7 @@ const defaultCompilerParameters = {
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,
-  configFilePath: ''
+  configFilePath: "/compiler_config.json"
 }
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
   constructor () {
