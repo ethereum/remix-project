@@ -314,7 +314,7 @@ export class Compiler {
             input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
           }
         } catch (exception) {
-          this.onCompilationFinished({ error: { formattedMessage: exception.messsage } }, [], source, "", this.state.currentVersion)
+          this.onCompilationFinished({ error: { formattedMessage: exception.message } }, [], source, "", this.state.currentVersion)
           return
         }
 
