@@ -11,7 +11,7 @@ export const profile = {
   name: 'compileAndRun',
   displayName: 'Compile and Run',
   description: 'after each compilation, run the script defined in Natspec.',
-  methods: [],
+  methods: ['runScriptAfterCompilation'],
   version: packageJson.version,
   kind: 'none'
 }
@@ -40,6 +40,11 @@ export class CompileAndRun extends Plugin {
         }
       }
     }
+  }
+
+  runScriptAfterCompilation (fileName: string) {
+    this.targetFileName = fileName
+    _paq.push(['trackEvent', 'ScriptExecutor', 'request_run_script'])
   }
 
   async runScript (fileName, clearAllInstances) {

@@ -30,6 +30,7 @@
     --info:#3399f3;
     --warning:#d47500;
     --danger:#cd0200;
+    --text:#eee;
     --light:#eee;
     --dark:#333;
     --body-bg:#fff;
@@ -5187,11 +5188,11 @@ a.close.disabled {
     border-left-color:#000
 }
 .tooltip-inner {
-    padding:.25rem .5rem;
-    color:#fff;
-    text-align:center;
-    background-color:var(--text-background);
-    border-radius:.25rem
+    padding: .25rem .5rem;
+    color: var(--text);
+    text-align: center;
+    background-color: var(--light);
+    border-radius: .25rem
 }
 .popover {
     position:absolute;
