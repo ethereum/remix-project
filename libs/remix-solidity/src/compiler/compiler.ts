@@ -124,7 +124,6 @@ export class Compiler {
               input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
             }
 
-            console.log("input = ", input)
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
@@ -315,7 +314,7 @@ export class Compiler {
             input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
           }
         } catch (exception) {
-          this.onCompilationFinished({ error: { formattedMessage: exception.messsage } })
+          this.onCompilationFinished({ error: { formattedMessage: exception.messsage } }, [], source, "", this.state.currentVersion)
           return
         }
 
