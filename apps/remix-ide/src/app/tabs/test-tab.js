@@ -13,7 +13,7 @@ var { UnitTestRunner, assertLibCode } = require('@remix-project/remix-tests')
 const profile = {
   name: 'solidityUnitTesting',
   displayName: 'Solidity unit testing',
-  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath', 'getTestlibs'],
+  methods: ['testFromPath', 'testFromSource', 'setTestFolderPath', 'getTestlibs', 'createTestLibs'],
   events: [],
   icon: 'assets/img/unitTesting.webp',
   description: 'Fast tool to generate unit tests for your contracts',
@@ -63,8 +63,8 @@ module.exports = class TestTab extends ViewPlugin {
   async createTestLibs () {
     const provider = await this.fileManager.currentFileProvider()
     if (provider) {
-      provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
-      provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
+      await provider.addExternal('.deps/remix-tests/remix_tests.sol', assertLibCode, 'remix_tests.sol')
+      await provider.addExternal('.deps/remix-tests/remix_accounts.sol', this.testRunner.accountsLibCode, 'remix_accounts.sol')
     }
   }
 
