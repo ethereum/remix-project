@@ -97,6 +97,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('contentImport', 'resolveAndSave', url)
   }
 
+  runScriptAfterCompilation (fileName: string) {
+    this.call('compileAndRun', 'runScriptAfterCompilation', fileName)
+  }
+
   compileWithHardhat (configFile) {
     return this.call('hardhat', 'compile', configFile)
   }

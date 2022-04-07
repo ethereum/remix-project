@@ -5236,11 +5236,11 @@ a.close.disabled {
   border-left-color: #000;
 }
 .tooltip-inner {
-  padding: 3px 8px;
-  color: #fff;
+  padding: .25rem .5rem;
+  color: var(--text);
   text-align: center;
-  background-color:var(--text-background);
-  border-radius: 2px;
+  background-color: var(--light);
+  border-radius: .25rem
 }
 .popover {
   position: absolute;
