@@ -180,7 +180,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const configFileContent = JSON.stringify(json_config, null, '\t')
     await api.writeFile(configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : configFilePath, configFileContent)
     setConfigFilePath(configFilePathInput.current.value)
+    compileTabLogic.setConfigFilePath(configFilePath)
+    setShowFilePathInput(false)
   }
+
   const handleConfigPathChange = async () => {
     if (configFilePathInput.current.value !== '') {
       if (await api.fileExists(configFilePathInput.current.value))
@@ -191,13 +194,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           'Create',
           async () => await createNewConfigFile(),
           'Cancel',
-          () => {}
+          () => { 
+            compileTabLogic.setConfigFilePath(configFilePath)
+            setShowFilePathInput(false)
+          }
         )
       }
     }
-   
-    setShowFilePathInput(false)
-    compileTabLogic.setConfigFilePath(configFilePath)
+    
   }
 
   const _retrieveVersion = (version?) => {
