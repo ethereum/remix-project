@@ -82,13 +82,14 @@ module.exports = {
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
   'Static Analysis run with remixd #group3': function (browser) {
-    browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5'])
+    browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
       .clickLaunchIcon('solidityStaticAnalysis')
-      .click('#staticanalysisButton button')
+      .click('#staticanalysisButton button').pause(4000)
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         browser
+          .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1"')
           .click('[data-id="staticAnalysisModuleMiscellaneous1"')
-          .waitForElementPresent('.highlightLine16', 60000)
+          .waitForElementVisible('.highlightLine16', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(
               'function _sendLogPayload(bytes memory payload) private view {') !== -1,
