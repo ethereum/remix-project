@@ -129,14 +129,17 @@ export class CompilerImports extends Plugin {
         if (provider.type === 'localhost' && !provider.isConnected()) {
           throw new Error(`file provider ${provider.type} not available while trying to resolve ${url}`)
         }
-        const exist = await provider.exists(url)
+        let exist = await provider.exists(url)
         /*
           if the path is absolute and the file does not exist, we can stop here
           Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
         */
+        if (!exist && (url === 'remix_tests.sol' || url === 'remix_accounts.sol')) {
+            await this.call('solidityUnitTesting', 'createTestLibs')
+            exist = await provider.exists(url)
+        }
         if (!exist && url.startsWith('browser/')) throw new Error(`not found ${url}`)
         if (!exist && url.startsWith('localhost/')) throw new Error(`not found ${url}`)
-
         if (exist) {
           const content = await (() => {
             return new Promise((resolve, reject) => {
