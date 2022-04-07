@@ -16,7 +16,7 @@ class AddFile extends EventEmitter {
 function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser.clickLaunchIcon('udapp')
     .clickLaunchIcon('filePanel')
-    .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
+    .click('*[data-id="remixUIWorkspaceExplorer"]') // focus on root directory
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
       if (res.value && (res.value as any).length > 0) {
         browser.openFile(name)
