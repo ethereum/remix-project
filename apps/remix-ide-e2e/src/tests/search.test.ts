@@ -46,7 +46,7 @@ module.exports = {
         browser
             .waitForElementVisible('*[data-id="search_use_regex"]').click('*[data-id="search_use_regex"]')
             .waitForElementVisible('*[id="search_input"]')
-            .clearValue('*[id="search_input"]')
+            .clearValue('*[id="search_input"]').pause(2000)
             .setValue('*[id="search_input"]', '^contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(3000)
             .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', '2_OWNER.SOL', 60000)
