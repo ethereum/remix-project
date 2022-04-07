@@ -41,7 +41,7 @@ module.exports = {
       .clickLaunchIcon('settings')
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .clickLaunchIcon('solidity')
-      .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
+      .click('#compileTabView button[data-id="compilerContainerCompileBtn"]') // that should generate the JSON artefact
       .clickLaunchIcon('udapp')
       .verifyContracts(['test'])
       .clickLaunchIcon('udapp')
