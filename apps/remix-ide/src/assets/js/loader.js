@@ -2,8 +2,6 @@ createScriptTag = function(url, type) {
   var script = document.createElement('script');
   script.src = url;
   script.type = type;
-  script.async = false;
-  script.defer = true;
   document.getElementsByTagName('head')[0].appendChild(script);
 };
 
