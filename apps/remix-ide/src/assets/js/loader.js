@@ -9,11 +9,11 @@ fetch('assets/version.json').then(response => {
   response.text().then(function(data) {
     const version = JSON.parse(data).version;
     console.log(`Loading Remix ${version}`);
-    createScriptTag(`main.${version}.js`, 'text/javascript');
     createScriptTag(`polyfills.${version}.js`, 'module');
     if (version.includes('dev')) {
       createScriptTag(`vendor.${version}.js`, 'module');
       createScriptTag(`runtime.js`, 'module');
     }
+    createScriptTag(`main.${version}.js`, 'text/javascript');
   });
 });
