@@ -9,7 +9,6 @@ createScriptTag = function(url, type) {
 
 fetch('assets/version.json').then(response => {
   response.text().then(function(data) {
-    console.log(data);
     const version = JSON.parse(data).version;
     console.log(`Loading Remix ${version}`);
     createScriptTag(`main.${version}.js`, 'text/javascript');
