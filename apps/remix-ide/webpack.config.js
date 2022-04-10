@@ -1,6 +1,12 @@
 const nxWebpack = require('@nrwl/react/plugins/webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const version = require('../../package.json').version
+const fs = require('fs')
+
+fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify({
+  version: version,
+}))
 
 module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
@@ -13,6 +19,10 @@ module.exports = config => {
       net: 'empty',
       module: 'empty',
       child_process: 'empty'
+    },
+    output: {
+      ...nxWebpackConfig.output,
+      chunkFilename: `[name].${version}.js`,
     },
     plugins: [
       ...nxWebpackConfig.plugins,
