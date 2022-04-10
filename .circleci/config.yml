@@ -191,7 +191,6 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app.js dist/apps/remix-ide/app.js"
     working_directory: ~/remix-project
     parallelism: 7
     steps:
@@ -235,7 +234,6 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app.js dist/apps/remix-ide/app.js"
     working_directory: ~/remix-project
 
     steps:
@@ -250,31 +248,6 @@ jobs:
               ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
             fi
 
-  publish:
-    docker:
-      # specify the version you desire here
-      - image: cimg/node:14.17.6-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app.js dist/apps/remix-ide/app.js"
-    working_directory: ~/remix-project
-
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run: npm install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
-      - run: ./apps/remix-ide/ci/copy_resources.sh     
-      - run: ./apps/remix-ide/ci/publishIpfs
-      - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
 
   deploy-remix-alpha:
     docker:
@@ -289,7 +262,6 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app.js dist/apps/remix-ide/app.js"
     working_directory: ~/remix-project
 
     steps:
@@ -317,8 +289,7 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app.js dist/apps/remix-ide/app.js"
-   working_directory: ~/remix-project
+    working_directory: ~/remix-project
 
     steps:
       - checkout
