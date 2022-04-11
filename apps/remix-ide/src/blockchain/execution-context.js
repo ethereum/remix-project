@@ -38,7 +38,6 @@ export class ExecutionContext {
       this.executionContext = 'vm'
     } else {
       this.executionContext = injectedProvider ? 'injected' : 'vm'
-      if (this.executionContext === 'injected') this.askPermission()
     }
   }
 
@@ -76,6 +75,15 @@ export class ExecutionContext {
     if (this.isVM()) {
       callback(null, { id: '-', name: 'VM' })
     } else {
+      if (!web3.currentProvider) {
+        return callback('No provider set')
+      }
+      if (web3.currentProvider.isConnected && !web3.currentProvider.isConnected()) {
+        if (web3.currentProvider.isMetaMask) {
+          this.askPermission()
+        }
+        return callback('Provider not connected')
+      }
       web3.eth.net.getId((err, id) => {
         let name = null
         if (err) name = 'Unknown'
