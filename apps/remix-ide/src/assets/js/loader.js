@@ -4,16 +4,15 @@ createScriptTag = function(url, type) {
   script.type = type;
   document.getElementsByTagName('head')[0].appendChild(script);
 };
-
 fetch('assets/version.json').then(response => {
   response.text().then(function(data) {
-    const version = JSON.parse(data).version;
-    console.log(`Loading Remix ${version}`);
-    createScriptTag(`polyfills.${version}.js`, 'module');
-    if (version.includes('dev')) {
-      createScriptTag(`vendor.${version}.js`, 'module');
-      createScriptTag(`runtime.js`, 'module');
+    const version = JSON.parse(data);
+    console.log(`Loading Remix ${version.version}`);
+    createScriptTag(`polyfills.${version.version}.${version.timestamp}.js`, 'module');
+    if (version.mode === 'development') {
+      createScriptTag(`vendor.${version.version}.${version.timestamp}.js`, 'module');
+      createScriptTag(`runtime.${version.version}.${version.timestamp}.js`, 'module');
     }
-    createScriptTag(`main.${version}.js`, 'text/javascript');
+    createScriptTag(`main.${version.version}.${version.timestamp}.js`, 'text/javascript');
   });
 });

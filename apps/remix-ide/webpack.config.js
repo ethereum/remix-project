@@ -4,9 +4,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const version = require('../../package.json').version
 const fs = require('fs')
 
-fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify({
+const versionData = {
   version: version,
-}))
+  timestamp: Date.now(),
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
+}
+
+fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
 
 module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
@@ -22,7 +26,8 @@ module.exports = config => {
     },
     output: {
       ...nxWebpackConfig.output,
-      chunkFilename: `[name].${version}.js`,
+      filename: `[name].${versionData.version}.${versionData.timestamp}.js`,
+      chunkFilename: `[name].${versionData.version}.${versionData.timestamp}.js`,
     },
     plugins: [
       ...nxWebpackConfig.plugins,
