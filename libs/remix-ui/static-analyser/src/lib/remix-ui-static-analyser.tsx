@@ -526,7 +526,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           title="when checked, the results are also displayed for external contract libraries"
           inputType="checkbox"
           checked={showLibsWarning}
-          label="Display all results"
+          label="Show warnings for external libraries"
           onClick={handleShowLibsWarning}
           onChange={() => {}}
           />
