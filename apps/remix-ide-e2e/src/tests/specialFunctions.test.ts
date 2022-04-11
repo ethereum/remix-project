@@ -165,16 +165,16 @@ module.exports = {
         })
       })
   },
-  'Use special functions receive/fallback - receive and fallback are declared, sending data and wei #group4': function (browser: NightwatchBrowser) {
+  'Use special functions receive/fallback - receive and fallback are declared, sending data and wei #group6': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
       .testContracts('receiveAndFallbackBothPayable.sol', sources[4]['receiveAndFallbackBothPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
       .waitForElementVisible('#value')
       .clearValue('#value')
-      .setValue('#value', '0').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(3000)
+      .setValue('#value', '0')
+      .pause(2000)
       .createContract('')
-      .clickInstance(1)
       .pause(1000)
       .perform((done) => {
         browser.getAddressAtPosition(1, (address) => {
@@ -206,7 +206,7 @@ module.exports = {
       .selectContract('CheckSpecials')
       .waitForElementVisible('#value')
       .clearValue('#value')
-      .setValue('#value', '0').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(3000)
+      .setValue('#value', '0').pause(2000)
       .createContract('')
       .clickInstance(0)
       .pause(1000)
