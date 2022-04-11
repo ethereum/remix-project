@@ -45,7 +45,7 @@ export interface SearchingStateInterface {
   replaceAllInFile: (result: SearchResult) => Promise<void>
   undoReplace: (buffer: undoBufferRecord) => Promise<void>
   clearUndo: () => void
-  cancelSearch: (clearResults?:boolean) => Promise<void>
+  cancelSearch: (clearResults?: boolean) => Promise<void>
   startSearch: () => void
 }
 
@@ -111,7 +111,7 @@ export const SearchProvider = ({
         payload: value
       })
     },
-    setSearchResults(value: SearchResult[]) {     
+    setSearchResults(value: SearchResult[]) {
       dispatch({
         type: 'SET_SEARCH_RESULTS',
         payload: value
@@ -285,7 +285,7 @@ export const SearchProvider = ({
     },
 
     clearStats: () => {
-      plugin.call('editor', 'discardHighlight')  
+      plugin.call('editor', 'discardHighlight')
       dispatch({
         type: 'CLEAR_STATS',
         payload: undefined
@@ -294,7 +294,7 @@ export const SearchProvider = ({
 
     cancelSearch: async (clearResults = true) => {
       plugin.cancel('fileManager')
-      if(clearResults) value.clearStats()
+      if (clearResults) value.clearStats()
       value.setRun(false)
     },
 
@@ -323,10 +323,10 @@ export const SearchProvider = ({
     })
     plugin.on('fileManager', 'rootFolderChanged', async file => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
-      if(workspace) value.setCurrentWorkspace(workspace.name)
+      if (workspace) value.setCurrentWorkspace(workspace.name)
       setFiles(await getDirectory('/', plugin))
     })
-    
+
     plugin.on('fileManager', 'fileAdded', async file => {
       setFiles(await getDirectory('/', plugin))
       await reloadStateForFile(file)
@@ -336,9 +336,13 @@ export const SearchProvider = ({
       await checkUndoState(file)
     })
     async function fetchWorkspace() {
-      const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
-      if(workspace) value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      try {
+        const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+        if (workspace) value.setCurrentWorkspace(workspace.name)
+        setFiles(await getDirectory('/', plugin))
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     fetchWorkspace()
@@ -402,7 +406,7 @@ export const SearchProvider = ({
   }
 
   useEffect(() => {
-    if(state.count>500) {
+    if (state.count > 500) {
       value.setClipped(true)
       value.cancelSearch(false)
     }
