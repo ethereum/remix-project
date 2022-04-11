@@ -187,7 +187,7 @@ module.exports = {
         })
       })
   },
-  'Use special functions receive/fallback - receive and fallback are declared and payable, sending wei #group4': function (browser: NightwatchBrowser) {
+  'Use special functions receive/fallback - receive and fallback are declared and payable, sending wei #group6': function (browser: NightwatchBrowser) {
     browser.perform((done) => {
       browser.getAddressAtPosition(1, (address) => {
         browser.sendLowLevelTx(address, '1', '')
