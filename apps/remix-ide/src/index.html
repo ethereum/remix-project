@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 
 <html>
-	<head>
-		<meta charset="utf-8">
-		<!--
+
+<head>
+	<meta charset="utf-8">
+	<!--
 		The MIT License (MIT)
 		Copyright (c) 2014, 2015, the individual contributors
 		Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,46 +23,24 @@
 		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 		THE SOFTWARE.
 		-->
-		<meta http-equiv="X-UA-Compatible" content="chrome=1">
-		<title>Remix - Ethereum IDE</title>
-		<link rel="stylesheet" href="assets/css/pygment_trac.css">
-		<link rel="icon" type="x-icon" href="assets/img/icon.png">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/4.1.0/introjs.min.css"> 
-		<script src="assets/js/browserfs.min.js"></script>
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<!-- Matomo -->
-		<script type="text/javascript">
-			const domains = {
-				'remix-alpha.ethereum.org': 27,
-				'remix-beta.ethereum.org': 25,
-				'remix.ethereum.org': 23
-			}
-			if (domains[window.location.hostname]) {
-				var _paq = window._paq = window._paq || []
-				/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-				_paq.push(['disableCookies']);
-        		_paq.push(['enableJSErrorTracking']);
-				_paq.push(['trackPageView']);
-				_paq.push(['enableLinkTracking']);
-				(function() {
-					var u="https://matomo.ethereum.org/";
-					_paq.push(['setTrackerUrl', u+'matomo.php'])
-					_paq.push(['setSiteId', domains[window.location.hostname]])
-					var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]
-					g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s)
-				})()
-			}
-		</script>
-		<!-- End Matomo Code -->
-		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/introjs.min.css">
-	</head>
-	<body>
-		<div id="root"></div>
-		<script type="text/javascript" src="assets/js/init.js"></script>
-		<script src="runtime.js" type="module"></script>
-		<script src="polyfills.js" type="module"></script>
-		<script src="vendor.js" type="module"></script>
-		<script src="https://kit.fontawesome.com/41dd021e94.js" crossorigin="anonymous"></script>
-		<script type="text/javascript" src="assets/js/intro.min.js"></script>
-	</body>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>Remix - Ethereum IDE</title>
+	<link rel="stylesheet" href="assets/css/pygment_trac.css">
+	<link rel="icon" type="x-icon" href="assets/img/icon.png">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/4.1.0/introjs.min.css">
+	<link rel="stylesheet" integrity="ha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+		crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+	<script src="assets/js/browserfs.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/introjs.min.css">
+</head>
+
+<body>
+
+	<div id="root"></div>
+	<script type="text/javascript" src="assets/js/loader.js"></script>
+	<script src="https://kit.fontawesome.com/41dd021e94.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="assets/js/intro.min.js"></script>
+</body>
+
 </html>

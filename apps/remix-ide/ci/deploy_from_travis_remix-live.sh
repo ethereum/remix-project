@@ -14,8 +14,7 @@ echo "To use an offline copy, download \`remix-$SHA.zip\`." >> README.md
 cp -r $FILES_TO_PACKAGE "./"
 rm -rf dist
 ls
-mv production.index.html index.html
-FILES_TO_DEPLOY="assets index.html main.js polyfills.js vendors~app.js app.js raw-loader*.js"
+FILES_TO_DEPLOY="assets index.html main*.js polyfills*.js vendors~app*.js app*.js raw-loader*.js"
 # ZIP the whole directory
 zip -r remix-$SHA.zip $FILES_TO_DEPLOY
 # -f is needed because "build" is part of .gitignore
