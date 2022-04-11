@@ -8,20 +8,21 @@ import Config from './config'
 import Registry from './app/state/registry'
 import { Storage } from '@remix-project/remix-lib'
 
-try {
-  const configStorage = new Storage('config-v0.8:')
-  const config = new Config(configStorage);
-  Registry.getInstance().put({ api: config, name: 'config' })
-} catch (e) { }
-const theme = new ThemeModule()
-theme.initTheme()
+(async function () {
+  try {
+    const configStorage = new Storage('config-v0.8:')
+    const config = new Config(configStorage);
+    Registry.getInstance().put({ api: config, name: 'config' })
+  } catch (e) { }
+  const theme = new ThemeModule()
+  theme.initTheme()
 
-render(
-  <React.StrictMode>
-    <Preload></Preload>
-  </React.StrictMode>,
-  document.getElementById('root')
-)
-
+  render(
+    <React.StrictMode>
+      <Preload></Preload>
+    </React.StrictMode>,
+    document.getElementById('root')
+  )
+})()
 
 
