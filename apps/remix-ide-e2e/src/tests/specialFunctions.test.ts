@@ -176,8 +176,9 @@ module.exports = {
       .pause(2000)
       .createContract('')
       .pause(1000)
+      .clickInstance(0).pause(1000)
       .perform((done) => {
-        browser.getAddressAtPosition(1, (address) => {
+        browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '999999998765257135', '0xaa')
             .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
@@ -189,7 +190,7 @@ module.exports = {
   },
   'Use special functions receive/fallback - receive and fallback are declared and payable, sending wei #group6': function (browser: NightwatchBrowser) {
     browser.perform((done) => {
-      browser.getAddressAtPosition(1, (address) => {
+      browser.getAddressAtPosition(0, (address) => {
         browser.sendLowLevelTx(address, '1', '')
           .pause(1000)
           .journalLastChildIncludes('to: CheckSpecials.(receive)')
