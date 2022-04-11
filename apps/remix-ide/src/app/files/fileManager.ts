@@ -625,32 +625,22 @@ class FileManager extends Plugin {
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
 
-      return new Promise((resolve, reject) => {
-        provider.get(file, (error, content) => {
-          if (error) {
-            console.log(error)
-            reject(error)
-          } else {
-            if (provider.isReadOnly(file)) {
-              this.editor.openReadOnly(file, content)
-            } else {
-              if (provider.isReadOnly(file)) {
-                this.editor.openReadOnly(file, content)
-              } else {
-                this.editor.open(file, content)
-              }
-              // TODO: Only keep `this.emit` (issue#2210)
-              this.emit('currentFileChanged', file)
-              this.events.emit('currentFileChanged', file)
-              resolve(true)
-            }
-            // TODO: Only keep `this.emit` (issue#2210)
-            this.emit('currentFileChanged', file)
-            this.events.emit('currentFileChanged', file)
-            resolve(true)
-          }
-        })
-      })
+      let content = ''
+      try {
+        content = await provider.get(file)   
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+      if (provider.isReadOnly(file)) {
+        this.editor.openReadOnly(file, content)
+      } else {
+        this.editor.open(file, content)
+      }
+      // TODO: Only keep `this.emit` (issue#2210)
+      this.emit('currentFileChanged', file)
+      this.events.emit('currentFileChanged', file)
+      return true      
     }
   }
 
