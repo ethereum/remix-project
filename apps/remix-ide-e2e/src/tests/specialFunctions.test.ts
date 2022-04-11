@@ -165,7 +165,7 @@ module.exports = {
         })
       })
   },
-  'Use special functions receive/fallback - receive and fallback are declared, sending data and wei #group4': function (browser: NightwatchBrowser) {
+  'Use special functions receive/fallback - receive and fallback are declared, sending data and wei #group6': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
       .testContracts('receiveAndFallbackBothPayable.sol', sources[4]['receiveAndFallbackBothPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
@@ -175,10 +175,10 @@ module.exports = {
       .setValue('#value', '0')
       .pause(2000)
       .createContract('')
-      .clickInstance(1)
       .pause(1000)
+      .clickInstance(0).pause(1000)
       .perform((done) => {
-        browser.getAddressAtPosition(1, (address) => {
+        browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '999999998765257135', '0xaa')
             .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
@@ -188,9 +188,9 @@ module.exports = {
         })
       })
   },
-  'Use special functions receive/fallback - receive and fallback are declared and payable, sending wei #group4': function (browser: NightwatchBrowser) {
+  'Use special functions receive/fallback - receive and fallback are declared and payable, sending wei #group6': function (browser: NightwatchBrowser) {
     browser.perform((done) => {
-      browser.getAddressAtPosition(1, (address) => {
+      browser.getAddressAtPosition(0, (address) => {
         browser.sendLowLevelTx(address, '1', '')
           .pause(1000)
           .journalLastChildIncludes('to: CheckSpecials.(receive)')
@@ -207,7 +207,7 @@ module.exports = {
       .selectContract('CheckSpecials')
       .waitForElementVisible('#value')
       .clearValue('#value')
-      .setValue('#value', '0')
+      .setValue('#value', '0').pause(2000)
       .createContract('')
       .clickInstance(0)
       .pause(1000)
