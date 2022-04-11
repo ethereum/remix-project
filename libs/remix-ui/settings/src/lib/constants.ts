@@ -6,7 +6,7 @@ export const warnText = 'Be sure the endpoint is opened before enabling it. \nTh
 export const gitAccessTokenTitle = 'GitHub Access Token'
 export const gitAccessTokenText = 'Manage the access token used to publish to Gist and retrieve GitHub contents.'
 export const gitAccessTokenText2 = 'Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only \'create gist\' permission.'
-export const gitAccessTokenLink = 'https://github.com/settings/tokens'
+export const gitAccessTokenLink = 'https://github.com/settings/tokens/new?scopes=gist,repo&description=Remix%20IDE%20Token'
 export const etherscanTokenTitle = 'EtherScan Access Token'
 export const etherscanTokenLink = 'https://etherscan.io/myapikey'
 export const etherscanAccessTokenText = 'Manage the api key used to interact with Etherscan.'
