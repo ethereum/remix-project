@@ -341,6 +341,7 @@ export const SearchProvider = ({
         if (workspace) value.setCurrentWorkspace(workspace.name)
         setFiles(await getDirectory('/', plugin))
       } catch (e) {
+        console.log(e)
       }
     }
 
