@@ -4,10 +4,11 @@ interface ErrorRendererProps {
   message: any;
   opt: any,
   warningErrors: any
-  editor: any
+  editor: any,
+  name: string,
 }
 
-const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
+const ErrorRenderer = ({ message, opt, editor, name }: ErrorRendererProps) => {
   const getPositionDetails = (msg: any) => {
     const result = { } as Record<string, number | string>
 
@@ -48,7 +49,7 @@ const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
         <div className="close" data-id="renderer">
           <i className="fas fa-times"></i>
         </div>
-        <span className='d-flex flex-column' onClick={() => handlePointToErrorOnClick(opt.location, opt.fileName)}>
+        <span className='d-flex flex-column' data-id={`${name}Button`} onClick={async () => await handlePointToErrorOnClick(opt.location, opt.fileName)}>
           <span className='h6 font-weight-bold'>{opt.name}</span>
           { opt.item.warning }
           {opt.item.more
