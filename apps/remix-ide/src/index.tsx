@@ -8,13 +8,12 @@ import Config from './config'
 import Registry from './app/state/registry'
 import { Storage } from '@remix-project/remix-lib'
 
-(async function() {
-  // load current theme befor anything else
+(async function () {
   try {
     const configStorage = new Storage('config-v0.8:')
     const config = new Config(configStorage);
     Registry.getInstance().put({ api: config, name: 'config' })
-  } catch (e) {}
+  } catch (e) { }
   const theme = new ThemeModule()
   theme.initTheme()
 
@@ -25,3 +24,5 @@ import { Storage } from '@remix-project/remix-lib'
     document.getElementById('root')
   )
 })()
+
+
