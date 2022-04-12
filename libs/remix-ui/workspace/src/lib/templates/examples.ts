@@ -256,7 +256,12 @@ contract BallotTest {
 `
 
 /* eslint-disable no-useless-escape */
-const deployWithWeb3 = `import { deploy } from './web3.ts'
+const deployWithWeb3 = `
+// This script example is to deploy the "Storage" contract using Web3 library.
+// Please make sure to compile "./contracts/1_Storage.sol" file before running this script.
+// Use Right click -> "Run" from content menu of the file to run the script.
+
+import { deploy } from './web3.ts'
 
 (async () => {
     try {
@@ -268,7 +273,12 @@ const deployWithWeb3 = `import { deploy } from './web3.ts'
     }
 })()`
 
-const deployWithEthers = `import { deploy } from './ethers.ts'
+const deployWithEthers = `
+// This script example is to deploy the "Storage" contract using ethers.js library.
+// Please make sure to compile "./contracts/1_Storage.sol" file before running this script.
+// Use Right click -> "Run" from content menu of the file to run the script.
+
+import { deploy } from './ethers.ts'
 
 (async () => {
     try {
