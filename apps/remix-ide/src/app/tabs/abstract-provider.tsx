@@ -128,6 +128,9 @@ export abstract class AbstractProvider extends Plugin {
         const result = await this.provider.send(data.method, data.params)
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
+        if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
+          this.switchAway(true)
+        }
         reject(error)
       }
     } else {
