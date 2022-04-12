@@ -125,27 +125,35 @@ class FileProvider {
     return true
   }
 
-  async createDir (path, cb) {
-    const unprefixedpath = this.removePrefix(path)
+  async createDir (path, cb, currentCheck = '') {
+    const unprefixedpath = currentCheck ? path : this.removePrefix(path)
     const paths = unprefixedpath.split('/')
+  
     if (paths.length && paths[0] === '') paths.shift()
-    let currentCheck = ''
-    for (const value of paths) {
-      currentCheck = currentCheck + '/' + value
-      if (!await window.remixFileSystem.exists(currentCheck)) {
-        try {
-          await window.remixFileSystem.mkdir(currentCheck)
-        } catch (error) {
-          console.log(error)
-        }
+    const value = paths[0]
+  
+    currentCheck = currentCheck + '/' + value
+    const folderExists = await window.remixFileSystem.exists(currentCheck)
+
+    if (!folderExists) {
+      try {
+        await window.remixFileSystem.mkdir(currentCheck)
+        this.event.emit('folderAdded', this._normalizePath(currentCheck))
+      } catch (error) {
+        console.log(error)
       }
+    } else {
+      this.event.emit('folderOpened', this._normalizePath(currentCheck))
     }
-    currentCheck = ''
-    for (const value of paths) {
-      currentCheck = currentCheck + '/' + value
-      this.event.emit('folderAdded', this._normalizePath(currentCheck))
+    const subPathArr = paths.slice(1)
+
+    if (subPathArr.length > 0) {
+      const subPath = subPathArr.join('/')
+
+      await this.createDir(subPath, cb, currentCheck)
+    } else {
+      if (cb) cb()
     }
-    if (cb) cb()
   }
 
   // this will not add a folder as readonly but keep the original url to be able to restore it later

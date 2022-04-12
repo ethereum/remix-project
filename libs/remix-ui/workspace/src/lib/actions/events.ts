@@ -1,7 +1,7 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
 import { action } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, folderOpenedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
@@ -61,6 +61,11 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
   provider.event.on('folderAdded', (folderPath: string) => {
     if (folderPath.indexOf('/.workspaces') === 0) return
     folderAdded(folderPath)
+  })
+
+  provider.event.on('folderOpened', (folderPath: string) => {
+    if (folderPath.indexOf('/.workspaces') === 0) return
+    folderOpened(folderPath)
   })
 
   provider.event.on('fileRemoved', (removePath: string) => {
@@ -148,6 +153,10 @@ const fileAdded = async (filePath: string) => {
 }
 
 const folderAdded = async (folderPath: string) => {
+  dispatch(folderAddedSuccess(folderPath))
+}
+
+const folderOpened = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
 
@@ -160,7 +169,7 @@ const folderAdded = async (folderPath: string) => {
 
   promise.then((files) => {
     folderPath = folderPath.replace(/^\/+/, '')
-    dispatch(folderAddedSuccess(path, folderPath, files))
+    dispatch(folderOpenedSuccess(path, folderPath, files))
   }).catch((error) => {
     console.error(error)
   })

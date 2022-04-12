@@ -296,7 +296,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
-    case 'FOLDER_ADDED_SUCCESS': {
+    case 'FOLDER_OPENED_SUCCESS': {
       const payload = action.payload as { path: string, folderPath: string, fileTree }
 
       return {
@@ -314,6 +314,24 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'FOLDER_ADDED_SUCCESS': {
+      const payload = action.payload as string
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          files: state.mode === 'browser' ? folderAdded(state, payload) : state.browser.files,
+          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+        },
+        localhost: {
+          ...state.localhost,
+          files: state.mode === 'localhost' ? folderAdded(state, payload) : state.localhost.files,
+          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+        }
+      }
+    }
+    
     case 'FILE_REMOVED_SUCCESS': {
       const payload = action.payload as string
 
@@ -613,6 +631,19 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
     name: extractNameFromKey(path),
     isDirectory: false,
     type: 'file'
+  }, Object)
+  return files
+}
+
+const folderAdded = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
+  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+  const _path = splitPath(state, path)
+
+  files = _.setWith(files, _path, {
+    path: path,
+    name: extractNameFromKey(path),
+    isDirectory: true,
+    type: 'folder'
   }, Object)
   return files
 }

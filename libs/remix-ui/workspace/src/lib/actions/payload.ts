@@ -62,9 +62,16 @@ export const fileAddedSuccess = (filePath: string) => {
   }
 }
 
-export const folderAddedSuccess = (path: string, folderPath: string, fileTree) => {
+export const folderAddedSuccess = (path: string) => {
   return {
     type: 'FOLDER_ADDED_SUCCESS',
+    payload: path
+  }
+}
+
+export const folderOpenedSuccess = (path: string, folderPath: string, fileTree) => {
+  return {
+    type: 'FOLDER_OPENED_SUCCESS',
     payload: { path, folderPath, fileTree }
   }
 }
