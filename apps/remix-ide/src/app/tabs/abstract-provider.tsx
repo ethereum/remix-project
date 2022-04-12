@@ -24,12 +24,14 @@ export abstract class AbstractProvider extends Plugin {
   blocked: boolean
   blockchain: Blockchain
   defaultUrl: string
+  connected: boolean
 
   constructor (profile, blockchain, defaultUrl) {
     super(profile)
     this.defaultUrl = defaultUrl
     this.provider = null
     this.blocked = false // used to block any call when trying to recover after a failed connection.
+    this.connected = false
     this.blockchain = blockchain
   }
 
@@ -79,9 +81,17 @@ export abstract class AbstractProvider extends Plugin {
         }
         this.provider = new ethers.providers.JsonRpcProvider(value)
         try {
+          setTimeout(() => {
+            if (!this.connected) {
+              this.switchAway(true)
+              reject('Unable to connect')
+            }
+          }, 2000)
           await this.provider.ready
+          this.connected = true
         } catch (e) {
           this.switchAway(true)
+          reject('Unable to connect')
           return
         }
         this.sendAsyncInternal(data, resolve, reject)       
@@ -92,7 +102,9 @@ export abstract class AbstractProvider extends Plugin {
   }
 
   private async switchAway (showError) {
+    this.provider = null
     this.blocked = true
+    this.connected = false
     if (showError) {
       const modalContent: AlertModal = {
         id: this.profile.name,
@@ -102,7 +114,6 @@ export abstract class AbstractProvider extends Plugin {
       this.call('notification', 'alert', modalContent)
     }
     await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
-    this.provider = null
     setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm        
     return
   }
