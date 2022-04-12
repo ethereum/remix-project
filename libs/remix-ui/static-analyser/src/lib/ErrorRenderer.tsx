@@ -46,9 +46,6 @@ const ErrorRenderer = ({ message, opt, editor, name }: ErrorRendererProps) => {
   return (
     <div>
       <div className={`sol ${opt.type} ${classList}`}>
-        <div className="close" data-id="renderer">
-          <i className="fas fa-times"></i>
-        </div>
         <span className='d-flex flex-column' data-id={`${name}Button`} onClick={async () => await handlePointToErrorOnClick(opt.location, opt.fileName)}>
           <span className='h6 font-weight-bold'>{opt.name}</span>
           { opt.item.warning }
