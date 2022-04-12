@@ -195,13 +195,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           async () => await createNewConfigFile(),
           'Cancel',
           () => { 
-            compileTabLogic.setConfigFilePath(configFilePath)
             setShowFilePathInput(false)
           }
         )
       }
     }
-    
   }
 
   const _retrieveVersion = (version?) => {

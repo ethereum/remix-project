@@ -70,6 +70,7 @@ export class CompileTabLogic {
   }
 
   setConfigFilePath (path) {
+    console.log("path in logic = ", path)
     this.configFilePath = path
   }
 
