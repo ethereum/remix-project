@@ -38,6 +38,7 @@ export class ExecutionContext {
       this.executionContext = 'vm'
     } else {
       this.executionContext = injectedProvider ? 'injected' : 'vm'
+      if (this.executionContext === 'injected') this.askPermission()
     }
   }
 
