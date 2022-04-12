@@ -26,17 +26,20 @@ export class CompileAndRun extends Plugin {
     super(profile)
     this.executionListener = async (e) => {
       // ctrl+e or command+e
-      const file = await this.call('fileManager', 'file')
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.keyCode === 83 && file !== '') {
-        if (file.endsWith('.sol')) {
-          e.preventDefault()
-          this.targetFileName = file
-          await this.call('solidity', 'compile', file)
-          _paq.push(['trackEvent', 'ScriptExecutor', 'compile_solidity'])
-        } else if (file.endsWith('.js') || file.endsWith('.ts')) {
-          e.preventDefault()
-          this.runScript(file, false)
-          _paq.push(['trackEvent', 'ScriptExecutor', 'run_script'])
+      
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.keyCode === 83) {
+        const file = await this.call('fileManager', 'file')
+        if (file) {
+          if (file.endsWith('.sol')) {
+            e.preventDefault()
+            this.targetFileName = file
+            await this.call('solidity', 'compile', file)
+            _paq.push(['trackEvent', 'ScriptExecutor', 'compile_solidity'])
+          } else if (file.endsWith('.js') || file.endsWith('.ts')) {
+            e.preventDefault()
+            this.runScript(file, false)
+            _paq.push(['trackEvent', 'ScriptExecutor', 'run_script'])
+          }
         }
       }
     }
