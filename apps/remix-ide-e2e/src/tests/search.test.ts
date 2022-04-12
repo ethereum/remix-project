@@ -37,7 +37,7 @@ module.exports = {
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 38)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 42)
             })
             .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
             .clearValue('*[id="search_exclude"]').setValue('*[id="search_exclude"]', '.*/**/*')
