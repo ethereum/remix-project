@@ -24,12 +24,14 @@ export abstract class AbstractProvider extends Plugin {
   blocked: boolean
   blockchain: Blockchain
   defaultUrl: string
+  connected: boolean
 
   constructor (profile, blockchain, defaultUrl) {
     super(profile)
     this.defaultUrl = defaultUrl
     this.provider = null
     this.blocked = false // used to block any call when trying to recover after a failed connection.
+    this.connected = false
     this.blockchain = blockchain
   }
 
@@ -74,14 +76,46 @@ export abstract class AbstractProvider extends Plugin {
           // the modal has been canceled/hide
           const result = data.method === 'net_listening' ? 'canceled' : []
           resolve({ jsonrpc: '2.0', result: result, id: data.id })
+          this.switchAway(false)
           return
         }
         this.provider = new ethers.providers.JsonRpcProvider(value)
+        try {
+          setTimeout(() => {
+            if (!this.connected) {
+              this.switchAway(true)
+              reject('Unable to connect')
+            }
+          }, 2000)
+          await this.provider.ready
+          this.connected = true
+        } catch (e) {
+          this.switchAway(true)
+          reject('Unable to connect')
+          return
+        }
         this.sendAsyncInternal(data, resolve, reject)       
       } else {
         this.sendAsyncInternal(data, resolve, reject)
       }
     })
+  }
+
+  private async switchAway (showError) {
+    this.provider = null
+    this.blocked = true
+    this.connected = false
+    if (showError) {
+      const modalContent: AlertModal = {
+        id: this.profile.name,
+        title: this.profile.displayName,
+        message: `Error while connecting to the provider, provider not connected`,
+      }
+      this.call('notification', 'alert', modalContent)
+    }
+    await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
+    setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm        
+    return
   }
 
   private async sendAsyncInternal (data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
@@ -94,16 +128,9 @@ export abstract class AbstractProvider extends Plugin {
         const result = await this.provider.send(data.method, data.params)
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
-        this.blocked = true
-        const modalContent: AlertModal = {
-          id: this.profile.name,
-          title: this.profile.displayName,
-          message: `Error while connecting to the provider: ${error.message}`,
+        if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
+          this.switchAway(true)
         }
-        this.call('notification', 'alert', modalContent)
-        await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
-        this.provider = null
-        setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm
         reject(error)
       }
     } else {
