@@ -141,12 +141,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.call('gistHandler', 'load', '')
     plugin.verticalIcons.select('filePanel')
   }
-  const switchToPreviousVersion = () => {
-    const query = new QueryParams()
-    query.update({ appVersion: '0.7.7' })
-    _paq.push(['trackEvent', 'LoadingType', 'oldExperience_0.7.7'])
-    document.location.reload()
-  }
   const startSolidity = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidity')
@@ -309,10 +303,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <p className="mb-1">
                   <img id='remixHhomeWebsite' className="mr-2 remixui_home_image" src={ plugin.profile.icon } style={ { filter: state.themeQuality.filter } } alt=''></img>
                   <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Featuring website</a>
-                </p>
-                <p className="mb-1">
-                  <i className="mr-2 fab fa-ethereum remixui_home_image"></i>
-                  <label className="remixui_home_text" onClick={() => switchToPreviousVersion()}>Old experience</label>
                 </p>
               </div>
             </div>

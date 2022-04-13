@@ -56,6 +56,8 @@ export function RunTabUI (props: RunTabProps) {
     storage: null,
     contract: null
   })
+  runTabInitialState.selectExEnv = props.plugin.blockchain.getProvider()
+  runTabInitialState.selectExEnv = runTabInitialState.selectExEnv === 'vm' ? 'vm-london' : runTabInitialState.selectExEnv
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = { runTab }
 

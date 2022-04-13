@@ -7,6 +7,7 @@ pragma solidity >=0.7.0 <0.9.0;
 /**
  * @title Storage
  * @dev Store & retrieve value in a variable
+ * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract Storage {
 
@@ -255,7 +256,12 @@ contract BallotTest {
 `
 
 /* eslint-disable no-useless-escape */
-const deployWithWeb3 = `import { deploy } from './web3.ts'
+const deployWithWeb3 = `
+// This script can be used to deploy the "Storage" contract using Web3 library.
+// Please make sure to compile "./contracts/1_Storage.sol" file before running this script.
+// And use Right click -> "Run" from context menu of the file to run the script. Shortcut: Ctrl+Shift+S
+
+import { deploy } from './web3.ts'
 
 (async () => {
     try {
@@ -267,7 +273,12 @@ const deployWithWeb3 = `import { deploy } from './web3.ts'
     }
 })()`
 
-const deployWithEthers = `import { deploy } from './ethers.ts'
+const deployWithEthers = `
+// This script can be used to deploy the "Storage" contract using ethers.js library.
+// Please make sure to compile "./contracts/1_Storage.sol" file before running this script.
+// And use Right click -> "Run" from context menu of the file to run the script. Shortcut: Ctrl+Shift+S
+
+import { deploy } from './ethers.ts'
 
 (async () => {
     try {

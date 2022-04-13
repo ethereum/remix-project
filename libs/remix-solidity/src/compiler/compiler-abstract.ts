@@ -14,7 +14,7 @@ export class CompilerAbstract {
     }
 
     getContracts () {
-      return this.data.contracts
+      return this.data.contracts || {}
     }
 
     getContract (name) {

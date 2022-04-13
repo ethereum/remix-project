@@ -12,3 +12,4 @@ remix
 TODO
 .tern-port
 temp_publish_docker
+src/assets/version.json
