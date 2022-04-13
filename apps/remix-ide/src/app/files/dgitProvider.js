@@ -483,9 +483,9 @@ class DGitProvider extends Plugin {
     } else {
       result = await this.importIPFSFiles(this.remixIPFS, cid, workspace) || await this.importIPFSFiles(this.ipfsconfig, cid, workspace) || await this.importIPFSFiles(this.globalIPFSConfig, cid, workspace)
     }
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    // setTimeout(async () => {
+    //   await this.call('fileManager', 'refresh')
+    // }, 1000)
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
 
