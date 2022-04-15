@@ -109,8 +109,8 @@ export class TxRunnerWeb3 {
         err = network.name === 'VM' ? null : err // just send the tx if "VM"
         gasEstimationForceSend(err, () => {
           // callback is called whenever no error
-          tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
-  
+          tx['gas'] = gasLimit
+
           if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
             return this._executeTx(tx, network, null, this._api, promptCb, callback)
           }
