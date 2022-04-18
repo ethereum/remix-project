@@ -143,9 +143,12 @@ export class Transactions {
           return cb('revert ' + reason)
         } catch (e) {
           return cb(e.message)
-        }        
+        }
       }
-      const gasUsed = result.result.execResult.gasUsed.toNumber()
+      let gasUsed = result.result.execResult.gasUsed.toNumber()
+      if (result.result.execResult.gasRefund) {
+        gasUsed += result.result.execResult.gasRefund.toNumber()
+      }
       cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
   }
