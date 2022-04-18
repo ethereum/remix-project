@@ -133,11 +133,11 @@ export class Transactions {
 
     payload.params[0].gas = 10000000 * 10
 
-    processTx(this.txRunnerInstance, payload, true, (error, result) => {
+    processTx(this.txRunnerInstance, payload, true, (error, { result }) => {
       if (error) return cb(error)
-      if (result.result.status === '0x0') {
+      if (result.status === '0x0') {
         try {
-          const msg = result.result.execResult.returnValue
+          const msg = result.execResult.returnValue
           const abiCoder = new ethers.utils.AbiCoder()
           const reason = abiCoder.decode(['string'], msg.slice(4))[0]
           return cb('revert ' + reason)
@@ -145,9 +145,9 @@ export class Transactions {
           return cb(e.message)
         }
       }
-      let gasUsed = result.result.execResult.gasUsed.toNumber()
-      if (result.result.execResult.gasRefund) {
-        gasUsed += result.result.execResult.gasRefund.toNumber()
+      let gasUsed = result.execResult.gasUsed.toNumber()
+      if (result.execResult.gasRefund) {
+        gasUsed += result.execResult.gasRefund.toNumber()
       }
       cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
