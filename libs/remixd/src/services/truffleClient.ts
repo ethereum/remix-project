@@ -32,7 +32,6 @@ export class TruffleClient extends PluginClient {
       let result = ''
       let error = ''
       child.stdout.on('data', (data) => {
-        console.log('data in truffle-->', data)
         const msg = `[Truffle Compilation]: ${data.toString()}`
         console.log('\x1b[32m%s\x1b[0m', msg)
         result += msg + '\n'
