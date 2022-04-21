@@ -25,7 +25,28 @@ createScriptTag = function (url, type) {
   script.type = type;
   document.getElementsByTagName('head')[0].appendChild(script);
 };
-fetch('assets/version.json', { cache: "no-store" }).then(response => {
+
+function isElectron() {
+  // Renderer process
+  if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
+      return true
+  }
+
+  // Main process
+  if (typeof process !== 'undefined' && typeof process.versions === 'object' && !!process.versions.electron) {
+      return true
+  }
+
+  // Detect the user agent when the `nodeIntegration` option is set to false
+  if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
+      return true
+  }
+
+  return false
+}
+
+const versionUrl = isElectron() ? 'https://remix.ethereum.org/assets/version.json' : 'assets/version.json'
+fetch(versionUrl, { cache: "no-store" }).then(response => {
   response.text().then(function (data) {
     const version = JSON.parse(data);
     console.log(`Loading Remix ${version.version}`);
