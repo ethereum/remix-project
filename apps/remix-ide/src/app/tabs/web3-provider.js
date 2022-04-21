@@ -42,7 +42,7 @@ export class Web3ProviderModule extends Plugin {
     try {
       const receipt = await this.call('blockchain', 'getTransactionReceipt', txhash)
       if (receipt) return receipt
-    } catch (e) {}
+    } catch (e) {} // eslint-disable-line
     await this.pause()
     return await this.tryTillReceiptAvailable(txhash)
   }
