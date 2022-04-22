@@ -28,13 +28,36 @@ export class Web3ProviderModule extends Plugin {
         if (error) return reject(error)
         if (payload.method === 'eth_sendTransaction') {
           if (payload.params.length && !payload.params[0].to && message.result) {
-            const receipt = await this.call('blockchain', 'getTransactionReceipt', message.result)
-            const contractData = await this.call('compilerArtefacts', 'getContractDataFromAddress', receipt.contractAddress)
-            if (contractData) this.call('udapp', 'addInstance', receipt.contractAddress, contractData.contract.abi, contractData.name)
+            setTimeout(async () => {
+              const receipt = await this.tryTillReceiptAvailable(message.result)
+              if (!receipt.contractAddress) {
+                console.log('receipt available but contract address not present', receipt)
+                return
+              }
+              const contractData = await this.call('compilerArtefacts', 'getContractDataFromAddress', receipt.contractAddress)
+              if (contractData) this.call('udapp', 'addInstance', receipt.contractAddress, contractData.contract.abi, contractData.name)
+            }, 50)
           }
         }
         resolve(message)
       })
     })
+  }
+
+  async tryTillReceiptAvailable (txhash) {
+    try {
+      const receipt = await this.call('blockchain', 'getTransactionReceipt', txhash)
+      if (receipt) return receipt
+    } catch (e) {
+      // do nothing
+    }
+    await this.pause()
+    return await this.tryTillReceiptAvailable(txhash)
+  }
+
+  async pause () { 
+    return new Promise((resolve, reject) => { 
+      setTimeout(resolve, 500) 
+    }) 
   }
 }
