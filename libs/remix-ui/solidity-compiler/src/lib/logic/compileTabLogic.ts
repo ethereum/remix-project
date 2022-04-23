@@ -48,9 +48,9 @@ export class CompileTabLogic {
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
-    this.useFileConfiguration = this.api.getCompilerParameters().useFileConfiguration
-    console.log("this.configFilePath ", this.configFilePath)
-    console.log("this.api.getCompilerParameters().configFilePath ", this.api.getCompilerParameters().configFilePath)
+    //this.useFileConfiguration = this.api.getCompilerParameters().useFileConfiguration
+    console.log("logic this.configFilePath ", this.configFilePath)
+    console.log("logic this.api.getCompilerParameters().configFilePath ", this.api.getCompilerParameters().configFilePath)
     this.configFilePath = this.api.getCompilerParameters().configFilePath
     this.language = getValidLanguage(this.api.getCompilerParameters().language)
     if (this.language != null) {
@@ -111,6 +111,7 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
+        console.log("compile from ", this.configFilePath)
         this.api.readFile(this.configFilePath).then( contentConfig => {
           this.compiler.set('configFileContent', contentConfig)
         })
