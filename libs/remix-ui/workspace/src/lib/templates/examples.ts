@@ -266,7 +266,6 @@ import { deploy } from './web3.ts'
 (async () => {
     try {
         const result = await deploy('Storage', [])
-        console.log(JSON.stringify(result, null, '\t')))
         console.log(\`address: \${result.address\}\`)
     } catch (e) {
         console.log(e.message)
@@ -283,7 +282,6 @@ import { deploy } from './ethers.ts'
 (async () => {
     try {
         const result = await deploy('Storage', [])
-        console.log(JSON.stringify(result, null, '\t'))
         console.log(\`address: \${result.address\}\`)
     } catch (e) {
         console.log(e.message)
