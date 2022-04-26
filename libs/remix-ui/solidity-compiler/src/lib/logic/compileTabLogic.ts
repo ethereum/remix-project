@@ -141,11 +141,31 @@ export class CompileTabLogic {
             })
           }
         } else if (externalCompType === 'truffle') {
-            this.api.compileWithTruffle().then((result) => {
+          const { currentVersion, optimize, runs, evmVersion } = this.compiler.state
+          if (currentVersion) {
+            const fileContent = `module.exports = {
+              compilers: {
+                solc: {
+                  version: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+                  settings: {
+                    optimizer: {
+                      enabled: ${optimize},
+                      runs: ${runs},
+                    },
+                    evmVersion: ${evmVersion}
+                  }
+                }
+              }
+            }`
+            const configFilePath = 'remix-compiler.config.js'
+            this.api.writeFile(configFilePath, fileContent)
+            _paq.push(['trackEvent', 'compiler', 'compileWithTruffle'])
+            this.api.compileWithTruffle(configFilePath).then((result) => {
               this.api.logToTerminal({ type: 'info', value: result })
             }).catch((error) => {
               this.api.logToTerminal({ type: 'error', value: error })
             })
+          }
         }
       }
       // TODO readd saving current file
