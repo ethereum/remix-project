@@ -497,6 +497,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'REMOVE_FOCUS_ELEMENT': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        focusElement: state.focusElement.filter(element => element.key !== payload)
+      }
+    }
+
     case 'SET_CONTEXT_MENU_ITEM': {
       const payload = action.payload as action
 
@@ -599,12 +608,12 @@ const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<str
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
-  files = _.set(files, _path, {
+  files = _.setWith(files, _path, {
     path: path,
     name: extractNameFromKey(path),
     isDirectory: false,
     type: 'file'
-  })
+  }, Object)
   return files
 }
 
@@ -629,13 +638,13 @@ const removeInputField = (state: BrowserState, path: string): { [x: string]: Rec
 
   if (prevFiles) {
     prevFiles.child && prevFiles.child[path + '/' + 'blank'] && delete prevFiles.child[path + '/' + 'blank']
-    files = _.set(files, _path, {
+    files = _.setWith(files, _path, {
       isDirectory: true,
       path,
-      name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+      name: extractNameFromKey(path),
       type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
       child: prevFiles ? prevFiles.child : {}
-    })
+    }, Object)
   }
 
   return files
@@ -647,14 +656,22 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
   if (state.mode === 'browser') {
     if (payload.path === state.browser.currentWorkspace) {
       let files = normalize(payload.fileTree, payload.path, payload.type)
-
       files = _.merge(files, state.browser.files[state.browser.currentWorkspace])
       if (deletePath) delete files[deletePath]
       return { [state.browser.currentWorkspace]: files }
     } else {
       let files = state.browser.files
       const _path = splitPath(state, payload.path)
-      const prevFiles = _.get(files, _path)
+      let prevFiles = _.get(files, _path)
+
+      if (!prevFiles) {
+        const object = {}; let o = object
+        for (const pa of _path) {
+          o = o[pa] = {}
+        }
+        files = _.defaultsDeep(files, object)
+        prevFiles = _.get(files, _path)
+      }
 
       if (prevFiles) {
         prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
@@ -665,16 +682,18 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
             delete prevFiles.child[deletePath]
           }
         }
-        files = _.set(files, _path, prevFiles)
+        files = _.setWith(files, _path, prevFiles, Object)
       } else if (payload.fileTree && payload.path) {
         files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
       }
       return files
     }
   } else {
-    if (payload.path === state.mode || payload.path === '/') {
+    if (payload.path === '/') {
+      const files = normalize(payload.fileTree, payload.path, payload.type)
+      return { [state.mode]: files }
+    } else if (payload.path === state.mode) {
       let files = normalize(payload.fileTree, payload.path, payload.type)
-
       files = _.merge(files, state[state.mode].files[state.mode])
       if (deletePath) delete files[deletePath]
       return { [state.mode]: files }
@@ -692,7 +711,7 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
             delete prevFiles.child[deletePath]
           }
         }
-        files = _.set(files, _path, prevFiles)
+        files = _.setWith(files, _path, prevFiles, Object)
       } else {
         files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
       }
@@ -723,7 +742,7 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
     if (filesList[key].isDirectory) {
       folders[extractNameFromKey(key)] = {
         path,
-        name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+        name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory,
         type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
       }

@@ -15,12 +15,12 @@ class CreateContract extends EventEmitter {
 
 function createContract (browser: NightwatchBrowser, inputParams: string, callback: VoidFunction) {
   if (inputParams) {
-    browser.setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
-      browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function () { callback() })
+    browser.setValue('.udapp_contractActionsContainerSingle > input', inputParams, function () {
+      browser.click('.udapp_contractActionsContainerSingle > button').pause(500).perform(function () { callback() })
     })
   } else {
     browser
-      .click('#runTabView button[class^="instanceButton"]')
+      .click('.udapp_contractActionsContainerSingle > button')
       .pause(500)
       .perform(function () { callback() })
   }

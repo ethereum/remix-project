@@ -21,5 +21,6 @@ export interface TreeViewItemProps {
     controlBehaviour?: boolean
     innerRef?: any,
     onContextMenu?: (...args: any) => void,
-    onBlur?: (...args: any) => void
+    onBlur?: (...args: any) => void,
+    showIcon?: boolean
 }

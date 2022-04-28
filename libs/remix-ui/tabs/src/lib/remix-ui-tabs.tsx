@@ -10,6 +10,7 @@ export interface TabsUIProps {
  onZoomOut: () => void
  onZoomIn: () => void
  onReady: (api: any) => void
+ themeQuality: "dark"
 }
 
 export interface TabsUIApi {
@@ -35,9 +36,11 @@ export const TabsUI = (props: TabsUIProps) => {
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
+    const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
+
     return (
-      <div onClick={() => { props.onSelect(index); currentIndexRef.current = index; setSelectedIndex(index) }} ref={el => { tabsRef.current[index] = el }} className={classNameTab} title={tab.tooltip}>
-        {tab.icon ? (<img className="my-1 mr-1 iconImage" src={tab.icon} />) : (<i className={classNameImg}></i>)}
+      <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} data-id={index === currentIndexRef.current ? 'tab-active' : ''} title={tab.tooltip}>
+        {tab.icon ? (<img className="my-1 mr-1 iconImage" style={{filter: invert}} src={tab.icon} />) : (<i className={classNameImg}></i>)}
         <span className="title-tabs">{tab.title}</span>
         <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
           <i className="text-dark fas fa-times"></i>
@@ -74,7 +77,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }, [])
 
   return (
-    <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs">
+    <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
       <div className="d-flex flex-row" style={ { maxWidth: 'fit-content', width: '97%' } }>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-2">
           <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
@@ -87,6 +90,11 @@ export const TabsUI = (props: TabsUIProps) => {
             if (tabsElement.current) return
             tabsElement.current = domEl
             tabsElement.current.addEventListener('wheel', transformScroll)
+          }}
+          onSelect={(index) => {
+            props.onSelect(index)
+            currentIndexRef.current = index
+            setSelectedIndex(index)
           }}
         >
           <TabList className="d-flex flex-row align-items-center">

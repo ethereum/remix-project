@@ -1,0 +1,24 @@
+.preload-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.preload-info-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    max-width: 400px;
+}
+
+.preload-info-container .btn {
+    cursor: pointer;
+}
+
+.preload-logo {
+    min-width: 200px;
+    max-width: 240px;
+    padding-bottom: 1.5rem !important;
+}

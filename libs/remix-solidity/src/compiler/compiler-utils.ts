@@ -1,5 +1,5 @@
-const semver = require('semver')
-const minixhr = require('minixhr')
+import * as semver from 'semver'
+import * as minixhr from 'minixhr'
 /* global Worker */
 
 export const baseURLBin = 'https://binaries.soliditylang.org/bin'

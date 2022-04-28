@@ -125,7 +125,7 @@ export const AssemblyItems = ({ registerEvent }) => {
     <div className="border rounded px-1 mt-1 bg-light">
       <div className='dropdownpanel'>
         <div className='dropdowncontent'>
-          <div className="pl-2 my-1 small instructions" id='asmitems' ref={asmItemsRef}>
+          <div className="pl-2 my-1 small instructions" data-id="asmitems" id='asmitems' ref={asmItemsRef}>
             {
               assemblyItems.display.map((item, i) => {
                 return <div className="px-1" key={i} ref={ref => { refs.current[i] = ref }}><span>{item}</span></div>

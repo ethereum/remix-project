@@ -21,6 +21,8 @@
   --light: #fff;
   --dark: #f8fafe;
   --text: #3b445e;
+  --body-bg: #eef1f6;
+  --text-bg-mark: #fcf8e3;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -69,7 +71,7 @@ body {
   line-height: 1.5;
   color: #2e3145;
   text-align: left;
-  background-color: #eef1f6;
+  background-color: var(--body-bg);
 }
 
 [tabindex="-1"]:focus {
@@ -471,7 +473,7 @@ small,
 mark,
 .mark {
   padding: 0.2em;
-  background-color: #fcf8e3;
+  background-color: var(--text-bg-mark);
 }
 
 .list-unstyled {
@@ -517,7 +519,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #eef1f6;
+  background-color: var(--body-bg);
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -1673,7 +1675,7 @@ pre code {
 .table-active,
 .table-active > th,
 .table-active > td {
-  background-color: #eef1f6;
+  background-color: var(--body-bg);
 }
 
 .table-hover .table-active:hover {
@@ -3767,13 +3769,13 @@ input[type="button"].btn-block {
   outline: none;
 }
 .custom-range:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 1px #eef1f6, 0px 0px 5px #00bbff;
+  box-shadow: 0 0 0 1px var(--body-bg), 0px 0px 5px #00bbff;
 }
 .custom-range:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 1px #eef1f6, 0px 0px 5px #00bbff;
+  box-shadow: 0 0 0 1px var(--body-bg), 0px 0px 5px #00bbff;
 }
 .custom-range:focus::-ms-thumb {
-  box-shadow: 0 0 0 1px #eef1f6, 0px 0px 5px #00bbff;
+  box-shadow: 0 0 0 1px var(--body-bg), 0px 0px 5px #00bbff;
 }
 .custom-range::-moz-focus-outer {
   border: 0;
@@ -5482,7 +5484,7 @@ a.close.disabled {
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #eef1f6;
+  background-color: var(--body-bg);
   background-clip: padding-box;
   border: 1px solid #dfe1ea;
   border-radius: 0.3rem;
@@ -5496,7 +5498,7 @@ a.close.disabled {
   z-index: 1040;
   width: 100vw;
   height: 100vh;
-  background-color: #eef1f6;
+  background-color: var(--body-bg);
 }
 .modal-backdrop.fade {
   opacity: 0;
@@ -5695,12 +5697,11 @@ a.close.disabled {
 }
 
 .tooltip-inner {
-  max-width: 200px;
-  padding: 0.25rem 0.5rem;
-  color: #fff;
+  padding: .25rem .5rem;
+  color: var(--text);
   text-align: center;
-  background-color: #000;
-  border-radius: 0.25rem;
+  background-color: var(--light);
+  border-radius: .25rem
 }
 
 .popover {
@@ -9494,8 +9495,9 @@ a.text-dark:focus {
   border: none !important;
 }
 .remix-bg-opacity {
- background: rgba(248, 250, 254, 0.80) !important; 
+  background: rgba(248, 250, 254, 0.80) !important; 
 }
+
 .plugins-list-header {
   background: transparent !important;
 }

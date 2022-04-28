@@ -6,9 +6,9 @@ import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-li
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
 import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
-const helper = require('../../../../../apps/remix-ide/src/lib/helper')
 const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
@@ -32,7 +32,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     toastMessage: '',
     validationError: '',
     txNumberIsEmpty: true,
-    isLocalNodeUsed: false
+    isLocalNodeUsed: false,
+    sourceLocationStatus: ''
   })
 
   useEffect(() => {
@@ -86,8 +87,26 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
+    debuggerInstance.event.register('locatingBreakpoint', async (isActive) => {
+      setState(prevState => {
+        return { ...prevState, sourceLocationStatus: 'Locating breakpoint, this might take a while...' }
+      })
+    })
+
+    debuggerInstance.event.register('noBreakpointHit', async (isActive) => {
+      setState(prevState => {
+        return { ...prevState, sourceLocationStatus: '' }
+      })
+    })
+
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
-      if (!lineColumnPos) return
+      if (!lineColumnPos) {        
+        await debuggerModule.discardHighlight()
+        setState(prevState => {
+          return { ...prevState, sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.' }
+        })
+        return
+      }
       const contracts = await debuggerModule.fetchContractAndCompile(
         address || currentReceipt.contractAddress || currentReceipt.to,
         currentReceipt)
@@ -113,6 +132,9 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           }
         }
         if (path) {
+          setState(prevState => {
+            return { ...prevState, sourceLocationStatus: '' }
+          })
           await debuggerModule.discardHighlight()
           await debuggerModule.highlight(lineColumnPos, path)
         }
@@ -138,6 +160,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
   const unloadRequested = (blockNumber, txIndex, tx) => {
     unLoad()
+    setState(prevState => {
+      return {
+        ...prevState,
+        sourceLocationStatus: ''
+      }
+    })
   }
 
   const unLoad = () => {
@@ -168,10 +196,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     setState(prevState => {
       return {
         ...prevState,
-        txNumber: txNumber
+        txNumber: txNumber,
+        sourceLocationStatus: ''
       }
     })
-    if (!helper.isValidHash(txNumber)) {
+    if (!isValidHash(txNumber)) {
       setState(prevState => {
         return {
           ...prevState,
@@ -230,6 +259,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
 
+    setTimeout(async() => {
     try {
       await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
         listenToEvents(debuggerInstance, currentReceipt)
@@ -257,6 +287,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
       })
     }
+  }, 300)
   }
 
   const debug = (txHash, web3?) => {
@@ -264,7 +295,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return {
         ...prevState,
         validationError: '',
-        txNumber: txHash
+        txNumber: txHash,
+        sourceLocationStatus: ''
       }
     })
     startDebugging(null, txHash, null, web3)
@@ -313,6 +345,16 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
+        { state.debugging && state.sourceLocationStatus && <div className="text-warning"><i className="fas fa-exclamation-triangle" aria-hidden="true"></i> {state.sourceLocationStatus}</div> }
+        { !state.debugging && 
+        <div>
+          <i className="fas fa-info-triangle" aria-hidden="true"></i>
+          <span>
+            When Debugging with a transaction hash, 
+            if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings.
+            For supported networks, please see: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://sourcify.dev" target="__blank">https://etherscan.io/contractsVerified</a>
+          </span>
+        </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }
         { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>

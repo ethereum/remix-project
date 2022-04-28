@@ -1,9 +1,9 @@
 'use strict'
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const EventManager = require('../../lib/events')
 
@@ -12,7 +12,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition']
 }
 
 class Editor extends Plugin {
@@ -25,11 +25,12 @@ class Editor extends Plugin {
       remixDark: 'remix-dark'
     }
 
+    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+
     // Init
     this.event = new EventManager()
     this.sessions = {}
-    this.sourceAnnotationsPerFile = {}
-    this.markerPerFile = {}
     this.readOnlySessions = {}
     this.previousInput = ''
     this.saveTimeout = null
@@ -46,7 +47,9 @@ class Editor extends Plugin {
       txt: 'text',
       json: 'json',
       abi: 'json',
-      rs: 'rust'
+      rs: 'rust',
+      cairo: 'cairo',
+      ts: 'typescript'
     }
 
     this.activated = false
@@ -60,10 +63,27 @@ class Editor extends Plugin {
 
     // to be implemented by the react component
     this.api = {}
+    this.dispatch = null
+    this.ref = null
+  }
+
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
+  }
+
+  updateComponent(state) {
+    return <EditorUI
+    editorAPI={state.api}
+    themeType={state.currentThemeType}
+    currentFile={state.currentFile}
+    events={state.events}
+    plugin={state.plugin}
+  />
   }
 
   render () {
-    if (this.el) return this.el
+    
+/*     if (this.el) return this.el
 
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'editorView')
@@ -74,22 +94,36 @@ class Editor extends Plugin {
         this._onChange(this.currentFile)
       }
     }
-    this.el.gotoLine = (line) => this.gotoLine(line, 0)
-    return this.el
+    this.el.gotoLine = (line, column) => this.gotoLine(line, column || 0)
+    this.el.getCursorPosition = () => this.getCursorPosition() */
+
+    return <div ref={(element)=>{ 
+      this.ref = element
+      this.ref.currentContent = () => this.currentContent() // used by e2e test
+      this.ref.setCurrentContent = (value) => {
+        if (this.sessions[this.currentFile]) {
+          this.sessions[this.currentFile].setValue(value)
+          this._onChange(this.currentFile)
+        }
+      }
+      this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
+      this.ref.getCursorPosition = () => this.getCursorPosition()
+      this.ref.addDecoration = (marker, filePath, typeOfDecoration) => this.addDecoration(marker, filePath, typeOfDecoration)
+      this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)      
+      this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
+    }} id='editorView'>
+      <PluginViewWrapper plugin={this} />
+      </div>
   }
 
   renderComponent () {
-    ReactDOM.render(
-      <EditorUI
-        editorAPI={this.api}
-        themeType={this.currentThemeType}
-        currentFile={this.currentFile}
-        sourceAnnotationsPerFile={this.sourceAnnotationsPerFile}
-        markerPerFile={this.markerPerFile}
-        events={this.events}
-        plugin={this}
-      />
-      , this.el)
+    this.dispatch({
+      api: this.api,
+      currentThemeType: this.currentThemeType,
+      currentFile: this.currentFile,
+      events: this.events,
+      plugin: this
+    })
   }
 
   triggerEvent (name, params) {
@@ -106,7 +140,11 @@ class Editor extends Plugin {
     this.on('sidePanel', 'pluginDisabled', (name) => {
       this.clearAllDecorationsFor(name)
     })
-
+    this.on('fileManager', 'fileClosed', (name) => {
+      if (name === this.currentFile) {
+        this.currentFile = null
+      }
+    })
     this.on('theme', 'themeLoaded', (theme) => {
       this.currentThemeType = theme.quality
       this.renderComponent()
@@ -147,11 +185,11 @@ class Editor extends Plugin {
     if (this.saveTimeout) {
       window.clearTimeout(this.saveTimeout)
     }
-    this.triggerEvent('contentChanged', [])
 
     this.saveTimeout = window.setTimeout(() => {
+      this.triggerEvent('contentChanged', [])
       this.triggerEvent('requiringToSaveCurrentfile', [])
-    }, 5000)
+    }, 500)
   }
 
   _switchSession (path) {
@@ -354,6 +392,20 @@ class Editor extends Plugin {
   }
 
   /**
+   * Reveals the range in the editor.
+   * @param {number} startLineNumber
+   * @param {number} startColumn
+   * @param {number} endLineNumber
+   * @param {number} endColumn
+   */
+  revealRange (startLineNumber, startColumn, endLineNumber, endColumn) {
+    if (!this.activated) return
+    this.emit('focus')
+    console.log(startLineNumber, startColumn, endLineNumber, endColumn)
+    this.emit('revealRange', startLineNumber, startColumn, endLineNumber, endColumn)
+  }
+
+  /**
    * Scrolls to a line. If center is true, it puts the line in middle of screen (or attempts to).
    * @param {number} line The line to scroll to
    */
@@ -377,27 +429,15 @@ class Editor extends Plugin {
     if (filePath && !this.sessions[filePath]) throw new Error('file not found' + filePath)
     const path = filePath || this.currentFile
 
-    const currentAnnotations = this[typeOfDecoration][path]
-    if (!currentAnnotations) return
-
-    const newAnnotations = []
-    for (const annotation of currentAnnotations) {
-      if (annotation.from !== plugin) newAnnotations.push(annotation)
-    }
-
-    this[typeOfDecoration][path] = newAnnotations
-    this.renderComponent()
+    const { currentDecorations, registeredDecorations } = this.api.clearDecorationsByPlugin(path, plugin, typeOfDecoration, this.registeredDecorations[typeOfDecoration][filePath] || [], this.currentDecorations[typeOfDecoration][filePath] || [])
+    this.currentDecorations[typeOfDecoration][filePath] = currentDecorations
+    this.registeredDecorations[typeOfDecoration][filePath] = registeredDecorations
   }
 
-  keepDecorationsFor (name, typeOfDecoration) {
+  keepDecorationsFor (plugin, typeOfDecoration) {
     if (!this.currentFile) return
-    if (!this[typeOfDecoration][this.currentFile]) return
-
-    const annotations = this[typeOfDecoration][this.currentFile]
-    for (const annotation of annotations) {
-      annotation.hide = annotation.from !== name
-    }
-    this.renderComponent()
+    const { currentDecorations } = this.api.keepDecorationsFor(this.currentFile, plugin, typeOfDecoration, this.registeredDecorations[typeOfDecoration][this.currentFile] || [], this.currentDecorations[typeOfDecoration][this.currentFile] || [])
+    this.currentDecorations[typeOfDecoration][this.currentFile] = currentDecorations
   }
 
   /**
@@ -436,14 +476,17 @@ class Editor extends Plugin {
     if (!filePath) return
     filePath = await this.call('fileManager', 'getPathFromUrl', filePath)
     filePath = filePath.file
-    if (!this.sessions[filePath]) throw new Error('file not found' + filePath)
+    if (!this.sessions[filePath]) return
     const path = filePath || this.currentFile
 
     const { from } = this.currentRequest
-    if (!this[typeOfDecoration][path]) this[typeOfDecoration][path] = []
     decoration.from = from
-    this[typeOfDecoration][path].push(decoration)
-    this.renderComponent()
+
+    const { currentDecorations, registeredDecorations } = this.api.addDecoration(decoration, path, typeOfDecoration)
+    if (!this.registeredDecorations[typeOfDecoration][filePath]) this.registeredDecorations[typeOfDecoration][filePath] = []    
+    this.registeredDecorations[typeOfDecoration][filePath].push(...registeredDecorations)
+    if (!this.currentDecorations[typeOfDecoration][filePath]) this.currentDecorations[typeOfDecoration][filePath] = []
+    this.currentDecorations[typeOfDecoration][filePath].push(...currentDecorations)
   }
 
   /**
@@ -473,7 +516,7 @@ class Editor extends Plugin {
   discardHighlight () {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'markerPerFile')
+      this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 }

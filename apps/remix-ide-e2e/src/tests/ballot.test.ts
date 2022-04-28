@@ -25,7 +25,7 @@ module.exports = {
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {
@@ -70,7 +70,7 @@ module.exports = {
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
       .pause(500)
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {
@@ -84,17 +84,24 @@ module.exports = {
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
-      .modalFooterOKClick()
+      .waitForElementPresent('[data-id="envNotification-modal-footer-ok-react"]')
+      .execute(function () {
+        const modal = document.querySelector('[data-id="envNotification-modal-footer-ok-react"]') as any
+
+        modal.click()
+      })
+      .pause(5000)
       .execute(function () {
         const env: any = document.getElementById('selectExEnvOptions')
+
         return env.value
       }, [], function (result) {
-        console.log({ result })
         browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
       })
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
+      .clearValue('input[placeholder="bytes32[] proposalNames"]')
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)

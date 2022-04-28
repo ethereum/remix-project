@@ -82,13 +82,14 @@ module.exports = {
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
   'Static Analysis run with remixd #group3': function (browser) {
-    browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5'])
+    browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
       .clickLaunchIcon('solidityStaticAnalysis')
-      .click('#staticanalysisButton button')
+      .click('#staticanalysisButton button').pause(4000)
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         browser
-          .click('[data-id="staticAnalysisModuleMiscellaneous1"')
-          .waitForElementPresent('.highlightLine16', 60000)
+          .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
+          .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
+          .waitForElementVisible('.highlightLine16', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(
               'function _sendLogPayload(bytes memory payload) private view {') !== -1,
@@ -125,9 +126,9 @@ function startRemixd (browser: NightwatchBrowser) {
     .clickLaunchIcon('filePanel')
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentActivateButtonremixd"]')
-    .waitForElementVisible('#modal-footer-ok', 2000)
+    .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
-    .click('#modal-footer-ok')
+    .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 

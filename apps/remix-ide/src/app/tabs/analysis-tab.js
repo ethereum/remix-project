@@ -1,10 +1,10 @@
 import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
-import ReactDOM from 'react-dom'
 import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-var Renderer = require('../ui/renderer')
+import Registry from '../state/registry'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 var EventManager = require('../../lib/events')
 
@@ -22,21 +22,20 @@ const profile = {
 }
 
 class AnalysisTab extends ViewPlugin {
-  constructor (registry) {
+  constructor () {
     super(profile)
     this.event = new EventManager()
     this.events = new EventEmitter()
-    this.registry = registry
+    this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
-    this._components = {
-      renderer: new Renderer(this)
-    }
+    this._components = {}
     this._components.registry = this.registry
     this._deps = {
       offsetToLineColumnConverter: this.registry.get(
         'offsettolinecolumnconverter').api
     }
+    this.dispatch = null
   }
 
   async onActivation () {
@@ -45,33 +44,40 @@ class AnalysisTab extends ViewPlugin {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
     this.renderComponent()
+    this.event.register('staticAnaysisWarning', (count) => {
+      if (count > 0) {
+        this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
+      } else if (count === 0) {
+        this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
+      } else {
+        // count ==-1 no compilation result
+        this.emit('statusChanged', { key: 'none' })
+      }
+    })
+  }
+  
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
   }
 
   render () {
-    return this.element
+    return <div id='staticAnalyserView'><PluginViewWrapper plugin={this} /></div>
+  }
+
+  updateComponent(state) {
+    return  <RemixUiStaticAnalyser
+    registry={state.registry}
+    analysisModule={state.analysisModule}
+    event={state.event}
+  />
   }
 
   renderComponent () {
-    ReactDOM.render(
-      <RemixUiStaticAnalyser
-        registry={this.registry}
-        analysisModule={this}
-        event={this.event}
-      />,
-      this.element,
-      () => {
-        this.event.register('staticAnaysisWarning', (count) => {
-          if (count > 0) {
-            this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
-          } else if (count === 0) {
-            this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
-          } else {
-            // count ==-1 no compilation result
-            this.emit('statusChanged', { key: 'none' })
-          }
-        })
-      }
-    )
+    this.dispatch({
+      registry: this.registry,
+      analysisModule: this,
+      event: this.event
+    })
   }
 }
 

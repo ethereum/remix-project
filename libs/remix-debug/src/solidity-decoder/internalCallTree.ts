@@ -262,7 +262,7 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
           // so, either this is the direct value, or the offset in memory. That depends on the type.
           if (variableDeclaration.name !== '') {
             states = tree.solidityProxy.extractStatesDefinitions()
-            var location = extractLocationFromAstVariable(variableDeclaration)
+            let location = extractLocationFromAstVariable(variableDeclaration)
             location = location === 'default' ? 'storage' : location
             // we push the new local variable in our tree
             tree.scopes[scopeId].locals[variableDeclaration.name] = {

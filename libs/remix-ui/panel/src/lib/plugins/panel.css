@@ -1,0 +1,105 @@
+.panel {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+}
+
+.swapitTitle {
+    margin: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.swapitTitle i {
+    padding-left: 6px;
+    font-size: 14px;
+}
+
+.swapitHeader {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px 15px;
+    justify-content: space-between;
+    text-transform: uppercase;
+}
+
+.icons i {
+    height: 80%;
+    cursor: pointer;
+}
+
+.pluginsContainer {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.titleInfo {
+    padding-left: 10px;
+}
+
+.versionBadge {
+    background-color: var(--light);
+    padding: 0 7px;
+    font-weight: bolder;
+    margin-left: 5px;
+    text-transform: lowercase;
+    cursor: default;
+}
+
+iframe {
+    height: 100%;
+    width: 100%;
+    border: 0;
+}
+
+.plugins {
+    height: 100%;
+}
+
+.plugItIn {
+    display: none;
+    height: 100%;
+}
+
+.plugItIn>div {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.plugItIn.active {
+    display: block;
+}
+
+#editorView {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    display: block;
+}
+
+#mainPanel {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    display: block;
+}
+
+.mainPanel-wrap, .editor-wrap {
+    flex: 1;
+    min-height: 100px;
+}
+
+.terminal-wrap {
+    min-height: 35px;
+    height: 20%;
+}
+
+.terminal-wrap.minimized {
+    height: 2rem !important;
+}

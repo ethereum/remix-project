@@ -1,0 +1,27 @@
+/* dragbar UI */
+
+.dragbar_terminal {
+  display: block;
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 0.3em;
+  z-index: 1000;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 900;
+}
+
+.dragbar_terminal:hover,
+.dragbar_terminal.ondrag {
+  background-color: var(--secondary);
+  cursor: row-resize;
+}

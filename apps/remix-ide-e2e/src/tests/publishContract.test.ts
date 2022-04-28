@@ -60,12 +60,14 @@ module.exports = {
       .click('*[data-id="contractDropdownIpfsCheckbox"]')
       .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(8000)
-      .getModalBody((value, done) => {
+      .pause(5000)
+      .waitForElementVisible('[data-id="udappModalDialogModalBody-react"]')
+      .getText('[data-id="udappModalDialogModalBody-react"]', (result) => {
+        const value = typeof result.value === 'string' ? result.value : null
+
         if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
-        done()
       })
-      .modalFooterOKClick()
+      .modalFooterOKClick('udapp')
   },
 
   'Should remember choice after page refresh': function (browser: NightwatchBrowser) {

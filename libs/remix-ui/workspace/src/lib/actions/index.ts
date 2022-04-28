@@ -5,14 +5,22 @@ import { customAction } from '@remixproject/plugin-api/lib/file-system/file-pane
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
+import { QueryParams } from '@remix-project/remix-lib'
+import JSZip from 'jszip'
 
 export * from './events'
 export * from './workspace'
 
-const QueryParams = require('../../../../../../apps/remix-ide/src/lib/query-params')
 const queryParams = new QueryParams()
+const _paq = window._paq = window._paq || []
 
 let plugin, dispatch: React.Dispatch<any>
+
+export type UrlParametersType = {
+  gist: string,
+  code: string,
+  url: string
+}
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
@@ -21,7 +29,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     setPlugin(plugin, dispatch)
     const workspaceProvider = filePanelPlugin.fileProviders.workspace
     const localhostProvider = filePanelPlugin.fileProviders.localhost
-    const params = queryParams.get()
+    const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
 
     dispatch(setWorkspaces(workspaces))
@@ -35,7 +43,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace('code-sample'))
       const filePath = await loadWorkspacePreset('code-template')
-      plugin.on('editor', 'editorMounted', () => plugin.fileManager.openFile(filePath))
+      plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
     } else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'default-template')
@@ -84,6 +92,12 @@ export const removeInputField = async (path: string) => {
   dispatch(removeInputFieldSuccess(path))
 }
 
+export type SolidityConfiguration = {
+  version: string,
+  optimize: string,
+  runs: string
+}
+
 export const publishToGist = async (path?: string, type?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
@@ -97,8 +111,9 @@ export const publishToGist = async (path?: string, type?: string) => {
     if (!accessToken) {
       dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => {}))
     } else {
+      const params = queryParams.get() as SolidityConfiguration
       const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
-        queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
+      params.version + '&optimize=' + params.optimize + '&runs=' + params.runs + '&gist='
       const gists = new Gists({ token: accessToken })
 
       if (id) {
@@ -179,7 +194,7 @@ export const createNewFolder = async (path: string, rootDir: string) => {
   const exists = await fileManager.exists(dirName)
 
   if (exists) {
-    return dispatch(displayNotification('Rename File Failed', `A file or folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
+    return dispatch(displayNotification('Failed to create folder', `A folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
   }
   await fileManager.mkdir(dirName)
   path = path.indexOf(rootDir + '/') === 0 ? path.replace(rootDir + '/', '') : path
@@ -215,7 +230,7 @@ export const copyFile = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
   try {
-    fileManager.copyFile(src, dest)
+    await fileManager.copyFile(src, dest)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
   }
@@ -225,7 +240,7 @@ export const copyFolder = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
   try {
-    fileManager.copyDir(src, dest)
+    await fileManager.copyDir(src, dest)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
   }
@@ -238,16 +253,16 @@ export const runScript = async (path: string) => {
     if (error) {
       return dispatch(displayPopUp(error))
     }
-    plugin.call('scriptRunner', 'execute', content)
+    plugin.call('scriptRunner', 'execute', content, path)
   })
 }
 
 export const emitContextMenuEvent = async (cmd: customAction) => {
-  plugin.call(cmd.id, cmd.name, cmd)
+  await plugin.call(cmd.id, cmd.name, cmd)
 }
 
 export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
-  plugin.fileManager.open(path)
+  await plugin.fileManager.open(path)
   dispatch(focusElement([{ key: path, type }]))
 }
 
@@ -255,10 +270,43 @@ export const handleExpandPath = (paths: string[]) => {
   dispatch(setExpandPath(paths))
 }
 
-const packageGistFiles = (directory) => {
+export const handleDownloadFiles = async () => {
+  try {
+    plugin.call('notification', 'toast', 'preparing files for download, please wait..')
+    const zip = new JSZip()
+
+    zip.file("readme.txt", "This is a Remix backup file.\nThis zip should be used by the restore backup tool in Remix.\nThe .workspaces directory contains your workspaces.")
+    const browserProvider = plugin.fileManager.getProvider('browser')
+
+    await browserProvider.copyFolderToJson('/', ({ path, content }) => {
+      zip.file(path, content)
+    })
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      const today = new Date()
+      const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+      const time = today.getHours() + 'h' + today.getMinutes() + 'min'
+
+      saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
+      _paq.push(['trackEvent', 'Backup', 'download', 'home'])
+    }).catch((e) => {
+      _paq.push(['trackEvent', 'Backup', 'error', e.message])
+      plugin.call('notification', 'toast', e.message)
+    })
+  } catch (e) {
+    plugin.call('notification', 'toast', e.message)
+  }
+}
+
+export const restoreBackupZip = async () => {
+  await plugin.appManager.activatePlugin(['restorebackupzip'])
+  await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
+  _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
+}
+
+const packageGistFiles = async (directory) => {
+  const workspaceProvider = plugin.fileProviders.workspace
+  const isFile = await workspaceProvider.isFile(directory)
   return new Promise((resolve, reject) => {
-    const workspaceProvider = plugin.fileProviders.workspace
-    const isFile = workspaceProvider.isFile(directory)
     const ret = {}
 
     if (isFile) {
@@ -329,4 +377,24 @@ const getOriginalFiles = async (id) => {
   const res = await fetch(url)
   const data = await res.json()
   return data.files || []
+}
+
+const saveAs = (blob, name) => {
+  const node = document.createElement('a')
+
+  node.download = name
+  node.rel = 'noopener'
+  node.href = URL.createObjectURL(blob)
+  setTimeout(function () { URL.revokeObjectURL(node.href) }, 4E4) // 40s
+  setTimeout(function () {
+    try {
+      node.dispatchEvent(new MouseEvent('click'))
+    } catch (e) {
+      const evt = document.createEvent('MouseEvents')
+
+      evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
+        20, false, false, false, false, 0, null)
+      node.dispatchEvent(evt)
+    }
+  }, 0) // 40s
 }

@@ -41,13 +41,16 @@ export class Debugger {
       }
     })
 
-    this.breakPointManager.event.register('managersChanged', () => {
-      const { traceManager, callTree, solidityProxy } = this.debugger
-      this.breakPointManager.setManagers({ traceManager, callTree, solidityProxy })
-    })
-
     this.breakPointManager.event.register('breakpointStep', (step) => {
       this.step_manager.jumpTo(step)
+    })
+
+    this.breakPointManager.event.register('noBreakpointHit', (step) => {
+      this.event.trigger('noBreakpointHit', [])
+    })
+
+    this.breakPointManager.event.register('locatingBreakpoint', () => {
+      this.event.trigger('locatingBreakpoint', [])
     })
 
     this.debugger.setBreakpointManager(this.breakPointManager)
@@ -68,7 +71,10 @@ export class Debugger {
     try {
       const address = this.debugger.traceManager.getCurrentCalledAddressAt(index)
       const compilationResultForAddress = await this.compilationResult(address)
-      if (!compilationResultForAddress) return
+      if (!compilationResultForAddress) {
+        this.event.trigger('newSourceLocation', [null])
+        return
+      }
 
       this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then(async (rawLocation) => {
         if (compilationResultForAddress && compilationResultForAddress.data) {
@@ -81,16 +87,21 @@ export class Debugger {
               sources[genSource.name] = { content: genSource.contents }
             }
           }
-          var lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
+          const lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
           this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address])
+          this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [rawLocation])
         } else {
           this.event.trigger('newSourceLocation', [null])
+          this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
         }
       }).catch((_error) => {
         this.event.trigger('newSourceLocation', [null])
+        this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
       })
       // })
     } catch (error) {
+      this.event.trigger('newSourceLocation', [null])
+      this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
       return console.log(error)
     }
   }
@@ -125,13 +136,6 @@ export class Debugger {
 
   async debugTx (tx, loadingCb) {
     this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
-
-    this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-      if (!this.debugger.solidityProxy.contracts) return
-      this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
-        this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
-      })
-    })
 
     this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
     this.vmDebuggerLogic.start()

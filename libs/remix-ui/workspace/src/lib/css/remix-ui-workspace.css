@@ -58,4 +58,7 @@
   .remixui_menuicon {
     padding-right   : 10px;
   }
+  .remixui_menuicon:hover {
+    transform: scale(1.3);
+  }
   

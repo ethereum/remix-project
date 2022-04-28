@@ -13,7 +13,7 @@ export class Struct extends RefType {
 
   async decodeFromStorage (location, storageResolver) {
     const ret = {}
-    for (var item of this.members) {
+    for (const item of this.members) {
       const globalLocation = {
         offset: location.offset + item.storagelocation.offset,
         slot: add(location.slot, item.storagelocation.slot)
@@ -31,8 +31,8 @@ export class Struct extends RefType {
   decodeFromMemoryInternal (offset, memory) {
     const ret = {}
     this.members.map((item, i) => {
-      var contentOffset = offset
-      var member = item.type.decodeFromMemory(contentOffset, memory)
+      const contentOffset = offset
+      const member = item.type.decodeFromMemory(contentOffset, memory)
       ret[item.name] = member
       if (!(item.type instanceof Mapping)) offset += 32
     })

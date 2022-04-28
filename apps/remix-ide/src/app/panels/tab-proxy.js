@@ -1,9 +1,8 @@
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
+import { PluginViewWrapper, getPathIcon } from '@remix-ui/helper'
 const EventEmitter = require('events')
-const helper = require('../../lib/helper')
 
 const profile = {
   name: 'tabs',
@@ -11,7 +10,6 @@ const profile = {
   kind: 'other'
 }
 
-// @todo(#650) Merge this with MainPanel into one plugin
 export class TabProxy extends Plugin {
   constructor (fileManager, editor) {
     super(profile)
@@ -22,12 +20,15 @@ export class TabProxy extends Plugin {
     this._view = {}
     this._handlers = {}
     this.loadedTabs = []
+    this.dispatch = null
+    this.themeQuality = 'dark'
   }
 
   onActivation () {
     this.on('theme', 'themeChanged', (theme) => {
+      this.themeQuality = theme.quality
       // update invert for all icons
-      this.updateImgStyles()
+      this.renderComponent()
     })
 
     this.on('fileManager', 'filesAllClosed', () => {
@@ -69,13 +70,15 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(workspacePath)
           return
         }
-        this.addTab(workspacePath, '', () => {
-          this.fileManager.open(file)
+        this.addTab(workspacePath, '', async () => {
+          await this.fileManager.open(file)
           this.event.emit('openFile', file)
+          this.emit('openFile', file)
         },
-        () => {
-          this.fileManager.closeFile(file)
+        async () => {
+          await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
+          this.emit('closeFile', file)
         })
         this.tabsApi.activateTab(workspacePath)
       } else {
@@ -85,13 +88,15 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(path)
           return
         }
-        this.addTab(path, '', () => {
-          this.fileManager.open(file)
+        this.addTab(path, '', async () => {
+          await this.fileManager.open(file)
           this.event.emit('openFile', file)
+          this.emit('openFile', file)
         },
-        () => {
-          this.fileManager.closeFile(file)
+        async () => {
+          await this.fileManager.closeFile(file)
           this.event.emit('closeFile', file)
+          this.emit('closeFile', file)
         })
         this.tabsApi.activateTab(path)
       }
@@ -132,9 +137,9 @@ export class TabProxy extends Plugin {
         this.addTab(
           name,
           displayName,
-          () => this.event.emit('switchApp', name),
+          () => this.emit('switchApp', name),
           () => {
-            this.event.emit('closeApp', name)
+            this.emit('closeApp', name)
             this.call('manager', 'deactivatePlugin', name)
           },
           icon
@@ -149,15 +154,8 @@ export class TabProxy extends Plugin {
   }
 
   focus (name) {
-    this.event.emit('switchApp', name)
+    this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
-  }
-
-  updateImgStyles () {
-    const images = this.el.getElementsByClassName('iconImage')
-    for (const element of images) {
-      this.call('theme', 'fixInvert', element)
-    }
   }
 
   switchTab (tabName) {
@@ -192,14 +190,6 @@ export class TabProxy extends Plugin {
   }
 
   renameTab (oldName, newName) {
-    this.addTab(newName, '', () => {
-      this.fileManager.open(newName)
-      this.event.emit('openFile', newName)
-    },
-    () => {
-      this.fileManager.closeFile(newName)
-      this.event.emit('closeFile', newName)
-    })
     this.removeTab(oldName)
   }
 
@@ -225,7 +215,7 @@ export class TabProxy extends Plugin {
             title,
             icon,
             tooltip: name,
-            iconClass: helper.getPathIcon(name)
+            iconClass: getPathIcon(name)
           })
           formatPath.shift()
           if (formatPath.length > 0) {
@@ -241,7 +231,7 @@ export class TabProxy extends Plugin {
                 title: duplicateTabTitle,
                 icon,
                 tooltip: duplicateTabName,
-                iconClass: helper.getPathIcon(duplicateTabName)
+                iconClass: getPathIcon(duplicateTabName)
               }
             }
           }
@@ -255,12 +245,11 @@ export class TabProxy extends Plugin {
         title,
         icon,
         tooltip: name,
-        iconClass: helper.getPathIcon(name)
+        iconClass: getPathIcon(name)
       })
     }
 
     this.renderComponent()
-    this.updateImgStyles()
     this._handlers[name] = { switchTo, close }
   }
 
@@ -272,7 +261,6 @@ export class TabProxy extends Plugin {
       return tab.name !== name
     })
     this.renderComponent()
-    this.updateImgStyles()
     if (previous) this.switchTab(previous.name)
   }
 
@@ -280,12 +268,21 @@ export class TabProxy extends Plugin {
     this.handlers[type] = fn
   }
 
+  setDispatch (dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
+  }
+
+  updateComponent(state) {
+    return <TabsUI tabs={state.loadedTabs} onSelect={state.onSelect} onClose={state.onClose} onZoomIn={state.onZoomIn} onZoomOut={state.onZoomOut} onReady={state.onReady} themeQuality={state.themeQuality} />
+  }
+
   renderComponent () {
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
         if (this._handlers[name]) this._handlers[name].switchTo()
-        this.event.emit('tabCountChanged', this.loadedTabs.length)
+        this.emit('tabCountChanged', this.loadedTabs.length)
       }
     }
 
@@ -293,7 +290,7 @@ export class TabProxy extends Plugin {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
         if (this._handlers[name]) this._handlers[name].close()
-        this.event.emit('tabCountChanged', this.loadedTabs.length)
+        this.emit('tabCountChanged', this.loadedTabs.length)
       }
     }
 
@@ -302,14 +299,18 @@ export class TabProxy extends Plugin {
 
     const onReady = (api) => { this.tabsApi = api }
 
-    ReactDOM.render(
-      <TabsUI tabs={this.loadedTabs} onSelect={onSelect} onClose={onClose} onZoomIn={onZoomIn} onZoomOut={onZoomOut} onReady={onReady} />
-      , this.el)
+    this.dispatch({
+      loadedTabs: this.loadedTabs,
+      onSelect,
+      onClose,
+      onZoomIn,
+      onZoomOut,
+      onReady,
+      themeQuality: this.themeQuality
+    })
   }
 
   renderTabsbar () {
-    this.el = document.createElement('div')
-    this.renderComponent()
-    return this.el
+    return <div><PluginViewWrapper plugin={this} /></div>
   }
 }

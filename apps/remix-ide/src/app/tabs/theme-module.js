@@ -1,7 +1,8 @@
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import QueryParams from '../../lib/query-params'
+import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
+import Registry from '../state/registry'
 const _paq = window._paq = window._paq || []
 
 const themes = [
@@ -26,23 +27,28 @@ const profile = {
 }
 
 export class ThemeModule extends Plugin {
-  constructor (registry) {
+  constructor () {
     super(profile)
     this.events = new EventEmitter()
     this._deps = {
-      config: registry.get('config').api
+      config: Registry.getInstance().get('config') && Registry.getInstance().get('config').api
     }
-    this.themes = themes.reduce((acc, theme) => {
-      theme.url = window.location.origin + window.location.pathname + theme.url
-      return { ...acc, [theme.name]: theme }
-    }, {})
+    this.themes = {}
+    themes.map((theme) => {
+      this.themes[theme.name.toLocaleLowerCase()] = {
+       ...theme,
+        url: window.location.origin + window.location.pathname + theme.url
+      }
+    })
     this._paq = _paq
     let queryTheme = (new QueryParams()).get().theme
+    queryTheme = queryTheme && queryTheme.toLocaleLowerCase()
     queryTheme = this.themes[queryTheme] ? queryTheme : null
-    let currentTheme = this._deps.config.get('settings/theme')
+    let currentTheme = (this._deps.config && this._deps.config.get('settings/theme')) || null
+    currentTheme = currentTheme && currentTheme.toLocaleLowerCase()
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.currentThemeState = { queryTheme, currentTheme }
-    this.active = queryTheme || currentTheme || 'Dark'
+    this.active = queryTheme || currentTheme || 'dark'
     this.forced = !!queryTheme
   }
 
@@ -62,6 +68,7 @@ export class ThemeModule extends Plugin {
   initTheme (callback) { // callback is setTimeOut in app.js which is always passed
     if (callback) this.initCallback = callback
     if (this.active) {
+      document.getElementById('theme-link') ? document.getElementById('theme-link').remove():null
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
 
@@ -81,6 +88,7 @@ export class ThemeModule extends Plugin {
    * @param {string} [themeName] - The name of the theme
    */
   switchTheme (themeName) {
+    themeName = themeName && themeName.toLocaleLowerCase() 
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
@@ -89,9 +97,9 @@ export class ThemeModule extends Plugin {
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
-    document.getElementById('theme-link').remove()
-    const theme = document.createElement('link')
+    document.getElementById('theme-link') ? document.getElementById('theme-link').remove():null
 
+    const theme = document.createElement('link')
     theme.setAttribute('rel', 'stylesheet')
     theme.setAttribute('href', nextTheme.url)
     theme.setAttribute('id', 'theme-link')

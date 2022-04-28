@@ -50,11 +50,15 @@ module.exports = {
 
   'Toggles Terminal': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="terminalContainer"]')
-      .assert.elementPresent('div[data-id="terminalContainerDisplay"]')
+      .assert.elementPresent('div[data-id="terminalCli"]')
+      .assert.elementPresent('div[data-id="terminalContainer"]')
+      .waitForElementVisible('div[data-id="terminalContainer"]')
+      .waitForElementVisible('div[data-id="terminalCli"]')
       .click('i[data-id="terminalToggleIcon"]')
       .checkElementStyle('div[data-id="terminalToggleMenu"]', 'height', '35px')
+      .assert.not.elementPresent('div[data-id="terminalCli"]')
       .click('i[data-id="terminalToggleIcon"]')
-      .assert.elementPresent('div[data-id="terminalContainerDisplay"]')
+      .waitForElementVisible('div[data-id="terminalCli"]')
   },
 
   'Switch Tabs using tabs icon': function (browser: NightwatchBrowser) {

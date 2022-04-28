@@ -1,7 +1,7 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
 import { action } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
@@ -44,6 +44,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
 
   plugin.on('fileManager', 'rootFolderChanged', async (path: string) => {
     rootFolderChanged(path)
+  })
+
+  plugin.on('fileManager', 'fileClosed', async (file: string) => {
+    dispatch(removeFocus(file))
   })
 }
 
@@ -150,7 +154,6 @@ const folderAdded = async (folderPath: string) => {
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
-
       resolve(fileTree)
     })
   })
