@@ -124,6 +124,10 @@ export class CompilerImports extends Plugin {
     */
   async resolveAndSave (url, targetPath) {
     try {
+      if (targetPath && this.currentRequest) {
+        const canCall = await this.askUserPermission('writeFile', 'This action will update the path ' + targetPath)
+        if (!canCall) throw new Error('No permission to update ' + targetPath)
+      }      
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
         if (provider.type === 'localhost' && !provider.isConnected()) {
