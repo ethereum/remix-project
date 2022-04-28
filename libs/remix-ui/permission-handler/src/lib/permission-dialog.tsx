@@ -43,6 +43,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
       </div> : null
   }
 
+  const sensitiveCall = method === 'writeFile'
   return (<section className="permission">
     {pluginsImages()}
     <article>
@@ -52,12 +53,14 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
       <h6>{to.displayName} :</h6>
       <p> {to.description || <i>No description Provided</i>}</p>
       {pluginMessage()}
+      { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>This action will update your files. Please make sure you trust this plugin.</p> : '' }
     </article>
     <article className='remember'>
-      <div className='form-check'>
+      { !sensitiveCall && <div className='form-check'>
         {rememberSwitch()}
         <label htmlFor='remember' className="form-check-label" data-id="permissionHandlerRememberChoice">Remember this choice</label>
-      </div>
+        </div>
+      }
       <button className="btn btn-sm" onClick={reset}>Reset all Permissions</button>
     </article>
     <div>{feedback}</div>
