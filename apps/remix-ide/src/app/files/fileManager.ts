@@ -484,7 +484,7 @@ class FileManager extends Plugin {
     this.emit('filesAllClosed')
     this.events.emit('filesAllClosed')
     for (const file in this.openedFiles) {
-      this.closeFile(file)
+      await this.closeFile(file)
     }
   }
 

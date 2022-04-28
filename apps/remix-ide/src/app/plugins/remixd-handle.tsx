@@ -76,10 +76,9 @@ export class RemixdHandle extends WebsocketPlugin {
         const intervalId = setInterval(() => {
           if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
             clearInterval(intervalId)
-            console.log(error)
             const alert:AlertModal = {
               id: 'connectionAlert',
-              message: 'Connection to remixd terminated.Please make sure remixd is still running in the background.'
+              message: 'Connection to remixd terminated. Please make sure remixd is still running in the background.'
             }
             this.call('notification', 'alert', alert)
             this.canceled()
