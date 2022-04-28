@@ -15,6 +15,7 @@ function Config (storage) {
       this.items = JSON.parse(config)
     }
   } catch (exception) {
+     /* Do nothing. */ 
   }
 
   this.exists = function (key) {
@@ -31,7 +32,13 @@ function Config (storage) {
       storage.set(CONFIG_FILE, JSON.stringify(this.items))
       this.events.emit(key + '_changed', content)
     } catch (exception) {
+       /* Do nothing. */ 
     }
+  }
+
+  this.clear = function () {
+    this.items = {}
+    storage.remove(CONFIG_FILE)
   }
 
   this.getUnpersistedProperty = function (key) {

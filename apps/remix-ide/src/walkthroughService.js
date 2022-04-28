@@ -31,7 +31,7 @@ export class WalkthroughService extends Plugin {
           position: 'right'
         },
         {
-          element: document.querySelector('#compileIcons'),
+          element: document.querySelector('#verticalIconsKindsolidity'),
           title: 'Solidity Compiler',
           intro: 'Having selected a .sol file in the File Explorers (the icon above), compile it with the Solidity Compiler.',
           tooltipClass: 'bg-light text-dark',

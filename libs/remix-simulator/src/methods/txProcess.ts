@@ -35,7 +35,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
 }
 
 export function processTx (txRunnerInstance, payload, isCall, callback) {
-  let { from, to, data, value, gas } = payload.params[0]
+  let { from, to, data, value, gas } = payload.params[0] // eslint-disable-line
   gas = gas || 3000000
 
   const callbacks = {

@@ -1,20 +1,19 @@
-/* global localStorage, fetch */
 import { PluginManager } from '@remixproject/engine'
-import { IframePlugin } from '@remixproject/engine-web'
 import { EventEmitter } from 'events'
-import QueryParams from './lib/query-params'
-import { PermissionHandler } from './app/ui/persmission-handler'
+import { QueryParams } from '@remix-project/remix-lib'
+import { IframePlugin } from '@remixproject/engine-web'
 const _paq = window._paq = window._paq || []
 
 const requiredModules = [ // services + layout views + system views
-  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
+  'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'gistHandler', 'layout',
+  'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy', 'hardhat-provider', 'compileAndRun', 'search']
 
-const dependentModules = ['git', 'hardhat', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
+const dependentModules = ['git', 'hardhat', 'truffle', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification', 'hardhat-provider', 'ganache-provider']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -40,7 +39,6 @@ export class RemixAppManager extends PluginManager {
     this.event = new EventEmitter()
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
-    this.permissionHandler = new PermissionHandler()
   }
 
   async canActivatePlugin (from, to) {
@@ -50,6 +48,10 @@ export class RemixAppManager extends PluginManager {
   async canDeactivatePlugin (from, to) {
     if (requiredModules.includes(to.name)) return false
     return isNative(from.name)
+  }
+
+  async canDeactivate(from,to) {
+   return this.canDeactivatePlugin(from, to)
   }
 
   async deactivatePlugin (name) {
@@ -72,12 +74,13 @@ export class RemixAppManager extends PluginManager {
       return true
     }
     // ask the user for permission
-    return await this.permissionHandler.askPermission(this.profiles[from], this.profiles[to], method, message)
+    return await this.call('permissionhandler', 'askPermission', this.profiles[from], this.profiles[to], method, message)
   }
 
   onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
+    this.emit('activate', plugin)
     if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
@@ -131,6 +134,7 @@ export class RemixAppManager extends PluginManager {
     }
     return plugins.map(plugin => {
       return new IframePlugin(plugin)
+      // return new IframeReactPlugin(plugin)
     })
   }
 
@@ -146,9 +150,9 @@ export class RemixAppManager extends PluginManager {
       sticky: true
     })
     await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'optimism-compiler',
+      id: 'nahmii-compiler',
       name: 'compileCustomAction',
-      label: 'Compile with Optimism',
+      label: 'Compile for Nahmii',
       type: [],
       extension: ['.sol'],
       path: [],
@@ -180,7 +184,7 @@ class PluginLoader {
     }
 
     this.loaders.queryParams = {
-      set: () => {},
+      set: () => {  /* Do nothing. */ },
       get: () => {
         const { activate } = queryParams.get()
         if (!activate) return []

@@ -32,6 +32,7 @@ class WorkspaceFileProvider extends FileProvider {
 
   removePrefix (path) {
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
+    path = path.replace(/^\.\/+/, '') // remove ./ from start of string
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     const splitPath = path.split('/')
 
@@ -48,14 +49,6 @@ class WorkspaceFileProvider extends FileProvider {
     return ret
   }
 
-  isSubDirectory (parent, child) {
-    if (!parent) return false
-    if (parent === child) return true
-    const relative = pathModule.relative(parent, child)
-
-    return !!relative && relative.split(pathModule.sep)[0] !== '..'
-  }
-
   resolveDirectory (path, callback) {
     super.resolveDirectory(path, (error, files) => {
       if (error) return callback(error)
@@ -68,8 +61,8 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   async copyFolderToJson (directory, visitFile, visitFolder) {
-    visitFile = visitFile || (() => {})
-    visitFolder = visitFolder || (() => {})
+    visitFile = visitFile || function () { /* do nothing. */ }
+    visitFolder = visitFolder || function () { /* do nothing. */ }
     const regex = new RegExp(`.workspaces/${this.workspace}/`, 'g')
     let json = await super._copyFolderToJsonInternal(directory, ({ path, content }) => {
       visitFile({ path: path.replace(regex, ''), content })

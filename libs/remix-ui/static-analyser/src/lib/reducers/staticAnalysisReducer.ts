@@ -13,7 +13,9 @@ export const analysisReducer = (state, action) => {
         file: action.payload.file,
         source: action.payload.source,
         languageVersion: action.payload.languageVersion,
-        data: action.payload.data
+        data: action.payload.data,
+        input: action.payload.input,
+        version: action.payload.version
       }
     default:
       return initialState

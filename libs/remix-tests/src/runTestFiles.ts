@@ -22,7 +22,7 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
   opts = opts || {}
   compilerConfig = compilerConfig || {} as CompilerConfiguration
   const sourceASTs: any = {}
-  const { Signale } = require('signale')
+  const { Signale } = require('signale') // eslint-disable-line
   // signale configuration
   const options = {
     types: {

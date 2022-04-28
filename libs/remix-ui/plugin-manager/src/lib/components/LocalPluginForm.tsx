@@ -191,7 +191,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
               type="radio"
               name="location"
               value="sidePanel"
-              id="sidePanel"
+              id="none"
               data-id='localPluginRadioButtonsidePanel'
               checked={location === 'sidePanel'}
               onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
@@ -203,7 +203,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
               type="radio"
               name="location"
               value="mainPanel"
-              id="mainPanel"
+              id="none"
               data-id='localPluginRadioButtonmainPanel'
               checked={location === 'mainPanel'}
               onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />

@@ -51,7 +51,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]')
-      .modalFooterOKClick()
+      .modalFooterOKClick('envNotification')
       .executeScript('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
@@ -109,17 +109,57 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
-      .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true)
+      .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true, false)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickInstance(0)
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
   },
-
+  'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('scripts/storage.test.js', { content: storageMochaTests })
+      .pause(1000)
+      .openFile('contracts/1_Storage.sol')
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(1000) // compile Storage
+      .executeScript('remix.execute(\'scripts/storage.test.js\')')
+      .pause(1000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ fail test updating and retrieving updated value')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 55')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 56')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '2 passing, 1 failing')
+  },
+  'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('scripts/storageWithLib.test.js', { content: storageWithLibMochaTests })
+      .pause(1000)
+      .click('[data-id="treeViewDivtreeViewItemcontracts"]')
+      .addFile('contracts/StorageWithLib.sol', { content: storageWithLibContract })
+      .openFile('contracts/StorageWithLib.sol')
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(1000) // compile StorageWithLib
+      .executeScript('remix.execute(\'scripts/storageWithLib.test.js\')')
+      .pause(1000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage with lib')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'deploying lib:')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ test library integration by calling a lib method')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 34')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 14')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: expected \'14\' to equal \'34\'')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0 passing, 1 failing')
+  },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
@@ -150,7 +190,17 @@ module.exports = {
       .waitForElementVisible('*[data-id="terminalCli"]')
       .click('*[data-id="terminalCli"]')
       .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
-      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]').end()
+      .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
+  },
+
+  'Should run a script right after compilation #group6': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract } )
+      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
+      .openFile('contracts/storage.sol')
+      .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
+      .pause(5000)
+      .journalLastChildIncludes('147')
   }
 }
 
@@ -261,6 +311,132 @@ const deployWithEthersJs = `
     }
 })()`
 
+const storageMochaTests = `
+const { expect } = require("chai");
+
+describe("Storage with lib", function () {
+  it("test initial value", async function () {
+    // Make sure contract is compiled and artifacts are generated
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let storage = await Storage.deploy();
+    console.log('storage contract Address: ' + storage.address);
+    await storage.deployed()
+    expect((await storage.retrieve()).toNumber()).to.equal(0);
+  });
+
+  it("test updating and retrieving updated value", async function () {
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let storage = await Storage.deploy();
+    await storage.deployed()
+    const setValue = await storage.store(56);
+    await setValue.wait();
+    expect((await storage.retrieve()).toNumber()).to.equal(56);
+  });
+
+  it("fail test updating and retrieving updated value", async function () {
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let storage = await Storage.deploy();
+    await storage.deployed()
+    const setValue = await storage.store(56);
+    await setValue.wait();
+    expect((await storage.retrieve()).toNumber(), 'incorrect number').to.equal(55);
+  });
+});`
+
+const storageWithLibContract = `
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+library Lib {
+    function test () public view returns (uint) {
+        return 14;
+    }
+}
+/**
+ * @title Storage
+ * @dev Store & retrieve value inr a variable
+ */
+contract StorageWithLib {
+
+    uint256 number;
+
+    /**
+     * @dev Store valrue in variable
+     * @param num value to store
+     */
+    function store(uint256 num) public {        
+        number = num;        
+    }
+
+    /**
+     * @dev Return value 
+     * @return value of 'number'
+     */
+    function retrieve() public view returns (uint256){
+        return number;
+    }
+
+    function getFromLib() public view returns (uint) {
+        return Lib.test();
+    }
+}
+`
+
+const storageWithLibMochaTests = `
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+describe("Storage", function () {
+    it("test library integration by calling a lib method", async function () {
+        const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Lib.json'))
+        console.log('deploying lib:')
+        const artifactLib  = {
+            contractName: 'Lib',
+            sourceName: 'contracts/StorageWithLib.sol',
+            abi: metadataLib.abi,
+            bytecode: '0x' + metadataLib.data.bytecode.object,
+            deployedBytecode:  '0x' + metadataLib.data.deployedBytecode.object,
+            linkReferences: metadataLib.data.bytecode.linkReferences,
+            deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
+        }
+
+        const optionsLib = {}
+        const factoryLib = await ethers.getContractFactoryFromArtifact(artifactLib, optionsLib)
+        const lib = await factoryLib.deploy();
+        await lib.deployed()
+
+        const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/StorageWithLib.json'))
+        const artifact  = {
+            contractName: 'StorageWithLib',
+            sourceName: 'contracts/StorageWithLib.sol',
+            abi: metadata.abi,
+            bytecode: '0x' + metadata.data.bytecode.object,
+            deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
+            linkReferences: metadata.data.bytecode.linkReferences,
+            deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
+        }
+        const options = {
+            libraries: { 
+                'Lib': lib.address
+            }
+        }
+        
+        const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
+        const storage = await factory.deploy();
+        await storage.deployed()
+        const storeValue = await storage.store(333);
+        await storeValue.wait();
+        expect((await storage.getFromLib()).toString()).to.equal('34');
+    });
+});`
+
 const hardhatLog = `
 // SPDX-License-Identifier: GPL-3.0
 
@@ -318,3 +494,115 @@ contract OwnerTest {
         return owner;
     }
 }`
+
+const scriptAutoExec = {
+  contract: `// SPDX-License-Identifier: GPL-3.0
+
+  pragma solidity >=0.7.0 <0.9.0;
+  
+  library lib {
+      function test () public view returns (uint) {
+  
+          return 147;
+      }
+  }
+  
+  /**
+   * @title Storage
+   * @dev Store & retrieve value inr a variable
+   * @custom:dev-run-script ./scripts/deploy_storage.js
+   */
+  contract Storage {
+  
+      uint256 number;
+  
+      /**
+       * @dev Store valrue in variable
+       * @param num value to store
+       */
+      function store(uint256 num) public {
+          number = num;        
+      }
+  
+      /**
+       * @dev Return value 
+       * @return value of 'number'
+       */
+      function retrieve() public view returns (uint256){
+          return number;
+      }
+  
+      function getFromLib() public view returns (uint) {
+          return lib.test();
+      }
+  }
+  `,
+  script: `
+  // Right click on the script name and hit "Run" to execute
+  const { expect } = require("chai");
+  const { ethers } = require("hardhat");
+  
+  (async () => {
+      try {
+          // function getContractFactoryFromArtifact(artifact: Artifact, signer?: ethers.Signer): Promise<ethers.ContractFactory>;
+  
+          // function getContractFactoryFromArtifact(artifact: Artifact, factoryOptions: FactoryOptions): Promise<ethers.ContractFactory>;
+          
+          const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/lib.json'))
+          console.log('deploying lib:')
+          
+          const artifactLib  = {
+              contractName: 'Lib',
+              sourceName: 'contracts/1_Storage.sol',
+              abi: metadataLib.abi,
+              bytecode: '0x' + metadataLib.data.bytecode.object,
+              deployedBytecode:  '0x' + metadataLib.data.deployedBytecode.object,
+              linkReferences: metadataLib.data.bytecode.linkReferences,
+              deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
+          }
+          const optionsLib = {}
+          
+          const factoryLib = await ethers.getContractFactoryFromArtifact(artifactLib, optionsLib)
+          
+          const lib = await factoryLib.deploy();
+  
+          await lib.deployed()
+  
+          console.log('lib deployed', lib.address)
+  
+          const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Storage.json'))
+          const artifact  = {
+              contractName: 'Storage',
+              sourceName: 'contracts/1_Storage.sol',
+              abi: metadata.abi,
+              bytecode: '0x' + metadata.data.bytecode.object,
+              deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
+              linkReferences: metadata.data.bytecode.linkReferences,
+              deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
+          }
+          const options = {
+              libraries: { 
+                  'lib': lib.address
+              }
+          }
+          
+          const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
+  
+          const storage = await factory.deploy();
+          
+          await storage.deployed()
+  
+          const storeValue = await storage.store(333);
+  
+          // wait until the transaction is mined
+          await storeValue.wait();
+  
+          console.log((await storage.getFromLib()).toString())
+          // expect((await storage.getFromLib()).toString()).to.equal('34');
+  
+      } catch (e) {
+          console.error(e.message)
+      }
+    })()
+  `
+}

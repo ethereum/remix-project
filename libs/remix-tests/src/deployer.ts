@@ -79,6 +79,9 @@ export function deployAll (compileResult: compilationInterface, web3: Web3, test
             console.error(err)
             callback(err)
           })
+        }).catch((err) => {
+          console.error(err)
+          callback(err)
         })
       }
 

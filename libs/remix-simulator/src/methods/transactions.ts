@@ -2,6 +2,7 @@ import Web3 from 'web3'
 import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
+import { ethers } from 'ethers'
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
 
@@ -122,7 +123,34 @@ export class Transactions {
   }
 
   eth_estimateGas (payload, cb) {
-    cb(null, 10000000 * 8)
+    // from might be lowercased address (web3)
+    if (payload.params && payload.params.length > 0 && payload.params[0].from) {
+      payload.params[0].from = toChecksumAddress(payload.params[0].from)
+    }
+    if (payload.params && payload.params.length > 0 && payload.params[0].to) {
+      payload.params[0].to = toChecksumAddress(payload.params[0].to)
+    }
+
+    payload.params[0].gas = 10000000 * 10
+
+    processTx(this.txRunnerInstance, payload, true, (error, { result }) => {
+      if (error) return cb(error)
+      if (result.status === '0x0') {
+        try {
+          const msg = result.execResult.returnValue
+          const abiCoder = new ethers.utils.AbiCoder()
+          const reason = abiCoder.decode(['string'], msg.slice(4))[0]
+          return cb('revert ' + reason)
+        } catch (e) {
+          return cb(e.message)
+        }
+      }
+      let gasUsed = result.execResult.gasUsed.toNumber()
+      if (result.execResult.gasRefund) {
+        gasUsed += result.execResult.gasRefund.toNumber()
+      }
+      cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
+    })
   }
 
   eth_getCode (payload, cb) {

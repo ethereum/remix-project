@@ -21,7 +21,8 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   useEffect(() => {
     const storageService = async () => {
       if ((contract.metadata === undefined || contract.metadata.length === 0)) {
-        modal('Publish To Storage', 'This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
+        modal('Publish To Storage', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.')
+                                    
       } else {
         if (storage === 'swarm') {
           try {
@@ -34,7 +35,8 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             let parseError = err
             try {
               parseError = JSON.stringify(err)
-            } catch (e) {}
+            } catch (e) {
+            }
             modal('Swarm Publish Failed', publishMessageFailed(storage, parseError))
           }
         } else {
@@ -79,7 +81,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     resetStorage()
   }
 
-  const modal = async (title: string, message: string | JSX.Element) => { // eslint-disable-line no-undef
+  const modal = async (title: string, message: string | JSX.Element) => {
     await setState(prevState => {
       return {
         ...prevState,
@@ -95,7 +97,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
 
   return (
     <ModalDialog
-      id='publishToStorage'
+      id={props.id || 'publishToStorage'}
       title={ state.modal.title }
       message={ state.modal.message }
       hide={ state.modal.hide }

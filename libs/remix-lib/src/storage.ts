@@ -10,7 +10,7 @@ export class Storage {
     if (typeof window !== 'undefined') {
       this.safeKeys().forEach(function (name) {
         if (name.indexOf('sol-cache-file-', 0) === 0) {
-          var content = window.localStorage.getItem(name)
+          const content = window.localStorage.getItem(name)
           window.localStorage.setItem(name.replace(/^sol-cache-file-/, 'sol:'), content)
           window.localStorage.removeItem(name)
         }

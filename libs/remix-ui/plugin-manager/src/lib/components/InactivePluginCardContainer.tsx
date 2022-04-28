@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
 import React from 'react' // eslint-disable-line no-use-before-define
-import { PluginManagerComponent, PluginManagerProfile } from '../../types'
+import { PluginManagerComponent } from '../../types'
 import InactivePluginCard from './InactivePluginCard'
 import ModuleHeading from './moduleHeading'
 
@@ -11,16 +11,6 @@ interface InactivePluginCardContainerProps {
   inactiveProfiles: Profile<any>[]
 }
 
-interface LocalPluginInterface {
-  profile: Partial<PluginManagerProfile>
-  activateService: {}
-  requestQueue: []
-  options: { queueTimeout: number }
-  id: number
-  pendingRequest: {}
-  listener: []
-  iframe: {}
-}
 function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardContainerProps) {
   const activatePlugin = (pluginName: string) => {
     pluginComponent.activateP(pluginName)

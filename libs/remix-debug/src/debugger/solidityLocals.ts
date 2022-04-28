@@ -10,6 +10,7 @@ export class DebuggerSolidityLocals {
   traceManager
   tx
   _sourceLocation
+  decodeTimeout
 
   constructor (tx, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
@@ -18,21 +19,21 @@ export class DebuggerSolidityLocals {
     this.storageResolver = null
     this.traceManager = _traceManager
     this.tx = tx
+    this.decodeTimeout = null
   }
 
   init (sourceLocation) {
     this._sourceLocation = sourceLocation
-    var decodeTimeout = null
     if (!this.storageResolver) {
       return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
     }
-    if (decodeTimeout) {
-      window.clearTimeout(decodeTimeout)
+    if (this.decodeTimeout) {
+      window.clearTimeout(this.decodeTimeout)
     }
     this.event.trigger('solidityLocalsUpdating')
-    decodeTimeout = setTimeout(() => {
+    this.decodeTimeout = setTimeout(() => {
       this.decode(sourceLocation)
-    }, 500)
+    }, 1000)
   }
 
   decode (sourceLocation, cursor?) {
@@ -76,11 +77,11 @@ export class DebuggerSolidityLocals {
       if (error) {
         return error
       }
-      var stack = result[0].value
-      var memory = result[1].value
-      var calldata = result[3].value
+      const stack = result[0].value
+      const memory = result[1].value
+      const calldata = result[3].value
       try {
-        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
+        const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
         solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, calldata, sourceLocation, cursor).then((locals) => {
           if (!cursor) {
             if (!locals['error']) {

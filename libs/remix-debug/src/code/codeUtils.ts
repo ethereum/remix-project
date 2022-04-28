@@ -36,7 +36,7 @@ export function nameOpCodes (raw, hardfork) {
 }
 
 type Opcode = {
-  name: String,
+  name: string,
   pushData?: Array<number>
   in?: number
   out?: number

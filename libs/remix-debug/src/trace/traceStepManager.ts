@@ -40,7 +40,7 @@ export class TraceStepManager {
     const call = util.findCall(currentStep, this.traceAnalyser.traceCache.callsTree.call)
     const subCalls = Object.keys(call.calls)
     if (subCalls.length) {
-      var callStart = util.findLowerBound(currentStep, subCalls) + 1
+      const callStart = util.findLowerBound(currentStep, subCalls) + 1
       if (subCalls.length > callStart) {
         return parseInt(subCalls[callStart]) - 1
       }

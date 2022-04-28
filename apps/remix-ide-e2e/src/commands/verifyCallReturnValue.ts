@@ -15,7 +15,7 @@ class VerifyCallReturnValue extends EventEmitter {
 
 function verifyCallReturnValue (browser: NightwatchBrowser, address: string, checks: string[], done: VoidFunction) {
   browser.execute(function (address: string) {
-    const nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]') as NodeListOf<HTMLElement>
+    const nodes = document.querySelectorAll('#instance' + address + ' [data-id="udapp_value"]') as NodeListOf<HTMLElement>
     const ret = []
     for (let k = 0; k < nodes.length; k++) {
       const text = nodes[k].innerText ? nodes[k].innerText : nodes[k].textContent
@@ -23,7 +23,6 @@ function verifyCallReturnValue (browser: NightwatchBrowser, address: string, che
     }
     return ret
   }, [address], function (result) {
-    console.log('verifyCallReturnValue', result)
     for (const k in checks) {
       browser.assert.equal(result.value[k].trim(), checks[k].trim())
     }

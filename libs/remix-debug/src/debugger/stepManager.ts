@@ -51,15 +51,18 @@ export class DebuggerStepManager {
       this.traceManager.buildCallPath(index).then((callsPath) => {
         this.currentCall = callsPath[callsPath.length - 1]
         if (this.currentCall.reverted) {
-          const revertedReason = this.currentCall.outofgas ? 'outofgas' : ''
+          const revertedReason = this.currentCall.outofgas ? 'outofgas' : 'reverted'
           this.revertionPoint = this.currentCall.return
-          return this.event.trigger('revertWarning', [revertedReason])
+          this.event.trigger('revertWarning', [revertedReason])
+          return 
         }
-        for (var k = callsPath.length - 2; k >= 0; k--) {
-          var parent = callsPath[k]
-          if (!parent.reverted) continue
-          this.revertionPoint = parent.return
-          this.event.trigger('revertWarning', ['parenthasthrown'])
+        for (let k = callsPath.length - 2; k >= 0; k--) {
+          const parent = callsPath[k]
+          if (parent.reverted) {
+            this.revertionPoint = parent.return
+            this.event.trigger('revertWarning', ['parenthasthrown'])
+            return
+          }
         }
         this.event.trigger('revertWarning', [''])
       }).catch((error) => {
@@ -82,7 +85,6 @@ export class DebuggerStepManager {
       }
 
       const jumpOutDisabled = (step === this.traceManager.findStepOut(step))
-
       this.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
     })
   }
@@ -119,6 +121,7 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, -1)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
@@ -134,22 +137,25 @@ export class DebuggerStepManager {
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 1)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
 
   jumpOut (solidityMode) {
     if (!this.traceManager.isLoaded()) return
-    var step = this.traceManager.findStepOut(this.currentStepIndex)
+    let step = this.traceManager.findStepOut(this.currentStepIndex)
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 0)
     }
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
 
   jumpTo (step) {
     if (!this.traceManager.inRange(step)) return
+    if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
@@ -201,7 +207,7 @@ export class DebuggerStepManager {
     if (!this.debugger.callTree.reducedTrace.length) {
       return value
     }
-    var nextSource = util.findClosestIndex(value, this.debugger.callTree.reducedTrace)
+    let nextSource = util.findClosestIndex(value, this.debugger.callTree.reducedTrace)
     nextSource = nextSource + incr
     if (nextSource <= 0) {
       nextSource = 0
