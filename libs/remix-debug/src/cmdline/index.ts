@@ -64,7 +64,7 @@ export class CmdLine {
     source.push('=>  ' + (currentLineNumber + 1) + ':  ' + currentLine)
 
     const startLine = lineColumnPos.start.line
-    for (var i = 1; i < 4; i++) {
+    for (let i = 1; i < 4; i++) {
       const line = content[startLine + i]
       source.push('    ' + (startLine + i + 1) + ':  ' + line)
     }

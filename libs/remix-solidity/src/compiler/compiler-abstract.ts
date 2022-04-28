@@ -1,30 +1,36 @@
 'use strict'
-import txHelper from './txHelper'
+import helper from './helper'
 
 export class CompilerAbstract {
   languageversion: any
     data: any
     source: any
-    constructor (languageversion, data, source) {
+    input: any
+    constructor (languageversion, data, source, input?) {
       this.languageversion = languageversion
       this.data = data
       this.source = source // source code
+      this.input = input // source code
     }
 
     getContracts () {
-      return this.data.contracts
+      return this.data.contracts || {}
     }
 
     getContract (name) {
-      return txHelper.getContract(name, this.data.contracts)
+      return helper.getContract(name, this.data.contracts)
     }
 
     visitContracts (calllback) {
-      return txHelper.visitContracts(this.data.contracts, calllback)
+      return helper.visitContracts(this.data.contracts, calllback)
     }
 
     getData () {
       return this.data
+    }
+
+    getInput () {
+      return this.input
     }
 
     getAsts () {

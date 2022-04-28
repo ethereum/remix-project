@@ -15,12 +15,14 @@
   --primary: #fc58a3;
   --secondary: #e2f5f2;
   --success: #24b882;
-  --info: #69c7e9;
+  --info: #00bbff;
   --warning: #fabe33;
   --danger: #f80b0b;
   --light: #fff;
   --dark: #645fb5;
   --text: #11556c;
+  --body-bg: #d5efff;
+  --text-bg-mark: #fcf8e3;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -69,7 +71,7 @@ body {
   line-height: 1.5;
   color: #0f7292;
   text-align: left;
-  background-color: #d5efff;
+  background-color: var(--body-bg);
 }
 
 [tabindex="-1"]:focus {
@@ -475,7 +477,7 @@ small,
 mark,
 .mark {
   padding: 0.2em;
-  background-color: #fcf8e3;
+  background-color: var(--text-bg-mark);
 }
 
 .list-unstyled {
@@ -5699,12 +5701,11 @@ a.close.disabled {
 }
 
 .tooltip-inner {
-  max-width: 200px;
-  padding: 0.25rem 0.5rem;
-  color: #fff;
+  padding: .25rem .5rem;
+  color: var(--text);
   text-align: center;
-  background-color: #000;
-  border-radius: 0.25rem;
+  background-color: var(--light);
+  border-radius: .25rem
 }
 
 .popover {

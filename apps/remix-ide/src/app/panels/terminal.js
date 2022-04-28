@@ -1,18 +1,15 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
 import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import Registry from '../state/registry'
+import { PluginViewWrapper } from '@remix-ui/helper'
 const vm = require('vm')
 const EventManager = require('../../lib/events')
 
-const CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-const AutoCompletePopup = require('../ui/auto-complete-popup')
-
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
-const globalRegistry = require('../../global/registry')
-const GistHandler = require('../../lib/gist-handler')
+
 
 const KONSOLES = []
 
@@ -21,7 +18,7 @@ function register (api) { KONSOLES.push(api) }
 const profile = {
   displayName: 'Terminal',
   name: 'terminal',
-  methods: ['log'],
+  methods: ['log', 'logHtml'],
   events: [],
   description: ' - ',
   version: packageJson.version
@@ -31,9 +28,8 @@ class Terminal extends Plugin {
   constructor (opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
-    this.gistHandler = new GistHandler()
     this.event = new EventManager()
-    this.globalRegistry = globalRegistry
+    this.globalRegistry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('class', 'panel')
     this.element.setAttribute('id', 'terminal-view')
@@ -67,8 +63,6 @@ class Terminal extends Plugin {
     }
     this._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     this._components = {}
-    this._components.cmdInterpreter = new CommandInterpreterAPI(this, null, this.blockchain)
-    this._components.autoCompletePopup = new AutoCompletePopup(this._opts)
     this._commands = {}
     this.commands = {}
     this._JOURNAL = []
@@ -86,9 +80,12 @@ class Terminal extends Plugin {
       this.call('menuicons', 'select', 'debugger')
       this.call('debugger', 'debug', hash)
     })
+    this.dispatch = null
+    
   }
+  
 
-  onActivation () {
+  onActivation() {
     this.renderComponent()
   }
 
@@ -107,23 +104,32 @@ class Terminal extends Plugin {
     this.terminalApi.log(message)
   }
 
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+  }
+
   render () {
-    return this.element
+    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this}/></div>
+  }
+
+  updateComponent(state) {
+    return <RemixUiTerminal
+    plugin={state.plugin}
+    onReady={state.onReady}
+  />
   }
 
   renderComponent () {
     const onReady = (api) => { this.terminalApi = api }
-    ReactDOM.render(
-      <RemixUiTerminal
-        plugin={this}
-        onReady={onReady}
-      />,
-      this.element
-    )
+    this.dispatch({
+      plugin: this,
+      onReady: onReady
+    })
   }
 
   scroll2bottom () {
     setTimeout(function () {
+      // do nothing.
     }, 0)
   }
 }

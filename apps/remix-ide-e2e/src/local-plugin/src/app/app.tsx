@@ -33,7 +33,7 @@ function App () {
 
   useEffect(() => {
     client.onload(async () => {
-      const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting']
+      const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting', 'hardhat-provider', 'notification']
 
       client.testCommand = async (data: any) => {
         console.log(data)

@@ -73,7 +73,7 @@ export class SourceMappings {
       lineBreaks.push(pos)
     }
     this.lineBreaks = lineBreaks
-  };
+  }
 
   /**
    * Get a list of nodes that are at the given "position".

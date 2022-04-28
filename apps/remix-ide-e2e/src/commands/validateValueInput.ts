@@ -6,6 +6,7 @@ class ValidateValueInput extends EventEmitter {
     const browser = this.api
     browser.perform((done) => {
       browser.clearValue(selector)
+        .pause(2000)
         .setValue(selector, valueTosSet)
         .execute(function (selector) {
           const elem = document.querySelector(selector) as HTMLInputElement

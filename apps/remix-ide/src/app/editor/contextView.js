@@ -40,7 +40,7 @@ class ContextView {
 
   render () {
     const view = yo`
-      <div class="${css.contextview} ${css.contextviewcontainer} bg-light text-dark border-0 theme-context-view">
+      <div class="${css.contextview} ${css.contextviewcontainer} bg-light text-dark border-0">
         <div class=${css.container}>
           ${this._renderTarget()}
         </div>

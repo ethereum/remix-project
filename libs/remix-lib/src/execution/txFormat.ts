@@ -37,7 +37,7 @@ export function encodeData (funABI, values, contractbyteCode) {
 */
 export function encodeParams (params, funAbi, callback) {
   let data: Buffer | string = ''
-  let dataHex: string = ''
+  let dataHex = ''
   let funArgs
   if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature
@@ -93,10 +93,25 @@ export function encodeFunctionCall (params, funAbi, callback) {
 * @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
 * @param {Function} callback    - callback
 */
-export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi, linkLibraries, linkReferences, callback) {
+export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi, linkLibrariesAddresses, linkReferences, callback) {
   encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
-    let bytecodeToDeploy = contract.evm.bytecode.object
+    linkLibraries(contract, linkLibrariesAddresses, linkReferences, (error, bytecodeToDeploy) => {
+      callback(error, { dataHex: bytecodeToDeploy + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs, contractBytecode: contract.evm.bytecode.object })
+    })
+  })
+}
+
+/**
+* link with provided libraries if needed
+*
+* @param {Object} contract    - input paramater of the function to call
+* @param {Object} linkLibraries    - contains {linkReferences} object which list all the addresses to be linked
+* @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
+* @param {Function} callback    - callback
+*/
+export function linkLibraries (contract, linkLibraries, linkReferences, callback) {
+  let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       if (linkLibraries && linkReferences) {
         for (const libFile in linkLibraries) {
@@ -111,8 +126,7 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       return callback('Failed to link some libraries')
     }
-    return callback(null, { dataHex: bytecodeToDeploy + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs, contractBytecode: contract.evm.bytecode.object })
-  })
+    return callback(null, bytecodeToDeploy)
 }
 
 /**
@@ -167,7 +181,7 @@ export function encodeConstructorCallAndDeployLibraries (contractName, contract,
 export function buildData (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
   let funArgs = []
   let data: Buffer | string = ''
-  let dataHex: string = ''
+  let dataHex = ''
 
   if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature

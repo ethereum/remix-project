@@ -1,3 +1,5 @@
+import * as ethJSUtil from 'ethereumjs-util'
+
 export const extractNameFromKey = (key: string): string => {
   if (!key) return
   const keyPath = key.split('/')
@@ -8,6 +10,7 @@ export const extractNameFromKey = (key: string): string => {
 export const extractParentFromKey = (key: string):string => {
   if (!key) return
   const keyPath = key.split('/')
+
   keyPath.pop()
 
   return keyPath.join('/')
@@ -34,9 +37,9 @@ export const createNonClashingNameAsync = async (name: string, fileManager, pref
   let exist = true
 
   do {
-    const isDuplicate = await fileManager.exists(name + _counter + prefix + '.' + ext)
+    const isDuplicate = await fileManager.exists(name + (_counter || '') + prefix + '.' + ext)
 
-    if (isDuplicate) _counter = (_counter | 0) + 1
+    if (isDuplicate) _counter = (_counter || 0) + 1
     else exist = false
   } while (exist)
   const counter = _counter || ''
@@ -58,6 +61,49 @@ export const getPathIcon = (path: string) => {
           ? 'fab fa-js' : path.endsWith('.json')
             ? 'fas fa-brackets-curly' : path.endsWith('.vy')
               ? 'fak fa-vyper-mono' : path.endsWith('.lex')
-                ? 'fak fa-lexon' : path.endsWith('.contract')
-                  ? 'fab fa-ethereum' : 'far fa-file'
+                ? 'fak fa-lexon' : path.endsWith('ts')
+                 ? 'fad fa-brackets-curly' : path.endsWith('.contract')
+                   ? 'fab fa-ethereum' : path.endsWith('.cairo')
+                     ? 'fab fa-ethereum' : 'far fa-file' // TODO: add cairo icon
+}
+
+export const isNumeric = (value) => {
+  return /^\+?(0|[1-9]\d*)$/.test(value)
+}
+
+export const shortenAddress = (address, etherBalance?) => {
+  const len = address.length
+
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
+}
+
+export const addressToString = (address) => {
+  if (!address) return null
+  if (typeof address !== 'string') {
+    address = address.toString('hex')
+  }
+  if (address.indexOf('0x') === -1) {
+    address = '0x' + address
+  }
+  return ethJSUtil.toChecksumAddress(address)
+}
+
+export const is0XPrefixed = (value) => {
+  return value.substr(0, 2) === '0x'
+}
+
+export const isHexadecimal = (value) => {
+  return /^[0-9a-fA-F]+$/.test(value) && (value.length % 2 === 0)
+}
+
+export const isValidHash  = (hash) =>  { // 0x prefixed, hexadecimal, 64digit
+  const hexValue = hash.slice(2, hash.length)
+  return is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
+}
+
+export const shortenHexData = (data) => {
+  if (!data) return ''
+  if (data.length < 5) return data
+  const len = data.length
+  return data.slice(0, 5) + '...' + data.slice(len - 5, len)
 }

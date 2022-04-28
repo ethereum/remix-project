@@ -3,6 +3,7 @@
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
+const _paq = window._paq = window._paq || []
 
 let web3
 
@@ -50,6 +51,10 @@ export class ExecutionContext {
     return this.executionContext
   }
 
+  getSelectedAddress () {
+    return injectedProvider ? injectedProvider.selectedAddress : null
+  }
+
   getCurrentFork () {
     return this.currentFork
   }
@@ -71,6 +76,15 @@ export class ExecutionContext {
     if (this.isVM()) {
       callback(null, { id: '-', name: 'VM' })
     } else {
+      if (!web3.currentProvider) {
+        return callback('No provider set')
+      }
+      if (web3.currentProvider.isConnected && !web3.currentProvider.isConnected()) {
+        if (web3.currentProvider.isMetaMask) {
+          this.askPermission()
+        }
+        return callback('Provider not connected')
+      }
       web3.eth.net.getId((err, id) => {
         let name = null
         if (err) name = 'Unknown'
@@ -124,10 +138,11 @@ export class ExecutionContext {
   }
 
   async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+    _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
     const context = value.context
-    if (!cb) cb = () => {}
-    if (!confirmCb) confirmCb = () => {}
-    if (!infoCb) infoCb = () => {}
+    if (!cb) cb = () => { /* Do nothing. */ }
+    if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
+    if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (context === 'vm') {
       this.executionContext = context
       this.currentFork = value.fork
@@ -216,7 +231,7 @@ export class ExecutionContext {
         cb()
       } else {
         web3.setProvider(oldProvider)
-        cb('Not possible to connect to the Web3 provider. Make sure the provider is running, a connection is open (via IPC or RPC) or that the provider plugin is properly configured.')
+        cb(`Not possible to connect to ${context}. Make sure the provider is running, a connection is open (via IPC or RPC) or that the provider plugin is properly configured.`)
       }
     })
   }

@@ -30,6 +30,27 @@ module.exports = {
   },
   'Static Analysis': function (browser: NightwatchBrowser) {
     runTests(browser)
+  },
+  'run analysis and filter results': function (browser: NightwatchBrowser) {
+    browser
+    .clickLaunchIcon('filePanel')
+    .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+    .click('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
+    .clickLaunchIcon('solidity')
+    .pause(10000)
+    .clickLaunchIcon('solidityStaticAnalysis')
+    .waitForElementPresent('#staticanalysisresult .warning', 5000)
+    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1') // Check warning count
+    .verify.elementPresent('input[name="showLibWarnings"]')
+    .verify.elementNotPresent('input[name="showLibWarnings"]:checked')
+    .verify.elementPresent('label[id="headingshowLibWarnings"]')
+    .click('label[id="headingshowLibWarnings"]')
+    .pause(1000)
+    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '382')
+    .click('label[id="headingshowLibWarnings"]')
+    .pause(1000)
+    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1')
+    .end()
   }
 }
 
@@ -47,14 +68,12 @@ function runTests (browser: NightwatchBrowser) {
         'TooMuchGas.() : Variables have very similar names "test" and "test1".',
         'TooMuchGas.() : Variables have very similar names "test" and "test1".'],
       '#staticanalysisresult .warning',
-      browser, function () {
-        browser.end()
-      }
+      browser
       )
     })
 }
 
-function listSelectorContains (textsToFind: string[], selector: string, browser: NightwatchBrowser, callback: VoidFunction) {
+function listSelectorContains (textsToFind: string[], selector: string, browser: NightwatchBrowser) {
   browser.execute(function (selector) {
     const items = document.querySelectorAll(selector)
     const ret = []
@@ -68,6 +87,5 @@ function listSelectorContains (textsToFind: string[], selector: string, browser:
       console.log('testing `' + result.value[k] + '` against `' + textsToFind[k] + '`')
       browser.assert.equal(result.value[k].indexOf(textsToFind[k]) !== -1, true)
     }
-    callback()
   })
 }

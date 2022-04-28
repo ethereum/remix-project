@@ -1,0 +1,27 @@
+/* dragbar UI */
+
+.dragbar {
+  display: block;
+  height: 100%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 0.3em;
+  z-index: 1000;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 1000;
+}
+
+.dragbar:hover,
+.dragbar.ondrag {
+  background-color: var(--secondary);
+  cursor: col-resize;
+}

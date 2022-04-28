@@ -1,0 +1,29 @@
+.permission h4 {
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .permission h6 {
+    text-transform: uppercase;
+  }
+  .remember {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  .images img {
+    width: 40px;
+    height: 40px;
+  }
+  .images i {
+    margin: 0 20px;
+  }
+
+  .invert {
+    filter: invert(1);
+  }

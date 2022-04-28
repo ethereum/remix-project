@@ -4,6 +4,7 @@ import { EventEmitter } from 'events'
 import { Engine } from '@remixproject/engine/lib/engine'
 import { PluginBase, Profile } from '@remixproject/plugin-utils'
 import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
+import { IframeReactPlugin } from '@remix-ui/app'
 /* eslint-disable camelcase */
 
 interface SetPluginOptionType {
@@ -73,7 +74,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   app: PluginApi<any> // eslint-disable-line no-undef
   engine: Engine
   htmlElement: HTMLDivElement
-  views: { root: null, items: {} }
+  views: { root: null, items: Record<any, any> }
   localPlugin: LocalPlugin // eslint-disable-line no-use-before-define
   pluginNames: string[]
   inactivePlugins: Profile[]
@@ -88,7 +89,7 @@ export class PluginManagerComponent extends ViewPlugin extends Plugin implements
   render(): HTMLDivElement
   getAndFilterPlugins: (filter?: string, profiles?: Profile[]) => void
   triggerEngineEventListener: () => void
-  activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | WebsocketPlugin) => Promise<void>
+  activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | IframeReactPlugin | WebsocketPlugin) => Promise<void>
   activeProfiles: string[]
   _paq: any
 }
@@ -148,7 +149,7 @@ export interface RemixUiPluginManagerProps {
 declare class PluginLoader {
   get currentLoader(): any
     donotAutoReload: string[]
-    loaders: {}
+    loaders: Record<any, any>
     current: string
     set(plugin: any, actives: any): void
     get(): any

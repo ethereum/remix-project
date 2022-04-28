@@ -1,6 +1,9 @@
+import Web3 from 'web3'
+
 export class Blocks {
   vmContext
   coinbase: string
+  TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
   constructor (vmContext, _options) {
     this.vmContext = vmContext
     const options = _options || {}
@@ -37,6 +40,28 @@ export class Blocks {
       return cb(new Error('block not found'))
     }
 
+    console.log(block.transactions)
+    const transactions = block.transactions.map((t) => {
+     const hash = '0x' + t.hash().toString('hex')
+     const tx = this.vmContext.txByHash[hash]
+     const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
+     if (receipt) {
+      return {
+        blockHash: '0x' + block.hash().toString('hex'),
+        blockNumber: '0x' + block.header.number.toString('hex'),
+        from: receipt.from,
+        gas: Web3.utils.toHex(receipt.gas),
+        chainId: '0xd05',
+        gasPrice: '0x4a817c800', // 20000000000
+        hash: receipt.transactionHash,
+        input: receipt.input,
+        nonce: '0x' + tx.nonce.toString('hex'),
+        transactionIndex: this.TX_INDEX,
+        value: receipt.value === '0x' ? '0x0' : receipt.value,
+        to: receipt.to ?  receipt.to : null
+      }
+     }
+    })
     const b = {
       baseFeePerGas: '0x01',
       number: this.toHex(block.header.number),
@@ -55,7 +80,7 @@ export class Blocks {
       gasLimit: this.toHex(block.header.gasLimit),
       gasUsed: this.toHex(block.header.gasUsed),
       timestamp: this.toHex(block.header.timestamp),
-      transactions: block.transactions.map((t) => '0x' + t.hash().toString('hex')),
+      transactions,
       uncles: []
     }
     cb(null, b)
@@ -70,6 +95,28 @@ export class Blocks {
   eth_getBlockByHash (payload, cb) {
     const block = this.vmContext.blocks[payload.params[0]]
 
+    console.log(block.transactions)
+    const transactions = block.transactions.map((t) => {
+      const hash = '0x' + t.hash().toString('hex')
+      const tx = this.vmContext.txByHash[hash]
+      const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
+      if (receipt) {
+       return {
+         blockHash: '0x' + block.hash().toString('hex'),
+         blockNumber: '0x' + block.header.number.toString('hex'),
+         from: receipt.from,
+         gas: Web3.utils.toHex(receipt.gas),
+         chainId: '0xd05',
+         gasPrice: '0x4a817c800', // 20000000000
+         hash: receipt.transactionHash,
+         input: receipt.input,
+         nonce: '0x' + tx.nonce.toString('hex'),
+         transactionIndex: this.TX_INDEX,
+         value: receipt.value === '0x' ? '0x0' : receipt.value,
+         to: receipt.to ?  receipt.to : null
+       }
+      }
+     })
     const b = {
       baseFeePerGas: '0x01',
       number: this.toHex(block.header.number),
@@ -88,7 +135,7 @@ export class Blocks {
       gasLimit: this.toHex(block.header.gasLimit),
       gasUsed: this.toHex(block.header.gasUsed),
       timestamp: this.toHex(block.header.timestamp),
-      transactions: block.transactions.map((t) => '0x' + t.hash().toString('hex')),
+      transactions,
       uncles: []
     }
 

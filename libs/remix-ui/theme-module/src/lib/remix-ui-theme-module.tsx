@@ -1,61 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from 'react';
-import { Theme, ThemeModule } from '../../types/theme-module';
+import React, { useEffect, useState } from 'react';
+import { ThemeModule } from '../../types/theme-module';
 import './remix-ui-theme-module.module.css';
 
 /* eslint-disable-next-line */
 export interface RemixUiThemeModuleProps {
   themeModule: ThemeModule;
 }
-
-const defaultThemes = [
-  {
-    name: 'Dark',
-    quality: 'dark',
-    url: 'assets/css/themes/remix-dark_tvx1s2.css'
-  },
-  {
-    name: 'Light',
-    quality: 'light',
-    url: 'assets/css/themes/remix-light_powaqg.css'
-  },
-  {
-    name: 'Midcentury',
-    quality: 'light',
-    url: 'assets/css/themes/remix-midcentury_hrzph3.css'
-  },
-  {
-    name: 'Black',
-    quality: 'dark',
-    url: 'assets/css/themes/remix-black_undtds.css'
-  },
-  {
-    name: 'Candy',
-    quality: 'light',
-    url: 'assets/css/themes/remix-candy_ikhg4m.css'
-  },
-
-  {
-    name: 'Cerulean',
-    quality: 'light',
-    url: 'assets/css/themes/bootstrap-cerulean.min.css'
-  },
-  {
-    name: 'Flatly',
-    quality: 'light',
-    url: 'assets/css/themes/bootstrap-flatly.min.css'
-  },
-  {
-    name: 'Spacelab',
-    quality: 'light',
-    url: 'assets/css/themes/bootstrap-spacelab.min.css'
-  },
-  {
-    name: 'Cyborg',
-    quality: 'dark',
-    url: 'assets/css/themes/bootstrap-cyborg.min.css'
-  }
-];
 
 export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
   const [themeName, setThemeName] = useState('')
@@ -85,7 +36,7 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
                     name="theme"
                     id={theme.name}
                     data-id={`settingsTabTheme${theme.name}`}
-                    checked={themeModule.active === theme.name}
+                    checked={themeModule.active === theme.name.toLocaleLowerCase()}
                   />
                   <label
                     className="form-check-label custom-control-label"

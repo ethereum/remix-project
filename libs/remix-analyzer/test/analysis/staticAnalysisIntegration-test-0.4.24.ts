@@ -814,12 +814,11 @@ test('Integration test forLoopIteratesOverDynamicArray module', function (t: tes
 function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, report: AnalysisReportObj[]) => void)): void {
   const statRunner: StatRunner = new StatRunner()
   testFiles.forEach((fileName: string) => {
-    statRunner.runWithModuleList(compilationResults[fileName], [{ name: new Module().name, mod: new Module() }], (reports: AnalysisReport[]) => {
-      let report: AnalysisReportObj[] = reports[0].report
-      if (report.some((x: AnalysisReportObj) => x.warning.includes('INTERNAL ERROR'))) {
-        t.comment('Error while executing Module: ' + JSON.stringify(report))
-      }
-      cb(fileName, report)
-    })
+    const reports = statRunner.runWithModuleList(compilationResults[fileName], [{ name: new Module().name, mod: new Module() }])
+    let report: AnalysisReportObj[] = reports[0].report
+    if (report.some((x: AnalysisReportObj) => x.warning.includes('INTERNAL ERROR'))) {
+      t.comment('Error while executing Module: ' + JSON.stringify(report))
+    }
+    cb(fileName, report)
   })      
 }

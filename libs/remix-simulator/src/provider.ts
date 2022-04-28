@@ -77,11 +77,11 @@ export class Provider {
 
   disconnect () {
     return false
-  };
+  }
 
   supportsSubscriptions () {
     return true
-  };
+  }
 
   on (type, cb) {
     this.vmContext.logsManager.addListener(type, cb)

@@ -11,22 +11,20 @@ module.exports = {
     return sources
   },
 
-  'Test Recorder': function (browser: NightwatchBrowser) {
+  'Run Scenario': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
       .pause(5000)
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('div[class^="cardContainer"] i[class^="arrow"]')
-      .click('#runTabView .runtransaction')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
-      .waitForElementPresent('.instance:nth-of-type(3)')
-      .click('.instance:nth-of-type(3) > div > button')
+      .click('[data-id="udapp_arrow"]')
+      .click('[data-id="runtransaction"]')
+      .clickInstance(0)
+      .clickInstance(1)
       .clickFunction('getInt - call')
       .clickFunction('getAddress - call')
       .clickFunction('getFromLib - call')
-      .waitForElementPresent('div[class^="contractActionsContainer"] div[class^="value"] ul')
+      .waitForElementPresent('[data-id="udapp_value"]')
       .getAddressAtPosition(1, (address) => {
         console.log('Test Recorder ' + address)
         addressRef = address
@@ -36,14 +34,21 @@ module.exports = {
           .perform(() => done())
       })
       .click('*[data-id="deployAndRunClearInstances"]')
-      .testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
+
+    },
+    'Save scenario': function (browser: NightwatchBrowser) {
+      browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
       .createContract('12')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
+      .clickInstance(0)
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
       .click('i.savetransaction')
-      .modalFooterOKClick()
+      .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
+      .execute(function () {
+        const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
+
+        modalOk.click()
+      }).pause(1000)
       .getEditorValue(function (result) {
         const parsed = JSON.parse(result)
         browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
@@ -73,11 +78,16 @@ module.exports = {
       .pause(1000)
       .createContract('')
       .click('i.savetransaction')
-      .modalFooterOKClick()
+      .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
+      .execute(function () {
+        const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
+
+        modalOk.click()
+      })
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
-      .click('#runTabView .runtransaction')
-      .clickInstance(1)
+      .click('[data-id="runtransaction"]')
+      .clickInstance(2)
       .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
       .testFunction('last',

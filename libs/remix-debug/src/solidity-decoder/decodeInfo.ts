@@ -11,6 +11,7 @@ import { Struct as StructType } from './types/Struct'
 import { Int as IntType } from './types/Int'
 import { Uint as UintType } from './types/Uint'
 import { Mapping as MappingType } from './types/Mapping'
+import { FunctionType } from './types/FunctionType'
 import { extractLocation, removeLocation } from './types/util'
 
 /**
@@ -27,7 +28,7 @@ function mapping (type, stateDefinitions, contractName) {
   const keyType = parseType(keyTypeName, stateDefinitions, contractName, 'storage')
   const valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
 
-  var underlyingTypes = {
+  const underlyingTypes = {
     keyType: keyType,
     valueType: valueType
   }
@@ -76,6 +77,10 @@ function address (type) {
   */
 function bool (type) {
   return new BoolType()
+}
+
+function functionType (type, stateDefinitions, contractName, location) {
+  return new FunctionType(type, stateDefinitions, contractName, location)
 }
 
 /**
@@ -300,7 +305,8 @@ function parseType (type, stateDefinitions, contractName, location) {
     struct: struct,
     int: int,
     uint: uint,
-    mapping: mapping
+    mapping: mapping,
+    function: functionType
   }
   const currentType = typeClass(type)
   if (currentType === null) {
@@ -329,9 +335,9 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
     offset: 0,
     slot: 0
   }
-  for (var i in types) {
-    var variable = types[i]
-    var type = parseType(variable.typeDescriptions.typeString, stateDefinitions, contractName, location)
+  for (const i in types) {
+    const variable = types[i]
+    const type = parseType(variable.typeDescriptions.typeString, stateDefinitions, contractName, location)
     if (!type) {
       console.log('unable to retrieve decode info of ' + variable.typeDescriptions.typeString)
       return null

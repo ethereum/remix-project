@@ -20,25 +20,28 @@ function signMsg (browser: NightwatchBrowser, msg: string, cb: (hash: { value: s
   browser
     .waitForElementPresent('i[id="remixRunSignMsg"]')
     .click('i[id="remixRunSignMsg"]')
-    .waitForElementVisible('textarea[id="prompt_text"]')
-    .setValue('textarea[id="prompt_text"]', msg, () => {
-      browser.modalFooterOKClick().perform(
-        (client, done) => {
-          browser.waitForElementVisible('span[id="remixRunSignMsgHash"]').getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
-        }
-      )
-        .perform(
-          (client, done) => {
-            browser.waitForElementVisible('span[id="remixRunSignMsgSignature"]').getText('span[id="remixRunSignMsgSignature"]', (v) => { signature = v; done() })
-          }
-        )
-        .modalFooterOKClick()
-        .perform(
-          () => {
-            cb(hash, signature)
-          }
-        )
-    })
+    .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+    .click('*[data-id="signMessageTextarea"]')
+    .setValue('*[data-id="signMessageTextarea"]', msg)
+    .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
+    .click('[data-id="udappNotify-modal-footer-ok-react"]')
+    .perform(
+      (client, done) => {
+        browser.waitForElementVisible('span[id="remixRunSignMsgHash"]').getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
+      }
+    )
+    .perform(
+      (client, done) => {
+        browser.waitForElementVisible('span[id="remixRunSignMsgSignature"]').getText('span[id="remixRunSignMsgSignature"]', (v) => { signature = v; done() })
+      }
+    )
+    .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
+    .click('[data-id="udappNotify-modal-footer-ok-react"]')
+    .perform(
+      () => {
+        cb(hash, signature)
+      }
+    )
 }
 
 module.exports = SelectContract

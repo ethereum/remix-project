@@ -1,13 +1,13 @@
-
 import { Plugin } from '@remixproject/engine'
 import { compile } from '@remix-project/remix-solidity'
 import { util } from '@remix-project/remix-lib'
-
-const ethutil = require('ethereumjs-util')
+import { toChecksumAddress } from 'ethereumjs-util'
+import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
+import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
 
 const profile = {
   name: 'fetchAndCompile',
-  methods: ['resolve'],
+  methods: ['resolve', 'clearCache'],
   version: '0.0.1'
 }
 
@@ -18,6 +18,14 @@ export class FetchAndCompile extends Plugin {
     super(profile)
     this.unresolvedAddresses = []
     this.sourceVerifierNetWork = ['Main', 'Rinkeby', 'Ropsten', 'Goerli']
+  }
+
+  /**
+   * Clear the cache
+   *
+   */
+  async clearCache () {
+    this.unresolvedAddresses = []
   }
 
   /**
@@ -32,7 +40,7 @@ export class FetchAndCompile extends Plugin {
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
   async resolve (contractAddress, codeAtAddress, targetPath) {
-    contractAddress = ethutil.toChecksumAddress(contractAddress)
+    contractAddress = toChecksumAddress(contractAddress)
 
     const localCompilation = async () => await this.call('compilerArtefacts', 'get', contractAddress) ? await this.call('compilerArtefacts', 'get', contractAddress) : await this.call('compilerArtefacts', 'get', '__last') ? await this.call('compilerArtefacts', 'get', '__last') : null
 
@@ -67,56 +75,48 @@ export class FetchAndCompile extends Plugin {
       }
     }
 
+    targetPath = `${targetPath}/${network.id}/${contractAddress}`
     let data
     try {
-      data = await this.call('source-verification', 'fetchByNetwork', contractAddress, network.id)
+      data = await fetchContractFromSourcify(this, network, contractAddress, targetPath)
     } catch (e) {
-      setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
-      this.unresolvedAddresses.push(contractAddress)
-      return localCompilation()
+      this.call('notification', 'toast', e.message)
+      console.log(e) // and fallback to getting the compilation result from etherscan
     }
-    if (!data || !data.metadata) {
+
+    if (!data) {
+      this.call('notification', 'toast', `contract ${contractAddress} not found in Sourcify, checking in Etherscan..`)
+      try {
+        data = await fetchContractFromEtherscan(this, network, contractAddress, targetPath)
+      } catch (e) {
+        this.call('notification', 'toast', e.message)
+        setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
+        this.unresolvedAddresses.push(contractAddress)
+        return localCompilation()    
+      }
+    }
+
+    if (!data) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0)
       this.unresolvedAddresses.push(contractAddress)
       return localCompilation()
     }
-
-    // set the solidity contract code using metadata
-    await this.call('fileManager', 'setFile', `${targetPath}/${network.id}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
-    const compilationTargets = {}
-    for (let file in data.metadata.sources) {
-      const urls = data.metadata.sources[file].urls
-      for (const url of urls) {
-        if (url.includes('ipfs')) {
-          const stdUrl = `ipfs://${url.split('/')[2]}`
-          const source = await this.call('contentImport', 'resolve', stdUrl)
-          if (await this.call('contentImport', 'isExternalUrl', file)) {
-            // nothing to do, the compiler callback will handle those
-          } else {
-            file = file.replace('browser/', '') // should be fixed in the remix IDE end.
-            const path = `${targetPath}/${network.id}/${contractAddress}/${file}`
-            await this.call('fileManager', 'setFile', path, source.content)
-            compilationTargets[path] = { content: source.content }
-          }
-          break
-        }
-      }
-    }
-
-    // compile
-    const settings = {
-      version: data.metadata.compiler.version,
-      language: data.metadata.language,
-      evmVersion: data.metadata.settings.evmVersion,
-      optimize: data.metadata.settings.optimizer.enabled,
-      runs: data.metadata.settings.runs
-    }
+    const { settings, compilationTargets } = data
+   
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
       const compData = await compile(
         compilationTargets,
         settings,
-        async (url, cb) => await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+        async (url, cb) => {
+          // we first try to resolve the content from the compilation target using a more appropiate path
+          const path = `${targetPath}/${url}`
+          if (compilationTargets[path] && compilationTargets[path].content) {
+            return cb(null, compilationTargets[path].content)
+          } else {
+            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+          }
+        })
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     } catch (e) {
