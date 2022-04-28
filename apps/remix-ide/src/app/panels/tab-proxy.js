@@ -50,10 +50,18 @@ export class TabProxy extends Plugin {
 
     this.on('fileManager', 'fileClosed', (name) => {
       const workspace = this.fileManager.currentWorkspace()
-
       if (this.fileManager.mode === 'browser') {
         name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
-        this.removeTab(name)
+        let tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+
+        // If tab doesn't exist, check if tab is opened because of abrupt disconnection with remixd
+        if (tabIndex === -1) {
+          const nameArray = name.split('/')
+          nameArray.shift()
+          name = 'localhost' + '/' + nameArray.join('/')
+          tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+          if(tabIndex !== -1) this.removeTab(name)
+        } else this.removeTab(name)
       } else {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
         this.removeTab(name)
