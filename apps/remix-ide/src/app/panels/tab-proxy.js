@@ -41,6 +41,13 @@ export class TabProxy extends Plugin {
 
       if (this.fileManager.mode === 'browser') {
         name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
+        // If deleted file is not current file and not an active tab in editor,
+        // ensure current file is active in the editor
+        if (this.fileManager.currentFile() && name !== this.fileManager.currentFile()) {
+          const currentFile = this.fileManager.currentFile()
+          const currentFileTabPath = currentFile.startsWith(workspace + '/') ? currentFile : workspace + '/' + currentFile
+          this.removeTab(name, { name: currentFileTabPath })
+        }
         this.removeTab(name)
       } else {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
@@ -261,11 +268,11 @@ export class TabProxy extends Plugin {
     this._handlers[name] = { switchTo, close }
   }
 
-  removeTab (name) {
+  removeTab (name, currentFileTab) {
     delete this._handlers[name]
-    let previous = null
+    let previous = currentFileTab
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
-      if (tab.name === name) previous = this.loadedTabs[index - 1]
+      if (!previous && tab.name === name) previous = this.loadedTabs[index - 1]
       return tab.name !== name
     })
     this.renderComponent()
