@@ -84,14 +84,23 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
       browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
         if (visible.status && visible.status === -1) {
 
-          browser.pause(1000).element('xpath', '//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (visiblePermission: any) => {
-            if (visiblePermission.status && visiblePermission.status === -1) {
+          browser.pause(1000).element('xpath', '//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okPresent: any) => {
+            if ((okPresent.status && okPresent.status === -1) || okPresent.value === false) {
               // @ts-ignore
               browser.frame(0, () => { resolve(true) })
             } else {
-              browser.click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
-                // @ts-ignore
-                browser.frame(0, () => { resolve(true) })
+              browser
+              .useXpath()
+              .isVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okVisible: any) => {
+                if (okVisible.value) {
+                  browser.click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+                    // @ts-ignore
+                    browser.frame(0, () => { resolve(true) })
+                  })
+                } else {
+                  // @ts-ignore
+                  browser.frame(0, () => { resolve(true) })
+                }
               })
             }
           })
@@ -99,7 +108,10 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
 
 
         } else {
-          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]')
+          .click('//*[@data-id="permissionHandlerRememberUnchecked"]')
+          .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
+          .click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
             // @ts-ignore
             browser.frame(0, () => { resolve(true) })
           })
