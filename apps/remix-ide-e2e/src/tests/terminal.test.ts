@@ -86,8 +86,12 @@ module.exports = {
       .openFile('resolveExternalUrlAndSaveToaPath.js')
       .pause(1000)
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
+      .useXpath()
+      .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
+      .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
+
   },
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
