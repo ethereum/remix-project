@@ -86,9 +86,6 @@ module.exports = {
       .openFile('resolveExternalUrlAndSaveToaPath.js')
       .pause(1000)
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
-      .useXpath()
-      .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
-      .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
 
