@@ -3,7 +3,7 @@ import { PermissionHandlerProps } from '../interface'
 import './permission-dialog.css'
 
 const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
-  const { from, to, remember, method, message } = props.value
+  const { from, to, remember, method, message, sensitiveCall } = props.value
   const [feedback, setFeedback] = useState<string>('')
   const theme = props.theme
 
@@ -43,7 +43,6 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
       </div> : null
   }
 
-  const sensitiveCall = method === 'writeFile'
   return (<section className="permission">
     {pluginsImages()}
     <article>
