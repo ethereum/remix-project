@@ -76,10 +76,9 @@ export class RemixAppManager extends PluginManager {
       return false
     }
     // skipping native plugins' requests
-    if (isNative(from) && !isSensitiveCall) {
+    if (isNative(from)) {
       return true
     }
-
 
     // ask the user for permission
     return await this.call('permissionhandler', 'askPermission', this.profiles[from], this.profiles[to], method, message, isSensitiveCall)
