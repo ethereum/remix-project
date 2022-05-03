@@ -134,7 +134,7 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
-  flaky-ff:
+  flaky-firefox:
     docker:
       # specify the version you desire here
       - image: cimg/node:14.17.6-browsers
