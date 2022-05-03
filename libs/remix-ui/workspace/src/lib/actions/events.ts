@@ -10,8 +10,8 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-    createWorkspace(name, isEmpty, cb)
+  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    createWorkspace(name, workspaceTemplateName, isEmpty, cb)
   })
 
   plugin.on('filePanel', 'renameWorkspaceReducerEvent', (oldName: string, workspaceName: string, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {

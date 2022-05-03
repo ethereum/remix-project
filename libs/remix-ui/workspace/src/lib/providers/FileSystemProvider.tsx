@@ -43,8 +43,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await removeInputField(path)
   }
 
-  const dispatchCreateWorkspace = async (workspaceName: string) => {
-    await createWorkspace(workspaceName)
+  const dispatchCreateWorkspace = async (workspaceName: string, workspaceTemplateName: string) => {
+    await createWorkspace(workspaceName, workspaceTemplateName)
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
