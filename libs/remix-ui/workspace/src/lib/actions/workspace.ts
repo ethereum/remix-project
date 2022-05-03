@@ -5,7 +5,6 @@ import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, cre
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, workspaceTemplate } from '../types'
-import { remixDefault } from '../templates'
 import { QueryParams } from '@remix-project/remix-lib'
 
 
@@ -150,12 +149,14 @@ export const loadWorkspacePreset = async (template: workspaceTemplate = 'remixDe
       }
       break
 
-    case 'remixDefault':
-      // creates a new workspace and populates it with default project template.
-      // insert example contracts
-      for (const file in remixDefault) {
+    default:
+      const templateWithContent = await import('../templates')
+      const templateList = Object.keys(templateWithContent)
+      if (!templateList.includes(template)) break
+      const files = templateWithContent[template]
+      for (const file in files) {
         try {
-          await workspaceProvider.set(remixDefault[file].name, remixDefault[file].content)
+          await workspaceProvider.set(files[file].name, files[file].content)
         } catch (error) {
           console.error(error)
         }
