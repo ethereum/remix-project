@@ -257,7 +257,7 @@ jobs:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
-      - run: ./apps/remix-ide/ci/browser_test.sh firefox
+      - run: ./apps/remix-ide/ci/flaky.sh firefox
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
