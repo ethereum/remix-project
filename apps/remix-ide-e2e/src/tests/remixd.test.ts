@@ -89,6 +89,9 @@ module.exports = {
         browser
           .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
           .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
+          .pause(2000)
+          .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
+          .pause(2000)
           .waitForElementVisible('.highlightLine16', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(
