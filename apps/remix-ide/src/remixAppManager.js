@@ -14,7 +14,8 @@ const dependentModules = ['git', 'hardhat', 'truffle', 'slither'] // module whic
 
 const sensitiveCalls = {
   'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
-  'contentImport': ['resolveAndSave']
+  'contentImport': ['resolveAndSave'],
+  'web3Provider': ['sendAsync'],
 }
 
 export function isNative(name) {
