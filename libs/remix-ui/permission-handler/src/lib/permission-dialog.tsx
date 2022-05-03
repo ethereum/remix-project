@@ -3,7 +3,7 @@ import { PermissionHandlerProps } from '../interface'
 import './permission-dialog.css'
 
 const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
-  const { from, to, remember, method, message } = props.value
+  const { from, to, remember, method, message, sensitiveCall } = props.value
   const [feedback, setFeedback] = useState<string>('')
   const theme = props.theme
 
@@ -52,12 +52,14 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
       <h6>{to.displayName} :</h6>
       <p> {to.description || <i>No description Provided</i>}</p>
       {pluginMessage()}
+      { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>You are going to process a sensitive call. Please make sure you trust this plugin.</p> : '' }
     </article>
     <article className='remember'>
-      <div className='form-check'>
+      { !sensitiveCall && <div className='form-check'>
         {rememberSwitch()}
         <label htmlFor='remember' className="form-check-label" data-id="permissionHandlerRememberChoice">Remember this choice</label>
-      </div>
+        </div>
+      }
       <button className="btn btn-sm" onClick={reset}>Reset all Permissions</button>
     </article>
     <div>{feedback}</div>

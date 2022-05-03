@@ -70,12 +70,12 @@ export class PermissionHandlerPlugin extends Plugin {
      * @param {string} message from the caller plugin to add more details if needed
      * @returns {Promise<boolean>}
      */
-    async askPermission(from: Profile, to: Profile, method: string, message: string) {
+    async askPermission(from: Profile, to: Profile, method: string, message: string, sensitiveCall: boolean) {
         try {
             this.permissions = this._getFromLocal()
             if (!this.permissions[to.name]) this.permissions[to.name] = {}
             if (!this.permissions[to.name][method]) this.permissions[to.name][method] = {}
-            if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message)
+            if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
 
             const { allow, hash } = this.permissions[to.name][method][from.name]
             if (!allow) {
@@ -85,20 +85,21 @@ export class PermissionHandlerPlugin extends Plugin {
             }
             return hash === from.hash
                 ? true // Allow
-                : await this.openPermission(from, to, method, message)
+                : await this.openPermission(from, to, method, message, sensitiveCall)
         } catch (err) {
             throw new Error(err)
         }
     }
 
-    async openPermission(from: Profile, to: Profile, method: string, message: string) {
+    async openPermission(from: Profile, to: Profile, method: string, message: string, sensitiveCall: boolean) {
         const remember = this.permissions[to.name][method][from.name]
         const value: PermissionHandlerValue = {
             from,
             to,
             method,
             message,
-            remember
+            remember,
+            sensitiveCall
         }
         const modal: AppModal = {
             id: 'PermissionHandler',
