@@ -150,16 +150,20 @@ export const loadWorkspacePreset = async (template: workspaceTemplate = 'remixDe
       break
 
     default:
-      const templateWithContent = await import('../templates')
-      const templateList = Object.keys(templateWithContent)
-      if (!templateList.includes(template)) break
-      const files = templateWithContent[template]
-      for (const file in files) {
-        try {
-          await workspaceProvider.set(files[file].name, files[file].content)
-        } catch (error) {
-          console.error(error)
+      try {
+        const templateWithContent = await import('../templates')
+        const templateList = Object.keys(templateWithContent)
+        if (!templateList.includes(template)) break
+        const files = templateWithContent[template]
+        for (const file in files) {
+          try {
+            await workspaceProvider.set(files[file].name, files[file].content)
+          } catch (error) {
+            console.error(error)
+          }
         }
+      } catch (e) {
+        console.error(e)
       }
       break
   }
