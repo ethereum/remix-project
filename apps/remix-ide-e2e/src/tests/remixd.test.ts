@@ -90,15 +90,26 @@ module.exports = {
         browser
           .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
           .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
-          .pause(2000)
+          .pause(2000).getLog('browser', (logEntries) => {
+            if (logEntries && logEntries.length > 0) {
+              console.log('Browser log:')
+              console.log(logEntries)
+            }
+          })
           .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
           .pause(2000)
+          .getLog('browser', (logEntries) => {
+            if (logEntries && logEntries.length > 0) {
+              console.log('Browser log:')
+              console.log(logEntries)
+            }
+          })
           .waitForElementVisible('.highlightLine16', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(
               'function _sendLogPayload(bytes memory payload) private view {') !== -1,
             'code has not been loaded')
-          })
+          }).pause(120000)
       })
   },
 
