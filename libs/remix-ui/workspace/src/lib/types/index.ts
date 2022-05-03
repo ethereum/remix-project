@@ -13,6 +13,7 @@ export interface JSONStandardInput {
   };
 }
 export type MenuItems = action[]
+export type workspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault'
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
