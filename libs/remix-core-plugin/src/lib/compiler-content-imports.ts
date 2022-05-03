@@ -124,6 +124,10 @@ export class CompilerImports extends Plugin {
     */
   async resolveAndSave (url, targetPath) {
     try {
+      if (targetPath && this.currentRequest) {
+        const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
+        if (!canCall) throw new Error('No permission to update ' + targetPath)
+      }      
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
         if (provider.type === 'localhost' && !provider.isConnected()) {
@@ -177,7 +181,7 @@ export class CompilerImports extends Plugin {
         }
       }
     } catch (e) {
-      throw new Error(`not found ${url}`)
+      throw new Error(e)
     }
   }
 }

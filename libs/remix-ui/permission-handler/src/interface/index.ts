@@ -5,7 +5,8 @@ export interface PermissionHandlerValue {
     to: Profile,
     remember: boolean,
     method: string,
-    message: string
+    message: string,
+    sensitiveCall: boolean
 }
 
 export interface PermissionHandlerProps {
