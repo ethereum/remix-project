@@ -391,7 +391,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "remix_beta" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-beta.sh;
             fi
-
 workflows:
   version: 2
   build_all:
@@ -406,27 +405,18 @@ workflows:
       - lint:
           requires:
             - build
-            - flaky-chrome
-            - flaky-firefox
       - remix-libs:
           requires:
             - build
-            - flaky-chrome
-            - flaky-firefox
       - remix-ide-plugin-api:
           requires:
             - build
-            - flaky-chrome
       - remix-ide-chrome:
           requires:
             - build
-            - flaky-chrome
-            - flaky-firefox
       - remix-ide-firefox:
           requires:
             - build
-            - flaky-chrome
-            - flaky-firefox
       - deploy-remix-live:          
           requires:
             - lint
