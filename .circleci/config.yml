@@ -107,7 +107,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 75
+    parallelism: 80
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
@@ -150,7 +150,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 75
+    parallelism: 80
     steps:
       - browser-tools/install-firefox
       - browser-tools/install-geckodriver
