@@ -27,11 +27,12 @@ const ErrorRenderer = ({ message, opt, editor, name }: ErrorRendererProps) => {
   }
 
   const handlePointToErrorOnClick = async (location, fileName) => {
+    await editor.call('terminal','log', `handlePointToErrorOnClick ${fileName}`)
     try{
       await editor.call('editor', 'discardHighlight')
       await editor.call('editor', 'highlight', location, fileName, '', { focus: true })
     }catch(e){
-      await editor.call('terminal','log', fileName)
+      await editor.call('terminal','log', `error on click ${fileName} ${location}`)
       await editor.call('terminal','log', e)
     }
   }

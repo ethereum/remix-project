@@ -507,7 +507,7 @@ class Editor extends Plugin {
   async highlight (position, filePath, highlightColor, opt = { focus: true }) {
     filePath = filePath || this.currentFile
     if (opt.focus) {
-      await this.call('terminal','log', filePath)
+      await this.call('terminal','log', `open file highlight ${filePath}`)
       await this.call('fileManager', 'open', filePath)
       this.scrollToLine(position.start.line)
     }
