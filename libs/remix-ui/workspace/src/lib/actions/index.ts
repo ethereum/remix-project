@@ -46,10 +46,10 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
     } else {
       if (workspaces.length === 0) {
-        await createWorkspaceTemplate('default_workspace', 'default-template')
+        await createWorkspaceTemplate('default_workspace', 'remixDefault')
         plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
         dispatch(setCurrentWorkspace('default_workspace'))
-        await loadWorkspacePreset('default-template')
+        await loadWorkspacePreset('remixDefault')
       } else {
         if (workspaces.length > 0) {
           workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])

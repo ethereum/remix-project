@@ -16,7 +16,7 @@ export type MenuItems = action[]
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
-    createWorkspace: (name: string) => void,
+    createWorkspace: (name: string, workspaceTemplateName: string) => void,
     renameWorkspace: (oldName: string, newName: string) => void
     workspaceRenamed: ({ name: string }) => void,
     workspaceCreated: ({ name: string }) => void,
