@@ -20,6 +20,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         })
       }
     })
+    .sendKeys('body', [browser.Keys.ALT, browser.Keys.COMMAND, 'j']) // press enter
     .perform(() => {
       callback()
     })

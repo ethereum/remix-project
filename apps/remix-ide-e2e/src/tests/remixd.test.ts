@@ -84,6 +84,7 @@ module.exports = {
   'Static Analysis run with remixd #group3': function (browser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
       .clickLaunchIcon('solidityStaticAnalysis')
+      .sendKeys('body', [browser.Keys.ALT, browser.Keys.COMMAND, 'j'])
       .click('#staticanalysisButton button').pause(4000)
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         browser
