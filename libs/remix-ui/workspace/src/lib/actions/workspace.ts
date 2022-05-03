@@ -5,7 +5,7 @@ import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, cre
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput } from '../types'
-import { examples } from '../templates/examples'
+import { remixDefault } from '../templates'
 import { QueryParams } from '@remix-project/remix-lib'
 
 
@@ -153,9 +153,9 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
     case 'remixDefault':
       // creates a new workspace and populates it with default project template.
       // insert example contracts
-      for (const file in examples) {
+      for (const file in remixDefault) {
         try {
-          await workspaceProvider.set(examples[file].name, examples[file].content)
+          await workspaceProvider.set(remixDefault[file].name, remixDefault[file].content)
         } catch (error) {
           console.error(error)
         }

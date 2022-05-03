@@ -392,7 +392,7 @@ For now, modules supported by Remix are ethers, web3, swarmgw, chai, remix and h
 For unsupported modules, an error like this will be thrown: '<module_name> module require is not supported by Remix IDE will be shown.'
 `
 
-export const examples = {
+export default {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
   owner: { name: 'contracts/2_Owner.sol', content: owner },
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
