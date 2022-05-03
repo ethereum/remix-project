@@ -2,6 +2,7 @@
 
 set -e
 
+npm run build:e2e
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.flaky" | sort )
 
 # count test files
@@ -10,7 +11,7 @@ fileCount=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/test
 if [ $fileCount -eq 0 ]
 then
   echo "No flaky tests found"
-  exit 1
+  exit 0
 fi
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
@@ -23,8 +24,6 @@ echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 npm run remixd &
 
 sleep 5
-
-npm run build:e2e
 
 for TESTFILE in $TESTFILES; do
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=$1  || TEST_EXITCODE=1
