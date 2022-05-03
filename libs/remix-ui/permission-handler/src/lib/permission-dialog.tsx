@@ -52,7 +52,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
       <h6>{to.displayName} :</h6>
       <p> {to.description || <i>No description Provided</i>}</p>
       {pluginMessage()}
-      { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>This action will update your files. Please make sure you trust this plugin.</p> : '' }
+      { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>You are going to process a sensitive call. Please make sure you trust this plugin.</p> : '' }
     </article>
     <article className='remember'>
       { !sensitiveCall && <div className='form-check'>
