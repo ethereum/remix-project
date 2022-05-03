@@ -15,19 +15,42 @@ fs.readdirSync(testFolder).forEach(file => {
   if (!file.includes('group')) {
     const content = fs.readFileSync(testFolder + file, 'utf8')
     const matches = content.match(/group\d+/g)
-    if (matches) {
-      const unique = matches.filter(onlyUnique)
-      unique.map((group) => {
-        const rewrite = source.replace('#groupname', group).replace('#file', file.replace('.ts', ''))
-        const extension = file.split('.')
-        extension.shift()
-        const filename = `${testFolder}${file.split('.').shift()}_${group}.${extension.join('.')}`
-        fs.writeFileSync(filename, rewrite)
-      })
-    }
+    createFlakyTestFiles(file, content)
+    createFiles(file, matches)
   }
 })
 
-function onlyUnique (value, index, self) {
+function createFiles(file, matches, flaky = false) {
+  if (matches) {
+    const unique = matches.filter(onlyUnique)
+    unique.map((group) => {
+      const rewrite = source.replace('#groupname', group).replace('#file', file.replace('.ts', ''))
+      const extension = file.split('.')
+      extension.shift()
+      let filename
+      if (!flaky) {
+        filename = `${testFolder}${file.split('.').shift()}_${group}.${extension.join('.')}`
+      } else {
+        filename = `${testFolder}${file.split('.').shift()}_${group}.flaky.ts`
+      }
+      fs.writeFileSync(filename, rewrite)
+    })
+  }
+}
+
+function onlyUnique(value, index, self) {
   return self.indexOf(value) === index
+}
+
+function createFlakyTestFiles(file, text) {
+  const lines = text.split('\n')
+  lines.forEach((line, index) => {
+    // if line contains #flaky
+    if (line.includes('#flaky')) {
+      console.log(line)
+      const matches = line.match(/group\d+/g)
+      const unique = matches.filter(onlyUnique)
+      createFiles(file, matches, true)
+    }
+  })
 }
