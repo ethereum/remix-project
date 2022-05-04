@@ -37,6 +37,11 @@ jobs:
 
       - run: npm run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
+      - run:
+          name: Update PATH and Define Environment Variable at Runtime
+          command: |
+            echo 'export VERY_IMPORTANT="testing"' >> $BASH_ENV
+            source $BASH_ENV
       - persist_to_workspace:
           root: .
           paths:
@@ -241,6 +246,7 @@ jobs:
       - browser-tools/install-geckodriver
       - run:
           command: |
+              echo $VERY_IMPORTANT
               firefox --version
               geckodriver --version
               java -jar /usr/local/bin/selenium.jar --version
