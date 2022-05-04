@@ -118,8 +118,10 @@ module.exports = class RemixDProvider extends FileProvider {
     const unprefixedpath = this.removePrefix(path)
     console.error('remixd set', unprefixedpath, content)
     return this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content }).then(async (result) => {
+      console.error(result)
       if (cb) return cb(null, result)
     }).catch((error) => {
+      console.error(error)
       if (cb) return cb(error)
       throw new Error(error)
     })
