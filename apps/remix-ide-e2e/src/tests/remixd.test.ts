@@ -81,27 +81,26 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
-  'Static Analysis run with remixd #group3 #flaky': function (browser) {
+  'Static Analysis run with remixd #group3 #flaky': function (browser: NightwatchBrowser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
       .clickLaunchIcon('solidityStaticAnalysis')
       .click('#staticanalysisButton button').pause(4000)
-      .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
-        browser
-          .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
-          .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
-          .getBrowserLogs('browser').then(function (logs) {
-            logs.forEach(function (log) {
-                console.log(log)
-              }
-            )
-          })
-          .waitForElementVisible('.highlightLine16', 60000)
-          .getEditorValue((content) => {
-            browser.assert.ok(content.indexOf(
-              'function _sendLogPayload(bytes memory payload) private view {') !== -1,
-            'code has not been loaded')
-          })
+      .waitForElementVisible('#staticanalysisresult .warning', 5000)
+      .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
+      .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
+      .getLog('browser', function (logs) {
+        logs.forEach(function (log) {
+          console.log(log)
+        }
+        )
       })
+      .waitForElementVisible('.highlightLine16', 60000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(
+          'function _sendLogPayload(bytes memory payload) private view {') !== -1,
+          'code has not been loaded')
+      })
+
   },
 
   'Run git status': '' + function (browser) {
@@ -119,7 +118,7 @@ module.exports = {
   }
 }
 
-function startRemixd (browser: NightwatchBrowser) {
+function startRemixd(browser: NightwatchBrowser) {
   const browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
     console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
@@ -135,10 +134,10 @@ function startRemixd (browser: NightwatchBrowser) {
     .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
-    // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
+  // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 
-function runTests (browser: NightwatchBrowser) {
+function runTests(browser: NightwatchBrowser) {
   const browserName = browser.options.desiredCapabilities.browserName
   browser.clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
@@ -173,7 +172,7 @@ function runTests (browser: NightwatchBrowser) {
   // .click('[data-path="folder1/renamed_contract_' + browserName + '.sol"]')
 }
 
-function testImportFromRemixd (browser: NightwatchBrowser, callback: VoidFunction) {
+function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction) {
   browser
     .waitForElementVisible('[data-path="src"]', 100000)
     .click('[data-path="src"]')
