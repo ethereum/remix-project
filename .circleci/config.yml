@@ -3,6 +3,10 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
+parameters:
+  run_flaky_tests:
+    type: boolean
+    default: true
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
@@ -399,7 +403,8 @@ jobs:
             fi
 workflows:
   version: 2
-  build_all:
+  run_flaky_tests:
+    when: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
       - flaky-chrome:
@@ -408,6 +413,10 @@ workflows:
       - flaky-firefox:
           requires:
             - build
+  build_all:
+    when: << !pipeline.parameters.run_flaky_tests >>
+    jobs:
+      - build
       - lint:
           requires:
             - build
