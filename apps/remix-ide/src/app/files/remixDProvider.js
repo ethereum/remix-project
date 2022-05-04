@@ -117,14 +117,15 @@ module.exports = class RemixDProvider extends FileProvider {
     if (!this._isReady) return cb && cb('provider not ready')
     const unprefixedpath = this.removePrefix(path)
     console.error('remixd set', unprefixedpath, content)
-    return this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content }).then(async (result) => {
-      console.error(result)
+    try{
+      const result = await this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content })
+      console.error('remixd set result', result)
       if (cb) return cb(null, result)
-    }).catch((error) => {
+    }catch(error) {
       console.error(error)
       if (cb) return cb(error)
       throw new Error(error)
-    })
+    }
   }
 
   async createDir (path, cb) {
