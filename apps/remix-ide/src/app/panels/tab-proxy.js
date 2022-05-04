@@ -47,8 +47,7 @@ export class TabProxy extends Plugin {
           const currentFile = this.fileManager.currentFile()
           const currentFileTabPath = currentFile.startsWith(workspace + '/') ? currentFile : workspace + '/' + currentFile
           this.removeTab(name, { name: currentFileTabPath })
-        }
-        this.removeTab(name)
+        } else this.removeTab(name)
       } else {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
         this.removeTab(name)
