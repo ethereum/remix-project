@@ -107,16 +107,24 @@ export class OpenZeppelinProxy extends Plugin {
     this.blockchain = blockchain
   }
 
-  async isConcerned(ast: ContractAST, contracts: ContractABI): Promise<boolean> {
+  async isConcerned(ast: ContractAST, contracts: ContractABI) {
     // check in the AST if it's an upgradable contract
     if (ast.nodes.find(node => node.absolutePath === UUPS)) {
-      this.kind = 'UUPS'
-      Object.keys(contracts).map(name => {
+      const inputs = Object.keys(contracts).map(name => {
         const abi = contracts[name].abi
+        const initializeInput = abi.find(node => node.name === 'initialize')
+
+        if (initializeInput) {
+          return {
+            [name]: initializeInput
+          }
+        }
       })
-      return true
+      if (inputs.length > 0) {
+        this.kind = 'UUPS'
+        return { inputs }
+      }
     }
-    return false
   }
 
   async execute(implAddress: string, _data: string = '') {
