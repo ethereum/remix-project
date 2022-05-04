@@ -7,9 +7,6 @@ parameters:
   run_flaky_tests:
     type: boolean
     default: true
-  run_flaky_parallelism:
-    type: integer
-    default: 40
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
@@ -162,7 +159,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: << parameters.run_flaky_parallelism >>
+    parallelism: 80
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
@@ -247,7 +244,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: << parameters.run_flaky_parallelism >>
+    parallelism: 80
     steps:
       - browser-tools/install-firefox
       - browser-tools/install-geckodriver
