@@ -90,11 +90,13 @@ export class RemixdClient extends PluginClient {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot write file: read-only mode selected'))
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
+        console.error('remixd write to ' + args.path, this.currentSharedFolder)
+        console.error('remixd write to ' + path)
         const exists = fs.existsSync(path)
 
         if (exists && !isRealPath(path)) return reject(new Error(''))
         if (args.content === 'undefined') { // no !!!!!
-          console.log('trying to write "undefined" ! stopping.')
+          console.error('trying to write "undefined" ! stopping.')
           return reject(new Error('trying to write "undefined" ! stopping.'))
         }
         this.trackDownStreamUpdate[path] = path
@@ -105,7 +107,7 @@ export class RemixdClient extends PluginClient {
         try {
           fs.writeFile(path, args.content, 'utf8', (error: Error) => {
             if (error) {
-              console.log(error)
+              console.error(error)
               return reject(error)
             }
             resolve(true)
