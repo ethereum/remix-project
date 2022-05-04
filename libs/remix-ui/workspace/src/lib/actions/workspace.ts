@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-import { JSONStandardInput, workspaceTemplate } from '../types'
+import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 
 
@@ -59,7 +59,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
   return promise
 }
 
-export const createWorkspaceTemplate = async (workspaceName: string, template: workspaceTemplate = 'remixDefault') => {
+export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if (await workspaceExists(workspaceName) && template === 'remixDefault') throw new Error('workspace already exists')
@@ -76,7 +76,7 @@ export type UrlParametersType = {
   url: string
 }
 
-export const loadWorkspacePreset = async (template: workspaceTemplate = 'remixDefault') => {
+export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault') => {
   const workspaceProvider = plugin.fileProviders.workspace
   const params = queryParams.get() as UrlParametersType
 
