@@ -1,6 +1,6 @@
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { action } from '../types'
+import { action, WorkspaceTemplate } from '../types'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
@@ -10,7 +10,7 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
     createWorkspace(name, workspaceTemplateName, isEmpty, cb)
   })
 
