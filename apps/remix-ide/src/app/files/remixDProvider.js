@@ -122,7 +122,7 @@ module.exports = class RemixDProvider extends FileProvider {
       console.error('remixd set result', result)
       if (cb) return cb(null, result)
     }catch(error) {
-      console.error(error)
+      console.error('remixd set ERROR', error)
       if (cb) return cb(error)
       throw new Error(error)
     }
