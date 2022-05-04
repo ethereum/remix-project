@@ -83,6 +83,14 @@ module.exports = {
   },
   'Static Analysis run with remixd #group3 #flaky': function (browser: NightwatchBrowser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItem.deps"]')
+      .click('[data-id="treeViewLitreeViewItem.deps"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItem.deps/npm"]')
+      .click('[data-id="treeViewLitreeViewItem.deps/npm"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItem.deps/npm/hardhat"]')
+      .click('[data-id="treeViewLitreeViewItem.deps/npm/hardhat"]')
+      .openFile('.deps/npm/hardhat/console.sol')
       .clickLaunchIcon('solidityStaticAnalysis')
       .click('#staticanalysisButton button').pause(4000)
       .waitForElementVisible('#staticanalysisresult .warning', 5000)
