@@ -414,7 +414,7 @@ workflows:
           requires:
             - build
   build_all:
-    when: << !pipeline.parameters.run_flaky_tests >>
+    when: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
       - lint:
