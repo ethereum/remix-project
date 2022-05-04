@@ -21,7 +21,6 @@ export interface SettingsProps {
   sendUnit: string,
   gasLimit: number,
   setGasFee: (value: number) => void,
-  setWeb3Endpoint: (endpoint: string) => void,
   personalMode: boolean,
   networkName: string,
   providers: {
@@ -225,7 +224,22 @@ export interface Modal {
 export type DeployMode = 'Deploy with Proxy'
 export interface DeployOptions {
   title: DeployMode,
-  active: boolean
+  active: boolean,
+  inputs: {
+    [key: string]: {
+      inputs: [
+            {
+                internalType: string,
+                name: string,
+                type: string
+            }
+        ],
+        name: "initialize",
+        outputs: any[],
+        stateMutability: string,
+        type: string
+    }
+  }
 }
 
 export interface ContractGUIProps {
