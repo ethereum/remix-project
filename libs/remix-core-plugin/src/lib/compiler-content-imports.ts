@@ -103,6 +103,7 @@ export class CompilerImports extends Plugin {
           try {
             const provider = await this.call('fileManager', 'getProviderOf', null)
             const path = targetPath || type + '/' + cleanUrl
+            console.log('add external ', '.deps/' + path, url,content)
             if (provider) await provider.addExternal('.deps/' + path, content, url)
           } catch (err) {
             console.error(err)
@@ -123,6 +124,7 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath) {
+    console.log(url)
     try {
       if (targetPath && this.currentRequest) {
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
