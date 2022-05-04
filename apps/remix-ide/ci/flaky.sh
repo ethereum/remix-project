@@ -22,6 +22,7 @@ npm run ganache-cli &
 npm run serve:production &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 npm run remixd &
+npx nx serve remix-ide-e2e-src-local-plugin &
 
 sleep 5
 
