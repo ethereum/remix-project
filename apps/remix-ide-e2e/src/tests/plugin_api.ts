@@ -277,7 +277,7 @@ module.exports = {
     await clickAndCheckLog(browser, 'fileManager:readFile', 'test', null, 'testrename.txt')
   },
 
-  'Should create empty workspace #group2': async function (browser: NightwatchBrowser) {
+  'Should create empty workspace #flaky #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, ['emptyworkspace', true])
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'emptyworkspace', isLocalhost: false, absolutePath: '.workspaces/emptyworkspace' }, null, null)
     await clickAndCheckLog(browser, 'fileManager:readdir', {}, null, '/')
