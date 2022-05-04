@@ -91,6 +91,17 @@ module.exports = {
       .waitForElementVisible('[data-id="treeViewLitreeViewItem.deps/npm/hardhat"]')
       .click('[data-id="treeViewLitreeViewItem.deps/npm/hardhat"]')
       .openFile('.deps/npm/hardhat/console.sol')
+      .getLog('browser', function (logs) {
+        logs.forEach(function (log) {
+          console.log(log)
+        }
+        )
+      })
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(
+          'library console') !== -1,
+          'code has not been loaded')
+      })
       .clickLaunchIcon('solidityStaticAnalysis')
       .click('#staticanalysisButton button').pause(4000)
       .waitForElementVisible('#staticanalysisresult .warning', 5000)
