@@ -165,7 +165,7 @@ module.exports = {
         })
       })
   },
-  'Use special functions receive/fallback - receive and fallback are declared, sending data and wei #group6 #flaky': function (browser: NightwatchBrowser) {
+  'Use special functions receive/fallback - receive and fallback are declared, sending data and wei #group6': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
       .testContracts('receiveAndFallbackBothPayable.sol', sources[4]['receiveAndFallbackBothPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
