@@ -26,7 +26,7 @@ module.exports = {
       .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from Github')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the github URL you would like to load.')
-      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
   },
 
   'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
@@ -39,11 +39,11 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
-  'Import From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
+  'Import From Github For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(2000)
-      .waitForElementVisible('*[data-id="landingPageImportFromGitHubButton"]')
-      .click('*[data-id="landingPageImportFromGitHubButton"]')
+      .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
+      .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
@@ -56,10 +56,10 @@ module.exports = {
         browser.assert.ok(content.indexOf('library Roles {') !== -1, 'content does contain "library Roles {"')
       })
   },
-  'Import JSON From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
+  'Import JSON From Github For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
       .click('div[title="home"]')
-      .click('*[data-id="landingPageImportFromGitHubButton"]')
+      .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
