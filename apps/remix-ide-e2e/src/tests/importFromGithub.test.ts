@@ -9,11 +9,12 @@ const testData = {
 }
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
 
-  'Import from GitHub Modal': function (browser: NightwatchBrowser) {
+  'Import from GitHub Modal #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
@@ -29,7 +30,7 @@ module.exports = {
       .refresh()
   },
 
-  'Display Error Message For Invalid GitHub URL Modal': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
@@ -44,7 +45,7 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
-  'Import From Github For Valid URL': function (browser: NightwatchBrowser) {
+  'Import From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
@@ -62,7 +63,7 @@ module.exports = {
         browser.assert.ok(content.indexOf('library Roles {') !== -1, 'content does contain "library Roles {"')
       })
   },
-  'Import JSON From Github For Valid URL': function (browser: NightwatchBrowser) {
+  'Import JSON From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
     browser
       .click('div[title="home"]')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
