@@ -27,14 +27,10 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the github URL you would like to load.')
       .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
-      .refresh()
   },
 
   'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .click('*[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
