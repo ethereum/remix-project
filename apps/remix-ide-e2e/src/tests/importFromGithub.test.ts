@@ -21,7 +21,7 @@ module.exports = {
       .click('div[title="home"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
       .pause(1000)
-      .scrollAndClick('button[data-id="landingPageImportFromGitHubButton"]')
+      .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalTitle-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from Github')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
@@ -33,12 +33,12 @@ module.exports = {
   'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
+      .click('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
-      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]') // submitted
+      .click('[data-id="homeTab-modal-footer-ok-react"]') // submitted
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
@@ -46,13 +46,13 @@ module.exports = {
   'Import From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
+      .click('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]')
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
-      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
+      .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
       .waitForElementVisible("div[title='default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol'")
       .getEditorValue((content) => {
@@ -62,13 +62,13 @@ module.exports = {
   'Import JSON From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
     browser
       .click('div[title="home"]')
-      .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
+      .click('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]')
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.JSON)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
-      .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
+      .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/ethereum/remix-project/package.json')
       .waitForElementVisible("div[title='default_workspace/github/ethereum/remix-project/package.json'")
       .getEditorValue((content) => {
