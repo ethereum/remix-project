@@ -47,9 +47,9 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]')
-      .clearValue('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
@@ -63,9 +63,9 @@ module.exports = {
     browser
       .click('div[title="home"]')
       .scrollAndClick('*[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]')
-      .clearValue('*[data-id="homeTabModalDialogCustomPromptText"]')
+      .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]')
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.JSON)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .scrollAndClick('[data-id="homeTab-modal-footer-ok-react"]')
