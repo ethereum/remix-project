@@ -3,6 +3,10 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
+parameters:
+  run_flaky_tests:
+    type: boolean
+    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
@@ -91,7 +95,7 @@ jobs:
       - run: npm i
       - run: cd dist/libs/remix-tests && npm install
       - run: npm run test:libs
-
+          
   remix-ide-chrome:
     docker:
       # specify the version you desire here
@@ -130,6 +134,49 @@ jobs:
           command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+  flaky-chrome:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    parallelism: 80
+    steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+              google-chrome --version
+              chromedriver --version
+              java -jar /usr/local/bin/selenium.jar --version
+          name: Check install
+      - checkout
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
+      - run: ./apps/remix-ide/ci/flaky.sh chrome
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -177,7 +224,49 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+  flaky-firefox:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
 
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    parallelism: 80
+    steps:
+      - browser-tools/install-firefox
+      - browser-tools/install-geckodriver
+      - run:
+          command: |
+              firefox --version
+              geckodriver --version
+              java -jar /usr/local/bin/selenium.jar --version
+          name: Check install
+      - checkout
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
+      - run: ./apps/remix-ide/ci/flaky.sh firefox
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+          
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
@@ -306,10 +395,20 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "remix_beta" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-beta.sh;
             fi
-
 workflows:
   version: 2
+  run_flaky_tests:
+    when: << pipeline.parameters.run_flaky_tests >>
+    jobs:
+      - build
+      - flaky-chrome:
+          requires:
+            - build
+      - flaky-firefox:
+          requires:
+            - build
   build_all:
+    unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
       - lint:
