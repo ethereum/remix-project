@@ -29,7 +29,7 @@ module.exports = {
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
   },
 
-  'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid GitHub URL Modal #group1': function (browser: NightwatchBrowser) {
     browser
       .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
@@ -39,15 +39,17 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
-  'Import From Github For Valid URL #group2': function (browser: NightwatchBrowser) {
+  'Import From Github For Valid URL #group2 #flaky': function (browser: NightwatchBrowser) {
     browser
-      .pause(2000)
-      .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('filePanel')
+      .click('div[title="home"]')
+      .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]').pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
-      .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL).getBrowserLogs()
+      .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
