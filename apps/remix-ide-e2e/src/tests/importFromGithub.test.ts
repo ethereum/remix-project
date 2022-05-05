@@ -29,7 +29,7 @@ module.exports = {
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
   },
 
-  'Display Error Message For Invalid GitHub URL Modal #group1': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
