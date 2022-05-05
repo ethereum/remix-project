@@ -47,7 +47,6 @@ function createFlakyTestFiles(file, text) {
   lines.forEach((line, index) => {
     // if line contains #flaky
     if (line.includes('#flaky')) {
-      console.log(line)
       const matches = line.match(/group\d+/g)
       const unique = matches.filter(onlyUnique)
       createFiles(file, matches, true)
