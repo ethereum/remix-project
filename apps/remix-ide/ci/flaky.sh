@@ -30,8 +30,6 @@ for TESTFILE in $TESTFILES; do
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=$1  || TEST_EXITCODE=1
 done
 
-ls -la ~/.config/google-chrome
-
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
 then
