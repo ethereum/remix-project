@@ -201,6 +201,7 @@ module.exports = {
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
       .pause(5000)
+      .getBrowserLogs()
       .journalLastChildIncludes('147')
   }
 }
