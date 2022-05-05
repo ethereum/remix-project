@@ -40,7 +40,7 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, workspaceTemplateName, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
 
@@ -163,6 +163,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
           }
         }
       } catch (e) {
+        dispatch(displayNotification('Workspace load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
         console.error(e)
       }
       break
