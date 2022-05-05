@@ -9,6 +9,8 @@ import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import * as json_config from '../../../../../apps/remix-ide/contracts/solidity_compiler_config.json'
 
 import './css/style.css'
 
@@ -21,7 +23,7 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject, isTruffleProject } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject, isTruffleProject, workspaceName } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -50,6 +52,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [hhCompilation, sethhCompilation] = useState(false)
   const [truffleCompilation, setTruffleCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
+
+  useEffect(() => {
+    setConfigFilePath("/compiler_config.json")
+    api.fileExists("/compiler_config.json").then((exists) => {
+      if (!exists) createNewConfigFile()
+      else {
+        // what to do? discuss
+      }
+    })
+    setConfigFilePath("/compiler_config.json")
+    setManualConfig(false)
+    setShowFilePathInput(false)
+  }, [workspaceName])
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
@@ -156,8 +171,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const createNewConfigFile = async () => {
-    const configFileContent =
-    await api.writeFile(configFilePathInput.current.value, "")
+    const configFileContent = JSON.stringify(json_config, null, '\t')
+    await api.writeFile(configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : configFilePath, configFileContent)
     setConfigFilePath(configFilePathInput.current.value)
   }
   const handleConfigPathChange = async () => {
@@ -165,7 +180,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setConfigFilePath(configFilePathInput.current.value)
     else {
       modal(
-        'New configuration file', 'The file you entered does not exist. Do you want to create a new one?',
+        'New configuration file', `The file "${configFilePathInput.current.value}"" you entered does not exist. Do you want to create a new one?`,
         'Create',
         async () => await createNewConfigFile(),
         'Cancel',
