@@ -1,24 +1,12 @@
 {
-    "_comment": "for foll description visit https://docs.soliditylang.org/en/develop/using-the-compiler.html?highlight=standard%20json#input-description",
+    "_comment": "For more info please visit https://docs.soliditylang.org/en/develop/using-the-compiler.html?highlight=standard%20json#input-description",
     "language": "Solidity",
-    "sources":
-    {
-      "myFile.sol":
-      {
-        "keccak256": "0x123...",
-        "urls": [
-        ]
-      },
-      "destructible":
-      {
-      }
-    },
     "settings":
     {
       "stopAfter": "parsing",
       "remappings": [ ":g=/dir" ],
       "optimizer": {
-        "enabled": true,
+        "enabled": false,
         "runs": 200,
         "details": {
           "peephole": true,
@@ -31,10 +19,11 @@
           "yul": false,
           "yulDetails": {
             "stackAllocation": true,
+            "optimizerSteps": "dhfoDgvulfnTUtnIf..."
           }
         }
       },
-      "evmVersion": "london",
+      "evmVersion": "byzantium",
       "viaIR": true,
       "debug": {
         "revertStrings": "default",
@@ -43,8 +32,6 @@
       "metadata": {
         "useLiteralContent": true,
         "bytecodeHash": "ipfs"
-      },
-      "libraries": {
       },
       "outputSelection": {
         "*": {
@@ -62,9 +49,6 @@
       },
       "modelChecker":
       {
-        "contracts":
-        {
-        },
         "divModNoSlacks": false,
         "engine": "chc",
         "invariants": ["contract", "reentrancy"],
