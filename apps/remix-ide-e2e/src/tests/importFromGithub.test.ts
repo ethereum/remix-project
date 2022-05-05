@@ -29,7 +29,7 @@ module.exports = {
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
   },
 
-  'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid GitHub URL Modal #group1': function (browser: NightwatchBrowser) {
     browser
       .execute(() => {
         (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
@@ -41,7 +41,7 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
-  'Import From Github For Valid URL #group2 #flaky': function (browser: NightwatchBrowser) {
+  'Import From Github For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
