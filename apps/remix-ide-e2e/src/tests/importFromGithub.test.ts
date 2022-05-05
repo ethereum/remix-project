@@ -41,6 +41,7 @@ module.exports = {
 
   'Import From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
     browser
+      .pause(2000)
       .waitForElementVisible('*[data-id="landingPageImportFromGitHubButton"]')
       .click('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
