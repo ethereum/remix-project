@@ -4,6 +4,7 @@ import init from '../helpers/init'
 import sauce from './sauce'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080?activate=solidity,udapp&call=fileManager//open//contracts/3_Ballot.sol&deactivate=home', false)
   },
@@ -15,7 +16,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
   },
 
-  'Editor should be focused on the 3_Ballot.sol': function (browser: NightwatchBrowser) {
+  'Editor should be focused on the 3_Ballot.sol #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .refresh()
@@ -25,12 +26,12 @@ module.exports = {
       })
   },
 
-  'Home page should be deactivated': function (browser: NightwatchBrowser) {
+  'Home page should be deactivated #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementNotPresent('[data-id="landingPageHomeContainer"]')
   },
 
-  'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
@@ -59,7 +60,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
-  'Should rename a workspace': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceRename"]') // rename workspace_name
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
@@ -78,7 +79,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
-  'Should delete a workspace': function (browser: NightwatchBrowser) {
+  'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
