@@ -62,7 +62,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
-  'Should rename a workspace #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceRename"]') // rename workspace_name
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
