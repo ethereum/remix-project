@@ -31,7 +31,7 @@ module.exports = {
 
   'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
-      .click('input[data-id="homeTabModalDialogCustomPromptText"]')
+      .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]') // submitted
@@ -44,8 +44,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
-      .click('input[data-id="homeTabModalDialogCustomPromptText"]')
-      .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]')
+      .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
+      .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL).getBrowserLogs()
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
@@ -59,9 +59,9 @@ module.exports = {
     browser
       .click('div[title="home"]')
       .click('*[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
-      .click('input[data-id="homeTabModalDialogCustomPromptText"]')
-      .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]')
+      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
+      .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
+      .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.JSON)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
