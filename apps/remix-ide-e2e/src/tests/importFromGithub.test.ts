@@ -31,7 +31,9 @@ module.exports = {
 
   'Display Error Message For Invalid GitHub URL Modal #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
-      .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
+      .execute(() => {
+        (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
+      }, [], () => { })
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]') // submitted
@@ -49,7 +51,7 @@ module.exports = {
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .execute(() => {
         (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
-      }, [], () => {})
+      }, [], () => { })
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.validURL)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
@@ -67,7 +69,7 @@ module.exports = {
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .execute(() => {
         (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
-      }, [], () => {})
+      }, [], () => { })
       .clearValue('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.JSON)
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
