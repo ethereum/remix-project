@@ -41,7 +41,7 @@ module.exports = {
 
   'Import From Github For Valid URL #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="landingPageImportFromGitHubButton"]')
       .click('*[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
       .click('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
