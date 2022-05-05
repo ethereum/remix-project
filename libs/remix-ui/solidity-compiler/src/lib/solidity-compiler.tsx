@@ -13,6 +13,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [state, setState] = useState({
     isHardhatProject: false,
     isTruffleProject: false,
+    workspaceName: '',
     currentFile,
     loading: false,
     compileTabLogic: null,
@@ -63,11 +64,15 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     })
   }
 
-  api.onSetWorkspace = async (isLocalhost: boolean) => {
+  api.onSetWorkspace = async (isLocalhost: boolean, workspaceName: string) => {
     const isHardhat = isLocalhost && await compileTabLogic.isHardhatProject()
     const isTruffle =  await compileTabLogic.isTruffleProject()
     setState(prevState => {
+<<<<<<< HEAD
       return { ...prevState, currentFile, isHardhatProject: isHardhat, isTruffleProject:  isTruffle }
+=======
+      return { ...prevState, currentFile, isHardhatProject: isHardhat, workspaceName: workspaceName }
+>>>>>>> bc1405382... new file on workspace change.
     })
   }
 
@@ -150,7 +155,11 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   return (
     <>
       <div id="compileTabView">
+<<<<<<< HEAD
         <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} isTruffleProject={state.isTruffleProject} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
+=======
+        <CompilerContainer api={api} isHardhatProject={state.isHardhatProject} workspaceName={state.workspaceName} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={currentFile} updateCurrentVersion={updateCurrentVersion} configurationSettings={configurationSettings} />
+>>>>>>> bc1405382... new file on workspace change.
         { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
         { compileErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
