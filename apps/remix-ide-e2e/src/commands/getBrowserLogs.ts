@@ -4,10 +4,12 @@ import EventEmitter from 'events'
 class GetBrowserLogs extends EventEmitter {
     command(this: NightwatchBrowser): NightwatchBrowser {
         this.api.getLog('browser', function (logs) {
-            logs.forEach(function (log) {
-                console.log(log)
+            if (logs && Array.isArray(logs)) {
+                logs.forEach(function (log) {
+                    console.log(log)
+                }
+                )
             }
-            )
         }).perform(() => {
             this.emit('complete')
         })
