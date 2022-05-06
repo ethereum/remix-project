@@ -1,6 +1,6 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData } from '@remix-project/core-plugin'
-import { DeployMode, DeployOptions } from '../types'
+import { DeployOption, DeployOptions } from '../types'
 import { ADD_DEPLOY_OPTION, ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_DEPLOY_OPTION, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_TX_FEE_CONTENT } from '../constants'
 interface Action {
   type: string
@@ -64,6 +64,7 @@ export interface RunTabState {
         compiler: CompilerAbstract
       }[]
     },
+    deployOptions: DeployOptions
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
     currentContract: string,
@@ -93,8 +94,7 @@ export interface RunTabState {
   recorder: {
     pathToScenario: string,
     transactionCount: number
-  },
-  deployOptions: DeployOptions[]
+  }
 }
 
 export const runTabInitialState: RunTabState = {
@@ -158,6 +158,7 @@ export const runTabInitialState: RunTabState = {
   matchPassphrase: '',
   contracts: {
     contractList: {},
+    deployOptions: {},
     loadType: 'other',
     currentFile: '',
     currentContract: '',
@@ -181,8 +182,7 @@ export const runTabInitialState: RunTabState = {
   recorder: {
     pathToScenario: 'scenario.json',
     transactionCount: 0
-  },
-  deployOptions: []
+  }
 }
 
 type AddProvider = {
@@ -688,25 +688,33 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
       return {
         ...state,
-        deployOptions: [...state.deployOptions, payload]
+        contracts: {
+          ...state.contracts,
+          deployOptions: { ...state.contracts.deployOptions, ...payload }
+        }
       }
     }
 
     case REMOVE_DEPLOY_OPTION: {
-      const payload: DeployMode = action.payload
+      const payload: string = action.payload
+      const options = state.contracts.deployOptions
 
+      delete options[payload]
       return {
         ...state,
-        deployOptions: state.deployOptions.filter(option => option.title !== payload)
+        deployOptions: options
       }
     }
 
     case SET_DEPLOY_OPTIONS: {
-      const payload: DeployOptions[] = action.payload
+      const payload: DeployOptions = action.payload
 
       return {
         ...state,
-        deployOptions: payload
+        contracts: {
+          ...state.contracts,
+          deployOptions: payload
+        }
       }
     }
 

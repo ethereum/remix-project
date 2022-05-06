@@ -100,10 +100,14 @@ const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispat
   const contracts = getCompiledContracts(compiler).map((contract) => {
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
   })
-  const upgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file].ast, data.contracts[file])
+  const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file].ast)
 
-  if (upgradeable) dispatch(setDeployOptions([{ title: 'Deploy with Proxy', active: false, inputs: upgradeable.inputs }]))
-  else dispatch(setDeployOptions([]))
+  if (isUpgradeable) {
+    const options = await plugin.call('openzeppelin-proxy', 'getDeployOptions', data.contracts[file])
+  
+    dispatch(setDeployOptions(options))
+  }
+  else dispatch(setDeployOptions({}))
   dispatch(fetchContractListSuccess({ [file]: contracts }))
   dispatch(setCurrentFile(file))
 }
@@ -113,7 +117,7 @@ const getCompiledContracts = (compiler) => {
 
   compiler.visitContracts((contract) => {
     contracts.push(contract)
-  })
+  }) 
   return contracts
 }
 

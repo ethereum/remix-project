@@ -294,7 +294,7 @@ export const removeDeployOption = (title: DeployMode) => {
   }
 }
 
-export const setDeployOptions = (deployOptions: DeployOptions[]) => {
+export const setDeployOptions = (deployOptions: DeployOptions) => {
   return {
     payload: deployOptions,
     type: SET_DEPLOY_OPTIONS

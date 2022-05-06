@@ -22,13 +22,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
-  const [selectedContract, setSelectedContract] = useState<string>('')
   const [compFails, setCompFails] = useState<'none' | 'block'>('none')
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
   const contractsRef = useRef<HTMLSelectElement>(null)
-  const { contractList, loadType, currentFile, compilationCount } = props.contracts
+  const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions } = props.contracts
 
   useEffect(() => {
     enableAtAddress(false)
@@ -66,13 +65,13 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         display: 'none',
         content: ''
       })
-      if (!selectedContract) enableAtAddress(false)
+      if (!currentContract) enableAtAddress(false)
     } else {
       setAbiLabel({
         display: 'none',
         content: ''
       })
-      if (!selectedContract) enableAtAddress(false)
+      if (!currentContract) enableAtAddress(false)
     }
     if (currentFile) {
       enableContractNames(true)
@@ -85,11 +84,11 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [loadType, currentFile, compilationCount])
 
   useEffect(() => {
-    if (selectedContract && contractList[currentFile]) {
-      const contract = contractList[currentFile].find(contract => contract.alias === selectedContract)
+    if (currentContract && contractList[currentFile]) {
+      const contract = contractList[currentFile].find(contract => contract.alias === currentContract)
 
       if (contract) {
-        const loadedContractData = props.getSelectedContract(selectedContract, contract.compiler)
+        const loadedContractData = props.getSelectedContract(currentContract, contract.compiler)
 
         if (loadedContractData) {
           setLoadedContractData(loadedContractData)
@@ -98,7 +97,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         }
       }
     }
-  }, [selectedContract, compilationCount])
+  }, [currentContract, compilationCount])
 
   useEffect(() => {
     initSelectedContract()
@@ -108,9 +107,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     const contracts = contractList[currentFile]
   
     if (contracts && contracts.length > 0) {
-      const contract = contracts.find(contract => contract.alias === selectedContract)
+      const contract = contracts.find(contract => contract.alias === currentContract)
 
-      if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
+      if (!currentContract) props.setSelectedContract(contracts[0].alias)
+      else if (!contract) props.setSelectedContract(currentContract)
       // TODO highlight contractlist box with css.
     }
   }
@@ -189,7 +189,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const handleContractChange = (e) => {
     const value = e.target.value
 
-    setSelectedContract(value)
+    props.setSelectedContract(value)
   }
 
   const checkSumWarning = () => {
@@ -214,7 +214,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <label className="udapp_settingsLabel">Contract</label>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
@@ -226,7 +226,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <div className="udapp_deployDropdown">
           { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
-              <ContractGUI title='Deploy' isDeploy={true} deployOptions={props.deployOptions} funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
+              <ContractGUI title='Deploy' isDeploy={true} deployOption={deployOptions[currentContract]} funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
                   id="deployAndRunPublishToIPFS"
