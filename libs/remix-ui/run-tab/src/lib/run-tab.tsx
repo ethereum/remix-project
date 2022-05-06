@@ -26,7 +26,7 @@ import {
   executeTransactions, loadFromAddress,
   storeNewScenario, runScenario,
   setScenarioPath, getFuncABIValues,
-  setNetworkName
+  setNetworkName, updateSelectedContract
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -244,7 +244,7 @@ export function RunTabUI (props: RunTabProps) {
             loadAddress={loadFromAddress}
             networkName={runTab.networkName}
             setNetworkName={setNetworkName}
-            deployOptions={runTab.deployOptions}
+            setSelectedContract={updateSelectedContract}
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
