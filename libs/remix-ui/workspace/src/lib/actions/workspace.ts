@@ -151,7 +151,8 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
 
     default:
       try {
-        const templateWithContent = await import('../templates')
+        // const templateWithContent = await import('../templates')
+        const templateWithContent = require('remix-ws-templates')
         const templateList = Object.keys(templateWithContent)
         if (!templateList.includes(template)) break
         const files = templateWithContent[template]
