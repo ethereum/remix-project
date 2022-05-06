@@ -157,7 +157,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         const files = templateWithContent[template]
         for (const file in files) {
           try {
-            await workspaceProvider.set(files[file].name, files[file].content)
+            await workspaceProvider.set(file, files[file])
           } catch (error) {
             console.error(error)
           }
