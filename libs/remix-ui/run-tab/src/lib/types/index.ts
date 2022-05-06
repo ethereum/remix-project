@@ -127,8 +127,10 @@ export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
+    deployOptions: DeployOptions,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
+    currentContract: string,
     compilationCount: number,
     isRequesting: boolean,
     isSuccessful: boolean,
@@ -160,7 +162,7 @@ export interface ContractDropdownProps {
   loadAddress: (contract: ContractData, address: string) => void,
   networkName: string,
   setNetworkName: (name: string) => void,
-  deployOptions: DeployOptions[]
+  setSelectedContract: (contractName: string) => void
 }
 
 export interface RecorderProps {
@@ -221,38 +223,40 @@ export interface Modal {
   cancelFn: () => void
 }
 
-export type DeployMode = 'Deploy with Proxy'
-export interface DeployOptions {
-  title: DeployMode,
-  active: boolean,
+export type DeployMode = 'Deploy with Proxy' | 'Upgrade Proxy'
+
+export type DeployOption = {
+  options: { title: DeployMode, active: boolean }[],
+  initializeInputs: string,
   inputs: {
-    [key: string]: {
-      inputs: [
-            {
-                internalType: string,
-                name: string,
-                type: string
-            }
-        ],
-        name: "initialize",
-        outputs: any[],
-        stateMutability: string,
-        type: string
-    }
+    inputs: [
+        {
+            internalType: string,
+            name: string,
+            type: string
+        }
+    ],
+    name: "initialize",
+    outputs: any[],
+    stateMutability: string,
+    type: string
   }
+}
+export interface DeployOptions {
+  [key: string]: DeployOption
 }
 
 export interface ContractGUIProps {
   title?: string,
   funcABI: FuncABI,
-  inputs: any,
+  inputs: string,
   clickCallBack: (inputs: { name: string, type: string }[], input: string, deployMode?: DeployMode[]) => void,
   widthClass?: string,
   evmBC: any,
   lookupOnly: boolean,
   disabled?: boolean,
   isDeploy?: boolean,
-  deployOptions?: DeployOptions[]
+  deployOption?: DeployOption
 }
 export interface MainnetProps {
   network: Network,
