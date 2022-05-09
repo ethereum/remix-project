@@ -226,7 +226,6 @@ export interface Modal {
 export type DeployMode = 'Deploy with Proxy' | 'Upgrade Proxy'
 
 export type DeployOption = {
-  options: { title: DeployMode, active: boolean }[],
   initializeInputs: string,
   inputs: {
     inputs: [
@@ -243,7 +242,10 @@ export type DeployOption = {
   }
 }
 export interface DeployOptions {
-  [key: string]: DeployOption
+  initializeOptions: {
+    [key: string]: DeployOption
+  },
+  options: { title: DeployMode, active: boolean }[],
 }
 
 export interface ContractGUIProps {
@@ -256,7 +258,8 @@ export interface ContractGUIProps {
   lookupOnly: boolean,
   disabled?: boolean,
   isDeploy?: boolean,
-  deployOption?: DeployOption
+  deployOption?: { title: DeployMode, active: boolean }[],
+  initializerOptions: DeployOption
 }
 export interface MainnetProps {
   network: Network,

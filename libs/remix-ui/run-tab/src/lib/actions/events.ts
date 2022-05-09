@@ -2,7 +2,7 @@ import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
 import { addExternalProvider, addInstance, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentFile, setDeployOptions, setLoadType, setRecorderCount, setSendValue } from "./payload"
+import { clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentContract, setCurrentFile, setDeployOptions, setLoadType, setRecorderCount, setSendValue } from "./payload"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
@@ -100,16 +100,20 @@ const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispat
   const contracts = getCompiledContracts(compiler).map((contract) => {
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
   })
+  const index = contracts.findIndex(contract => contract.alias === plugin.REACT_API.contracts.currentContract)
+
+  if (index < 0) dispatch(setCurrentContract(contracts[0].alias))
   const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file].ast)
 
   if (isUpgradeable) {
     const options = await plugin.call('openzeppelin-proxy', 'getDeployOptions', data.contracts[file])
   
-    dispatch(setDeployOptions(options))
+    dispatch(setDeployOptions({ options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade Proxy', active: false }], initializeOptions: options }))
   }
-  else dispatch(setDeployOptions({}))
+  else dispatch(setDeployOptions({} as any))
   dispatch(fetchContractListSuccess({ [file]: contracts }))
   dispatch(setCurrentFile(file))
+  // TODO: set current contract
 }
 
 const getCompiledContracts = (compiler) => {
