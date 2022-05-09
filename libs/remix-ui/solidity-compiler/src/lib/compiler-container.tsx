@@ -11,6 +11,7 @@ import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import * as json_config from '../../../../../apps/remix-ide/contracts/solidity_compiler_config.json'
+import { readFileSync } from 'fs'
 
 import './css/style.css'
 
@@ -190,6 +191,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const configFileContent = JSON.stringify(json_config, null, '\t')
     console.log("file content as string -> ", json_config)
     console.log("file content as json -> ", configFileContent)
+    try {
+      const contentContent: string = readFileSync(json_config, 'utf8')
+      console.log("content is  ", contentContent)
+
+    } catch (err) {
+      console.log(err);
+      return;
+    }
 
     const filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
     await api.writeFile(filePath, configFileContent)
