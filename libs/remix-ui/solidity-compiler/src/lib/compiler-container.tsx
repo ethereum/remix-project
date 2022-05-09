@@ -92,7 +92,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const autocompile = await api.getAppParameter('autoCompile') as boolean || false
         const hideWarnings = await api.getAppParameter('hideWarnings') as boolean || false
         const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
-        const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || true
+        const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || false
         let configFilePath = await api.getAppParameter('configFilePath')
         console.log("in useeff init ", configFilePath)
         if (!configFilePath || configFilePath == '') configFilePath = "/compiler_config.json"
@@ -188,6 +188,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const createNewConfigFile = async () => {
     const configFileContent = JSON.stringify(json_config, null, '\t')
+    console.log("file content as string -> ", json_config)
+    console.log("file content as json -> ", configFileContent)
+
     const filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
     await api.writeFile(filePath, configFileContent)
     console.log("createNewConfigFile ", filePath)
