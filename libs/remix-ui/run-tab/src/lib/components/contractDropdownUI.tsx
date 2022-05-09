@@ -226,7 +226,18 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <div className="udapp_deployDropdown">
           { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
-              <ContractGUI title='Deploy' isDeploy={true} deployOption={deployOptions[currentContract]} funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
+              <ContractGUI
+                title='Deploy'
+                isDeploy={true}
+                deployOption={deployOptions.options}
+                initializerOptions={deployOptions.initializeOptions ? deployOptions.initializeOptions[currentContract] : null}
+                funcABI={constructorInterface}
+                clickCallBack={clickCallback}
+                inputs={constructorInputs}
+                widthClass='w-50'
+                evmBC={loadedContractData.bytecodeObject}
+                lookupOnly={false}
+              />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
                   id="deployAndRunPublishToIPFS"

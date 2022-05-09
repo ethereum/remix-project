@@ -32,14 +32,14 @@ export function ContractGUI (props: ContractGUIProps) {
     }
     setBasicInput('')
     // we have the reset the fields before reseting the previous references.
-    basicInputRef.current.value = ''
+    if (basicInputRef.current) basicInputRef.current.value = ''
     multiFields.current.filter((el) => el !== null && el !== undefined).forEach((el) => el.value = '')
     multiFields.current = []
 
     const hasArgs = (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
     (props.funcABI.type === 'fallback') ||
     (props.funcABI.type === 'receive') ||
-    (props.isDeploy && props.deployOption && (props.deployOption.options.length > 0))
+    (props.isDeploy && props.initializerOptions && props.initializerOptions.inputs && (props.initializerOptions.inputs.inputs.length > 0))
 
     setHasArgs(hasArgs)
   }, [props.title, props.funcABI])
@@ -191,37 +191,36 @@ export function ContractGUI (props: ContractGUIProps) {
     <div className={`udapp_contractProperty ${hasArgs ? 'udapp_hasArgs' : ''}`}>
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
         {
-          props.isDeploy && props.deployOption && (props.deployOption.options || []).length > 0 ? 
+          props.isDeploy && (props.deployOption || []).length > 0 ? 
           <Dropdown as={ButtonGroup} show={showOptions}>
             <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>Deploy</button>
             <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} onClick={toggleOptions} />
             <Dropdown.Menu className="deploy-items border-0">
               {
-                (props.deployOption.options).map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { selectedDeployIndex.includes(index) ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
+                (props.deployOption).map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)}> { selectedDeployIndex.includes(index) ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
               }
             </Dropdown.Menu>
           </Dropdown> : <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
         }
         {
-          props.isDeploy && props.deployOption && props.deployOption.inputs.inputs.length > 0 && 
+          props.isDeploy && props.initializerOptions && (props.initializerOptions.inputs.inputs.length > 0) ?
           <>
             <input
               className="form-control"
-              data-id={props.deployOption.inputs.type === 'fallback' || props.deployOption.inputs.type === 'receive' ? `'(${props.deployOption.inputs.type}')` : 'multiParamManagerBasicInputField'}
-              placeholder={props.deployOption.initializeInputs}
-              title={props.deployOption.inputs.type === 'fallback' || props.deployOption.inputs.type === 'receive' ? `'(${props.deployOption.inputs.type}')` : props.deployOption.initializeInputs}
+              data-id={props.initializerOptions.inputs.type === 'fallback' || props.initializerOptions.inputs.type === 'receive' ? `'(${props.initializerOptions.inputs.type}')` : 'multiParamManagerBasicInputField'}
+              placeholder={props.initializerOptions.initializeInputs}
+              title={props.initializerOptions.inputs.type === 'fallback' || props.initializerOptions.inputs.type === 'receive' ? `'(${props.initializerOptions.inputs.type}')` : props.initializerOptions.initializeInputs}
               onChange={handleBasicInput}
               ref={basicInputRef}
-              style={{ visibility: !((props.deployOption.inputs.inputs && props.deployOption.inputs.inputs.length > 0) || (props.deployOption.inputs.type === 'fallback') || (props.deployOption.inputs.type === 'receive')) ? 'hidden' : 'visible' }} />
+              style={{ visibility: !((props.initializerOptions.inputs.inputs && props.initializerOptions.inputs.inputs.length > 0) || (props.initializerOptions.inputs.type === 'fallback') || (props.initializerOptions.inputs.type === 'receive')) ? 'hidden' : 'visible' }} />
             <i
               className="fas fa-angle-down udapp_methCaret"
               onClick={switchMethodViewOn}
               title={title}
-              style={{ visibility: !(props.deployOption.inputs.inputs && props.deployOption.inputs.inputs.length > 0) ? 'hidden' : 'visible' }}>
+              style={{ visibility: !(props.initializerOptions.inputs.inputs && props.initializerOptions.inputs.inputs.length > 0) ? 'hidden' : 'visible' }}>
             </i>
-          </>
-        }
-        { !props.deployOption && <>
+          </> :
+          <>
             <input
               className="form-control"
               data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
@@ -240,7 +239,7 @@ export function ContractGUI (props: ContractGUIProps) {
         }
       </div>
       {
-          props.isDeploy && props.deployOption && props.deployOption.inputs.inputs.length > 0 && 
+          props.isDeploy && props.initializerOptions && (props.initializerOptions.inputs.inputs.length > 0) ?
           <div className="udapp_contractActionsContainerMulti" style={{ display: toggleContainer ? 'flex' : 'none' }}>
             <div className="udapp_contractActionsContainerMultiInner text-dark">
               <div onClick={switchMethodViewOff} className="udapp_multiHeader">
@@ -248,7 +247,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 <i className='fas fa-angle-up udapp_methCaret'></i>
               </div>
               <div>
-                {props.deployOption.inputs.inputs.map((inp, index) => {
+                {props.initializerOptions.inputs.inputs.map((inp, index) => {
                   return (
                     <div className="udapp_multiArg" key={index}>
                       <label htmlFor={inp.name}> {inp.name}: </label>
@@ -261,9 +260,7 @@ export function ContractGUI (props: ContractGUIProps) {
               <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
             </div>
           </div>
-        </div>
-      }
-      { !props.deployOption && 
+        </div> :
         <div className="udapp_contractActionsContainerMulti" style={{ display: toggleContainer ? 'flex' : 'none' }}>
           <div className="udapp_contractActionsContainerMultiInner text-dark">
             <div onClick={switchMethodViewOff} className="udapp_multiHeader">
