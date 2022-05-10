@@ -1,3 +1,4 @@
+export const configFileContent = `
 {
 	"language": "Solidity",
 	"settings": {
@@ -14,3 +15,4 @@
 		"evmVersion": "byzantium"
 	}
 }
+`
