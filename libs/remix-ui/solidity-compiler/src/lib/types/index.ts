@@ -46,4 +46,3 @@ export interface CompilationDetails {
 export interface ContractsFile {
  [currentFile: string]: CompilationDetails
 }
-
