@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 import semver from 'semver'
-import { CompilerContainerProps } from './types'
+import { CompilerContainerProps, defaultInput } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 import { checkSpecialChars, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
@@ -9,9 +9,6 @@ import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import * as json_config from '../../../../../apps/remix-ide/contracts/solidity_compiler_config.json'
-import { readFileSync } from 'fs'
 
 import './css/style.css'
 
@@ -188,19 +185,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const createNewConfigFile = async () => {
-    if (json_config.default) json_config.default = null
-    const configFileContent = JSON.stringify(json_config, null, '\t')
-    console.log("file content as string -> ", json_config)
-    console.log("file content as json -> ", configFileContent)
-    try {
-      const contentContent: string = readFileSync('../../../../../apps/remix-ide/contracts/solidity_compiler_config.json', 'utf8')
-      console.log("content is  ", contentContent)
-
-    } catch (err) {
-      console.log(err);
-      return;
-    }
-
+    const configFileContent = defaultInput
     const filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
     await api.writeFile(filePath, configFileContent)
     console.log("createNewConfigFile ", filePath)
