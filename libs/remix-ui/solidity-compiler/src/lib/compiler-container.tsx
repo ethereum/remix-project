@@ -188,11 +188,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const createNewConfigFile = async () => {
+    if (json_config.default) json_config.default = null
     const configFileContent = JSON.stringify(json_config, null, '\t')
     console.log("file content as string -> ", json_config)
     console.log("file content as json -> ", configFileContent)
     try {
-      const contentContent: string = readFileSync(json_config, 'utf8')
+      const contentContent: string = readFileSync('../../../../../apps/remix-ide/contracts/solidity_compiler_config.json', 'utf8')
       console.log("content is  ", contentContent)
 
     } catch (err) {
