@@ -9,8 +9,6 @@ import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import * as json_config from '../../../../../apps/remix-ide/contracts/solidity_compiler_config.json'
 import { configFileContent } from './compilerConfiguration'
 
 import './css/style.css'
