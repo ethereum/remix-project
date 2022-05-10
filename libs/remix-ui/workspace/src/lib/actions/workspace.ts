@@ -4,8 +4,7 @@ import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-import { JSONStandardInput } from '../types'
-import { examples } from '../templates/examples'
+import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 
 
@@ -41,9 +40,9 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   await plugin.fileManager.closeAllFiles()
-  const promise = createWorkspaceTemplate(workspaceName, 'default-template')
+  const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
@@ -51,7 +50,7 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
-    if (!isEmpty) await loadWorkspacePreset('default-template')
+    if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName)
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -60,10 +59,10 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
   return promise
 }
 
-export const createWorkspaceTemplate = async (workspaceName: string, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
+export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
-  if (await workspaceExists(workspaceName) && template === 'default-template') throw new Error('workspace already exists')
+  if (await workspaceExists(workspaceName) && template === 'remixDefault') throw new Error('workspace already exists')
   else {
     const workspaceProvider = plugin.fileProviders.workspace
 
@@ -77,7 +76,7 @@ export type UrlParametersType = {
   url: string
 }
 
-export const loadWorkspacePreset = async (template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
+export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault') => {
   const workspaceProvider = plugin.fileProviders.workspace
   const params = queryParams.get() as UrlParametersType
 
@@ -150,15 +149,22 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
       }
       break
 
-    case 'default-template':
-      // creates a new workspace and populates it with default project template.
-      // insert example contracts
-      for (const file in examples) {
-        try {
-          await workspaceProvider.set(examples[file].name, examples[file].content)
-        } catch (error) {
-          console.error(error)
+    default:
+      try {
+        const templateWithContent = await import('../templates')
+        const templateList = Object.keys(templateWithContent)
+        if (!templateList.includes(template)) break
+        const files = templateWithContent[template]
+        for (const file in files) {
+          try {
+            await workspaceProvider.set(files[file].name, files[file].content)
+          } catch (error) {
+            console.error(error)
+          }
         }
+      } catch (e) {
+        dispatch(displayNotification('Workspace load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
+        console.error(e)
       }
       break
   }
