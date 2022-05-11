@@ -258,7 +258,7 @@ export interface ContractGUIProps {
   lookupOnly: boolean,
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
-  initializerOptions: DeployOption
+  initializerOptions?: DeployOption
 }
 export interface MainnetProps {
   network: Network,

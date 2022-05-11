@@ -157,11 +157,6 @@ export const createInstance = async (
     } else {
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
-    deployMode.forEach(async (mode) => {
-      const owner = plugin.REACT_API.accounts.selectedAccount
-    
-      if (mode === 'Deploy with Proxy') await plugin.call('openzeppelin-proxy', 'execute', address, owner)
-    })
   }
 
   let contractMetadata
@@ -173,10 +168,11 @@ export const createInstance = async (
 
   const compilerContracts = getCompilerContracts(plugin)
   const confirmationCb = getConfirmationCb(plugin, dispatch, mainnetPrompt)
+  const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
 
   if (selectedContract.isOverSizeLimit()) {
     return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(), 'Force Send', 'Cancel', () => {
-      deployContract(plugin, selectedContract, args, contractMetadata, compilerContracts, {
+      deployContract(plugin, selectedContract, !isProxyDeployment ? args : '', contractMetadata, compilerContracts, {
         continueCb: (error, continueTxExecution, cancelCb) => {
           continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
         },
@@ -192,7 +188,7 @@ export const createInstance = async (
       return terminalLogger(plugin, log)
     }))
   }
-  deployContract(plugin, selectedContract, args, contractMetadata, compilerContracts, {
+  deployContract(plugin, selectedContract, !isProxyDeployment ? args : '', contractMetadata, compilerContracts, {
     continueCb: (error, continueTxExecution, cancelCb) => {
       continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
     },
