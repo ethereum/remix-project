@@ -185,7 +185,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const createNewConfigFile = async () => {
-    const filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
+    let filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
+    if (!filePath.endsWith('.json')) filePath = filePath + '.json'
+
     await api.writeFile(filePath, configFileContent)
     api.setAppParameter('configFilePath', filePath)
     setState(prevState => {
@@ -197,6 +199,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const handleConfigPathChange = async () => {
     if (configFilePathInput.current.value !== '') {
+      if (!configFilePathInput.current.value.endsWith('.json')) configFilePathInput.current.value += '.json'
+
       if (await api.fileExists(configFilePathInput.current.value)) {
         api.setAppParameter('configFilePath', configFilePathInput.current.value)
         setState(prevState => {
@@ -633,7 +637,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
-            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label" htmlFor="nightlies">Include nightly builds</label>
+            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">Include nightly builds</label>
           </div>
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
