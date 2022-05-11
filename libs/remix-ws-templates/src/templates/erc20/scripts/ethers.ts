@@ -12,7 +12,7 @@ export const deploy = async (contractName: string, args: Array<any>, from?: stri
     // 'web3Provider' is a remix global variable object
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
 
-    let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    const factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
 
     let contract
     if (from) {

@@ -11,5 +11,5 @@
     "**/*.spec.ts",
     "tests/"
   ],
-  "include": ["**/*.ts", "**/*.sol"]
+  "include": ["**/*.ts"]
 }
