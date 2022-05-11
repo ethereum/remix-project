@@ -11,10 +11,10 @@ import "hardhat/console.sol";
 contract Owner {
 
     address private owner;
-    
+
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
-    
+
     // modifier to check if caller is owner
     modifier isOwner() {
         // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -25,7 +25,7 @@ contract Owner {
         require(msg.sender == owner, "Caller is not owner");
         _;
     }
-    
+
     /**
      * @dev Set contract deployer as owner
      */
@@ -51,4 +51,4 @@ contract Owner {
     function getOwner() external view returns (address) {
         return owner;
     }
-}
+} 

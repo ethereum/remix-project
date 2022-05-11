@@ -1,4 +1,3 @@
-
 {
   "version": 1,
   "projects": {
@@ -756,8 +755,8 @@
       }
     },
     "remix-ui-plugin-manager": {
-     "root": "libs/remix-ui/plugin-manager",
-      "sourceRoot": "libs/remix-ui/plugin-manager/src", 
+      "root": "libs/remix-ui/plugin-manager",
+      "sourceRoot": "libs/remix-ui/plugin-manager/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1010,7 +1009,6 @@
             "tsConfig": ["libs/remix-ui/home-tab/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/remix-ui/home-tab/**/*"]
           }
-
         }
       }
     },
@@ -1039,8 +1037,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-              "tsConfig": ["libs/remix-ui/editor/tsconfig.lib.json"],
-              "exclude": ["**/node_modules/**", "!libs/remix-ui/editor/**/*"]
+            "tsConfig": ["libs/remix-ui/editor/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor/**/*"]
           }
         }
       }
@@ -1101,8 +1099,13 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/vertical-icons-panel/**/*"]
+            "tsConfig": [
+              "libs/remix-ui/vertical-icons-panel/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/vertical-icons-panel/**/*"
+            ]
           }
         }
       }
@@ -1136,17 +1139,19 @@
           }
         }
       }
-    }, 
+    },
     "solidity-unit-testing": {
       "root": "libs/remix-ui/solidity-unit-testing",
-      "sourceRoot": "libs/remix-ui/solidity-unit-testing/src", 
+      "sourceRoot": "libs/remix-ui/solidity-unit-testing/src",
       "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/solidity-unit-testing/tsconfig.lib.json"],
+            "tsConfig": [
+              "libs/remix-ui/solidity-unit-testing/tsconfig.lib.json"
+            ],
             "exclude": [
               "**/node_modules/**",
               "!libs/remix-ui/solidity-unit-testing/**/*"
@@ -1165,7 +1170,10 @@
           "options": {
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/editor-context-view/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor-context-view/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/editor-context-view/**/*"
+            ]
           }
         }
       }
@@ -1180,7 +1188,11 @@
           "options": {
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/run-tab/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-ui/run-tab/**/*.d.ts", "!libs/remix-ui/run-tab/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "libs/remix-ui/run-tab/**/*.d.ts",
+              "!libs/remix-ui/run-tab/**/*"
+            ]
           }
         }
       }
@@ -1195,7 +1207,24 @@
           "options": {
             "linter": "eslint",
             "tsConfig": ["libs/remix-ui/permission-handler/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-ui/permission-handler/**/*.d.ts", "!libs/remix-ui/permission-handler/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "libs/remix-ui/permission-handler/**/*.d.ts",
+              "!libs/remix-ui/permission-handler/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ws-templates": {
+      "root": "libs/remix-ws-templates",
+      "sourceRoot": "libs/remix-ws-templates/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/remix-ws-templates/**/*.ts"]
           }
         }
       }
