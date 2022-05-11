@@ -3,7 +3,6 @@ const TerserPlugin = require('terser-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const version = require('../../package.json').version
 const fs = require('fs')
-const path = require('path')
 
 const versionData = {
   version: version,
