@@ -1,3 +1,5 @@
+import { remixTypes } from './remix-plugin-types'
+
 export const loadTypes = async (monaco) => {
     // ethers.js
 
@@ -162,20 +164,12 @@ export const loadTypes = async (monaco) => {
     // @ts-ignore
     const indexWeb3Util = await import('raw-loader!web3-utils/types/index.d.ts')
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Util.default, `file:///node_modules/@types/web3-utils/index.d.ts`)
-
-
-    /*
     // remix
-   
-    // @ts-ignore
-    const indexRemixApi = await import('./remix-plugin-types')
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(indexRemixApi.types)
-    */
-   
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(`
-            import { PluginClient } from 'packages/plugin/core/src/lib/client'
-            declare const remix: PluginClient
-        `)
-
+    let indexRemixApi = remixTypes + `\n
+    declare global {
+        const remix: PluginClient;
+    }
+    `
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(indexRemixApi)
     console.log('loaded monaco types')
 }
