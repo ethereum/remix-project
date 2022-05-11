@@ -9,7 +9,8 @@
   },
   "exclude": [
     "**/*.spec.ts",
-    "tests/"
+    "tests/",
+    "templates/"
   ],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "**/*.sol"]
 }

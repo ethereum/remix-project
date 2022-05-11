@@ -1229,6 +1229,28 @@
             "tsConfig": ["libs/remix-ws-templates/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**"]
           }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-ws-templates",
+            "tsConfig": "libs/remix-ws-templates/tsconfig.lib.json",
+            "packageJson": "libs/remix-ws-templates/package.json",
+            "main": "libs/remix-ws-templates/src/index.ts",
+            "assets": [
+              {
+                "glob": "templates/**/*",
+                "ignore": ["templates/**/*/index.ts"],
+                "input": "libs/remix-ws-templates/src/",
+                "output": "src/"
+              },
+              {
+                "glob": "*.md",
+                "input": "libs/remix-ws-templates/",
+                "output": "/"
+              }
+            ]
+          }
         }
       }
     }
