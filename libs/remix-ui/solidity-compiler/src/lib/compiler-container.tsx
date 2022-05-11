@@ -93,7 +93,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
         const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || false
         let configFilePath = await api.getAppParameter('configFilePath')
-        console.log("in useeff init ", configFilePath)
         if (!configFilePath || configFilePath == '') configFilePath = "/compiler_config.json"
 
         setState(prevState => {
@@ -186,13 +185,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const createNewConfigFile = async () => {
-    const configFileJSON = JSON.stringify(configFileContent, null, '\t')
-    console.log("file content as string -> ", configFileContent)
-    console.log("file content as json -> ", configFileJSON)
-
     const filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
     await api.writeFile(filePath, configFileContent)
-    console.log("createNewConfigFile ", filePath)
     api.setAppParameter('configFilePath', filePath)
     setState(prevState => {
       return { ...prevState, configFilePath: filePath }
@@ -620,7 +614,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     <section>
       <article>
         <header className='pt-0 remixui_compilerSection border-bottom'>
-          <div className="mb-2">
+          <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               Compiler
               <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
@@ -637,9 +631,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               }
             </select>
           </div>
-          <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
+          <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
-            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">Include nightly builds</label>
+            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label" htmlFor="nightlies">Include nightly builds</label>
           </div>
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
@@ -728,7 +722,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             { (!showFilePathInput&& !state.useFileConfiguration) && <span className="py-2 text-secondary">{state.configFilePath}</span> }
             <input
               ref={configFilePathInput}
-              className={`py-0 my-0 ${showFilePathInput ? "d-flex" : "d-none"}`}
+              className={`py-0 my-0 form-control ${showFilePathInput ? "d-flex" : "d-none"}`}
               placeholder={"Enter the new path"}
               title="If the file you entered does not exist you will be able to create one in the next step."
               disabled={!state.useFileConfiguration}
