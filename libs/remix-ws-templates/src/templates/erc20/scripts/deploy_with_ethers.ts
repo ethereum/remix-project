@@ -1,4 +1,4 @@
-import { deploy } from './web3.ts'
+import { deploy } from './ethers'
 
 (async () => {
     try {
@@ -7,4 +7,4 @@ import { deploy } from './web3.ts'
     } catch (e) {
         console.log(e.message)
     }
-})()
+  })()

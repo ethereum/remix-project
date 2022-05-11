@@ -133,7 +133,7 @@
     "remix-ui-app": {
       "tags": []
     },
-    "remix-ui-helper": { 
+    "remix-ui-helper": {
       "tags": []
     },
     "remix-ui-vertical-icons-panel": {
@@ -164,6 +164,9 @@
       "tags": []
     },
     "remix-ui-permission-handler": {
+      "tags": []
+    },
+    "remix-ws-templates": {
       "tags": []
     }
   },
