@@ -617,11 +617,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
  return (
     <section>
       <article>
-        <header className='pt-0 remixui_compilerSection border-bottom'>
+        <div className='pt-0 mb-3 remixui_compilerSection border-bottom'>
           <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               Compiler
-              <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
+              <button className="far fa-plus btn-light border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
             </label>
             <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
@@ -679,8 +679,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </a>
             </div>
           }
-          <hr />
-          
+        </div>
+        <div className='pt-0 remixui_compilerSection border-bottom'>          
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
             <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
             <label className="form-check-label custom-control-label" htmlFor="scManualConfig">Compiler configuration</label>
@@ -795,7 +795,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </CopyToClipboard>
             </div>
           </div>          
-        </header>
+        </div>
       </article>
     </section>
   )
