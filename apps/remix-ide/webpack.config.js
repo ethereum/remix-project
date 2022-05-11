@@ -15,15 +15,6 @@ fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(vers
 
 module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
-  
-  nxWebpackConfig.module.rules.push({ test: /\.txt$/, use: 'raw-loader' })
-  nxWebpackConfig.module.rules.push({ test: /\.sol$/, use: 'raw-loader' })
-
-  nxWebpackConfig.module.rules.push({ test: /\.test\.js$/, use: 'raw-loader' })
-
-  nxWebpackConfig.module.rules.push({ test: /\web3.ts$/, use: 'raw-loader' })
-  nxWebpackConfig.module.rules.push({ test: /\ethers.ts$/, use: 'raw-loader' })
-
   const webpackConfig = {
     ...nxWebpackConfig,
     node: {
