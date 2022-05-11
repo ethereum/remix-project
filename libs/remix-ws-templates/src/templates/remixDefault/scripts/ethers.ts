@@ -1,5 +1,5 @@
 export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => {    
-    
+
     console.log(`deploying ${contractName}`)
     // Note that the script needs the ABI which is generated from the compilation artifact.
     // Make sure contract is compiled and artifacts are generated
@@ -15,7 +15,7 @@ export const deploy = async (contractName: string, args: Array<any>, from?: stri
     if (from) {
         contract = await factory.connect(from).deploy(...args);
     } else {
-        contract = await factory.deploy(...arguments);
+        contract = await factory.deploy(...args);
     }    
 
     // The contract is NOT deployed yet; we must wait until it is mined

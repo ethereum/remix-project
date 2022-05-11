@@ -1,11 +1,11 @@
 {
-  "name": "remix-ws-templates",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Aniket-Engg",
-  "license": "ISC"
-}
+    "name": "@remix-project/remix-ws-templates",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Aniket-Engg",
+    "license": "ISC"
+  }

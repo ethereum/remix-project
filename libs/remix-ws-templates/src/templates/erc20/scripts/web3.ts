@@ -1,5 +1,5 @@
-export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number) => {
-    
+export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {
+
     console.log(`deploying ${contractName}`)
     // Note that the script needs the ABI which is generated from the compilation artifact.
     // Make sure contract is compiled and artifacts are generated
@@ -21,4 +21,4 @@ export const deploy = async (contractName: string, args: Array<any>, from?: stri
         gas: gas || 1500000
     })
     return newContractInstance.options    
-}: Promise<any>
+}
