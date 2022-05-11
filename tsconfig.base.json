@@ -86,7 +86,7 @@
         "libs/remix-ui/permission-handler/src/index.ts"
       ],
       "@remix-project/remix-ws-templates": [
-        "libs/remix-ws-templates/src/index.ts"
+        "dist/libs/remix-ws-templates/src/index.ts"
       ]
     }
   },
