@@ -1222,9 +1222,12 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": ["libs/remix-ws-templates/**/*.ts"]
+            "linter": "eslint",
+            "config": "libs/remix-ws-templates/.eslintrc",
+            "tsConfig": ["libs/remix-ws-templates/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
