@@ -620,81 +620,27 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     <section>
       <article>
         <header className='pt-0 remixui_compilerSection border-bottom'>
-          <div className="d-flex remixui_compilerConfig custom-control custom-checkbox">
-            <input className="custom-control-input" type="checkbox" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="sCManualConfig" />
-            <label className="font-weight-bold pt-1 form-check-label custom-control-label remixui_compilerLabel" htmlFor="sCManualConfig">Use configuration file</label>
+          <div className="mb-2">
+            <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
+              Compiler
+              <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
+            </label>
+            <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
+              { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
+              { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option> }
+              { state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option>)}
+              { state.allversions.map((build, i) => {
+                return _shouldBeAdded(build.longVersion)
+                  ? <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>{build.longVersion}</option>
+                  : null
+              })
+              }
+            </select>
           </div>
-          <div className={`pt-2 ml-3 ml-2 align-items-start flex-column ${state.useFileConfiguration ? 'd-flex' : 'd-none'}`}>
-            { !showFilePathInput && <span className="py-2 text-primary">{state.configFilePath}</span> }
-            <input
-              ref={configFilePathInput}
-              className={`py-0 my-0 ${showFilePathInput ? "d-flex" : "d-none"}`}
-              placeholder={"Enter the new path"}
-              title="If the file you entered does not exist you will be able to create one in the next step."
-              onKeyPress={event => {
-                if (event.key === 'Enter') {
-                  handleConfigPathChange()
-                }
-              }}
-            />
-            { !showFilePathInput && <button className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Set new config file</button> }
+          <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
+            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
+            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">Include nightly builds</label>
           </div>
-          <div className={`flex-column ${!state.useFileConfiguration ? 'd-flex' : 'd-none'}`}>
-            <div className="pl-0 d-flex remixui_compilerConfig custom-control custom-checkbox">
-            </div>
-            <div className="mb-2">
-              <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
-                Compiler
-                <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
-              </label>
-              <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
-                { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
-                { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option> }
-                { state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option>)}
-                { state.allversions.map((build, i) => {
-                  return _shouldBeAdded(build.longVersion)
-                    ? <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>{build.longVersion}</option>
-                    : null
-                })
-                }
-              </select>
-            </div>
-            <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
-              <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
-              <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">Include nightly builds</label>
-            </div>
-            <div className="mb-2">
-              <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-              <select onChange={(e) => handleLanguageChange(e.target.value)} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
-                <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
-                <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
-              </select>
-            </div>
-            <div className="mb-2">
-              <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
-              <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
-                {compileTabLogic.evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
-              </select>
-            </div>
-            <div className="mt-1 mt-3 border-dark pb-3  remixui_compilerConfig custom-control custom-checkbox">
-              <div className="justify-content-between align-items-center d-flex">
-                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
-                <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
-                <input
-                  min="1"
-                  className="custom-select ml-2 remixui_runs"
-                  id="runs"
-                  placeholder="200"
-                  value={state.runs}
-                  type="number"
-                  title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
-                  onChange={(e) => onChangeRuns(e.target.value)}
-                  disabled={!state.optimize}
-                />
-              </div>
-            </div>
-          </div>
-          <label className="font-weight-bold ml-1 mt-3 remixui_compilerLabel">Plugin settings</label>
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
             <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
@@ -735,6 +681,66 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </a>
             </div>
           }
+          <hr />
+          
+          <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
+            <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
+            <label className="form-check-label custom-control-label" htmlFor="scManualConfig">Compiler configuration</label>
+          </div>
+          <div className={`flex-column 'd-flex'}`}>
+            <div className="mb-2 ml-4">
+              <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
+              <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+                <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
+                <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
+              </select>
+            </div>
+            <div className="mb-2 ml-4">
+              <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
+              <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} disabled={state.useFileConfiguration} className="custom-select" id="evmVersionSelector">
+                {compileTabLogic.evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
+              </select>
+            </div>
+            <div className="mt-1 mt-3 border-dark pb-3 ml-4 remixui_compilerConfig custom-control custom-checkbox">
+              <div className="justify-content-between align-items-center d-flex">
+                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} disabled={state.useFileConfiguration} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
+                <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
+                <input
+                  min="1"
+                  className="custom-select ml-2 remixui_runs"
+                  id="runs"
+                  placeholder="200"
+                  value={state.runs}
+                  type="number"
+                  title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
+                  onChange={(e) => onChangeRuns(e.target.value)}
+                  disabled={!state.optimize || state.useFileConfiguration}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
+            <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" />
+            <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
+          </div>
+          <div className={`pt-2 ml-4 ml-2 align-items-start flex-column d-flex`}>
+            { (!showFilePathInput && state.useFileConfiguration) && <span className="py-2 text-primary">{state.configFilePath}</span> }
+            { (!showFilePathInput&& !state.useFileConfiguration) && <span className="py-2 text-secondary">{state.configFilePath}</span> }
+            <input
+              ref={configFilePathInput}
+              className={`py-0 my-0 ${showFilePathInput ? "d-flex" : "d-none"}`}
+              placeholder={"Enter the new path"}
+              title="If the file you entered does not exist you will be able to create one in the next step."
+              disabled={!state.useFileConfiguration}
+              onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  handleConfigPathChange()
+                }
+              }}
+            />
+            { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Set new config file</button> }
+          </div>
+
           <div>
             <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={disableCompileButton}>
               <OverlayTrigger overlay={
