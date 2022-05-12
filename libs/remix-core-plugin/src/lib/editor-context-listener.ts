@@ -2,12 +2,22 @@
 import { Plugin } from '@remixproject/engine'
 
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { AstNode } from '@remix-project/remix-solidity-ts'
 
 const profile = {
   name: 'contextualListener',
-  methods: ['referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf'],
+  methods: ['jumpToDefinition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpTo'],
   events: [],
   version: '0.0.1'
+}
+
+export function isDefinition(node: any) {
+  return node.nodeType === 'ContractDefinition' ||
+    node.nodeType === 'FunctionDefinition' ||
+    node.nodeType === 'ModifierDefinition' ||
+    node.nodeType === 'VariableDeclaration' ||
+    node.nodeType === 'StructDefinition' ||
+    node.nodeType === 'EventDefinition'
 }
 
 /*
@@ -27,7 +37,7 @@ export class EditorContextListener extends Plugin {
   contract: any
   activated: boolean
 
-  constructor (astWalker) {
+  constructor(astWalker) {
     super(profile)
     this.activated = false
     this._index = {
@@ -39,7 +49,7 @@ export class EditorContextListener extends Plugin {
     this.astWalker = astWalker
   }
 
-  onActivation () {
+  onActivation() {
     this.on('editor', 'contentChanged', () => { this._stopHighlighting() })
 
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
@@ -50,6 +60,7 @@ export class EditorContextListener extends Plugin {
         FlatReferences: {}
       }
       this._buildIndex(data, source)
+      console.log(this._index)
     })
 
     setInterval(async () => {
@@ -72,22 +83,78 @@ export class EditorContextListener extends Plugin {
     this.activated = true
   }
 
-  getActiveHighlights () {
+  getActiveHighlights() {
     return [...this._activeHighlights]
   }
 
-  declarationOf (node) {
+  declarationOf(node) {
     if (node && node.referencedDeclaration) {
       return this._index.FlatReferences[node.referencedDeclaration]
     }
     return null
   }
 
-  referencesOf (node) {
+  referencesOf(node) {
     return this._index.Declarations[node.id]
   }
 
-  async _highlightItems (cursorPosition, compilationResult, file) {
+  async nodesAtEditorPosition(position: any){
+    const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
+      const nodes = sourceMappingDecoder.nodesAtPosition(null, position, lastCompilationResult.data.sources[this.currentFile])
+      return nodes
+    }
+    return []
+  }
+
+  async jumpToDefinition(position: any) {
+    const nodes = await this.nodesAtEditorPosition(position)
+    console.log(nodes)
+    let nodeDeclaration: AstNode
+    let node: AstNode
+    if (nodes && nodes.length) {
+      node = nodes[nodes.length - 1]
+      if (!isDefinition(node)) {
+        nodeDeclaration = await this.declarationOf(node)
+      } else {
+        nodeDeclaration = node
+      }
+    }
+    console.log(node, nodeDeclaration)
+    if (nodeDeclaration && nodeDeclaration.src) {
+      console.log(nodeDeclaration)
+      const position = sourceMappingDecoder.decode(nodeDeclaration.src)
+      if (position) {
+        await this.jumpToPosition(position)
+      }
+    }
+  }
+  /*
+ * onClick jump to position of ast node in the editor
+ */
+  async jumpToPosition(position: any) {
+    const jumpToLine = async (fileName: string, lineColumn: any) => {
+      if (fileName !== await this.call('fileManager', 'file')) {
+        await this.call('fileManager', 'open', fileName)
+      }
+      if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
+        this.call('editor', 'gotoLine', lineColumn.start.line, lineColumn.end.column + 1)
+      }
+    }
+    const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
+      const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
+        position,
+        position.file,
+        lastCompilationResult.getSourceCode().sources,
+        lastCompilationResult.getAsts())
+      const filename = lastCompilationResult.getSourceName(position.file)
+      // TODO: refactor with rendererAPI.errorClick
+      jumpToLine(filename, lineColumn)
+    }
+  }
+
+  async _highlightItems(cursorPosition, compilationResult, file) {
     if (this.currentPosition === cursorPosition) return
     this._stopHighlighting()
     this.currentPosition = cursorPosition
@@ -95,6 +162,7 @@ export class EditorContextListener extends Plugin {
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
       const nodes = sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
       this.nodes = nodes
+      console.log(nodes)
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         await this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
@@ -102,7 +170,7 @@ export class EditorContextListener extends Plugin {
     }
   }
 
-  _buildIndex (compilationResult, source) {
+  _buildIndex(compilationResult, source) {
     if (compilationResult && compilationResult.sources) {
       const callback = (node) => {
         if (node && node.referencedDeclaration) {
@@ -119,7 +187,7 @@ export class EditorContextListener extends Plugin {
     }
   }
 
-  async _highlight (node, compilationResult) {
+  async _highlight(node, compilationResult) {
     if (!node) return
     const position = sourceMappingDecoder.decode(node.src)
     const fileTarget = compilationResult.getSourceName(position.file)
@@ -132,7 +200,7 @@ export class EditorContextListener extends Plugin {
     }
   }
 
-  async _highlightInternal (position, node, compilationResult) {
+  async _highlightInternal(position, node, compilationResult) {
     if (node.nodeType === 'Block') return
     if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn', position, position.file, compilationResult.getSourceCode().sources, compilationResult.getAsts())
@@ -157,7 +225,7 @@ export class EditorContextListener extends Plugin {
     return null
   }
 
-  async _highlightExpressions (node, compilationResult) {
+  async _highlightExpressions(node, compilationResult) {
     const highlights = async (id) => {
       if (this._index.Declarations && this._index.Declarations[id]) {
         const refs = this._index.Declarations[id]
@@ -178,13 +246,13 @@ export class EditorContextListener extends Plugin {
     this.results = compilationResult
   }
 
-  _stopHighlighting () {
+  _stopHighlighting() {
     this.call('editor', 'discardHighlight')
     this.emit('stopHighlighting')
     this._activeHighlights = []
   }
 
-  gasEstimation (node) {
+  gasEstimation(node) {
     this._loadContractInfos(node)
     let executionCost, codeDepositCost
     if (node.nodeType === 'FunctionDefinition') {
@@ -207,7 +275,7 @@ export class EditorContextListener extends Plugin {
     return { executionCost, codeDepositCost }
   }
 
-  _loadContractInfos (node) {
+  _loadContractInfos(node) {
     const path = (this.nodes.length && this.nodes[0].absolutePath) || this.results.source.target
     for (const i in this.nodes) {
       if (this.nodes[i].id === node.scope) {
@@ -222,7 +290,9 @@ export class EditorContextListener extends Plugin {
     }
   }
 
-  _getInputParams (node) {
+
+
+  _getInputParams(node) {
     const params = []
     const target = node.parameters
     // for (const i in node.children) {

@@ -35,14 +35,9 @@ export type gasEstimationType = {
 }
 export interface RemixUiEditorContextViewProps {
   hide: boolean,
-  gotoLine: (line: number, column: number) => void,
-  openFile: (fileName: string) => void,
-  getLastCompilationResult: () => any,
-  offsetToLineColumn: (position: any, file: any, sources: any, asts: any) => any,
-  getCurrentFileName: () => string
+  jumpToPosition: (position: any) => void
   onContextListenerChanged: (listener: onContextListenerChangedListener) => void
   onCurrentFileChanged: (listener: ononCurrentFileChangedListener) => void
-  referencesOf: (nodes: astNode) => Array<astNode>
   getActiveHighlights: () => Array<astNodeLight>
   gasEstimation: (node: astNode) => gasEstimationType
   declarationOf: (node: astNode) => astNode
@@ -91,6 +86,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
           nextNodeDeclaration = nextNode
         }
       }
+      console.log(nextNode, nextNodeDeclaration)
       if (nextNodeDeclaration && currentNodeDeclaration.current && nextNodeDeclaration.id === currentNodeDeclaration.current.id) return
 
       currentNodeDeclaration.current = nextNodeDeclaration
@@ -134,35 +130,13 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
     }
   }
 
-  /*
-   * onClick jump to ast node in the editor
-   */
-  const _jumpToInternal = async (position: any) => {
-    const jumpToLine = async (fileName: string, lineColumn: any) => {
-      if (fileName !== await props.getCurrentFileName()) {
-        await props.openFile(fileName)
-      }
-      if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
-        props.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
-      }
-    }
-    const lastCompilationResult = await props.getLastCompilationResult()
-    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
-      const lineColumn = await props.offsetToLineColumn(
-        position,
-        position.file,
-        lastCompilationResult.getSourceCode().sources,
-        lastCompilationResult.getAsts())
-      const filename = lastCompilationResult.getSourceName(position.file)
-      // TODO: refactor with rendererAPI.errorClick
-      jumpToLine(filename, lineColumn)
-    }
-  }
+
 
   const _render = () => {
     const node = currentNodeDeclaration.current
     if (!node) return (<div></div>)
     const references = state.activeHighlights
+    console.log(node)
     const type = node.typeDescriptions && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.nodeType
     const referencesCount = `${references ? references.length : '0'} reference(s)`
 
@@ -170,9 +144,10 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
 
     const jumpTo = () => {
       if (node && node.src) {
+        console.log(node)
         const position = sourceMappingDecoder.decode(node.src)
         if (position) {
-          _jumpToInternal(position)
+          props.jumpToPosition(position)
         }
       }
     }
@@ -182,7 +157,8 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
       e.target.dataset.action === 'next' ? loopOverReferences.current++ : loopOverReferences.current--
       if (loopOverReferences.current < 0) loopOverReferences.current = nodes.length - 1
       if (loopOverReferences.current >= nodes.length) loopOverReferences.current = 0
-      _jumpToInternal(nodes[loopOverReferences.current].position)
+      console.log(loopOverReferences.current)
+      props.jumpToPosition(nodes[loopOverReferences.current].position)
     }
 
     return (
