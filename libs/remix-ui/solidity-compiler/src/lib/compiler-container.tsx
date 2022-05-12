@@ -43,7 +43,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     evmVersion: ''
   })
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
-
+  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
@@ -614,10 +614,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     onChangeRuns(settings.runs)
   }
 
+  const toggleConfigurations = () => {
+    setToggleExpander(!toggleExpander)
+  }
+
  return (
     <section>
       <article>
-        <div className='pt-0 mb-3 remixui_compilerSection border-bottom'>
+        <div className='pt-0 remixui_compilerSection'>
           <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               Compiler
@@ -680,7 +684,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           }
         </div>
-        <div className='pt-0 remixui_compilerSection border-bottom'>          
+        <div className="d-flex px-4 pb-1 justify-content-between" onClick={toggleConfigurations}>
+          <div className="d-flex">
+            <label>Advanced Configurations</label>
+          </div>
+          <div>
+            <span data-id='scConfigExpander' onClick={toggleConfigurations}>
+              <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
+            </span>
+          </div>
+        </div>
+        <div className={`px-4 pb-4 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
             <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
             <label className="form-check-label custom-control-label" htmlFor="scManualConfig">Compiler configuration</label>
@@ -738,64 +752,63 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             />
             { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Set new config file</button> }
           </div>
-
-          <div>
-            <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={disableCompileButton}>
+        </div>
+        <div className="px-4">
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={disableCompileButton}>
+            <OverlayTrigger overlay={
+              <Tooltip id="overlay-tooltip-compile">
+                <div className="text-left">
+                  <div><b>Ctrl+S</b> for compiling</div>
+                </div>
+              </Tooltip>
+            }>
+              <span>
+                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
+                Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
+              </span>
+            </OverlayTrigger>
+          </button>
+          <div className='d-flex align-items-center'>            
+            <button id="compileAndRunBtn" data-id="compilerContainerCompileAndRunBtn" className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3" onClick={compileAndRun} disabled={disableCompileButton}>
               <OverlayTrigger overlay={
-                <Tooltip id="overlay-tooltip-compile">
+                <Tooltip id="overlay-tooltip-compile-run">
                   <div className="text-left">
-                    <div><b>Ctrl+S</b> for compiling</div>
+                  <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>
                   </div>
                 </Tooltip>
               }>
                 <span>
-                  { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-                  Compile { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
+                  Compile and Run script
                 </span>
-              </OverlayTrigger>
-            </button>
-            <div className='d-flex align-items-center'>            
-              <button id="compileAndRunBtn" data-id="compilerContainerCompileAndRunBtn" className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3" onClick={compileAndRun} disabled={disableCompileButton}>
-                <OverlayTrigger overlay={
-                  <Tooltip id="overlay-tooltip-compile-run">
-                    <div className="text-left">
-                    <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>
-                    </div>
-                  </Tooltip>
-                }>
-                  <span>
-                    Compile and Run script
-                  </span>
-                  </OverlayTrigger>
-              </button>            
-              <OverlayTrigger overlay={
-                <Tooltip id="overlay-tooltip-compile-run-doc">
-                  <div className="text-left p-2">
-                  <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
-                  <pre>
-                    <code>
-                    /**<br />
-                    * @title ContractName<br />
-                    * @dev ContractDescription<br />
-                    * @custom:dev-run-script file_path<br />
-                    */<br />
-                    contract ContractName {'{}'}<br />
-                    </code>
-                  </pre>
-                  Click to know more
-                  </div>
-                </Tooltip>
-              }>
-                <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
-              </OverlayTrigger>
-              <CopyToClipboard tip="Copy tag to use in contract NatSpec" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
-                <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
-                  <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                </button>
-              </CopyToClipboard>
-            </div>
-          </div>          
-        </div>
+                </OverlayTrigger>
+            </button>            
+            <OverlayTrigger overlay={
+              <Tooltip id="overlay-tooltip-compile-run-doc">
+                <div className="text-left p-2">
+                <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                <pre>
+                  <code>
+                  /**<br />
+                  * @title ContractName<br />
+                  * @dev ContractDescription<br />
+                  * @custom:dev-run-script file_path<br />
+                  */<br />
+                  contract ContractName {'{}'}<br />
+                  </code>
+                </pre>
+                Click to know more
+                </div>
+              </Tooltip>
+            }>
+              <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
+            </OverlayTrigger>
+            <CopyToClipboard tip="Copy tag to use in contract NatSpec" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
+              <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
+                <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+              </button>
+            </CopyToClipboard>
+          </div>
+        </div>          
       </article>
     </section>
   )
