@@ -17,6 +17,9 @@ module.exports = {
     "@remix-project/remix-url-resolver": 
       "<rootDir>/../../dist/libs/remix-url-resolver/src/index.js"
     ,
+    "@remix-project/remix-ws-templates": 
+      "<rootDir>/../../dist/libs/remix-ws-templates/src/index.js"
+    ,
     "@remix-project/remixd": "<rootDir>/../../dist/libs/remixd/index.js"
   }
 };
