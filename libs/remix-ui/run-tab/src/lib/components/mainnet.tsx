@@ -92,7 +92,7 @@ export function MainnetPrompt (props: MainnetProps) {
         </div>
         <div>
           <span className="text-dark mr-2">Gas limit:</span>
-          <span>${props.tx.gas}</span>
+          <span>{props.tx.gas}</span>
         </div>
         {
           props.network.lastBlock.baseFeePerGas
