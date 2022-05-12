@@ -1,4 +1,4 @@
-declare var remix:any
-declare var ethers:any
-declare var web3:any
-declare var web3Provider:any
+declare const remix:any
+declare const ethers:any
+declare const web3:any
+declare const web3Provider:any
