@@ -50,6 +50,9 @@
     "remix-url-resolver": {
       "tags": []
     },
+    "remix-ws-templates": {
+      "tags": []
+    },
     "remix-ide": {
       "tags": [],
       "implicitDependencies": [
@@ -60,7 +63,8 @@
         "remix-solidity",
         "remix-tests",
         "remix-astwalker",
-        "remix-url-resolver"
+        "remix-url-resolver",
+        "remix-ws-templates"
       ]
     },
     "remix-ide-e2e": {
@@ -164,9 +168,6 @@
       "tags": []
     },
     "remix-ui-permission-handler": {
-      "tags": []
-    },
-    "remix-ws-templates": {
       "tags": []
     }
   },
