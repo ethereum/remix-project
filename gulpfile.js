@@ -51,6 +51,7 @@ task('syncLibVersions', async function () {
         'remix-solidity',
         'remix-tests',
         'remix-url-resolver',
+        'remix-ws-templates',
         'remixd'
     ]
 

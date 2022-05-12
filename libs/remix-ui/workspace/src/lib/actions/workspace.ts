@@ -6,6 +6,7 @@ import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
+import * as templateWithContent from '@remix-project/remix-ws-templates'
 
 
 const LOCALHOST = ' - connect to localhost - '
@@ -151,13 +152,13 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
 
     default:
       try {
-        const templateWithContent = await import('../templates')
         const templateList = Object.keys(templateWithContent)
         if (!templateList.includes(template)) break
-        const files = templateWithContent[template]
+        // @ts-ignore
+        const files = await templateWithContent[template]()
         for (const file in files) {
           try {
-            await workspaceProvider.set(files[file].name, files[file].content)
+            await workspaceProvider.set(file, files[file])
           } catch (error) {
             console.error(error)
           }
