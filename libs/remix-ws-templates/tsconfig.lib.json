@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "../../dist/out-tsc",
     "declaration": true,
     "rootDir": "./src",
     "types": ["node"]
@@ -11,5 +10,5 @@
     "**/*.spec.ts",
     "tests/"
   ],
-  "include": ["**/*.ts"]
+  "include": ["**/index.ts"]
 }
