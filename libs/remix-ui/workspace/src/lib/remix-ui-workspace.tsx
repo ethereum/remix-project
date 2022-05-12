@@ -119,13 +119,18 @@ export function Workspace () {
     }
   }
 
+  const updateWsName = () => {
+    // @ts-ignore
+    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
+  }
+
   const createModalMessage = () => {
     return (
       <>
         <label id="wsName" className="form-check-label">Workspace name</label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" /><br/>
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" /><br/>
         <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
-        <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput}>
+        <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
           <option value='remixDefault'>Default</option>
           <option value='blank'>Blank</option>
           <option value='ozerc20'>OpenZeppelin ERC20</option>
