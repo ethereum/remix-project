@@ -18,9 +18,9 @@ export function RecorderUI (props: RecorderProps) {
 
   return (
     <div className="udapp_cardContainer list-group-item border-0">
-      <div className="d-flex justify-content-between" onClick={toggleClass}>
+      <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex">
-          <label>Transactions recorded</label>
+          <label className="h6 udapp_recorderSection">Transactions recorded</label>
           <div className="ml-2 mb-2 badge badge-pill badge-primary" title="The number of recorded transactions">{props.count}</div>
         </div>
         <div>
@@ -29,12 +29,12 @@ export function RecorderUI (props: RecorderProps) {
           </span>
         </div>
       </div>
-      <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
-        <div className="udapp_recorderDescription mt-2">
+      <div className={`border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
+        <div className="p-2 mt-2">
           All transactions (deployed contracts and function executions) can be saved and replayed in
           another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
         </div>
-        <div className="udapp_transactionActions">
+        <div className="mb-2 udapp_transactionActions">
           <i className="fas fa-save savetransaction udapp_recorder udapp_icon"
             onClick={triggerRecordButton} title="Save Transactions" aria-hidden="true">
           </i>
