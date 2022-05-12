@@ -70,9 +70,6 @@
 .udapp_container {
   padding: 0 24px 16px;
 }
-.udapp_recorderDescription {
-  margin: 0 15px 15px 0;
-  }
 .udapp_contractNames {
   width: 100%;
   border: 1px solid
@@ -121,7 +118,8 @@
 .udapp_ataddressinput {
   padding: .25rem;
 }
-.udapp_create {
+.udapp_recorderSection:hover {
+  cursor: pointer;
 }
 .udapp_input {
   font-size: 10px !important;
