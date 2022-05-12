@@ -128,7 +128,7 @@ export function Workspace () {
         <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput}>
           <option value='remixDefault'>Default</option>
           <option value='blank'>Blank</option>
-          <option value='erc20'>ERC20</option>
+          <option value='ozerc20'>OpenZeppelin ERC20</option>
         </select>
       </>
     )
