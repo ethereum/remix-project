@@ -121,9 +121,9 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  createWorkspace (workspaceName, isEmpty) {
+  createWorkspace (workspaceName, workspaceTemplateName, isEmpty) {
     return new Promise((resolve, reject) => {
-      this.emit('createWorkspaceReducerEvent', workspaceName, isEmpty, (err, data) => {
+      this.emit('createWorkspaceReducerEvent', workspaceName, workspaceTemplateName, isEmpty, (err, data) => {
         if (err) reject(err)
         else resolve(data || true)
       })
