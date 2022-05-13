@@ -206,7 +206,7 @@ export function ContractGUI (props: ContractGUIProps) {
     <div className={`udapp_contractProperty ${hasArgs ? 'udapp_hasArgs' : ''}`}>
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: 'flex' }}>
         {
-          props.isDeploy && !isMultiField && (props.deployOption || []).length > 0 &&
+          props.isDeploy && !isMultiField && (props.deployOption || []).length > 0 ?
           <Dropdown as={ButtonGroup} show={showOptions}>
             <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>Deploy</button>
             <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} onClick={toggleOptions} />
@@ -215,34 +215,24 @@ export function ContractGUI (props: ContractGUIProps) {
                 (props.deployOption).map(({ title, active }, index) => <Dropdown.Item onClick={() => setSelectedDeploy(index)} key={index}> { selectedDeployIndex.includes(index) ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
               }
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> :
+          !isMultiField ?
+          <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>
+            {title}
+          </button> : null
         }
         {
-          props.isDeploy && !isMultiField && !props.deployOption &&
-          <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
-        }
-        {
-          props.isDeploy && !isMultiField && props.initializerOptions &&
-            <>
-              <input
-                className="form-control"
-                data-id={props.initializerOptions.inputs.type === 'fallback' || props.initializerOptions.inputs.type === 'receive' ? `'(${props.initializerOptions.inputs.type}')` : 'multiParamManagerBasicInputField'}
-                placeholder={props.initializerOptions.initializeInputs}
-                title={props.initializerOptions.inputs.type === 'fallback' || props.initializerOptions.inputs.type === 'receive' ? `'(${props.initializerOptions.inputs.type}')` : props.initializerOptions.initializeInputs}
-                onChange={handleBasicInput}
-                ref={basicInputRef}
-                style={{ visibility: !((props.initializerOptions.inputs.inputs && props.initializerOptions.inputs.inputs.length > 0) || (props.initializerOptions.inputs.type === 'fallback') || (props.initializerOptions.inputs.type === 'receive')) ? 'hidden' : 'visible' }} />
-              {/* <i
-                className="fas fa-angle-down udapp_methCaret"
-                onClick={switchMethodViewOn}
-                title={title}
-                style={{ visibility: !(props.initializerOptions.inputs.inputs && props.initializerOptions.inputs.inputs.length > 0) ? 'hidden' : 'visible' }}>
-              </i> */}
-            </>
-        }
-        {
-          props.isDeploy && !isMultiField && props.funcABI &&
-          <>
+          props.isDeploy && !isMultiField && props.initializerOptions ?
+            <input
+              className="form-control"
+              data-id={props.initializerOptions.inputs.type === 'fallback' || props.initializerOptions.inputs.type === 'receive' ? `'(${props.initializerOptions.inputs.type}')` : 'multiParamManagerBasicInputField'}
+              placeholder={props.initializerOptions.initializeInputs}
+              title={props.initializerOptions.inputs.type === 'fallback' || props.initializerOptions.inputs.type === 'receive' ? `'(${props.initializerOptions.inputs.type}')` : props.initializerOptions.initializeInputs}
+              onChange={handleBasicInput}
+              ref={basicInputRef}
+              style={{ visibility: !((props.initializerOptions.inputs.inputs && props.initializerOptions.inputs.inputs.length > 0) || (props.initializerOptions.inputs.type === 'fallback') || (props.initializerOptions.inputs.type === 'receive')) ? 'hidden' : 'visible' }}
+            />
+          : !isMultiField && props.funcABI ?
             <input
               className="form-control"
               data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
@@ -250,17 +240,11 @@ export function ContractGUI (props: ContractGUIProps) {
               title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
               onChange={handleBasicInput}
               ref={basicInputRef}
-              style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
-            {/* <i
-              className="fas fa-angle-down udapp_methCaret"
-              onClick={switchMethodViewOn}
-              title={title}
-              style={{ visibility: !(props.funcABI.inputs && props.funcABI.inputs.length > 0) ? 'hidden' : 'visible' }}>
-            </i> */}
-          </>
+              style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }}
+            /> : null
         }
       </div>
-      { isMultiField && props.isDeploy && props.initializerOptions &&
+      { isMultiField && props.isDeploy && props.initializerOptions ?
             <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
               <div className="udapp_contractActionsContainerMultiInner text-dark">
                 <div className="udapp_multiHeader">
@@ -292,28 +276,29 @@ export function ContractGUI (props: ContractGUIProps) {
                 }
               </div>
             </div>
-          </div>
-      }
-        <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
-            <div className="udapp_contractActionsContainerMultiInner text-dark">
-              <div className="udapp_multiHeader">
-                <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
+          </div> :
+           isMultiField && props.funcABI ? 
+            <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
+              <div className="udapp_contractActionsContainerMultiInner text-dark">
+                <div className="udapp_multiHeader">
+                  <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
+                </div>
+                <div>
+                  {props.funcABI.inputs.map((inp, index) => {
+                    return (
+                      <div className="udapp_multiArg" key={index}>
+                        <label htmlFor={inp.name}> {inp.name}: </label>
+                        <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
+                      </div>)
+                  })}
+                </div>
+              <div className="udapp_group udapp_multiArg">
+                <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} getContent={getContentOnCTC} />
+                <button onClick={handleMultiValsSubmit} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
               </div>
-              <div>
-                {props.funcABI.inputs.map((inp, index) => {
-                  return (
-                    <div className="udapp_multiArg" key={index}>
-                      <label htmlFor={inp.name}> {inp.name}: </label>
-                      <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
-                    </div>)
-                })}
-              </div>
-            <div className="udapp_group udapp_multiArg">
-              <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} getContent={getContentOnCTC} />
-              <button onClick={handleMultiValsSubmit} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
             </div>
-          </div>
-        </div>
+          </div> : null
+      }
     </div>
   )
 }
