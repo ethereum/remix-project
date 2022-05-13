@@ -141,21 +141,29 @@ export class OpenZeppelinProxy extends Plugin {
     }
   }
 
-  async execute(implAddress: string, _data: string = '') {
+  async execute(implAddress: string, args: string = '', initializeABI, implementationContractObject) {
     // deploy the proxy, or use an existing one
-    if (this.kind === 'UUPS') this.deployUUPSProxy(implAddress, _data)
+    const _data = await this.blockchain.getEncodedFunctionHex(args, initializeABI)
+
+    if (this.kind === 'UUPS') this.deployUUPSProxy(implAddress, _data, implementationContractObject)
   }
 
-  async deployUUPSProxy (implAddress: string, _data: string) {
+  async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject) {
+    const args = [implAddress, _data]
+    const constructorData = await this.blockchain.getEncodedParams(args, UUPSfunAbi)
+    const proxyName = 'ERC1967Proxy'
     const data = {
       contractABI: UUPSABI,
       contractByteCode: UUPSBytecode,
-      contractName: 'ERC1967Proxy',
+      contractName: proxyName,
       funAbi: UUPSfunAbi,
-      funArgs: [implAddress, _data],
-      linkReferences: {}
+      funArgs: args,
+      linkReferences: {},
+      dataHex: UUPSBytecode + constructorData.replace('0x', '')
     }
 
-    this.blockchain.deployProxy(data)
+    // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
+    implementationContractObject.name = proxyName
+    this.blockchain.deployProxy(data, implementationContractObject)
   }
 }

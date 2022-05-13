@@ -1,4 +1,4 @@
-import { createNonClashingNameAsync, extractNameFromKey } from "@remix-ui/helper"
+import { createNonClashingNameAsync, extractNameFromKey, logBuilder } from "@remix-ui/helper"
 import { MainnetPrompt } from "../types"
 import { RunTab } from "../types/run-tab"
 import { addInstance } from "./actions"
@@ -36,7 +36,7 @@ export const storeScenario = async (plugin: RunTab, dispatch: React.Dispatch<any
   )
 }
 
-const runScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
+const runScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => {
   if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'OK', null))
 
   plugin.fileManager.readFile(file).then((json) => {
@@ -64,9 +64,9 @@ const runScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, file: string
   }).catch((error) => dispatch(displayNotification('Alert', error, 'OK', null)))
 }
 
-export const runCurrentScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => {
+export const runCurrentScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => {
   const file = plugin.config.get('currentFile')
 
   if (!file) return dispatch(displayNotification('Alert', 'A scenario file has to be selected', 'Ok', null))
-  runScenario(plugin, dispatch, file, gasEstimationPrompt, passphrasePrompt, confirmDialogContent, logBuilder)
+  runScenario(plugin, dispatch, file, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)
 }

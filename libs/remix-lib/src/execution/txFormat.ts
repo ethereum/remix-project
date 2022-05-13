@@ -39,7 +39,23 @@ export function encodeParams (params, funAbi, callback) {
   let data: Buffer | string = ''
   let dataHex = ''
   let funArgs
-  if (params.indexOf('raw:0x') === 0) {
+  if (Array.isArray(params)) {
+    funArgs = params
+    if (funArgs.length > 0) {
+      try {
+        data = encodeParamsHelper(funAbi, funArgs)
+        dataHex = data.toString()
+      } catch (e) {
+        return callback('Error encoding arguments: ' + e)
+      }
+    }
+    if (data.slice(0, 9) === 'undefined') {
+      dataHex = data.slice(9)
+    }
+    if (data.slice(0, 2) === '0x') {
+      dataHex = data.slice(2)
+    }
+  } else if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature
     dataHex = params.replace('raw:0x', '')
     data = Buffer.from(dataHex, 'hex')

@@ -142,7 +142,9 @@ export const resetAndInit = (plugin: RunTab) => {
     },
     getGasLimit: (cb) => {
       try {
-        cb(null, '0x' + new ethJSUtil.BN(plugin.REACT_API.gasLimit, 10).toString(16))
+        const gasLimit = '0x' + new ethJSUtil.BN(plugin.REACT_API.gasLimit, 10).toString(16)
+
+        cb(null, gasLimit)
       } catch (e) {
         cb(e.message)
       }

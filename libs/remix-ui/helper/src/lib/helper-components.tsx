@@ -78,3 +78,7 @@ export const storageFullMessage = () => (
     </span>
   </div>
 )
+
+export const logBuilder = (msg: string) => {
+  return <pre>{msg}</pre>
+}
