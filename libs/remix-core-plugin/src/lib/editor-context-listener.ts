@@ -6,7 +6,7 @@ import { AstNode } from '@remix-project/remix-solidity-ts'
 
 const profile = {
   name: 'contextualListener',
-  methods: ['jumpToDefinition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpTo'],
+  methods: ['jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -60,7 +60,6 @@ export class EditorContextListener extends Plugin {
         FlatReferences: {}
       }
       this._buildIndex(data, source)
-      console.log(this._index)
     })
 
     setInterval(async () => {
@@ -90,21 +89,52 @@ export class EditorContextListener extends Plugin {
   declarationOf(node) {
     if (node && node.referencedDeclaration) {
       return this._index.FlatReferences[node.referencedDeclaration]
+    } else {
+      // console.log(this._index.FlatReferences)
     }
     return null
   }
 
   referencesOf(node) {
-    return this._index.Declarations[node.id]
+    const results = []
+    const highlights = (id) => {
+      if (this._index.Declarations && this._index.Declarations[id]) {
+        const refs = this._index.Declarations[id]
+        for (const ref in refs) {
+          const node = refs[ref]
+          //console.log('reference', node)
+          results.push(node)
+        }
+      }
+    }
+    if (node && node.referencedDeclaration) {
+      highlights(node.referencedDeclaration)
+      const current = this._index.FlatReferences[node.referencedDeclaration]
+      results.push(current)
+    } else {
+      highlights(node.id)
+    }
+
+    //console.log(results)
   }
 
-  async nodesAtEditorPosition(position: any){
+  async nodesAtEditorPosition(position: any) {
     const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
       const nodes = sourceMappingDecoder.nodesAtPosition(null, position, lastCompilationResult.data.sources[this.currentFile])
       return nodes
     }
     return []
+  }
+
+  async referrencesAtPosition(position: any) {
+    const nodes = await this.nodesAtEditorPosition(position)
+    if (nodes && nodes.length) {
+      const node = nodes[nodes.length - 1]
+      if (node) {      
+        return this.referencesOf(node)
+      }
+    }
   }
 
   async jumpToDefinition(position: any) {
@@ -120,12 +150,25 @@ export class EditorContextListener extends Plugin {
         nodeDeclaration = node
       }
     }
-    console.log(node, nodeDeclaration)
+    // console.log(node, nodeDeclaration)
     if (nodeDeclaration && nodeDeclaration.src) {
-      console.log(nodeDeclaration)
+      //console.log(nodeDeclaration)
       const position = sourceMappingDecoder.decode(nodeDeclaration.src)
       if (position) {
+        console.log('jump to', position)
         await this.jumpToPosition(position)
+      }
+    }
+    // jump to import
+    if (node && node.nodeType === 'ImportDirective') {
+      console.log(this._index.FlatReferences)
+      // loop over this._index.FlatReferences
+      for (const key in this._index.FlatReferences) {
+        if (this._index.FlatReferences[key].id === node.sourceUnit) {
+          console.log('jump to', this._index.FlatReferences[key])
+          const position = sourceMappingDecoder.decode(this._index.FlatReferences[key].src)
+          this.jumpToPosition(position)
+        }
       }
     }
   }
@@ -243,6 +286,7 @@ export class EditorContextListener extends Plugin {
       await highlights(node.id)
       await this._highlight(node, compilationResult)
     }
+
     this.results = compilationResult
   }
 
