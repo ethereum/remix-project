@@ -86,7 +86,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
           nextNodeDeclaration = nextNode
         }
       }
-      console.log(nextNode, nextNodeDeclaration)
+      //console.log(nextNode, nextNodeDeclaration)
       if (nextNodeDeclaration && currentNodeDeclaration.current && nextNodeDeclaration.id === currentNodeDeclaration.current.id) return
 
       currentNodeDeclaration.current = nextNodeDeclaration
@@ -98,6 +98,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
         }
       }
       const activeHighlights: Array<astNodeLight> = await props.getActiveHighlights()
+      console.log('active highlights', activeHighlights)
       if (nextNode && activeHighlights && activeHighlights.length) {
         loopOverReferences.current = activeHighlights.findIndex((el: astNodeLight) => `${el.position.start}:${el.position.length}:${el.position.file}` === nextNode.src)
         loopOverReferences.current = loopOverReferences.current === -1 ? 0 : loopOverReferences.current
@@ -136,7 +137,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
     const node = currentNodeDeclaration.current
     if (!node) return (<div></div>)
     const references = state.activeHighlights
-    console.log(node)
+    // console.log(node)
     const type = node.typeDescriptions && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.nodeType
     const referencesCount = `${references ? references.length : '0'} reference(s)`
 
@@ -144,7 +145,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
 
     const jumpTo = () => {
       if (node && node.src) {
-        console.log(node)
+        // console.log(node)
         const position = sourceMappingDecoder.decode(node.src)
         if (position) {
           props.jumpToPosition(position)
