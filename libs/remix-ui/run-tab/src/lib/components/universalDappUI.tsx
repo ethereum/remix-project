@@ -119,7 +119,6 @@ export function UniversalDappUI (props: UdappProps) {
       props.instance.contractData,
       address,
       logMsg,
-      props.logBuilder,
       props.mainnetPrompt,
       props.gasEstimationPrompt,
       props.passphrasePrompt,

@@ -1,6 +1,7 @@
 import React from 'react' // eslint-disable-line
 import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { addressToString } from '@remix-ui/helper'
 import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
@@ -18,7 +19,7 @@ const profile = {
   version: packageJson.version,
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance']
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContract']
 }
 
 export class RunTab extends ViewPlugin {
@@ -162,5 +163,12 @@ export class RunTab extends ViewPlugin {
 
   readFile (fileName) {
     return this.call('fileManager', 'readFile', fileName)
+  }
+
+  resolveContract (contractObject, address) {
+    const data = this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+
+    this.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    this.addInstance(address, contractObject.abi, contractObject.name)
   }
 }
