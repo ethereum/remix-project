@@ -430,9 +430,35 @@ export const EditorUI = (props: EditorUIProps) => {
       provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken){
         const cursorPosition = props.editorAPI.getCursorPosition()
         props.plugin.call('contextualListener', 'jumpToDefinition', cursorPosition)
-        return null
       }
     })
+
+    monacoRef.current.languages.registerReferenceProvider('remix-solidity', {
+      provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: any, token: monaco.CancellationToken){
+        const cursorPosition = props.editorAPI.getCursorPosition()
+        const references = props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
+        console.log(references)
+        return [{
+          range:  new monaco.Range(
+            0,  
+            0,
+            0, 
+            4
+          ),
+          uri:  monaco.Uri.parse('test.sol'),
+        },
+        {
+          range:  new monaco.Range(
+            0,  
+            0,
+            0, 
+            4
+          ),
+          uri:  monaco.Uri.parse('test2.sol'),
+        }]
+      }
+    })
+    
 
 
     monacoRef.current.languages.registerHoverProvider('remix-solidity', {
@@ -458,11 +484,11 @@ export const EditorUI = (props: EditorUIProps) => {
           range: new monaco.Range(
             position.lineNumber,  
             position.column,
-            position.lineNumber,
+            position.lineNumber, 
             model.getLineMaxColumn(position.lineNumber)
           ),
           contents: [
-            { value: '<div>test html</div>' }
+            
           ]
         };
       }

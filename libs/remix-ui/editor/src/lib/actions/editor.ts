@@ -21,6 +21,7 @@ export const reducerActions = (models = initialState, action: Action) => {
       const readOnly = action.payload.readOnly
       if (models[uri]) return models // already existing
       models[uri] = { language, uri, readOnly }
+      console.log(uri)
       const model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
       models[uri].model = model
       model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
