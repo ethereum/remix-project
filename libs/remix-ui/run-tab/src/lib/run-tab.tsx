@@ -166,10 +166,6 @@ export function RunTabUI (props: RunTabProps) {
     )
   }
 
-  const logBuilder = (msg: string) => {
-    return <pre>{msg}</pre>
-  }
-
   const passphrasePrompt = (message: string) => {
     return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
   }
@@ -237,7 +233,6 @@ export function RunTabUI (props: RunTabProps) {
             setIpfsCheckedState={setCheckIpfs}
             publishToStorage={publishToStorage}
             gasEstimationPrompt={gasEstimationPrompt}
-            logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
             tooltip={toast}
@@ -248,7 +243,6 @@ export function RunTabUI (props: RunTabProps) {
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
-            logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
             storeScenario={storeNewScenario}
@@ -262,7 +256,6 @@ export function RunTabUI (props: RunTabProps) {
             removeInstance={removeSingleInstance}
             getContext={getExecutionContext}
             gasEstimationPrompt={gasEstimationPrompt}
-            logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
             runTransactions={executeTransactions}
