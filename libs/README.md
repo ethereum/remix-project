@@ -23,6 +23,7 @@ Here is the brief description of Remix libraries.
 + [`remix-lib`](remix-lib/README.md): Common place for libraries being used across multiple modules
 + [`remix-tests`](remix-tests/README.md): Unit test Solidity smart contracts. It works as a plugin & as CLI both
 + [`remix-url-resolver`](remix-url-resolver/README.md): Provide helpers for resolving the content from external URL ( including github, swarm, ipfs etc.).
++ [`remix-ws-templates`](remix-ws-templates/README.md): To create a workspace using different templates on Remix IDE
 + [`remixd`](remixd/README.md): Allow accessing local filesystem from Remix IDE by running a daemon
 
 Each library is an NPM package and has basic documentation about its usage in its own `README`.
