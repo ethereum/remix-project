@@ -3,7 +3,6 @@ import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
 import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
-import { waterfall } from 'async'
 import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
@@ -12,6 +11,7 @@ import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
+import { logBuilder } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
@@ -113,7 +113,9 @@ export class Blockchain extends Plugin {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+      if (error) {
+        return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+      }
 
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
@@ -127,20 +129,51 @@ export class Blockchain extends Plugin {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+      if (error) {
+        return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+      }
 
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
     })
   }
 
-  async deployProxy (proxyData) {
-    const args = {
-      useCall: false,
-      data: proxyData
+  async deployProxy (proxyData, implementationContractObject) {
+    const args = { useCall: false, data: proxyData }
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      // continue using original authorization given by user
+      continueTxExecution(null)
+    }
+    const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
+    const promptCb = (okCb, cancelCb) => { okCb() }
+    const finalCb = (error, txResult, address, returnValue) => {
+      if (error) {
+        const log = logBuilder(error)
+  
+        return this.call('terminal', 'logHtml', log)
+      }
+      return this.call('udapp', 'resolveContract', implementationContractObject, address)
     }
 
-    this.runTx(args)
+    this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
+  }
+
+  async getEncodedFunctionHex (args, funABI) {
+    return new Promise((resolve, reject) => {
+      txFormat.encodeFunctionCall(args, funABI, (error, data) => {
+        if (error) return reject(error)
+        resolve(data.dataHex)
+      })
+    })
+  }
+
+  async getEncodedParams (args, funABI) {
+    return new Promise((resolve, reject) => {
+      txFormat.encodeParams(args, funABI, (error, encodedParams) => {
+        if (error) return reject(error)
+        return resolve(encodedParams.dataHex)
+      })
+    })
   }
 
   createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
@@ -442,55 +475,71 @@ export class Blockchain extends Plugin {
     })
   }
 
-  runTx (args, confirmationCb, continueCb, promptCb, cb) {
-    waterfall([
-      (next) => { // getGasLimit
+  async runTx (args, confirmationCb, continueCb, promptCb, cb) {
+    const getGasLimit = () => {
+      return new Promise((resolve, reject) => {
         if (this.transactionContextAPI.getGasLimit) {
-          return this.transactionContextAPI.getGasLimit(next)
+          return this.transactionContextAPI.getGasLimit((err, value) => {
+            if (err) return reject(err)
+            return resolve(value)
+          })
         }
-        next(null, 3000000)
-      },
-      (gasLimit, next) => { // queryValue
+        return resolve(3000000)
+      })
+    }
+    const queryValue = () => {
+      return new Promise((resolve, reject) => {
         if (args.value) {
-          return next(null, args.value, gasLimit)
+          return resolve(args.value)
         }
         if (args.useCall || !this.transactionContextAPI.getValue) {
-          return next(null, 0, gasLimit)
+          return resolve(0)
         }
-        this.transactionContextAPI.getValue(function (err, value) {
-          next(err, value, gasLimit)
+        this.transactionContextAPI.getValue((err, value) => {
+          if (err) return reject(err)
+          return resolve(value)
         })
-      },
-      (value, gasLimit, next) => { // getAccount
+      })
+    }
+    const getAccount = () => {
+      return new Promise((resolve, reject) => {
         if (args.from) {
-          return next(null, args.from, value, gasLimit)
+          return resolve(args.from)
         }
         if (this.transactionContextAPI.getAddress) {
           return this.transactionContextAPI.getAddress(function (err, address) {
-            next(err, address, value, gasLimit)
+            if (err) return reject(err)
+            return resolve(address)
           })
         }
         this.getAccounts(function (err, accounts) {
+          if (err) return reject(err)
           const address = accounts[0]
 
-          if (err) return next(err)
-          if (!address) return next('No accounts available')
+          if (!address) return reject('No accounts available')
           if (this.executionContext.isVM() && !this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-            return next('Invalid account selected')
+            return reject('Invalid account selected')
           }
-          next(null, address, value, gasLimit)
+          return resolve(address)
         })
-      },
-      (fromAddress, value, gasLimit, next) => { // runTransaction
+      })
+    }
+    const runTransaction = async () => {
+      // eslint-disable-next-line no-async-promise-executor
+      return new Promise(async (resolve, reject) => {
+        const fromAddress = await getAccount()
+        const value = await queryValue()
+        const gasLimit = await getGasLimit()
         const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
-        if (!tx.timestamp) tx.timestamp = Date.now()
 
+        if (!tx.timestamp) tx.timestamp = Date.now()
         const timestamp = tx.timestamp
+
         this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           async (error, result) => {
-            if (error) return next(error)
+            if (error) return reject(error)
 
             const isVM = this.executionContext.isVM()
             if (isVM && tx.useCall) {
@@ -509,16 +558,15 @@ export class Blockchain extends Plugin {
                 try { error = 'error: ' + JSON.stringify(error) } catch (e) { console.log(e) }
               }
             }
-            next(error, result, tx)
+            return resolve({ result, tx })
           }
         )
-      }
-    ],
-    async (error, txResult, tx) => {
-      if (error) {
-        return cb(error)
-      }
-
+      })
+    }
+    try {
+      const transaction = await runTransaction()
+      const txResult = transaction.result
+      const tx = transaction.tx
       /*
       value of txResult is inconsistent:
           - transact to contract:
@@ -526,12 +574,12 @@ export class Blockchain extends Plugin {
           - call to contract:
             {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
       */
-
       const isVM = this.executionContext.isVM()
       let execResult
       let returnValue = null
       if (isVM) {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
+
         if (hhlogs && hhlogs.length) {
           let finalLogs = '<b>console.log:</b>\n'
           for (const log of hhlogs) {
@@ -561,17 +609,19 @@ export class Blockchain extends Plugin {
           }
         }
       }
-
+  
       if (!isVM && tx && tx.useCall) {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
-
+  
       let address = null
       if (txResult && txResult.receipt) {
         address = txResult.receipt.contractAddress
       }
-
-      cb(error, txResult, address, returnValue)
-    })
+  
+      cb(null, txResult, address, returnValue)
+    } catch (error) {
+      cb(error)
+    }
   }
 }

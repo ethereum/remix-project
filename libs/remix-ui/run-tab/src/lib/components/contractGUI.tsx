@@ -169,7 +169,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const handleActionClick = () => {
     const deployMode = selectedDeployIndex.map(index => props.deployOption[index].title)
 
-    props.clickCallBack(props.funcABI.inputs, basicInput, props.isDeploy ? deployMode : null)
+    props.clickCallBack(props.funcABI.inputs, basicInput, deployMode)
   }
 
   const handleBasicInput = (e) => {
@@ -180,11 +180,12 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const handleMultiValsSubmit = () => {
     const valsString = getMultiValsString()
+    const deployMode = selectedDeployIndex.map(index => props.deployOption[index].title)
 
     if (valsString) {
-      props.clickCallBack(props.funcABI.inputs, valsString)
+      props.clickCallBack(props.funcABI.inputs, valsString, deployMode)
     } else {
-      props.clickCallBack(props.funcABI.inputs, '')
+      props.clickCallBack(props.funcABI.inputs, '', deployMode)
     }
   }
 
@@ -259,14 +260,12 @@ export function ContractGUI (props: ContractGUIProps) {
           </>
         }
       </div>
-      { isMultiField ? 
-          props.isDeploy && props.initializerOptions ?
+      { isMultiField && props.isDeploy && props.initializerOptions &&
             <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
               <div className="udapp_contractActionsContainerMultiInner text-dark">
-                {/* <div onClick={switchMethodViewOff} className="udapp_multiHeader">
+                <div className="udapp_multiHeader">
                   <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
-                  <i className='fas fa-angle-up udapp_methCaret'></i>
-                </div> */}
+                </div>
                 <div>
                   {props.initializerOptions.inputs.inputs.map((inp, index) => {
                     return (
@@ -293,13 +292,13 @@ export function ContractGUI (props: ContractGUIProps) {
                 }
               </div>
             </div>
-          </div> :
-          <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
+          </div>
+      }
+        <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
             <div className="udapp_contractActionsContainerMultiInner text-dark">
-              {/* <div onClick={switchMethodViewOff} className="udapp_multiHeader">
+              <div className="udapp_multiHeader">
                 <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
-                <i className='fas fa-angle-up udapp_methCaret'></i>
-              </div> */}
+              </div>
               <div>
                 {props.funcABI.inputs.map((inp, index) => {
                   return (
@@ -315,8 +314,6 @@ export function ContractGUI (props: ContractGUIProps) {
             </div>
           </div>
         </div>
-      : null
-    }
     </div>
   )
 }

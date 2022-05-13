@@ -84,3 +84,7 @@ export const recursivePasteToastMsg = () => (
     File(s) to paste is an ancestor of the destination folder
   </div>
 )
+
+export const logBuilder = (msg: string) => {
+  return <pre>{msg}</pre>
+}

@@ -151,7 +151,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
   }
 
   const atAddressChanged = (event) => {

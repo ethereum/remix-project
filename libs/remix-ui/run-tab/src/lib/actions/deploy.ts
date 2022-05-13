@@ -5,7 +5,7 @@ import * as remixLib from '@remix-project/remix-lib'
 import { DeployMode, MainnetPrompt } from "../types"
 import { displayNotification, displayPopUp, setDecodedResponse } from "./payload"
 import { addInstance } from "./actions"
-import { addressToString } from "@remix-ui/helper"
+import { addressToString, logBuilder } from "@remix-ui/helper"
 
 declare global {
   interface Window {
@@ -128,13 +128,13 @@ export const createInstance = async (
   selectedContract: ContractData,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
-  logBuilder: (msg: string) => JSX.Element,
   publishToStorage: (storage: 'ipfs' | 'swarm',
   contract: ContractData) => void,
   mainnetPrompt: MainnetPrompt,
   isOverSizePrompt: () => JSX.Element,
   args,
   deployMode: DeployMode[]) => {
+  const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
   const statusCb = (msg: string) => {
     const log = logBuilder(msg)
 
@@ -157,6 +157,11 @@ export const createInstance = async (
     } else {
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
+    if (isProxyDeployment) {
+      const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
+
+      plugin.call('openzeppelin-proxy', 'execute', addressToString(address), args, initABI, contractObject)
+    }
   }
 
   let contractMetadata
@@ -168,7 +173,6 @@ export const createInstance = async (
 
   const compilerContracts = getCompilerContracts(plugin)
   const confirmationCb = getConfirmationCb(plugin, dispatch, mainnetPrompt)
-  const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
 
   if (selectedContract.isOverSizeLimit()) {
     return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(), 'Force Send', 'Cancel', () => {
@@ -248,7 +252,6 @@ export const runTransactions = (
   contractABI, contract,
   address,
   logMsg:string,
-  logBuilder: (msg: string) => JSX.Element,
   mainnetPrompt: MainnetPrompt,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
