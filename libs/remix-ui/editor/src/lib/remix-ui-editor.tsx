@@ -480,6 +480,35 @@ export const EditorUI = (props: EditorUIProps) => {
         const nodeDefinition = await props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
         console.log(nodeDefinition)
         const contents = []
+
+        const getDocs = async (node: any) => {
+          if(node.documentation && node.documentation.text) {
+            let text = ''
+            node.documentation.text.split('\n').forEach(line => {
+              text += `${line.trim()}\n`
+            })
+            contents.push({
+              value: text
+            })
+          }
+        }
+        
+        const getVariableDeclaration = async (node: any) => {
+          if(node.typeDescriptions && node.typeDescriptions.typeString) {
+            return `${node.typeDescriptions.typeString} ${node.name}`
+          }
+        }
+
+        const getParamaters = async (node: any) => {
+          if(node.parameters && node.parameters.parameters) {
+            let params = []
+            for(const param of node.parameters.parameters) {
+              params.push(await getVariableDeclaration(param))
+            }
+            return `(${params.join(', ')})`
+          }
+        }
+
         if (!nodeDefinition) return null
         if (nodeDefinition.absolutePath) {
           const target = await props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
@@ -494,17 +523,25 @@ export const EditorUI = (props: EditorUIProps) => {
         }
         if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'VariableDeclaration') {
           contents.push({
-            value: `${nodeDefinition.typeDescriptions.typeString} ${nodeDefinition.name}`
+            value: await getVariableDeclaration(nodeDefinition)
           })
+
         }
         else if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'ElementaryTypeName') {
           contents.push({
             value: `${nodeDefinition.typeDescriptions.typeString}`
           })
+
+        } else if (nodeDefinition.nodeType === 'FunctionDefinition') {
+          contents.push({
+            value: `(${nodeDefinition.visibility} function) ${nodeDefinition.name}: ${await getParamaters(nodeDefinition)}`
+          })
+          getDocs(nodeDefinition)
         } else {
           contents.push({
             value: `${nodeDefinition.nodeType}`
           })
+          getDocs(nodeDefinition)
         }
         for (const key in contents) {
           contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
