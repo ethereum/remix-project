@@ -6,7 +6,7 @@ import { AstNode } from '@remix-project/remix-solidity-ts'
 
 const profile = {
   name: 'contextualListener',
-  methods: ['jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -95,14 +95,13 @@ export class EditorContextListener extends Plugin {
     return null
   }
 
-  referencesOf(node) {
+  referencesOf(node: AstNode) {
     const results = []
     const highlights = (id) => {
       if (this._index.Declarations && this._index.Declarations[id]) {
         const refs = this._index.Declarations[id]
         for (const ref in refs) {
           const node = refs[ref]
-          //console.log('reference', node)
           results.push(node)
         }
       }
@@ -114,8 +113,7 @@ export class EditorContextListener extends Plugin {
     } else {
       highlights(node.id)
     }
-
-    //console.log(results)
+    return results
   }
 
   async nodesAtEditorPosition(position: any) {
@@ -131,43 +129,49 @@ export class EditorContextListener extends Plugin {
     const nodes = await this.nodesAtEditorPosition(position)
     if (nodes && nodes.length) {
       const node = nodes[nodes.length - 1]
-      if (node) {      
+      if (node) {
         return this.referencesOf(node)
       }
     }
   }
 
-  async jumpToDefinition(position: any) {
+  async getNodeDefinition() {
+
+  }
+
+  async definitionAtPosition(position: any) {
     const nodes = await this.nodesAtEditorPosition(position)
     console.log(nodes)
-    let nodeDeclaration: AstNode
+    console.log(this._index.FlatReferences)
+    let nodeDefinition: AstNode
     let node: AstNode
     if (nodes && nodes.length) {
       node = nodes[nodes.length - 1]
+      nodeDefinition = node
       if (!isDefinition(node)) {
-        nodeDeclaration = await this.declarationOf(node)
-      } else {
-        nodeDeclaration = node
+        nodeDefinition = await this.declarationOf(node) || node
       }
-    }
-    // console.log(node, nodeDeclaration)
-    if (nodeDeclaration && nodeDeclaration.src) {
-      //console.log(nodeDeclaration)
-      const position = sourceMappingDecoder.decode(nodeDeclaration.src)
-      if (position) {
-        console.log('jump to', position)
-        await this.jumpToPosition(position)
+      if (node.nodeType === 'ImportDirective') {
+        for (const key in this._index.FlatReferences) {
+          if (this._index.FlatReferences[key].id === node.sourceUnit) {
+            nodeDefinition = this._index.FlatReferences[key]
+          }
+        }
       }
+      return nodeDefinition
+    }else{
+      console.log('no node found')
     }
-    // jump to import
-    if (node && node.nodeType === 'ImportDirective') {
-      console.log(this._index.FlatReferences)
-      // loop over this._index.FlatReferences
-      for (const key in this._index.FlatReferences) {
-        if (this._index.FlatReferences[key].id === node.sourceUnit) {
-          console.log('jump to', this._index.FlatReferences[key])
-          const position = sourceMappingDecoder.decode(this._index.FlatReferences[key].src)
-          this.jumpToPosition(position)
+    
+  }
+
+  async jumpToDefinition(position: any) {
+    const node = await this.definitionAtPosition(position)
+    if (node) {
+      if (node.src) {
+        const position = sourceMappingDecoder.decode(node.src)
+        if (position) {
+          await this.jumpToPosition(position)
         }
       }
     }

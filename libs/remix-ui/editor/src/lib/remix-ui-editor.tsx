@@ -358,7 +358,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
       return model.getOffsetAt(position)
-    }else{
+    } else {
       return 0
     }
   }
@@ -424,72 +424,99 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf)
-    
+
     // register Definition Provider
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', {
-      provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken){
+      provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken) {
         const cursorPosition = props.editorAPI.getCursorPosition()
         props.plugin.call('contextualListener', 'jumpToDefinition', cursorPosition)
       }
     })
 
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', {
-      provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: any, token: monaco.CancellationToken){
+      async provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: any, token: monaco.CancellationToken) {
         const cursorPosition = props.editorAPI.getCursorPosition()
-        const references = props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
-        console.log(references)
-        return [{
-          range:  new monaco.Range(
-            0,  
-            0,
-            0, 
-            4
-          ),
-          uri:  monaco.Uri.parse('test.sol'),
-        },
-        {
-          range:  new monaco.Range(
-            0,  
-            0,
-            0, 
-            4
-          ),
-          uri:  monaco.Uri.parse('test2.sol'),
-        }]
+        const nodes = await props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
+        const references = []
+        if (nodes && nodes.length) {
+          const compilationResult = await props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
+          const file = await props.plugin.call('fileManager', 'file')
+          if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
+            for (const node of nodes) {
+              const position = sourceMappingDecoder.decode(node.src)
+              const fileInNode = compilationResult.getSourceName(position.file)
+              let fileTarget = await props.plugin.call('fileManager', 'getPathFromUrl', fileInNode)
+              fileTarget = fileTarget.file
+              const fileContent = await props.plugin.call('fileManager', 'readFile', fileInNode)
+              const lineColumn = await props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
+                position,
+                position.file,
+                compilationResult.getSourceCode().sources,
+                compilationResult.getAsts())
+              console.log(position, fileTarget, lineColumn)
+              try {
+                props.plugin.call('editor', 'addModel', fileTarget, fileContent)
+              } catch (e) {
+
+              }
+              const range = new monaco.Range(lineColumn.start.line + 1, lineColumn.start.column + 1, lineColumn.end.line + 1, lineColumn.end.column + 1)
+              references.push({
+                range,
+                uri: monaco.Uri.parse(fileTarget)
+              })
+            }
+          }
+        }
+        return references
       }
     })
-    
+
 
 
     monacoRef.current.languages.registerHoverProvider('remix-solidity', {
       provideHover: async function (model: any, position: monaco.Position) {
-        //console.log(position)
+        console.log('--------------------')
         const cursorPosition = props.editorAPI.getHoverPosition(position)
-        //console.log(cursorPosition)
-        const compilationResult = await props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
-        const file = await props.plugin.call('fileManager', 'file')
-        if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
-          const nodes = sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
-          // console.log(cursorPosition, nodes)
-          // loop over nodes
-          if (nodes && nodes.length) {
-            nodes.forEach((node) => {
-              const position = sourceMappingDecoder.decode(node.src)
-              const fileTarget = compilationResult.getSourceName(position.file)
-              // console.log(position, fileTarget)
+        const nodeDefinition = await props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
+        console.log(nodeDefinition)
+        const contents = []
+        if (!nodeDefinition) return null
+        if (nodeDefinition.absolutePath) {
+          const target = await props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
+          if (target.file !== nodeDefinition.absolutePath) {
+            contents.push({
+              value: `${target.file}`
             })
           }
+          contents.push({
+            value: `${nodeDefinition.absolutePath}`
+          })
+        }
+        if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'VariableDeclaration') {
+          contents.push({
+            value: `${nodeDefinition.typeDescriptions.typeString} ${nodeDefinition.name}`
+          })
+        }
+        else if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'ElementaryTypeName') {
+          contents.push({
+            value: `${nodeDefinition.typeDescriptions.typeString}`
+          })
+        } else {
+          contents.push({
+            value: `${nodeDefinition.nodeType}`
+          })
+        }
+        for (const key in contents) {
+          contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
         }
         return {
           range: new monaco.Range(
-            position.lineNumber,  
+            position.lineNumber,
             position.column,
-            position.lineNumber, 
+            position.lineNumber,
             model.getLineMaxColumn(position.lineNumber)
           ),
-          contents: [
-            
-          ]
+          contents: contents
         };
       }
     })
