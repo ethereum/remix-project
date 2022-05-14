@@ -12,7 +12,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel']
 }
 
 class Editor extends Plugin {
@@ -163,6 +163,7 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
+    console.log(file)
     const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
@@ -242,6 +243,10 @@ class Editor extends Plugin {
    */
   find (string) {
     return this.api.findMatches(this.currentFile, string)
+  }
+
+  addModel(path, content) {
+    this.emit('addModel', content, this._getMode(path), path, false)
   }
 
   /**
