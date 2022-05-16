@@ -10,6 +10,7 @@ import { loadTypes } from './web-types'
 import monaco from '../types/monaco'
 import { IPosition, languages } from 'monaco-editor'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { RemixHoverProvider } from './providers/hoverProvider'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -435,6 +436,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', {
       async provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: any, token: monaco.CancellationToken) {
+
         const cursorPosition = props.editorAPI.getCursorPosition()
         const nodes = await props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
         const references = []
@@ -471,91 +473,138 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
-
-
     monacoRef.current.languages.registerHoverProvider('remix-solidity', {
       provideHover: async function (model: any, position: monaco.Position) {
-        console.log('--------------------')
         const cursorPosition = props.editorAPI.getHoverPosition(position)
         const nodeDefinition = await props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
         console.log(nodeDefinition)
         const contents = []
 
         const getDocs = async (node: any) => {
-          if(node.documentation && node.documentation.text) {
-            let text = ''
-            node.documentation.text.split('\n').forEach(line => {
-              text += `${line.trim()}\n`
-            })
-            contents.push({
-              value: text
-            })
-          }
-        }
-        
-        const getVariableDeclaration = async (node: any) => {
-          if(node.typeDescriptions && node.typeDescriptions.typeString) {
-            return `${node.typeDescriptions.typeString} ${node.name}`
-          }
+            if (node.documentation && node.documentation.text) {
+                let text = ''
+                node.documentation.text.split('\n').forEach(line => {
+                    text += `${line.trim()}\n`
+                })
+                contents.push({
+
+                    value: text
+                })
+            }
         }
 
-        const getParamaters = async (node: any) => {
-          if(node.parameters && node.parameters.parameters) {
-            let params = []
-            for(const param of node.parameters.parameters) {
-              params.push(await getVariableDeclaration(param))
+        const getLinks = async (node: any) => {
+            const position = await props.plugin.call('contextualListener', 'positionOfDefinition', node)
+            const lastCompilationResult = await props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
+            const filename = lastCompilationResult.getSourceName(position.file)
+            console.log(filename, position)
+            const lineColumn = await props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
+                position,
+                position.file,
+                lastCompilationResult.getSourceCode().sources,
+                lastCompilationResult.getAsts())
+            contents.push({
+                value: `${filename} ${lineColumn.start.line}:${lineColumn.start.column}`
+            })
+        }
+
+        const getVariableDeclaration = async (node: any) => {
+            if (node.typeDescriptions && node.typeDescriptions.typeString) {
+                return `${node.typeDescriptions.typeString}${node.name && node.name.length ? ` ${node.name}` : ''}`
             }
-            return `(${params.join(', ')})`
-          }
+        }
+
+        const getParamaters = async (parameters: any) => {
+            if (parameters && parameters.parameters) {
+                let params = []
+                for (const param of parameters.parameters) {
+                    params.push(await getVariableDeclaration(param))
+                }
+                return `(${params.join(', ')})`
+            }
+        }
+
+        const getOverrides = async (node: any) => {
+            if (node.overrides) {
+                let overrides = []
+                for (const override of node.overrides.overrides) {
+                    overrides.push(override.name)
+                }
+                if (overrides.length)
+                    return ` overrides (${overrides.join(', ')})`
+                return ''
+            }
+        }
+
+        const getlinearizedBaseContracts = async (node: any) => {
+            let params = []
+            for (const id of node.linearizedBaseContracts) {
+                const baseContract = await props.plugin.call('contextualListener', 'getNodeById', id)
+                params.push(
+                    baseContract.name
+                )
+            }
+            if (params.length)
+                return `is ${params.join(', ')}`
+            return ''
         }
 
         if (!nodeDefinition) return null
         if (nodeDefinition.absolutePath) {
-          const target = await props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
-          if (target.file !== nodeDefinition.absolutePath) {
+            const target = await props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
+            if (target.file !== nodeDefinition.absolutePath) {
+                contents.push({
+                    value: `${target.file}`
+                })
+            }
             contents.push({
-              value: `${target.file}`
+                value: `${nodeDefinition.absolutePath}`
             })
-          }
-          contents.push({
-            value: `${nodeDefinition.absolutePath}`
-          })
         }
         if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'VariableDeclaration') {
-          contents.push({
-            value: await getVariableDeclaration(nodeDefinition)
-          })
+            contents.push({
+                value: await getVariableDeclaration(nodeDefinition)
+            })
 
         }
         else if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'ElementaryTypeName') {
-          contents.push({
-            value: `${nodeDefinition.typeDescriptions.typeString}`
-          })
+            contents.push({
+                value: `${nodeDefinition.typeDescriptions.typeString}`
+            })
 
         } else if (nodeDefinition.nodeType === 'FunctionDefinition') {
-          contents.push({
-            value: `(${nodeDefinition.visibility} function) ${nodeDefinition.name}: ${await getParamaters(nodeDefinition)}`
-          })
-          getDocs(nodeDefinition)
+            contents.push({
+                value: `function ${nodeDefinition.name} ${await getParamaters(nodeDefinition.parameters)} ${nodeDefinition.visibility} ${nodeDefinition.stateMutability}${await getOverrides(nodeDefinition)} returns ${await getParamaters(nodeDefinition.returnParameters)}`
+            })
+
+            getDocs(nodeDefinition)
+        } else if (nodeDefinition.nodeType === 'ContractDefinition') {
+            contents.push({
+                value: `${nodeDefinition.contractKind} ${nodeDefinition.name} ${await getlinearizedBaseContracts(nodeDefinition)}`
+            })
+            getDocs(nodeDefinition)
+
         } else {
-          contents.push({
-            value: `${nodeDefinition.nodeType}`
-          })
-          getDocs(nodeDefinition)
+            contents.push({
+                value: `${nodeDefinition.nodeType}`
+            })
+            getDocs(nodeDefinition)
         }
+        getLinks(nodeDefinition)
         for (const key in contents) {
-          contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
+            contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
         }
+
         return {
-          range: new monaco.Range(
-            position.lineNumber,
-            position.column,
-            position.lineNumber,
-            model.getLineMaxColumn(position.lineNumber)
-          ),
-          contents: contents
+            range: new monaco.Range(
+                position.lineNumber,
+                position.column,
+                position.lineNumber,
+                model.getLineMaxColumn(position.lineNumber)
+            ),
+            contents: contents
         };
-      }
+    }
     })
 
     loadTypes(monacoRef.current)

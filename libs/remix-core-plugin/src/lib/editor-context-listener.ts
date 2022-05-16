@@ -2,11 +2,10 @@
 import { Plugin } from '@remixproject/engine'
 
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-import { AstNode } from '@remix-project/remix-solidity-ts'
 
 const profile = {
   name: 'contextualListener',
-  methods: ['definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['getNodeById', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -95,7 +94,7 @@ export class EditorContextListener extends Plugin {
     return null
   }
 
-  referencesOf(node: AstNode) {
+  referencesOf(node: any) {
     const results = []
     const highlights = (id) => {
       if (this._index.Declarations && this._index.Declarations[id]) {
@@ -118,8 +117,9 @@ export class EditorContextListener extends Plugin {
 
   async nodesAtEditorPosition(position: any) {
     const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    let urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
-      const nodes = sourceMappingDecoder.nodesAtPosition(null, position, lastCompilationResult.data.sources[this.currentFile])
+      const nodes = sourceMappingDecoder.nodesAtPosition(null, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
       return nodes
     }
     return []
@@ -135,16 +135,20 @@ export class EditorContextListener extends Plugin {
     }
   }
 
-  async getNodeDefinition() {
-
+  async getNodeById(id: any) {
+    for (const key in this._index.FlatReferences) {
+      if (this._index.FlatReferences[key].id === id) {
+        return this._index.FlatReferences[key]
+      }
+    }
   }
 
   async definitionAtPosition(position: any) {
     const nodes = await this.nodesAtEditorPosition(position)
     console.log(nodes)
     console.log(this._index.FlatReferences)
-    let nodeDefinition: AstNode
-    let node: AstNode
+    let nodeDefinition: any
+    let node: any
     if (nodes && nodes.length) {
       node = nodes[nodes.length - 1]
       nodeDefinition = node
@@ -165,23 +169,33 @@ export class EditorContextListener extends Plugin {
     
   }
 
-  async jumpToDefinition(position: any) {
-    const node = await this.definitionAtPosition(position)
+  async positionOfDefinition(node: any) {
     if (node) {
       if (node.src) {
         const position = sourceMappingDecoder.decode(node.src)
         if (position) {
-          await this.jumpToPosition(position)
+          return position
         }
       }
     }
+    return null
   }
-  /*
+
+  async jumpToDefinition(position: any) {
+    const node = await this.definitionAtPosition(position)
+    const sourcePosition = await this.positionOfDefinition(node)
+    if(sourcePosition){
+      await this.jumpToPosition(sourcePosition)
+    }  
+  }
+
+ /*
  * onClick jump to position of ast node in the editor
  */
   async jumpToPosition(position: any) {
     const jumpToLine = async (fileName: string, lineColumn: any) => {
       if (fileName !== await this.call('fileManager', 'file')) {
+        console.log('jump to file', fileName)
         await this.call('fileManager', 'open', fileName)
       }
       if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
@@ -189,6 +203,8 @@ export class EditorContextListener extends Plugin {
       }
     }
     const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    console.log(lastCompilationResult.getSourceCode().sources)
+    console.log(position)
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
       const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
         position,
@@ -197,6 +213,7 @@ export class EditorContextListener extends Plugin {
         lastCompilationResult.getAsts())
       const filename = lastCompilationResult.getSourceName(position.file)
       // TODO: refactor with rendererAPI.errorClick
+      console.log(filename, lineColumn)
       jumpToLine(filename, lineColumn)
     }
   }
@@ -206,10 +223,10 @@ export class EditorContextListener extends Plugin {
     this._stopHighlighting()
     this.currentPosition = cursorPosition
     this.currentFile = file
-    if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
-      const nodes = sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
+    let urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
+    if (compilationResult && compilationResult.data && (compilationResult.data.sources[file] || compilationResult.data.sources[urlFromPath.file])) {
+      const nodes = sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file] || compilationResult.data.sources[urlFromPath.file])
       this.nodes = nodes
-      console.log(nodes)
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         await this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
