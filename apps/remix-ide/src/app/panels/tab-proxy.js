@@ -153,7 +153,7 @@ export class TabProxy extends Plugin {
           displayName,
           () => this.emit('switchApp', name),
           () => {
-            if(name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
+            if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
               const files = Object.keys(this.editor.sessions)
               files.forEach(filepath => this.editor.discard(filepath))
             }
