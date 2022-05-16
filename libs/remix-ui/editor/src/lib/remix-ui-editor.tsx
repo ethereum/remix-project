@@ -75,6 +75,16 @@ export interface EditorUIProps {
 
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
+  const defaultEditorValue = `
+   ____    _____   __  __   ___  __  __   ___   ____    _____ 
+  |  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
+  | |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
+  |  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
+  |_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
+  \t\tCTRL + E : To find text in a file in editor\n
+  \t\tCTRL + S: To compile current solidity (.sol) file\n
+  \t\tCTRL + SHIFT + S: To (compile contract and) run the script\n
+  `
   const editorRef = useRef(null)
   const monacoRef = useRef(null)
   const currentFileRef = useRef('')
@@ -423,6 +433,7 @@ export const EditorUI = (props: EditorUIProps) => {
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
         options={{ glyphMargin: true }}
+        defaultValue={defaultEditorValue}
       />
       <div className="contextview">
         <RemixUiEditorContextView
