@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # Bash Menu Script Example
 

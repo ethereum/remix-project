@@ -2,8 +2,8 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-const passphrase = process.env.account_passphrase
-const password = process.env.account_password
+const passphrase = 'explain uniform adapt basic blue onion rebel pull rice erase volcano couple' // process.env.account_passphrase
+const password = 'remix_is_cool' // process.env.account_password
 
 module.exports = {
   '@disabled': true,
@@ -80,10 +80,14 @@ module.exports = {
       .end()
   },
 
-  'Should connect to Goerli Test Network using MetaMask #group4 #flaky': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+  'Should connect to Goerli Test Network using MetaMask #group4': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .pause(10000)
+      .switchBrowserTab(0)
       .setupMetamask(passphrase, password)
-      .click('.network-indicator__down-arrow')
+      .click('.network-display--clickable')
+      .click('.network-dropdown-content--link')
       .useXpath().click("//span[text()='Goerli Test Network']")
       .useCss().switchBrowserTab(0)
       .refresh()

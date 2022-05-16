@@ -13,10 +13,11 @@ class SwitchBrowserWindow extends EventEmitter {
   }
 }
 
-function switchWindow (browser: NightwatchBrowser, url: string, windowName: string, cb: (browser: NightwatchBrowser, window: NightwatchCallbackResult<Window>) => void) {
+function switchWindow (browser: NightwatchBrowser, url: string, windowName: string, cb: (browser: NightwatchBrowser, window?: NightwatchCallbackResult<Window>) => void) {
   browser.execute(function (windowName) {
     return window.open('', windowName, 'width=2560, height=1440')
   }, [windowName], (newWindow) => {
+    console.log('windowName', windowName)
     browser.switchWindow(windowName)
       .url(url)
       .pause(5000)
