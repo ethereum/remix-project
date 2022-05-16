@@ -1,3 +1,8 @@
+import * as fs from 'fs'
+
+const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/metamask.crx')
+const metamaskExtension = Buffer.from(crxFile).toString('base64')
+
 module.exports = {
   src_folders: ['dist/apps/remix-ide-e2e/src/tests'],
   output_folder: './reports/tests',
@@ -51,7 +56,8 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose'],
+          extensions: [metamaskExtension]
         }
       }
     },
