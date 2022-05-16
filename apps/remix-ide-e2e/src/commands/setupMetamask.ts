@@ -16,7 +16,7 @@ class MetaMask extends EventEmitter {
 
 function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
   browser
-    .switchBrowserWindow('chrome-extension://poemojpkcjbpmcccohjnomjffeinlafe/home.html#initialize/welcome', 'MetaMask', (browser) => {
+    .switchBrowserWindow('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html#initialize/welcome', 'MetaMask', (browser) => {
       browser.waitForElementPresent('.first-time-flow__button')
         .click('.first-time-flow__button')
         .waitForElementPresent('.select-action__select-button:nth-of-type(1) > .first-time-flow__button')
