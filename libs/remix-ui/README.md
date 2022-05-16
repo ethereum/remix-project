@@ -3,7 +3,7 @@
 This library was generated with [Nx](https://nx.dev).
 
 ## Pre-requisite
--	Install **NxConsole** vscose extension
+-	Install **NxConsole** vscode extension
 ## Steps To Generate React App
 -	Open **NxConsole** extension
 -	Click generate option
