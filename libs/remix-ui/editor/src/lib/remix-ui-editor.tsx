@@ -532,8 +532,8 @@ export const EditorUI = (props: EditorUIProps) => {
                 }
                 if (overrides.length)
                     return ` overrides (${overrides.join(', ')})`
-                return ''
             }
+            return ''
         }
 
         const getlinearizedBaseContracts = async (node: any) => {
@@ -577,23 +577,24 @@ export const EditorUI = (props: EditorUIProps) => {
                 value: `function ${nodeDefinition.name} ${await getParamaters(nodeDefinition.parameters)} ${nodeDefinition.visibility} ${nodeDefinition.stateMutability}${await getOverrides(nodeDefinition)} returns ${await getParamaters(nodeDefinition.returnParameters)}`
             })
 
-            getDocs(nodeDefinition)
+
         } else if (nodeDefinition.nodeType === 'ContractDefinition') {
             contents.push({
                 value: `${nodeDefinition.contractKind} ${nodeDefinition.name} ${await getlinearizedBaseContracts(nodeDefinition)}`
             })
-            getDocs(nodeDefinition)
+
 
         } else {
             contents.push({
                 value: `${nodeDefinition.nodeType}`
             })
-            getDocs(nodeDefinition)
+ 
         }
         getLinks(nodeDefinition)
         for (const key in contents) {
             contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
         }
+        getDocs(nodeDefinition)
 
         return {
             range: new monaco.Range(
