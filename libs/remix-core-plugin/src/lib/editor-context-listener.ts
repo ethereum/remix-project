@@ -117,6 +117,7 @@ export class EditorContextListener extends Plugin {
 
   async nodesAtEditorPosition(position: any) {
     const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    if (!lastCompilationResult) return false
     let urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
       const nodes = sourceMappingDecoder.nodesAtPosition(null, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
@@ -164,7 +165,7 @@ export class EditorContextListener extends Plugin {
       }
       return nodeDefinition
     }else{
-      console.log('no node found')
+      return false
     }
     
   }
