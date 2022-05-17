@@ -1,6 +1,6 @@
 
 
-export class RemixHoverProvide {
+export class RemixHoverProvider {
 
     props: any
     monaco: any
