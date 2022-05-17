@@ -2,8 +2,8 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-const passphrase = process.env.account_passphrase
-const password = process.env.account_password
+const passphrase = 'explain uniform adapt basic blue onion rebel pull rice erase volcano couple' // process.env.account_passphrase
+const password = 'remix_is_cool' // process.env.account_password
 
 module.exports = {
   '@disabled': true,
@@ -80,10 +80,14 @@ module.exports = {
       .end()
   },
 
-  'Should connect to Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+  'Should connect to Goerli Test Network using MetaMask #group4': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .pause(10000)
+      .switchBrowserTab(0)
       .setupMetamask(passphrase, password)
-      .click('.network-indicator__down-arrow')
+      .click('.network-display--clickable')
+      .click('.network-dropdown-content--link')
       .useXpath().click("//span[text()='Goerli Test Network']")
       .useCss().switchBrowserTab(0)
       .refresh()
@@ -101,7 +105,7 @@ module.exports = {
       .switchBrowserTab(0)
   },
 
-  'Should deploy contract on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should deploy contract on Goerli Test Network using MetaMask #group4': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
@@ -118,7 +122,7 @@ module.exports = {
       .switchBrowserTab(0)
   },
 
-  'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask #group4': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
       .click('*[data-id="universalDappUiTitleExpander"]')
@@ -135,7 +139,7 @@ module.exports = {
       .end()
   },
 
-  'Should connect to Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask #group4': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(2)
       .waitForElementPresent('.network-indicator__down-arrow')
@@ -153,7 +157,7 @@ module.exports = {
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
   },
 
-  'Should deploy contract on Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should deploy contract on Ethereum Main Network using MetaMask #group4': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
@@ -173,7 +177,7 @@ module.exports = {
    * - Ropsten node for retrieving the trace and storage
    *
    */
-  'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask #group4': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .switchBrowserTab(2)
@@ -198,7 +202,7 @@ module.exports = {
       .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
   },
 
-  'Call web3.eth.getAccounts() using Injected web3 (Metamask)': '' + function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected web3 (Metamask) #group4': function (browser: NightwatchBrowser) {
     browser
       .executeScript('web3.eth.getAccounts()')
       .pause(2000)
