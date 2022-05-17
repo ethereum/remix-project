@@ -11,6 +11,7 @@ export class RemixHoverProvider {
 
     provideHover = async function (model: any, position: any) {
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
+
         const nodeDefinition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
         console.log(nodeDefinition)
         const contents = []
@@ -48,6 +49,7 @@ export class RemixHoverProvider {
                 return `${node.typeDescriptions.typeString}${node.name && node.name.length ? ` ${node.name}` : ''}`
             }
         }
+        
 
         const getParamaters = async (parameters: any) => {
             if (parameters && parameters.parameters) {
@@ -84,54 +86,62 @@ export class RemixHoverProvider {
             return ''
         }
 
-        if (!nodeDefinition) return null
-        if (nodeDefinition.absolutePath) {
-            const target = await this.props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
-            if (target.file !== nodeDefinition.absolutePath) {
+        if (!nodeDefinition) {
+            contents.push({
+                value: 'No definition found. Please compile the source code.'
+            })
+        } 
+
+        if (nodeDefinition) {
+            if (nodeDefinition.absolutePath) {
+                const target = await this.props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
+                if (target.file !== nodeDefinition.absolutePath) {
+                    contents.push({
+                        value: `${target.file}`
+                    })
+                }
                 contents.push({
-                    value: `${target.file}`
+                    value: `${nodeDefinition.absolutePath}`
                 })
             }
-            contents.push({
-                value: `${nodeDefinition.absolutePath}`
-            })
-        }
-        if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'VariableDeclaration') {
-            contents.push({
-                value: await getVariableDeclaration(nodeDefinition)
-            })
+            if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'VariableDeclaration') {
+                contents.push({
+                    value: await getVariableDeclaration(nodeDefinition)
+                })
+
+            }
+            else if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'ElementaryTypeName') {
+                contents.push({
+                    value: `${nodeDefinition.typeDescriptions.typeString}`
+                })
+
+            } else if (nodeDefinition.nodeType === 'FunctionDefinition') {
+                contents.push({
+                    value: `function ${nodeDefinition.name} ${await getParamaters(nodeDefinition.parameters)} ${nodeDefinition.visibility} ${nodeDefinition.stateMutability}${await getOverrides(nodeDefinition)} returns ${await getParamaters(nodeDefinition.returnParameters)}`
+                })
+
+
+            } else if (nodeDefinition.nodeType === 'ContractDefinition') {
+                contents.push({
+                    value: `${nodeDefinition.contractKind} ${nodeDefinition.name} ${await getlinearizedBaseContracts(nodeDefinition)}`
+                })
+
+
+            } else {
+                contents.push({
+                    value: `${nodeDefinition.nodeType}`
+                })
+
+            }
+
+            for (const key in contents) {
+                contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
+            }
+            getLinks(nodeDefinition)
+            getDocs(nodeDefinition)
 
         }
-        else if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'ElementaryTypeName') {
-            contents.push({
-                value: `${nodeDefinition.typeDescriptions.typeString}`
-            })
 
-        } else if (nodeDefinition.nodeType === 'FunctionDefinition') {
-            contents.push({
-                value: `function ${nodeDefinition.name} ${await getParamaters(nodeDefinition.parameters)} ${nodeDefinition.visibility} ${nodeDefinition.stateMutability}${await getOverrides(nodeDefinition)} returns ${await getParamaters(nodeDefinition.returnParameters)}`
-            })
-
-            
-        } else if (nodeDefinition.nodeType === 'ContractDefinition') {
-            contents.push({
-                value: `${nodeDefinition.contractKind} ${nodeDefinition.name} ${await getlinearizedBaseContracts(nodeDefinition)}`
-            })
-
-
-        } else {
-            contents.push({
-                value: `${nodeDefinition.nodeType}`
-            })
-
-        }
-
-        for (const key in contents) {
-            contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
-        }
-        getLinks(nodeDefinition)
-        getDocs(nodeDefinition)
-        
 
         return {
             range: new this.monaco.Range(
