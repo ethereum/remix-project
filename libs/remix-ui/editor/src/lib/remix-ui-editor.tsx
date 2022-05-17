@@ -432,7 +432,7 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true }}
+        options={{ glyphMargin: true, readOnly: true }}
         defaultValue={defaultEditorValue}
       />
       <div className="contextview">
