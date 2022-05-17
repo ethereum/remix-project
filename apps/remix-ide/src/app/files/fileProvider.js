@@ -135,15 +135,12 @@ class FileProvider {
       if (!await window.remixFileSystem.exists(currentCheck)) {
         try {
           await window.remixFileSystem.mkdir(currentCheck)
+          currentCheck = currentCheck + '/' + value
+          this.event.emit('folderAdded', this._normalizePath(currentCheck))
         } catch (error) {
           console.log(error)
         }
       }
-    }
-    currentCheck = ''
-    for (const value of paths) {
-      currentCheck = currentCheck + '/' + value
-      this.event.emit('folderAdded', this._normalizePath(currentCheck))
     }
     if (cb) cb()
   }
