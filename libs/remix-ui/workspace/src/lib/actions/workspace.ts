@@ -12,6 +12,7 @@ import * as templateWithContent from '@remix-project/remix-ws-templates'
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
 const queryParams = new QueryParams()
+const _paq = window._paq = window._paq || [] //eslint-disable-line
 let plugin, dispatch: React.Dispatch<any>
 
 export const setPlugin = (filePanelPlugin, reducerDispatch) => {
@@ -154,6 +155,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       try {
         const templateList = Object.keys(templateWithContent)
         if (!templateList.includes(template)) break
+        _paq.push(['trackEvent', 'workspace', 'template', template])
         // @ts-ignore
         const files = await templateWithContent[template]()
         for (const file in files) {
