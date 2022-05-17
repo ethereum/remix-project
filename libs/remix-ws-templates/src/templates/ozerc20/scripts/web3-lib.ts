@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import Web3 from 'web3-lib'
 
 export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {
 
