@@ -1,15 +1,17 @@
-import monaco from '../../types/monaco'
 
-export class RemixHoverProvider implements monaco.languages.HoverProvider {
+
+export class RemixHoverProvide {
 
     props: any
-    constructor(props: any) {
+    monaco: any
+    constructor(props: any, monaco: any) {
         this.props = props
+        this.monaco = monaco
     }
 
-    provideHover = async function (model: any, position: monaco.Position) {
-        const cursorPosition = this.propseditorAPI.getHoverPosition(position)
-        const nodeDefinition = await this.propsplugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
+    provideHover = async function (model: any, position: any) {
+        const cursorPosition = this.props.editorAPI.getHoverPosition(position)
+        const nodeDefinition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
         console.log(nodeDefinition)
         const contents = []
 
@@ -27,11 +29,11 @@ export class RemixHoverProvider implements monaco.languages.HoverProvider {
         }
 
         const getLinks = async (node: any) => {
-            const position = await this.propsplugin.call('contextualListener', 'positionOfDefinition', node)
-            const lastCompilationResult = await this.propsplugin.call('compilerArtefacts', 'getLastCompilationResult')
+            const position = await this.props.plugin.call('contextualListener', 'positionOfDefinition', node)
+            const lastCompilationResult = await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
             const filename = lastCompilationResult.getSourceName(position.file)
             console.log(filename, position)
-            const lineColumn = await this.propsplugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
+            const lineColumn = await this.props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
                 position,
                 position.file,
                 lastCompilationResult.getSourceCode().sources,
@@ -65,14 +67,14 @@ export class RemixHoverProvider implements monaco.languages.HoverProvider {
                 }
                 if (overrides.length)
                     return ` overrides (${overrides.join(', ')})`
-                return ''
             }
+            return ''
         }
 
         const getlinearizedBaseContracts = async (node: any) => {
             let params = []
             for (const id of node.linearizedBaseContracts) {
-                const baseContract = await this.propsplugin.call('contextualListener', 'getNodeById', id)
+                const baseContract = await this.props.plugin.call('contextualListener', 'getNodeById', id)
                 params.push(
                     baseContract.name
                 )
@@ -84,7 +86,7 @@ export class RemixHoverProvider implements monaco.languages.HoverProvider {
 
         if (!nodeDefinition) return null
         if (nodeDefinition.absolutePath) {
-            const target = await this.propsplugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
+            const target = await this.props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
             if (target.file !== nodeDefinition.absolutePath) {
                 contents.push({
                     value: `${target.file}`
@@ -110,26 +112,29 @@ export class RemixHoverProvider implements monaco.languages.HoverProvider {
                 value: `function ${nodeDefinition.name} ${await getParamaters(nodeDefinition.parameters)} ${nodeDefinition.visibility} ${nodeDefinition.stateMutability}${await getOverrides(nodeDefinition)} returns ${await getParamaters(nodeDefinition.returnParameters)}`
             })
 
-            getDocs(nodeDefinition)
+            
         } else if (nodeDefinition.nodeType === 'ContractDefinition') {
             contents.push({
                 value: `${nodeDefinition.contractKind} ${nodeDefinition.name} ${await getlinearizedBaseContracts(nodeDefinition)}`
             })
-            getDocs(nodeDefinition)
+
 
         } else {
             contents.push({
                 value: `${nodeDefinition.nodeType}`
             })
-            getDocs(nodeDefinition)
+
         }
-        getLinks(nodeDefinition)
+
         for (const key in contents) {
             contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
         }
+        getLinks(nodeDefinition)
+        getDocs(nodeDefinition)
+        
 
         return {
-            range: new monaco.Range(
+            range: new this.monaco.Range(
                 position.lineNumber,
                 position.column,
                 position.lineNumber,
