@@ -11,6 +11,7 @@ import monaco from '../types/monaco'
 import { IPosition, languages } from 'monaco-editor'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { RemixHoverProvider } from './providers/hoverProvider'
+import { RemixReferenceProvider } from './providers/referenceProvider'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -434,45 +435,7 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
-    monacoRef.current.languages.registerReferenceProvider('remix-solidity', {
-      async provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: any, token: monaco.CancellationToken) {
-
-        const cursorPosition = props.editorAPI.getCursorPosition()
-        const nodes = await props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
-        const references = []
-        if (nodes && nodes.length) {
-          const compilationResult = await props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
-          const file = await props.plugin.call('fileManager', 'file')
-          if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
-            for (const node of nodes) {
-              const position = sourceMappingDecoder.decode(node.src)
-              const fileInNode = compilationResult.getSourceName(position.file)
-              let fileTarget = await props.plugin.call('fileManager', 'getPathFromUrl', fileInNode)
-              fileTarget = fileTarget.file
-              const fileContent = await props.plugin.call('fileManager', 'readFile', fileInNode)
-              const lineColumn = await props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
-                position,
-                position.file,
-                compilationResult.getSourceCode().sources,
-                compilationResult.getAsts())
-              console.log(position, fileTarget, lineColumn)
-              try {
-                props.plugin.call('editor', 'addModel', fileTarget, fileContent)
-              } catch (e) {
-
-              }
-              const range = new monaco.Range(lineColumn.start.line + 1, lineColumn.start.column + 1, lineColumn.end.line + 1, lineColumn.end.column + 1)
-              references.push({
-                range,
-                uri: monaco.Uri.parse(fileTarget)
-              })
-            }
-          }
-        }
-        return references
-      }
-    })
-
+    monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
 
     loadTypes(monacoRef.current)
