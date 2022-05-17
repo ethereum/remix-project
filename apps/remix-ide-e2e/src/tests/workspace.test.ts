@@ -89,7 +89,7 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc20' })
       .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=erc20]')
+      .click('select[id="wstemplate"] option[value=ozerc20]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(1000)
