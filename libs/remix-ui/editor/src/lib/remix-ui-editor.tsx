@@ -76,14 +76,20 @@ export interface EditorUIProps {
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
   const defaultEditorValue = `
-   ____    _____   __  __   ___  __  __   ___   ____    _____ 
-  |  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
-  | |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
-  |  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
-  |_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
-  \t\tCTRL + E : To find text in a file in editor\n
-  \t\tCTRL + S: To compile current solidity (.sol) file\n
-  \t\tCTRL + SHIFT + S: To (compile contract and) run the script\n
+  \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
+  \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
+  \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
+  \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
+  \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
+  \t\t\t\t\t\t\tKeyboard Shortcuts:\n
+  \t\t\t\t\t\t\t\tCTRL + E : To find text in a file in editor\n
+  \t\t\t\t\t\t\t\tCTRL + S: To compile current solidity (.sol) file\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: To (compile contract and) run the script\n\n
+  \t\t\t\t\t\t\tImportant Links:\n
+  \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
+  \t\t\t\t\t\t\t\tCurated list of Remix resources: https://github.com/ethereum/awesome-remix\n
+  \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
+  \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
   const editorRef = useRef(null)
   const monacoRef = useRef(null)
@@ -432,7 +438,7 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: true }}
+        options={{ glyphMargin: true, readOnly: true, domReadOnly: true }}
         defaultValue={defaultEditorValue}
       />
       <div className="contextview">
