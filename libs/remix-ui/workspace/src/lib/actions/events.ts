@@ -49,6 +49,16 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin.on('fileManager', 'fileClosed', async (file: string) => {
     dispatch(removeFocus(file))
   })
+
+  plugin.on('fileManager', 'currentFileChanged', async (file: string) => {
+    const paths = file.split('/')
+    if (paths.length && paths[0] === '') paths.shift()
+    let currentCheck = ''
+    for (const value of paths) {
+      currentCheck = currentCheck + '/' + value
+      await folderAdded(currentCheck)
+    }
+  })
 }
 
 export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Dispatch<any>) => {
