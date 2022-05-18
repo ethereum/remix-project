@@ -60,6 +60,9 @@
   text-align: center;
   padding: 0 14px 16px;
 }
+.udapp_deployedContracts {
+  font-size: 1rem;
+}
 .udapp_pendingTxsContainer  {
   display: flex;
   flex-direction: column;
@@ -120,6 +123,12 @@
 }
 .udapp_recorderSection:hover {
   cursor: pointer;
+}.udapp_recorderSectionLabel:hover {
+  cursor: pointer;
+}
+.udapp_recorderSectionLabel {
+  cursor: pointer;
+  font-size: 1rem;
 }
 .udapp_input {
   font-size: 10px !important;
