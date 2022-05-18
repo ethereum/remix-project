@@ -12,6 +12,7 @@ export function Workspace () {
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
+  const workspaceCreateTemplateInput = useRef()
 
   useEffect(() => {
     resetFocus()
@@ -83,9 +84,11 @@ export function Workspace () {
     if (workspaceCreateInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceCreateInput.current.value
+    // @ts-ignore: Object is possibly 'null'.
+    const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
 
     try {
-      await global.dispatchCreateWorkspace(workspaceName)
+      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName)
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -116,10 +119,22 @@ export function Workspace () {
     }
   }
 
+  const updateWsName = () => {
+    // @ts-ignore
+    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
+  }
+
   const createModalMessage = () => {
     return (
       <>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <label id="wsName" className="form-check-label">Workspace name</label>
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" /><br/>
+        <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
+        <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
+          <option value='remixDefault'>Default</option>
+          <option value='blank'>Blank</option>
+          <option value='ozerc20'>OpenZeppelin ERC20</option>
+        </select>
       </>
     )
   }

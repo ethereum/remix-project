@@ -34,6 +34,9 @@
       "@remix-project/remix-url-resolver": [
         "dist/libs/remix-url-resolver/src/index.js"
       ],
+      "@remix-project/remix-ws-templates": [
+        "dist/libs/remix-ws-templates/src/index.js"
+      ],
       "@remixproject/debugger-plugin": ["apps/debugger/src/index.ts"],
       "@remixproject/solidity-compiler-plugin": [
         "apps/solidity-compiler/src/index.ts"
@@ -75,10 +78,16 @@
       ],
       "@remix-ui/theme-module": ["libs/remix-ui/theme-module/src/index.ts"],
       "@remix-ui/panel": ["libs/remix-ui/panel/src/index.ts"],
-      "@remix-ui/editor-context-view": ["libs/remix-ui/editor-context-view/src/index.ts"],
-      "@remix-ui/solidity-unit-testing": ["libs/remix-ui/solidity-unit-testing/src/index.ts"],
+      "@remix-ui/editor-context-view": [
+        "libs/remix-ui/editor-context-view/src/index.ts"
+      ],
+      "@remix-ui/solidity-unit-testing": [
+        "libs/remix-ui/solidity-unit-testing/src/index.ts"
+      ],
       "@remix-ui/run-tab": ["libs/remix-ui/run-tab/src/index.ts"],
-      "@remix-ui/permission-handler": ["libs/remix-ui/permission-handler/src/index.ts"]
+      "@remix-ui/permission-handler": [
+        "libs/remix-ui/permission-handler/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
