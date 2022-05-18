@@ -686,7 +686,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         </div>
         <div className="d-flex px-4 remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
           <div className="d-flex">
-            <label className="h6 remixui_compilerConfigSection">Advanced Configurations</label>
+            <label className="mt-1 remixui_compilerConfigSection">Advanced Configurations</label>
           </div>
           <div>
             <span data-id='scConfigExpander' onClick={toggleConfigurations}>

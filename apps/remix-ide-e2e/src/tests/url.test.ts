@@ -97,6 +97,7 @@ module.exports = {
       .pause(5000)
       .clickLaunchIcon('solidity')
       .pause(5000)
+      .click('*[data-id="scConfigExpander"]')
       .assert.containsText('#versionSelector option[data-id="selected"]', 'custom')
     // default values
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'default')

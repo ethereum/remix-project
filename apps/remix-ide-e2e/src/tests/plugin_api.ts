@@ -230,7 +230,13 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false },
+      'compiler_config.json': { isDirectory: false }
+    }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -280,7 +286,9 @@ module.exports = {
   'Should create empty workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, ['emptyworkspace', true])
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'emptyworkspace', isLocalhost: false, absolutePath: '.workspaces/emptyworkspace' }, null, null)
-    await clickAndCheckLog(browser, 'fileManager:readdir', {}, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      'compiler_config.json': { isDirectory: false }
+    }, null, '/')
   },
   'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
