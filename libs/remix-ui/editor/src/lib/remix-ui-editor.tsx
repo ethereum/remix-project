@@ -12,6 +12,8 @@ import { IPosition, languages } from 'monaco-editor'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
+import { RemixCompletionProvider } from './providers/completionProvider'
+import { RemixSignatureProvider } from './providers/signatureProvider'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -437,8 +439,11 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
-
+    monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    monacoRef.current.languages.registerSignatureHelpProvider('remix-solidity', new RemixSignatureProvider(props, monaco))
     loadTypes(monacoRef.current)
+    
+    props.plugin.call()
   }
 
   return (
