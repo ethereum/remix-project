@@ -75,6 +75,9 @@
 .remixui_compilerConfigSection:hover {
   cursor: pointer;
 }
+. remixui_compilerConfigSection {
+  font-size: 1rem;
+}
 .remixui_compilerLabel {
   margin-bottom: 2px;
   font-size: 11px;
