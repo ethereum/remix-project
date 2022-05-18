@@ -624,7 +624,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <div className="mt-3 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={updateTruffleCompilation} id="enableTruffle" type="checkbox" title="Enable Truffle Compilation" checked={truffleCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableTruffle">Enable Truffle Compilation</label>
-              <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/' target={'_blank'}>
+              <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/truffle.html#enable-truffle-compilation' target={'_blank'}>
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="overlay-tooltip-truffle">
                     <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Truffle Compilation</span>
