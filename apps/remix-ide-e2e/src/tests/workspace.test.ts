@@ -104,6 +104,29 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
 
+  'Should create ERC721 workspace with files': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > span')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc721' })
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc721]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(1000)
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3.ts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers.ts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC721_test.sol"]')
+  },
+
   // WORKSPACE TEMPLATES E2E END
 
   'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
