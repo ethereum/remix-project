@@ -163,7 +163,6 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
-    console.log(file)
     const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
