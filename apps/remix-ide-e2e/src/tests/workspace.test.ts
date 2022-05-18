@@ -64,8 +64,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`const { expect } = require("chai");
-        const { ethers } = require("hardhat");`) !== -1,
+        browser.assert.ok(content.indexOf(`const { expect } = require("chai");`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/Ballot_test.sol"]')
