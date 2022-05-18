@@ -50,11 +50,39 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      // check js and ts files are not transformed
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './web3'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3.ts"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers.ts"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
+      .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`const { expect } = require("chai");
+        const { ethers } = require("hardhat");`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/Ballot_test.sol"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemREADME.txt"]')
   },
