@@ -134,6 +134,7 @@ export function Workspace () {
           <option value='remixDefault'>Default</option>
           <option value='blank'>Blank</option>
           <option value='ozerc20'>OpenZeppelin ERC20</option>
+          <option value='ozerc721'>OpenZeppelin ERC721</option>
         </select>
       </>
     )
