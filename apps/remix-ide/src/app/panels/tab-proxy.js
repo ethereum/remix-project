@@ -24,7 +24,7 @@ export class TabProxy extends Plugin {
     this.themeQuality = 'dark'
   }
 
-  onActivation () {
+  async onActivation () {
     this.on('theme', 'themeChanged', (theme) => {
       this.themeQuality = theme.quality
       // update invert for all icons
@@ -169,6 +169,9 @@ export class TabProxy extends Plugin {
     this.on('manager', 'pluginDeactivated', (profile) => {
       this.removeTab(profile.name)
     })
+
+    this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
+    this.renderComponent()
   }
 
   focus (name) {
@@ -292,7 +295,15 @@ export class TabProxy extends Plugin {
   }
 
   updateComponent(state) {
-    return <TabsUI tabs={state.loadedTabs} onSelect={state.onSelect} onClose={state.onClose} onZoomIn={state.onZoomIn} onZoomOut={state.onZoomOut} onReady={state.onReady} themeQuality={state.themeQuality} />
+    return <TabsUI
+      tabs={state.loadedTabs}
+      onSelect={state.onSelect}
+      onClose={state.onClose}
+      onZoomIn={state.onZoomIn}
+      onZoomOut={state.onZoomOut}
+      onReady={state.onReady}
+      themeQuality={state.themeQuality}
+    />
   }
 
   renderComponent () {
