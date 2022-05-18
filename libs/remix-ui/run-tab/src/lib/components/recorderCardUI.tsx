@@ -24,7 +24,7 @@ export function RecorderUI (props: RecorderProps) {
           <div className="ml-2 mb-2 badge badge-pill badge-primary" title="The number of recorded transactions">{props.count}</div>
         </div>
         <div>
-          <span data-id='UdaooRecorderTitleExpander' onClick={toggleClass}>
+          <span data-id='udappRecorderTitleExpander' onClick={toggleClass}>
             <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
           </span>
         </div>
