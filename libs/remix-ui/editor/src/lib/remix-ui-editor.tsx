@@ -228,7 +228,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
 
   useEffect(() => {
-    if (!editorRef.current) return
+    if (!editorRef.current || !props.currentFile) return
     currentFileRef.current = props.currentFile
     const file = editorModelsState[props.currentFile]
     editorRef.current.setModel(file.model)

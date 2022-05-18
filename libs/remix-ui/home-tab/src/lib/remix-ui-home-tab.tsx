@@ -255,7 +255,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                   <PluginButton imgPath="assets/img/starkNetLogo.webp" envID="starkNetLogo" envText="StarkNet" l2={true} callback={() => startStarkNet()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
                   <PluginButton imgPath="assets/img/learnEthLogo.webp" envID="learnEthLogo" envText="LearnEth" callback={() => startLearnEth()} />
-                  <PluginButton imgPath="assets/img/sourcifyLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
+                  <PluginButton imgPath="assets/img/sourcifyNewLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
                   <PluginButton imgPath="assets/img/moreLogo.webp" envID="moreLogo" envText="More" callback={startPluginManager} />
                 </ThemeContext.Provider>
               </div>

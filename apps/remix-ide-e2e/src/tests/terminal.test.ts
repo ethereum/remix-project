@@ -88,6 +88,7 @@ module.exports = {
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
+
   },
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
@@ -199,7 +200,7 @@ module.exports = {
       .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
-      .pause(5000)
+      .pause(15000)
       .journalLastChildIncludes('147')
   }
 }

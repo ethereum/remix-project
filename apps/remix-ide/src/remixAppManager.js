@@ -12,7 +12,13 @@ const requiredModules = [ // services + layout views + system views
 
 const dependentModules = ['git', 'hardhat', 'truffle', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
-export function isNative (name) {
+const sensitiveCalls = {
+  'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
+  'contentImport': ['resolveAndSave'],
+  'web3Provider': ['sendAsync'],
+}
+
+export function isNative(name) {
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification', 'hardhat-provider', 'ganache-provider']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
@@ -27,34 +33,34 @@ export function isNative (name) {
  * @param {any, any}
  * @returns {boolean}
  */
-export function canActivate (from, to) {
+export function canActivate(from, to) {
   return ['ethdoc'].includes(from.name) ||
-  isNative(from.name) ||
-  (to && from && from.canActivate && from.canActivate.includes(to.name))
+    isNative(from.name) ||
+    (to && from && from.canActivate && from.canActivate.includes(to.name))
 }
 
 export class RemixAppManager extends PluginManager {
-  constructor () {
+  constructor() {
     super()
     this.event = new EventEmitter()
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
   }
 
-  async canActivatePlugin (from, to) {
+  async canActivatePlugin(from, to) {
     return canActivate(from, to)
   }
 
-  async canDeactivatePlugin (from, to) {
+  async canDeactivatePlugin(from, to) {
     if (requiredModules.includes(to.name)) return false
     return isNative(from.name)
   }
 
-  async canDeactivate(from,to) {
-   return this.canDeactivatePlugin(from, to)
+  async canDeactivate(from, to) {
+    return this.canDeactivatePlugin(from, to)
   }
 
-  async deactivatePlugin (name) {
+  async deactivatePlugin(name) {
     const [to, from] = [
       await this.getProfile(name),
       await this.getProfile(this.requestFrom)
@@ -64,7 +70,8 @@ export class RemixAppManager extends PluginManager {
     }
   }
 
-  async canCall (from, to, method, message) {
+  async canCall(from, to, method, message) {
+    const isSensitiveCall = sensitiveCalls[to] && sensitiveCalls[to].includes(method)
     // Make sure the caller of this methods is the target plugin
     if (to !== this.currentRequest.from) {
       return false
@@ -73,43 +80,44 @@ export class RemixAppManager extends PluginManager {
     if (isNative(from)) {
       return true
     }
+
     // ask the user for permission
-    return await this.call('permissionhandler', 'askPermission', this.profiles[from], this.profiles[to], method, message)
+    return await this.call('permissionhandler', 'askPermission', this.profiles[from], this.profiles[to], method, message, isSensitiveCall)
   }
 
-  onPluginActivated (plugin) {
+  onPluginActivated(plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
     this.emit('activate', plugin)
     if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
-  getAll () {
+  getAll() {
     return Object.keys(this.profiles).map((p) => {
       return this.profiles[p]
     })
   }
 
-  getIds () {
+  getIds() {
     return Object.keys(this.profiles)
   }
 
-  onPluginDeactivated (plugin) {
+  onPluginDeactivated(plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('deactivate', plugin)
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }
 
-  isDependent (name) {
+  isDependent(name) {
     return dependentModules.includes(name)
   }
 
-  isRequired (name) {
+  isRequired(name) {
     // excluding internal use plugins
     return requiredModules.includes(name)
   }
 
-  async registeredPlugins () {
+  async registeredPlugins() {
     let plugins
     try {
       const res = await fetch(this.pluginsDirectory)
@@ -138,7 +146,7 @@ export class RemixAppManager extends PluginManager {
     })
   }
 
-  async registerContextMenuItems () {
+  async registerContextMenuItems() {
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'flattener',
       name: 'flattenFileCustomAction',
@@ -167,11 +175,11 @@ export class RemixAppManager extends PluginManager {
  *  (localStorage, queryParams)
  **/
 class PluginLoader {
-  get currentLoader () {
+  get currentLoader() {
     return this.loaders[this.current]
   }
 
-  constructor () {
+  constructor() {
     const queryParams = new QueryParams()
     this.donotAutoReload = ['remixd', 'git'] // that would be a bad practice to force loading some plugins at page load.
     this.loaders = {}
@@ -195,11 +203,11 @@ class PluginLoader {
     this.current = queryParams.get().activate ? 'queryParams' : 'localStorage'
   }
 
-  set (plugin, actives) {
+  set(plugin, actives) {
     this.currentLoader.set(plugin, actives)
   }
 
-  get () {
+  get() {
     return this.currentLoader.get()
   }
 }
