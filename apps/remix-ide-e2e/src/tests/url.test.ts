@@ -81,6 +81,7 @@ module.exports = {
       .refresh()
       .pause(5000)
       .clickLaunchIcon('solidity')
+      .click('*[data-id="scConfigExpander"]')
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.7.4+commit.3f05b770')
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
       .assert.containsText('#compilierLanguageSelector option[data-id="selected"]', 'Yul')
