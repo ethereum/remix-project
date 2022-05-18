@@ -3,7 +3,7 @@ import React, {useState} from 'react'
 import { RecorderProps } from '../types'
 
 export function RecorderUI (props: RecorderProps) {
-  const [toggleExpander, setToggleExpander] = useState<boolean>(true)
+  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const triggerRecordButton = () => {
     props.storeScenario(props.scenarioPrompt)
   }
@@ -17,10 +17,10 @@ export function RecorderUI (props: RecorderProps) {
   }
 
   return (
-    <div className="udapp_cardContainer list-group-item border-0">
+    <div className="udapp_cardContainer list-group-item border border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex">
-          <label className="h6 udapp_recorderSection">Transactions recorded</label>
+          <label className="mt-1 udapp_recorderSectionLabel">Transactions recorded</label>
           <div className="ml-2 mb-2 badge badge-pill badge-primary" title="The number of recorded transactions">{props.count}</div>
         </div>
         <div>
