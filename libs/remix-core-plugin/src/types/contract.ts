@@ -3,8 +3,8 @@ export interface FuncABI {
     type: string,
     inputs: { name: string, type: string }[],
     stateMutability: string,
-    payable: boolean,
-    constant: any
+    payable?: boolean,
+    constant?: any
 }
 
 export interface ContractData {

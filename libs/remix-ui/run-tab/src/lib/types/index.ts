@@ -1,3 +1,4 @@
+import { Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { ContractList } from '../reducers/runTab'
@@ -223,17 +224,17 @@ export type DeployMode = 'Deploy with Proxy' | 'Upgrade Proxy'
 export type DeployOption = {
   initializeInputs: string,
   inputs: {
-    inputs: [
-        {
-            internalType: string,
-            name: string,
-            type: string
-        }
-    ],
+    inputs: {
+      internalType?: string,
+      name: string,
+      type: string
+    }[],
     name: "initialize",
-    outputs: any[],
+    outputs?: any[],
     stateMutability: string,
-    type: string
+    type: string,
+    payable?: boolean,
+    constant?: any
   }
 }
 export interface DeployOptions {
@@ -304,4 +305,56 @@ export interface UdappProps {
     funcIndex?: number) => void,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
+}
+
+export interface DeployButtonProps {
+  deployOptions: { title: DeployMode, active: boolean }[],
+  buttonOptions: {
+    title: string,
+    content: string,
+    classList: string,
+    dataId: string,
+    widthClass: string
+  },
+  selectedIndex: number,
+  setSelectedIndex: (index: number) => void,
+  handleActionClick: () => void
+}
+
+export interface DeployInputProps {
+  funcABI: FuncABI,
+  inputs: string,
+  handleBasicInput: (e) => void,
+  basicInputRef: Ref<HTMLInputElement>,
+  buttonOptions: {
+    title: string,
+    content: string,
+    classList: string,
+    dataId: string,
+    widthClass: string
+  },
+  selectedIndex: number,
+  setSelectedIndex: (index: number) => void,
+  handleActionClick: (fields?: HTMLInputElement[]) => void,
+  deployOptions: { title: DeployMode, active: boolean }[]
+}
+
+export interface MultiDeployInputProps {
+  deployOptions?: { title: DeployMode, active: boolean }[],
+  buttonOptions: {
+    title: string,
+    content: string,
+    classList: string,
+    dataId: string,
+    widthClass: string
+  },
+  selectedIndex: number,
+  setSelectedIndex: (index: number) => void,
+  handleMultiValsSubmit: (fields?: HTMLInputElement[]) => void,
+  inputs: {
+    internalType?: string,
+    name: string,
+    type: string
+  }[],
+  getMultiValsString: (fields: HTMLInputElement[]) => void
 }

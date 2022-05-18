@@ -63,7 +63,8 @@ export function encodeParams (params, funAbi, callback) {
     try {
       params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
       params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      funArgs = JSON.parse('[' + params + ']')
+      params = JSON.stringify([params])
+      funArgs = JSON.parse(params)
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
     }
@@ -93,6 +94,7 @@ export function encodeParams (params, funAbi, callback) {
 * @param {Function} callback    - callback
 */
 export function encodeFunctionCall (params, funAbi, callback) {
+  console.log('params: ', params)
   encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
     callback(null, { dataHex: encodeFunctionId(funAbi) + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs })

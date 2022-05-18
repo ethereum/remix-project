@@ -109,7 +109,7 @@ export class OpenZeppelinProxy extends Plugin {
 
   async isConcerned(ast: ContractAST) {
     // check in the AST if it's an upgradable contract
-    if (ast.nodes.find(node => node.absolutePath === UUPS)) {
+    if (ast.nodes && ast.nodes.find(node => node.absolutePath === UUPS)) {
       this.kind = 'UUPS'
       return true
     }
@@ -144,6 +144,7 @@ export class OpenZeppelinProxy extends Plugin {
   async execute(implAddress: string, args: string = '', initializeABI, implementationContractObject) {
     // deploy the proxy, or use an existing one
     const _data = await this.blockchain.getEncodedFunctionHex(args, initializeABI)
+    console.log('_data: ', _data)
 
     if (this.kind === 'UUPS') this.deployUUPSProxy(implAddress, _data, implementationContractObject)
   }
@@ -151,6 +152,7 @@ export class OpenZeppelinProxy extends Plugin {
   async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject) {
     const args = [implAddress, _data]
     const constructorData = await this.blockchain.getEncodedParams(args, UUPSfunAbi)
+    console.log('constructorData: ', constructorData)
     const proxyName = 'ERC1967Proxy'
     const data = {
       contractABI: UUPSABI,
