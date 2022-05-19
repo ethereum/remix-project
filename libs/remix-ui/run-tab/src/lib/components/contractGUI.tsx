@@ -1,9 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import React, { Ref, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { DeployButton } from './deployButton'
 import { MultiDeployInput } from './multiDeployInput'
 import { DeployInput } from './deployInput'
 
@@ -158,7 +157,6 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const getMultiValsString = (fields: HTMLInputElement[]) => {
     const valArray = fields
-    console.log('valArray: ', valArray)
     let ret = ''
     const valArrayTest = []
 
@@ -208,7 +206,6 @@ export function ContractGUI (props: ContractGUIProps) {
   const handleActionClick = () => {
     const deployMode = selectedDeployIndex !== null ? [props.deployOption[selectedDeployIndex].title] : []
 
-    console.log('basicInput: ', basicInput)
     props.clickCallBack(props.funcABI.inputs, basicInput, deployMode)
   }
 
@@ -219,7 +216,6 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const handleMultiValsSubmit = (fields: HTMLInputElement[]) => {
-    console.log('fields: ', fields)
     const valsString = getMultiValsString(fields)
     const deployMode = selectedDeployIndex !== null ? [props.deployOption[selectedDeployIndex].title] : []
 
