@@ -62,7 +62,6 @@ export class OpenZeppelinProxy extends Plugin {
   async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject) {
     const args = [implAddress, _data]
     const constructorData = await this.blockchain.getEncodedParams(args, UUPSfunAbi)
-    console.log('constructorData: ', constructorData)
     const proxyName = 'ERC1967Proxy'
     const data = {
       contractABI: UUPSABI,
