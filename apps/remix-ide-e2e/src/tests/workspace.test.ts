@@ -128,9 +128,34 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC20.sol"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      // check js and ts files are not transformed
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './web3'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
@@ -151,9 +176,34 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      // check js and ts files are not transformed
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './web3'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC721_test.sol"]')
   },
