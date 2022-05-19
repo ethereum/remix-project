@@ -94,7 +94,6 @@ export function encodeParams (params, funAbi, callback) {
 * @param {Function} callback    - callback
 */
 export function encodeFunctionCall (params, funAbi, callback) {
-  console.log('params: ', params)
   encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
     callback(null, { dataHex: encodeFunctionId(funAbi) + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs })
