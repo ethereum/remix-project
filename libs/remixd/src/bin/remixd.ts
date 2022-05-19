@@ -85,6 +85,8 @@ function errorHandler (error: any, service: string) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
   }
 
+  if (!program.sharedFolder) program.sharedFolder = process.cwd() // if no specified, use the current folder
+
   if (program.sharedFolder && existsSync(absolutePath('./', program.sharedFolder))) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
