@@ -59,21 +59,21 @@ module.exports = {
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(1000)
+      .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
         'Incorrect content')
@@ -81,7 +81,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`const { expect } = require("chai");`) !== -1,
         'Incorrect content')
@@ -101,7 +101,7 @@ module.exports = {
       .click('select[id="wstemplate"] option[value=blank]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .pause(1000)
+      .pause(100)
       .assert.elementPresent('*[data-id="treeViewUltreeViewMenu"]')
       .execute(function () {
         const fileList = document.querySelector('*[data-id="treeViewUltreeViewMenu"]')
@@ -123,7 +123,7 @@ module.exports = {
       .click('select[id="wstemplate"] option[value=ozerc20]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .pause(1000)
+      .pause(100)
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC20.sol"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -137,21 +137,21 @@ module.exports = {
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
         'Incorrect content')
@@ -171,7 +171,7 @@ module.exports = {
       .click('select[id="wstemplate"] option[value=ozerc721]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .pause(1000)
+      .pause(100)
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -185,21 +185,21 @@ module.exports = {
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(1000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
         'Incorrect content')
