@@ -1,4 +1,4 @@
-import { deploy } from './web3'
+import { deploy } from './web3-lib'
 
 (async () => {
     try {
