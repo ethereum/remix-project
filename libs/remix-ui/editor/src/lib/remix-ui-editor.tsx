@@ -82,12 +82,15 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
   \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
   \t\t\t\t\t\t\tKeyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + E : To find text in a file in editor\n
-  \t\t\t\t\t\t\t\tCTRL + S: To compile current solidity (.sol) file\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: To (compile contract and) run the script\n\n
+  \t\t\t\t\t\t\t\tCTRL + S: To compile current contract\n
+  \t\t\t\t\t\t\t\tCtrl + Shift + F : To open file explorer\n
+  \t\t\t\t\t\t\t\tCtrl + Shift + A : To open plugin manager\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: To compile current contract and run the script\n\n
   \t\t\t\t\t\t\tImportant Links:\n
+  \t\t\t\t\t\t\t\tOfficial website: https://remix-project.org/\n
   \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
-  \t\t\t\t\t\t\t\tCurated list of Remix resources: https://github.com/ethereum/awesome-remix\n
+  \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
+  \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
