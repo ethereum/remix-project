@@ -58,11 +58,30 @@ module.exports = {
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers'`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        'Incorrect content')
+      })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
+      .pause(1000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`const { expect } = require("chai");`) !== -1,
         'Incorrect content')
