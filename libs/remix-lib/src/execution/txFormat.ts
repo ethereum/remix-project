@@ -61,11 +61,9 @@ export function encodeParams (params, funAbi, callback) {
     data = Buffer.from(dataHex, 'hex')
   } else {
     try {
-      params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-      params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      const args = '[' + params + ']'
-    
-      funArgs = JSON.parse(args)
+      if (params.length > 0) {
+        funArgs = parseFunctionParams(params)
+      }
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
     }
