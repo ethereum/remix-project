@@ -1,8 +1,5 @@
-<<<<<<< HEAD:libs/remix-ws-templates/src/templates/ozerc20/scripts/ethers-lib.ts
-import { ethers } from 'ethers-lib'
+import { ethers } from 'ethers'
 
-=======
->>>>>>> 03bafc1b0 (js ts content check for all templates):libs/remix-ws-templates/src/templates/ozerc20/scripts/ethers.ts
 export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => {    
 
     console.log(`deploying ${contractName}`)
