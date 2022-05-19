@@ -3,14 +3,7 @@ import { MultiDeployInputProps } from '../types'
 import { DeployButton } from './deployButton'
 
 export function MultiDeployInput (props: MultiDeployInputProps) {
-  const [showOptions, setShowOptions] = useState<boolean>(false)
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
-
-  const toggleOptions = () => {
-    setShowOptions(!showOptions)
-  }
-
-  // TODO: Clear multiFields after deployment.
   
   return ( 
     <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
