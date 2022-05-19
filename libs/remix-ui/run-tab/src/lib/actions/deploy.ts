@@ -160,7 +160,6 @@ export const createInstance = async (
     if (isProxyDeployment) {
       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
 
-      console.log('args: ', args)
       plugin.call('openzeppelin-proxy', 'execute', addressToString(address), args, initABI, contractObject)
     }
   }
