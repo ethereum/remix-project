@@ -111,7 +111,6 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
-        console.log("compile from ", this.configFilePath)
         this.api.readFile(this.configFilePath).then( contentConfig => {
           this.compiler.set('configFileContent', contentConfig)
         })

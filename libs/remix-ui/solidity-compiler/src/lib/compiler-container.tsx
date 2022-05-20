@@ -197,7 +197,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
     })
     api.setAppParameter('useFileConfiguration', state.useFileConfiguration)
+  }
 
+  const openFile = async () => {
+    await api.openFile(state.configFilePath)
   }
 
   const createNewConfigFile = async () => {
@@ -752,7 +755,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start flex-column d-flex`}>
-            { (!showFilePathInput && state.useFileConfiguration) && <span className="py-2 text-primary">{state.configFilePath}</span> }
+            { (!showFilePathInput && state.useFileConfiguration) && <span
+              title="Click to open the config file."
+              onClick={openFile}
+              className="py-2 text-primary remixui_compilerConfigPath"
+            >{state.configFilePath}</span> }
             { (!showFilePathInput&& !state.useFileConfiguration) && <span className="py-2 text-secondary">{state.configFilePath}</span> }
             <input
               ref={configFilePathInput}
