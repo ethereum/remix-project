@@ -143,6 +143,7 @@ class Editor extends Plugin {
     this.on('fileManager', 'fileClosed', (name) => {
       if (name === this.currentFile) {
         this.currentFile = null
+        this.renderComponent()
       }
     })
     this.on('theme', 'themeLoaded', (theme) => {
