@@ -77,7 +77,8 @@ export interface CompilerInput {
       // after remappings were applied.
       // If this key is an empty string, that refers to a global level.
       [fileName: string]: Record<string, string>
-    }
+    },
+    parserErrorRecovery: boolean,
     // The following can be used to select desired outputs based
     // on file and contract names.
     // If this field is omitted, then the compiler loads and does type checking,
@@ -123,7 +124,7 @@ export interface CompilerInput {
     outputSelection?: {
         '*': {
           '': [ 'ast' ],
-          '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly' ]
+          '*':  any
         }
     }
   }

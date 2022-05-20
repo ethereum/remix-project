@@ -316,7 +316,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
         }
       }     
     }
+
+    this.data.eventHandlers.onAstFinished = async (success, data, source, input, version) => {
+      this.emit('astFinished', source.target, source, 'soljson', data, input, version)
+    }
+
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
+    this.compiler.event.register('astFinished', this.data.eventHandlers.onAstFinished)
 
     this.data.eventHandlers.onThemeChanged = (theme) => {
       const invert = theme.quality === 'dark' ? 1 : 0

@@ -14,7 +14,7 @@ export class RemixReferenceProvider {
         const nodes = await this.props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
         const references = []
         if (nodes && nodes.length) {
-          const compilationResult = await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
+          const compilationResult = await this.props.plugin.call('contextualListener', 'getLastCompilationResult')
           const file = await this.props.plugin.call('fileManager', 'file')
           if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
             for (const node of nodes) {
