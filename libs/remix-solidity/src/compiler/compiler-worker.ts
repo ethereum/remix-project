@@ -26,7 +26,10 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
               missingInputs.push(path)
               return { error: 'Deferred import' }
             }
-            return compiler.compile(input, { import: missingInputsCallback })
+            //console.log(input)
+            const ret = compiler.compile(input, { import: missingInputsCallback })
+            //console.log(JSON.parse(ret))
+            return ret
           } catch (exception) {
             return JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception })
           }

@@ -162,6 +162,7 @@ export class Compiler {
       }
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
+    this.event.trigger('astFinished', [true, data, source, input, version])
   }
 
   /**
@@ -252,6 +253,7 @@ export class Compiler {
    */
 
   loadWorker (url: string): void {
+    console.log("WEB", webworkify)
     this.state.worker = webworkify(require.resolve('./compiler-worker'))
     const jobs: Record<'sources', SourceWithTarget> [] = []
 
