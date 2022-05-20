@@ -66,6 +66,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [workspaceName])
 
   useEffect(() => {
+    const listener = (event) => {
+      console.log("mouse event ", event)
+      if (configFilePathInput.current !== event.target) {
+        setShowFilePathInput(false)
+        return;
+      }
+    };
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    }
+  })
+
+  useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
       setState(prevState => {
         return { ...prevState, allversions }
