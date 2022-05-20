@@ -52,9 +52,14 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   }
 
   setCompilerParameters (params) {
+    console.log("compiler.ts")
     for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }
+  }
+
+  async openFile (path) {
+    return await PluginClient.call('fileManager', 'open', path)
   }
 
   async getAppParameter (name) {
