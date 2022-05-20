@@ -10,6 +10,16 @@ export class RemixHoverProvider {
     }
 
     provideHover = async function (model: any, position: any) {
+        return new Promise((resolve, reject) => {
+            this.props.plugin.once('contextualListener', 'astFinished', async () => {
+                console.log('AST FINISHED')
+                resolve(await this.run(model, position))
+            })
+            this.props.plugin.call('contextualListener', 'compile')
+        })
+
+    }
+    async run(model: any, position: any) {
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
 
         const nodeDefinition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
@@ -31,7 +41,7 @@ export class RemixHoverProvider {
 
         const getLinks = async (node: any) => {
             const position = await this.props.plugin.call('contextualListener', 'positionOfDefinition', node)
-            const lastCompilationResult = await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
+            const lastCompilationResult = await this.props.plugin.call('contextualListener', 'getLastCompilationResult')
             const filename = lastCompilationResult.getSourceName(position.file)
             console.log(filename, position)
             const lineColumn = await this.props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
@@ -47,9 +57,14 @@ export class RemixHoverProvider {
         const getVariableDeclaration = async (node: any) => {
             if (node.typeDescriptions && node.typeDescriptions.typeString) {
                 return `${node.typeDescriptions.typeString}${node.name && node.name.length ? ` ${node.name}` : ''}`
-            }
+            } else
+                if (node.typeName && node.typeName.name) {
+                    return `${node.typeName.name}${node.name && node.name.length ? ` ${node.name}` : ''}`
+                } else {
+                    return `${node.name && node.name.length ? ` ${node.name}` : ''}`
+                }
         }
-        
+
 
         const getParamaters = async (parameters: any) => {
             if (parameters && parameters.parameters) {
@@ -90,7 +105,7 @@ export class RemixHoverProvider {
             contents.push({
                 value: 'No definition found. Please compile the source code.'
             })
-        } 
+        }
 
         if (nodeDefinition) {
             if (nodeDefinition.absolutePath) {

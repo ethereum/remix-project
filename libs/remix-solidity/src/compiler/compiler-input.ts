@@ -12,14 +12,18 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
         runs: opts.runs || 200
       },
       libraries: opts.libraries,
+      parserErrorRecovery: false,
       outputSelection: {
         '*': {
           '': ['ast'],
-          '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
+          '*': []
+         //'*' : ['abi', 'metadata']
+         // '*':  ['abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
         }
       }
     }
   }  
+  
   if (opts.evmVersion) {
     if (opts.evmVersion.toLowerCase() == 'default') {
       opts.evmVersion = null

@@ -2,10 +2,12 @@
 import { Plugin } from '@remixproject/engine'
 
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { compile } from '@remix-project/remix-solidity'
+import { canUseWorker, Compiler, CompilerAbstract, urlFromVersion } from '@remix-project/remix-solidity-ts'
 
 const profile = {
   name: 'contextualListener',
-  methods: ['getNodeById', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -36,6 +38,9 @@ export class EditorContextListener extends Plugin {
   contract: any
   activated: boolean
 
+  compiler: Compiler
+  lastCompilationResult: any
+
   constructor(astWalker) {
     super(profile)
     this.activated = false
@@ -51,19 +56,26 @@ export class EditorContextListener extends Plugin {
   onActivation() {
     this.on('editor', 'contentChanged', () => { this._stopHighlighting() })
 
-    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
-      if (languageVersion.indexOf('soljson') !== 0) return
+    this.on('solidity', 'astFinished', async (file, source, languageVersion, data, input, version) => {
+      console.log('compilation result', Object.keys(data.sources))
+      if (languageVersion.indexOf('soljson') !== 0 || !data.sources) return
+      if (data.sources && Object.keys(data.sources).length === 0) return
+      this.lastCompilationResult = new CompilerAbstract(languageVersion, data, source, input)
+
       this._stopHighlighting()
       this._index = {
         Declarations: {},
         FlatReferences: {}
       }
       this._buildIndex(data, source)
+      this.emit('astFinished')
     })
 
     setInterval(async () => {
-      const compilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+
+      const compilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
       if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
+
         let currentFile
         try {
           currentFile = await this.call('fileManager', 'file')
@@ -77,8 +89,15 @@ export class EditorContextListener extends Plugin {
         )
       }
     }, 1000)
+  }
 
-    this.activated = true
+  async getLastCompilationResult() {
+    return this.lastCompilationResult
+  }
+
+  async compile() {
+    this.currentFile = await this.call('fileManager', 'file')
+    return await this.call('solidity', 'compile', this.currentFile)
   }
 
   getActiveHighlights() {
@@ -116,7 +135,7 @@ export class EditorContextListener extends Plugin {
   }
 
   async nodesAtEditorPosition(position: any) {
-    const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    const lastCompilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
     if (!lastCompilationResult) return false
     let urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
@@ -146,7 +165,7 @@ export class EditorContextListener extends Plugin {
 
   async definitionAtPosition(position: any) {
     const nodes = await this.nodesAtEditorPosition(position)
-    console.log(nodes)
+    console.log('nodes at position', nodes)
     console.log(this._index.FlatReferences)
     let nodeDefinition: any
     let node: any
@@ -164,10 +183,10 @@ export class EditorContextListener extends Plugin {
         }
       }
       return nodeDefinition
-    }else{
+    } else {
       return false
     }
-    
+
   }
 
   async positionOfDefinition(node: any) {
@@ -185,14 +204,18 @@ export class EditorContextListener extends Plugin {
   async jumpToDefinition(position: any) {
     const node = await this.definitionAtPosition(position)
     const sourcePosition = await this.positionOfDefinition(node)
-    if(sourcePosition){
+    if (sourcePosition) {
       await this.jumpToPosition(sourcePosition)
-    }  
+    }
   }
 
- /*
- * onClick jump to position of ast node in the editor
- */
+  async getNodes() {
+    return this._index.FlatReferences
+  }
+
+  /*
+  * onClick jump to position of ast node in the editor
+  */
   async jumpToPosition(position: any) {
     const jumpToLine = async (fileName: string, lineColumn: any) => {
       if (fileName !== await this.call('fileManager', 'file')) {
@@ -203,7 +226,7 @@ export class EditorContextListener extends Plugin {
         this.call('editor', 'gotoLine', lineColumn.start.line, lineColumn.end.column + 1)
       }
     }
-    const lastCompilationResult = await this.call('compilerArtefacts', 'getLastCompilationResult')
+    const lastCompilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
     console.log(lastCompilationResult.getSourceCode().sources)
     console.log(position)
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
