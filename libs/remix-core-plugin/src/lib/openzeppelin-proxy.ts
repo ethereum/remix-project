@@ -16,7 +16,7 @@ export class OpenZeppelinProxy extends Plugin {
     this.blockchain = blockchain
   }
 
-  async isConcerned(ast: ContractAST) {
+  async isConcerned(ast: ContractAST = {} as ContractAST) {
     // check in the AST if it's an upgradable contract
     if (ast.nodes && ast.nodes.find(node => node.absolutePath === UUPS)) {
       this.kind = 'UUPS'
