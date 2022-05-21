@@ -144,8 +144,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }
 
   const clickCallback = (inputs, value, deployMode?: DeployMode[]) => {
-    console.log('value: ', value)
-    console.log('deployMode: ', deployMode)
     createInstance(loadedContractData, value, deployMode)
   }
 

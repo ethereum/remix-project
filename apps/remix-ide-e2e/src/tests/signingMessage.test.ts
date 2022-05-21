@@ -33,7 +33,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .pause(5000)
       .selectContract('ECVerify')
-      .createContract('')
+      .createContract([''])
       .clickInstance(0)
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {

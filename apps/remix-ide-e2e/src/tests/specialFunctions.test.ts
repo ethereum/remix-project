@@ -24,7 +24,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .selectContract('CheckSpecials')
-      .createContract('') // deploy
+      .createContract(['']) // deploy
       .clickInstance(0)
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
@@ -92,7 +92,7 @@ module.exports = {
       .testContracts('receiveOnly.sol', sources[1]['receiveOnly.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
-      .createContract('')
+      .createContract([''])
       .clickInstance(0)
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
@@ -122,7 +122,7 @@ module.exports = {
       .testContracts('fallbackOnlyPayable.sol', sources[2]['fallbackOnlyPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
-      .createContract('')
+      .createContract([''])
       .clickInstance(0)
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
@@ -153,7 +153,7 @@ module.exports = {
       .testContracts('fallbackOnlyNotPayable.sol', sources[3]['fallbackOnlyNotPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
-      .createContract('')
+      .createContract([''])
       .clickInstance(0)
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
@@ -174,7 +174,7 @@ module.exports = {
       .clearValue('#value')
       .setValue('#value', '0')
       .pause(2000)
-      .createContract('')
+      .createContract([''])
       .pause(1000)
       .clickInstance(0).pause(1000)
       .perform((done) => {
@@ -208,7 +208,7 @@ module.exports = {
       .waitForElementVisible('#value')
       .clearValue('#value')
       .setValue('#value', '0').pause(2000)
-      .createContract('')
+      .createContract([''])
       .clickInstance(0)
       .pause(1000)
       .perform((done) => {

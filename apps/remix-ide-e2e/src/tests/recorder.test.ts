@@ -39,7 +39,7 @@ module.exports = {
     'Save scenario': function (browser: NightwatchBrowser) {
       browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
-      .createContract('12')
+      .createContract(['12'])
       .clickInstance(0)
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
       .click('i.savetransaction')
@@ -72,11 +72,11 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
       .pause(1000)
-      .createContract('')
+      .createContract([''])
       .clickInstance(0)
       .selectContract('t2est')
       .pause(1000)
-      .createContract('')
+      .createContract([''])
       .click('i.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
