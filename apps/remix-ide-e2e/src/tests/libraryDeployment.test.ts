@@ -22,7 +22,7 @@ module.exports = {
     browser.verifyContracts(['test'])
       .clickLaunchIcon('udapp')
       .selectContract('test')
-      .createContract([''])
+      .createContract([])
       .getAddressAtPosition(0, (address) => {
         console.log('testAutoDeployLib ' + address)
         addressRef = address
@@ -46,7 +46,7 @@ module.exports = {
       .verifyContracts(['test'])
       .clickLaunchIcon('udapp')
       .selectContract('lib') // deploy lib
-      .createContract([''])
+      .createContract([])
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
           console.log(address)
@@ -74,7 +74,7 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
     .openFile('Untitled5.sol')
     .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
-    .createContract([''])
+    .createContract([])
     .pause(2000)
     .getText('div[class^="terminal"]', (value) => {
       console.log('value: ', value)
@@ -98,7 +98,7 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
     .openFile('Untitled5.sol')
     .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
-    .createContract([''])
+    .createContract([])
     .getAddressAtPosition(1, (address) => {
       addressRef = address
     })
