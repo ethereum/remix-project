@@ -102,7 +102,7 @@ const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispat
   })
   const index = contracts.findIndex(contract => contract.alias === plugin.REACT_API.contracts.currentContract)
 
-  if (index < 0) dispatch(setCurrentContract(contracts[0].alias))
+  if ((index < 0) && (contracts.length > 0)) dispatch(setCurrentContract(contracts[0].alias))
   const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file] ? data.sources[file].ast : {})
 
   if (isUpgradeable) {
