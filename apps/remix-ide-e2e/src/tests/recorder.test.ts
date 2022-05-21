@@ -72,11 +72,11 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
       .pause(1000)
-      .createContract([''])
+      .createContract([])
       .clickInstance(0)
       .selectContract('t2est')
       .pause(1000)
-      .createContract([''])
+      .createContract([])
       .click('i.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
