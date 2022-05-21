@@ -172,7 +172,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
-      .createContract([''])
+      .createContract([])
       .pause(1000)
       .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
       .pause(5000)
