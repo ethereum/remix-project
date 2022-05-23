@@ -61,13 +61,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       }
     })
     api.setAppParameter('configFilePath', "/compiler_config.json")
-    api.setAppParameter('useFileConfiguration', false)
     setShowFilePathInput(false)
   }, [workspaceName])
 
   useEffect(() => {
     const listener = (event) => {
-      console.log("mouse event ", event)
       if (configFilePathInput.current !== event.target) {
         setShowFilePathInput(false)
         return;
@@ -194,9 +192,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const toggleConfigType = () => {
     setState(prevState => {
+      api.setAppParameter('useFileConfiguration', !state.useFileConfiguration)
       return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
     })
-    api.setAppParameter('useFileConfiguration', state.useFileConfiguration)
   }
 
   const openFile = async () => {
