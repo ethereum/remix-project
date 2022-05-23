@@ -61,15 +61,15 @@ export function encodeParams (params, funAbi, callback) {
     data = Buffer.from(dataHex, 'hex')
   } else {
     try {
-      if (params.length > 0) {
-        funArgs = parseFunctionParams(params)
-      }
+      funArgs = parseFunctionParams(params)
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
     }
     try {
-      data = encodeParamsHelper(funAbi, funArgs)
-      dataHex = data.toString()
+      if (funArgs.length > 0) {
+        data = encodeParamsHelper(funAbi, funArgs)
+        dataHex = data.toString()
+      }
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
     }
