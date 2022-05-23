@@ -27,10 +27,6 @@ export function createContract (from, data, value, gasLimit, txRunner, callbacks
   })
 }
 
-export async function deployProxy (bytecode, abi, implAddress, signer, _data) {
-  
-}
-
 /**
   * call the current given contract ! that will create a transaction !
   *
