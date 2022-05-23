@@ -6,19 +6,6 @@ import { CompilerApiMixin } from './compiler-api'
 import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 
-const profile = {
-  name: 'solidity',
-  displayName: 'Solidity compiler',
-  icon: 'assets/img/solidity.webp',
-  description: 'Compile solidity contracts',
-  kind: 'compiler',
-  permission: true,
-  location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
-  version: '0.0.1',
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState']
-}
-
 const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
@@ -52,7 +39,6 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   }
 
   setCompilerParameters (params) {
-    console.log("compiler.ts")
     for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }
