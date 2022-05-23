@@ -410,7 +410,7 @@ export function decodeResponse (response, fnabi) {
 }
 
 export function parseFunctionParams (params) {
-  let args = []
+  const args = []
   // Check if parameter string starts with array or string
   let startIndex = isArrayOrStringStart(params, 0) ? -1 : 0
   for (let i = 0; i < params.length; i++) {
