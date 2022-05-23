@@ -135,8 +135,6 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   setCompilerParameters (params) {
-    console.log("compiler-tab.ts")
-
     this.queryParams.update(params)
   }
 

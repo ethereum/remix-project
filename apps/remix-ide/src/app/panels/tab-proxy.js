@@ -215,6 +215,7 @@ export class TabProxy extends Plugin {
   }
 
   renameTab (oldName, newName) {
+    // The new tab is being added by FileManager
     this.removeTab(oldName)
   }
 
