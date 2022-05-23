@@ -169,8 +169,12 @@ export class TabProxy extends Plugin {
     this.on('manager', 'pluginDeactivated', (profile) => {
       this.removeTab(profile.name)
     })
-
-    this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
+    
+    try {
+      this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
+    } catch (e) {
+      console.log('theme plugin has an issue: ', e)
+    }
     this.renderComponent()
   }
 
