@@ -13,7 +13,7 @@ const defaultCompilerParameters = {
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,
-  configFilePath: "/compiler_config.json"
+  configFilePath: "compiler_config.json"
 }
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
   constructor () {
@@ -42,10 +42,6 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }
-  }
-
-  async openFile (path) {
-    return await PluginClient.call('fileManager', 'open', path)
   }
 
   async getAppParameter (name) {

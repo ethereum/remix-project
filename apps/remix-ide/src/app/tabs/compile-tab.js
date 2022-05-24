@@ -138,10 +138,6 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.queryParams.update(params)
   }
 
-  async openFile (path) {
-    return await this.call('fileManager', 'open', path)
-  }
-
   async getAppParameter (name) {
     return await this.call('config', 'getAppParameter', name)
   }
