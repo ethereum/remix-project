@@ -48,7 +48,6 @@ export class CompileTabLogic {
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
-    this.configFilePath = this.api.getCompilerParameters().configFilePath
     this.language = getValidLanguage(this.api.getCompilerParameters().language)
     if (this.language != null) {
       this.compiler.set('language', this.language)
