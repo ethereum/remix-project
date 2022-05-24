@@ -105,8 +105,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('hardhat', 'compile', configFile)
   }
 
-  compileWithTruffle () {
-    return this.call('truffle', 'compile')
+  compileWithTruffle (configFile) {
+    return this.call('truffle', 'compile', configFile)
   }
 
   logToTerminal (content) {

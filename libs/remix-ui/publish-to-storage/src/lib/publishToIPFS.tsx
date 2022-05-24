@@ -24,33 +24,41 @@ export const publishToIPFS = async (contract, api) => {
   }
 
   await Promise.all(Object.keys(metadata.sources).map(fileName => {
-    // find hash
-    let hash = null
-    try {
-      // we try extract the hash defined in the metadata.json
-      // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
-      // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
-      // if we don't find the hash in the metadata.json, the check is not done.
-      //
-      // TODO: refactor this with publishOnSwarm
-      if (metadata.sources[fileName].urls) {
-        metadata.sources[fileName].urls.forEach(url => {
-          if (url.includes('ipfs')) hash = url.match('dweb:/ipfs/(.+)')[1]
-        })
+    return new Promise((resolve, reject) => {
+      // find hash
+      let hash = null
+      try {
+        // we try extract the hash defined in the metadata.json
+        // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
+        // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
+        // if we don't find the hash in the metadata.json, the check is not done.
+        //
+        // TODO: refactor this with publishOnSwarm
+        if (metadata.sources[fileName].urls) {
+          metadata.sources[fileName].urls.forEach(url => {
+            if (url.includes('ipfs')) hash = url.match('dweb:/ipfs/(.+)')[1]
+          })
+        }
+      } catch (e) {
+        return reject(new Error('Error while extracting the hash from metadata.json'))
       }
-    } catch (e) {
-      throw new Error('Error while extracting the hash from metadata.json')
-    }
 
-    api.readFile(fileName).then((content) => {
-      sources.push({
-        content: content,
-        hash: hash,
-        filename: fileName
+      api.readFile(fileName).then((content) => {
+        sources.push({
+          content: content,
+          hash: hash,
+          filename: fileName
+        })
+        resolve({
+          content: content,
+          hash: hash,
+          filename: fileName
+        })
+      }).catch((error) => {
+        console.log(error)
+        reject(error)
       })
-    }).catch((error) => {
-      console.log(error)
-    })
+    })    
   }))
   // publish the list of sources in order, fail if any failed
   await Promise.all(sources.map(async (item) => {

@@ -34,11 +34,11 @@ export class CompileAndRun extends Plugin {
             e.preventDefault()
             this.targetFileName = file
             await this.call('solidity', 'compile', file)
-            _paq.push(['trackEvent', 'ScriptExecutor', 'compile_solidity'])
+            _paq.push(['trackEvent', 'ScriptExecutor', 'CompileAndRun', 'compile_solidity'])
           } else if (file.endsWith('.js') || file.endsWith('.ts')) {
             e.preventDefault()
             this.runScript(file, false)
-            _paq.push(['trackEvent', 'ScriptExecutor', 'run_script'])
+            _paq.push(['trackEvent', 'ScriptExecutor', 'CompileAndRun', 'run_script'])
           }
         }
       }
@@ -47,7 +47,7 @@ export class CompileAndRun extends Plugin {
 
   runScriptAfterCompilation (fileName: string) {
     this.targetFileName = fileName
-    _paq.push(['trackEvent', 'ScriptExecutor', 'request_run_script'])
+    _paq.push(['trackEvent', 'ScriptExecutor', 'CompileAndRun', 'request_run_script'])
   }
 
   async runScript (fileName, clearAllInstances) {
@@ -78,7 +78,7 @@ export class CompileAndRun extends Plugin {
           const file = contract.object.devdoc['custom:dev-run-script']
           if (file) {
             this.runScript(file, true)
-            _paq.push(['trackEvent', 'ScriptExecutor', 'run_script_after_compile'])
+            _paq.push(['trackEvent', 'ScriptExecutor', 'CompileAndRun', 'run_script_after_compile'])
           } else {
             this.call('notification', 'toast', 'You have not set a script to run. Set it with @custom:dev-run-script NatSpec tag.')
           }
