@@ -752,7 +752,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" />
             <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
           </div>
-          <div className={`pt-2 ml-4 ml-2 align-items-start flex-column d-flex`}>
+          <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             { (!showFilePathInput && state.useFileConfiguration) && <span
               title="Click to open the config file."
               onClick={openFile}
@@ -771,7 +771,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 }
               }}
             />
-            { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Set new config file</button> }
+            { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
           </div>
         </div>
         <div className="px-4">
