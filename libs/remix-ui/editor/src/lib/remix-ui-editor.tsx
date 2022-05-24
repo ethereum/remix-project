@@ -82,12 +82,12 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
   \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
   \t\t\t\t\t\t\tKeyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + S: To compile current contract\n
-  \t\t\t\t\t\t\t\tCtrl + Shift + F : To open file explorer\n
-  \t\t\t\t\t\t\t\tCtrl + Shift + A : To open plugin manager\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: To compile current contract and run the script\n\n
+  \t\t\t\t\t\t\t\tCTRL + S: Compile the current contract\n
+  \t\t\t\t\t\t\t\tCtrl + Shift + F : Open the File Explorer\n
+  \t\t\t\t\t\t\t\tCtrl + Shift + A : Open the Plugin Manager\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n\n
   \t\t\t\t\t\t\tImportant Links:\n
-  \t\t\t\t\t\t\t\tOfficial website: https://remix-project.org/\n
+  \t\t\t\t\t\t\t\tOfficial website about the Remix Project: https://remix-project.org/\n
   \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
   \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
