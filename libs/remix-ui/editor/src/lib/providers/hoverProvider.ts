@@ -10,6 +10,8 @@ export class RemixHoverProvider {
     }
 
     provideHover = async function (model: any, position: any) {
+        console.log('HOVERING')
+        return await this.run(model, position)
         return new Promise((resolve, reject) => {
             this.props.plugin.once('contextualListener', 'astFinished', async () => {
                 console.log('AST FINISHED')
@@ -22,8 +24,8 @@ export class RemixHoverProvider {
     async run(model: any, position: any) {
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
 
-        const nodeDefinition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
-        console.log(nodeDefinition)
+        const nodeAtPosition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
+        console.log(nodeAtPosition)
         const contents = []
 
         const getDocs = async (node: any) => {
@@ -37,6 +39,20 @@ export class RemixHoverProvider {
                     value: text
                 })
             }
+        }
+
+        const getScope = async (node: any) => {
+            if (node.id) {
+                contents.push({
+                    value: `id: ${node.id}`
+                })
+            }
+            if (node.scope) {
+                contents.push({
+                    value: `scope: ${node.scope}`
+                })
+            }
+
         }
 
         const getLinks = async (node: any) => {
@@ -101,50 +117,50 @@ export class RemixHoverProvider {
             return ''
         }
 
-        if (!nodeDefinition) {
+        if (!nodeAtPosition) {
             contents.push({
                 value: 'No definition found. Please compile the source code.'
             })
         }
 
-        if (nodeDefinition) {
-            if (nodeDefinition.absolutePath) {
-                const target = await this.props.plugin.call('fileManager', 'getPathFromUrl', nodeDefinition.absolutePath)
-                if (target.file !== nodeDefinition.absolutePath) {
+        if (nodeAtPosition) {
+            if (nodeAtPosition.absolutePath) {
+                const target = await this.props.plugin.call('fileManager', 'getPathFromUrl', nodeAtPosition.absolutePath)
+                if (target.file !== nodeAtPosition.absolutePath) {
                     contents.push({
                         value: `${target.file}`
                     })
                 }
                 contents.push({
-                    value: `${nodeDefinition.absolutePath}`
+                    value: `${nodeAtPosition.absolutePath}`
                 })
             }
-            if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'VariableDeclaration') {
+            if (nodeAtPosition.typeDescriptions && nodeAtPosition.nodeType === 'VariableDeclaration') {
                 contents.push({
-                    value: await getVariableDeclaration(nodeDefinition)
+                    value: await getVariableDeclaration(nodeAtPosition)
                 })
 
             }
-            else if (nodeDefinition.typeDescriptions && nodeDefinition.nodeType === 'ElementaryTypeName') {
+            else if (nodeAtPosition.typeDescriptions && nodeAtPosition.nodeType === 'ElementaryTypeName') {
                 contents.push({
-                    value: `${nodeDefinition.typeDescriptions.typeString}`
+                    value: `${nodeAtPosition.typeDescriptions.typeString}`
                 })
 
-            } else if (nodeDefinition.nodeType === 'FunctionDefinition') {
+            } else if (nodeAtPosition.nodeType === 'FunctionDefinition') {
                 contents.push({
-                    value: `function ${nodeDefinition.name} ${await getParamaters(nodeDefinition.parameters)} ${nodeDefinition.visibility} ${nodeDefinition.stateMutability}${await getOverrides(nodeDefinition)} returns ${await getParamaters(nodeDefinition.returnParameters)}`
+                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition.parameters)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} returns ${await getParamaters(nodeAtPosition.returnParameters)}`
                 })
 
 
-            } else if (nodeDefinition.nodeType === 'ContractDefinition') {
+            } else if (nodeAtPosition.nodeType === 'ContractDefinition') {
                 contents.push({
-                    value: `${nodeDefinition.contractKind} ${nodeDefinition.name} ${await getlinearizedBaseContracts(nodeDefinition)}`
+                    value: `${nodeAtPosition.contractKind} ${nodeAtPosition.name} ${await getlinearizedBaseContracts(nodeAtPosition)}`
                 })
 
 
             } else {
                 contents.push({
-                    value: `${nodeDefinition.nodeType}`
+                    value: `${nodeAtPosition.nodeType}`
                 })
 
             }
@@ -152,9 +168,9 @@ export class RemixHoverProvider {
             for (const key in contents) {
                 contents[key].value = '```remix-solidity\n' + contents[key].value + '\n```'
             }
-            getLinks(nodeDefinition)
-            getDocs(nodeDefinition)
-
+            getLinks(nodeAtPosition)
+            getDocs(nodeAtPosition)
+            getScope(nodeAtPosition)
         }
 
 
