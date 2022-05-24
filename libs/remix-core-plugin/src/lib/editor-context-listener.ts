@@ -7,7 +7,7 @@ import { canUseWorker, Compiler, CompilerAbstract, urlFromVersion } from '@remix
 
 const profile = {
   name: 'contextualListener',
-  methods: ['getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['nodesWithScope', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -57,7 +57,7 @@ export class EditorContextListener extends Plugin {
     this.on('editor', 'contentChanged', () => { this._stopHighlighting() })
 
     this.on('solidity', 'astFinished', async (file, source, languageVersion, data, input, version) => {
-      console.log('compilation result', Object.keys(data.sources))
+      // console.log('compilation result', Object.keys(data.sources))
       if (languageVersion.indexOf('soljson') !== 0 || !data.sources) return
       if (data.sources && Object.keys(data.sources).length === 0) return
       this.lastCompilationResult = new CompilerAbstract(languageVersion, data, source, input)
@@ -134,12 +134,12 @@ export class EditorContextListener extends Plugin {
     return results
   }
 
-  async nodesAtEditorPosition(position: any) {
+  async nodesAtEditorPosition(position: any, type: string = '') {
     const lastCompilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
     if (!lastCompilationResult) return false
     let urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
-      const nodes = sourceMappingDecoder.nodesAtPosition(null, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
+      const nodes = sourceMappingDecoder.nodesAtPosition(type, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
       return nodes
     }
     return []
@@ -163,6 +163,14 @@ export class EditorContextListener extends Plugin {
     }
   }
 
+  async nodesWithScope(scope: any) {
+    const nodes = []
+    for(const node of Object.values(this._index.FlatReferences) as any[]){
+      if(node.scope === scope) nodes.push(node)
+    }
+    return nodes
+  }
+  
   async definitionAtPosition(position: any) {
     const nodes = await this.nodesAtEditorPosition(position)
     console.log('nodes at position', nodes)

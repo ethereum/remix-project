@@ -1,4 +1,3 @@
-
 export class RemixCompletionProvider {
 
     props: any
@@ -8,42 +7,133 @@ export class RemixCompletionProvider {
         this.monaco = monaco
     }
 
-    async provideCompletionItems(model: any, position: any) {
-        console.log('AUTOCOMPLETE')
+    triggerCharacters = ['.', '']
+    async provideCompletionItems(model: any, position: any, context: any) {
+        console.log('AUTOCOMPLETE', context)
+        return await this.run(model, position, context)
         return new Promise((resolve, reject) => {
             this.props.plugin.once('contextualListener', 'astFinished', async () => {
                 console.log('AST FINISHED')
-                resolve(await this.run(model, position))
+                resolve(await this.run(model, position, context))
             })
             this.props.plugin.call('contextualListener', 'compile')
         })
     }
 
-    async run(model: any, position: any) {
+    async run(model: any, position: any, context: any) {
         const textUntilPosition = model.getValueInRange({
-			startLineNumber: 1,
-			startColumn: 1,
-			endLineNumber: position.lineNumber,
-			endColumn: position.column
-		});
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+        });
 
-		const word = model.getWordUntilPosition(position);
-		const range = {
-			startLineNumber: position.lineNumber,
-			endLineNumber: position.lineNumber,
-			startColumn: word.startColumn,
-			endColumn: word.endColumn
-		};
-        const nodes = await this.props.plugin.call('contextualListener', 'getNodes')
+        const word = model.getWordUntilPosition(position);
+        const wordAt = model.getWordAtPosition(position);
+        const range = {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn
+        };
 
+
+        const getlinearizedBaseContracts = async (node: any) => {
+            let params = []
+            if (node.linearizedBaseContracts) {
+                for (const id of node.linearizedBaseContracts) {
+                    if (id !== node.id) {
+                        const baseContract = await this.props.plugin.call('contextualListener', 'getNodeById', id)
+                        params = [...params, ...[baseContract]]
+                    }
+                }
+            }
+            return params
+        }
+
+
+        const line = model.getLineContent(position.lineNumber)
+        let nodes
+
+
+
+        if (context.triggerCharacter === '.') {
+            console.log('TEXT', line)
+            const splits = line.split('.')
+            console.log('splits', splits)
+            if (splits.length > 1) {
+                const last = splits[splits.length - 2].trim()
+                console.log('last', last)
+                const cursorPosition = this.props.editorAPI.getCursorPosition()
+                const nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
+                console.log('NODES AT POSITION', nodesAtPosition)
+                for (const node of nodesAtPosition) {
+                    const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
+                    console.log('NODES OF SCOPE ', node.name, node.id, nodesOfScope)
+                    for (const nodeOfScope of nodesOfScope) {
+                        if (nodeOfScope.name === last) {
+                            console.log('FOUND NODE', nodeOfScope)
+                            if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
+                                const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
+                                console.log('HAS DECLARATION OF', declarationOf)
+                                nodes = declarationOf.nodes
+                            }
+                        }
+                    }
+                }
+            }
+            /*
+            console.log('TEXT', line)
+            const splits = line.split('.')
+            console.log('splits', splits)
+            if(splits.length > 1) {
+                const last = splits[splits.length - 2].trim()
+                console.log('last', last)
+                for(const node of Object.values(nodes) as any[]){
+                    if(node.name === last) {
+                        console.log('FOUND', node)
+                        const cursorPosition = this.props.editorAPI.getCursorPosition()
+                        const nodeAtPosition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
+                        console.log('NODE AT POSITION', nodeAtPosition)
+                        if(nodeAtPosition && nodeAtPosition.nodeType === 'Block'){
+                            if(node.scope && node.scope === nodeAtPosition.id) {
+                                console.log('NODE IN SCOPE', node)
+                            }
+                        }
+                    }
+                }
+            }
+            */
+        } else {
+            const cursorPosition = this.props.editorAPI.getCursorPosition()
+            const nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
+            nodes = []
+            console.log('NODES AT POSITION', nodesAtPosition)
+
+            for (const node of nodesAtPosition) {
+                const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
+                nodes = [...nodes, ...nodesOfScope]
+            }
+            for (const node of nodesAtPosition) {
+                const baseContracts = await getlinearizedBaseContracts(node)
+                for (const baseContract of baseContracts) {
+                    nodes = [...nodes, ...baseContract.nodes]
+                }
+            }
+            //nodes  = await this.props.plugin.call('contextualListener', 'getNodes')
+        }
+
+
+        console.log('WORD', word, wordAt)
         console.log('NODES', nodes)
         console.log('NODES', Object.values(nodes))
+
+
 
         const getLinks = async (node: any) => {
             const position = await this.props.plugin.call('contextualListener', 'positionOfDefinition', node)
             const lastCompilationResult = await this.props.plugin.call('contextualListener', 'getLastCompilationResult')
             const filename = lastCompilationResult.getSourceName(position.file)
-            console.log(filename, position)
             const lineColumn = await this.props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
                 position,
                 position.file,
@@ -95,30 +185,30 @@ export class RemixCompletionProvider {
         }
 
         const suggestions = []
-        for(const node of Object.values(nodes) as any[]){
+        for (const node of Object.values(nodes) as any[]) {
+            if(!node.name) continue
             if (node.nodeType === 'VariableDeclaration') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` ${await getVariableDeclaration(node)}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${await getVariableDeclaration(node)}` },
                     kind: this.monaco.languages.CompletionItemKind.Variable,
                     insertText: node.name,
                     range: range,
                     documentation: await getDocs(node)
                 }
                 suggestions.push(completion)
-            } else
-            if (node.nodeType === 'FunctionDefinition') {
+            } else if (node.nodeType === 'FunctionDefinition') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` -> ${node.name} ${await getParamaters(node.parameters)}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` -> ${node.name} ${await getParamaters(node.parameters)}` },
                     kind: this.monaco.languages.CompletionItemKind.Function,
-                    insertText: `${node.name} ${await completeParameters(node.parameters)}`,
+                    insertText: `${node.name}${await completeParameters(node.parameters)};`,
                     range: range,
                     documentation: await getDocs(node)
                 }
                 suggestions.push(completion)
             } else if
-            (node.nodeType === 'ContractDefinition') {
+                (node.nodeType === 'ContractDefinition') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}` },
                     kind: this.monaco.languages.CompletionItemKind.Interface,
                     insertText: node.name,
                     range: range,
@@ -126,9 +216,9 @@ export class RemixCompletionProvider {
                 }
                 suggestions.push(completion)
             } else if
-            (node.nodeType === 'StructDefinition') {
+                (node.nodeType === 'StructDefinition') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}` },
                     kind: this.monaco.languages.CompletionItemKind.Struct,
                     insertText: node.name,
                     range: range,
@@ -136,9 +226,9 @@ export class RemixCompletionProvider {
                 }
                 suggestions.push(completion)
             } else if
-            (node.nodeType === 'EnumDefinition') {
+                (node.nodeType === 'EnumDefinition') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}` },
                     kind: this.monaco.languages.CompletionItemKind.Enum,
                     insertText: node.name,
                     range: range,
@@ -146,9 +236,9 @@ export class RemixCompletionProvider {
                 }
                 suggestions.push(completion)
             } else if
-            (node.nodeType === 'EventDefinition') {
+                (node.nodeType === 'EventDefinition') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}` },
                     kind: this.monaco.languages.CompletionItemKind.Event,
                     insertText: node.name,
                     range: range,
@@ -156,9 +246,9 @@ export class RemixCompletionProvider {
                 }
                 suggestions.push(completion)
             } else if
-            (node.nodeType === 'ModifierDefinition') {
+                (node.nodeType === 'ModifierDefinition') {
                 const completion = {
-                    label: {label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}`},
+                    label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${node.name}` },
                     kind: this.monaco.languages.CompletionItemKind.Method,
                     insertText: node.name,
                     range: range,

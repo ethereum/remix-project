@@ -98,7 +98,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
         }
       }
       const activeHighlights: Array<astNodeLight> = await props.getActiveHighlights()
-      console.log('active highlights', activeHighlights)
+      // console.log('active highlights', activeHighlights)
       if (nextNode && activeHighlights && activeHighlights.length) {
         loopOverReferences.current = activeHighlights.findIndex((el: astNodeLight) => `${el.position.start}:${el.position.length}:${el.position.file}` === nextNode.src)
         loopOverReferences.current = loopOverReferences.current === -1 ? 0 : loopOverReferences.current
