@@ -409,7 +409,7 @@ module.exports = {
       .addFile('test_modal.js', { content: testModalToasterApi })
       .executeScript('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications
