@@ -14,8 +14,6 @@ export interface ICompilerApi {
     getCompilerParameters: () => ConfigurationSettings
     setCompilerParameters: (ConfigurationSettings?) => void
 
-    openFile: (path: string) => Promise<any>
-
     getAppParameter: (value: string) => Promise<any>
     setAppParameter: (name: string, value: string | boolean) => void
 
@@ -59,7 +57,5 @@ export interface ConfigurationSettings {
     evmVersion: string,
     language: string,
     optimize: boolean,
-    runs: string,
-    useFileConfiguration: boolean,
-    configFilePath: string
+    runs: string
 }

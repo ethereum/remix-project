@@ -26,7 +26,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
-    configFilePath: "/compiler_config.json",
+    configFilePath: "compiler_config.json",
     useFileConfiguration: false,
     matomoAutocompileOnce: true,
     optimize: false,
@@ -198,7 +198,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const openFile = async () => {
-    await api.openFile(state.configFilePath)
+    api.open(state.configFilePath)
   }
 
   const createNewConfigFile = async () => {
