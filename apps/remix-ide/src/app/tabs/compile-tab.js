@@ -41,6 +41,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   renderComponent () {
+    this.render()
     // empty method, is a state update needed?
   }
 
