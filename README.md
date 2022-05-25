@@ -40,7 +40,7 @@ Note: It contains the latest supported version of Solidity available at the time
 ```
 * Install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
-npm install -g @nrwl/cli
+yarn global add @nrwl/cli
 ```
 * Clone the github repository (`wget` need to be installed first):
 
@@ -50,7 +50,7 @@ git clone https://github.com/ethereum/remix-project.git
 * Build `remix-project`:
 ```bash
 cd remix-project
-npm install
+yarn install
 npm run build:libs // Build remix libs
 nx build
 nx serve
