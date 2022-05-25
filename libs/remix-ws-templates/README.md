@@ -8,7 +8,7 @@
 
 `@remix-project/remix-ws-templates` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-ws-templates`
+`yarn add @remix-project/remix-ws-templates`
 
 ### Contribute
 

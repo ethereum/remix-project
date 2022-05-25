@@ -10,7 +10,7 @@
 ### Installation
 `@remix-project/remix-lib` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-lib`
+`yarn add @remix-project/remix-lib`
 
 ### How to use
 
