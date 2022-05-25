@@ -19,7 +19,7 @@ Please change the compiler version in Solidity Plugin to the newer one or use an
 
 **Q:** How to verify a contract that imports other contracts?
 
-**A:**  The verification tool does not recursively go through the import statments in a contract.  So can only verify a 'flattened' contract.  
+**A:**  The verification tool does not recursively go through the import statements in a contract.  So can only verify a 'flattened' contract.  
 
 There is a plugin called `Flattener` which will stuff all the original code and the imported code into a single file.
 
