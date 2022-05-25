@@ -8,7 +8,7 @@ The code of `remixd` is
 [here](https://github.com/ethereum/remixd) .
 
 `remixd` can be globally installed using the following command:
-`yarn globak add @remix-project/remixd`
+`yarn global add @remix-project/remixd`
 
 Then from the terminal, the command `remixd -s <absolute-path-to-the-shared-folder> --remix-ide <your-remix-ide-URL-instance>` will start `remixd` and will share the given folder with remix-ide. 
 

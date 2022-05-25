@@ -12,7 +12,7 @@ To know more about Remix IDE `Solidity Unit Testing Plugin`, visit [Remix IDE of
 ### Installation
 * As a dev dependency:
 
-`yarn add @remix-project/remix-tests`
+`yarn add --dev @remix-project/remix-tests`
 
 * As a global NPM module to use as CLI:
 

@@ -9,7 +9,6 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version
- - remove package-lock.json version and generate a new one with `yarn install`
  - merge PR
  - git fetch origin master
  - git checkout origin/master
@@ -29,7 +28,6 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version to the new version "vx.x.x-beta.1"
- - remove package-lock/json version and generate a new one with `yarn install`
  - merge PR
  - git fetch origin master
  - git checkout origin/master
