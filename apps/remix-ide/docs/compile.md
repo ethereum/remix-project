@@ -1,7 +1,7 @@
 Compiler (Solidity)
 ===================
 
-Clicking the Solidity icon in the icon panel brings you to the Solidty Compiler.
+Clicking the Solidity icon in the icon panel brings you to the Solidity Compiler.
 
 Compiling is triggered when you click the compile button ( **D. in image below**). If you want the file to be compiled each time the file is saved or when another file is selected - check the auto compile checkbox ( **E. in image below**).
 
