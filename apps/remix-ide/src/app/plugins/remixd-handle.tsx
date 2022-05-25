@@ -134,16 +134,18 @@ export class RemixdHandle extends WebsocketPlugin {
 }
 
 function remixdDialog () {
-  const commandText = 'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
+  const commandText = 'remixd'
   return (<>
     <div className=''>
       <div className='mb-2 text-break'>
         Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.<br/><br/>
-        Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
+        Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd documentation</a>.
       </div>
       <div className='mb-2 text-break'>
         If you are just looking for the remixd command, here it is:
-        <br></br><br></br><b>{commandText}</b>
+        <br></br>
+        Go to your working directory and then run:
+        <br></br><b>{commandText}</b>
         <CopyToClipboard data-id='remixdCopyCommand' content={commandText}></CopyToClipboard>
       </div>
       <div className='mb-2 text-break'>
