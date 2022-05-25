@@ -252,7 +252,7 @@ a + b;
 ```
 -   **String Length: Bytes length != String length**
 
-Bytes and string length are not the same since strings are assumed to be UTF-8 encoded (according to the ABI defintion) therefore one character is not nessesarily encoded in one byte of data.
+Bytes and string length are not the same since strings are assumed to be UTF-8 encoded (according to the ABI definition) therefore one character is not necessarily encoded in one byte of data.
 
 _Example:_
 ```
