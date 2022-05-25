@@ -49,6 +49,6 @@ The Plugin Manager is also the place you go when you are creating your own plugi
 Themes
 ---------------
 
-So you want to work on Remix with a dark theme or a gray theme or just a different theme that the one you are currently looking at?  Go to the settings tab and at the bottom is a choice of lots of bootstrap based themes.
+So you want to work on Remix with a dark theme or a gray theme or just a different theme than the one you are currently looking at?  Go to the settings tab and at the bottom is a choice of lots of bootstrap based themes.
 
 ![](images/a-themes.png) 
