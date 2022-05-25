@@ -60,6 +60,9 @@
   text-align: center;
   padding: 0 14px 16px;
 }
+.udapp_deployedContracts {
+  font-size: 1rem;
+}
 .udapp_pendingTxsContainer  {
   display: flex;
   flex-direction: column;
@@ -70,9 +73,6 @@
 .udapp_container {
   padding: 0 24px 16px;
 }
-.udapp_recorderDescription {
-  margin: 0 15px 15px 0;
-  }
 .udapp_contractNames {
   width: 100%;
   border: 1px solid
@@ -121,7 +121,14 @@
 .udapp_ataddressinput {
   padding: .25rem;
 }
-.udapp_create {
+.udapp_recorderSection:hover {
+  cursor: pointer;
+}.udapp_recorderSectionLabel:hover {
+  cursor: pointer;
+}
+.udapp_recorderSectionLabel {
+  cursor: pointer;
+  font-size: 1rem;
 }
 .udapp_input {
   font-size: 10px !important;
