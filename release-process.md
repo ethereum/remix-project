@@ -20,7 +20,7 @@ This document includes:
  - git fetch origin master
  - git checkout origin/master
  - git checkout -b bumpLibsVersion
- - npm run publish:libs (this command uses lerna)
+ - yarn run publish:libs (this command uses lerna)
  - commit
 
 ## Remix IDE release Part 1. First push master to beta. Feature Freeze
