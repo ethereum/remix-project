@@ -3,7 +3,7 @@ import { Plugin } from '@remixproject/engine'
 
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { compile } from '@remix-project/remix-solidity'
-import { canUseWorker, Compiler, CompilerAbstract, urlFromVersion } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'contextualListener',
@@ -38,7 +38,6 @@ export class EditorContextListener extends Plugin {
   contract: any
   activated: boolean
 
-  compiler: Compiler
   lastCompilationResult: any
 
   constructor(astWalker) {
