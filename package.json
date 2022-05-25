@@ -106,7 +106,7 @@
     "sourcemap": "exorcist --root ../ apps/remix-ide/build/app.js.map > apps/remix-ide/build/app.js",
     "test-browser": "npm-run-all -lpr selenium make-mock-compiler serve browsertest",
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
-    "reinstall": "rm ./node-modules/ -rf && rm package-lock.json && rm ./build/ -rf && yarn install & yarn run build",
+    "reinstall": "rm ./node-modules/ -rf && rm yarn.lock && rm ./build/ -rf && yarn install & yarn run build",
     "ganache-cli": "npx ganache-cli"
   },
   "browserify": {
