@@ -20,7 +20,7 @@ This document includes:
  - rm -rf node_modules
  - yarn install
  - remove all soljson.js files in root folder
- - npm run build
+ - yarn run build
  - npm publish
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
