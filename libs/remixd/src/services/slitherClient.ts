@@ -14,7 +14,7 @@ export class SlitherClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['analyse']
+    this.methods = ['analyse', 'install']
   }
 
   setWebSocket (websocket: WS): void {
@@ -23,6 +23,10 @@ export class SlitherClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+  }
+
+  install (): void {
+    console.log('inside slither install method')
   }
 
   mapNpmDepsDir (list) {
