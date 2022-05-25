@@ -12,7 +12,7 @@
 
 `@remix-project/remix-url-resolver` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-url-resolver`
+`yarn add @remix-project/remix-url-resolver`
 
 ### How to use
 

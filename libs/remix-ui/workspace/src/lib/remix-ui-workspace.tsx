@@ -134,6 +134,8 @@ export function Workspace () {
           <option value='remixDefault'>Default</option>
           <option value='blank'>Blank</option>
           <option value='ozerc20'>OpenZeppelin ERC20</option>
+          <option value='zeroxErc20'>0xProject ERC20</option>
+          <option value='ozerc721'>OpenZeppelin ERC721</option>
         </select>
       </>
     )
@@ -191,7 +193,7 @@ export function Workspace () {
                   title='Delete'>
                 </span>
                 <span
-                  hidden={currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspacesDownload'
                   data-id='workspacesDownload'
                   onClick={(e) => {
@@ -202,6 +204,7 @@ export function Workspace () {
                   title='Download Workspaces'>
                 </span>
                 <span
+                  hidden={currentWorkspace === LOCALHOST}
                   id='workspacesRestore'
                   data-id='workspacesRestore'
                   onClick={(e) => {

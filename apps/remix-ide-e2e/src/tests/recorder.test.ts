@@ -17,7 +17,7 @@ module.exports = {
       .pause(5000)
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('[data-id="udapp_arrow"]')
+      .click('[data-id="udappRecorderTitleExpander"]')
       .click('[data-id="runtransaction"]')
       .clickInstance(0)
       .clickInstance(1)

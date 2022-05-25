@@ -71,7 +71,7 @@ module.exports = {
       .addFile('mkdirFile.js', { content: executeMkdir })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemTest_Folder"]', 60000)
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemTest_Folder"]', 80000)
   },
 
   'Should execute `readdir` api from file manager external api #group3': function (browser: NightwatchBrowser) {
