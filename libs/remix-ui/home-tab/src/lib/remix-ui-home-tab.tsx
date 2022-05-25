@@ -4,7 +4,6 @@ import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
-import { QueryParams } from '@remix-project/remix-lib'
 import { ThemeContext, themes } from './themeContext'
 declare global {
   interface Window {
