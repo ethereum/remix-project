@@ -18,6 +18,8 @@ export class CompileTabLogic {
   public compilerImport
   public event
   public evmVersions: Array<string>
+  public useFileConfiguration: boolean
+  public configFilePath: string
 
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
@@ -52,10 +54,19 @@ export class CompileTabLogic {
     }
   }
 
-  setOptimize (newOptimizeValue) {
+  setOptimize (newOptimizeValue: boolean) {
     this.optimize = newOptimizeValue
     this.api.setCompilerParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
+  }
+
+  setUseFileConfiguration (useFileConfiguration: boolean) {
+    this.useFileConfiguration = useFileConfiguration
+    this.compiler.set('useFileConfiguration', useFileConfiguration)
+  }
+
+  setConfigFilePath (path) {
+    this.configFilePath = path
   }
 
   setRuns (runs) {
@@ -95,6 +106,9 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
+        this.api.readFile(this.configFilePath).then( contentConfig => {
+          this.compiler.set('configFileContent', contentConfig)
+        })
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {

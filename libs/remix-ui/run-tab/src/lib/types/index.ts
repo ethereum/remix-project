@@ -227,7 +227,8 @@ export interface ContractGUIProps {
   clickCallBack: (inputs: { name: string, type: string }[], input: string) => void,
   widthClass?: string,
   evmBC: any,
-  lookupOnly: boolean
+  lookupOnly: boolean,
+  disabled?: boolean
 }
 export interface MainnetProps {
   network: Network,
