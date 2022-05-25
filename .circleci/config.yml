@@ -35,11 +35,11 @@ jobs:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-      - run: npm run downloadsolc_assets      
+      - run: yarn run downloadsolc_assets      
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
 
-      - run: npm run build:libs
+      - run: yarn run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -94,7 +94,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: yarn install
       - run: cd dist/libs/remix-tests && yarn install
-      - run: npm run test:libs
+      - run: yarn run test:libs
           
   remix-ide-chrome:
     docker:
@@ -329,8 +329,8 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
@@ -358,8 +358,8 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
@@ -386,9 +386,9 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: npm run build:libs
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn run build:libs
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
