@@ -3,10 +3,3 @@
   margin              : 0;
   background          : none;
 }
-.udapp_arrow {
-  font-weight         : bold;
-  cursor              : pointer;
-  font-size           : 14px;
-}
-.udapp_arrow:hover {
-}
