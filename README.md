@@ -30,7 +30,7 @@ Note: It contains the latest supported version of Solidity available at the time
 
 ## Setup
 
-* Install **NPM** and **Node.js**. See [Guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) <br/>
+* Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
 *Supported versions:*
 ```bash
 "engines": {
