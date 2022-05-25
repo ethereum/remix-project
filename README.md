@@ -30,7 +30,7 @@ Note: It contains the latest supported version of Solidity available at the time
 
 ## Setup
 
-* Install **NPM** and **Node.js**. See [Guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) <br/>
+* Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
 *Supported versions:*
 ```bash
 "engines": {
@@ -40,7 +40,7 @@ Note: It contains the latest supported version of Solidity available at the time
 ```
 * Install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
-npm install -g @nrwl/cli
+yarn global add @nrwl/cli
 ```
 * Clone the github repository (`wget` need to be installed first):
 
@@ -50,8 +50,8 @@ git clone https://github.com/ethereum/remix-project.git
 * Build `remix-project`:
 ```bash
 cd remix-project
-npm install
-npm run build:libs // Build remix libs
+yarn install
+yarn run build:libs // Build remix libs
 nx build
 nx serve
 ```
@@ -63,12 +63,12 @@ Go to your `text editor` and start developing. Browser will automatically refres
 ## Production Build
 To generate react production builds for remix-project.
 ```bash
-npm run build:production
+yarn run build:production
 ```
 Build can be found in `remix-project/dist/apps/remix-ide` directory.
 
 ```bash
-npm run serve:production
+yarn run serve:production
 ```
 Production build will be served by default to `http://localhost:8080/` or `http://127.0.0.1:8080/`
 
@@ -133,17 +133,17 @@ For example, to run unit tests of `remix-analyzer`, use `nx test remix-analyzer`
 
 To run the Selenium tests via Nightwatch:
 
- - Install Selenium for first time: `npm run selenium-install`
- - Run a selenium server: `npm run selenium`
+ - Install Selenium for first time: `yarn run selenium-install`
+ - Run a selenium server: `yarn run selenium`
  - Build & Serve Remix: `nx serve`
  - Run all the end-to-end tests:
 
-    for Firefox: `npm run nightwatch_local_firefox`, or 
+    for Firefox: `yarn run nightwatch_local_firefox`, or 
 
-    for Google Chrome: `npm run nightwatch_local_chrome`
+    for Google Chrome: `yarn run nightwatch_local_chrome`
  - Run a specific test case instead, use a command like this: 
  
-		- npm run nightwatch_local_ballot
+		- yarn run nightwatch_local_ballot
 		
 	The package.json file contains a list of all the tests you can run.
         
@@ -163,7 +163,7 @@ To run the Selenium tests via Nightwatch:
 There is a script to allow selecting the browser and a specific test to run:
 
 ```
-npm run select_test
+yarn run select_test
 ```
 
 You need to have 
@@ -209,13 +209,13 @@ module.exports = {
 - change package json to locally run all group tests:
 
 ```
-    "nightwatch_local_debugger": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
+    "nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
 ```
 
 - run the build script to build the test files if you want to run the locally
 
 ```
-npm run build:e2e
+yarn run build:e2e
 ```
 
 ### Locally testing group tests
@@ -229,12 +229,12 @@ You can tag any test with a groupname, for example, #group10 and easily run the 
 
 This script will give you an option menu, just select the test you want
 ```
-npm run select_test
+yarn run select_test
 ```
 #### method 2
 
 ```
-npm run group_test --test=debugger --group=10 --env=chromeDesktop
+yarn run group_test --test=debugger --group=10 --env=chromeDesktop
 ```
 - specify chromeDesktop to see the browser action, use 'chrome' to run it headless
 

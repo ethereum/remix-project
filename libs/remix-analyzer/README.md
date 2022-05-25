@@ -10,7 +10,7 @@
 ### Installation
 `@remix-project/remix-analyzer` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-analyzer`
+`yarn add @remix-project/remix-analyzer`
 
 ### How to use
 
