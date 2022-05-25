@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - run: npm install     
+      - run: yarn install     
       - run: ls
       - run: pwd
       - run: npm run downloadsolc_assets
