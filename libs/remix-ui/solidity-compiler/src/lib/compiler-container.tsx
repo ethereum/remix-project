@@ -9,6 +9,7 @@ import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
+import { configFileContent } from './compilerConfiguration'
 
 import './css/style.css'
 
@@ -21,10 +22,12 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject, isTruffleProject } = props // eslint-disable-line
+  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject, isTruffleProject, workspaceName } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
+    configFilePath: "compiler_config.json",
+    useFileConfiguration: false,
     matomoAutocompileOnce: true,
     optimize: false,
     compileTimeout: null,
@@ -39,12 +42,42 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: 'Solidity',
     evmVersion: ''
   })
+  const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
+  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
+  const configFilePathInput = useRef(null)
   const [hhCompilation, sethhCompilation] = useState(false)
   const [truffleCompilation, setTruffleCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
+
+  useEffect(() => {
+    api.setAppParameter('configFilePath', "/compiler_config.json")
+    api.fileExists("/compiler_config.json").then((exists) => {
+      if (!exists) createNewConfigFile()
+      else {
+        // what to do? discuss
+      }
+    })
+    api.setAppParameter('configFilePath', "/compiler_config.json")
+    setShowFilePathInput(false)
+  }, [workspaceName])
+
+  useEffect(() => {
+    const listener = (event) => {
+      if (configFilePathInput.current !== event.target) {
+        setShowFilePathInput(false)
+        return;
+      }
+    };
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    }
+  })
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
@@ -72,6 +105,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const autocompile = await api.getAppParameter('autoCompile') as boolean || false
         const hideWarnings = await api.getAppParameter('hideWarnings') as boolean || false
         const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
+        const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || false
+        let configFilePath = await api.getAppParameter('configFilePath')
+        if (!configFilePath || configFilePath == '') configFilePath = "/compiler_config.json"
+
         setState(prevState => {
           const params = api.getCompilerParameters()
           const optimize = params.optimize
@@ -84,6 +121,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             hideWarnings: hideWarnings,
             autoCompile: autocompile,
             includeNightlies: includeNightlies,
+            useFileConfiguration: useFileConfiguration,
+            configFilePath: configFilePath,
             optimize: optimize,
             runs: runs,
             evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default',
@@ -141,10 +180,65 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [compilerContainer.editor.mode])
 
   useEffect(() => {
+    compileTabLogic.setUseFileConfiguration(state.useFileConfiguration)
+    if (state.useFileConfiguration) compileTabLogic.setConfigFilePath(state.configFilePath)
+  }, [state.useFileConfiguration])
+
+  useEffect(() => {
     if (configurationSettings) {
       setConfiguration(configurationSettings)
     }
   }, [configurationSettings])
+
+  const toggleConfigType = () => {
+    setState(prevState => {
+      api.setAppParameter('useFileConfiguration', !state.useFileConfiguration)
+      return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
+    })
+  }
+
+  const openFile = async () => {
+    api.open(state.configFilePath)
+  }
+
+  const createNewConfigFile = async () => {
+    let filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
+    if (!filePath.endsWith('.json')) filePath = filePath + '.json'
+
+    await api.writeFile(filePath, configFileContent)
+    api.setAppParameter('configFilePath', filePath)
+    setState(prevState => {
+      return { ...prevState, configFilePath: filePath }
+    })
+    compileTabLogic.setConfigFilePath(filePath)
+    setShowFilePathInput(false)
+  }
+
+  const handleConfigPathChange = async () => {
+    if (configFilePathInput.current.value !== '') {
+      if (!configFilePathInput.current.value.endsWith('.json')) configFilePathInput.current.value += '.json'
+
+      if (await api.fileExists(configFilePathInput.current.value)) {
+        api.setAppParameter('configFilePath', configFilePathInput.current.value)
+        setState(prevState => {
+          return { ...prevState, configFilePath: configFilePathInput.current.value }
+        })
+        compileTabLogic.setConfigFilePath(configFilePathInput.current.value)
+
+        setShowFilePathInput(false)
+      } else {
+        modal(
+          'New configuration file', `The file "${configFilePathInput.current.value}" you entered does not exist. Do you want to create a new one?`,
+          'Create',
+          async () => await createNewConfigFile(),
+          'Cancel',
+          () => { 
+            setShowFilePathInput(false)
+          }
+        )
+      }
+    }
+  }
 
   const _retrieveVersion = (version?) => {
     if (!version) version = state.selectedVersion
@@ -537,14 +631,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     onChangeRuns(settings.runs)
   }
 
+  const toggleConfigurations = () => {
+    setToggleExpander(!toggleExpander)
+  }
+
  return (
     <section>
       <article>
-        <header className='remixui_compilerSection border-bottom'>
-          <div className="mb-2">
+        <div className='pt-0 remixui_compilerSection'>
+          <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               Compiler
-              <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
+              <button className="far fa-plus btn-light border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
             </label>
             <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
@@ -558,50 +656,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               }
             </select>
           </div>
-          <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
+          <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
             <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">Include nightly builds</label>
           </div>
-          <div className="mb-2">
-            <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-            <select onChange={(e) => handleLanguageChange(e.target.value)} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
-              <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
-              <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
-            </select>
+          <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+            <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
+            <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
           </div>
-          <div className="mb-2">
-            <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
-            <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
-              {compileTabLogic.evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
-            </select>
-          </div>
-          <div className="mt-3">
-            <p className="mt-2 remixui_compilerLabel">Compiler Configuration</p>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
-              <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
-            </div>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <div className="justify-content-between align-items-center d-flex">
-                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
-                <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
-                <input
-                  min="1"
-                  className="custom-select ml-2 remixui_runs"
-                  id="runs"
-                  placeholder="200"
-                  value={state.runs}
-                  type="number"
-                  title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
-                  onChange={(e) => onChangeRuns(e.target.value)}
-                  disabled={!state.optimize}
-                />
-              </div>
-            </div>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
-              <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
-            </div>
+          <div className="mt-1 mb-2 remixui_compilerConfig custom-control custom-checkbox">
+            <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
+            <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
           </div>
           {
             isHardhatProject &&
@@ -635,7 +700,81 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </a>
             </div>
           }
+        </div>
+        <div className="d-flex px-4 remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
+          <div className="d-flex">
+            <label className="mt-1 remixui_compilerConfigSection">Advanced Configurations</label>
+          </div>
           <div>
+            <span data-id='scConfigExpander' onClick={toggleConfigurations}>
+              <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
+            </span>
+          </div>
+        </div>
+        <div className={`px-4 pb-4 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
+          <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
+            <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
+            <label className="form-check-label custom-control-label" htmlFor="scManualConfig">Compiler configuration</label>
+          </div>
+          <div className={`flex-column 'd-flex'}`}>
+            <div className="mb-2 ml-4">
+              <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
+              <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+                <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
+                <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
+              </select>
+            </div>
+            <div className="mb-2 ml-4">
+              <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
+              <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} disabled={state.useFileConfiguration} className="custom-select" id="evmVersionSelector">
+                {compileTabLogic.evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
+              </select>
+            </div>
+            <div className="mt-1 mt-3 border-dark pb-3 ml-4 remixui_compilerConfig custom-control custom-checkbox">
+              <div className="justify-content-between align-items-center d-flex">
+                <input onChange={(e) => { handleOptimizeChange(e.target.checked) }} disabled={state.useFileConfiguration} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimize} />
+                <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
+                <input
+                  min="1"
+                  className="custom-select ml-2 remixui_runs"
+                  id="runs"
+                  placeholder="200"
+                  value={state.runs}
+                  type="number"
+                  title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
+                  onChange={(e) => onChangeRuns(e.target.value)}
+                  disabled={!state.optimize || state.useFileConfiguration}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
+            <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" />
+            <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
+          </div>
+          <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
+            { (!showFilePathInput && state.useFileConfiguration) && <span
+              title="Click to open the config file."
+              onClick={openFile}
+              className="py-2 text-primary remixui_compilerConfigPath"
+            >{state.configFilePath}</span> }
+            { (!showFilePathInput&& !state.useFileConfiguration) && <span className="py-2 text-secondary">{state.configFilePath}</span> }
+            <input
+              ref={configFilePathInput}
+              className={`py-0 my-0 form-control ${showFilePathInput ? "d-flex" : "d-none"}`}
+              placeholder={"Enter the new path"}
+              title="If the file you entered does not exist you will be able to create one in the next step."
+              disabled={!state.useFileConfiguration}
+              onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  handleConfigPathChange()
+                }
+              }}
+            />
+            { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
+          </div>
+        </div>
+        <div className="px-4">
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={disableCompileButton}>
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile">
@@ -665,33 +804,32 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 </OverlayTrigger>
             </button>            
             <OverlayTrigger overlay={
-                  <Tooltip id="overlay-tooltip-compile-run-doc">
-                    <div className="text-left p-2">
-                    <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
-                    <pre>
-                      <code>
-                      /**<br />
-                      * @title ContractName<br />
-                      * @dev ContractDescription<br />
-                      * @custom:dev-run-script file_path<br />
-                      */<br />
-                      contract ContractName {'{}'}<br />
-                      </code>
-                    </pre>
-                    Click to know more
-                    </div>
-                  </Tooltip>
-                }>
-                <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
-              </OverlayTrigger>
-              <CopyToClipboard tip="Copy tag to use in contract NatSpec" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
-                <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
-                  <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                </button>
-              </CopyToClipboard>
-            </div>
-          </div>          
-        </header>
+              <Tooltip id="overlay-tooltip-compile-run-doc">
+                <div className="text-left p-2">
+                <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                <pre>
+                  <code>
+                  /**<br />
+                  * @title ContractName<br />
+                  * @dev ContractDescription<br />
+                  * @custom:dev-run-script file_path<br />
+                  */<br />
+                  contract ContractName {'{}'}<br />
+                  </code>
+                </pre>
+                Click to know more
+                </div>
+              </Tooltip>
+            }>
+              <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
+            </OverlayTrigger>
+            <CopyToClipboard tip="Copy tag to use in contract NatSpec" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
+              <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
+                <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+              </button>
+            </CopyToClipboard>
+          </div>
+        </div>          
       </article>
     </section>
   )
