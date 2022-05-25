@@ -23,7 +23,7 @@ export class GanacheProvider extends AbstractProvider {
   body (): JSX.Element {
     return (
       <div> Note: To run Ganache on your system, run
-        <div className="border p-1">npm install -g ganache</div> 
+        <div className="border p-1">yarn global add ganache</div> 
         <div className="border p-1">ganache</div>       
         For more info, visit: <a href="https://github.com/trufflesuite/ganache" target="_blank">Ganache Documentation</a>
         <div>Ganache JSON-RPC Endpoint:</div>

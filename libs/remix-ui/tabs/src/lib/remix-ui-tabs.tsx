@@ -10,7 +10,7 @@ export interface TabsUIProps {
  onZoomOut: () => void
  onZoomIn: () => void
  onReady: (api: any) => void
- themeQuality: "dark"
+ themeQuality: string
 }
 
 export interface TabsUIApi {

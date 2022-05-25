@@ -15,13 +15,13 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-npm run ganache-cli &
-npm run serve &
+yarn run ganache-cli &
+yarn run serve &
 setupRemixd
 
 sleep 5
 
-npm run nightwatch_parallel || TEST_EXITCODE=1
+yarn run nightwatch_parallel || TEST_EXITCODE=1
 TESTFILES=$(circleci tests glob "./apps/remix-ide/test-browser/tests/**/*.test.js" | circleci tests split )
 for TESTFILE in $TESTFILES; do
     ./node_modules/.bin/nightwatch --config ./apps/remix-ide/nightwatch.js --env chrome $TESTFILE || TEST_EXITCODE=1
