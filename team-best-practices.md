@@ -55,7 +55,7 @@ Related links:
      - How the backend (if any) works / will work (could be a smart contract).
      - How the frontend works / will work.
      - What is the general vision of the UX design for this particular story.
-     Later progress and discussion is updated directly on the issue or pull request (Github).
+     Later progress and discussion is updated directly on the issue or pull request (GitHub).
  
 ---
 
@@ -73,7 +73,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 # Story / Bug fix
 
-- Prioritised list of PRs / issues are tracked in a Github Project, Remix IDE issues are managed by a prioritized backlog.
+- Prioritised list of PRs / issues are tracked in a GitHub Project, Remix IDE issues are managed by a prioritized backlog.
 - Every story can be executed by a single developer or a group of 2 or more developers (depending on the size and complexity)
 - Each dev should take the part he/she feels the most confortable with.
 - Later progress and discussion is updated directly on the issue or pull request (github).

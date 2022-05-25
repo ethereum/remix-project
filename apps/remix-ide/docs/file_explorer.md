@@ -33,9 +33,9 @@ Publish to Gist
 The icon marked **C.** above. Publishes all files from the browser folder to a gist.  Only file in the root of **browser** will be published.  Files in subfolders will not be publish to the Gist.
 Gist API has changed in 2018 and **requires** users to be authenticated to be able to publish a gist.
 
-Click [this link](https://github.com/settings/tokens) to Github tokens setup and select Generate new token. Then check the **Create gists** checkbox and generate a new token.
+Click [this link](https://github.com/settings/tokens) to GitHub tokens setup and select Generate new token. Then check the **Create gists** checkbox and generate a new token.
 
-Take the token and paste it in Remix's **Settings** module in the **Github Access Token** section. And then click Save. Now you should be able to use the feature.
+Take the token and paste it in Remix's **Settings** module in the **GitHub Access Token** section. And then click Save. Now you should be able to use the feature.
 
 Create a folder
 ---------------

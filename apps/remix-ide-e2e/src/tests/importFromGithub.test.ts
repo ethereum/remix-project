@@ -23,7 +23,7 @@ module.exports = {
       .pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalTitle-react"]')
-      .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from Github')
+      .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from GitHub')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the github URL you would like to load.')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
@@ -41,7 +41,7 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
-  'Import From Github For Valid URL #group2': function (browser: NightwatchBrowser) {
+  'Import From GitHub For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
@@ -62,7 +62,7 @@ module.exports = {
         browser.assert.ok(content.indexOf('library Roles {') !== -1, 'content does contain "library Roles {"')
       })
   },
-  'Import JSON From Github For Valid URL #group2': function (browser: NightwatchBrowser) {
+  'Import JSON From GitHub For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
       .click('div[title="home"]')
       .click('button[data-id="landingPageImportFromGitHubButton"]')

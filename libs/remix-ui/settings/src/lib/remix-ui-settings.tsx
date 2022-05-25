@@ -188,7 +188,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={() => removeToken(type)}>Remove</button>
+              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub access token" onClick={() => removeToken(type)}>Remove</button>
             </div>
           </div></div>
       </div>
