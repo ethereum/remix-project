@@ -29,10 +29,10 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - save_cache:
-          key: v1-deps-{{ checksum "package-lock.json" }}
+          key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
       - run: yarn run downloadsolc_assets      
@@ -64,7 +64,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
           name: Remix Libs Linting
@@ -91,7 +91,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run: cd dist/libs/remix-tests && yarn install
       - run: yarn run test:libs
@@ -127,7 +127,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
           name: Start Selenium
@@ -170,7 +170,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
           name: Start Selenium
@@ -213,7 +213,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
           name: Start Selenium
@@ -255,7 +255,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
           name: Start Selenium
@@ -298,7 +298,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
           name: Start Selenium
