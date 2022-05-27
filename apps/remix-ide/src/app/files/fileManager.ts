@@ -219,6 +219,7 @@ class FileManager extends Plugin {
    * @returns {string} content of the file
    */
   async readFile(path) {
+
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -226,6 +227,7 @@ class FileManager extends Plugin {
       await this._handleIsFile(path, `Cannot read file ${path}`)
       return this.getFileContent(path)
     } catch (e) {
+      console.trace(e)
       throw new Error(e)
     }
   }

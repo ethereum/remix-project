@@ -98,10 +98,10 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.call('notification', 'toast', compilerConfigChangedToastMsg(this.currentRequest.from, value))
   }
 
-  compile (fileName) {
+  compile (fileName, settings = {}) {
     if(this.currentRequest.from !== 'contextualListener')
       this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
-    super.compile(fileName)
+    super.compile(fileName, settings)
   }
 
   compileFile (event) {

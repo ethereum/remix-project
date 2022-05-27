@@ -97,6 +97,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('contentImport', 'resolveAndSave', url)
   }
 
+  resolveContent (url) {
+    return this.call('contentImport', 'resolveAndSave', url, undefined, false)
+  }
+
   runScriptAfterCompilation (fileName: string) {
     this.call('compileAndRun', 'runScriptAfterCompilation', fileName)
   }
@@ -127,9 +131,9 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * This function is used by remix-plugin compiler API.
    * @param {string} fileName to compile
    */
-  compile (fileName) {
+  compile (fileName, settings = {}) {
     this.currentFile = fileName
-    return this.compileTabLogic.compileFile(fileName)
+    return this.compileTabLogic.compileFile(fileName, settings)
   }
 
   compileFile (event) {
