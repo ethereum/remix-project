@@ -84,6 +84,7 @@ export class Compiler {
    */
 
   compile (files: Source, target: string): void {
+    console.log('compiler', files, target)
     this.state.target = target
     this.event.trigger('compilationStarted', [])
     this.internalCompile(files)

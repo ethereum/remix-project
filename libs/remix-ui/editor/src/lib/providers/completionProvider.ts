@@ -10,7 +10,19 @@ export class RemixCompletionProvider {
     triggerCharacters = ['.', '']
     async provideCompletionItems(model: any, position: any, context: any) {
         console.log('AUTOCOMPLETE', context)
+        console.log(position)
+        //await this.props.plugin.call('contextualListener', 'compile')
+        //const block = await this.props.plugin.call('contextualListener', 'getBlockName', position)
+        //console.log('BLOCK', block)
+        //return null
         return await this.run(model, position, context)
+
+        const word = model.getWordUntilPosition(position);
+        const wordAt = model.getWordAtPosition(position);
+
+        console.log('WORD', word)
+        console.log('WORDAT', wordAt)
+
         return new Promise((resolve, reject) => {
             this.props.plugin.once('contextualListener', 'astFinished', async () => {
                 console.log('AST FINISHED')
@@ -37,7 +49,7 @@ export class RemixCompletionProvider {
             endColumn: word.endColumn
         };
 
-
+        console.log('WORD', word)
         const getlinearizedBaseContracts = async (node: any) => {
             let params = []
             if (node.linearizedBaseContracts) {
