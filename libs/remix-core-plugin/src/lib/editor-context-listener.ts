@@ -1,13 +1,11 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-import { compile } from '@remix-project/remix-solidity'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'contextualListener',
-  methods: ['nodesWithScope', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['getBlockName', 'getAST', 'nodesWithScope', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -20,6 +18,8 @@ export function isDefinition(node: any) {
     node.nodeType === 'StructDefinition' ||
     node.nodeType === 'EventDefinition'
 }
+
+const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
 /*
   trigger contextChanged(nodes)
@@ -40,6 +40,8 @@ export class EditorContextListener extends Plugin {
 
   lastCompilationResult: any
 
+  lastAST: any
+
   constructor(astWalker) {
     super(profile)
     this.activated = false
@@ -53,7 +55,10 @@ export class EditorContextListener extends Plugin {
   }
 
   onActivation() {
-    this.on('editor', 'contentChanged', () => { this._stopHighlighting() })
+    this.on('editor', 'contentChanged', async () => {
+      await this.getAST()
+      this._stopHighlighting()
+    })
 
     this.on('solidity', 'astFinished', async (file, source, languageVersion, data, input, version) => {
       // console.log('compilation result', Object.keys(data.sources))
@@ -71,7 +76,11 @@ export class EditorContextListener extends Plugin {
     })
 
     setInterval(async () => {
+      await this.compile()
+    }, 5000)
 
+
+    setInterval(async () => {
       const compilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
       if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
 
@@ -96,7 +105,44 @@ export class EditorContextListener extends Plugin {
 
   async compile() {
     this.currentFile = await this.call('fileManager', 'file')
-    return await this.call('solidity', 'compile', this.currentFile)
+    if(!this.currentFile) return
+    return await this.call('solidity', 'compile', this.currentFile, { save: false })
+  }
+
+  async getBlockName(position: any) {
+    await this.getAST()
+    const allowedTypes = ['SourceUnit','ContractDefinition','FunctionDefinition']
+
+    const walkAst = (node) => {
+      console.log(node)
+      if (node.loc.start.line <= position.lineNumber && node.loc.end.line >= position.lineNumber) {
+        const children = node.children || node.subNodes
+        if (children && allowedTypes.indexOf(node.type) !== -1) {
+          for (const child of children) {
+            const result = walkAst(child)
+            if (result) return result
+          }
+        } 
+        return node
+      }
+      return null
+    }
+
+    return walkAst(this.lastAST)
+  }
+
+  async getAST() {
+    this.currentFile = await this.call('fileManager', 'file')
+    if(!this.currentFile) return
+    let fileContent = await this.call('fileManager', 'readFile', this.currentFile)
+    try {
+      const ast = (SolidityParser as any).parse(fileContent, { loc: true, range: true, tolerant: true })
+      this.lastAST = ast
+    } catch (e) {
+
+    }
+    console.log('LAST AST', this.lastAST)
+    return this.lastAST
   }
 
   getActiveHighlights() {
@@ -164,12 +210,12 @@ export class EditorContextListener extends Plugin {
 
   async nodesWithScope(scope: any) {
     const nodes = []
-    for(const node of Object.values(this._index.FlatReferences) as any[]){
-      if(node.scope === scope) nodes.push(node)
+    for (const node of Object.values(this._index.FlatReferences) as any[]) {
+      if (node.scope === scope) nodes.push(node)
     }
     return nodes
   }
-  
+
   async definitionAtPosition(position: any) {
     const nodes = await this.nodesAtEditorPosition(position)
     console.log('nodes at position', nodes)
@@ -227,6 +273,7 @@ export class EditorContextListener extends Plugin {
     const jumpToLine = async (fileName: string, lineColumn: any) => {
       if (fileName !== await this.call('fileManager', 'file')) {
         console.log('jump to file', fileName)
+        await this.call('contentImport', 'resolveAndSave', fileName, null, true)
         await this.call('fileManager', 'open', fileName)
       }
       if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
