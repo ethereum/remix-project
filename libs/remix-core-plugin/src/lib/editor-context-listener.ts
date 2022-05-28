@@ -43,6 +43,7 @@ export class EditorContextListener extends Plugin {
 
   lastAST: any
   compiler: any
+  onAstFinished: (success: any, data: any, source: any, input: any, version: any) => Promise<void>
 
   constructor(astWalker) {
     super(profile)
@@ -56,20 +57,26 @@ export class EditorContextListener extends Plugin {
     this.astWalker = astWalker
   }
 
-  onActivation() {
+  async onActivation() {
     this.on('editor', 'contentChanged', async () => {
       await this.getAST()
       this._stopHighlighting()
     })
 
-    this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.compiler.loadVersion(true, 'https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js')
+    this.on('solidity', 'loadingCompiler', async(url) => {
+      console.log('loading compiler', url)
+      this.compiler.loadVersion(true, url)
+    })
 
-    this.on('solidity', 'astFinished', async (file, source, languageVersion, data, input, version) => {
-      // console.log('compilation result', Object.keys(data.sources))
-      if (languageVersion.indexOf('soljson') !== 0 || !data.sources) return
+    this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+    
+    
+
+    this.onAstFinished = async (success, data, source, input, version) => {
+
+      if (!data.sources) return
       if (data.sources && Object.keys(data.sources).length === 0) return
-      this.lastCompilationResult = new CompilerAbstract(languageVersion, data, source, input)
+      this.lastCompilationResult = new CompilerAbstract('soljson', data, source, input)
 
       this._stopHighlighting()
       this._index = {
@@ -78,12 +85,14 @@ export class EditorContextListener extends Plugin {
       }
       this._buildIndex(data, source)
       this.emit('astFinished')
-    })
+    }
+
+    this.compiler.event.register('astFinished', this.onAstFinished)
 
     setInterval(async () => {
+
       await this.compile()
     }, 5000)
-
 
     setInterval(async () => {
       const compilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
@@ -110,6 +119,12 @@ export class EditorContextListener extends Plugin {
 
   async compile() {
     try {
+      const state = await this.call('solidity', 'getCompilerState')
+      this.compiler.set('optimize', state.optimize)
+      this.compiler.set('evmVersion', state.evmVersion)
+      this.compiler.set('language', state.language)
+      this.compiler.set('runs', state.runs)
+      this.compiler.set('useFileConfiguration', state.useFileConfiguration)
       this.currentFile = await this.call('fileManager', 'file')
       if (!this.currentFile) return
       const content = await this.call('fileManager', 'readFile', this.currentFile)
@@ -119,8 +134,8 @@ export class EditorContextListener extends Plugin {
     }
   }
 
-  async getBlockName(position: any) {
-    await this.getAST()
+  async getBlockName(position: any, text: string = null) {
+    await this.getAST(text)
     const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
 
     const walkAst = (node) => {
@@ -137,19 +152,19 @@ export class EditorContextListener extends Plugin {
       }
       return null
     }
-
+    if(!this.lastAST) return
     return walkAst(this.lastAST)
   }
 
-  async getAST() {
+  async getAST(text: string = null) {
     this.currentFile = await this.call('fileManager', 'file')
     if (!this.currentFile) return
-    let fileContent = await this.call('fileManager', 'readFile', this.currentFile)
+    let fileContent = text || await this.call('fileManager', 'readFile', this.currentFile)
     try {
       const ast = (SolidityParser as any).parse(fileContent, { loc: true, range: true, tolerant: true })
       this.lastAST = ast
     } catch (e) {
-
+      console.log(e)
     }
     console.log('LAST AST', this.lastAST)
     return this.lastAST
