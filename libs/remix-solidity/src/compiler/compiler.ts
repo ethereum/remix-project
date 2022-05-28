@@ -272,6 +272,7 @@ export class Compiler {
     const jobs: Record<'sources', SourceWithTarget> [] = []
 
     this.state.worker.addEventListener('message', (msg: Record <'data', MessageFromWorker>) => {
+      console.log(msg)
       const data: MessageFromWorker = msg.data
       switch (data.cmd) {
         case 'versionLoaded':
