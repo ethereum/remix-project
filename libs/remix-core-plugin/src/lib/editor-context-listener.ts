@@ -2,7 +2,7 @@
 import { Plugin } from '@remixproject/engine'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
+import { Compiler } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'contextualListener',
@@ -63,7 +63,7 @@ export class EditorContextListener extends Plugin {
     })
 
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.compiler.loadVersion(true,'https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js')
+    this.compiler.loadVersion(true, 'https://binaries.soliditylang.org/wasm/soljson-v0.8.7+commit.e28d00a7.js')
 
     this.on('solidity', 'astFinished', async (file, source, languageVersion, data, input, version) => {
       // console.log('compilation result', Object.keys(data.sources))
@@ -81,7 +81,7 @@ export class EditorContextListener extends Plugin {
     })
 
     setInterval(async () => {
-      //await this.compile()
+      await this.compile()
     }, 5000)
 
 
@@ -109,14 +109,19 @@ export class EditorContextListener extends Plugin {
   }
 
   async compile() {
-    this.currentFile = await this.call('fileManager', 'file')
-    if(!this.currentFile) return
-    return await this.call('solidity', 'compile', this.currentFile, { save: false })
+    try {
+      this.currentFile = await this.call('fileManager', 'file')
+      if (!this.currentFile) return
+      const content = await this.call('fileManager', 'readFile', this.currentFile)
+      const sources = { [this.currentFile]: { content } }
+      this.compiler.compile(sources, this.currentFile)
+    } catch (e) {
+    }
   }
 
   async getBlockName(position: any) {
     await this.getAST()
-    const allowedTypes = ['SourceUnit','ContractDefinition','FunctionDefinition']
+    const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
 
     const walkAst = (node) => {
       console.log(node)
@@ -127,7 +132,7 @@ export class EditorContextListener extends Plugin {
             const result = walkAst(child)
             if (result) return result
           }
-        } 
+        }
         return node
       }
       return null
@@ -138,7 +143,7 @@ export class EditorContextListener extends Plugin {
 
   async getAST() {
     this.currentFile = await this.call('fileManager', 'file')
-    if(!this.currentFile) return
+    if (!this.currentFile) return
     let fileContent = await this.call('fileManager', 'readFile', this.currentFile)
     try {
       const ast = (SolidityParser as any).parse(fileContent, { loc: true, range: true, tolerant: true })
