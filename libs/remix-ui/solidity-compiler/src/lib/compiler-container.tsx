@@ -478,6 +478,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     console.log('VERSION', selectedVersion)
     if (selectedVersion === 'builtin') selectedVersion = state.defaultVersion
     if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
+      console.log('loading ' + url + ' with worker')
       compileTabLogic.compiler.loadVersion(true, url)
     } else {
       compileTabLogic.compiler.loadVersion(false, url)

@@ -99,8 +99,7 @@ export class CompileTabLogic {
    * Compile a specific file of the file manager
    * @param {string} target the path to the file to compile
    */
-  compileFile (target: string, settings: any = {save: true}) {
-    console.log(settings)
+  compileFile (target: string) {
     if (!target) throw new Error('No target provided for compiliation')
     return new Promise((resolve, reject) => {
       this.api.readFile(target).then((content) => {
@@ -110,12 +109,6 @@ export class CompileTabLogic {
         this.api.readFile(this.configFilePath).then( contentConfig => {
           this.compiler.set('configFileContent', contentConfig)
         })
-        if(settings.save) {
-          this.compiler.handleImportCall = (url, cb) => this.api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-        }else{
-          this.compiler.handleImportCall = (url, cb) => this.api.resolveContent(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-        }
-        console.log(this.compiler)
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {
