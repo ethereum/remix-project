@@ -119,7 +119,7 @@ export class RemixHoverProvider {
 
         if (!nodeAtPosition) {
             contents.push({
-                value: 'No definition found. Please compile the source code.'
+                value: 'Loading...'
             })
         }
 

@@ -40,6 +40,9 @@ export class RemixCompletionProvider {
             endColumn: position.column
         });
 
+
+
+
         const word = model.getWordUntilPosition(position);
         const wordAt = model.getWordAtPosition(position);
         const range = {
@@ -69,58 +72,90 @@ export class RemixCompletionProvider {
 
 
 
+
+        const cursorPosition = this.props.editorAPI.getCursorPosition()
+        console.log('cursor', cursorPosition)
+
         if (context.triggerCharacter === '.') {
             console.log('TEXT', line)
-            const splits = line.split('.')
+
+            const textBeforeCursor = line.substring(0, position.column - 1)
+            const textAfterCursor = line.substring(position.column - 1)
+            console.log(textBeforeCursor, textAfterCursor)
+            const splits = textBeforeCursor.split('.')
+
             console.log('splits', splits)
             if (splits.length > 1) {
-                const last = splits[splits.length - 2].trim()
+                let last = splits[splits.length - 2].trim()
+                const lastParentheses = last.lastIndexOf('(')
+                const lastBracket = last.lastIndexOf('{')
+                const lastSemiColon = last.lastIndexOf(';')
+                let textBefore = null
+                let lastWord = null
+                let lineWithoutEdits = null
+                // find largest 
+                const lastIndex = Math.max(lastParentheses, lastBracket, lastSemiColon)
+                if (lastIndex > -1) {
+                    lastWord = last.substring(lastIndex + 1)
+                    textBefore = last.substring(0, lastIndex + 1)
+                    console.log('textBefore', textBefore)
+                    console.log('text without edits', textBefore, textAfterCursor)
+                    lineWithoutEdits = `${textBefore}${textAfterCursor}`
+                }
+                last = lastWord || last
                 console.log('last', last)
-                const cursorPosition = this.props.editorAPI.getCursorPosition()
-                const nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
+
+                const lines = model.getLinesContent()
+                lines[position.lineNumber - 1] = lineWithoutEdits
+
+                const textWithoutEdits = lines.join('\n')
+                console.log('textWithoutEdits', textWithoutEdits)
+
+                let nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
+
                 console.log('NODES AT POSITION', nodesAtPosition)
-                for (const node of nodesAtPosition) {
-                    const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
-                    console.log('NODES OF SCOPE ', node.name, node.id, nodesOfScope)
-                    for (const nodeOfScope of nodesOfScope) {
-                        if (nodeOfScope.name === last) {
-                            console.log('FOUND NODE', nodeOfScope)
-                            if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
-                                const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
-                                console.log('HAS DECLARATION OF', declarationOf)
-                                nodes = declarationOf.nodes
+                if (!nodesAtPosition.length) {
+                    const block = await this.props.plugin.call('contextualListener', 'getBlockName', position, textWithoutEdits)
+                    console.log('BLOCK', block)
+                    if (block) {
+                        nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', block.range[0])
+                        console.log('NODES AT POSITION', nodesAtPosition)
+                    }
+                }
+                if (nodesAtPosition) {
+                    for (const node of nodesAtPosition) {
+                        const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
+                        console.log('NODES OF SCOPE ', node.name, node.id, nodesOfScope)
+                        for (const nodeOfScope of nodesOfScope) {
+                            if (nodeOfScope.name === last) {
+                                console.log('FOUND NODE', nodeOfScope)
+                                if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
+                                    const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
+                                    console.log('HAS DECLARATION OF', declarationOf)
+                                    nodes = declarationOf.nodes
+                                    const baseContracts = await getlinearizedBaseContracts(declarationOf)
+                                    for (const baseContract of baseContracts) {
+                                        nodes = [...nodes, ...baseContract.nodes]
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-            /*
-            console.log('TEXT', line)
-            const splits = line.split('.')
-            console.log('splits', splits)
-            if(splits.length > 1) {
-                const last = splits[splits.length - 2].trim()
-                console.log('last', last)
-                for(const node of Object.values(nodes) as any[]){
-                    if(node.name === last) {
-                        console.log('FOUND', node)
-                        const cursorPosition = this.props.editorAPI.getCursorPosition()
-                        const nodeAtPosition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
-                        console.log('NODE AT POSITION', nodeAtPosition)
-                        if(nodeAtPosition && nodeAtPosition.nodeType === 'Block'){
-                            if(node.scope && node.scope === nodeAtPosition.id) {
-                                console.log('NODE IN SCOPE', node)
-                            }
-                        }
-                    }
-                }
-            }
-            */
         } else {
             const cursorPosition = this.props.editorAPI.getCursorPosition()
-            const nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
+            let nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
             nodes = []
             console.log('NODES AT POSITION', nodesAtPosition)
+            if (!nodesAtPosition.length) {
+                const block = await this.props.plugin.call('contextualListener', 'getBlockName', position, null)
+                console.log('BLOCK', block)
+                if (block) {
+                    nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', block.range[0])
+                    console.log('NODES AT POSITION', nodesAtPosition)
+                }
+            }
 
             for (const node of nodesAtPosition) {
                 const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
@@ -198,7 +233,7 @@ export class RemixCompletionProvider {
 
         const suggestions = []
         for (const node of Object.values(nodes) as any[]) {
-            if(!node.name) continue
+            if (!node.name) continue
             if (node.nodeType === 'VariableDeclaration') {
                 const completion = {
                     label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` ${await getVariableDeclaration(node)}` },
