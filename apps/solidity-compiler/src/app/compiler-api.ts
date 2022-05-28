@@ -131,9 +131,9 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * This function is used by remix-plugin compiler API.
    * @param {string} fileName to compile
    */
-  compile (fileName, settings = {}) {
+  compile (fileName) {
     this.currentFile = fileName
-    return this.compileTabLogic.compileFile(fileName, settings)
+    return this.compileTabLogic.compileFile(fileName)
   }
 
   compileFile (event) {
