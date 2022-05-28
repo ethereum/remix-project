@@ -44,13 +44,13 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
       case 'compile':
         missingInputs.length = 0
         if (data.input && compileJSON) {
-          self.postMessage({
-            cmd: 'compiled',
-            job: data.job,
-            data: compileJSON(data.input),
-            input: data.input,
-            missingInputs: missingInputs
-          })
+            self.postMessage({
+              cmd: 'compiled',
+              job: data.job,
+              data: compileJSON(data.input),
+              input: data.input,
+              missingInputs: missingInputs
+            })
         }
         break
     }
