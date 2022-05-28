@@ -115,7 +115,7 @@ export function RemixUiEditorContextView (props: RemixUiEditorContextViewProps) 
    * show gas estimation
    */
   const gasEstimation = (node) => {
-    if (node.nodeType === 'FunctionDefinition') {
+    if (node.nodeType === 'FunctionDefinition' && state && state.gasEstimation) {
       const result: gasEstimationType = state.gasEstimation
       const executionCost = ' Execution cost: ' + result.executionCost + ' gas'
       const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
