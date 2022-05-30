@@ -49,7 +49,7 @@ export const Toaster = (props: ToasterProps) => {
         }
       })
     }
-  }, [props.message])
+  }, [props.message, state.message])
 
   useEffect(() => {
     if (state.hiding) {
