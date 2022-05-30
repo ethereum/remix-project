@@ -29,8 +29,6 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             const result = await publishToSwarm(contract, api)
 
             modal(`Published ${contract.name}'s Metadata`, publishMessage(result.uploaded))
-            // triggered each time there's a new verified publish (means hash correspond)
-            api.writeFile('swarm/' + result.item.hash, result.item.content)
           } catch (err) {
             let parseError = err
             try {
@@ -44,8 +42,6 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             const result = await publishToIPFS(contract, api)
 
             modal(`Published ${contract.name}'s Metadata`, publishMessage(result.uploaded))
-            // triggered each time there's a new verified publish (means hash correspond)
-            api.writeFile('ipfs/' + result.item.hash, result.item.content)
           } catch (err) {
             modal('IPFS Publish Failed', publishMessageFailed(storage, err))
           }
