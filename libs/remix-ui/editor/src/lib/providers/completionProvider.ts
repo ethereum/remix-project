@@ -88,11 +88,16 @@ export class RemixCompletionProvider {
             if (splits.length > 1) {
                 let last = splits[splits.length - 2].trim()
                 const lastParentheses = last.lastIndexOf('(')
+                const lastClosingParentheses = last.lastIndexOf(')')
                 const lastBracket = last.lastIndexOf('{')
                 const lastSemiColon = last.lastIndexOf(';')
                 let textBefore = null
                 let lastWord = null
                 let lineWithoutEdits = null
+                // get word before last closing parentheses
+                if (lastParentheses > -1 && lastClosingParentheses > -1) {
+                    //textBefore = last.substring(0, lastParentheses)
+                }
                 // find largest 
                 const lastIndex = Math.max(lastParentheses, lastBracket, lastSemiColon)
                 if (lastIndex > -1) {
@@ -132,7 +137,7 @@ export class RemixCompletionProvider {
                                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                                     const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
                                     console.log('HAS DECLARATION OF', declarationOf)
-                                    nodes = declarationOf.nodes
+                                    nodes = declarationOf.nodes || declarationOf.members
                                     const baseContracts = await getlinearizedBaseContracts(declarationOf)
                                     for (const baseContract of baseContracts) {
                                         nodes = [...nodes, ...baseContract.nodes]
@@ -201,7 +206,7 @@ export class RemixCompletionProvider {
 
         const getParamaters = async (parameters: any) => {
             if (parameters && parameters.parameters) {
-                let params = []
+                const params = []
                 for (const param of parameters.parameters) {
                     params.push(await getVariableDeclaration(param))
                 }
@@ -211,7 +216,7 @@ export class RemixCompletionProvider {
 
         const completeParameters = async (parameters: any) => {
             if (parameters && parameters.parameters) {
-                let params = []
+                const params = []
                 for (const param of parameters.parameters) {
                     params.push(param.name)
                 }
