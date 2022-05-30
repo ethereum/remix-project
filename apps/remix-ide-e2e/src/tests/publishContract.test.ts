@@ -25,7 +25,7 @@ module.exports = {
         const value = <string>(result.value)
 
         browser.perform((done) => {
-          if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
+          if (value.indexOf('Metadata and sources of "ballot" were published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
           done()
         })
       })
@@ -43,7 +43,7 @@ module.exports = {
         const value = <string>(result.value)
 
         browser.perform((done) => {
-          if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('swarm deploy failed')
+          if (value.indexOf('Metadata and sources of "ballot" were published successfully.') === -1) browser.assert.fail('swarm deploy failed')
           if (value.indexOf('bzz') === -1) browser.assert.fail('swarm deploy failed')
           done()
         })
@@ -67,7 +67,7 @@ module.exports = {
       .getText('[data-id="udappModalDialogModalBody-react"]', (result) => {
         const value = typeof result.value === 'string' ? result.value : null
 
-        if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
+        if (value.indexOf('Metadata and sources of "storage" were published successfully.') === -1) browser.assert.fail('ipfs deploy failed')
       })
       .modalFooterOKClick('udapp')
   },
