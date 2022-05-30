@@ -1,5 +1,6 @@
 'use strict'
 import React from 'react' // eslint-disable-line
+import { resolve } from 'path'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
@@ -149,6 +150,25 @@ class Editor extends Plugin {
     this.on('theme', 'themeLoaded', (theme) => {
       this.currentThemeType = theme.quality
       this.renderComponent()
+    })
+    this.on('fileManager', 'currentFileChanged', async (name) => {
+      if (name.endsWith('.ts')) {
+        // extract the import, resolve their content
+        // and add the imported files to Monaco through the `addModel`
+        // so Monaco can provide auto completion
+        let content = await this.call('fileManager', 'readFile', name)
+        const paths = name.split('/')
+        paths.pop()
+        const fromPath = paths.join('/') // get current execution context path
+        for (const match of content.matchAll(/import\s+.*\s+from\s+(?:"(.*?)"|'(.*?)')/g)) {
+          let path = match[2]
+          if (path.startsWith('./') || path.startsWith('../')) path = resolve(fromPath, path)
+          if (path.startsWith('/')) path = path.substring(1)
+          if (!path.endsWith('.ts')) path = path + '.ts'
+          content = await this.call('fileManager', 'readFile', path)
+          this.emit('addModel', content, 'typescript', path, false)
+        }
+      }
     })
     try {
       this.currentThemeType = (await this.call('theme', 'currentTheme')).quality
