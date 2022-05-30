@@ -63,7 +63,7 @@ export const publishToIPFS = async (contract, api) => {
   // publish the list of sources in order, fail if any failed
   await Promise.all(sources.map(async (item) => {
     try {
-      const result = await ipfsVerifiedPublish(item.content, item.hash)
+      const result = await ipfsVerifiedPublish(item.content, item.hash, api)
 
       try {
         item.hash = result.url.match('dweb:/ipfs/(.+)')[1]
@@ -76,10 +76,10 @@ export const publishToIPFS = async (contract, api) => {
       throw new Error(error)
     }
   }))
-  const metadataContent = JSON.stringify(metadata)
+  const metadataContent = JSON.stringify(metadata, null, '\t')
 
   try {
-    const result = await ipfsVerifiedPublish(metadataContent, '')
+    const result = await ipfsVerifiedPublish(metadataContent, '', api)
 
     try {
       contract.metadataHash = result.url.match('dweb:/ipfs/(.+)')[1]
@@ -101,13 +101,14 @@ export const publishToIPFS = async (contract, api) => {
   return { uploaded, item }
 }
 
-const ipfsVerifiedPublish = async (content, expectedHash) => {
+const ipfsVerifiedPublish = async (content, expectedHash, api) => {
   try {
     const results = await severalGatewaysPush(content)
 
     if (expectedHash && results !== expectedHash) {
       return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + results, hash: results }
     } else {
+      api.writeFile('ipfs/' + results, content)
       return { message: 'ok', url: 'dweb:/ipfs/' + results, hash: results }
     }
   } catch (error) {
