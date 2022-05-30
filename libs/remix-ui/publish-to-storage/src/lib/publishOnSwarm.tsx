@@ -79,7 +79,7 @@ export const publishToSwarm = async (contract, api) => {
   // publish the list of sources in order, fail if any failed
   await Promise.all(sources.map(async (item) => {
     try {
-      const result = await swarmVerifiedPublish(beeNodes, postageStampId, item.content, item.hash)
+      const result = await swarmVerifiedPublish(beeNodes, postageStampId, item.content, item.hash, api)
 
       try {
         item.hash = result.url.match('bzz-raw://(.+)')[1]
@@ -96,9 +96,9 @@ export const publishToSwarm = async (contract, api) => {
     }
   }))
 
-  const metadataContent = JSON.stringify(metadata)
+  const metadataContent = JSON.stringify(metadata, null, '\t')
   try {
-    const result = await swarmVerifiedPublish(beeNodes, postageStampId, metadataContent, '')
+    const result = await swarmVerifiedPublish(beeNodes, postageStampId, metadataContent, '', api)
 
     try {
       contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
@@ -121,7 +121,7 @@ export const publishToSwarm = async (contract, api) => {
   return { uploaded, item }
 }
 
-const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash): Promise<Record<string, any>> => {
+const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash, api): Promise<Record<string, any>> => {
   try {
     const results = await uploadToBeeNodes(beeNodes, postageStampId, content)
     const hash = hashFromResults(results)
@@ -129,6 +129,7 @@ const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, con
     if (expectedHash && hash !== expectedHash) {
       return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + hash, hash }
     } else {
+      api.writeFile('swarm/' + hash, content)
       return { message: 'ok', url: 'bzz-raw://' + hash, hash }
     }
   } catch (error) {
