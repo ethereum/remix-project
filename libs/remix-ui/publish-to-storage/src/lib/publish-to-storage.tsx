@@ -28,7 +28,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
           try {
             const result = await publishToSwarm(contract, api)
 
-            modal(`Published ${contract.name}'s Metadata`, publishMessage(result.uploaded))
+            modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
           } catch (err) {
             let parseError = err
             try {
@@ -41,7 +41,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
           try {
             const result = await publishToIPFS(contract, api)
 
-            modal(`Published ${contract.name}'s Metadata`, publishMessage(result.uploaded))
+            modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
           } catch (err) {
             modal('IPFS Publish Failed', publishMessageFailed(storage, err))
           }
@@ -55,7 +55,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   }, [storage])
 
   const publishMessage = (uploaded) => (
-    <span> Metadata of "{contract.name.toLowerCase()}" was published successfully. <br />
+    <span> Metadata and sources of "{contract.name.toLowerCase()}" were published successfully. <br />
       <pre>
         <div>
           { uploaded.map((value, index) => <div key={index}><b>{ value.filename }</b> : <pre>{ value.output.url }</pre></div>) }
@@ -65,7 +65,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   )
 
   const publishMessageFailed = (storage, err) => (
-    <span>Failed to publish metadata file to { storage }, please check the { storage } gateways is available. <br />
+    <span>Failed to publish metadata file and sources to { storage }, please check the { storage } gateways is available. <br />
       {err}
     </span>
   )
