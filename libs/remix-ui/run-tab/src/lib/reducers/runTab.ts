@@ -1,4 +1,4 @@
-import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract, CompilationError } from '@remix-project/remix-solidity-ts'
 import { ContractData } from '@remix-project/core-plugin'
 interface Action {
   type: string

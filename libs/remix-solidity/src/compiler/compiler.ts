@@ -84,7 +84,6 @@ export class Compiler {
    */
 
   compile (files: Source, target: string): void {
-    console.log('compiler', files, target)
     this.state.target = target
     this.event.trigger('compilationStarted', [])
     this.internalCompile(files)
@@ -156,6 +155,7 @@ export class Compiler {
     if (!noFatalErrors) {
       // There are fatal errors, abort here
       this.state.lastCompilationResult = null
+      this.event.trigger('astFinished', [false, data, source, input, version])
       this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
@@ -169,9 +169,10 @@ export class Compiler {
           source: source
         }
       }
+      this.event.trigger('astFinished', [true, data, source, input, version])
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
-    this.event.trigger('astFinished', [true, data, source, input, version])
+    
   }
 
   /**
@@ -272,7 +273,6 @@ export class Compiler {
     const jobs: Record<'sources', SourceWithTarget> [] = []
 
     this.state.worker.addEventListener('message', (msg: Record <'data', MessageFromWorker>) => {
-      console.log(msg)
       const data: MessageFromWorker = msg.data
       switch (data.cmd) {
         case 'versionLoaded':
