@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
-import { fileChangedToastMsg, storageFullMessage } from '@remix-ui/helper'
+import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 
 /*
@@ -275,7 +275,7 @@ class FileManager extends Plugin {
 
       const provider = this.fileProviderOf(src)
       if (provider.isSubDirectory(src, dest)) {
-        this.call('notification', 'toast', 'File(s) to paste is an ancestor of the destination folder')
+        this.call('notification', 'toast', recursivePasteToastMsg())
       } else {
         await this.inDepthCopy(src, dest)
       }
