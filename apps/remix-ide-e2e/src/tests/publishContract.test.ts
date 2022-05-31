@@ -30,8 +30,8 @@ module.exports = {
         })
       })
       .click('[data-id="publishToStorage-modal-footer-ok-react"]')
-      .openFile('ipfs/Qmd4XV9j79GPfv5cgVsg62vKzaLuf6igx7VSW2BKaUyF3w')
-      .openFile('ipfs/QmVyGTHJAPhVephhnBSEHpTga3Svxx7ifynGuxRjWuRCfM')
+      .openFile('ipfs/QmSUodhSvoorFL5m5CNqve8YvmuBpjCq17NbTf4GUX8ydw')
+      .openFile('ipfs/QmXYUS1ueS22EqNVRaKuZa31EgHLjKZ8uTM8vWhQLxa3pw')
   },
 
   /* Disableing the test untill refactoring and the new swarm usage
