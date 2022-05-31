@@ -332,9 +332,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
-        if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
-        else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
-        else this.compileTabLogic.runCompiler(undefined)
+        if (this.currentFile && (this.currentFile.endsWith('.sol') || this.currentFile.endsWith('.yul'))) {
+          if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
+          else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
+          else this.compileTabLogic.runCompiler(undefined)
+        }
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
