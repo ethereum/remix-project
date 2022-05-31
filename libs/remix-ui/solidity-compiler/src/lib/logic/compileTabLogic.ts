@@ -131,11 +131,6 @@ export class CompileTabLogic {
 
   runCompiler (externalCompType) {
     try {
-      const currentFile = this.api.currentFile
-      if (currentFile && (currentFile.endsWith('.ts') || currentFile.endsWith('.js') || currentFile.endsWith('.txt') || currentFile.endsWith('.log'))) {
-        // these are obviously not solidity files.
-        return
-      }
       if (this.api.getFileManagerMode() === 'localhost') {
         if (externalCompType === 'hardhat') {
           const { currentVersion, optimize, runs } = this.compiler.state
@@ -188,7 +183,8 @@ export class CompileTabLogic {
         }
       }
       // TODO readd saving current file
-      this.api.saveCurrentFile()      
+      this.api.saveCurrentFile()
+      const currentFile = this.api.currentFile
       return this.compileFile(currentFile)
     } catch (err) {
       console.error(err)
