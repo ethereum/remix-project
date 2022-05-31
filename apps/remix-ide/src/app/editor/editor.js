@@ -165,8 +165,10 @@ class Editor extends Plugin {
           if (path.startsWith('./') || path.startsWith('../')) path = resolve(fromPath, path)
           if (path.startsWith('/')) path = path.substring(1)
           if (!path.endsWith('.ts')) path = path + '.ts'
-          content = await this.call('fileManager', 'readFile', path)
-          this.emit('addModel', content, 'typescript', path, false)
+          if (await this.call('fileManager', 'exists', path)) {
+            content = await this.call('fileManager', 'readFile', path)
+            this.emit('addModel', content, 'typescript', path, false)
+          }
         }
       }
     })
