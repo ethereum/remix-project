@@ -26,7 +26,25 @@ export class SlitherClient extends PluginClient {
   }
 
   install (): void {
-    console.log('inside slither install method')
+    try {
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: slither requires Python 3.6+ and solc, the Solidity compiler.`)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc-select is required to manage installing and setting different solc compiler versions.`)
+      const options = { cwd: this.currentSharedFolder, shell: true }
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: checking pip3 availability ...`)
+      const pip3OP = execSync('pip3 --version', options)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: pip3 found: ${pip3OP.toString()}`)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: checking solc availability...`)
+      const solcOP = execSync('solc --version', options)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc found: ${solcOP.toString()}`)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: installing slither...`)
+      const slitherOP = execSync('pip3 install slither-analyzer', options)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: slither installation output: ${slitherOP.toString()}`)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: installing solc-select...`)
+      const solcSelectOP = execSync('pip3 install solc-select', options)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc-select installation output: ${solcSelectOP.toString()}`)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   mapNpmDepsDir (list) {

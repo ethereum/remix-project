@@ -76,6 +76,7 @@ function errorHandler (error: any, service: string) {
     const availableModulesToInstall = ['slither']
     const service = program.install
     if(availableModulesToInstall.includes(program.install)) services[service](false)['install']()
+    process.exit(0)
   }
 
   if (!program.remixIde) {
