@@ -1,6 +1,10 @@
-export class RemixCompletionProvider {
+import { editor, languages, Position } from "monaco-editor"
+import monaco from "../../types/monaco"
+import { EditorUIProps } from "../remix-ui-editor"
 
-    props: any
+export class RemixCompletionProvider implements languages.CompletionItemProvider {
+
+    props: EditorUIProps
     monaco: any
     constructor(props: any, monaco: any) {
         this.props = props
@@ -8,31 +12,10 @@ export class RemixCompletionProvider {
     }
 
     triggerCharacters = ['.', '']
-    async provideCompletionItems(model: any, position: any, context: any) {
+    async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext) {
         console.log('AUTOCOMPLETE', context)
         console.log(position)
-        //await this.props.plugin.call('contextualListener', 'compile')
-        //const block = await this.props.plugin.call('contextualListener', 'getBlockName', position)
-        //console.log('BLOCK', block)
-        //return null
-        return await this.run(model, position, context)
 
-        const word = model.getWordUntilPosition(position);
-        const wordAt = model.getWordAtPosition(position);
-
-        console.log('WORD', word)
-        console.log('WORDAT', wordAt)
-
-        return new Promise((resolve, reject) => {
-            this.props.plugin.once('contextualListener', 'astFinished', async () => {
-                console.log('AST FINISHED')
-                resolve(await this.run(model, position, context))
-            })
-            this.props.plugin.call('contextualListener', 'compile')
-        })
-    }
-
-    async run(model: any, position: any, context: any) {
         const textUntilPosition = model.getValueInRange({
             startLineNumber: 1,
             startColumn: 1,
@@ -68,7 +51,7 @@ export class RemixCompletionProvider {
 
 
         const line = model.getLineContent(position.lineNumber)
-        let nodes
+        let nodes = []
 
 
 
@@ -119,14 +102,15 @@ export class RemixCompletionProvider {
                 let nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
 
                 console.log('NODES AT POSITION', nodesAtPosition)
-                if (!nodesAtPosition.length) {
-                    const block = await this.props.plugin.call('contextualListener', 'getBlockName', position, textWithoutEdits)
-                    console.log('BLOCK', block)
-                    if (block) {
-                        nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', block.range[0])
-                        console.log('NODES AT POSITION', nodesAtPosition)
-                    }
+                const block = await this.props.plugin.call('contextualListener', 'getBlockName', position, textWithoutEdits)
+                console.log('BLOCK', block)
+                //if (!nodesAtPosition.length) {
+                if (block) {
+                    nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', block.body ? block.body.range[0] : block.range[0])
+                    console.log('NODES AT POSITION WITH BLOCK', nodesAtPosition)
                 }
+                //}
+                // explore nodes at the BLOCK
                 if (nodesAtPosition) {
                     for (const node of nodesAtPosition) {
                         const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
@@ -137,7 +121,7 @@ export class RemixCompletionProvider {
                                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                                     const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
                                     console.log('HAS DECLARATION OF', declarationOf)
-                                    nodes = declarationOf.nodes || declarationOf.members
+                                    nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
                                     const baseContracts = await getlinearizedBaseContracts(declarationOf)
                                     for (const baseContract of baseContracts) {
                                         nodes = [...nodes, ...baseContract.nodes]
@@ -146,7 +130,46 @@ export class RemixCompletionProvider {
                             }
                         }
                     }
+                    // anything within the block statements might provide a clue to what it is
+                    if (!nodes.length) {
+                        for (const node of nodesAtPosition) {
+                            if (node.statements) {
+                                for (const statement of node.statements) {
+                                    if (statement.expression && statement.expression.memberName === last) {
+                                        const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', statement.expression)
+                                        if (declarationOf.typeName && declarationOf.typeName.nodeType === 'UserDefinedTypeName') {
+                                            const baseDeclaration = await this.props.plugin.call('contextualListener', 'declarationOf', declarationOf.typeName)
+                                            console.log('HAS BASE DECLARATION OF', baseDeclaration)
+                                            nodes = [...nodes, ...baseDeclaration.nodes || baseDeclaration.members]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+
+
+                // brute force search in all nodes with the name
+                //if (!nodes.length) {
+                    const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithName', last)
+                    console.log('NODES WITHE NAME ', last, nodesOfScope)
+                    for (const nodeOfScope of nodesOfScope) {
+                        if (nodeOfScope.name === last) {
+                            console.log('FOUND NODE', nodeOfScope)
+                            if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
+                                const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
+                                console.log('HAS DECLARATION OF', declarationOf)
+                                nodes = [...nodes,...declarationOf.nodes || declarationOf.members]
+                                const baseContracts = await getlinearizedBaseContracts(declarationOf)
+                                for (const baseContract of baseContracts) {
+                                    nodes = [...nodes, ...baseContract.nodes]
+                                }
+                            }
+                        }
+                    }
+
+                //}
             }
         } else {
             const cursorPosition = this.props.editorAPI.getCursorPosition()
@@ -162,16 +185,32 @@ export class RemixCompletionProvider {
                 }
             }
 
+            // get all children of all nodes at position
             for (const node of nodesAtPosition) {
                 const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
+                for (const nodeOfScope of nodesOfScope) {
+                    const imports = await this.props.plugin.call('contextualListener', 'resolveImports', nodeOfScope)
+                    if (imports) {
+                        for (const key in imports) {
+                            if (imports[key].nodes)
+                                nodes = [...nodes, ...imports[key].nodes]
+                        }
+                    }
+                }
+
+
                 nodes = [...nodes, ...nodesOfScope]
             }
+            // get the linearized base contracts
             for (const node of nodesAtPosition) {
                 const baseContracts = await getlinearizedBaseContracts(node)
                 for (const baseContract of baseContracts) {
                     nodes = [...nodes, ...baseContract.nodes]
                 }
             }
+
+
+
             //nodes  = await this.props.plugin.call('contextualListener', 'getNodes')
         }
 
