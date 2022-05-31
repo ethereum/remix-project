@@ -7,11 +7,9 @@ import { Compiler } from '@remix-project/remix-solidity'
 import { helper } from '@remix-project/remix-solidity'
 import type { CompilationError } from '@remix-project/remix-solidity-ts'
 
-
-
 const profile = {
   name: 'contextualListener',
-  methods: ['getBlockName', 'getAST', 'nodesWithScope', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['getBlockName', 'resolveImports', 'getAST', 'nodesWithScope', 'nodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -43,9 +41,7 @@ export class EditorContextListener extends Plugin {
   codeDepositCost: any
   contract: any
   activated: boolean
-
   lastCompilationResult: any
-
   lastAST: any
   compiler: any
   onAstFinished: (success: any, data: any, source: any, input: any, version: any) => Promise<void>
@@ -70,16 +66,16 @@ export class EditorContextListener extends Plugin {
       this._stopHighlighting()
     })
 
-    this.on('solidity', 'loadingCompiler', async(url) => {
+    this.on('solidity', 'loadingCompiler', async (url) => {
       console.log('loading compiler', url)
 
-      this.compiler.event.register('compilerLoaded', async() => await this.compile() )
+      this.compiler.event.register('compilerLoaded', async () => await this.compile())
       this.compiler.loadVersion(true, url)
     })
 
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    
-    
+
+
 
     this.onAstFinished = async (success, data, source, input, version) => {
       console.log('compile success', success)
@@ -129,7 +125,7 @@ export class EditorContextListener extends Plugin {
       //await this.compile()
     }, 1000)
 
-    
+
 
     setInterval(async () => {
       const compilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
@@ -173,6 +169,21 @@ export class EditorContextListener extends Plugin {
     }
   }
 
+  async resolveImports(node, imported = {}) {
+    if (node.nodeType === 'ImportDirective' && !imported[node.sourceUnit]) {
+      console.log('IMPORTING', node)
+      const importNode = await this.getNodeById(node.sourceUnit)
+      imported[importNode.id] = importNode
+      if (importNode.nodes) {
+        for (const child of importNode.nodes) {
+          imported = await this.resolveImports(child, imported)
+        }
+      }
+    }
+    console.log(imported)
+    return imported
+  }
+
   async getBlockName(position: any, text: string = null) {
     await this.getAST(text)
     const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
@@ -191,7 +202,7 @@ export class EditorContextListener extends Plugin {
       }
       return null
     }
-    if(!this.lastAST) return
+    if (!this.lastAST) return
     return walkAst(this.lastAST)
   }
 
@@ -243,7 +254,7 @@ export class EditorContextListener extends Plugin {
     return results
   }
 
-  async nodesAtEditorPosition(position: any, type: string = '') {
+  async nodesAtEditorPosition(position: any, type = '') {
     const lastCompilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
     if (!lastCompilationResult) return false
     const urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
@@ -276,6 +287,14 @@ export class EditorContextListener extends Plugin {
     const nodes = []
     for (const node of Object.values(this._index.FlatReferences) as any[]) {
       if (node.scope === scope) nodes.push(node)
+    }
+    return nodes
+  }
+
+  async nodesWithName(name: string) {
+    const nodes = []
+    for (const node of Object.values(this._index.FlatReferences) as any[]) {
+      if (node.name === name) nodes.push(node)
     }
     return nodes
   }

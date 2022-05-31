@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events'
 import { Node, AstNode } from './index'
-import type { CompilationError } from '@remix-project/remix-solidity-ts'
 
 export declare interface AstWalker {
   new(): EventEmitter;

@@ -1,27 +1,18 @@
 
+import { editor, languages, Position } from 'monaco-editor'
+import monaco from '../../types/monaco'
+import { EditorUIProps } from '../remix-ui-editor'
+export class RemixHoverProvider implements languages.HoverProvider {
 
-export class RemixHoverProvider {
-
-    props: any
+    props: EditorUIProps
     monaco: any
     constructor(props: any, monaco: any) {
         this.props = props
         this.monaco = monaco
     }
 
-    provideHover = async function (model: any, position: any) {
+    provideHover = async function (model: editor.ITextModel, position: Position) {
         console.log('HOVERING')
-        return await this.run(model, position)
-        return new Promise((resolve, reject) => {
-            this.props.plugin.once('contextualListener', 'astFinished', async () => {
-                console.log('AST FINISHED')
-                resolve(await this.run(model, position))
-            })
-            this.props.plugin.call('contextualListener', 'compile')
-        })
-
-    }
-    async run(model: any, position: any) {
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
 
         const nodeAtPosition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
