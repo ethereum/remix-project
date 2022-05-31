@@ -69,8 +69,13 @@ export class EditorContextListener extends Plugin {
     this.on('solidity', 'loadingCompiler', async (url) => {
       console.log('loading compiler', url)
 
-      this.compiler.event.register('compilerLoaded', async () => await this.compile())
       this.compiler.loadVersion(true, url)
+      this.compiler.event.register('compilerLoaded', async () =>{
+        console.log('compiler loaded')
+        await this.compile()
+        await this.getAST()
+      })
+      
     })
 
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))
@@ -162,6 +167,7 @@ export class EditorContextListener extends Plugin {
       this.currentFile = await this.call('fileManager', 'file')
       if (!this.currentFile) return
       const content = await this.call('fileManager', 'readFile', this.currentFile)
+      console.log('compile', this.currentFile, content)
       const sources = { [this.currentFile]: { content } }
       this.compiler.compile(sources, this.currentFile)
     } catch (e) {
