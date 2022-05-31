@@ -8,8 +8,8 @@ import { cairoLang, cairoConf } from './cairoSyntax'
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
 import monaco from '../types/monaco'
-import { IPosition, languages } from 'monaco-editor'
-import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { IPosition } from 'monaco-editor'
+
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
@@ -103,7 +103,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
   const editorRef = useRef(null)
-  const monacoRef = useRef(null)
+  const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -428,31 +428,34 @@ export const EditorUI = (props: EditorUIProps) => {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
   }
 
-  function handleEditorWillMount(monaco) {
+  function handleEditorWillMount(monaco: Monaco) {
+    console.log('editor will mount', monaco, typeof monaco)
     monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
     // Register a tokens provider for the language
-    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language)
-    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', conf)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', conf as any)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang)
-    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf as any)
 
     // register Definition Provider
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', {
-      provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken) {
+      
+      provideDefinition(model:any, position: any, token: any) {
         const cursorPosition = props.editorAPI.getCursorPosition()
         props.plugin.call('contextualListener', 'jumpToDefinition', cursorPosition)
+        return null
       }
     })
 
