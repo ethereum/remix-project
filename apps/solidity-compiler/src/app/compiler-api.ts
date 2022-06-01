@@ -304,14 +304,15 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (data.errors) {
         for (const error of data.errors) {
           let pos = helper.getPositionDetails(error.formattedMessage)
-          if (pos.errFile) {
+          const file = pos.errFile
+          if (file) {
             pos = {
               row: pos.errLine,
               column: pos.errCol,
               text: error.formattedMessage,
               type: error.severity
             }
-            await this.call('editor', 'addAnnotation', pos, pos.errFile)
+            await this.call('editor', 'addAnnotation', pos, file)
           }
         }
       }     
