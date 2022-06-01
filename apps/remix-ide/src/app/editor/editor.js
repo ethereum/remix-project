@@ -141,12 +141,6 @@ class Editor extends Plugin {
     this.on('sidePanel', 'pluginDisabled', (name) => {
       this.clearAllDecorationsFor(name)
     })
-    this.on('fileManager', 'fileClosed', (name) => {
-      if (name === this.currentFile) {
-        this.currentFile = null
-        this.renderComponent()
-      }
-    })
     this.on('theme', 'themeLoaded', (theme) => {
       this.currentThemeType = theme.quality
       this.renderComponent()
@@ -171,6 +165,15 @@ class Editor extends Plugin {
           }
         }
       }
+      if (name === this.currentFile) {
+        this.currentFile = name
+        this.renderComponent()
+      }
+    })
+
+    this.on('fileManager', 'noFileSelected', async () => {
+      this.currentFile = null
+      this.renderComponent()
     })
     try {
       this.currentThemeType = (await this.call('theme', 'currentTheme')).quality
