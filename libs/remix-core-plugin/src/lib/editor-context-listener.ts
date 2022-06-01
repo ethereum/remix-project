@@ -74,6 +74,9 @@ export class EditorContextListener extends Plugin {
         console.log('compiler loaded')
         await this.compile()
         await this.getAST()
+        const a = 'function (){a=4; c.getBook().run.}'
+        const ast = (SolidityParser as any).parse(a, { loc: true, range: true, tolerant: true })
+        console.log('BAD AST', ast)
       })
       
     })
