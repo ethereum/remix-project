@@ -284,7 +284,7 @@ export class TabProxy extends Plugin {
     let previous = currentFileTab
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
       if (!previous && tab.name === name) {
-        if(index - 1 && this.loadedTabs[index - 1])
+        if(index - 1  >= 0 && this.loadedTabs[index - 1])
           previous = this.loadedTabs[index - 1]
         else if (index + 1 && this.loadedTabs[index + 1]) 
           previous = this.loadedTabs[index + 1]
