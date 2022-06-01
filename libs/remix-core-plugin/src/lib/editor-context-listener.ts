@@ -72,8 +72,8 @@ export class EditorContextListener extends Plugin {
       this.compiler.loadVersion(true, url)
       this.compiler.event.register('compilerLoaded', async () =>{
         console.log('compiler loaded')
-        await this.compile()
-        await this.getAST()
+        //await this.compile()
+        //await this.getAST()
         const a = 'function (){a=4; c.getBook().run.}'
         const ast = (SolidityParser as any).parse(a, { loc: true, range: true, tolerant: true })
         console.log('BAD AST', ast)
@@ -225,7 +225,7 @@ export class EditorContextListener extends Plugin {
     } catch (e) {
       console.log(e)
     }
-    console.log('LAST AST', this.lastAST)
+    console.log('LAST PARSER AST', this.lastAST)
     return this.lastAST
   }
 
