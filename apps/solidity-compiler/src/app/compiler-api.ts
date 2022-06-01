@@ -19,6 +19,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onCurrentFileChanged: (fileName: string) => void
   // onResetResults: () => void
   onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
+  onFileRemoved: (path: string) => void
   onNoFileSelected: () => void
   onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
@@ -238,6 +239,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.resetResults()
       if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost, workspace.name)
+    })
+
+    this.on('fileManager', 'fileRemoved', (path) => {
+      if (this.onFileRemoved) this.onFileRemoved(path)
     })
 
     this.on('remixd', 'rootFolderChanged', () => {

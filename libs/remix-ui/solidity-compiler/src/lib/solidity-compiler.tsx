@@ -15,6 +15,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     isTruffleProject: false,
     workspaceName: '',
     currentFile,
+    configFilePath: 'compiler_config.json',
     loading: false,
     compileTabLogic: null,
     compiler: null,
@@ -71,6 +72,13 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       return { ...prevState, currentFile, isHardhatProject: isHardhat, workspaceName: workspaceName, isTruffleProject:  isTruffle }
     })
   }
+  
+  api.onFileRemoved = (path: string) => {
+    if (path === state.configFilePath)
+      setState(prevState => {
+        return { ...prevState, configFilePath: '' }
+      })
+  }
 
   api.onNoFileSelected = () => {
     setState(prevState => {
@@ -102,6 +110,13 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   api.statusChanged = (data: { key: string, title?: string, type?: string }) => {
     setBadgeStatus({ ...badgeStatus, [currentFile]: data })
   }
+
+  const setConfigFilePath = (path: string) => {
+    setState(prevState => {
+      return { ...prevState, configFilePath: path }
+    })
+  }
+
 
   const toast = (message: string) => {
     setState(prevState => {
@@ -162,6 +177,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           compiledFileName={currentFile}
           updateCurrentVersion={updateCurrentVersion}
           configurationSettings={configurationSettings}
+          configFilePath={state.configFilePath}
+          setConfigFilePath={setConfigFilePath}
         />
         { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
         { compileErrors[currentFile] &&

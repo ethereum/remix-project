@@ -16,7 +16,9 @@ export interface CompilerContainerProps {
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   compiledFileName: string,
   updateCurrentVersion: any,
-  configurationSettings: ConfigurationSettings
+  configurationSettings: ConfigurationSettings,
+  configFilePath: string,
+  setConfigFilePath: (path: string) => void
 }
 export interface ContractSelectionProps {
   api: ICompilerApi,
