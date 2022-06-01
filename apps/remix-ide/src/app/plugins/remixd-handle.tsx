@@ -142,11 +142,14 @@ function remixdDialog () {
         Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd documentation</a>.
       </div>
       <div className='mb-2 text-break'>
-        If you are just looking for the remixd command, here it is:
-        <br></br>
-        Go to your working directory and then run:
+        The remixd command is:
         <br></br><b>{commandText}</b>
-        <CopyToClipboard data-id='remixdCopyCommand' content={commandText}></CopyToClipboard>
+      </div>
+      <div className='mb-2 text-break'>
+        The remixd command without options uses the terminal's current directory as the shared directory and the shared Remix domain can only be https://remix.ethereum.org, https://remix-alpha.ethereum.org, or https://remix-beta.ethereum.org
+      </div>
+      <div className='mb-2 text-break'>
+        See all remixd options:  <b>remixd --help</b>
       </div>
       <div className='mb-2 text-break'>
         When connected, a session will be started between <em>{window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>.
