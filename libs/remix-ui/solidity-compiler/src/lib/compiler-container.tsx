@@ -12,6 +12,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
 
 import './css/style.css'
+const defaultPath = "compiler_config.json"
 
 declare global {
   interface Window {
@@ -66,22 +67,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
-    api.setAppParameter('configFilePath', "compiler_config.json")
+    api.setAppParameter('configFilePath', defaultPath)
 
     if (state.useFileConfiguration) {
-      api.fileExists("compiler_config.json").then((exists) => {
+      api.fileExists(defaultPath).then((exists) => {
         if (!exists || state.useFileConfiguration ) createNewConfigFile()
       })
     }
 
-    api.setAppParameter('configFilePath', "compiler_config.json")
+    api.setAppParameter('configFilePath', defaultPath)
     setShowFilePathInput(false)
   }, [workspaceName])
 
   useEffect(() => {
     
     if (state.useFileConfiguration)
-      api.fileExists("compiler_config.json").then((exists) => {
+      api.fileExists(defaultPath).then((exists) => {
         if (!exists || state.useFileConfiguration ) createNewConfigFile()
       })
   }, [state.useFileConfiguration])
@@ -130,7 +131,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
         const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || false
         let configFilePathSaved = await api.getAppParameter('configFilePath')
-        if (!configFilePathSaved || configFilePathSaved == '') configFilePathSaved = "compiler_config.json"
+        if (!configFilePathSaved || configFilePathSaved == '') configFilePathSaved = defaultPath
 
         setConfigFilePath(configFilePathSaved)
 
@@ -217,7 +218,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const toggleConfigType = () => {
     if (state.useFileConfiguration)
       if (state.createFileOnce) {
-        api.fileExists("compiler_config.json").then((exists) => {
+        api.fileExists(defaultPath).then((exists) => {
           if (!exists || state.useFileConfiguration ) createNewConfigFile()
         })
         setState(prevState => {
@@ -237,6 +238,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const createNewConfigFile = async () => {
     let filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : configFilePath
+    if (filePath === '') filePath = defaultPath
     if (!filePath.endsWith('.json')) filePath = filePath + '.json'
 
     await api.writeFile(filePath, configFileContent)
