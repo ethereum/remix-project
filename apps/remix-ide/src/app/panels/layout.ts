@@ -57,9 +57,6 @@ export class Layout extends Plugin {
       this.panels.main.active = false
       this.event.emit('change', null)
     })
-    this.on('tabs', 'tabCountChanged', async count => {
-      if (!count) await this.call('manager', 'activatePlugin', 'home')
-    })
     this.on('manager', 'activate', (profile: Profile) => {
       switch (profile.name) {
         case 'filePanel':
