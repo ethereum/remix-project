@@ -79,10 +79,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [workspaceName])
 
   useEffect(() => {
-    if (state.useFileConfiguration)
+    if (state.useFileConfiguration) {
       api.fileExists(defaultPath).then((exists) => {
         if (!exists || state.useFileConfiguration ) createNewConfigFile()
       })
+      setToggleExpander(true)
+    }
   }, [state.useFileConfiguration])
 
 
