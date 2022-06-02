@@ -424,6 +424,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
     if (!state.autoCompile || (state.autoCompile && state.matomoAutocompileOnce)) {
+      if (state.useFileConfiguration)
+        _paq.push(['trackEvent', 'compiler', 'compiled_with_config_file'])
+
       _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
       if (state.autoCompile && state.matomoAutocompileOnce) {
         setState(prevState => {
