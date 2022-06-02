@@ -1,32 +1,53 @@
-import React, { useState } from 'react'
-import { ButtonGroup, Dropdown } from 'react-bootstrap'
+import React, { ReactNode, Ref } from 'react'
+import { Dropdown, FormControl } from 'react-bootstrap'
 
-export function DeployButton (props: DeployButtonProps) {
-  const [showOptions, setShowOptions] = useState<boolean>(false)
+// The forwardRef is important!!
+// Dropdown needs access to the DOM node in order to position the Menu
+const CustomToggle = React.forwardRef(({ children, onClick }: { children?: ReactNode, onClick: (e) => void }, ref: Ref<HTMLAnchorElement>) => (
+  <a
+    href=""
+    ref={ref}
+    onClick={(e) => {
+      e.preventDefault()
+      onClick(e)
+    }}
+  >
+    {children}
+  </a>
+))
 
-  const toggleOptions = () => {
-    setShowOptions(!showOptions)
-  }
+export const cloneWorkspace = () => {
 
   return (
-    <>
-    { props.deployOptions && (props.deployOptions || []).length > 0 ?
-      <Dropdown as={ButtonGroup} autoClose="outside">
-        <button onClick={props.handleActionClick} title={props.buttonOptions.title} className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`} data-id={props.buttonOptions.dataId}>{ props.deployOptions[props.selectedIndex] ? props.deployOptions[props.selectedIndex].title : 'Deploy' }</button>
-        <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${props.buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} />
-        <Dropdown.Menu className="deploy-items border-0">
-          {
-            (props.deployOptions).map(({ title, active }, index) => <Dropdown.Item onClick={() => {
-              props.setSelectedIndex(index)
-              toggleOptions()
-            }} key={index}> { props.selectedIndex === index ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
-          }
-        </Dropdown.Menu>
-      </Dropdown> : 
-      <button onClick={props.handleActionClick} title={props.buttonOptions.title} className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`} data-id={props.buttonOptions.dataId}>
-        Deploy
-      </button>
-    }
-    </>
+    <Dropdown>
+      <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
+        <span
+          id='workspacesRestore'
+          data-id='workspacesRestore'
+          onClick={() => {}}
+          className='far fa-upload remixui_menuicon'
+          title='Restore Workspaces Backup'>
+        </span>
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        {/* <Dropdown.Item eventKey="1">
+          <FormControl
+              autoFocus
+              className="mx-3 my-2 w-auto"
+              placeholder="Type to filter..."
+              onChange={(e) => setValue(e.target.value)}
+              value={value}
+            />
+        </Dropdown.Item> */}
+          <FormControl
+            autoFocus
+            className="mx-3 my-2 w-auto"
+            placeholder="Type to filter..."
+            onChange={() => {}}
+            value=''
+          />
+      </Dropdown.Menu>
+    </Dropdown>
   )
 }
