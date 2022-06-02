@@ -53,15 +53,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
-    api.setAppParameter('configFilePath', "/compiler_config.json")
-    api.fileExists("/compiler_config.json").then((exists) => {
-      if (!exists) createNewConfigFile()
-      else {
-        // what to do? discuss
-      }
-    })
-    api.setAppParameter('configFilePath', "/compiler_config.json")
-    setShowFilePathInput(false)
+    if (workspaceName) {
+      api.setAppParameter('configFilePath', "/compiler_config.json")
+      api.fileExists("/compiler_config.json").then((exists) => {
+        if (!exists) createNewConfigFile()
+      })
+      api.setAppParameter('configFilePath', "/compiler_config.json")
+      setShowFilePathInput(false)
+    }
   }, [workspaceName])
 
   useEffect(() => {

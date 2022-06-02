@@ -376,8 +376,8 @@ class FileManager extends Plugin {
         const provider = this.fileProviderOf(path)
 
         provider.resolveDirectory(path, (error, filesProvider) => {
-          if (error) reject(error)
-          resolve(filesProvider)
+          if (error) return reject(error)
+          return resolve(filesProvider)
         })
       })
     } catch (e) {
