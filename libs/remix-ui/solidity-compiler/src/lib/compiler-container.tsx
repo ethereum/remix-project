@@ -784,8 +784,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
-            <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" data-id="scFileConfiguration"/>
-            <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
+            <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" />
+            <label className="form-check-label custom-control-label" htmlFor="scFileConfig" data-id="scFileConfiguration">Use configuration file</label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             { (!showFilePathInput && state.useFileConfiguration) && <span
