@@ -60,10 +60,55 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         console.log('cursor', cursorPosition)
 
         if (context.triggerCharacter === '.') {
+            console.clear()
             console.log('TEXT', line)
-
             const textBeforeCursor = line.substring(0, position.column - 1)
             const textAfterCursor = line.substring(position.column - 1)
+            // parse the line witout changing the line
+
+            const wrapLineInFunction = (text: string) => {
+                return `function() {
+                    ${text}
+                }`
+            }
+
+            let lastNode
+            const checkLastNode = (node) => {
+                if (!node) return
+                if (lastNode && lastNode.range && lastNode.range[1]) {
+                    if (node.range[1] > lastNode.range[1]) {
+                        lastNode = node
+                    }
+                } else {
+                    lastNode = node
+                }
+            }
+
+
+            const linesToCheck =
+                [
+                    textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode;",
+                    textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode;}",
+                    textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode);",
+                    wrapLineInFunction(textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode;"),
+                    wrapLineInFunction(textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode;}"),
+                    wrapLineInFunction(textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode;)"),
+                ]
+
+            for (const line of linesToCheck) {
+                try {
+                    const lineAst = await this.props.plugin.call('contextualListener', 'parseSource', line)
+                    const lastNode = await this.props.plugin.call('contextualListener', 'getLastNodeInLine', lineAst)
+                    checkLastNode(lastNode)
+                } catch (e) {
+
+                }
+            }
+
+            console.log('lastNode found', lastNode)
+
+
+
             console.log(textBeforeCursor, textAfterCursor)
             const splits = textBeforeCursor.split('.')
 
@@ -90,7 +135,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     console.log('text without edits', textBefore, textAfterCursor)
                     lineWithoutEdits = `${textBefore}${textAfterCursor}`
                 }
-                last = lastWord || last
+                last = lastNode.name || lastNode.memberName
                 console.log('last', last)
 
                 const lines = model.getLinesContent()
@@ -151,7 +196,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
 
                 // brute force search in all nodes with the name
-                //if (!nodes.length) {
+                if (!nodes.length) {
                     const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithName', last)
                     console.log('NODES WITHE NAME ', last, nodesOfScope)
                     for (const nodeOfScope of nodesOfScope) {
@@ -160,16 +205,15 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                             if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                                 const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
                                 console.log('HAS DECLARATION OF', declarationOf)
-                                nodes = [...nodes,...declarationOf.nodes || declarationOf.members]
+                                // nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
                                 const baseContracts = await getlinearizedBaseContracts(declarationOf)
                                 for (const baseContract of baseContracts) {
-                                    nodes = [...nodes, ...baseContract.nodes]
+                                    //nodes = [...nodes, ...baseContract.nodes]
                                 }
                             }
                         }
                     }
-
-                //}
+                }
             }
         } else {
             const cursorPosition = this.props.editorAPI.getCursorPosition()

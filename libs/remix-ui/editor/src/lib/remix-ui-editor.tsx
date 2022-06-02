@@ -8,12 +8,13 @@ import { cairoLang, cairoConf } from './cairoSyntax'
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
 import monaco from '../types/monaco'
-import { IPosition } from 'monaco-editor'
+import { IPosition, MarkerSeverity } from 'monaco-editor'
 
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixSignatureProvider } from './providers/signatureProvider'
+import { CompilationError } from '@remix-project/remix-solidity-ts'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -76,11 +77,11 @@ export interface EditorUIProps {
     getCursorPosition: () => cursorPosition
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+    addErrorMarker: (error: CompilationError) => void
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   }
 }
-
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
   const defaultEditorValue = `
@@ -265,6 +266,7 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     }
+    
   }, [props.currentFile])
 
   const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
@@ -354,6 +356,35 @@ export const EditorUI = (props: EditorUIProps) => {
     return addDecoration(marker, filePath, typeOfDecoration)
   }
 
+  props.editorAPI.addErrorMarker = async (marker: CompilationError) => {
+
+    console.log(editorModelsState)
+    let filePath = marker.sourceLocation.file
+    console.log(filePath)
+    if (!filePath) return
+    const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
+    filePath = fileFromUrl.file
+    const model = editorModelsState[filePath]?.model
+    if (model) {
+      console.log(model)
+      const markerData: monaco.editor.IMarkerData = {
+        severity: MarkerSeverity.Error,
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: 1,
+        endColumn: 2,
+        message: marker.message,
+        code: '21ji2j21ij21iji'
+      }
+      console.log(markerData)
+      monacoRef.current.editor.colorizeModelLine(model,1)
+      monacoRef.current.editor.colorizeModelLine(model,2)
+      console.log(monacoRef.current.editor.getModels())
+      monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [markerData])
+      console.log(monacoRef.current.editor.getModelMarkers({}))
+    }
+  }
+
   props.editorAPI.findMatches = (uri: string, value: string) => {
     if (!editorRef.current) return
     const model = editorModelsState[uri]?.model
@@ -436,7 +467,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
   }
 
-  function handleEditorWillMount(monaco: Monaco) {
+  function handleEditorWillMount(monaco: Monaco) {   
     console.log('editor will mount', monaco, typeof monaco)
     monacoRef.current = monaco
     // Register a new language
@@ -451,20 +482,24 @@ export const EditorUI = (props: EditorUIProps) => {
 
     // register Definition Provider
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', {
-      
-      provideDefinition(model:any, position: any, token: any) {
+
+      provideDefinition(model: any, position: any, token: any) {
         const cursorPosition = props.editorAPI.getCursorPosition()
         props.plugin.call('contextualListener', 'jumpToDefinition', cursorPosition)
         return null
       }
     })
+    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+    });
 
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     // monacoRef.current.languages.registerSignatureHelpProvider('remix-solidity', new RemixSignatureProvider(props, monaco))
     loadTypes(monacoRef.current)
-    
+
   }
 
   return (

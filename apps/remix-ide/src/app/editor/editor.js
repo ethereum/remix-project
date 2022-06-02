@@ -12,7 +12,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel', 'addErrorMarker']
 }
 
 class Editor extends Plugin {
@@ -492,6 +492,10 @@ class Editor extends Plugin {
     this.registeredDecorations[typeOfDecoration][filePath].push(...registeredDecorations)
     if (!this.currentDecorations[typeOfDecoration][filePath]) this.currentDecorations[typeOfDecoration][filePath] = []
     this.currentDecorations[typeOfDecoration][filePath].push(...currentDecorations)
+  }
+
+  async addErrorMarker (error){
+    this.api.addErrorMarker(error)
   }
 
   /**

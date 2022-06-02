@@ -13,6 +13,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
 
     provideHover = async function (model: editor.ITextModel, position: Position) {
         console.log('HOVERING')
+        return null
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
 
         const nodeAtPosition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
