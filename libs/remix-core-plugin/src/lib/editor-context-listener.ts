@@ -5,11 +5,12 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { Compiler } from '@remix-project/remix-solidity'
 
 import { helper } from '@remix-project/remix-solidity'
-import type { CompilationError } from '@remix-project/remix-solidity-ts'
+import type { CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts'
+
 
 const profile = {
   name: 'contextualListener',
-  methods: ['getBlockName', 'resolveImports', 'getAST', 'nodesWithScope', 'nodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
+  methods: ['getBlockName', 'getLastNodeInLine', 'resolveImports', 'parseSource', 'getAST', 'nodesWithScope', 'nodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'nodesAtEditorPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'jumpToPosition'],
   events: [],
   version: '0.0.1'
 }
@@ -66,11 +67,17 @@ export class EditorContextListener extends Plugin {
       this._stopHighlighting()
     })
 
+    this.on('fileManager', 'currentFileChanged', async () => {
+      await this.getAST()
+      await this.compile()
+      this._stopHighlighting()
+    })
+
     this.on('solidity', 'loadingCompiler', async (url) => {
       console.log('loading compiler', url)
 
       this.compiler.loadVersion(true, url)
-      this.compiler.event.register('compilerLoaded', async () =>{
+      this.compiler.event.register('compilerLoaded', async () => {
         console.log('compiler loaded')
         //await this.compile()
         //await this.getAST()
@@ -78,15 +85,15 @@ export class EditorContextListener extends Plugin {
         const ast = (SolidityParser as any).parse(a, { loc: true, range: true, tolerant: true })
         console.log('BAD AST', ast)
       })
-      
+
     })
 
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))
 
 
 
-    this.onAstFinished = async (success, data, source, input, version) => {
-      console.log('compile success', success)
+    this.onAstFinished = async (success, data: CompilationResult, source: CompilationSource, input: any, version) => {
+      console.log('compile success', success, data)
       this.call('editor', 'clearAnnotations')
       let noFatalErrors = true // ie warnings are ok
       const checkIfFatalError = (error: CompilationError) => {
@@ -101,16 +108,8 @@ export class EditorContextListener extends Plugin {
       if (data.errors) data.errors.forEach((err) => checkIfFatalError(err))
       if (data.errors) {
         for (const error of data.errors) {
-          let pos = helper.getPositionDetails(error.formattedMessage)
-          if (pos.errFile) {
-            pos = {
-              row: pos.errLine,
-              column: pos.errCol,
-              text: error.formattedMessage,
-              type: error.severity
-            }
-            await this.call('editor', 'addAnnotation', pos, pos.errFile)
-          }
+          console.log('ERROR POS', error)
+          await this.call('editor', 'addErrorMarker', error)
         }
       }
       if (!data.sources) return
@@ -136,6 +135,7 @@ export class EditorContextListener extends Plugin {
 
 
     setInterval(async () => {
+      return
       const compilationResult = this.lastCompilationResult // await this.call('compilerArtefacts', 'getLastCompilationResult')
       if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
 
@@ -170,7 +170,7 @@ export class EditorContextListener extends Plugin {
       this.currentFile = await this.call('fileManager', 'file')
       if (!this.currentFile) return
       const content = await this.call('fileManager', 'readFile', this.currentFile)
-      console.log('compile', this.currentFile, content)
+      // console.log('compile', this.currentFile, content)
       const sources = { [this.currentFile]: { content } }
       this.compiler.compile(sources, this.currentFile)
     } catch (e) {
@@ -220,13 +220,49 @@ export class EditorContextListener extends Plugin {
     if (!this.currentFile) return
     const fileContent = text || await this.call('fileManager', 'readFile', this.currentFile)
     try {
-      const ast = (SolidityParser as any).parse(fileContent, { loc: true, range: true, tolerant: true })
+      const ast = await this.parseSource(fileContent)
       this.lastAST = ast
+      console.log('AST PARSE SUCCESS', ast)
     } catch (e) {
       console.log(e)
     }
     console.log('LAST PARSER AST', this.lastAST)
     return this.lastAST
+  }
+
+  async parseSource(text: string) {
+    //console.log('PARSING', text)
+    const ast = (SolidityParser as any).parse(text, { loc: true, range: true, tolerant: true })
+    console.log('AST PARSE SUCCESS', ast)
+    return ast
+  }
+
+  async getLastNodeInLine(ast: string) {
+    let lastNode
+    const checkLastNode = (node) => {
+      if (lastNode && lastNode.range && lastNode.range[1]) {
+        if (node.range[1] > lastNode.range[1]) {
+          lastNode = node
+        }
+      } else {
+        lastNode = node
+      }
+    }
+
+    (SolidityParser as any).visit(ast, {
+      MemberAccess: function (node) {
+        checkLastNode(node)
+      },
+      Identifier: function (node) {
+        checkLastNode(node)
+      }
+    })
+    if (lastNode && lastNode.expression) {
+      console.log('lastNode', lastNode.expression)
+      return lastNode.expression
+    }
+    console.log('lastNode', lastNode)
+    return lastNode
   }
 
   getActiveHighlights() {
