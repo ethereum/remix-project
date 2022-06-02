@@ -111,6 +111,27 @@ module.exports = {
       .journalLastChildIncludes('data: 0x5c1...a733c')
   },
 
+  'Compile Ballot using config file': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('cf.json', {content: configFile})
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      .click('*[data-id="scConfigExpander"]')
+      .waitForElementVisible('*[data-id="scFileConfiguration"]', 10000)
+      .click('*[data-id="scFileConfiguration"]')
+      .waitForElementVisible('*[data-id="scConfigChangeFilePath"]', 10000)
+      .click('*[data-id="scConfigChangeFilePath"]')
+      .pause(10000)
+      .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+      .click('*[data-id="scConfigFilePathInput]')
+      .clearValue('*[data-id="scConfigFilePathInput"]')
+      .setValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
+      .sendKeys('*[data-id$="scConfigFilePathInput"]', browser.Keys.ENTER)
+      .openFile('Untitled.sol')
+      .pause(20000)
+      .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
+  },
+
   'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
     browser
       .clickFunction('winnerName - call')
@@ -123,21 +144,6 @@ module.exports = {
       // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
       .end()
-  },
-
-  'Compile Ballot using config file': function (browser: NightwatchBrowser) {
-    browser
-      .addFile('cf.json', {content: configFile})
-      .clickLaunchIcon('solidity')
-      .click('*[data-id="scConfigExpander"]')
-      .click('*[data-id="scFileConfiguration"]')
-      .click('*[data-id="scConfigChangeFilePath"]')
-      .click('*[data-id="scConfigFilePathInput]')
-      .clearValue('*[data-id="scConfigFilePathInput"]')
-      .setValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
-      .openFile('Untitled.sol')
-      .pause(5000)
-      .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
   }
 }
 

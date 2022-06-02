@@ -48,7 +48,6 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
         .waitForElementVisible('*[data-id="treeViewDivtreeViewItemoptimizer"]')
         .click('*[data-id="treeViewDivtreeViewItemoptimizer"]')
         .waitForElementVisible('*[data-id="treeViewDivruns"]')
-
         .assert.containsText('*[data-id="treeViewDivruns"]', `${opts.runs}`)
         .click('[data-id="workspacesModalDialog-modal-footer-ok-react"]')
         .perform(() => {
