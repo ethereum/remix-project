@@ -123,6 +123,21 @@ module.exports = {
       // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
       .end()
+  },
+
+  'Compile Ballot using config file': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('cf.json', {content: configFile})
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="scConfigExpander"]')
+      .click('*[data-id="scFileConfiguration"]')
+      .click('*[data-id="scConfigChangeFilePath"]')
+      .click('*[data-id="scConfigFilePathInput]')
+      .clearValue('*[data-id="scConfigFilePathInput"]')
+      .setValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
+      .openFile('Untitled.sol')
+      .pause(5000)
+      .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
   }
 }
 
@@ -190,6 +205,7 @@ const stateCheck = {
     immutable: false
   }
 }
+
 const ballotABI = `[
 {
   "inputs": [
@@ -356,3 +372,22 @@ const ballotABI = `[
   "type": "function"
 }
 ]`
+
+const configFile = `
+{
+	"language": "Solidity",
+	"settings": {
+		"optimizer": {
+			"enabled": true,
+			"runs": 300
+		},
+		"outputSelection": {
+			"*": {
+			"": ["ast"],
+			"*": []
+			}
+		},
+		"evmVersion": "byzantium"
+	}
+}
+`
