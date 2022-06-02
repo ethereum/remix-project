@@ -106,9 +106,11 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
-        this.api.readFile(this.configFilePath).then( contentConfig => {
-          this.compiler.set('configFileContent', contentConfig)
-        })
+        if (this.configFilePath) {
+          this.api.readFile(this.configFilePath).then( contentConfig => {
+            this.compiler.set('configFileContent', contentConfig)
+          }).catch(console.log)
+        }
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {
