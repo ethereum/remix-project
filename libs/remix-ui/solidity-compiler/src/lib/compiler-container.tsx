@@ -67,20 +67,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
-    api.setAppParameter('configFilePath', defaultPath)
-
-    if (state.useFileConfiguration) {
-      api.fileExists(defaultPath).then((exists) => {
-        if (!exists || state.useFileConfiguration ) createNewConfigFile()
-      })
+    if (workspaceName) {
+      api.setAppParameter('configFilePath', defaultPath)
+      if (state.useFileConfiguration) {
+        api.fileExists(defaultPath).then((exists) => {
+          if (!exists || state.useFileConfiguration ) createNewConfigFile()
+        })
+      }
+      setShowFilePathInput(false)
     }
-
-    api.setAppParameter('configFilePath', defaultPath)
-    setShowFilePathInput(false)
   }, [workspaceName])
 
   useEffect(() => {
-    
     if (state.useFileConfiguration)
       api.fileExists(defaultPath).then((exists) => {
         if (!exists || state.useFileConfiguration ) createNewConfigFile()
@@ -781,7 +779,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           </div>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
-            <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" />
+            <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" data-id="scFileConfiguration"/>
             <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
@@ -797,13 +795,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placeholder={"Enter the new path"}
               title="If the file you entered does not exist you will be able to create one in the next step."
               disabled={!state.useFileConfiguration}
+              data-id="scConfigFilePathInput"
               onKeyPress={event => {
                 if (event.key === 'Enter') {
                   handleConfigPathChange()
                 }
               }}
             />
-            { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
+            { !showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
           </div>
         </div>
         <div className="px-4">
