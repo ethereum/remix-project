@@ -344,8 +344,10 @@ export const SearchProvider = ({
         console.log(e)
       }
     }
+    setTimeout(async () => {
+      await fetchWorkspace()
+    }, 500)
 
-    fetchWorkspace()
 
     return () => {
       plugin.off('fileManager', 'fileChanged')
