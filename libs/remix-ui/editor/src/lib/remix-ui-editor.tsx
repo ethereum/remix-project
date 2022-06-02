@@ -256,7 +256,9 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
-    }    
+    } else {
+      monacoRef.current.editor.setModelLanguage(file.model, file.language)
+    }
   }, [props.currentFile])
 
   const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
@@ -420,6 +422,17 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorWillMount (monaco) {
     monacoRef.current = monaco
+    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+      noSuggestionDiagnostic: false
+    })
+
+    monacoRef.current.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+      noSuggestionDiagnostic: false
+    })
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
