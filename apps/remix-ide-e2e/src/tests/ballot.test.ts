@@ -121,14 +121,11 @@ module.exports = {
       .click('*[data-id="scFileConfiguration"]')
       .waitForElementVisible('*[data-id="scConfigChangeFilePath"]', 10000)
       .click('*[data-id="scConfigChangeFilePath"]')
-      .pause(10000)
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-      .click('*[data-id="scConfigFilePathInput]')
       .clearValue('*[data-id="scConfigFilePathInput"]')
       .setValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id$="scConfigFilePathInput"]', browser.Keys.ENTER)
       .openFile('Untitled.sol')
-      .pause(20000)
       .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
   },
 
