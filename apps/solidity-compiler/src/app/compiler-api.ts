@@ -287,23 +287,20 @@ export const CompilerApiMixin = (Base) => class extends Base {
             type: 'warning'
           })
         } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
-        // Store the contracts
-        this.compilationDetails.contractsDetails = {}
-        this.compiler.visitContracts((contract) => {
-          this.compilationDetails.contractsDetails[contract.name] = parseContracts(
-            contract.name,
-            contract.object,
-            this.compiler.getSource(contract.file)
-          )
-        })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
         this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
-      // Update contract Selection
-      this.compilationDetails.contractMap = {}
-      if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
-      this.compilationDetails.target = source.target
+      // Store the contracts and Update contract Selection
+      if (success) {
+        this.compilationDetails = await this.visitsContractApi(source)
+      } else {
+        this.compilationDetails = {
+          contractMap: {},
+          contractsDetails: {},
+          target: source.target
+        }
+      }
       if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
       // set annotations
       if (data.errors) {
@@ -346,5 +343,27 @@ export const CompilerApiMixin = (Base) => class extends Base {
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
+  }
+
+  async visitsContractApi (source): Promise<{ contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }> {
+    return new Promise((resolve) => {
+      this.compiler.visitContracts((contract) => {
+        const contractDetails = parseContracts(
+          contract.name,
+          contract.object,
+          this.compiler.getSource(contract.file)
+        )
+        const contractMap = contract 
+
+        return resolve({
+          contractMap: {
+            [contract.name]: contractMap
+          }, contractsDetails: {
+            [contract.name]: contractDetails
+          },
+          target: source.target
+        })
+      })
+    })
   }
 }
