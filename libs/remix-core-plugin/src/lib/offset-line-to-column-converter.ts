@@ -30,6 +30,7 @@ export class OffsetToLineColumnConverter extends Plugin {
    * @param {Object.<string, {ast, id}>} asts - Map of content sources
    */
   offsetToLineColumn (rawLocation, file, sources, asts) {
+    console.log('offsetToLineColumn', rawLocation, file, sources, asts)
     if (!this.lineBreakPositionsByContent[file]) {
       const sourcesArray = Object.keys(sources)
       if (!asts || (file === 0 && sourcesArray.length === 1)) {
