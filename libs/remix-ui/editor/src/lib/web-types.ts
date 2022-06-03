@@ -156,13 +156,11 @@ export const loadTypes = async (monaco) => {
     // @ts-ignore
     const versionEthers = await import('raw-loader!ethers/lib/_version.d.ts')
     versionEthers.default = versionEthers.default.replace(/@ethersproject\//g, '@ethersproject_')
-    console.log(versionEthers.default)
     monaco.languages.typescript.typescriptDefaults.addExtraLib(versionEthers.default, `file:///node_modules/@types/_version-ethers-lib/index.d.ts`)
 
     // @ts-ignore
     const utilEthers = await import('raw-loader!ethers/lib/utils.d.ts')
     utilEthers.default = utilEthers.default.replace(/@ethersproject\//g, '@ethersproject_')
-    console.log(utilEthers.default)
     monaco.languages.typescript.typescriptDefaults.addExtraLib(utilEthers.default, `file:///node_modules/@types/utils-ethers-lib/index.d.ts`)
 
     // @ts-ignore
@@ -171,14 +169,12 @@ export const loadTypes = async (monaco) => {
     ethers.default = ethers.default.replace(/.\/_version/g, '_version-ethers-lib')
     ethers.default = ethers.default.replace(/.\/ethers/g, 'ethers-lib')
     ethers.default = ethers.default.replace(/@ethersproject\//g, '@ethersproject_')
-    console.log(ethers.default)
     monaco.languages.typescript.typescriptDefaults.addExtraLib(ethers.default, `file:///node_modules/@types/ethers-lib/index.d.ts`)
 
     // @ts-ignore
     const indexEthers = await import('raw-loader!ethers/lib/index.d.ts')
     indexEthers.default = indexEthers.default.replace(/.\/ethers/g, 'ethers-lib')
     indexEthers.default = indexEthers.default.replace(/@ethersproject\//g, '@ethersproject_')
-    console.log(indexEthers.default)
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexEthers.default, `file:///node_modules/@types/ethers/index.d.ts`)
 
     // Web3

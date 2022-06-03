@@ -193,7 +193,7 @@ export function Workspace () {
                   title='Delete'>
                 </span>
                 <span
-                  hidden={currentWorkspace === NO_WORKSPACE}
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
                   id='workspacesDownload'
                   data-id='workspacesDownload'
                   onClick={(e) => {
@@ -204,6 +204,7 @@ export function Workspace () {
                   title='Download Workspaces'>
                 </span>
                 <span
+                  hidden={currentWorkspace === LOCALHOST}
                   id='workspacesRestore'
                   data-id='workspacesRestore'
                   onClick={(e) => {

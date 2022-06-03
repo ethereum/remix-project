@@ -164,6 +164,8 @@ export interface CompilerState {
     language: Language,
     compilationStartTime: number| null,
     target: string | null,
+    useFileConfiguration: boolean,
+    configFileContent: string,
     lastCompilationResult: {
       data: CompilationResult | null,
       source: SourceWithTarget | null | undefined

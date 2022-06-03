@@ -18,7 +18,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   onCurrentFileChanged: (fileName: string) => void
   // onResetResults: () => void
-  onSetWorkspace: (workspace: any) => void
+  onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
   onNoFileSelected: () => void
   onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
@@ -237,12 +237,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost)
+      if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost, workspace.name)
     })
 
     this.on('remixd', 'rootFolderChanged', () => {
       this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(true)
+      if (this.onSetWorkspace) this.onSetWorkspace(true, 'localhost')
     })
 
     this.on('editor', 'sessionSwitched', () => {
@@ -304,14 +304,15 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (data.errors) {
         for (const error of data.errors) {
           let pos = helper.getPositionDetails(error.formattedMessage)
-          if (pos.errFile) {
+          const file = pos.errFile
+          if (file) {
             pos = {
               row: pos.errLine,
               column: pos.errCol,
               text: error.formattedMessage,
               type: error.severity
             }
-            await this.call('editor', 'addAnnotation', pos, pos.errFile)
+            await this.call('editor', 'addAnnotation', pos, file)
           }
         }
       }     
@@ -332,9 +333,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
-        if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
-        else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
-        else this.compileTabLogic.runCompiler(undefined)
+        if (this.currentFile && (this.currentFile.endsWith('.sol') || this.currentFile.endsWith('.yul'))) {
+          if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
+          else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
+          else this.compileTabLogic.runCompiler(undefined)
+        }
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
