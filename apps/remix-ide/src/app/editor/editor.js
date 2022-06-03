@@ -165,7 +165,7 @@ class Editor extends Plugin {
           }
         }
       }
-      if (name === this.currentFile) {
+      if (name !== this.currentFile) {
         this.currentFile = name
         this.renderComponent()
       }
