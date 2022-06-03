@@ -78,6 +78,7 @@ export interface EditorUIProps {
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     addErrorMarker: (errors: []) => void
+    clearErrorMarkers: (sources: {}) => void
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   }
@@ -358,6 +359,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.addErrorMarker = async (errors: []) => {
 
+    let allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
     for (const error of errors) {
       const marker = (error as any).error
       const lineColumn = (error as any).lineColumn
@@ -367,6 +369,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
       filePath = fileFromUrl.file
       const model = editorModelsState[filePath]?.model
+
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
           severity: MarkerSeverity.Error,
@@ -375,10 +378,29 @@ export const EditorUI = (props: EditorUIProps) => {
           endLineNumber: lineColumn.end.line + 1,
           endColumn: lineColumn.end.column + 1,
           message: marker.message,
-          code: '21ji2j21ij21iji'
         }
         console.log(markerData)
-        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [markerData])
+        if (!allMarkersPerfile[filePath]) {
+          allMarkersPerfile[filePath] = []
+        }
+        allMarkersPerfile[filePath].push(markerData)
+      }
+    }
+    for (const filePath in allMarkersPerfile) {
+      const model = editorModelsState[filePath]?.model
+      if (model) {
+        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', allMarkersPerfile[filePath])
+      }
+    }
+  }
+
+  props.editorAPI.clearErrorMarkers = async (sources: {}) => {
+    console.log('clear', sources)
+    for (const source of Object.keys(sources)) {
+      const filePath = source
+      const model = editorModelsState[filePath]?.model
+      if (model) {
+        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [])
       }
     }
   }
