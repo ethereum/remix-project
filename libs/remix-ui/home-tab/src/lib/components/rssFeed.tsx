@@ -12,8 +12,8 @@ export function RSSFeed({ feedUrl, maxItems }: RSSFeedProps) {
 
     useEffect(() => {
         const fetchData = async () => {
-            let parser = new Parser()
-            let feed = await parser.parseURL(feedUrl);
+            const parser = new Parser()
+            const feed = await parser.parseURL(feedUrl);
             for (const item of feed.items) {
                 item.content = item['content:encoded']
                 item.date = new Date(item.pubDate).toLocaleDateString('en-US', {
