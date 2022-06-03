@@ -309,14 +309,15 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (data.errors) {
         for (const error of data.errors) {
           let pos = helper.getPositionDetails(error.formattedMessage)
-          if (pos.errFile) {
+          const file = pos.errFile
+          if (file) {
             pos = {
               row: pos.errLine,
               column: pos.errCol,
               text: error.formattedMessage,
               type: error.severity
             }
-            await this.call('editor', 'addAnnotation', pos, pos.errFile)
+            await this.call('editor', 'addAnnotation', pos, file)
           }
         }
       }     
@@ -340,9 +341,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
-        if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
-        else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
-        else this.compileTabLogic.runCompiler(undefined)
+        if (this.currentFile && (this.currentFile.endsWith('.sol') || this.currentFile.endsWith('.yul'))) {
+          if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
+          else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
+          else this.compileTabLogic.runCompiler(undefined)
+        }
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
