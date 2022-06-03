@@ -77,7 +77,7 @@ export interface EditorUIProps {
     getCursorPosition: () => cursorPosition
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    addErrorMarker: (error: CompilationError) => void
+    addErrorMarker: (errors: []) => void
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   }
@@ -266,7 +266,7 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     }
-    
+
   }, [props.currentFile])
 
   const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
@@ -356,32 +356,30 @@ export const EditorUI = (props: EditorUIProps) => {
     return addDecoration(marker, filePath, typeOfDecoration)
   }
 
-  props.editorAPI.addErrorMarker = async (marker: CompilationError) => {
+  props.editorAPI.addErrorMarker = async (errors: []) => {
 
-    console.log(editorModelsState)
-    let filePath = marker.sourceLocation.file
-    console.log(filePath)
-    if (!filePath) return
-    const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
-    filePath = fileFromUrl.file
-    const model = editorModelsState[filePath]?.model
-    if (model) {
-      console.log(model)
-      const markerData: monaco.editor.IMarkerData = {
-        severity: MarkerSeverity.Error,
-        startLineNumber: 1,
-        startColumn: 1,
-        endLineNumber: 1,
-        endColumn: 2,
-        message: marker.message,
-        code: '21ji2j21ij21iji'
+    for (const error of errors) {
+      const marker = (error as any).error
+      const lineColumn = (error as any).lineColumn
+      let filePath = marker.sourceLocation.file
+
+      if (!filePath) return
+      const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
+      filePath = fileFromUrl.file
+      const model = editorModelsState[filePath]?.model
+      if (model) {
+        const markerData: monaco.editor.IMarkerData = {
+          severity: MarkerSeverity.Error,
+          startLineNumber: lineColumn.start.line + 1,
+          startColumn: lineColumn.start.column + 1,
+          endLineNumber: lineColumn.end.line + 1,
+          endColumn: lineColumn.end.column + 1,
+          message: marker.message,
+          code: '21ji2j21ij21iji'
+        }
+        console.log(markerData)
+        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [markerData])
       }
-      console.log(markerData)
-      monacoRef.current.editor.colorizeModelLine(model,1)
-      monacoRef.current.editor.colorizeModelLine(model,2)
-      console.log(monacoRef.current.editor.getModels())
-      monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [markerData])
-      console.log(monacoRef.current.editor.getModelMarkers({}))
     }
   }
 
@@ -467,7 +465,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
   }
 
-  function handleEditorWillMount(monaco: Monaco) {   
+  function handleEditorWillMount(monaco: Monaco) {
     console.log('editor will mount', monaco, typeof monaco)
     monacoRef.current = monaco
     // Register a new language
@@ -510,7 +508,7 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: true}}
+        options={{ glyphMargin: true, readOnly: true }}
         defaultValue={defaultEditorValue}
       />
       <div className="contextview">

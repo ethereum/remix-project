@@ -4,8 +4,8 @@ import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { Compiler } from '@remix-project/remix-solidity'
 
-import { helper } from '@remix-project/remix-solidity'
-import type { CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts'
+
+import { CompilationError, CompilationResult, CompilationSource, helper } from '@remix-project/remix-solidity-ts'
 
 
 const profile = {
@@ -104,13 +104,30 @@ export class EditorContextListener extends Plugin {
           noFatalErrors = false
         }
       }
+      const result = new CompilerAbstract('soljson', data, source, input)
+
+
+
       if (data.error) checkIfFatalError(data.error)
       if (data.errors) data.errors.forEach((err) => checkIfFatalError(err))
       if (data.errors) {
+        const allErrors = []
         for (const error of data.errors) {
           console.log('ERROR POS', error)
-          await this.call('editor', 'addErrorMarker', error)
+          let pos = helper.getPositionDetails(error.formattedMessage)
+          console.log('ERROR POS', pos)
+          const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
+          {
+            start: error.sourceLocation.start,
+            length: error.sourceLocation.end - error.sourceLocation.start
+          },
+          0,
+          result.getSourceCode().sources,
+          result.getAsts())
+          console.log('lineColumn', lineColumn)
+          allErrors.push({error, lineColumn})
         }
+        await this.call('editor', 'addErrorMarker', allErrors)
       }
       if (!data.sources) return
       if (data.sources && Object.keys(data.sources).length === 0) return
