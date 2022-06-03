@@ -110,25 +110,29 @@ export class EditorContextListener extends Plugin {
 
       if (data.error) checkIfFatalError(data.error)
       if (data.errors) data.errors.forEach((err) => checkIfFatalError(err))
+      const allErrors = []
       if (data.errors) {
-        const allErrors = []
         for (const error of data.errors) {
           console.log('ERROR POS', error)
           let pos = helper.getPositionDetails(error.formattedMessage)
           console.log('ERROR POS', pos)
           const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
-          {
-            start: error.sourceLocation.start,
-            length: error.sourceLocation.end - error.sourceLocation.start
-          },
-          0,
-          result.getSourceCode().sources,
-          result.getAsts())
+            {
+              start: error.sourceLocation.start,
+              length: error.sourceLocation.end - error.sourceLocation.start
+            },
+            0,
+            result.getSourceCode().sources,
+            null)
           console.log('lineColumn', lineColumn)
-          allErrors.push({error, lineColumn})
+          allErrors.push({ error, lineColumn })
         }
         await this.call('editor', 'addErrorMarker', allErrors)
+      } else {
+        await this.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
       }
+      
+
       if (!data.sources) return
       if (data.sources && Object.keys(data.sources).length === 0) return
       this.lastCompilationResult = new CompilerAbstract('soljson', data, source, input)
