@@ -354,22 +354,21 @@ export const CompilerApiMixin = (Base) => class extends Base {
           target: source.target
         })
       }
+      const contractMap = {}
+      const contractsDetails = {}
       this.compiler.visitContracts((contract) => {
         const contractDetails = parseContracts(
           contract.name,
           contract.object,
           this.compiler.getSource(contract.file)
         )
-        const contractMap = contract 
-
-        return resolve({
-          contractMap: {
-            [contract.name]: contractMap
-          }, contractsDetails: {
-            [contract.name]: contractDetails
-          },
-          target: source.target
-        })
+        contractMap[contract.name] = contract
+        contractDetails[contract.name] = contractDetails
+      })
+      return resolve({
+        contractMap, 
+        contractsDetails,
+        target: source.target
       })
     })
   }
