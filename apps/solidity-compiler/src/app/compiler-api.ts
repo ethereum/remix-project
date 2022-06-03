@@ -293,7 +293,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       }
       // Store the contracts and Update contract Selection
       if (success) {
-        this.compilationDetails = await this.visitsContractApi(source)
+        this.compilationDetails = await this.visitsContractApi(source, data)
       } else {
         this.compilationDetails = {
           contractMap: {},
@@ -345,8 +345,15 @@ export const CompilerApiMixin = (Base) => class extends Base {
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
   }
 
-  async visitsContractApi (source): Promise<{ contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }> {
+  async visitsContractApi (source, data): Promise<{ contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }> {
     return new Promise((resolve) => {
+      if (!data.contracts || (data.contracts && Object.keys(data.contracts).length === 0)) {
+        return resolve({
+          contractMap: {}, 
+          contractsDetails: {},
+          target: source.target
+        })
+      }
       this.compiler.visitContracts((contract) => {
         const contractDetails = parseContracts(
           contract.name,
