@@ -9,11 +9,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - run: yarn install --ignore-engines
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.17.6
+      - run: yarn install
       - run: ls
       - run: pwd
-      - run: yarn run downloadsolc_assets --ignore-engines
-      - run: yarn run build:production --ignore-engines
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
       - uses: mshick/add-pr-comment@v1
         with:
