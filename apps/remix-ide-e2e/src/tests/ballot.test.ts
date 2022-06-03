@@ -111,6 +111,19 @@ module.exports = {
       .journalLastChildIncludes('data: 0x5c1...a733c')
   },
 
+  'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
+    browser
+      .clickFunction('winnerName - call')
+      // Test in terminal
+      .journalLastChildIncludes('Ballot.winnerName()')
+      .testFunction('last',
+        {
+          'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
+        })
+      // Test in Udapp UI , treeViewDiv0 shows returned value on method click
+      .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
+  },
+
   'Compile Ballot using config file': function (browser: NightwatchBrowser) {
     browser
       .addFile('cf.json', {content: configFile})
@@ -127,19 +140,6 @@ module.exports = {
       .sendKeys('*[data-id$="scConfigFilePathInput"]', browser.Keys.ENTER)
       .openFile('Untitled.sol')
       .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
-  },
-
-  'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
-    browser
-      .clickFunction('winnerName - call')
-      // Test in terminal
-      .journalLastChildIncludes('Ballot.winnerName()')
-      .testFunction('last',
-        {
-          'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
-        })
-      // Test in Udapp UI , treeViewDiv0 shows returned value on method click
-      .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
       .end()
   }
 }
@@ -387,7 +387,7 @@ const configFile = `
 		"outputSelection": {
 			"*": {
 			"": ["ast"],
-			"*": []
+      "*": ["abi", "metadata", "devdoc", "userdoc", "storageLayout", "evm.legacyAssembly", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "evm.gasEstimates", "evm.assembly"]
 			}
 		},
 		"evmVersion": "byzantium"
