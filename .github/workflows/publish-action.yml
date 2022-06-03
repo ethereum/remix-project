@@ -22,8 +22,7 @@ jobs:
         with:
           message: |
             ipfs://${{ env.action_state }}
-            https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
-            https://gateway.ipfs.io/ipfs/${{ env.action_state }}
+            https://remix-project.infura-ipfs.io/ipfs/${{ env.action_state }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
