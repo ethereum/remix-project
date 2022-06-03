@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Parser from "rss-parser";
-import './RssFeed.css';
+import './rssFeed.css';
 
 interface RSSFeedProps {
     feedUrl: string,
