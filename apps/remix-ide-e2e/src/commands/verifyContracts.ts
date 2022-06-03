@@ -19,7 +19,7 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
     .pause(opts.wait)
     .pause(5000)
     .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)
-    .perform((done) => {
+    .perform(async (done) => {
       if (opts.version) {
         browser
           .click('*[data-id="compilation-details"]')
@@ -55,9 +55,9 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
           callback()
         })
       } else {
-        compiledContractNames.forEach((name) => {
-          browser.waitForElementContainsText('[data-id="compiledContracts"]', name, 60000)
-        })
+        for (const name in compiledContractNames) {
+         await browser.waitForElementContainsText('[data-id="compiledContracts"]', name, 60000)
+        }
         done()
         callback()
       }
