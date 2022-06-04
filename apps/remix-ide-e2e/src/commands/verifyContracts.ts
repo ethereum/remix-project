@@ -55,8 +55,8 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
           callback()
         })
       } else {
-        for (const name in compiledContractNames) {
-         await browser.waitForElementContainsText('[data-id="compiledContracts"]', name, 60000)
+        for (const index in compiledContractNames) {
+         await browser.waitForElementContainsText('[data-id="compiledContracts"]', compiledContractNames[index], 60000)
         }
         done()
         callback()
