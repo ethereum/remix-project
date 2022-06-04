@@ -111,7 +111,8 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     const scriptMedium = document.createElement('script')
     scriptMedium.src = 'https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js'
     scriptMedium.async = true
-    document.body.appendChild(scriptMedium)
+    // script causes a bug in the editor and prevents syntax error detection
+    // document.body.appendChild(scriptMedium)
     return () => {
       document.body.removeChild(scriptTwitter)
       document.body.removeChild(scriptMedium)
@@ -324,6 +325,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               className="btn-danger p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-medium"
               id="remixIDEHomeMediumbtn"
               title="Medium blogs"
+              hidden={true}
               onClick={(e) => {
                 setState(prevState => {
                   return { ...prevState, showMediaPanel: state.showMediaPanel === 'medium' ? 'none' : 'medium' }
