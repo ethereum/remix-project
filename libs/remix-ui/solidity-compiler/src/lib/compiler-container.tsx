@@ -71,7 +71,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       api.setAppParameter('configFilePath', defaultPath)
       if (state.useFileConfiguration) {
         api.fileExists(defaultPath).then((exists) => {
-          if (!exists || state.useFileConfiguration ) createNewConfigFile()
+          if (!exists && state.useFileConfiguration) createNewConfigFile()
         })
       }
       setShowFilePathInput(false)
@@ -81,7 +81,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (state.useFileConfiguration) {
       api.fileExists(defaultPath).then((exists) => {
-        if (!exists || state.useFileConfiguration ) createNewConfigFile()
+        if (!exists) createNewConfigFile()
       })
       setToggleExpander(true)
     }
