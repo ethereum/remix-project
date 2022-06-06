@@ -68,14 +68,14 @@ module.exports = {
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .pause(2000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .pause(100)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, acountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
@@ -145,14 +145,14 @@ module.exports = {
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .pause(100)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .pause(100)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, acountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
@@ -193,14 +193,14 @@ module.exports = {
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .pause(100)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<any> => {`) !== -1,
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .pause(100)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string): Promise<any> => { `) !== -1,
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, acountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
         'Incorrect content')
       })
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
