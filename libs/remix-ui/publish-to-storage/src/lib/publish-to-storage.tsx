@@ -6,6 +6,7 @@ import { publishToSwarm } from './publishOnSwarm'
 
 export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   const { api, storage, contract, resetStorage } = props
+  const [modalShown, setModalShown] = useState(false)
   const [state, setState] = useState({
     modal: {
       title: '',
@@ -38,7 +39,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
             modal('Swarm Publish Failed', publishMessageFailed(storage, parseError))
           }
         } else {
-          if (!api.config.get('settings/ipfs-url')) {
+          if (!api.config.get('settings/ipfs-url') && !modalShown) {
             modal('IPFS Settings', <div>You have not set your own custom IPFS settings.<br></br>
               <br></br>
               We won’t be providing a public endpoint anymore for publishing your contracts to IPFS.<br></br>Instead of that, 4 options are now available:<br></br>
@@ -82,6 +83,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     } catch (err) {
       modal('IPFS Publish Failed', publishMessageFailed(storage, err))
     }
+    setModalShown(true)
   }
 
   const publishMessage = (uploaded) => (
