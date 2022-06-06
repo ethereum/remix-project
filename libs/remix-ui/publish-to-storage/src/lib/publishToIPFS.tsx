@@ -121,7 +121,7 @@ const ipfsVerifiedPublish = async (content, expectedHash, api) => {
     if (expectedHash && hash !== expectedHash) {
       return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + hash, hash }
     } else {
-      api.writeFile('ipfs/' + results, content)
+      api.writeFile('ipfs/' + hash, content)
       return { message: 'ok', url: 'dweb:/ipfs/' + hash, hash }
     }
   } catch (error) {
