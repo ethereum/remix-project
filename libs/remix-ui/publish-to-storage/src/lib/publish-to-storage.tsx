@@ -47,7 +47,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
               <ul className='pl-3'>
                 <li>
                   DEFAULT OPTION:
-                  Use the public INFURA node. This will not guarantee your data will persists.
+                  Use the public INFURA node. This will not guarantee your data will persist.
                 </li>
                 <li>
                   Use your own INFURA IPFS node. This requires a subscription. <a href='https://infura.io/product/ipfs' target={'_blank'}>Learn more</a>
