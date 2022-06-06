@@ -319,8 +319,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               className="btn-danger p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-medium"
               id="remixIDEHomeMediumbtn"
               title="Medium blogs"
-              hidden={true}
-              onClick={(e) => {
+              remove ionClick={(e) => {
                 setState(prevState => {
                   return { ...prevState, showMediaPanel: state.showMediaPanel === 'medium' ? 'none' : 'medium' }
                 })
