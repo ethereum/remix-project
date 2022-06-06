@@ -291,7 +291,7 @@ const deployWithEthersJs = `
         // 'web3Provider' is a remix global variable object
         const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     
-        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     
         let contract = await factory.deploy(...constructorArgs);
     
@@ -320,7 +320,7 @@ describe("Storage with lib", function () {
     // Make sure contract is compiled and artifacts are generated
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     console.log('storage contract Address: ' + storage.address);
     await storage.deployed()
@@ -330,7 +330,7 @@ describe("Storage with lib", function () {
   it("test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     await storage.deployed()
     const setValue = await storage.store(56);
@@ -341,7 +341,7 @@ describe("Storage with lib", function () {
   it("fail test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     await storage.deployed()
     const setValue = await storage.store(56);
