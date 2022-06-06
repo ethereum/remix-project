@@ -19,6 +19,9 @@ module.exports = {
       .openFile('contracts/3_Ballot.sol')
       .verifyContracts(['Ballot'])
       .click('#publishOnIpfs')
+      .pause(2000)
+      .waitForElementVisible('[data-id="publishToStorageModalDialogModalBody-react"]', 60000)
+      .click('[data-id="publishToStorage-modal-footer-ok-react"]')
       .pause(8000)
       .waitForElementVisible('[data-id="publishToStorageModalDialogModalBody-react"]', 60000)
       .getText('[data-id="publishToStorageModalDialogModalBody-react"]', (result) => {
@@ -63,7 +66,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
-      .waitForElementVisible('[data-id="udappModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="udappModalDialogModalBody-react"]', 60000)
+      .modalFooterOKClick('udapp')
+      .pause(8000)
       .getText('[data-id="udappModalDialogModalBody-react"]', (result) => {
         const value = typeof result.value === 'string' ? result.value : null
 
