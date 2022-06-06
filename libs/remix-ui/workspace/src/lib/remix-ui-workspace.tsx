@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react' // eslint
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import './css/remix-ui-workspace.css'
 import { FileSystemContext } from './contexts'
+import { CloneWorkspace } from './components/tooltipInput'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -214,6 +215,7 @@ export function Workspace () {
                   className='far fa-upload remixui_menuicon'
                   title='Restore Workspaces Backup'>
                 </span>
+                <CloneWorkspace />
               </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {

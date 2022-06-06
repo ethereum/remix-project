@@ -12,22 +12,16 @@ const CustomToggle = React.forwardRef(({ children, onClick }: { children?: React
       onClick(e)
     }}
   >
-    {children}
+    { children }
   </a>
 ))
 
-export const cloneWorkspace = () => {
+export const CloneWorkspace = () => {
 
   return (
-    <Dropdown>
+    <Dropdown className="inline">
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-        <span
-          id='workspacesRestore'
-          data-id='workspacesRestore'
-          onClick={() => {}}
-          className='far fa-upload remixui_menuicon'
-          title='Restore Workspaces Backup'>
-        </span>
+        <i className="fas fa-cloud-download remixui_menuicon"></i>
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
