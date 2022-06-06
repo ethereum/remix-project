@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { Contract, ContractSendMethod, Options } from 'web3-eth-contract';
+import { Contract, ContractSendMethod, Options } from 'web3-eth-contract'
 
 /**
  * Deploy the given contract
@@ -21,9 +21,9 @@ export const deploy = async (contractName: string, args: Array<any>, from?: stri
 
     const accounts = await web3.eth.getAccounts()
 
-    let contract: Contract  = new web3.eth.Contract(metadata.abi)
+    const contract: Contract  = new web3.eth.Contract(metadata.abi)
 
-    let contractSend: ContractSendMethod = contract.deploy({
+    const contractSend: ContractSendMethod = contract.deploy({
         data: metadata.data.bytecode.object,
         arguments: args
     })
