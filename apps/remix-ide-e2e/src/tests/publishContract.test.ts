@@ -19,6 +19,9 @@ module.exports = {
       .openFile('contracts/3_Ballot.sol')
       .verifyContracts(['Ballot'])
       .click('#publishOnIpfs')
+      .pause(2000)
+      .waitForElementVisible('[data-id="publishToStorageModalDialogModalBody-react"]', 60000)
+      .click('[data-id="publishToStorage-modal-footer-ok-react"]')
       .pause(8000)
       .waitForElementVisible('[data-id="publishToStorageModalDialogModalBody-react"]', 60000)
       .getText('[data-id="publishToStorageModalDialogModalBody-react"]', (result) => {
