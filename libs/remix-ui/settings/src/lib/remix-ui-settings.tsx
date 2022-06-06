@@ -1,10 +1,10 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText } from './constants'
 
 import './remix-ui-settings.css'
-import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast } from './settingsAction'
+import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
@@ -26,6 +26,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
   const [resetState, refresh] = useState(0)
+  const [ipfsUrl, setipfsUrl] = useState('')
+  const [ipfsPort, setipfsPort] = useState('')
+  const [ipfsProtocol, setipfsProtocol] = useState('')
+  const [ipfsProjectId, setipfsProjectId] = useState('')
+  const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
+
 
   const initValue = () => {
     const metadataConfig =  props.config.get('settings/generate-contract-metadata')
@@ -59,6 +65,29 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (configPostageStampId) {
       setPostageStampId(configPostageStampId)
     }
+
+    const configipfsUrl = props.config.get('settings/ipfs-url')
+    if (configipfsUrl) {
+      setipfsUrl(configipfsUrl)
+    }
+    const configipfsPort = props.config.get('settings/ipfs-port')
+    if (configipfsPort) {
+      setipfsPort(configipfsPort)
+    }
+    const configipfsProtocol = props.config.get('settings/ipfs-protocol')
+    if (configipfsProtocol) {
+      setipfsProtocol(configipfsProtocol)
+    }
+    const configipfsProjectId = props.config.get('settings/ipfs-project-id')
+    if (configipfsProjectId) {
+      setipfsProjectId(configipfsProjectId)
+    }
+    const configipfsProjectSecret = props.config.get('settings/ipfs-project-secret')
+    if (configipfsProjectSecret) {
+      setipfsProjectSecret(configipfsProjectSecret)
+    }
+
+
   }, [themeName, state.message])
 
   useEffect(() => {
@@ -237,6 +266,83 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     </div>
   )
 
+  // ipfs settings
+
+  const handleSaveIpfsProjectId = useCallback(
+    (event) => {
+      setipfsProjectId(event.target.value)
+    }
+    , [ipfsProjectId]
+  )
+
+  const handleSaveIpfsSecret = useCallback(
+    (event) => {
+      setipfsProjectSecret(event.target.value)
+    }
+    , [ipfsProjectSecret]
+  )
+
+  const handleSaveIpfsUrl = useCallback(
+    (event) => {
+      setipfsUrl(event.target.value)
+    }
+    , [ipfsUrl]
+  )
+
+  const handleSaveIpfsPort = useCallback(
+    (event) => {
+      setipfsPort(event.target.value)
+    }
+    , [ipfsPort]
+  )
+
+  const handleSaveIpfsProtocol = useCallback(
+    (event) => {
+      setipfsProtocol(event.target.value)
+    }
+    , [ipfsProtocol]
+  )
+
+  const saveIpfsSettings = () => {
+    saveIpfsSettingsToast(props.config, dispatchToast, ipfsUrl, ipfsProtocol, ipfsPort, ipfsProjectId, ipfsProjectSecret)
+  }
+
+  const ipfsSettings = () => (
+    <div className="border-top">
+    <div className="card-body pt-3 pb-2">
+      <h6 className="card-title">{ ipfsSettingsText }</h6>
+      <div className="pt-2 mb-1"><label>IPFS HOST:</label>
+        <div className="text-secondary mb-0 h6">
+          <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
+        </div>
+      </div>
+      <div className=""><label>IPFS PROTOCOL:</label>
+        <div className="text-secondary mb-0 h6">
+          <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ ipfsProtocol } />
+        </div>
+      </div>
+      <div className=""><label>IPFS PORT:</label>
+        <div className="text-secondary mb-0 h6">
+          <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ ipfsPort } />
+        </div>
+      </div>
+      <div className=""><label>IPFS PROJECT ID [ INFURA ]:</label>
+        <div className="text-secondary mb-0 h6">
+          <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ ipfsProjectId } />
+        </div>
+      </div>
+      <div className=""><label>IPFS PROJECT SECRET [ INFURA ]:</label>
+        <div className="text-secondary mb-0 h6">
+          <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ ipfsProjectSecret } />
+        </div>
+      </div>
+      <div className="d-flex justify-content-end pt-2">
+        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value="Save" type="button"></input>
+    </div>
+    </div>
+  </div>)
+
+
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
@@ -244,6 +350,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {token('gist')}
       {token('etherscan')}
       {swarmSettings()}
+      {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
     </div>
   )
