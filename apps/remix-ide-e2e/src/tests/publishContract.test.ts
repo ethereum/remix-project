@@ -66,8 +66,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
-      .waitForElementVisible('[data-id="publishToStorageModalDialogModalBody-react"]', 60000)
-      .click('[data-id="publishToStorage-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="udappModalDialogModalBody-react"]', 60000)
+      .modalFooterOKClick('udapp')
       .pause(8000)
       .getText('[data-id="udappModalDialogModalBody-react"]', (result) => {
         const value = typeof result.value === 'string' ? result.value : null
