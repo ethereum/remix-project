@@ -56,3 +56,12 @@ export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, post
   config.set('settings/swarm-postage-stamp-id', postageStampId)
   dispatch({ type: 'save', payload: { message: 'Swarm settings have been saved' } })
 }
+
+export const saveIpfsSettingsToast = (config, dispatch, ipfsURL, ipfsProtocol, ipfsPort, ipfsProjectId, ipfsProjectSecret) => {
+  config.set('settings/ipfs-url', ipfsURL)
+  config.set('settings/ipfs-protocol', ipfsProtocol)
+  config.set('settings/ipfs-port', ipfsPort)
+  config.set('settings/ipfs-project-id', ipfsProjectId)
+  config.set('settings/ipfs-project-secret', ipfsProjectSecret)
+  dispatch({ type: 'save', payload: { message: 'IPFS settings have been saved' } })
+}
