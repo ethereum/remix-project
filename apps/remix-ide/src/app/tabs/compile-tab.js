@@ -56,6 +56,10 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.renderComponent()
   }
 
+  onFileRemoved () {
+    this.renderComponent()
+  }
+
   onNoFileSelected () {
     this.renderComponent()
   }

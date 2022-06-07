@@ -13,6 +13,7 @@
     padding-left      : 6px;
     padding-right     : 6px;
     padding-top       : 6px;
+    overflow-y        : auto;
   }
   .remixui_fileExplorerTree   {
     cursor            : default;
