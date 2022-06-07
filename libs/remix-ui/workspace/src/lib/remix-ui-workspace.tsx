@@ -228,8 +228,8 @@ export function Workspace () {
             </div>
           </header>
         </div>
-        <div className='remixui_fileExplorerTree'>
-          <div>
+        <div className='h-100 remixui_fileExplorerTree'>
+          <div className='h-100'>
             <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
               { (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
                   <FileExplorer

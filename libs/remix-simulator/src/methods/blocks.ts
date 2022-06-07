@@ -40,7 +40,6 @@ export class Blocks {
       return cb(new Error('block not found'))
     }
 
-    console.log(block.transactions)
     const transactions = block.transactions.map((t) => {
      const hash = '0x' + t.hash().toString('hex')
      const tx = this.vmContext.txByHash[hash]
@@ -95,7 +94,6 @@ export class Blocks {
   eth_getBlockByHash (payload, cb) {
     const block = this.vmContext.blocks[payload.params[0]]
 
-    console.log(block.transactions)
     const transactions = block.transactions.map((t) => {
       const hash = '0x' + t.hash().toString('hex')
       const tx = this.vmContext.txByHash[hash]
