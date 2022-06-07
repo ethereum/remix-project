@@ -5,6 +5,7 @@ import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import { ThemeContext, themes } from './themeContext'
+import { RSSFeed } from './components/rssFeed'
 declare global {
   interface Window {
     _paq: any
@@ -109,16 +110,8 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     scriptTwitter.src = 'https://platform.twitter.com/widgets.js'
     scriptTwitter.async = true
     document.body.appendChild(scriptTwitter)
-
-    // to retrieve medium publications
-    const scriptMedium = document.createElement('script')
-    scriptMedium.src = 'https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js'
-    scriptMedium.async = true
-    // causes bugs in Monaco
-    // document.body.appendChild(scriptMedium)
     return () => {
       document.body.removeChild(scriptTwitter)
-      document.body.removeChild(scriptMedium)
     }
   }, [])
 
@@ -342,19 +335,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             id="remixIDEMediaPanels"
             ref={rightPanel}
           >
-            <div id="remixIDE_MediumBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" style={{ maxHeight: maxHeight }}>
-              <div id="medium-widget" className="px-3 remixui_home_media" hidden={state.showMediaPanel !== 'medium'} style={{ maxHeight: '10000px' }}>
-                <div
-                  id="retainable-rss-embed"
-                  data-rss="https://medium.com/feed/remix-ide"
-                  data-maxcols="1"
-                  data-layout="grid"
-                  data-poststyle="external"
-                  data-readmore="More..."
-                  data-buttonclass="btn mb-3"
-                  data-offset="-100"
-                >
-                </div>
+            <div id="remixIDE_MediumBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" style={ { maxHeight: maxHeight } }>
+              <div id="medium-widget" className="px-3 remixui_home_media" hidden={state.showMediaPanel !== 'medium'} style={ { maxHeight: '10000px' } }>
+                <RSSFeed feedUrl='https://rss.remixproject.org/' maxItems={10} />
               </div>
             </div>
             <div id="remixIDE_TwitterBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" hidden={state.showMediaPanel !== 'twitter'} style={{ maxHeight: maxHeight, marginRight: '28px' }} >
