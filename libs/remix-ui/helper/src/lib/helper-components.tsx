@@ -78,3 +78,9 @@ export const storageFullMessage = () => (
     </span>
   </div>
 )
+
+export const recursivePasteToastMsg = () => (
+  <div>
+    File(s) to paste is an ancestor of the destination folder
+  </div>
+)

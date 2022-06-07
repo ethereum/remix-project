@@ -12,6 +12,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
 
 import './css/style.css'
+const defaultPath = "compiler_config.json"
 
 declare global {
   interface Window {
@@ -22,11 +23,23 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { api, compileTabLogic, tooltip, modal, compiledFileName, updateCurrentVersion, configurationSettings, isHardhatProject, isTruffleProject, workspaceName } = props // eslint-disable-line
+  const {
+    api,
+    compileTabLogic,
+    tooltip,
+    modal,
+    compiledFileName,
+    updateCurrentVersion,
+    configurationSettings,
+    isHardhatProject,
+    isTruffleProject,
+    workspaceName,
+    configFilePath,
+    setConfigFilePath,
+  } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
-    configFilePath: "compiler_config.json",
     useFileConfiguration: false,
     matomoAutocompileOnce: true,
     optimize: false,
@@ -40,7 +53,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compiledFileName: '',
     includeNightlies: false,
     language: 'Solidity',
-    evmVersion: ''
+    evmVersion: '',
+    createFileOnce: true
   })
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
@@ -53,16 +67,26 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
 
   useEffect(() => {
-    api.setAppParameter('configFilePath', "/compiler_config.json")
-    api.fileExists("/compiler_config.json").then((exists) => {
-      if (!exists) createNewConfigFile()
-      else {
-        // what to do? discuss
+    if (workspaceName) {
+      api.setAppParameter('configFilePath', defaultPath)
+      if (state.useFileConfiguration) {
+        api.fileExists(defaultPath).then((exists) => {
+          if (!exists && state.useFileConfiguration) createNewConfigFile()
+        })
       }
-    })
-    api.setAppParameter('configFilePath', "/compiler_config.json")
-    setShowFilePathInput(false)
+      setShowFilePathInput(false)
+    }
   }, [workspaceName])
+
+  useEffect(() => {
+    if (state.useFileConfiguration) {
+      api.fileExists(defaultPath).then((exists) => {
+        if (!exists) createNewConfigFile()
+      })
+      setToggleExpander(true)
+    }
+  }, [state.useFileConfiguration])
+
 
   useEffect(() => {
     const listener = (event) => {
@@ -106,8 +130,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const hideWarnings = await api.getAppParameter('hideWarnings') as boolean || false
         const includeNightlies = await api.getAppParameter('includeNightlies') as boolean || false
         const useFileConfiguration = await api.getAppParameter('useFileConfiguration') as boolean || false
-        let configFilePath = await api.getAppParameter('configFilePath')
-        if (!configFilePath || configFilePath == '') configFilePath = "/compiler_config.json"
+        let configFilePathSaved = await api.getAppParameter('configFilePath')
+        if (!configFilePathSaved || configFilePathSaved == '') configFilePathSaved = defaultPath
+
+        setConfigFilePath(configFilePathSaved)
 
         setState(prevState => {
           const params = api.getCompilerParameters()
@@ -122,7 +148,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             autoCompile: autocompile,
             includeNightlies: includeNightlies,
             useFileConfiguration: useFileConfiguration,
-            configFilePath: configFilePath,
             optimize: optimize,
             runs: runs,
             evmVersion: (evmVersion !== null) && (evmVersion !== 'null') && (evmVersion !== undefined) && (evmVersion !== 'undefined') ? evmVersion : 'default',
@@ -181,7 +206,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     compileTabLogic.setUseFileConfiguration(state.useFileConfiguration)
-    if (state.useFileConfiguration) compileTabLogic.setConfigFilePath(state.configFilePath)
+    if (state.useFileConfiguration) compileTabLogic.setConfigFilePath(configFilePath)
   }, [state.useFileConfiguration])
 
   useEffect(() => {
@@ -191,6 +216,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [configurationSettings])
 
   const toggleConfigType = () => {
+    if (state.useFileConfiguration)
+      if (state.createFileOnce) {
+        api.fileExists(defaultPath).then((exists) => {
+          if (!exists || state.useFileConfiguration ) createNewConfigFile()
+        })
+        setState(prevState => {
+          return { ...prevState, createFileOnce: false }
+        })
+      }
+    
     setState(prevState => {
       api.setAppParameter('useFileConfiguration', !state.useFileConfiguration)
       return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
@@ -198,18 +233,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const openFile = async () => {
-    api.open(state.configFilePath)
+    api.open(configFilePath)
   }
 
   const createNewConfigFile = async () => {
-    let filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : state.configFilePath
+    let filePath = configFilePathInput.current && configFilePathInput.current.value !== '' ? configFilePathInput.current.value : configFilePath
+    if (filePath === '') filePath = defaultPath
     if (!filePath.endsWith('.json')) filePath = filePath + '.json'
 
     await api.writeFile(filePath, configFileContent)
     api.setAppParameter('configFilePath', filePath)
-    setState(prevState => {
-      return { ...prevState, configFilePath: filePath }
-    })
+    setConfigFilePath(filePath)
     compileTabLogic.setConfigFilePath(filePath)
     setShowFilePathInput(false)
   }
@@ -220,9 +254,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
       if (await api.fileExists(configFilePathInput.current.value)) {
         api.setAppParameter('configFilePath', configFilePathInput.current.value)
-        setState(prevState => {
-          return { ...prevState, configFilePath: configFilePathInput.current.value }
-        })
+        setConfigFilePath(configFilePathInput.current.value)
         compileTabLogic.setConfigFilePath(configFilePathInput.current.value)
 
         setShowFilePathInput(false)
@@ -394,6 +426,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
     if (!state.autoCompile || (state.autoCompile && state.matomoAutocompileOnce)) {
+      if (state.useFileConfiguration)
+        _paq.push(['trackEvent', 'compiler', 'compiled_with_config_file'])
+
       _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
       if (state.autoCompile && state.matomoAutocompileOnce) {
         setState(prevState => {
@@ -750,36 +785,38 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
             <input className="custom-control-input" type="radio" name="configradio" value="file" onChange={toggleConfigType} checked={state.useFileConfiguration} id="scFileConfig" />
-            <label className="form-check-label custom-control-label" htmlFor="scFileConfig">Use configuration file</label>
+            <label className="form-check-label custom-control-label" htmlFor="scFileConfig" data-id="scFileConfiguration">Use configuration file</label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             { (!showFilePathInput && state.useFileConfiguration) && <span
               title="Click to open the config file."
-              onClick={openFile}
-              className="py-2 text-primary remixui_compilerConfigPath"
-            >{state.configFilePath}</span> }
-            { (!showFilePathInput&& !state.useFileConfiguration) && <span className="py-2 text-secondary">{state.configFilePath}</span> }
+              onClick={configFilePath === '' ? () => {} : openFile}
+              className="py-2 remixui_compilerConfigPath"
+            >{configFilePath === '' ? 'No file selected.' : configFilePath}</span> }
+            { (!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span> }
             <input
               ref={configFilePathInput}
               className={`py-0 my-0 form-control ${showFilePathInput ? "d-flex" : "d-none"}`}
               placeholder={"Enter the new path"}
               title="If the file you entered does not exist you will be able to create one in the next step."
               disabled={!state.useFileConfiguration}
+              data-id="scConfigFilePathInput"
               onKeyPress={event => {
                 if (event.key === 'Enter') {
                   handleConfigPathChange()
                 }
               }}
             />
-            { !showFilePathInput && <button disabled={!state.useFileConfiguration} className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
+            { !showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
           </div>
         </div>
         <div className="px-4">
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={disableCompileButton}>
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile">
                 <div className="text-left">
-                  <div><b>Ctrl+S</b> for compiling</div>
+                  { !(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> for compiling</div> }
+                  { (configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div> }
                 </div>
               </Tooltip>
             }>
@@ -790,11 +827,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </OverlayTrigger>
           </button>
           <div className='d-flex align-items-center'>            
-            <button id="compileAndRunBtn" data-id="compilerContainerCompileAndRunBtn" className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3" onClick={compileAndRun} disabled={disableCompileButton}>
+            <button id="compileAndRunBtn" data-id="compilerContainerCompileAndRunBtn" className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3" onClick={compileAndRun} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
               <OverlayTrigger overlay={
                 <Tooltip id="overlay-tooltip-compile-run">
                   <div className="text-left">
-                  <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>
+                    { !(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div> }
+                    { (configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div> }
                   </div>
                 </Tooltip>
               }>
@@ -806,18 +844,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile-run-doc">
                 <div className="text-left p-2">
-                <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
-                <pre>
-                  <code>
-                  /**<br />
-                  * @title ContractName<br />
-                  * @dev ContractDescription<br />
-                  * @custom:dev-run-script file_path<br />
-                  */<br />
-                  contract ContractName {'{}'}<br />
-                  </code>
-                </pre>
-                Click to know more
+                  <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                  <pre>
+                    <code>
+                    /**<br />
+                    * @title ContractName<br />
+                    * @dev ContractDescription<br />
+                    * @custom:dev-run-script file_path<br />
+                    */<br />
+                    contract ContractName {'{}'}<br />
+                    </code>
+                  </pre>
+                  Click to know more
                 </div>
               </Tooltip>
             }>
