@@ -200,6 +200,10 @@ export const loadTypes = async (monaco) => {
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Personal.default, `file:///node_modules/@types/web3-eth-personal/index.d.ts`)
 
     // @ts-ignore
+    const indexWeb3Contract = await import('raw-loader!web3-eth-contract/types/index.d.ts')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Contract.default, `file:///node_modules/@types/web3-eth-contract/index.d.ts`)
+
+    // @ts-ignore
     const indexWeb3Net = await import('raw-loader!web3-net/types/index.d.ts')
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Net.default, `file:///node_modules/@types/web3-net/index.d.ts`)
 

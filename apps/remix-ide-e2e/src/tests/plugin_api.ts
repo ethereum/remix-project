@@ -231,7 +231,6 @@ module.exports = {
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:readdir', {
-      'compiler_config.json': { isDirectory: false },
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
@@ -286,15 +285,12 @@ module.exports = {
   'Should create empty workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, ['emptyworkspace', true])
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'emptyworkspace', isLocalhost: false, absolutePath: '.workspaces/emptyworkspace' }, null, null)
-    await clickAndCheckLog(browser, 'fileManager:readdir', {
-      'compiler_config.json': { isDirectory: false }
-    }, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', {}, null, '/')
   },
   'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
     await clickAndCheckLog(browser, 'fileManager:readdir', {
-      'compiler_config.json': { isDirectory: false },
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },

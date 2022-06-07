@@ -19,6 +19,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onCurrentFileChanged: (fileName: string) => void
   // onResetResults: () => void
   onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
+  onFileRemoved: (path: string) => void
   onNoFileSelected: () => void
   onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
@@ -245,6 +246,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost, workspace.name)
     })
 
+    this.on('fileManager', 'fileRemoved', (path) => {
+      if (this.onFileRemoved) this.onFileRemoved(path)
+    })
+
     this.on('remixd', 'rootFolderChanged', () => {
       this.resetResults()
       if (this.onSetWorkspace) this.onSetWorkspace(true, 'localhost')
@@ -287,23 +292,20 @@ export const CompilerApiMixin = (Base) => class extends Base {
             type: 'warning'
           })
         } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
-        // Store the contracts
-        this.compilationDetails.contractsDetails = {}
-        this.compiler.visitContracts((contract) => {
-          this.compilationDetails.contractsDetails[contract.name] = parseContracts(
-            contract.name,
-            contract.object,
-            this.compiler.getSource(contract.file)
-          )
-        })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
         this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
-      // Update contract Selection
-      this.compilationDetails.contractMap = {}
-      if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
-      this.compilationDetails.target = source.target
+      // Store the contracts and Update contract Selection
+      if (success) {
+        this.compilationDetails = await this.visitsContractApi(source, data)
+      } else {
+        this.compilationDetails = {
+          contractMap: {},
+          contractsDetails: {},
+          target: source.target
+        }
+      }
       if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
       // set annotations
       if (data.errors) {
@@ -349,5 +351,32 @@ export const CompilerApiMixin = (Base) => class extends Base {
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
+  }
+
+  async visitsContractApi (source, data): Promise<{ contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }> {
+    return new Promise((resolve) => {
+      if (!data.contracts || (data.contracts && Object.keys(data.contracts).length === 0)) {
+        return resolve({
+          contractMap: {}, 
+          contractsDetails: {},
+          target: source.target
+        })
+      }
+      const contractMap = {}
+      const contractsDetails = {}
+      this.compiler.visitContracts((contract) => {
+        contractMap[contract.name] = contract
+        contractsDetails[contract.name] = parseContracts(
+          contract.name,
+          contract.object,
+          this.compiler.getSource(contract.file)
+        )
+      })
+      return resolve({
+        contractMap, 
+        contractsDetails,
+        target: source.target
+      })
+    })
   }
 }

@@ -24,7 +24,7 @@ export class CompileTabLogic {
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.evmVersions = ['default', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
+    this.evmVersions = ['default', 'berlin', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
   init () {
@@ -106,9 +106,11 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
-        this.api.readFile(this.configFilePath).then( contentConfig => {
-          this.compiler.set('configFileContent', contentConfig)
-        })
+        if (this.configFilePath) {
+          this.api.readFile(this.configFilePath).then( contentConfig => {
+            this.compiler.set('configFileContent', contentConfig)
+          })
+        }
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {
