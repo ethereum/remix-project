@@ -30,9 +30,11 @@ module.exports = {
     .modalFooterOKClick('ganache-provider')
     .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   },
-  
+
   'Should switch to foundry provider, set a custom URL and fail to connect': function (browser: NightwatchBrowser) {
-    browser.click('*[data-id="Foundry Provider"]')
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+    .clickLaunchIcon('udapp')
+    .click('*[data-id="Foundry Provider"]')
     .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
     .execute(() => {
       (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
