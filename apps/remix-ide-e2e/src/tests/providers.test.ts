@@ -33,7 +33,6 @@ module.exports = {
 
   'Should switch to foundry provider, set a custom URL and fail to connect': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .clickLaunchIcon('udapp')
     .click('*[data-id="Foundry Provider"]')
     .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
     .execute(() => {
@@ -45,6 +44,9 @@ module.exports = {
     .waitForElementContainsText('*[data-id="foundry-providerModalDialogModalBody-react"]', 'Error while connecting to the provider')
     .modalFooterOKClick('foundry-provider')
     .waitForElementNotVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
+    .waitForElementVisible('*[data-id="PermissionHandler-modal-footer-ok-react"]')
+    .click('*[data-id="PermissionHandler-modal-footer-ok-react"]')
+    .waitForElementNotVisible('*[data-id="PermissionHandler-modal-footer-ok-react"]')
     .pause(1000)
 
 },
