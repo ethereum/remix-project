@@ -72,10 +72,11 @@ function errorHandler (error: any, service: string) {
 
   await warnLatestVersion()
 
-  if(program.install && !program.readOnly) {
+  if (program.install && !program.readOnly) {
     const availableModulesToInstall = ['slither']
     const service = program.install
-    if(availableModulesToInstall.includes(program.install)) services[service](false)['install']()
+    if (availableModulesToInstall.includes(program.install)) services[service](false)['install']()
+    else console.log('\x1b[32m%s\x1b[0m', `[INFO] ${service} can not be installed using remixd`)
     process.exit(0)
   }
 
