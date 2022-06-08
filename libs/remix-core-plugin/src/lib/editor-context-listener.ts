@@ -116,13 +116,15 @@ export class EditorContextListener extends Plugin {
           console.log('ERROR POS', error)
           let pos = helper.getPositionDetails(error.formattedMessage)
           console.log('ERROR POS', pos)
+          const sources = result.getSourceCode().sources
+          const source = sources[pos.file]
           const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
             {
               start: error.sourceLocation.start,
               length: error.sourceLocation.end - error.sourceLocation.start
             },
             0,
-            result.getSourceCode().sources,
+            sources,
             null)
           console.log('lineColumn', lineColumn)
           allErrors.push({ error, lineColumn })
