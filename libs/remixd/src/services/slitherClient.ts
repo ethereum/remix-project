@@ -27,8 +27,8 @@ export class SlitherClient extends PluginClient {
 
   install (): void {
     try {
-      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: slither requires Python 3.6+ and solc, the Solidity compiler.`)
-      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc-select is required to manage installing and setting different solc compiler versions.`)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: slither requires Python3.6+ (pip3) and solc, the Solidity compiler. They should be installed on your system`)
+      console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc-select will be installed along with Slither to manage setting different solc compiler versions.`)
       const options = { cwd: this.currentSharedFolder, shell: true }
       console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: checking pip3 availability ...`)
       const pip3OP = execSync('pip3 --version', options)
@@ -43,7 +43,7 @@ export class SlitherClient extends PluginClient {
       const solcSelectOP = execSync('pip3 install solc-select', options)
       console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc-select installation output: ${solcSelectOP.toString()}`)
     } catch (err) {
-      console.log(err)
+      console.log('\x1b[31m%s\x1b[0m', `[Slither Installation]: Error occured: ${err}`)
     }
   }
 
