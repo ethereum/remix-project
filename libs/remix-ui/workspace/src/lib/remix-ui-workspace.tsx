@@ -159,64 +159,68 @@ export function Workspace () {
               <label className="form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
-              <span className="remixui_menu">
-                <span
-                  hidden={currentWorkspace === LOCALHOST}
-                  id='workspaceCreate'
-                  data-id='workspaceCreate'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    createWorkspace()
-                  }}
-                  className='far fa-plus-square remixui_menuicon'
-                  title='Create'>
+              <div className="d-flex justify-content-between">
+                <span className="remixui_menu">
+                  <span
+                    hidden={currentWorkspace === LOCALHOST}
+                    id='workspaceCreate'
+                    data-id='workspaceCreate'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      createWorkspace()
+                    }}
+                    className='far fa-plus-square remixui_menuicon'
+                    title='Create'>
+                  </span>
+                  <span
+                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                    id='workspaceRename'
+                    data-id='workspaceRename'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      renameCurrentWorkspace()
+                    }}
+                    className='far fa-edit remixui_menuicon'
+                    title='Rename'>
+                  </span>
+                  <span
+                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                    id='workspaceDelete'
+                    data-id='workspaceDelete'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteCurrentWorkspace()
+                    }}
+                    className='fas fa-trash remixui_menuicon'
+                    title='Delete'>
+                  </span>
+                  <span
+                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                    id='workspacesDownload'
+                    data-id='workspacesDownload'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      downloadWorkspaces()
+                    }}
+                    className='far fa-download remixui_menuicon'
+                    title='Download Workspaces'>
+                  </span>
+                  <span
+                    hidden={currentWorkspace === LOCALHOST}
+                    id='workspacesRestore'
+                    data-id='workspacesRestore'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      restoreBackup()
+                    }}
+                    className='far fa-upload remixui_menuicon'
+                    title='Restore Workspaces Backup'>
+                  </span>
                 </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                  id='workspaceRename'
-                  data-id='workspaceRename'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    renameCurrentWorkspace()
-                  }}
-                  className='far fa-edit remixui_menuicon'
-                  title='Rename'>
+                <span className="remixui_menu">
+                  <CloneWorkspace />
                 </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                  id='workspaceDelete'
-                  data-id='workspaceDelete'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    deleteCurrentWorkspace()
-                  }}
-                  className='fas fa-trash remixui_menuicon'
-                  title='Delete'>
-                </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                  id='workspacesDownload'
-                  data-id='workspacesDownload'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    downloadWorkspaces()
-                  }}
-                  className='far fa-download remixui_menuicon'
-                  title='Download Workspaces'>
-                </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST}
-                  id='workspacesRestore'
-                  data-id='workspacesRestore'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    restoreBackup()
-                  }}
-                  className='far fa-upload remixui_menuicon'
-                  title='Restore Workspaces Backup'>
-                </span>
-                <CloneWorkspace />
-              </span>
+              </div>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {
                   global.fs.browser.workspaces
