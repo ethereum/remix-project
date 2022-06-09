@@ -276,7 +276,7 @@
   color: var(--primary);
 }
 .udapp_titleExpander {
-  padding: 5px 7px;
+  margin-top: 2px;
 }
 .udapp_nameNbuts {
   display: contents;
