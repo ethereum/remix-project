@@ -54,13 +54,16 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     contentImport.import(
       state.importSource,
       (loadingMsg) => dispatch({ tooltip: loadingMsg }),
-      (error, content, cleanUrl, type, url) => {
+      async (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
         } else {
           try {
-            workspace.addExternal(type + '/' + cleanUrl, content, url)
-            plugin.call('menuicons', 'select', 'filePanel')
+            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
+            else {
+              workspace.addExternal(type + '/' + cleanUrl, content, url)
+              plugin.call('menuicons', 'select', 'filePanel')
+            }   
           } catch (e) {
             toast(e.message)
           }
