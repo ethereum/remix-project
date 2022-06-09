@@ -1,6 +1,7 @@
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
+import { getBlockCompletionItems } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
@@ -392,6 +393,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 suggestions.push(completion)
             }
         }
+
+        suggestions.push(getBlockCompletionItems(range))
 
         console.log(suggestions)
         return {
