@@ -19,12 +19,12 @@ const CustomToggle = React.forwardRef(({ children, onClick }: { children?: React
 export const CloneWorkspace = () => {
 
   return (
-    <Dropdown className="inline">
+    <Dropdown>
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-        <i className="fas fa-cloud-download remixui_menuicon"></i>
+        <i className="fas fa-cloud-download remixui_menuicon" data-toggle="dropdown"></i>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu>
+      <Dropdown.Menu renderOnMount={true}>
         {/* <Dropdown.Item eventKey="1">
           <FormControl
               autoFocus
@@ -34,13 +34,16 @@ export const CloneWorkspace = () => {
               value={value}
             />
         </Dropdown.Item> */}
-          <FormControl
-            autoFocus
-            className="mx-3 my-2 w-auto"
-            placeholder="Type to filter..."
-            onChange={() => {}}
-            value=''
-          />
+      <div role="tabpanel">
+        <FormControl
+          autoFocus
+          className="mx-3 my-2 w-auto"
+          placeholder="Type to filter..."
+          onChange={() => {}}
+          value=''
+        />
+      </div>
+
       </Dropdown.Menu>
     </Dropdown>
   )
