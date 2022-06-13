@@ -18,7 +18,7 @@ export class OpenZeppelinProxy extends Plugin {
 
   async isConcerned(ast: ContractAST = {} as ContractAST) {
     // check in the AST if it's an upgradable contract
-    if (ast.nodes && ast.nodes.find(node => node.absolutePath === UUPS)) {
+    if (ast.nodes && ast.nodes.find(node => node.absolutePath && node.absolutePath.includes(UUPS))) {
       this.kind = 'UUPS'
       return true
     }
