@@ -183,7 +183,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   const renderData = (item, parent, key: string | number, keyPath: string) => {
     const data = extractDataDefault(item, parent)
-    const children = (data.children || []).map((child) => {
+    const children = (data.children || []).map((child, index) => {
       return (
         renderData(child.value, data, child.key, keyPath + '/' + child.key)
       )
@@ -236,7 +236,7 @@ export function UniversalDappUI (props: UdappProps) {
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
               const inputs = props.getFuncABIInputs(funcABI)
 
-              return <>
+              return <div key={index}>
                 <ContractGUI
                   funcABI={funcABI}
                   clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
@@ -254,14 +254,14 @@ export function UniversalDappUI (props: UdappProps) {
                         const funcIndex = index.toString()
                         const response = props.instance.decodedResponse[key]
 
-                        return key === funcIndex ? Object.keys(response || {}).map((innerkey) => {
+                        return key === funcIndex ? Object.keys(response || {}).map((innerkey, index) => {
                           return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
                         }) : null
                       })
                     }
                   </TreeView>
                 </div>
-              </>
+              </div>
             })
           }
         </div>
