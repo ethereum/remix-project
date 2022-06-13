@@ -71,7 +71,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       api.setAppParameter('configFilePath', defaultPath)
       if (state.useFileConfiguration) {
         api.fileExists(defaultPath).then((exists) => {
-          if (!exists && state.useFileConfiguration) createNewConfigFile()
+          if (!exists && state.useFileConfiguration) {
+            configFilePathInput.current.value = defaultPath
+            createNewConfigFile()
+          }
         })
       }
       setShowFilePathInput(false)
