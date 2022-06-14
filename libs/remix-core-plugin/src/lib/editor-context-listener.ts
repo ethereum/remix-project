@@ -75,17 +75,10 @@ export class EditorContextListener extends Plugin {
 
     this.on('solidity', 'loadingCompiler', async (url) => {
       console.log('loading compiler', url)
-
       this.compiler.loadVersion(true, url)
       this.compiler.event.register('compilerLoaded', async () => {
         console.log('compiler loaded')
-        //await this.compile()
-        //await this.getAST()
-        const a = 'function (){a=4; c.getBook().run.}'
-        const ast = (SolidityParser as any).parse(a, { loc: true, range: true, tolerant: true })
-        console.log('BAD AST', ast)
       })
-
     })
 
     this.compiler = new Compiler((url, cb) => this.call('contentImport', 'resolveAndSave', url, undefined, false).then((result) => cb(null, result)).catch((error) => cb(error.message)))

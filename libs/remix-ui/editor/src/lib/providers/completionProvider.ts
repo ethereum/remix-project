@@ -1,12 +1,13 @@
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { getBlockCompletionItems } from "./completion/completionGlobals"
+import { GeCompletionUnits, getBlockCompletionItems, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, getMsgCompletionItems, getTxCompletionItems } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
     props: EditorUIProps
     monaco: any
+
     constructor(props: any, monaco: any) {
         this.props = props
         this.monaco = monaco
@@ -16,16 +17,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext) {
         console.log('AUTOCOMPLETE', context)
         console.log(position)
-
-        const textUntilPosition = model.getValueInRange({
-            startLineNumber: 1,
-            startColumn: 1,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column
-        });
-
-
-
 
         const word = model.getWordUntilPosition(position);
         const wordAt = model.getWordAtPosition(position);
@@ -37,25 +28,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         };
 
         console.log('WORD', word)
-        const getlinearizedBaseContracts = async (node: any) => {
-            let params = []
-            if (node.linearizedBaseContracts) {
-                for (const id of node.linearizedBaseContracts) {
-                    if (id !== node.id) {
-                        const baseContract = await this.props.plugin.call('contextualListener', 'getNodeById', id)
-                        params = [...params, ...[baseContract]]
-                    }
-                }
-            }
-            return params
-        }
-
 
         const line = model.getLineContent(position.lineNumber)
         let nodes = []
-
-
-
+        let suggestions = []
 
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         console.log('cursor', cursorPosition)
@@ -85,7 +61,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 }
             }
 
-
             const linesToCheck =
                 [
                     textBeforeCursor.substring(0, textBeforeCursor.lastIndexOf('.')) + ".lastnode;",
@@ -105,23 +80,30 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
                 }
             }
-
             console.log('lastNode found', lastNode)
-
-
-
             console.log(textBeforeCursor, textAfterCursor)
             const splits = textBeforeCursor.split('.')
 
             console.log('splits', splits)
-            if (splits.length > 1) {
+            let dotCompleted = false
+            if (splits.length === 2) {
+                let globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNode.name, range, this.monaco)
+                if (globalCompletion) {
+                    dotCompleted = true
+                    suggestions = [...suggestions, ...globalCompletion]
+                }
+                if (lastNode.name === 'this') {
+                    dotCompleted = true
+                    nodes = [...nodes, ...await this.getContractCompletions(nodes, position)]
+                }
+            }
+            if (splits.length > 1 && !dotCompleted) {
                 let last = splits[splits.length - 2].trim()
                 const lastParentheses = last.lastIndexOf('(')
                 const lastClosingParentheses = last.lastIndexOf(')')
                 const lastBracket = last.lastIndexOf('{')
                 const lastSemiColon = last.lastIndexOf(';')
                 let textBefore = null
-                let lastWord = null
                 let lineWithoutEdits = null
                 // get word before last closing parentheses
                 if (lastParentheses > -1 && lastClosingParentheses > -1) {
@@ -130,7 +112,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 // find largest 
                 const lastIndex = Math.max(lastParentheses, lastBracket, lastSemiColon)
                 if (lastIndex > -1) {
-                    lastWord = last.substring(lastIndex + 1)
                     textBefore = last.substring(0, lastIndex + 1)
                     console.log('textBefore', textBefore)
                     console.log('text without edits', textBefore, textAfterCursor)
@@ -168,7 +149,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                                     const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
                                     console.log('HAS DECLARATION OF', declarationOf)
                                     nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
-                                    const baseContracts = await getlinearizedBaseContracts(declarationOf)
+                                    const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
                                     for (const baseContract of baseContracts) {
                                         nodes = [...nodes, ...baseContract.nodes]
                                     }
@@ -195,7 +176,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     }
                 }
 
-
                 // brute force search in all nodes with the name
                 if (!nodes.length) {
                     const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithName', last)
@@ -207,7 +187,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                                 const declarationOf = await this.props.plugin.call('contextualListener', 'declarationOf', nodeOfScope.typeName)
                                 console.log('HAS DECLARATION OF', declarationOf)
                                 // nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
-                                const baseContracts = await getlinearizedBaseContracts(declarationOf)
+                                const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
                                 for (const baseContract of baseContracts) {
                                     //nodes = [...nodes, ...baseContract.nodes]
                                 }
@@ -217,54 +197,21 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 }
             }
         } else {
-            const cursorPosition = this.props.editorAPI.getCursorPosition()
-            let nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
-            nodes = []
-            console.log('NODES AT POSITION', nodesAtPosition)
-            if (!nodesAtPosition.length) {
-                const block = await this.props.plugin.call('contextualListener', 'getBlockName', position, null)
-                console.log('BLOCK', block)
-                if (block) {
-                    nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', block.range[0])
-                    console.log('NODES AT POSITION', nodesAtPosition)
-                }
-            }
 
-            // get all children of all nodes at position
-            for (const node of nodesAtPosition) {
-                const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
-                for (const nodeOfScope of nodesOfScope) {
-                    const imports = await this.props.plugin.call('contextualListener', 'resolveImports', nodeOfScope)
-                    if (imports) {
-                        for (const key in imports) {
-                            if (imports[key].nodes)
-                                nodes = [...nodes, ...imports[key].nodes]
-                        }
-                    }
-                }
+            suggestions = [...suggestions,
+            ...GetGlobalVariable(range, this.monaco),
+            ...getCompletionSnippets(range, this.monaco),
+            ...GetCompletionTypes(range, this.monaco),
+            ...GetCompletionKeywords(range, this.monaco),
+            ...GetGlobalFunctions(range, this.monaco),
+            ...GeCompletionUnits(range, this.monaco),
+            ]
+            nodes = [...nodes, ...await this.getContractCompletions(nodes, position)]
 
-
-                nodes = [...nodes, ...nodesOfScope]
-            }
-            // get the linearized base contracts
-            for (const node of nodesAtPosition) {
-                const baseContracts = await getlinearizedBaseContracts(node)
-                for (const baseContract of baseContracts) {
-                    nodes = [...nodes, ...baseContract.nodes]
-                }
-            }
-
-
-
-            //nodes  = await this.props.plugin.call('contextualListener', 'getNodes')
         }
-
 
         console.log('WORD', word, wordAt)
         console.log('NODES', nodes)
-        console.log('NODES', Object.values(nodes))
-
-
 
         const getLinks = async (node: any) => {
             const position = await this.props.plugin.call('contextualListener', 'positionOfDefinition', node)
@@ -301,8 +248,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         const completeParameters = async (parameters: any) => {
             if (parameters && parameters.parameters) {
                 const params = []
-                for (const param of parameters.parameters) {
-                    params.push(param.name)
+                for (const key in parameters.parameters) {
+                    params.push('${' + (key + 1) + ':' + parameters.parameters[key].name + '}')
                 }
                 return `(${params.join(', ')})`
             }
@@ -320,7 +267,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 }
         }
 
-        const suggestions = []
+
         for (const node of Object.values(nodes) as any[]) {
             if (!node.name) continue
             if (node.nodeType === 'VariableDeclaration') {
@@ -333,10 +280,12 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 }
                 suggestions.push(completion)
             } else if (node.nodeType === 'FunctionDefinition') {
+
                 const completion = {
                     label: { label: `"${node.name}"`, description: await getLinks(node), detail: ` -> ${node.name} ${await getParamaters(node.parameters)}` },
                     kind: this.monaco.languages.CompletionItemKind.Function,
                     insertText: `${node.name}${await completeParameters(node.parameters)};`,
+                    insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     range: range,
                     documentation: await getDocs(node)
                 }
@@ -391,14 +340,75 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     documentation: await getDocs(node)
                 }
                 suggestions.push(completion)
+            } else {
+                console.log('UNKNOWN NODE', node)
             }
         }
 
-        suggestions.push(getBlockCompletionItems(range))
+        suggestions = [...suggestions,
+            /*             ...GetGlobalVariable(range, this.monaco), 
+                        ...getCompletionSnippets(range, this.monaco), 
+                        ...getBlockCompletionItems(range, this.monaco), 
+                        ...GetCompletionTypes(range,this.monaco), 
+                        ...GetCompletionKeywords(range,this.monaco),
+                        ...GetGlobalFunctions(range,this.monaco),
+                        ...GeCompletionUnits(range,this.monaco),
+                        ...getMsgCompletionItems(range,this.monaco),
+                        ...getTxCompletionItems(range,this.monaco), */
+        ]
 
         console.log(suggestions)
         return {
             suggestions
         }
+    }
+
+    private getlinearizedBaseContracts = async (node: any) => {
+        let params = []
+        if (node.linearizedBaseContracts) {
+            for (const id of node.linearizedBaseContracts) {
+                if (id !== node.id) {
+                    const baseContract = await this.props.plugin.call('contextualListener', 'getNodeById', id)
+                    params = [...params, ...[baseContract]]
+                }
+            }
+        }
+        return params
+    }
+
+    private getContractCompletions = async (nodes: any[], position: Position) => {
+        const cursorPosition = this.props.editorAPI.getCursorPosition()
+        let nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', cursorPosition)
+
+        // if no nodes exits at position, try to get the block of which the position is in
+        if (!nodesAtPosition.length) {
+            const block = await this.props.plugin.call('contextualListener', 'getBlockName', position, null)
+            if (block) {
+                nodesAtPosition = await this.props.plugin.call('contextualListener', 'nodesAtEditorPosition', block.range[0])
+            }
+        }
+
+        // get all children of all nodes at position
+        for (const node of nodesAtPosition) {
+            const nodesOfScope = await this.props.plugin.call('contextualListener', 'nodesWithScope', node.id)
+            for (const nodeOfScope of nodesOfScope) {
+                const imports = await this.props.plugin.call('contextualListener', 'resolveImports', nodeOfScope)
+                if (imports) {
+                    for (const key in imports) {
+                        if (imports[key].nodes)
+                            nodes = [...nodes, ...imports[key].nodes]
+                    }
+                }
+            }
+            nodes = [...nodes, ...nodesOfScope]
+        }
+        // get the linearized base contracts
+        for (const node of nodesAtPosition) {
+            const baseContracts = await this.getlinearizedBaseContracts(node)
+            for (const baseContract of baseContracts) {
+                nodes = [...nodes, ...baseContract.nodes]
+            }
+        }
+        return nodes
     }
 }
