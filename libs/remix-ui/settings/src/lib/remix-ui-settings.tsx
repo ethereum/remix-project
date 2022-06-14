@@ -8,6 +8,7 @@ import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, use
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
+import { GithubSettings } from './github-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -347,7 +348,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}     
-      {token('gist')}
+      <GithubSettings
+        saveTokenToast={(githubToken: string) => { saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token") }}
+        removeTokenToast={() => { removeTokenToast(props.config, dispatchToast, "gist-access-token") }}
+      />
       {token('etherscan')}
       {swarmSettings()}
       {ipfsSettings()}

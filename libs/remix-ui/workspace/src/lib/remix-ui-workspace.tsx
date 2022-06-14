@@ -218,7 +218,7 @@ export function Workspace () {
                   </span>
                 </span>
                 <span className="remixui_menu">
-                    <CloneWorkspace />
+                  <CloneWorkspace />
                 </span>
               </div>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
