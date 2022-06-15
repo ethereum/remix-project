@@ -6,6 +6,7 @@ import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryR
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
 import { QueryParams } from '@remix-project/remix-lib'
+import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 
 export * from './events'
@@ -31,7 +32,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const localhostProvider = filePanelPlugin.fileProviders.localhost
     const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
-
     dispatch(setWorkspaces(workspaces))
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
@@ -44,7 +44,13 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       dispatch(setCurrentWorkspace('code-sample'))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-    } else {
+    } else if (window.location.pathname && window.location.pathname !== '/') {
+      const route = window.location.pathname
+      if (route.startsWith('/address/0x') && route.length === 51) {
+        console.log('this is an etherscan url')
+      }
+    }
+    else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'remixDefault')
         plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
