@@ -17,7 +17,10 @@ jobs:
       - run: pwd
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
-      - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs' ${{ secrets.IPFS_PROJECT_ID }} ${{ secrets.IPFS_PROJECT_SECRET }})" >> $GITHUB_ENV
+      - env:
+          IPFS_PROJECT_ID: ${{ secrets.IPFS_PROJECT_ID }}
+          IPFS_PROJECT_SECRET: ${{ secrets.IPFS_PROJECT_SECRET }}
+      - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs' env.IPFS_PROJECT_ID env.IPFS_PROJECT_SECRET)" >> $GITHUB_ENV
       - uses: mshick/add-pr-comment@v1
         with:
           message: |
