@@ -8,7 +8,7 @@ env:
 jobs:
   build:
     if: ${{ github.event.label.name == 'publish' }}
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
