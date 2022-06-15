@@ -47,10 +47,18 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     } else if (window.location.pathname && window.location.pathname !== '/') {
       const route = window.location.pathname
       if (route.startsWith('/address/0x') && route.length === 51) {
-        console.log('this is an etherscan url')
+        const contractAddress = route.split('/')[2]
+        const network = {id: 1, name: 'main'}
+        const target = `/${network.name}`
+        const data = await fetchContractFromEtherscan(plugin, network, contractAddress, target)
+        await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
+        plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
+        dispatch(setCurrentWorkspace('etherscan-code-sample'))
+        const filePath = Object.keys(data.compilationTargets)[0]
+        await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+        plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
       }
-    }
-    else {
+    } else {
       if (workspaces.length === 0) {
         await createWorkspaceTemplate('default_workspace', 'remixDefault')
         plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
