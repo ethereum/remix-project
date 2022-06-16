@@ -1,6 +1,5 @@
-import { DeployOption } from '@remix-ui/run-tab';
 import { Plugin } from '@remixproject/engine';
-import { ContractABI, ContractAST } from '../types/contract';
+import { ContractABI, ContractAST, DeployOption } from '../types/contract';
 import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi } from './constants/uups';
 
 const proxyProfile = {
@@ -48,7 +47,7 @@ export class OpenZeppelinProxy extends Plugin {
     return inputs
   }
 
-  async execute(implAddress: string, args: string | string [] = '', initializeABI, implementationContractObject) {
+  async execute(implAddress: string, args: string | string [] = '', initializeABI, implementationContractObject): Promise<void> {
     // deploy the proxy, or use an existing one
     if (!initializeABI) throw new Error('Cannot deploy proxy: Missing initialize ABI')
     args = args === '' ? [] : args
@@ -57,7 +56,7 @@ export class OpenZeppelinProxy extends Plugin {
     if (this.kind === 'UUPS') this.deployUUPSProxy(implAddress, _data, implementationContractObject)
   }
 
-  async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject) {
+  async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject): Promise<void> {
     const args = [implAddress, _data]
     const constructorData = await this.blockchain.getEncodedParams(args, UUPSfunAbi)
     const proxyName = 'ERC1967Proxy'

@@ -135,3 +135,20 @@ export interface ContractABI {
         };
     };
 }
+
+export type DeployOption = {
+    initializeInputs: string,
+    inputs: {
+      inputs: {
+        internalType?: string,
+        name: string,
+        type: string
+      }[],
+      name: "initialize",
+      outputs?: any[],
+      stateMutability: string,
+      type: string,
+      payable?: boolean,
+      constant?: any
+    }
+  }
