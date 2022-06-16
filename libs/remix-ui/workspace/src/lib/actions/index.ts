@@ -8,7 +8,6 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin 
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import { networkInterfaces } from 'os'
 
 export * from './events'
 export * from './workspace'
