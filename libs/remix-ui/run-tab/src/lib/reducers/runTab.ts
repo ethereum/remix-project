@@ -115,14 +115,14 @@ export const runTabInitialState: RunTabState = {
     providerList: [{
       id: 'vm-mode-london',
       dataId: 'settingsVMLondonMode',
-      title: 'Execution environment does not connect to any node, everything is local and in memory only.',
+      title: 'Execution environment does not connect to any node. All data is stored in browser memory only.',
       value: 'vm-london',
       fork: 'london',
       content: 'JavaScript VM (London)'
     }, {
       id: 'vm-mode-berlin',
       dataId: 'settingsVMBerlinMode',
-      title: 'Execution environment does not connect to any node, everything is local and in memory only.',
+      title: 'Execution environment does not connect to any node. All data is stored in browser memory only.',
       value: 'vm-berlin',
       fork: 'berlin',
       content: 'JavaScript VM (Berlin)'
@@ -135,8 +135,7 @@ export const runTabInitialState: RunTabState = {
     }, {
       id: 'web3-mode',
       dataId: 'settingsWeb3Mode',
-      title: `Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
-      If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.`,
+      title: `Execution environment connects to an external node. For security, only connect to trusted networks. If Remix is served via https and your node is accessed via http, it might not work. In this case, try cloning the repository and serving it via http.`,
       value: 'web3',
       content: 'Web3 Provider'
     }],
