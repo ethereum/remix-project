@@ -63,20 +63,28 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       const route = window.location.pathname
       if (route.startsWith('/address/0x') && route.length === 51) {
         const contractAddress = route.split('/')[2]
-        const network = {id: 1, name: 'main'}
-        const target = `/${network.name}`
-        try {
-          const data = await fetchContractFromEtherscan(plugin, network, contractAddress, target)
-          await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
-          plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
-          dispatch(setCurrentWorkspace('etherscan-code-sample'))
-          const filePath = Object.keys(data.compilationTargets)[0]
-          await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
-          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-        } catch (error) {
-          if(error.message.includes('unable to retrieve contract data') || error.message.includes('unable to try fetching the source code'))
+        const networks = [
+          {id: 1, name: 'mainnet'},
+          {id: 3, name: 'ropsten'},
+          {id: 4, name: 'rinkeby'},
+          {id: 42, name: 'kovan'},
+          {id: 5, name: 'goerli'}
+        ]
+        plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
+        for (const network of networks) {
+          const target = `/${network.name}`
+          try {
+            const data = await fetchContractFromEtherscan(plugin, network, contractAddress, target)
+            await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
+            plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
+            dispatch(setCurrentWorkspace('etherscan-code-sample'))
+            const filePath = Object.keys(data.compilationTargets)[0]
+            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+          } catch (error) {
             plugin.call('notification', 'toast', error.message)
-          await basicWorkspaceInit(workspaces, workspaceProvider)
+            await basicWorkspaceInit(workspaces, workspaceProvider)
+          }
         }
       }
     } else {
