@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react' // eslint
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import './css/remix-ui-workspace.css'
 import { FileSystemContext } from './contexts'
-import { CloneWorkspace } from './components/clone'
+import { CloneRepository } from './components/clone'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -159,7 +159,6 @@ export function Workspace () {
               <label className="form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
-              <div className="d-flex justify-content-between">
                 <span className="remixui_menu">
                   <span
                     hidden={currentWorkspace === LOCALHOST}
@@ -216,11 +215,8 @@ export function Workspace () {
                     className='far fa-upload remixui_menuicon'
                     title='Restore Workspaces Backup'>
                   </span>
+                  <CloneRepository />
                 </span>
-                <span className="remixui_menu">
-                  <CloneWorkspace />
-                </span>
-              </div>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {
                   global.fs.browser.workspaces

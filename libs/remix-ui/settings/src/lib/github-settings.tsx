@@ -21,7 +21,7 @@ export function GithubSettings (props: GithubSettingsProps) {
 
   // api key settings
   const saveGithubToken = () => {
-    props.saveTokenToast(githubToken)
+    props.saveTokenToast(githubToken, githubUserName, githubEmail)
   }
 
   const removeToken = () => {
@@ -41,7 +41,7 @@ export function GithubSettings (props: GithubSettingsProps) {
           <div className="input-group text-secondary mb-0 h6">
             <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleChangeTokenState(e)} value={ githubToken } />
             <div className="input-group-append">
-              <CopyToClipboard content={githubToken} data-id='copyToClipboardCopyIcon' className='input-group-text far fa-copy ml-1 p-2 h-100' direction={"top"} />
+              <CopyToClipboard content={githubToken} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
             </div>
           </div>
         </div>
