@@ -12,6 +12,7 @@ import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder } from "@remix-ui/helper"
+import { cancelProxyMsg } from '@remix-ui/helper'
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
@@ -139,6 +140,25 @@ export class Blockchain extends Plugin {
   }
 
   async deployProxy (proxyData, implementationContractObject) {
+    const proxyModal = {
+      id: 'confirmProxyDeployment',
+      title: 'ERC1967',
+      message: 'Confirm proxy deployment?',
+      modalType: 'modal',
+      okLabel: 'OK',
+      cancelLabel: 'Cancel',
+      okFn: () => {
+        this.runProxyTx(proxyData, implementationContractObject)
+      },
+      cancelFn: () => {
+        this.call('notification', 'toast', cancelProxyMsg())
+      },
+      hideFn: () => null
+    }
+    this.call('notification', 'modal', proxyModal)
+  }
+
+  async runProxyTx (proxyData, implementationContractObject) {
     const args = { useCall: false, data: proxyData }
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       // continue using original authorization given by user
