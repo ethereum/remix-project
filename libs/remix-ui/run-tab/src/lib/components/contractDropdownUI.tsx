@@ -119,12 +119,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setAtAddressOptions({
         disabled: false,
-        title: 'Interact with the given contract.'
+        title: 'Interact with the given contract - needs the .abi file or compiled .sol file (with the same compiler settings)'
       })
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: loadedAddress ? '⚠ Compile *.sol file or select *.abi file.' : '⚠ Compile *.sol file or select *.abi file & then enter the address of deployed contract.'
+        title: loadedAddress ? '⚠ Compile a *.sol file or select a *.abi file.' : '⚠ For use with a deployed contract and its .abi file or compiled .sol file (with the same compiler settings)'
       })
     }
   }
@@ -133,12 +133,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setContractOptions({
         disabled: false,
-        title: 'Select contract for Deploy or At Address.'
+        title: 'Select compiled a contract to deploy or to use with At Address.'
       })
     } else {
       setContractOptions({
         disabled: true,
-        title: loadType === 'sol' ? '⚠ Select and compile *.sol file to deploy or access a contract.' : '⚠ Selected *.abi file allows accessing contracts, select and compile *.sol file to deploy and access one.'
+        title: loadType === 'sol' ? '⚠ Select and compile *.sol file to deploy or access a contract.' : '⚠ When there is a compiled .sol file, the choice of contracts to deploy or to use with AtAddress is made here'
       })
     }
   }
