@@ -349,8 +349,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}     
       <GithubSettings
-        saveTokenToast={(githubToken: string) => { saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token") }}
-        removeTokenToast={() => { removeTokenToast(props.config, dispatchToast, "gist-access-token") }}
+        saveTokenToast={(githubToken: string, githubUserName: string, githubEmail: string) => {
+          saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token")
+          saveTokenToast(props.config, dispatchToast, githubUserName, "github-user-name")
+          saveTokenToast(props.config, dispatchToast, githubEmail, "github-email")
+        }}
+        removeTokenToast={() => { 
+          removeTokenToast(props.config, dispatchToast, "gist-access-token")
+          removeTokenToast(props.config, dispatchToast, "github-user-name")
+          removeTokenToast(props.config, dispatchToast, "github-email")
+        }}
       />
       {token('etherscan')}
       {swarmSettings()}
