@@ -47,7 +47,7 @@ export function ValueUI (props: ValueProps) {
 
   return (
     <div className="udapp_crow">
-      <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Value</label>
+      <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Amount</label>
       <div className="udapp_gasValueContainer">
         <input
           ref={inputValue}
@@ -58,7 +58,7 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          title="Enter the value and choose the unit"
+          title="Enter an amount and choose its unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}
           value={props.sendValue}
