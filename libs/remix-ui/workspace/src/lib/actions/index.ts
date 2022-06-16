@@ -23,6 +23,21 @@ export type UrlParametersType = {
   url: string
 }
 
+const basicWorkspaceInit = async (workspaces, workspaceProvider) => {
+  if (workspaces.length === 0) {
+    await createWorkspaceTemplate('default_workspace', 'remixDefault')
+    plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
+    dispatch(setCurrentWorkspace('default_workspace'))
+    await loadWorkspacePreset('remixDefault')
+  } else {
+    if (workspaces.length > 0) {
+      workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
+      plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
+      dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+    }
+  }
+}
+
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
     plugin = filePanelPlugin
@@ -50,27 +65,22 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         const contractAddress = route.split('/')[2]
         const network = {id: 1, name: 'main'}
         const target = `/${network.name}`
-        const data = await fetchContractFromEtherscan(plugin, network, contractAddress, target)
-        await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
-        plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
-        dispatch(setCurrentWorkspace('etherscan-code-sample'))
-        const filePath = Object.keys(data.compilationTargets)[0]
-        await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
-        plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-      }
-    } else {
-      if (workspaces.length === 0) {
-        await createWorkspaceTemplate('default_workspace', 'remixDefault')
-        plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
-        dispatch(setCurrentWorkspace('default_workspace'))
-        await loadWorkspacePreset('remixDefault')
-      } else {
-        if (workspaces.length > 0) {
-          workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-          plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
-          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+        try {
+          const data = await fetchContractFromEtherscan(plugin, network, contractAddress, target)
+          await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
+          plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
+          dispatch(setCurrentWorkspace('etherscan-code-sample'))
+          const filePath = Object.keys(data.compilationTargets)[0]
+          await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+        } catch (error) {
+          if(error.message.includes('unable to retrieve contract data') || error.message.includes('unable to try fetching the source code'))
+            plugin.call('notification', 'toast', error.message)
+          await basicWorkspaceInit(workspaces, workspaceProvider)
         }
       }
+    } else {
+      await basicWorkspaceInit(workspaces, workspaceProvider)
     }
 
     listenOnPluginEvents(plugin)
