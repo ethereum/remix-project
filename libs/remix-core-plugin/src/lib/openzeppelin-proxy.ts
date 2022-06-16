@@ -1,3 +1,4 @@
+import { DeployOption } from '@remix-ui/run-tab';
 import { Plugin } from '@remixproject/engine';
 import { ContractABI, ContractAST } from '../types/contract';
 import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi } from './constants/uups';
@@ -16,7 +17,7 @@ export class OpenZeppelinProxy extends Plugin {
     this.blockchain = blockchain
   }
 
-  async isConcerned(ast: ContractAST = {} as ContractAST) {
+  async isConcerned(ast: ContractAST = {} as ContractAST): Promise<boolean> {
     // check in the AST if it's an upgradable contract
     if (ast.nodes && ast.nodes.find(node => node.absolutePath && node.absolutePath.includes(UUPS))) {
       this.kind = 'UUPS'
@@ -28,10 +29,10 @@ export class OpenZeppelinProxy extends Plugin {
     return false
   }
 
-  async getDeployOptions (contracts: ContractABI) {
+  async getDeployOptions (contracts: ContractABI): Promise<{ [name: string]: DeployOption }> {
+    const inputs = {}
+
     if (this.kind === 'UUPS') {
-      const inputs = {}
-    
       Object.keys(contracts).map(name => {
         const abi = contracts[name].abi
         const initializeInput = abi.find(node => node.name === 'initialize')
@@ -43,11 +44,8 @@ export class OpenZeppelinProxy extends Plugin {
           }
         }
       })
-      if (Object.keys(inputs).length > 0) {
-        this.kind = 'UUPS'
-        return inputs
-      }
     }
+    return inputs
   }
 
   async execute(implAddress: string, args: string | string [] = '', initializeABI, implementationContractObject) {

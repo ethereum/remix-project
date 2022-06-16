@@ -88,3 +88,9 @@ export const recursivePasteToastMsg = () => (
 export const logBuilder = (msg: string) => {
   return <pre>{msg}</pre>
 }
+
+export const cancelProxyMsg = () => (
+  <div>
+    <b>Proxy deployment cancelled.</b>
+  </div>
+)
