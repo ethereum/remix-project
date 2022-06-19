@@ -124,7 +124,7 @@ export interface CompilerInput {
     outputSelection?: {
         '*': {
           '': [ 'ast' ],
-          '*':  any
+          '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly' ]
         }
     }
   }
