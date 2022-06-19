@@ -11,10 +11,10 @@ export class RemixReferenceProvider {
     async provideReferences(model: any, position: any, context: any, token: any) {
 
         const cursorPosition = this.props.editorAPI.getCursorPosition()
-        const nodes = await this.props.plugin.call('contextualListener', 'referrencesAtPosition', cursorPosition)
+        const nodes = await this.props.plugin.call('codeParser', 'referrencesAtPosition', cursorPosition)
         const references = []
         if (nodes && nodes.length) {
-          const compilationResult = await this.props.plugin.call('contextualListener', 'getLastCompilationResult')
+          const compilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult')
           const file = await this.props.plugin.call('fileManager', 'file')
           if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
             for (const node of nodes) {
