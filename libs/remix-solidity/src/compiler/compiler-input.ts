@@ -16,9 +16,9 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
       outputSelection: {
         '*': {
           '': ['ast'],
-         '*': []
+         //'*': []
          //'*' : ['abi', 'metadata']
-         //'*':  ['abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
+         '*':  ['abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
         }
       }
     }
