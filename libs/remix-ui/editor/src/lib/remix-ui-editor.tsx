@@ -74,7 +74,7 @@ export interface EditorUIProps {
     findMatches: (uri: string, value: string) => any
     getFontSize: () => number,
     getValue: (uri: string) => string
-    getCursorPosition: () => cursorPosition
+    getCursorPosition: () => number
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     addErrorMarker: (errors: []) => void
@@ -541,7 +541,7 @@ export const EditorUI = (props: EditorUIProps) => {
           onCurrentFileChanged={(listener) => { props.plugin.on('fileManager', 'currentFileChanged', listener) }}
           getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
           gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}
-          declarationOf={(node: astNode) => { return props.plugin.call('contextualListener', 'declarationOf', node) }}
+          declarationOf={(node: astNode) => { return props.plugin.call('codeParser', 'declarationOf', node) }}
         />
       </div>
     </div>

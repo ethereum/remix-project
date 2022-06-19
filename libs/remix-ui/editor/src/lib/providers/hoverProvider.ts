@@ -13,24 +13,17 @@ export class RemixHoverProvider implements languages.HoverProvider {
 
     provideHover = async function (model: editor.ITextModel, position: Position) {
         console.log('HOVERING')
-    
+
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
 
-        const nodeAtPosition = await this.props.plugin.call('contextualListener', 'definitionAtPosition', cursorPosition)
+        const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         console.log(nodeAtPosition)
         const contents = []
 
         const getDocs = async (node: any) => {
-            if (node.documentation && node.documentation.text) {
-                let text = ''
-                node.documentation.text.split('\n').forEach(line => {
-                    text += `${line.trim()}\n`
-                })
-                contents.push({
-
-                    value: text
-                })
-            }
+            contents.push({
+                value: await this.props.plugin.call('codeParser', 'getNodeDocumentation', node)
+            })
         }
 
         const getScope = async (node: any) => {
@@ -48,41 +41,24 @@ export class RemixHoverProvider implements languages.HoverProvider {
         }
 
         const getLinks = async (node: any) => {
-            const position = await this.props.plugin.call('contextualListener', 'positionOfDefinition', node)
-            const lastCompilationResult = await this.props.plugin.call('contextualListener', 'getLastCompilationResult')
-            const filename = lastCompilationResult.getSourceName(position.file)
-            console.log(filename, position)
-            const lineColumn = await this.props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
-                position,
-                position.file,
-                lastCompilationResult.getSourceCode().sources,
-                lastCompilationResult.getAsts())
             contents.push({
-                value: `${filename} ${lineColumn.start.line}:${lineColumn.start.column}`
+                value: await this.props.plugin.call('codeParser', 'getNodeLink', node)
             })
         }
 
         const getVariableDeclaration = async (node: any) => {
-            if (node.typeDescriptions && node.typeDescriptions.typeString) {
-                return `${node.typeDescriptions.typeString}${node.name && node.name.length ? ` ${node.name}` : ''}`
-            } else
-                if (node.typeName && node.typeName.name) {
-                    return `${node.typeName.name}${node.name && node.name.length ? ` ${node.name}` : ''}`
-                } else {
-                    return `${node.name && node.name.length ? ` ${node.name}` : ''}`
-                }
+            return await this.props.plugin.call('codeParser', 'getVariableDeclaration', node)
         }
 
 
-        const getParamaters = async (parameters: any) => {
-            if (parameters && parameters.parameters) {
-                let params = []
-                for (const param of parameters.parameters) {
-                    params.push(await getVariableDeclaration(param))
-                }
-                return `(${params.join(', ')})`
-            }
+        const getParamaters = async (node: any) => {
+            return await this.props.plugin.call('codeParser', 'getFunctionParamaters', node)
         }
+
+        const getReturnParameters = async (node: any) => {
+            return await this.props.plugin.call('codeParser', 'getFunctionReturnParameters', node)
+        }
+
 
         const getOverrides = async (node: any) => {
             if (node.overrides) {
@@ -99,7 +75,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
         const getlinearizedBaseContracts = async (node: any) => {
             let params = []
             for (const id of node.linearizedBaseContracts) {
-                const baseContract = await this.props.plugin.call('contextualListener', 'getNodeById', id)
+                const baseContract = await this.props.plugin.call('codeParser', 'getNodeById', id)
                 params.push(
                     baseContract.name
                 )
@@ -112,6 +88,8 @@ export class RemixHoverProvider implements languages.HoverProvider {
         if (!nodeAtPosition) {
             contents.push({
                 value: 'Loading...'
+            }, {
+                value: 'Compilation errors'
             })
         }
 
@@ -140,7 +118,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
 
             } else if (nodeAtPosition.nodeType === 'FunctionDefinition') {
                 contents.push({
-                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition.parameters)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} returns ${await getParamaters(nodeAtPosition.returnParameters)}`
+                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} returns ${await getReturnParameters(nodeAtPosition)}`
                 })
 
 
@@ -149,7 +127,10 @@ export class RemixHoverProvider implements languages.HoverProvider {
                     value: `${nodeAtPosition.contractKind} ${nodeAtPosition.name} ${await getlinearizedBaseContracts(nodeAtPosition)}`
                 })
 
-
+            } else if (nodeAtPosition.nodeType === 'InvalidNode') {
+                contents.push({
+                    value: `Parsing error found!`
+                })
             } else {
                 contents.push({
                     value: `${nodeAtPosition.nodeType}`
