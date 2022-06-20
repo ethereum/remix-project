@@ -1,8 +1,11 @@
-export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath) => {
+export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath, key?) => {
   let data
   const compilationTargets = {}
+  let etherscanKey
 
-  const etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+  if (!key) etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+  else etherscanKey = key
+  
   if (etherscanKey) {
     const endpoint = network.id == 1 ? 'api.etherscan.io' : 'api-' + network.name + '.etherscan.io'
     data = await fetch('https://' + endpoint + '/api?module=contract&action=getsourcecode&address='  + contractAddress + '&apikey=' + etherscanKey)

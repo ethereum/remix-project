@@ -63,42 +63,39 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       const route = window.location.pathname
       if (route.startsWith('/address/0x') && route.length === 51) {
         const contractAddress = route.split('/')[2]
+        plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
         let data
         try {
-          const etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
-          if (!etherscanKey) {
-            plugin.call('notification', 'toast', `Cannot look for contract address ${contractAddress}. Etherscan access token not found. Go to Remix settings page and save an access token.`)
-            await basicWorkspaceInit(workspaces, workspaceProvider)
-          } else {
-            const networks = [
-              {id: 1, name: 'mainnet'},
-              {id: 3, name: 'ropsten'},
-              {id: 4, name: 'rinkeby'},
-              {id: 42, name: 'kovan'},
-              {id: 5, name: 'goerli'}
-            ]
-            plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
-            let found = false
-            for (const network of networks) {
-              const target = `/${network.name}`
-              try{
-                data = await fetchContractFromEtherscan(plugin, network, contractAddress, target)
-              } catch (error) {
-                if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
-                  continue
-                else {
-                  if (!found) await basicWorkspaceInit(workspaces, workspaceProvider)
-                  break
-                }
+          let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+          if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
+          const networks = [
+            {id: 1, name: 'mainnet'},
+            {id: 3, name: 'ropsten'},
+            {id: 4, name: 'rinkeby'},
+            {id: 42, name: 'kovan'},
+            {id: 5, name: 'goerli'}
+          ]
+          plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
+          let found = false
+          for (const network of networks) {
+            const target = `/${network.name}`
+            try{
+              data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, etherscanKey)
+            } catch (error) {
+              if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
+                continue
+              else {
+                if (!found) await basicWorkspaceInit(workspaces, workspaceProvider)
+                break
               }
-              found = true
-              await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
-              plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
-              dispatch(setCurrentWorkspace('etherscan-code-sample'))
-              const filePath = Object.keys(data.compilationTargets)[0]
-              await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
-              plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
             }
+            found = true
+            await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
+            plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
+            dispatch(setCurrentWorkspace('etherscan-code-sample'))
+            const filePath = Object.keys(data.compilationTargets)[0]
+            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
           }
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
