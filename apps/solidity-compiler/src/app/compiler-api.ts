@@ -98,10 +98,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('contentImport', 'resolveAndSave', url)
   }
 
-  resolveContent (url) {
-    return this.call('contentImport', 'resolveAndSave', url, undefined, false)
-  }
-
   runScriptAfterCompilation (fileName: string) {
     this.call('compileAndRun', 'runScriptAfterCompilation', fileName)
   }
@@ -223,7 +219,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.data.loading = true
       this.data.loadingUrl = url
       this.statusChanged({ key: 'loading', title: 'loading compiler...', type: 'info' })
-      this.emit('loadingCompiler', url)
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
@@ -324,11 +319,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
         }
       }     
     }
-
-
-
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
-    
+
     this.data.eventHandlers.onThemeChanged = (theme) => {
       const invert = theme.quality === 'dark' ? 1 : 0
       const img = document.getElementById('swarmLogo')
