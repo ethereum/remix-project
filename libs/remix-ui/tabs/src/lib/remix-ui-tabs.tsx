@@ -33,12 +33,6 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }, [selectedIndex])
 
-
-  useEffect(() => {
-    console.log(props.themeQuality)
-  }, [props.themeQuality])
-
-  
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
