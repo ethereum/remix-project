@@ -74,23 +74,17 @@ export class RemixHoverProvider implements languages.HoverProvider {
 
         const getlinearizedBaseContracts = async (node: any) => {
             let params = []
-            for (const id of node.linearizedBaseContracts) {
-                const baseContract = await this.props.plugin.call('codeParser', 'getNodeById', id)
-                params.push(
-                    baseContract.name
-                )
+            if (node.linearizedBaseContracts) {
+                for (const id of node.linearizedBaseContracts) {
+                    const baseContract = await this.props.plugin.call('codeParser', 'getNodeById', id)
+                    params.push(
+                        baseContract.name
+                    )
+                }
+                if (params.length)
+                    return `is ${params.join(', ')}`
             }
-            if (params.length)
-                return `is ${params.join(', ')}`
             return ''
-        }
-
-        if (!nodeAtPosition) {
-            contents.push({
-                value: 'Loading...'
-            }, {
-                value: 'Compilation errors'
-            })
         }
 
         if (nodeAtPosition) {
@@ -105,23 +99,32 @@ export class RemixHoverProvider implements languages.HoverProvider {
                     value: `${nodeAtPosition.absolutePath}`
                 })
             }
-            if (nodeAtPosition.typeDescriptions && nodeAtPosition.nodeType === 'VariableDeclaration') {
+            if (nodeAtPosition.nodeType === 'VariableDeclaration') {
                 contents.push({
                     value: await getVariableDeclaration(nodeAtPosition)
                 })
 
             }
-            else if (nodeAtPosition.typeDescriptions && nodeAtPosition.nodeType === 'ElementaryTypeName') {
+            else if (nodeAtPosition.nodeType === 'ElementaryTypeName') {
                 contents.push({
                     value: `${nodeAtPosition.typeDescriptions.typeString}`
                 })
 
             } else if (nodeAtPosition.nodeType === 'FunctionDefinition') {
+                if(!nodeAtPosition.name) return 
+                const returns = await getReturnParameters(nodeAtPosition)
                 contents.push({
-                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} returns ${await getReturnParameters(nodeAtPosition)}`
+                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} ${returns? `returns ${returns}`: ''}`
                 })
 
-
+            } else if (nodeAtPosition.nodeType === 'ModifierDefinition') {
+                contents.push({
+                    value: `modifier ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)}`
+                })
+            } else if (nodeAtPosition.nodeType === 'EventDefinition') {
+                contents.push({
+                    value: `modifier ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)}`
+                })
             } else if (nodeAtPosition.nodeType === 'ContractDefinition') {
                 contents.push({
                     value: `${nodeAtPosition.contractKind} ${nodeAtPosition.name} ${await getlinearizedBaseContracts(nodeAtPosition)}`
@@ -129,7 +132,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
 
             } else if (nodeAtPosition.nodeType === 'InvalidNode') {
                 contents.push({
-                    value: `Parsing error found!`
+                    value: `There are errors in the code.`
                 })
             } else {
                 contents.push({
