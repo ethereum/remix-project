@@ -281,7 +281,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     private getContractCompletions = async (nodes: any[], position: Position) => {
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         let nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-
+        console.log('NODES AT POSITION', nodesAtPosition)
         // if no nodes exits at position, try to get the block of which the position is in
         if (!nodesAtPosition.length) {
             const block = await this.props.plugin.call('codeParser', 'getBlockAtPosition', position, null)
@@ -291,7 +291,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         }
 
         // get all children of all nodes at position
-        if (isArray(nodesAtPosition)) {
+        if (isArray(nodesAtPosition) && nodesAtPosition.length) {
             for (const node of nodesAtPosition) {
                 const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', node.id)
                 for (const nodeOfScope of nodesOfScope) {
