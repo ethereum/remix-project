@@ -4,7 +4,8 @@
     "types": ["node", "jest"],
     "module": "commonjs",
     "esModuleInterop": true,
-    "rootDir": "./src",
+    "allowJs": true,
+    "rootDir": "./",
   },
   "include": ["**/*.ts"]
 }

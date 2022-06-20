@@ -3,7 +3,7 @@ import async from 'async'
 import path from 'path'
 import deepequal from 'deep-equal'
 import Log from './logger'
-import { Compiler } from '@remix-project/remix-solidity'
+import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 const logger = new Log()
 const log = logger.logger
@@ -114,7 +114,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
   } finally {
     async.waterfall([
       function loadCompiler (next) {
-        compiler = new Compiler((url, cb) => {
+        compiler = new RemixCompiler((url, cb) => {
           try {
             cb(null, fs.readFileSync(url, 'utf-8'))
           } catch (e) {
@@ -186,7 +186,7 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
       if (!compiler || !deepequal(UTRunner.compilerConfig, newCompConfig)) {
         UTRunner.compilerConfig = newCompConfig
         const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = newCompConfig
-        compiler = new Compiler(importFileCb)
+        compiler = new RemixCompiler(importFileCb)
         compiler.set('evmVersion', evmVersion)
         compiler.set('optimize', optimize)
         compiler.set('runs', runs)
