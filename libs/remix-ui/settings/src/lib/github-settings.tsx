@@ -1,11 +1,23 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GithubSettingsProps } from '../types'
 
 export function GithubSettings (props: GithubSettingsProps) {
   const [githubToken, setGithubToken] = useState<string>("")
   const [githubUserName, setGithubUsername] = useState<string>("")
   const [githubEmail, setGithubEmail] = useState<string>("")
+
+  useEffect(() => {
+    if (props.config) {
+      const githubToken = props.config.get('settings/gist-access-token')
+      const githubUserName = props.config.get('settings/github-user-name')
+      const githubEmail = props.config.get('settings/github-email')
+  
+      setGithubToken(githubToken)
+      setGithubUsername(githubUserName)
+      setGithubEmail(githubEmail)
+    }
+  }, [props.config])
 
   const handleChangeTokenState = (event) => {
     setGithubToken(event.target.value)
@@ -26,6 +38,8 @@ export function GithubSettings (props: GithubSettingsProps) {
 
   const removeToken = () => {
     setGithubToken('')
+    setGithubUsername('')
+    setGithubEmail('')
     props.removeTokenToast()
   }
   
@@ -48,13 +62,13 @@ export function GithubSettings (props: GithubSettingsProps) {
         <div>
           <label>USERNAME:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="githubusername" data-id="settingsTabGithubUsername" type="password" className="form-control" onChange={(e) => handleChangeUserNameState(e)} value={ githubUserName } />
+            <input id="githubusername" data-id="settingsTabGithubUsername" type="text" className="form-control" onChange={(e) => handleChangeUserNameState(e)} value={ githubUserName } />
           </div>
         </div>
         <div>
           <label>EMAIL:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="githubemail" data-id="settingsTabGithubEmail" type="password" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={ githubEmail } />
+            <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={ githubEmail } />
             <div className="d-flex justify-content-end pt-2">
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={saveGithubToken} value="Save" type="button" disabled={githubToken === ''}></input>
               <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub Credentials" onClick={removeToken}>Remove</button>
