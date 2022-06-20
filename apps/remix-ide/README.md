@@ -26,7 +26,7 @@ Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/inst
 Remix-ide has been published as an npm module:
 
 ```bash
-npm install remix-ide -g
+yarn global add remix-ide
 remix-ide
 ```
 Or if you want to clone the github repository (`wget` need to be installed first) :
@@ -36,12 +36,12 @@ git clone https://github.com/ethereum/remix-ide.git
 git clone https://github.com/ethereum/remix.git # only if you plan to link remix and remix-ide repositories and develop on it.
 
 cd remix  # only if you plan to link remix and remix-ide repositories and develop on it.
-npm install  # only if you plan to link remix and remix-ide repositories and develop on it.
-npm run bootstrap  # only if you plan to link remix and remix-ide repositories and develop on it.
+yarn install  # only if you plan to link remix and remix-ide repositories and develop on it.
+yarn run bootstrap  # only if you plan to link remix and remix-ide repositories and develop on it.
 
 cd remix-ide
-npm install
-npm run setupremix  # only if you plan to link remix and remix-ide repositories and develop on it.
+yarn install
+yarn run setupremix  # only if you plan to link remix and remix-ide repositories and develop on it.
 npm start
 ```
 
@@ -112,40 +112,40 @@ nvm --version
 Register new unit test files in `test/index.js`.
 The tests are written using [tape](https://www.npmjs.com/package/tape).
 
-Run the unit tests via: `npm test`
+Run the unit tests via: `yarn test`
 
-For local headless browser tests run `npm run test-browser`
-(requires Selenium to be installed - can be done with `npm run selenium-install`)
+For local headless browser tests run `yarn run test-browser`
+(requires Selenium to be installed - can be done with `yarn run selenium-install`)
 
-Running unit tests via `npm test` requires at least node v7.0.0
+Running unit tests via `yarn test` requires at least node v7.0.0
 
 ## Browser Testing
 
 To run the Selenium tests via Nightwatch:
 
- - Build Remix IDE and serve it: `npm run build && npm run serve` # starts web server at localhost:8080
- - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
- - Run a selenium server `npm run selenium`
- - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
+ - Build Remix IDE and serve it: `yarn run build && yarn run serve` # starts web server at localhost:8080
+ - Make sure Selenium is installed `yarn run selenium-install` # don't need to repeat
+ - Run a selenium server `yarn run selenium`
+ - Run all the tests `yarn run nightwatch_local_firefox` or `yarn run nightwatch_local_chrome`
  - Or run a specific test case: 
  
-		- npm run nightwatch_local_ballot
+		- yarn run nightwatch_local_ballot
 		
-		- npm run nightwatch_local_libraryDeployment
+		- yarn run nightwatch_local_libraryDeployment
 		
-		- npm run nightwatch_local_solidityImport
+		- yarn run nightwatch_local_solidityImport
 		
-		- npm run nightwatch_local_recorder
+		- yarn run nightwatch_local_recorder
 		
-		- npm run nightwatch_local_transactionExecution
+		- yarn run nightwatch_local_transactionExecution
 		
-		- npm run nightwatch_local_staticAnalysis
+		- yarn run nightwatch_local_staticAnalysis
 		
-		- npm run nightwatch_local_signingMessage
+		- yarn run nightwatch_local_signingMessage
 
-		- npm run nightwatch_local_console
+		- yarn run nightwatch_local_console
 		
-		- npm run nightwatch_local_remixd # remixd needs to be run
+		- yarn run nightwatch_local_remixd # remixd needs to be run
 **NOTE:**
 
 - **the `ballot` tests suite** requires to run `ganache-cli` locally.

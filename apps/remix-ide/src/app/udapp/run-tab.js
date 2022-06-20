@@ -128,6 +128,20 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
+      name: 'Foundry Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('foundry-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
       name: 'Wallet Connect',
       provider: {
         async sendAsync (payload, callback) {

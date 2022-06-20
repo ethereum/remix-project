@@ -2,7 +2,7 @@
 
 import { update } from 'solc/abi'
 import * as webworkify from 'webworkify-webpack'
-import compilerInput from './compiler-input'
+import compilerInput, { compilerInputForConfigFile } from './compiler-input'
 import EventManager from '../lib/eventManager'
 import txHelper from './helper'
 import {
@@ -31,6 +31,8 @@ export class Compiler {
       language: 'Solidity',
       compilationStartTime: null,
       target: null,
+      useFileConfiguration: false,
+      configFileContent: '',
       lastCompilationResult: {
         data: null,
         source: null
@@ -111,11 +113,17 @@ export class Compiler {
           return { error: 'Deferred import' }
         }
         let result: CompilationResult = {}
-        let input
+        let input = ""
         try {
           if (source && source.sources) {
-            const { optimize, runs, evmVersion, language } = this.state
-            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
+
+            if (useFileConfiguration) {
+              input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+            } else {
+              input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            }
+
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
@@ -183,11 +191,17 @@ export class Compiler {
             return { error: 'Deferred import' }
           }
           let result: CompilationResult = {}
-          let input: string
+          let input = ""
           try {
             if (source && source.sources) {
-              const { optimize, runs, evmVersion, language } = this.state
-              input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+              const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
+
+              if (useFileConfiguration) {
+                input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+              } else {
+                input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+              }
+
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
             }
           } catch (exception) {
@@ -289,12 +303,26 @@ export class Compiler {
 
     this.state.compileJSON = (source: SourceWithTarget) => {
       if (source && source.sources) {
-        const { optimize, runs, evmVersion, language } = this.state
+        const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
+        let input = ""
+
+        try {
+          if (useFileConfiguration) {
+            input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+          } else {
+            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+          }
+        } catch (exception) {
+          this.onCompilationFinished({ error: { formattedMessage: exception.message } }, [], source, "", this.state.currentVersion)
+          return
+        }
+
+
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
-          input: compilerInput(source.sources, { optimize, runs, evmVersion, language })
+          input: input
         })
       }
     }

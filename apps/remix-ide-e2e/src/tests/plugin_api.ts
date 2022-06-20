@@ -230,7 +230,12 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false }
+    }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -285,7 +290,12 @@ module.exports = {
   'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false } 
+    }, null, null)
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['default_workspace', 'emptyworkspace', 'testspace'], null, null)
@@ -409,7 +419,7 @@ module.exports = {
       .addFile('test_modal.js', { content: testModalToasterApi })
       .executeScript('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications

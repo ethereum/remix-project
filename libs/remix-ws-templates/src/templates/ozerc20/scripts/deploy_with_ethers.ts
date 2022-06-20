@@ -1,4 +1,4 @@
-import { deploy } from './ethers'
+import { deploy } from './ethers-lib'
 
 (async () => {
     try {

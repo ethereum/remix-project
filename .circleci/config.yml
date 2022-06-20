@@ -29,17 +29,17 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - save_cache:
-          key: v1-deps-{{ checksum "package-lock.json" }}
+          key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: npm run downloadsolc_assets      
+      - run: yarn run downloadsolc_assets      
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
 
-      - run: npm run build:libs
+      - run: yarn run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -64,8 +64,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Remix Libs Linting
           command: ./apps/remix-ide/ci/lint.sh
@@ -91,10 +91,10 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm i
-      - run: cd dist/libs/remix-tests && npm install
-      - run: npm run test:libs
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run: cd dist/libs/remix-tests && yarn install
+      - run: yarn run test:libs
           
   remix-ide-chrome:
     docker:
@@ -127,8 +127,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -170,8 +170,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -213,8 +213,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -255,8 +255,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -298,8 +298,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -328,9 +328,9 @@ jobs:
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn install
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
@@ -357,9 +357,9 @@ jobs:
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn install
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
@@ -385,10 +385,10 @@ jobs:
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run build:libs
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn install
+      - run: yarn run build:libs
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
