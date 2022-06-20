@@ -86,7 +86,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const rightPanel = useRef(null)
 
   useEffect(() => {
-
     plugin.call('theme', 'currentTheme').then((theme) => {
       // update theme quality. To be used for for images
       setState(prevState => {
@@ -99,7 +98,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         return { ...prevState, themeQuality: theme.quality === 'dark' ? themes.dark : themes.light }
       })
     })
-
     window.addEventListener('click', (event) => {
       const target = event.target as Element
       const id = target.id
@@ -188,21 +186,21 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     <>
       <ModalDialog
         id='homeTab'
-        title={'Import from ' + state.modalInfo.title}
+        title={ 'Import from ' + state.modalInfo.title }
         okLabel='Import'
-        hide={!state.showModalDialog}
-        handleHide={() => hideFullMessage()}
-        okFn={() => processLoading()}
+        hide={ !state.showModalDialog }
+        handleHide={ () => hideFullMessage() }
+        okFn={ () => processLoading() }
       >
         <div className="p-2 user-select-auto">
-          {state.modalInfo.loadItem !== '' && <span>Enter the {state.modalInfo.loadItem} you would like to load.</span>}
-          {state.modalInfo.examples.length !== 0 &&
-            <>
-              <div>e.g</div>
-              <div>
-                {examples}
-              </div>
-            </>}
+          { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
+          { state.modalInfo.examples.length !== 0 &&
+          <>
+            <div>e.g</div>
+            <div>
+              { examples }
+            </div>
+          </> }
           <input
             ref={inputValue}
             type='text'
@@ -224,10 +222,10 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
           <div className="d-flex justify-content-between ">
             <div className="mx-4 my-4 d-flex">
-              <label style={{ fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' }}>Remix IDE</label>
+              <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
             </div>
             <div className="mr-4 d-flex">
-              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={() => playRemi()} alt=""></img>
+              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
               <audio
                 id="remiAudio"
                 muted={false}
@@ -249,7 +247,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <div className="mb-3">
               <h4>Featured Plugins</h4>
               <div className="d-flex flex-row pt-2">
-                <ThemeContext.Provider value={state.themeQuality}>
+                <ThemeContext.Provider value={ state.themeQuality }>
                   <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" callback={() => startSolidity()} />
                   <PluginButton imgPath="assets/img/starkNetLogo.webp" envID="starkNetLogo" envText="StarkNet" l2={true} callback={() => startStarkNet()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
@@ -300,7 +298,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                   <a className="remixui_home_text" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
                 </p>
                 <p className="mb-1">
-                  <img id='remixHhomeWebsite' className="mr-2 remixui_home_image" src={plugin.profile.icon} style={{ filter: state.themeQuality.filter }} alt=''></img>
+                  <img id='remixHhomeWebsite' className="mr-2 remixui_home_image" src={ plugin.profile.icon } style={ { filter: state.themeQuality.filter } } alt=''></img>
                   <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Featuring website</a>
                 </p>
               </div>
@@ -334,7 +332,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           </div>
           <div
             className="mr-3 d-flex bg-light remixui_home_panels"
-            style={{ visibility: state.showMediaPanel === 'none' ? 'hidden' : 'visible' }}
+            style={ { visibility: state.showMediaPanel === 'none' ? 'hidden' : 'visible' } }
             id="remixIDEMediaPanels"
             ref={rightPanel}
           >
@@ -343,11 +341,11 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <RSSFeed feedUrl='https://rss.remixproject.org/' maxItems={10} />
               </div>
             </div>
-            <div id="remixIDE_TwitterBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" hidden={state.showMediaPanel !== 'twitter'} style={{ maxHeight: maxHeight, marginRight: '28px' }} >
-              <div className="remixui_home_media" style={{ minHeight: elHeight }} >
+            <div id="remixIDE_TwitterBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" hidden={state.showMediaPanel !== 'twitter'} style={ { maxHeight: maxHeight, marginRight: '28px' } } >
+              <div className="remixui_home_media" style={ { minHeight: elHeight } } >
                 <a className="twitter-timeline"
                   data-width="375"
-                  data-theme={state.themeQuality.name}
+                  data-theme={ state.themeQuality.name }
                   data-chrome="nofooter noheader transparent"
                   data-tweet-limit="18"
                   href="https://twitter.com/EthereumRemix"

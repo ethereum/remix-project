@@ -99,7 +99,7 @@ export class CompileTabLogic {
    * Compile a specific file of the file manager
    * @param {string} target the path to the file to compile
    */
-  compileFile (target: string) {
+  compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
     return new Promise((resolve, reject) => {
       this.api.readFile(target).then((content) => {
