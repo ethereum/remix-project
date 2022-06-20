@@ -33,7 +33,6 @@ export interface ICompilerApi {
     onFileClosed: (name: string) => void
 
     resolveContentAndSave: (url: string) => Promise<string>
-    resolveContent: (url: string) => Promise<string>
     fileExists: (file: string) => Promise<boolean>
     writeFile: (file: string, content: string) => Promise<void>
     readFile: (file: string) => Promise<string>
