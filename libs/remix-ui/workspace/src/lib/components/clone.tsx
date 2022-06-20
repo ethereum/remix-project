@@ -18,6 +18,6 @@ const popover = (
 
 export const CloneRepository = () => (
   <OverlayTrigger trigger="click" placement={"bottom"} overlay={popover}>
-    <i className="fas fa-cloud-download remixui_menuicon"></i>
+    <i className="fas fa-cloud-download remixui_menuicon pr-0 mr-2"></i>
   </OverlayTrigger>
 )
