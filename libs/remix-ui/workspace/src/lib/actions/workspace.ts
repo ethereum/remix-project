@@ -321,3 +321,7 @@ export const getWorkspaces = async (): Promise<string[]> | undefined => {
     return workspaces
   } catch (e) {}
 }
+
+export const cloneRepository = async (url: string) => {
+  console.log('url: ', url)
+}
