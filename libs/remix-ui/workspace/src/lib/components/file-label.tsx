@@ -57,7 +57,7 @@ export const FileLabel = (props: FileLabelProps) => {
     >
       <span
         title={file.path}
-        className={'remixui_label ' + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+        className={'text-nowrap remixui_label ' + (file.isDirectory ? 'folder' : 'remixui_leaf')}
         data-path={file.path}
       >
         { file.name }

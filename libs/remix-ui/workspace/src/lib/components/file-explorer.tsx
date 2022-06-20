@@ -78,7 +78,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   
       targetDocument.addEventListener('keydown', keyPressHandler)
       targetDocument.addEventListener('keyup', keyUpHandler)
-      targetDocument.focus()
       return () => {
         targetDocument.removeEventListener('keydown', keyPressHandler)
         targetDocument.removeEventListener('keyup', keyUpHandler)

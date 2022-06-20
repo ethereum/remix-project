@@ -20,7 +20,7 @@ This document includes:
  - git fetch origin master
  - git checkout origin/master
  - git checkout -b bumpLibsVersion
- - npm run publish:libs (this command uses lerna)
+ - yarn run publish:libs (this command uses lerna)
  - commit
 
 ## Remix IDE release Part 1. First push master to beta. Feature Freeze
@@ -37,7 +37,7 @@ This document includes:
  - git checkout origin/remix_beta
  - git checkout -b bumpVersion
  - update package.json version
- - update version in package-lock.json
+ - update version in yarn.lock
  - merge PR to **origin/remix_beta**
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
@@ -52,7 +52,7 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpDevVersion
  - update package.json version: bump the version and add the tag `dev` if not already present.
- - update version in package-lock.json
+ - update version in yarn.lock
  - create a PR and merge it to origin/master
  
 ## Remix IDE release Part 4. remix.ethereum.org update
@@ -73,7 +73,7 @@ This is not strictly speaking a release. Updating the remix site is done through
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version to the new version "vx.x.x-beta.1"
- - update version in package-lock.json
+ - update version in yarn.lock
  - merge PR
  - git fetch origin master
  - git checkout origin/master

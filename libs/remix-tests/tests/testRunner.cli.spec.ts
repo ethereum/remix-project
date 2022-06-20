@@ -11,7 +11,7 @@ describe('testRunner: remix-tests CLI', () => {
         const dirContent = result.stdout.toString()
         // Install dependencies if 'node_modules' is not already present
         if(!dirContent.includes('node_modules')) {
-          execSync('npm install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
         }
     }
     
