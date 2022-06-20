@@ -26,10 +26,7 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
               missingInputs.push(path)
               return { error: 'Deferred import' }
             }
-            //console.log(input)
-            const ret = compiler.compile(input, { import: missingInputsCallback })
-            //console.log(JSON.parse(ret))
-            return ret
+            return compiler.compile(input, { import: missingInputsCallback })
           } catch (exception) {
             return JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception })
           }
@@ -44,13 +41,13 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
       case 'compile':
         missingInputs.length = 0
         if (data.input && compileJSON) {
-            self.postMessage({
-              cmd: 'compiled',
-              job: data.job,
-              data: compileJSON(data.input),
-              input: data.input,
-              missingInputs: missingInputs
-            })
+          self.postMessage({
+            cmd: 'compiled',
+            job: data.job,
+            data: compileJSON(data.input),
+            input: data.input,
+            missingInputs: missingInputs
+          })
         }
         break
     }

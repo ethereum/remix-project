@@ -23,7 +23,7 @@ const RemixApp = (props: IRemixAppUi) => {
     async function activateApp () {
       props.app.themeModule.initTheme(() => {
         setAppReady(true)
-          props.app.activate()
+        props.app.activate()
         setListeners()
       })
     }
