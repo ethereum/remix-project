@@ -170,7 +170,6 @@ export class Compiler {
       }
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
-    
   }
 
   /**
