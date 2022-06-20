@@ -19,7 +19,7 @@ const profile = {
   version: packageJson.version,
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContract']
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContractAndAddInstance']
 }
 
 export class RunTab extends ViewPlugin {
@@ -165,7 +165,7 @@ export class RunTab extends ViewPlugin {
     return this.call('fileManager', 'readFile', fileName)
   }
 
-  resolveContract (contractObject, address) {
+  resolveContractAndAddInstance (contractObject, address) {
     const data = this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     this.compilersArtefacts.addResolvedContract(addressToString(address), data)

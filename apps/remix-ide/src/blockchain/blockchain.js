@@ -173,7 +173,7 @@ export class Blockchain extends Plugin {
   
         return this.call('terminal', 'logHtml', log)
       }
-      return this.call('udapp', 'resolveContract', implementationContractObject, address)
+      return this.call('udapp', 'resolveContractAndAddInstance', implementationContractObject, address)
     }
 
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
