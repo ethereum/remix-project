@@ -11,7 +11,7 @@ import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
-import { logBuilder } from "@remix-ui/helper"
+import { logBuilder, confirmProxyMsg } from "@remix-ui/helper"
 import { cancelProxyMsg } from '@remix-ui/helper'
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
@@ -143,7 +143,8 @@ export class Blockchain extends Plugin {
     const proxyModal = {
       id: 'confirmProxyDeployment',
       title: 'ERC1967',
-      message: 'Confirm proxy deployment?',
+      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.           
+      For more info on ERC1967, see https://docs.openzeppelin.com/contracts/4.x/api/proxy#ERC1967Proxy`,
       modalType: 'modal',
       okLabel: 'OK',
       cancelLabel: 'Cancel',

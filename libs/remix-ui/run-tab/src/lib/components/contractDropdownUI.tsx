@@ -219,7 +219,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
         </select>
-        { (contractList[currentFile] || []).length <= 0 && <i style={{ display: compFails }} title="No contract compiled yet or compilation failed. Please check the compile tab for more information." className="m-2 ml-3 fas fa-times-circle udapp_errorIcon" ></i> }
         <span className="py-1" style={{ display: abiLabel.display }}>{ abiLabel.content }</span>
       </div>
       <div>
