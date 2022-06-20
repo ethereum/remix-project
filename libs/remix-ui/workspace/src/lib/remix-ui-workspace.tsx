@@ -215,7 +215,8 @@ export function Workspace () {
                     className='far fa-upload remixui_menuicon'
                     title='Restore Workspaces Backup'>
                   </span>
-                  <CloneRepository />
+                  <CloneRepository>
+                  </CloneRepository>
                 </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {
