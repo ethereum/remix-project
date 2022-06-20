@@ -127,7 +127,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
                 })
             } else if (nodeAtPosition.nodeType === 'ContractDefinition') {
                 contents.push({
-                    value: `${nodeAtPosition.contractKind} ${nodeAtPosition.name} ${await getlinearizedBaseContracts(nodeAtPosition)}`
+                    value: `${nodeAtPosition.contractKind || nodeAtPosition.kind} ${nodeAtPosition.name} ${await getlinearizedBaseContracts(nodeAtPosition)}`
                 })
 
             } else if (nodeAtPosition.nodeType === 'InvalidNode') {

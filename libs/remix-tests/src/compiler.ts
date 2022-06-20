@@ -3,7 +3,7 @@ import async from 'async'
 import path from 'path'
 import deepequal from 'deep-equal'
 import Log from './logger'
-import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
+import { Compiler as RemixCompiler } from '@remix-project/remix-solidity-ts'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 const logger = new Log()
 const log = logger.logger
