@@ -19,10 +19,9 @@ export class fileSystem {
     checkWorkspaces = async () => {
         try {
             await this.fs.stat('.workspaces')
-            console.log('Workspaces found in', this.name)
             this.hasWorkSpaces = true
         } catch (e) {
-            console.log('No workspaces found in', this.name)
+
         }
     }
 
@@ -50,7 +49,6 @@ export class fileSystems {
             return true
         } catch (e) {
             console.log(fs.name + ' not available...')
-            console.log(e)
             return false
         }
     }
