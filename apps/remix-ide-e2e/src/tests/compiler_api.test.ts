@@ -46,7 +46,7 @@ module.exports = {
     browser
       .addFile('test_updateConfiguration.js', { content: updateConfiguration })
       .executeScript('remix.exeCurrent()')
-      .pause(5000)
+      .pause(15000)
       .addFile('test_updateConfiguration.sol', { content: simpleContract })
       .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
   },
@@ -168,3 +168,4 @@ contract DoesNotCompile {
     function fStackLimit(uint u1, uint u2, uint u3, uint u4, uint u5, uint u6, uint u7, uint u8, uint u9, uint u10, uint u11, uint u12) public {        
     }
 }`
+

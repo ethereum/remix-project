@@ -1,12 +1,26 @@
-import IpfsClient from 'ipfs-mini'
+import IpfsHttpClient from 'ipfs-http-client'
 
-const ipfsNodes = [
-  new IpfsClient({ host: 'ipfs.remixproject.org', port: 443, protocol: 'https' }),
-  new IpfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }),
-  new IpfsClient({ host: '127.0.0.1', port: 5001, protocol: 'http' })
-]
+
+
+let ipfsNodes = []
 
 export const publishToIPFS = async (contract, api) => {
+  ipfsNodes = [
+    IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+  ]
+  if (api.config.get('settings/ipfs-url')) {
+    const auth = api.config.get('settings/ipfs-project-id') ? 'Basic ' + Buffer.from(api.config.get('settings/ipfs-project-id') + ':' + api.config.get('settings/ipfs-project-secret')).toString('base64') : null
+    const ipfs = IpfsHttpClient({
+      host: api.config.get('settings/ipfs-url'),
+      port: api.config.get('settings/ipfs-port'),
+      protocol: api.config.get('settings/ipfs-protocol'),
+      headers: {
+        Authorization: auth
+      }
+    })
+    ipfsNodes.push(ipfs)
+  }
+
   // gather list of files to publish
   const sources = []
   let metadata
@@ -58,13 +72,12 @@ export const publishToIPFS = async (contract, api) => {
         console.log(error)
         reject(error)
       })
-    })    
+    })
   }))
   // publish the list of sources in order, fail if any failed
   await Promise.all(sources.map(async (item) => {
     try {
-      const result = await ipfsVerifiedPublish(item.content, item.hash)
-
+      const result = await ipfsVerifiedPublish(item.content, item.hash, api)
       try {
         item.hash = result.url.match('dweb:/ipfs/(.+)')[1]
       } catch (e) {
@@ -76,10 +89,10 @@ export const publishToIPFS = async (contract, api) => {
       throw new Error(error)
     }
   }))
-  const metadataContent = JSON.stringify(metadata)
+  const metadataContent = JSON.stringify(metadata, null, '\t')
 
   try {
-    const result = await ipfsVerifiedPublish(metadataContent, '')
+    const result = await ipfsVerifiedPublish(metadataContent, '', api)
 
     try {
       contract.metadataHash = result.url.match('dweb:/ipfs/(.+)')[1]
@@ -101,14 +114,15 @@ export const publishToIPFS = async (contract, api) => {
   return { uploaded, item }
 }
 
-const ipfsVerifiedPublish = async (content, expectedHash) => {
+const ipfsVerifiedPublish = async (content, expectedHash, api) => {
   try {
     const results = await severalGatewaysPush(content)
-
-    if (expectedHash && results !== expectedHash) {
-      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + results, hash: results }
+    const hash: any = (results as any).path
+    if (expectedHash && hash !== expectedHash) {
+      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + hash, hash }
     } else {
-      return { message: 'ok', url: 'dweb:/ipfs/' + results, hash: results }
+      api.writeFile('ipfs/' + hash, content)
+      return { message: 'ok', url: 'dweb:/ipfs/' + hash, hash }
     }
   } catch (error) {
     throw new Error(error)

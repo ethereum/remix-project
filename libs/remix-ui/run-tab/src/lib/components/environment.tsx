@@ -19,7 +19,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
         Environment
       </label>
       <div className="udapp_environment">
-        <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="form-control udapp_select custom-select" value={props.selectedEnv} onChange={(e) => { handleChangeExEnv(e.target.value) }}>
+        <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="form-control udapp_select custom-select" value={props.selectedEnv || ''} onChange={(e) => { handleChangeExEnv(e.target.value) }}>
           {
             props.providers.providerList.map((provider, index) =>
               <option id={provider.id} key={index} data-id={provider.dataId}

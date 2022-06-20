@@ -8,18 +8,23 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/ethereumremix?style=social)](https://twitter.com/ethereumremix)
 
 # Remix Project
+**Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
 
-**Remix Project** is a platform for development tools that use a plugin architecture. It encompasses sub-projects including Remix Plugin Engine, Remix Libraries, and of course Remix IDE.
+## Remix IDE
+**Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs.  The IDE comes in 2 flavors and a VSCode extension:
 
-**Remix IDE** is an open source web and desktop application. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. Remix is used for the **entire journey of contract development with [Solidity language](https://soliditylang.org/)** as well as a playground for learning and teaching [Ethereum](https://ethereum.org/).
+**Remix Online IDE**, see: [https://remix.ethereum.org](https://remix.ethereum.org)
 
-Start developing using Remix on browser, visit: [https://remix.ethereum.org](https://remix.ethereum.org)
+:point_right: Supported browsers: Firefox v100.0.1 & Chrome v101.0.4951.64. No support for Remix's use on tablets or smartphones or telephones.
 
-For desktop version, see releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
+**Remix Desktop IDE**, see releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
 
-![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix_screenshot.png)
+![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix-screenshot-400h.png)
 
-:point_right: **Remix libraries** work as a core of native plugins of Remix IDE. Read more about libraries [here](libs/README.md)
+**VSCode extension**, see: [Ethereum-Remix](https://marketplace.visualstudio.com/items?itemName=RemixProject.ethereum-remix)
+
+## Remix libraries 
+Remix libraries are essential for Remix IDE's native plugins. Read more about libraries [here](libs/README.md)
 
 ## Offline Usage
 
@@ -30,7 +35,7 @@ Note: It contains the latest supported version of Solidity available at the time
 
 ## Setup
 
-* Install **NPM** and **Node.js**. See [Guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) <br/>
+* Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
 *Supported versions:*
 ```bash
 "engines": {
@@ -40,7 +45,7 @@ Note: It contains the latest supported version of Solidity available at the time
 ```
 * Install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
-npm install -g @nrwl/cli
+yarn global add @nrwl/cli
 ```
 * Clone the github repository (`wget` need to be installed first):
 
@@ -50,8 +55,8 @@ git clone https://github.com/ethereum/remix-project.git
 * Build `remix-project`:
 ```bash
 cd remix-project
-npm install
-npm run build:libs // Build remix libs
+yarn install
+yarn run build:libs // Build remix libs
 nx build
 nx serve
 ```
@@ -63,12 +68,12 @@ Go to your `text editor` and start developing. Browser will automatically refres
 ## Production Build
 To generate react production builds for remix-project.
 ```bash
-npm run build:production
+yarn run build:production
 ```
 Build can be found in `remix-project/dist/apps/remix-ide` directory.
 
 ```bash
-npm run serve:production
+yarn run serve:production
 ```
 Production build will be served by default to `http://localhost:8080/` or `http://127.0.0.1:8080/`
 
@@ -133,66 +138,19 @@ For example, to run unit tests of `remix-analyzer`, use `nx test remix-analyzer`
 
 To run the Selenium tests via Nightwatch:
 
- - Install Selenium for first time: `npm run selenium-install`
- - Run a selenium server: `npm run selenium`
+ - Install Selenium for first time: `yarn run selenium-install`
+ - Run a selenium server: `yarn run selenium`
  - Build & Serve Remix: `nx serve`
  - Run all the end-to-end tests:
 
-    for Firefox: `npm run nightwatch_local_firefox`, or 
+    for Firefox: `yarn run nightwatch_local_firefox`, or 
 
-    for Google Chrome: `npm run nightwatch_local_chrome`
- - Run a specific test case instead, use one of following commands: 
+    for Google Chrome: `yarn run nightwatch_local_chrome`
+ - Run a specific test case instead, use a command like this: 
  
-		- npm run nightwatch_local_ballot
-
-        - npm run nightwatch_local_usingWorker
+		- yarn run nightwatch_local_ballot
 		
-		- npm run nightwatch_local_libraryDeployment
-		
-		- npm run nightwatch_local_solidityImport
-		
-		- npm run nightwatch_local_recorder
-		
-		- npm run nightwatch_local_transactionExecution
-		
-		- npm run nightwatch_local_staticAnalysis
-		
-		- npm run nightwatch_local_signingMessage
-
-        - npm run nightwatch_local_specialFunctions
-
-        - npm run nightwatch_local_solidityUnitTests
-
-        - npm run nightwatch_local_remixd # remixd needs to be run
-
-		- npm run nightwatch_local_terminal
-
-        - npm run nightwatch_local_gist
-
-        - npm run nightwatch_local_workspace
-
-        - npm run nightwatch_local_defaultLayout
-
-        - npm run nightwatch_local_pluginManager
-
-        - npm run nightwatch_local_publishContract
-
-        - npm run nightwatch_local_generalSettings
-
-        - npm run nightwatch_local_fileExplorer
-
-        - npm run nightwatch_local_debugger
-
-        - npm run nightwatch_local_editor
-
-        - npm run nightwatch_local_compiler
-
-        - npm run nightwatch_local_txListener
-
-        - npm run nightwatch_local_fileManager
-
-        - npm run nightwatch_local_runAndDeploy
-		
+	The package.json file contains a list of all the tests you can run.
         
 **NOTE:**
 
@@ -204,6 +162,113 @@ To run the Selenium tests via Nightwatch:
 ```
     gist_token = <token> // token should have permission to create a gist
 ```
+
+### Using 'select_test' for locally running specific tests
+
+There is a script to allow selecting the browser and a specific test to run:
+
+```
+yarn run select_test
+```
+
+You need to have 
+
+- selenium running 
+
+- the IDE running
+
+- optionally have remixd or ganache running
+
+### Splitting tests with groups
+
+Groups can be used to group tests in a test file together. The advantage is you can avoid running long test files when you want to focus on a specific set of tests within a test file.x
+
+These groups only apply to the test file, not across all test files. So for example group1 in the ballot is not related to group1 in another test file.
+
+Running a group only runs the tests marked as belonging to the group + all the tests in the test file that do not have a group tag. This way you can have tests that run for all groups, for example to peform common actions.
+
+There is no need to number the groups in a certain order. The number of the group is arbitrary.
+
+A test can have multiple group tags, this means that this test will run in different groups.
+
+You should write your tests so they can be executed in groups and not depend on other groups.
+
+To do this you need to:
+
+- Add a group to tag to a test, they are formatted as #group followed by a number: so it becomes #group1, #group220, #group4. Any number will do. You don't have to do it in specific order. 
+
+```
+  'Should generate test file #group1': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+```
+
+- add '@disable': true to the test file you want to split:
+
+```
+module.exports = {
+  '@disabled': true,
+  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    init(browser, done) // , 'http://localhost:8080', false)
+  },
+```
+- change package json to locally run all group tests:
+
+```
+    "nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
+```
+
+- run the build script to build the test files if you want to run the locally
+
+```
+yarn run build:e2e
+```
+
+### Locally testing group tests
+
+You can tag any test with a groupname, for example, #group10 and easily run the test locally.
+
+- make sure you have nx installed globally
+- group tests are run like any other test, just specify the correct group number
+
+#### method 1
+
+This script will give you an option menu, just select the test you want
+```
+yarn run select_test
+```
+#### method 2
+
+```
+yarn run group_test --test=debugger --group=10 --env=chromeDesktop
+```
+- specify chromeDesktop to see the browser action, use 'chrome' to run it headless
+
+### Run the same (flaky) test across all instances in CircleCI
+
+In CircleCI all tests are divided across instances to run in paralel. 
+You can also run 1 or more tests simultaneously across all instances.
+This way the pipeline can easily be restarted to check if a test is flaky.
+
+For example:
+
+```
+  'Static Analysis run with remixd #group3 #flaky': function (browser) {
+```
+
+Now group3 of this test will be executed in firefox and chrome 80 times.
+If you mark more groups in other tests they will also be executed. 
+
+**CONFIGURATION**
+
+It's important to set a parameter in the .circleci/config.yml, set it to false then the normal tests will run.
+Set it to true to run only tests marked with flaky.
+```
+parameters:
+  run_flaky_tests:
+    type: boolean
+    default: true
+```
+
 
 ## Important Links
 
