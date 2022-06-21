@@ -49,7 +49,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             console.log('expression elements', expressionElements)
             let dotCompleted = false
             if (expressionElements.length === 2) {
-                let globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
+                const globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
                 if (globalCompletion) {
                     dotCompleted = true
                     suggestions = [...suggestions, ...globalCompletion]
@@ -127,10 +127,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                                 const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
                                 console.log('HAS DECLARATION OF', declarationOf)
                                 // nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
-                                const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
-                                for (const baseContract of baseContracts) {
+                                //const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
+                                //for (const baseContract of baseContracts) {
                                     //nodes = [...nodes, ...baseContract.nodes]
-                                }
+                                //}
                             }
                         }
                     }
@@ -166,7 +166,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         }
 
         const completeParameters = async (parameters: any) => {
-            let localParam = ( parameters && parameters.parameters ) || (parameters)
+            const localParam = ( parameters && parameters.parameters ) || (parameters)
             if (localParam) {
                 const params = []
                 for (const key in localParam) {
