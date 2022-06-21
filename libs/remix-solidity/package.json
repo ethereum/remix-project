@@ -1,5 +1,5 @@
 {
-  "name": "@remix-project/remix-solidity-ts",
+  "name": "@remix-project/remix-solidity",
   "version": "0.5.0",
   "description": "Tool to load and run Solidity compiler",
   "main": "src/index.js",

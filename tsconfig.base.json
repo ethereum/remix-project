@@ -10,7 +10,7 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "commonjs",
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "dist/libs/**/*.d.ts"],
     "lib": ["es2017", "es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
@@ -28,7 +28,7 @@
         "dist/libs/remix-simulator/src/index.js"
       ],
       "@remix-project/remix-solidity": [
-        "dist/libs/remix-solidity/src/index.js"
+        "dist/libs/remix-solidity/src/index"
       ],
       "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
       "@remix-project/remix-url-resolver": [

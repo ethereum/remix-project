@@ -4,7 +4,8 @@ import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { Compiler } from '@remix-project/remix-solidity'
 
-import { AstNode, CompilationError, CompilationResult, CompilationSource, helper } from '@remix-project/remix-solidity-ts'
+import { AstNode, CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
+import { helper } from '@remix-project/remix-solidity'
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
 const profile = {
@@ -104,6 +105,7 @@ export class CodeParser extends Plugin {
                     console.log('lineColumn', lineColumn)
                     allErrors.push({ error, lineColumn })
                 }
+                console.log('allErrors', allErrors)
                 await this.call('editor', 'addErrorMarker', allErrors)
             } else {
                 await this.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
