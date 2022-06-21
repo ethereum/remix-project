@@ -370,9 +370,14 @@ export const EditorUI = (props: EditorUIProps) => {
       filePath = fileFromUrl.file
       const model = editorModelsState[filePath]?.model
 
+      const errorServerityMap = {
+        'error': MarkerSeverity.Error,
+        'warning': MarkerSeverity.Warning,
+        'info': MarkerSeverity.Info
+      }
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
-          severity: MarkerSeverity.Error,
+          severity: errorServerityMap[marker.severity],
           startLineNumber: lineColumn.start.line + 1,
           startColumn: lineColumn.start.column + 1,
           endLineNumber: lineColumn.end.line + 1,
