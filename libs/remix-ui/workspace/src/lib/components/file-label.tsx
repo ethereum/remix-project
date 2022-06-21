@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
-import { FileType } from '../types'
+import { fileState, FileType } from '../types'
 
 export interface FileLabelProps {
   file: FileType,
@@ -10,12 +10,14 @@ export interface FileLabelProps {
     isNew: boolean
     lastEdit: string
   }
+  fileState: fileState[],
   editModeOff: (content: string) => void
 }
 
 export const FileLabel = (props: FileLabelProps) => {
-  const { file, focusEdit, editModeOff } = props
+  const { file, focusEdit, editModeOff, fileState } = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [fileStateClasses, setFileStateClasses] = useState<string>('')
   const labelRef = useRef(null)
 
   useEffect(() => {
@@ -23,6 +25,17 @@ export const FileLabel = (props: FileLabelProps) => {
       setIsEditable(focusEdit.element === file.path)
     }
   }, [file.path, focusEdit])
+
+  useEffect(() => {
+    const state = props.fileState.find((state: fileState) => {
+      if(state.path === props.file.path) return true
+      if(state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
+    })
+    console.log(props)
+    if (state && state.fileStateLabelClass) {
+      setFileStateClasses(state.fileStateLabelClass)
+    }
+  }, [fileState])
 
   useEffect(() => {
     if (labelRef.current) {
@@ -57,10 +70,10 @@ export const FileLabel = (props: FileLabelProps) => {
     >
       <span
         title={file.path}
-        className={'text-nowrap remixui_label ' + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+        className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
         data-path={file.path}
       >
-        { file.name }
+        {file.name}
       </span>
     </div>
   )

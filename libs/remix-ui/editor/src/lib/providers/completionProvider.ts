@@ -2,7 +2,7 @@ import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { GeCompletionUnits, getBlockCompletionItems, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, getMsgCompletionItems, getTxCompletionItems } from "./completion/completionGlobals"
+import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
