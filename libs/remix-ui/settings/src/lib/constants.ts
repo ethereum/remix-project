@@ -14,6 +14,7 @@ export const etherscanAccessTokenText2 = 'Go to Etherscan api key page (link bel
 export const ethereunVMText = 'Always use Javascript VM at load'
 export const wordWrapText = 'Word wrap in editor'
 export const enablePersonalModeText = ' Enable Personal Mode for web3 provider. Transaction sent over Web3 will use the web3.personal API.\n'
+export const useAutoCompleteText = 'Enable code completion in editor.'
 export const matomoAnalytics = 'Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about '
 export const swarmSettingsTitle = 'Swarm Settings'
 export const swarmSettingsText = 'Swarm Settings'

@@ -1,28 +1,28 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText } from './constants'
 
 import './remix-ui-settings.css'
-import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast } from './settingsAction'
+import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
-import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
+import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
   config: any,
   editor: any,
-   _deps: any,
-   useMatomoAnalytics: boolean
-   themeModule: ThemeModule
+  _deps: any,
+  useMatomoAnalytics: boolean
+  themeModule: ThemeModule
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [, dispatch] = useReducer(settingReducer, initialState)
   const [state, dispatchToast] = useReducer(toastReducer, toastInitialState)
   const [tokenValue, setTokenValue] = useState({})
-  const [themeName, ] = useState('')
+  const [themeName,] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
   const [resetState, refresh] = useState(0)
@@ -32,13 +32,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
 
-
   const initValue = () => {
-    const metadataConfig =  props.config.get('settings/generate-contract-metadata')
+    const metadataConfig = props.config.get('settings/generate-contract-metadata')
     if (metadataConfig === undefined || metadataConfig === null) generateContractMetadat(props.config, true, dispatch)
 
     const javascriptVM = props.config.get('settings/always-use-vm')
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
+
+    const useAutoComplete = props.config.get('settings/use-auto-complete')
+    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -87,7 +89,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       setipfsProjectSecret(configipfsProjectSecret)
     }
 
-
   }, [themeName, state.message])
 
   useEffect(() => {
@@ -114,6 +115,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     useMatomoAnalytics(props.config, event.target.checked, dispatch)
   }
 
+  const onchangeUseAutoComplete = event => {
+    useAutoCompletion(props.config, event.target.checked, dispatch)
+  }
+
   const getTextClass = (key) => {
     if (props.config.get(key)) {
       return textDark
@@ -128,51 +133,58 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
+    const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? true:props.config.get('settings/auto-completion')
 
     return (
       <div className="$border-top">
         <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
           <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
+            try {
+              if ((window as any).remixFileSystem.name === 'indexedDB') {
+                props.config.clear()
                 try {
-                  if ((window as any).remixFileSystem.name === 'indexedDB') {
-                    props.config.clear()
-                    try {
-                      localStorage.clear() // remove the whole storage
-                    } catch (e) {
-                      console.log(e)
-                    }
-                  } else {
-                    props.config.clear() // remove only the remix settings
-                  }
-                  refresh(resetState + 1)
+                  localStorage.clear() // remove the whole storage
                 } catch (e) {
                   console.log(e)
                 }
-              }}>Reset to Default settings</button>
+              } else {
+                props.config.clear() // remove only the remix settings
+              }
+              refresh(resetState + 1)
+            } catch (e) {
+              console.log(e)
+            }
+          }}>Reset to Default settings</button>
         </div>
         <div className="card-body pt-3 pb-2">
           <h6 className="card-title">General settings</h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
-            <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked = { isMetadataChecked }/>
+            <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked={isMetadataChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
           </div>
           <div className="fmt-2 custom-control custom-checkbox mb-1">
-            <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ isEthereumVMChecked }/>
+            <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={isEthereumVMChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
-            <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { isEditorWrapChecked }/>
+            <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
           </div>
+          <div className='custom-control custom-checkbox mb-1'>
+            <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsUseAutoComplete">
+              <span>{useAutoCompleteText}</span>
+            </label>
+          </div>
           <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { isPersonalChecked }/>
+            <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
               <span>   </span>{enablePersonalModeText} {warnText}
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={ isMatomoChecked }/>
+            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
               <span>{matomoAnalytics}</span>
               <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
@@ -190,7 +202,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const removeToken = (type: string) => {
     setTokenValue(prevState => {
-      return { ...prevState, [type]: ''}
+      return { ...prevState, [type]: '' }
     })
     removeTokenToast(props.config, dispatchToast, labels[type].key)
   }
@@ -198,7 +210,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const handleSaveTokenState = useCallback(
     (event, type) => {
       setTokenValue(prevState => {
-        return { ...prevState, [type]: event.target.value}
+        return { ...prevState, [type]: event.target.value }
       })
     },
     [tokenValue]
@@ -207,13 +219,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const token = (type: string) => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ labels[type].title }</h6>
-        <p className="mb-1">{ labels[type].message1 }</p>
-        <p className="">{ labels[type].message2 }</p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{ labels[type].link }</a></p>
+        <h6 className="card-title">{labels[type].title}</h6>
+        <p className="mb-1">{labels[type].message1}</p>
+        <p className="">{labels[type].message2}</p>
+        <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{labels[type].link}</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] } />
+            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={tokenValue[type]} />
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
@@ -246,15 +258,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const swarmSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ swarmSettingsTitle }</h6>
+        <h6 className="card-title">{swarmSettingsTitle}</h6>
         <div className="pt-2 mb-1"><label>PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={ privateBeeAddress } />
+            <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={privateBeeAddress} />
           </div>
         </div>
         <div className=""><label>POSTAGE STAMP ID:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="swarmpostagestamp" data-id="settingsPostageStampId" className="form-control" onChange={handleSavePostageStampId} value={ postageStampId } />
+            <input id="swarmpostagestamp" data-id="settingsPostageStampId" className="form-control" onChange={handleSavePostageStampId} value={postageStampId} />
             <div className="d-flex justify-content-end pt-2">
             </div>
           </div>
@@ -309,44 +321,44 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const ipfsSettings = () => (
     <div className="border-top">
-    <div className="card-body pt-3 pb-2">
-      <h6 className="card-title">{ ipfsSettingsText }</h6>
-      <div className="pt-2 mb-1"><label>IPFS HOST:</label>
-        <div className="text-secondary mb-0 h6">
-          <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
+      <div className="card-body pt-3 pb-2">
+        <h6 className="card-title">{ipfsSettingsText}</h6>
+        <div className="pt-2 mb-1"><label>IPFS HOST:</label>
+          <div className="text-secondary mb-0 h6">
+            <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ipfsUrl} />
+          </div>
+        </div>
+        <div className=""><label>IPFS PROTOCOL:</label>
+          <div className="text-secondary mb-0 h6">
+            <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ipfsProtocol} />
+          </div>
+        </div>
+        <div className=""><label>IPFS PORT:</label>
+          <div className="text-secondary mb-0 h6">
+            <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ipfsPort} />
+          </div>
+        </div>
+        <div className=""><label>IPFS PROJECT ID [ INFURA ]:</label>
+          <div className="text-secondary mb-0 h6">
+            <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ipfsProjectId} />
+          </div>
+        </div>
+        <div className=""><label>IPFS PROJECT SECRET [ INFURA ]:</label>
+          <div className="text-secondary mb-0 h6">
+            <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ipfsProjectSecret} />
+          </div>
+        </div>
+        <div className="d-flex justify-content-end pt-2">
+          <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value="Save" type="button"></input>
         </div>
       </div>
-      <div className=""><label>IPFS PROTOCOL:</label>
-        <div className="text-secondary mb-0 h6">
-          <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ ipfsProtocol } />
-        </div>
-      </div>
-      <div className=""><label>IPFS PORT:</label>
-        <div className="text-secondary mb-0 h6">
-          <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ ipfsPort } />
-        </div>
-      </div>
-      <div className=""><label>IPFS PROJECT ID [ INFURA ]:</label>
-        <div className="text-secondary mb-0 h6">
-          <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ ipfsProjectId } />
-        </div>
-      </div>
-      <div className=""><label>IPFS PROJECT SECRET [ INFURA ]:</label>
-        <div className="text-secondary mb-0 h6">
-          <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ ipfsProjectSecret } />
-        </div>
-      </div>
-      <div className="d-flex justify-content-end pt-2">
-        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value="Save" type="button"></input>
-    </div>
-    </div>
-  </div>)
+    </div>)
 
 
   return (
     <div>
-      {state.message ? <Toaster message= {state.message}/> : null}
-      {generalConfig()}     
+      {state.message ? <Toaster message={state.message} /> : null}
+      {generalConfig()}
       {token('gist')}
       {token('etherscan')}
       {swarmSettings()}

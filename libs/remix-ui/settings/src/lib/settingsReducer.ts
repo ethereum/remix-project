@@ -26,6 +26,11 @@ export const initialState = {
       name: 'useMatomoAnalytics',
       isChecked: false,
       textClass: textSecondary
+    },
+    {
+      name: 'useAutoCompletion',
+      isChecked: true,
+      textClass: textSecondary
     }
   ]
 }
@@ -75,6 +80,16 @@ export const settingReducer = (state, action) => {
     case 'useMatomoAnalytics':
       state.elementState.map(element => {
         if (element.name === 'useMatomoAnalytics') {
+          element.isChecked = action.payload.isChecked
+          element.textClass = action.payload.textClass
+        }
+      })
+      return {
+        ...state
+      }
+    case 'useAutoCompletion':
+      state.elementState.map(element => {
+        if (element.name === 'useAutoCompletion') {
           element.isChecked = action.payload.isChecked
           element.textClass = action.payload.textClass
         }

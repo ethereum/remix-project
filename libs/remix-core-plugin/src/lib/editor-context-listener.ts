@@ -165,7 +165,7 @@ export class EditorContextListener extends Plugin {
   async _highlightExpressions(node, compilationResult) {
     
     const highlights = async (id) => {
-      let refs = await this.call('codeParser', 'getDeclaration', id)
+      const refs = await this.call('codeParser', 'getDeclaration', id)
       if (refs) {
         for (const ref in refs) {
           const node = refs[ref]

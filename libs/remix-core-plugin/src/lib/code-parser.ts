@@ -90,7 +90,7 @@ export class CodeParser extends Plugin {
             if (data.errors) {
                 for (const error of data.errors) {
                     console.log('ERROR POS', error)
-                    let pos = helper.getPositionDetails(error.formattedMessage)
+                    const pos = helper.getPositionDetails(error.formattedMessage)
                     console.log('ERROR POS', pos)
                     const sources = result.getSourceCode().sources
                     const source = sources[pos.file]
@@ -258,7 +258,7 @@ export class CodeParser extends Plugin {
      */
     async listAstNodes() {
         await this.getCurrentFileAST();
-        let nodes = [];
+        const nodes = [];
         (SolidityParser as any).visit(this.currentFileAST, {
             StateVariableDeclaration: (node) => {
                 if (node.variables) {
@@ -403,7 +403,7 @@ export class CodeParser extends Plugin {
             }
             return nodeDefinition
         } else {
-            let astNodes = await this.listAstNodes()
+            const astNodes = await this.listAstNodes()
             for (const node of astNodes) {
                 if (node.range[0] <= position && node.range[1] >= position) {
                     if (nodeDefinition && nodeDefinition.range[0] < node.range[0]) {
@@ -427,7 +427,7 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async findIdentifier(identifierNode: any) {
-        let astNodes = await this.listAstNodes()
+        const astNodes = await this.listAstNodes()
         for (const node of astNodes) {
             if (node.name === identifierNode.name && node.nodeType !== 'Identifier') {
                 return node
@@ -621,7 +621,7 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getFunctionParamaters(node: any) {
-        let localParam = (node.parameters && node.parameters.parameters) || (node.parameters)
+        const localParam = (node.parameters && node.parameters.parameters) || (node.parameters)
         if (localParam) {
             const params = []
             for (const param of localParam) {
@@ -637,7 +637,7 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getFunctionReturnParameters(node: any) {
-        let localParam = (node.returnParameters && node.returnParameters.parameters)
+        const localParam = (node.returnParameters && node.returnParameters.parameters)
         if (localParam) {
             const params = []
             for (const param of localParam) {
