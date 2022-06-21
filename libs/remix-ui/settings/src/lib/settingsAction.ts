@@ -41,6 +41,11 @@ export const useMatomoAnalytics = (config, checked, dispatch) => {
   }
 }
 
+export const useAutoCompletion = (config, checked, dispatch) => {
+  config.set('settings/auto-completion', checked)
+  dispatch({ type: 'useAutoCompletion', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
 export const saveTokenToast = (config, dispatch, tokenValue, key) => {
   config.set('settings/' + key, tokenValue)
   dispatch({ type: 'save', payload: { message: 'Access token has been saved' } })
