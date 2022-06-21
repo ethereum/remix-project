@@ -103,7 +103,6 @@ export function Workspace () {
     const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
 
     try {
-      console.log("create workspace")
       await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName)
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
