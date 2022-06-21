@@ -202,10 +202,10 @@ module.exports = {
       .addFile('Storage.sol', sources[6]['Storage.sol'])
       .addFile('Owner.sol', sources[6]['Owner.sol'])
       .clickLaunchIcon('udapp')
-      .createContract('42, 24')
+      .createContract(['42', '24'])
       .openFile('Storage.sol')
       .clickLaunchIcon('udapp')
-      .createContract('102') // this creation will fail if the component hasn't been properly reset.
+      .createContract(['102']) // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })
       .testFunction('last', // we check if the contract is actually reachable.

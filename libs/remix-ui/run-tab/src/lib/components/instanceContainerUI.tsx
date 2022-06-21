@@ -30,7 +30,6 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
             removeInstance={props.removeInstance}
             index={index}
             gasEstimationPrompt={props.gasEstimationPrompt}
-            logBuilder={props.logBuilder}
             passphrasePrompt={props.passphrasePrompt}
             mainnetPrompt={props.mainnetPrompt}
             runTransactions={props.runTransactions}
