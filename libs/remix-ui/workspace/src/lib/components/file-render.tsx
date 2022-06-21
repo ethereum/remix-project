@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-use-before-define
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { FileType } from '../types'
+import { fileState, FileType } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileLabel } from './file-label'
+import FileState from './file-state'
 
 export interface RenderFileProps {
   file: FileType,
@@ -19,6 +20,7 @@ export interface RenderFileProps {
   handleClickFolder: (path: string, type: string) => void,
   handleClickFile: (path: string, type: string) => void,
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
+  fileState: fileState[]
 }
 
 export const FileRender = (props: RenderFileProps) => {
@@ -76,7 +78,7 @@ export const FileRender = (props: RenderFileProps) => {
         iconX='pr-3 fa fa-folder'
         iconY='pr-3 fa fa-folder-open'
         key={`${file.path + props.index}`}
-        label={<FileLabel file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
+        label={<FileLabel fileState={props.fileState} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
         onClick={handleFolderClick}
         onContextMenu={handleContextMenu}
         labelClass={labelClass}
@@ -89,6 +91,7 @@ export const FileRender = (props: RenderFileProps) => {
           file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
             Object.keys(file.child).map((key, index) => <FileRender
               file={file.child[key]}
+              fileState={props.fileState}
               index={index}
               focusContext={props.focusContext}
               focusEdit={props.focusEdit}
@@ -111,7 +114,14 @@ export const FileRender = (props: RenderFileProps) => {
       <TreeViewItem
         id={`treeViewItem${file.path}`}
         key={`treeView${file.path}`}
-        label={<FileLabel file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
+        label={
+          <>
+            <div className="d-flex flex-row">
+              <FileLabel file={file} fileState={props.fileState} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+              <FileState file={file} fileState={props.fileState}/>
+            </div>
+          </>
+        }
         onClick={handleFileClick}
         onContextMenu={handleContextMenu}
         icon={icon}

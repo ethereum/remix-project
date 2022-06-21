@@ -1,4 +1,4 @@
-import { action } from '../types'
+import { action, fileState } from '../types'
 
 export const setCurrentWorkspace = (workspace: string) => {
   return {
@@ -237,5 +237,12 @@ export const loadLocalhostSuccess = () => {
 export const fsInitializationCompleted = () => {
   return {
     type: 'FS_INITIALIZATION_COMPLETED'
+  }
+}
+
+export const setFileStateSuccess = (items: fileState[]) => {
+  return {
+    type: 'SET_FILE_STATE_SUCCESS',
+    payload: items
   }
 }
