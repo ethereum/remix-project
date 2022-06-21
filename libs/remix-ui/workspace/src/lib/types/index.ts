@@ -66,6 +66,35 @@ export interface FileType {
   child?: File[]
 }
 
+export enum fileStateType {
+  Error = 'ERROR',
+  Warning = 'WARNING',
+  Success = 'SUCCESS',
+  Loading = 'LOADING',
+  Unsaved = 'UNSAVED',
+  Untracked = 'UNTRACKED',
+  Modified = 'MODIFIED',
+  Staged = 'STAGED',
+  Committed = 'COMMITTED',
+  Deleted = 'DELETED',
+  Added = 'ADDED',
+  New = 'NEW',
+  Compiled = 'COMPILED',
+  Custom = 'CUSTOM',
+}
+
+export type fileState = {
+  path: string,
+  isDirectory: boolean,
+  fileStateType: fileStateType[],
+  fileStateLabelClass: string,
+  fileStateIconClass: string,
+  fileStateIcon: string | HTMLDivElement | JSX.Element,
+  bubble: boolean,
+  comment: string,
+  owner: string,
+}
+
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
@@ -73,6 +102,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    fileState: fileState[],
     expandPath: string[],
     focusEdit: string,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
