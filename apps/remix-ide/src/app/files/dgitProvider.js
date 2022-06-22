@@ -233,11 +233,11 @@ class DGitProvider extends Plugin {
     return this.calculateLocalStorage()
   }
 
-  async clone (input) {
+  async clone (input, workspaceName) {
     const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
     if (!permission) return false
     if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
-    await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
+    await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
 
     const cmd = {
       url: input.url,

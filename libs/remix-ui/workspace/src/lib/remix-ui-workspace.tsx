@@ -131,7 +131,7 @@ export function Workspace () {
       const url = cloneUrlRef.current.value
 
       if (url) {
-        global.dispatchCloneRepository()
+        global.dispatchCloneRepository(url)
       } else {
         console.log('Please provide a valid github repository url.')
       }
