@@ -1,8 +1,8 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
-import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
+import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { checkSlash, checkSpecialChars, createNonClashingTitle } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
@@ -326,6 +326,14 @@ export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
   const token = config.get('currentFile')
   const repoConfig = { url, token }
+  const urlArray = url.split('/')
+  let repoName = urlArray[urlArray.length - 1]
 
-  plugin.call('dGitProvider', 'clone', repoConfig)
+  try {
+    repoName = await createNonClashingTitle(repoName, plugin.fileManager)
+    await plugin.call('dGitProvider', 'clone', repoConfig, repoName)
+    await plugin.call('manager', 'activatePlugin', 'dgit')
+  } catch (e) {
+    dispatch(displayPopUp('An error occured: ' + e))
+  }
 }
