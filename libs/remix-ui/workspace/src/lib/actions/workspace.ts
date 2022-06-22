@@ -323,5 +323,9 @@ export const getWorkspaces = async (): Promise<string[]> | undefined => {
 }
 
 export const cloneRepository = async (url: string) => {
-  console.log('url: ', url)
+  const config = plugin.registry.get('config').api
+  const token = config.get('currentFile')
+  const repoConfig = { url, token }
+
+  plugin.call('dGitProvider', 'clone', repoConfig)
 }
