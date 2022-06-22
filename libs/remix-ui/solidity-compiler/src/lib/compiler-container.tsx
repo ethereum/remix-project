@@ -95,6 +95,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const listener = (event) => {
       if (configFilePathInput.current !== event.target) {
         setShowFilePathInput(false)
+        configFilePathInput.current.value = ""
         return;
       }
     };
