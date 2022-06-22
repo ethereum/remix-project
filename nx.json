@@ -169,14 +169,9 @@
     },
     "remix-ui-permission-handler": {
       "tags": []
+    },
+    "remix-ui-tooltip-popup": {
+      "tags": []
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   }
 }

@@ -1,5 +1,35 @@
 {
   "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "defaultProject": "remix-ide",
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    }
+  },
   "projects": {
     "remix-ide": {
       "root": "apps/remix-ide",
@@ -1253,36 +1283,21 @@
           }
         }
       }
-    }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "schematics": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "eslint"
-      }
     },
-    "@nrwl/react": {
-      "application": {
-        "style": "css",
-        "linter": "eslint",
-        "babel": true
-      },
-      "component": {
-        "style": "css"
-      },
-      "library": {
-        "style": "css",
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
+    "remix-ui-tooltip-popup": {
+      "root": "libs/remix-ui/tooltip-popup",
+      "sourceRoot": "libs/remix-ui/tooltip-popup/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/remix-ui/tooltip-popup/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
       }
     }
-  },
-  "defaultProject": "remix-ide"
+  }
 }

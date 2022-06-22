@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
-import './css/remix-ui-workspace.css'
 import { FileSystemContext } from './contexts'
-import { CloneRepository } from './components/clone'
+import { TooltipPopup } from '@remix-ui/tooltip-popup'
+import './css/remix-ui-workspace.css'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -14,6 +14,7 @@ export function Workspace () {
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
   const workspaceCreateTemplateInput = useRef()
+  const cloneUrlRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
     resetFocus()
@@ -125,6 +126,18 @@ export function Workspace () {
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
   }
 
+  const handleTypingUrl = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      const url = cloneUrlRef.current.value
+
+      if (url) {
+        global.dispatchCloneRepository()
+      } else {
+        console.log('Please provide a valid github repository url.')
+      }
+    }
+  }
+
   const createModalMessage = () => {
     return (
       <>
@@ -215,8 +228,17 @@ export function Workspace () {
                     className='far fa-upload remixui_menuicon'
                     title='Restore Workspaces Backup'>
                   </span>
-                  <CloneRepository>
-                  </CloneRepository>
+                  <TooltipPopup icon='fas fa-cloud-download' title='Clone Repository'>
+                    <div className="remixui_cloneContainer">
+                      <input
+                        ref={cloneUrlRef}
+                        className="form-control"
+                        placeholder="Enter github repository url"
+                        title="Enter github repository url"
+                        onKeyDown={handleTypingUrl}
+                      />
+                    </div>
+                  </TooltipPopup>
                 </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {

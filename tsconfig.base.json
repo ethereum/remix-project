@@ -87,7 +87,8 @@
       "@remix-ui/run-tab": ["libs/remix-ui/run-tab/src/index.ts"],
       "@remix-ui/permission-handler": [
         "libs/remix-ui/permission-handler/src/index.ts"
-      ]
+      ],
+      "@remix-ui/tooltip-popup": ["libs/remix-ui/tooltip-popup/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
