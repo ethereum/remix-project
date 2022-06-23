@@ -8,6 +8,7 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin 
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
+import axios, { AxiosResponse } from 'axios'
 
 export * from './events'
 export * from './workspace'
@@ -60,7 +61,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
     } else if (window.location.pathname && window.location.pathname !== '/') {
-      const route = window.location.pathname
+      let route = window.location.pathname
       if (route.startsWith('/address/0x') && route.length === 51) {
         const contractAddress = route.split('/')[2]
         plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
@@ -100,7 +101,19 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
-      }
+      } else if (route.endsWith('.sol')) {
+        if (route.includes('blob')) route = route.replace('/blob', '')
+        const response: AxiosResponse = await axios.get(`https://raw.githubusercontent.com${route}`)
+        let content
+        if (response.status === 200) {
+          content = response.data
+          await createWorkspaceTemplate('github-code-sample', 'code-template')
+          plugin.setWorkspace({ name: 'github-code-sample', isLocalhost: false })
+          dispatch(setCurrentWorkspace('github-code-sample'))
+          await workspaceProvider.set(route, content)
+          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(route))
+        } else await basicWorkspaceInit(workspaces, workspaceProvider)
+      } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
     }
