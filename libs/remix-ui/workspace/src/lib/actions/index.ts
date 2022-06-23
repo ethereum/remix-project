@@ -103,10 +103,15 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         }
       } else if (route.endsWith('.sol')) {
         if (route.includes('blob')) route = route.replace('/blob', '')
-        const response: AxiosResponse = await axios.get(`https://raw.githubusercontent.com${route}`)
-        let content
-        if (response.status === 200) {
-          content = response.data
+        let response: AxiosResponse
+        try {
+          response = await axios.get(`https://raw.githubusercontent.com${route}`)
+        } catch (error) {
+          plugin.call('notification', 'toast', `cound not find ${route} on GitHub`)
+          await basicWorkspaceInit(workspaces, workspaceProvider)
+        }
+        if (response && response.status === 200) {
+          const content = response.data
           await createWorkspaceTemplate('github-code-sample', 'code-template')
           plugin.setWorkspace({ name: 'github-code-sample', isLocalhost: false })
           dispatch(setCurrentWorkspace('github-code-sample'))
