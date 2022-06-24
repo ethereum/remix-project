@@ -1,3 +1,4 @@
+import { Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { ContractList } from '../reducers/runTab'
@@ -21,7 +22,6 @@ export interface SettingsProps {
   sendUnit: string,
   gasLimit: number,
   setGasFee: (value: number) => void,
-  setWeb3Endpoint: (endpoint: string) => void,
   personalMode: boolean,
   networkName: string,
   providers: {
@@ -128,8 +128,10 @@ export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
+    deployOptions: DeployOptions,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
+    currentContract: string,
     compilationCount: number,
     isRequesting: boolean,
     isSuccessful: boolean,
@@ -143,29 +145,28 @@ export interface ContractDropdownProps {
     selectedContract: ContractData,
     gasEstimationPrompt: (msg: string) => JSX.Element,
     passphrasePrompt: (msg: string) => JSX.Element,
-    logBuilder: (msg: string) => JSX.Element,
     publishToStorage: (storage: 'ipfs' | 'swarm',
     contract: ContractData) => void,
     mainnetPrompt: MainnetPrompt,
     isOverSizePrompt: () => JSX.Element,
-    args) => void,
+    args,
+    deployMode: DeployMode[]) => void,
   ipfsCheckedState: boolean,
   setIpfsCheckedState: (value: boolean) => void,
   publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void,
   gasEstimationPrompt: (msg: string) => JSX.Element,
-  logBuilder: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   tooltip: (toasterMsg: string | JSX.Element) => void,
   loadAddress: (contract: ContractData, address: string) => void,
   networkName: string,
-  setNetworkName: (name: string) => void
+  setNetworkName: (name: string) => void,
+  setSelectedContract: (contractName: string) => void
 }
 
 export interface RecorderProps {
   storeScenario: (prompt: (msg: string, defaultValue: string) => JSX.Element) => void,
-  runCurrentScenario: (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt, logBuilder: (msg: string) => JSX.Element) => void,
-  logBuilder: (msg: string) => JSX.Element,
+  runCurrentScenario: (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => void,
   mainnetPrompt: MainnetPrompt,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
@@ -196,13 +197,11 @@ export interface InstanceContainerProps {
     contractABI, contract,
     address,
     logMsg:string,
-    logBuilder: (msg: string) => JSX.Element,
     mainnetPrompt: MainnetPrompt,
     gasEstimationPrompt: (msg: string) => JSX.Element,
     passphrasePrompt: (msg: string) => JSX.Element,
     funcIndex?: number) => void,
   gasEstimationPrompt: (msg: string) => JSX.Element,
-  logBuilder: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   sendValue: string,
@@ -220,15 +219,43 @@ export interface Modal {
   cancelFn: () => void
 }
 
+export type DeployMode = 'Deploy with Proxy' | 'Upgrade Proxy'
+
+export type DeployOption = {
+  initializeInputs: string,
+  inputs: {
+    inputs: {
+      internalType?: string,
+      name: string,
+      type: string
+    }[],
+    name: "initialize",
+    outputs?: any[],
+    stateMutability: string,
+    type: string,
+    payable?: boolean,
+    constant?: any
+  }
+}
+export interface DeployOptions {
+  initializeOptions: {
+    [key: string]: DeployOption
+  },
+  options: { title: DeployMode, active: boolean }[],
+}
+
 export interface ContractGUIProps {
   title?: string,
   funcABI: FuncABI,
-  inputs: any,
-  clickCallBack: (inputs: { name: string, type: string }[], input: string) => void,
+  inputs: string,
+  clickCallBack: (inputs: { name: string, type: string }[], input: string, deployMode?: DeployMode[]) => void,
   widthClass?: string,
   evmBC: any,
   lookupOnly: boolean,
-  disabled?: boolean
+  disabled?: boolean,
+  isDeploy?: boolean,
+  deployOption?: { title: DeployMode, active: boolean }[],
+  initializerOptions?: DeployOption
 }
 export interface MainnetProps {
   network: Network,
@@ -261,7 +288,6 @@ export interface UdappProps {
   removeInstance: (index: number) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
-  logBuilder: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
@@ -273,11 +299,62 @@ export interface UdappProps {
     contractABI, contract,
     address,
     logMsg:string,
-    logBuilder: (msg: string) => JSX.Element,
     mainnetPrompt: MainnetPrompt,
     gasEstimationPrompt: (msg: string) => JSX.Element,
     passphrasePrompt: (msg: string) => JSX.Element,
     funcIndex?: number) => void,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
+}
+
+export interface DeployButtonProps {
+  deployOptions: { title: DeployMode, active: boolean }[],
+  buttonOptions: {
+    title: string,
+    content: string,
+    classList: string,
+    dataId: string,
+    widthClass: string
+  },
+  selectedIndex: number,
+  setSelectedIndex: (index: number) => void,
+  handleActionClick: () => void
+}
+
+export interface DeployInputProps {
+  funcABI: FuncABI,
+  inputs: string,
+  handleBasicInput: (e) => void,
+  basicInputRef: Ref<HTMLInputElement>,
+  buttonOptions: {
+    title: string,
+    content: string,
+    classList: string,
+    dataId: string,
+    widthClass: string
+  },
+  selectedIndex: number,
+  setSelectedIndex: (index: number) => void,
+  handleActionClick: (fields?: HTMLInputElement[]) => void,
+  deployOptions: { title: DeployMode, active: boolean }[]
+}
+
+export interface MultiDeployInputProps {
+  deployOptions?: { title: DeployMode, active: boolean }[],
+  buttonOptions: {
+    title: string,
+    content: string,
+    classList: string,
+    dataId: string,
+    widthClass: string
+  },
+  selectedIndex: number,
+  setSelectedIndex: (index: number) => void,
+  handleMultiValsSubmit: (fields?: HTMLInputElement[]) => void,
+  inputs: {
+    internalType?: string,
+    name: string,
+    type: string
+  }[],
+  getMultiValsString: (fields: HTMLInputElement[]) => void
 }

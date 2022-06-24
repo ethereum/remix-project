@@ -22,7 +22,6 @@ export function MainnetPrompt (props: MainnetProps) {
   }, [])
 
   const onMaxFeeChange = (value: string) => {
-    console.log('value: ', value)
     const maxFee = value
     // @ts-ignore
     if (parseInt(props.network.lastBlock.baseFeePerGas, 16) > Web3.utils.toWei(maxFee, 'Gwei')) {
