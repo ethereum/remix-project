@@ -38,19 +38,9 @@ export function encodeData (funABI, values, contractbyteCode) {
 export function encodeParams (params, funAbi, callback) {
   let data: Buffer | string = ''
   let dataHex = ''
-  let funArgs
-  if (params.indexOf('raw:0x') === 0) {
-    // in that case we consider that the input is already encoded and *does not* contain the method signature
-    dataHex = params.replace('raw:0x', '')
-    data = Buffer.from(dataHex, 'hex')
-  } else {
-    try {
-      params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-      params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      funArgs = JSON.parse('[' + params + ']')
-    } catch (e) {
-      return callback('Error encoding arguments: ' + e)
-    }
+  let funArgs = []
+  if (Array.isArray(params)) {
+    funArgs = params
     if (funArgs.length > 0) {
       try {
         data = encodeParamsHelper(funAbi, funArgs)
@@ -58,6 +48,30 @@ export function encodeParams (params, funAbi, callback) {
       } catch (e) {
         return callback('Error encoding arguments: ' + e)
       }
+    }
+    if (data.slice(0, 9) === 'undefined') {
+      dataHex = data.slice(9)
+    }
+    if (data.slice(0, 2) === '0x') {
+      dataHex = data.slice(2)
+    }
+  } else if (params.indexOf('raw:0x') === 0) {
+    // in that case we consider that the input is already encoded and *does not* contain the method signature
+    dataHex = params.replace('raw:0x', '')
+    data = Buffer.from(dataHex, 'hex')
+  } else {
+    try {
+      funArgs = parseFunctionParams(params)
+    } catch (e) {
+      return callback('Error encoding arguments: ' + e)
+    }
+    try {
+      if (funArgs.length > 0) {
+        data = encodeParamsHelper(funAbi, funArgs)
+        dataHex = data.toString()
+      }
+    } catch (e) {
+      return callback('Error encoding arguments: ' + e)
     }
     if (data.slice(0, 9) === 'undefined') {
       dataHex = data.slice(9)
@@ -396,7 +410,7 @@ export function decodeResponse (response, fnabi) {
 }
 
 export function parseFunctionParams (params) {
-  let args = []
+  const args = []
   // Check if parameter string starts with array or string
   let startIndex = isArrayOrStringStart(params, 0) ? -1 : 0
   for (let i = 0; i < params.length; i++) {
@@ -431,29 +445,27 @@ export function parseFunctionParams (params) {
         if (bracketCount !== 0 && j === params.length - 1) {
           throw new Error('invalid tuple params')
         }
+        if (bracketCount === 0) break
       }
-      // If bracketCount = 0, it means complete array/nested array parsed, push it to the arguments list
-      args.push(JSON.parse(params.substring(i, j)))
+      args.push(parseFunctionParams(params.substring(i + 1, j)))
       i = j - 1
-    } else if (params.charAt(i) === ',') {
-      // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
+    } else if (params.charAt(i) === ',' || i === params.length - 1) { // , or end of string
+       // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
       if (startIndex >= 0) {
-        args.push(params.substring(startIndex, i))
+        let param = params.substring(startIndex, i === params.length - 1 ? undefined : i)
+        const trimmed = param.trim()
+        if (param.startsWith('0x')) param = `${param}`
+        if (/[0-9]/g.test(trimmed)) param = `${trimmed}`
+        if (typeof param === 'string') {          
+          if (trimmed === 'true') param = true
+          if (trimmed === 'false') param = false        
+        }
+        args.push(param)
       }
       // Register start index of a parameter to parse
       startIndex = isArrayOrStringStart(params, i + 1) ? -1 : i + 1
-    } else if (startIndex >= 0 && i === params.length - 1) {
-      // If start index is registered and string is completed (To handle last parameter)
-      args.push(params.substring(startIndex, params.length))
     }
   }
-  args = args.map(e => {
-    if (!Array.isArray(e)) {
-      return e.trim()
-    } else {
-      return e
-    }
-  })
   return args
 }
 
