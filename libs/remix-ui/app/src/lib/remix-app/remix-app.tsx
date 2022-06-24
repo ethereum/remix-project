@@ -9,6 +9,7 @@ import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import { AppContext } from './context/context'
 import { RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
+import { IntlProvider } from 'react-intl'
 
 interface IRemixAppUi {
   app: any
@@ -17,6 +18,7 @@ interface IRemixAppUi {
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
+  const [locale, setLocale] = useState<{ name:string; messages:any }>({ name:'', messages:{} });
   const sidePanelRef = useRef(null)
 
   useEffect(() => {
@@ -26,6 +28,7 @@ const RemixApp = (props: IRemixAppUi) => {
         props.app.activate()
         setListeners()
       })
+      setLocale(props.app.localeModule.currentLocale())
     }
     if (props.app) {
       activateApp()
@@ -48,6 +51,9 @@ const RemixApp = (props: IRemixAppUi) => {
         setHideSidePanel(true)
       }, 1000)
     })
+    props.app.localeModule.events.on('localeChanged', (nextLocale) => {
+      setLocale(nextLocale)
+    })
   }
 
   const value = {
@@ -59,22 +65,24 @@ const RemixApp = (props: IRemixAppUi) => {
   }
 
   return (
-    <AppProvider value={value}>
-      <OriginWarning></OriginWarning>
-      <MatomoDialog hide={!appReady}></MatomoDialog>
+    <IntlProvider locale={locale.name} messages={locale.messages}>
+      <AppProvider value={value}>
+        <OriginWarning></OriginWarning>
+        <MatomoDialog hide={!appReady}></MatomoDialog>
 
-      <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-        <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light">{props.app.menuicons.render()}</div>
-        <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
-        <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-        <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
-          <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
+        <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
+          <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light">{props.app.menuicons.render()}</div>
+          <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
+          <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
+          <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
+            <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
+          </div>
         </div>
-      </div>
-      <div>{props.app.hiddenPanel.render()}</div>
-      <AppDialogs></AppDialogs>
-      <DialogViewPlugin></DialogViewPlugin>
-    </AppProvider>
+        <div>{props.app.hiddenPanel.render()}</div>
+        <AppDialogs></AppDialogs>
+        <DialogViewPlugin></DialogViewPlugin>
+      </AppProvider>
+    </IntlProvider>
   )
 }
 

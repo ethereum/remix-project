@@ -1253,6 +1253,21 @@
           }
         }
       }
+    },
+    "remix-ui-locale-module": {
+      "root": "libs/remix-ui/locale-module",
+      "sourceRoot": "libs/remix-ui/locale-module/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/remix-ui/locale-module/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
@@ -23,8 +24,8 @@ module.exports = class SettingsTab extends ViewPlugin {
   config: any = {}
   editor: any
   private _deps: {
-    themeModule: any // eslint-disable-line
-    
+    themeModule: any
+    localeModule: any
   }
   element: HTMLDivElement
   public useMatomoAnalytics: any
@@ -34,7 +35,8 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.config = config
     this.editor = editor
     this._deps = {
-      themeModule: Registry.getInstance().get('themeModule').api
+      themeModule: Registry.getInstance().get('themeModule').api,
+      localeModule: Registry.getInstance().get('localeModule').api
     }
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
@@ -46,7 +48,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.renderComponent()
   }
 
-  render() {      
+  render() {
     return <div id='settingsTab'>
         <PluginViewWrapper plugin={this} />
       </div>
@@ -59,6 +61,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     _deps={state._deps}
     useMatomoAnalytics={state.useMatomoAnalytics}
     themeModule = {state._deps.themeModule}
+    localeModule={state._deps.localeModule}
   />
   }
 
