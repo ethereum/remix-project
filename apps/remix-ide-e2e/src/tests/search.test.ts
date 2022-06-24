@@ -33,11 +33,11 @@ module.exports = {
             .clearValue('*[id="search_include"]').pause(2000)
             .setValue('*[id="search_include"]', '**').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 61)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 62)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 55)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 56)
             })
             .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
             .clearValue('*[id="search_exclude"]').setValue('*[id="search_exclude"]', '.*/**/*')
@@ -78,7 +78,7 @@ module.exports = {
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 13)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 15)
             })
     },
     'Should replace text': function (browser: NightwatchBrowser) {

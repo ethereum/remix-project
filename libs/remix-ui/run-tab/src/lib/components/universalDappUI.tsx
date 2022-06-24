@@ -119,7 +119,6 @@ export function UniversalDappUI (props: UdappProps) {
       props.instance.contractData,
       address,
       logMsg,
-      props.logBuilder,
       props.mainnetPrompt,
       props.gasEstimationPrompt,
       props.passphrasePrompt,
@@ -184,7 +183,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   const renderData = (item, parent, key: string | number, keyPath: string) => {
     const data = extractDataDefault(item, parent)
-    const children = (data.children || []).map((child) => {
+    const children = (data.children || []).map((child, index) => {
       return (
         renderData(child.value, data, child.key, keyPath + '/' + child.key)
       )
@@ -206,9 +205,9 @@ export function UniversalDappUI (props: UdappProps) {
   return (
     <div className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`} id={`instance${address}`} data-shared="universalDappUiInstance">
       <div className="udapp_title alert alert-secondary">
-        <button data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
-        </button>
+        </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
             <span className="input-group-text udapp_spanTitleText">
@@ -237,7 +236,7 @@ export function UniversalDappUI (props: UdappProps) {
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
               const inputs = props.getFuncABIInputs(funcABI)
 
-              return <>
+              return <div key={index}>
                 <ContractGUI
                   funcABI={funcABI}
                   clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
@@ -255,14 +254,14 @@ export function UniversalDappUI (props: UdappProps) {
                         const funcIndex = index.toString()
                         const response = props.instance.decodedResponse[key]
 
-                        return key === funcIndex ? Object.keys(response || {}).map((innerkey) => {
+                        return key === funcIndex ? Object.keys(response || {}).map((innerkey, index) => {
                           return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
                         }) : null
                       })
                     }
                   </TreeView>
                 </div>
-              </>
+              </div>
             })
           }
         </div>

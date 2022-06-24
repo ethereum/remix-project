@@ -9,7 +9,7 @@ export function RecorderUI (props: RecorderProps) {
   }
 
   const handleClickRunButton = () => {
-    props.runCurrentScenario(props.gasEstimationPrompt, props.passphrasePrompt, props.mainnetPrompt, props.logBuilder)
+    props.runCurrentScenario(props.gasEstimationPrompt, props.passphrasePrompt, props.mainnetPrompt)
   }
 
   const toggleClass = () => {

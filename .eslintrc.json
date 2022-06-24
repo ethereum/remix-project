@@ -29,7 +29,9 @@
         "@typescript-eslint/no-this-alias": "off",
         "@typescript-eslint/no-empty-function": "off",
         "eslint-disable-next-line no-empty": "off",
-        "no-empty": "off"
+        "no-empty": "off",
+        "jsx-a11y/anchor-is-valid": "off",
+        "@typescript-eslint/no-inferrable-types": "off"
       }
     },
     {
