@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
-import { TooltipPopup } from '@remix-ui/tooltip-popup'
 import './css/remix-ui-workspace.css'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -51,6 +50,10 @@ export function Workspace () {
 
   const deleteCurrentWorkspace = () => {
     global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
+  }
+
+  const cloneGitRepository = () => {
+    global.modal('Clone Git Repository', cloneModalMessage(), 'OK', handleTypingUrl, '')
   }
 
   const downloadWorkspaces = async () => {
@@ -126,15 +129,13 @@ export function Workspace () {
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
   }
 
-  const handleTypingUrl = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      const url = cloneUrlRef.current.value
+  const handleTypingUrl = () => {
+    const url = cloneUrlRef.current.value
 
-      if (url) {
-        global.dispatchCloneRepository(url)
-      } else {
-        console.log('Please provide a valid github repository url.')
-      }
+    if (url) {
+      global.dispatchCloneRepository(url)
+    } else {
+      global.modal('Create Workspace', 'Please provide a valid github repository url.', 'OK', () => {}, '')
     }
   }
 
@@ -159,6 +160,14 @@ export function Workspace () {
     return (
       <>
         <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ currentWorkspace } ref={workspaceRenameInput} className="form-control" />
+      </>
+    )
+  }
+
+  const cloneModalMessage = () => {
+    return (
+      <>
+        <input type="text" data-id="modalDialogCustomPromptTextClone" placeholder='Enter git repository url' ref={cloneUrlRef} className="form-control" />
       </>
     )
   }
@@ -228,17 +237,16 @@ export function Workspace () {
                     className='far fa-upload remixui_menuicon'
                     title='Restore Workspaces Backup'>
                   </span>
-                  <TooltipPopup icon='fas fa-cloud-download' title='Clone Repository'>
-                    <div className="remixui_cloneContainer">
-                      <input
-                        ref={cloneUrlRef}
-                        className="form-control"
-                        placeholder="Enter github repository url"
-                        title="Enter github repository url"
-                        onKeyDown={handleTypingUrl}
-                      />
-                    </div>
-                  </TooltipPopup>
+                  <span
+                    id='cloneGitRepository'
+                    data-id='cloneGitRepository'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      cloneGitRepository()
+                    }}
+                    className='far fa-clone remixui_menuicon'
+                    title='Clone Git Repository'>
+                  </span>
                 </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
                 {
