@@ -8,6 +8,7 @@ import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, use
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
+import { RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -16,6 +17,7 @@ export interface RemixUiSettingsProps {
    _deps: any,
    useMatomoAnalytics: boolean
    themeModule: ThemeModule
+   localeModule: LocaleModule
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
@@ -346,12 +348,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
-      {generalConfig()}     
+      {generalConfig()}
       {token('gist')}
       {token('etherscan')}
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
+      <RemixUiLocaleModule localeModule={props._deps.localeModule} />
     </div>
   )
 }
