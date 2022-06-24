@@ -9,6 +9,7 @@ import { initialState, toastInitialState, toastReducer, settingReducer } from '.
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
 import { RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -33,6 +34,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProtocol, setipfsProtocol] = useState('')
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
+  const intl = useIntl()
 
 
   const initValue = () => {
@@ -150,27 +152,36 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 } catch (e) {
                   console.log(e)
                 }
-              }}>Reset to Default settings</button>
+              }}><FormattedMessage id='settings.reset' defaultMessage='Reset to Default settings' /></button>
         </div>
         <div className="card-body pt-3 pb-2">
-          <h6 className="card-title">General settings</h6>
+          <h6 className="card-title"><FormattedMessage id='settings.general' defaultMessage='General settings' /></h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked = { isMetadataChecked }/>
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">
+              <FormattedMessage id='settings.generateContractMetadataText' defaultMessage={generateContractMetadataText} />
+            </label>
           </div>
           <div className="fmt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ isEthereumVMChecked }/>
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">
+              <FormattedMessage id='settings.ethereunVMText' defaultMessage={ethereunVMText} />
+            </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { isEditorWrapChecked }/>
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
+              <FormattedMessage id='settings.wordWrapText' defaultMessage={wordWrapText} />
+            </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { isPersonalChecked }/>
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
-              <span>   </span>{enablePersonalModeText} {warnText}
+              <span>   </span>
+              <FormattedMessage id='settings.enablePersonalModeText' defaultMessage={enablePersonalModeText} />
+              &nbsp;
+              <FormattedMessage id='settings.warnText' defaultMessage={warnText} />
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
@@ -209,17 +220,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const token = (type: string) => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ labels[type].title }</h6>
-        <p className="mb-1">{ labels[type].message1 }</p>
-        <p className="">{ labels[type].message2 }</p>
+        <h6 className="card-title"><FormattedMessage id='settings.gitAccessTokenTitle' defaultMessage={ labels[type].title } /></h6>
+        <p className="mb-1"><FormattedMessage id='settings.gitAccessTokenText' defaultMessage={ labels[type].message1 } /></p>
+        <p className=""><FormattedMessage id='settings.gitAccessTokenText2' defaultMessage={ labels[type].message2 } /></p>
         <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{ labels[type].link }</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
             <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] } />
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
-              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub access token" onClick={() => removeToken(type)}>Remove</button>
+              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button" disabled={tokenValue === ''}></input>
+              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub access token" onClick={() => removeToken(type)}>
+                <FormattedMessage id='settings.remove' defaultMessage='Remove' />
+              </button>
             </div>
           </div></div>
       </div>
@@ -262,7 +275,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
         </div>
         <div className="d-flex justify-content-end pt-2">
-          <input className="btn btn-sm btn-primary ml-2" id="saveswarmsettings" data-id="settingsTabSaveSwarmSettings" onClick={() => saveSwarmSettings()} value="Save" type="button" disabled={privateBeeAddress === ''}></input>
+          <input className="btn btn-sm btn-primary ml-2" id="saveswarmsettings" data-id="settingsTabSaveSwarmSettings" onClick={() => saveSwarmSettings()} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button" disabled={privateBeeAddress === ''}></input>
         </div>
       </div>
     </div>
@@ -339,7 +352,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
       </div>
       <div className="d-flex justify-content-end pt-2">
-        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value="Save" type="button"></input>
+        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button"></input>
     </div>
     </div>
   </div>)

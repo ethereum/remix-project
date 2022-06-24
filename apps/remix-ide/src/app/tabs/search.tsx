@@ -5,6 +5,7 @@ import { SearchTab } from '@remix-ui/search'
 const profile = {
     name: 'search',
     displayName: 'Search in files',
+    intlId: 'search.displayName',
     methods: [''],
     events: [],
     icon: 'assets/img/search_icon.webp',
@@ -20,8 +21,8 @@ export class SearchPlugin extends ViewPlugin {
     constructor () {
       super(profile)
     }
-    
-    render() {      
+
+    render() {
         return (
           <div id='searchTab'>
             <SearchTab plugin={this}></SearchTab>

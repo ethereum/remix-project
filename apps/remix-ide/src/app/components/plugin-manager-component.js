@@ -8,6 +8,7 @@ const _paq = window._paq = window._paq || []
 const profile = {
   name: 'pluginManager',
   displayName: 'Plugin manager',
+  intlId: 'pluginManager.displayName',
   methods: [],
   events: [],
   icon: 'assets/img/pluginManager.webp',
@@ -99,7 +100,7 @@ class PluginManagerComponent extends ViewPlugin {
     return (
       <div id='pluginManager'><PluginViewWrapper plugin={this} /></div>
     );
-    
+
   }
 
   getAndFilterPlugins = (filter) => {

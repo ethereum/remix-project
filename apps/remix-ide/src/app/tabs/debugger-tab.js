@@ -10,6 +10,7 @@ const css = require('./styles/debugger-tab-styles')
 const profile = {
   name: 'debugger',
   displayName: 'Debugger',
+  intlId: 'debugger.displayName',
   methods: ['debug', 'getTrace'],
   events: [],
   icon: 'assets/img/debuggerLogo.webp',

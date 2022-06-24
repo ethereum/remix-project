@@ -11,6 +11,7 @@ const _paq = window._paq = window._paq || []
 const profile = {
   name: 'udapp',
   displayName: 'Deploy & run transactions',
+  intlId: 'udapp.displayName',
   icon: 'assets/img/deployAndRun.webp',
   description: 'execute and save transactions',
   kind: 'udapp',
@@ -68,7 +69,7 @@ export class RunTab extends ViewPlugin {
     this.emit('clearAllInstancesReducer')
   }
 
-  addInstance (address, abi, name) {    
+  addInstance (address, abi, name) {
     this.emit('addInstanceReducer', address, abi, name)
   }
 
@@ -94,7 +95,7 @@ export class RunTab extends ViewPlugin {
   }
 
   onReady (api) {
-    this.REACT_API = api    
+    this.REACT_API = api
   }
 
   async onInitDone () {
