@@ -12,6 +12,7 @@ import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper
 const profile = {
   name: 'solidity',
   displayName: 'Solidity compiler',
+  intlId: 'solidity.displayName',
   icon: 'assets/img/solidity.webp',
   description: 'Compile solidity contracts',
   kind: 'compiler',
@@ -98,7 +99,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
     const value = JSON.stringify(settings, null, '\t')
-  
+
     this.call('notification', 'toast', compilerConfigChangedToastMsg(this.currentRequest.from, value))
   }
 
