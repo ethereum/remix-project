@@ -50,7 +50,8 @@ export interface BrowserState {
   popup: string,
   focusEdit: string,
   focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
-  initializingFS: boolean
+  initializingFS: boolean,
+  isGitRepo: boolean
 }
 
 export const browserInitialState: BrowserState = {
@@ -98,7 +99,8 @@ export const browserInitialState: BrowserState = {
   popup: '',
   focusEdit: '',
   focusElement: [],
-  initializingFS: true
+  initializingFS: true,
+  isGitRepo: false
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -118,7 +120,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'SET_WORKSPACES': {
-      const payload = action.payload as string[]
+      const payload = action.payload as { name: string; isGitRepo: boolean; }[]
 
       return {
         ...state,

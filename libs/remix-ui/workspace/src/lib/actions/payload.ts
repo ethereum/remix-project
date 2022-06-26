@@ -7,7 +7,7 @@ export const setCurrentWorkspace = (workspace: string) => {
   }
 }
 
-export const setWorkspaces = (workspaces: string[]) => {
+export const setWorkspaces = (workspaces: { name: string; isGitRepo: boolean; }[]) => {
   return {
     type: 'SET_WORKSPACES',
     payload: workspaces

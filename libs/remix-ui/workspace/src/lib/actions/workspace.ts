@@ -302,24 +302,29 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   })
 }
 
-export const getWorkspaces = async (): Promise<string[]> | undefined => {
+export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean}[]> | undefined => {
   try {
-    const workspaces: string[] = await new Promise((resolve, reject) => {
+    const workspaces: {name: string, isGitRepo: boolean}[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           return reject(error)
         }
-        resolve(Object.keys(items)
+        Promise.all(Object.keys(items)
           .filter((item) => items[item].isDirectory)
-          .map((folder) => folder.replace(workspacesPath + '/', '')))
+          .map(async (folder) => {
+            const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
+            return {
+              name: folder.replace(workspacesPath + '/', ''),
+              isGitRepo
+            }
+          })).then(workspacesList => resolve(workspacesList))
       })
     })
-
     await plugin.setWorkspaces(workspaces)
     return workspaces
-  } catch (e) {}
+ } catch (e) {}
 }
 
 export const cloneRepository = async (url: string) => {
