@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
+import { Dropdown } from 'react-bootstrap'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
@@ -9,6 +10,8 @@ export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
+  // const [toggleSelectWorkspace, setToggleSelectWorkspace] = useState<string | JSX.Element>("")
+  const [dropdownWorkspacesList, setDropdownWorkspacesList] = useState<{string: string | JSX.Element}[]>([])
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -38,6 +41,10 @@ export function Workspace () {
         switchWorkspace(NO_WORKSPACE)
       }
     }
+    const dropdownList = global.fs.browser.workspaces.map((workspace) => {
+
+    })
+    setDropdownWorkspacesList(dropdownList)
   }, [global.fs.browser.workspaces])
 
   const renameCurrentWorkspace = () => {
@@ -248,7 +255,25 @@ export function Workspace () {
                     title='Clone Git Repository'>
                   </span>
                 </span>
-              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
+                {/* <Dropdown
+                  onSelect={value => {
+                    const { code, title } = [{ code: 'NG', title: 'Nigeria' }].find(({ code }) => value === code)
+
+                    setSelectedCountry(value)
+                    setToggleContents(<><i className="fas fa-code-branch"></i> {title}</>)
+                  }}
+                >
+                  <Dropdown.Toggle variant="secondary" id="dropdown-flags" className="text-left" style={{ width: 300 }}>
+                    {toggleContents}
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    {[{ code: 'NG', title: 'Nigeria' }].map(({ code, title }) => (
+                      <Dropdown.Item key={code} eventKey={code}><i className="fas fa-code-branch"></i> {title}</Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown> */}
+              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-select">
                 {
                   global.fs.browser.workspaces
                     .map((folder, index) => {
