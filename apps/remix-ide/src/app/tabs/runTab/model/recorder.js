@@ -1,16 +1,28 @@
 var async = require('async')
 var ethutil = require('ethereumjs-util')
 var remixLib = require('@remix-project/remix-lib')
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../.././../../package.json'
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 const helper = require('../../../../lib/helper')
 
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
+const profile = {
+  name: 'recorder',
+  displayName: 'Recorder',
+  description: '',
+  version: packageJson.version,
+  methods: [  ]
+}
 /**
   * Record transaction as long as the user create them.
   */
-class Recorder {
+class Recorder extends Plugin {
   constructor (blockchain) {
+    super(profile)
     this.event = new EventManager()
     this.blockchain = blockchain
     this.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
@@ -169,16 +181,29 @@ class Recorder {
   /**
     * run the list of records
     *
+    * @param {Object} records
     * @param {Object} accounts
     * @param {Object} options
     * @param {Object} abis
+    * @param {Object} linkReferences
+    * @param {Function} confirmationCb
+    * @param {Function} continueCb
+    * @param {Function} promptCb
+    * @param {Function} alertCb
+    * @param {Function} logCallBack
+    * @param {Function} live
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
+  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, live, newContractFn) {
     this.setListen(false)
     logCallBack(`Running ${records.length} transaction(s) ...`)
-    async.eachOfSeries(records, (tx, index, cb) => {
+    async.eachOfSeries(records, async (tx, index, cb) => {
+      if (live && tx.record.type === 'constructor') {
+        // resolve the bytecode using the contract name, this ensure getting the last compiled one.
+        const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
+        tx.record.bytecode = data.artefact.evm.bytecode.object
+      }
       var record = this.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
@@ -277,6 +302,7 @@ class Recorder {
       var options = json.options || {}
       var abis = json.abis || {}
       var linkReferences = json.linkReferences || {}
+      var live = json.live || false
     } catch (e) {
       return cb('Invalid Scenario File. Please try again')
     }
@@ -285,7 +311,7 @@ class Recorder {
       return
     }
 
-    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
+    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, live, (abi, address, contractName) => {
       cb(null, abi, address, contractName)
     })
   }
