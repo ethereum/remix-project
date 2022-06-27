@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import './css/remix-ui-workspace.css'
 import { FileSystemContext } from './contexts'
@@ -13,6 +14,7 @@ export function Workspace () {
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
   const workspaceCreateTemplateInput = useRef()
+  const intl = useIntl()
 
   useEffect(() => {
     resetFocus()
@@ -40,15 +42,21 @@ export function Workspace () {
   }, [global.fs.browser.workspaces])
 
   const renameCurrentWorkspace = () => {
-    global.modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
+    global.modal(intl.formatMessage({id: 'filePanel.workspace.rename', defaultMessage: 'Rename Current Workspace'}), renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
   }
 
   const createWorkspace = () => {
-    global.modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '')
+    global.modal(intl.formatMessage({id: 'filePanel.workspace.create', defaultMessage: 'Create Workspace'}), createModalMessage(), 'OK', onFinishCreateWorkspace, '')
   }
 
   const deleteCurrentWorkspace = () => {
-    global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
+    global.modal(
+      intl.formatMessage({id: 'filePanel.workspace.delete', defaultMessage: 'Delete Current Workspace'}),
+      intl.formatMessage({id: 'filePanel.workspace.deleteConfirm', defaultMessage: 'Are you sure to delete the current workspace?'}),
+      'OK',
+      onFinishDeleteWorkspace,
+      ''
+    )
   }
 
   const downloadWorkspaces = async () => {
@@ -127,9 +135,9 @@ export function Workspace () {
   const createModalMessage = () => {
     return (
       <>
-        <label id="wsName" className="form-check-label">Workspace name</label>
+        <label id="wsName" className="form-check-label"><FormattedMessage id='filePanel.workspace.name' defaultMessage='Workspace name' /></label>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" /><br/>
-        <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
+        <label id="selectWsTemplate" className="form-check-label"><FormattedMessage id='filePanel.workspace.chooseTemplate' defaultMessage='Choose a template' /></label>
         <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
           <option value='remixDefault'>Default</option>
           <option value='blank'>Blank</option>
@@ -156,7 +164,7 @@ export function Workspace () {
           <header>
             <div className="mb-2">
               <label className="form-check-label" htmlFor="workspacesSelect">
-                Workspaces
+                <FormattedMessage id='filePanel.workspace' defaultMessage='Workspaces' />
               </label>
               <span className="remixui_menu">
                 <span
@@ -168,7 +176,7 @@ export function Workspace () {
                     createWorkspace()
                   }}
                   className='far fa-plus-square remixui_menuicon'
-                  title='Create'>
+                  title={intl.formatMessage({id: 'filePanel.create', defaultMessage: 'Create'})}>
                 </span>
                 <span
                   hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -179,7 +187,7 @@ export function Workspace () {
                     renameCurrentWorkspace()
                   }}
                   className='far fa-edit remixui_menuicon'
-                  title='Rename'>
+                  title={intl.formatMessage({id: 'filePanel.rename', defaultMessage: 'Rename'})}>
                 </span>
                 <span
                   hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -190,7 +198,7 @@ export function Workspace () {
                     deleteCurrentWorkspace()
                   }}
                   className='fas fa-trash remixui_menuicon'
-                  title='Delete'>
+                  title={intl.formatMessage({id: 'filePanel.delete', defaultMessage: 'Delete'})}>
                 </span>
                 <span
                   hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -201,7 +209,7 @@ export function Workspace () {
                     downloadWorkspaces()
                   }}
                   className='far fa-download remixui_menuicon'
-                  title='Download Workspaces'>
+                  title={intl.formatMessage({id: 'filePanel.workspace.download', defaultMessage: 'Download Workspaces'})}>
                 </span>
                 <span
                   hidden={currentWorkspace === LOCALHOST}
@@ -212,7 +220,7 @@ export function Workspace () {
                     restoreBackup()
                   }}
                   className='far fa-upload remixui_menuicon'
-                  title='Restore Workspaces Backup'>
+                  title={intl.formatMessage({id: 'filePanel.workspace.restore', defaultMessage: 'Restore Workspaces Backup'})}>
                 </span>
               </span>
               <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-control custom-select">
