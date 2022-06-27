@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react' //eslint-disable-line
+import { useIntl } from 'react-intl'
 import { FileExplorerMenuProps } from '../types'
 
 export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
+  const intl = useIntl()
   const [state, setState] = useState({
     menuItems: [
       {
@@ -54,7 +56,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 id={action}
                 data-id={'fileExplorerUploadFile' + action }
                 className={icon + ' mb-0 remixui_newFile'}
-                title={title}
+                title={intl.formatMessage({id: `filePanel.${action}`, defaultMessage: title})}
                 key={index}
               >
                 <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
@@ -83,7 +85,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   }
                 }}
                 className={'newFile ' + icon + ' remixui_newFile'}
-                title={title}
+                title={intl.formatMessage({id: `filePanel.${action}`, defaultMessage: title})}
                 key={index}
               >
               </span>
