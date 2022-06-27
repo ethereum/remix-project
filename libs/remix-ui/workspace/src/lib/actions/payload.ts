@@ -1,6 +1,6 @@
 import { action } from '../types'
 
-export const setCurrentWorkspace = (workspace: string) => {
+export const setCurrentWorkspace = (workspace: { name: string; isGitRepo: boolean; }) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
     payload: workspace
@@ -125,7 +125,7 @@ export const createWorkspaceRequest = (promise: Promise<any>) => {
   }
 }
 
-export const createWorkspaceSuccess = (workspaceName: string) => {
+export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; }) => {
   return {
     type: 'CREATE_WORKSPACE_SUCCESS',
     payload: workspaceName
