@@ -24,17 +24,19 @@ export type UrlParametersType = {
   url: string
 }
 
-const basicWorkspaceInit = async (workspaces, workspaceProvider) => {
+const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
   if (workspaces.length === 0) {
     await createWorkspaceTemplate('default_workspace', 'remixDefault')
     plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
-    dispatch(setCurrentWorkspace('default_workspace'))
+    dispatch(setCurrentWorkspace({ name: 'default_workspace', isGitRepo: false }))
     await loadWorkspacePreset('remixDefault')
   } else {
     if (workspaces.length > 0) {
-      workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-      plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
-      dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+      const workspace = workspaces[workspaces.length - 1]
+
+      workspaceProvider.setWorkspace(workspace.name)
+      plugin.setWorkspace({ name: (workspace || {}).name, isLocalhost: false })
+      dispatch(setCurrentWorkspace(workspace))
     }
   }
 }
@@ -52,12 +54,12 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace('gist-sample'))
+      dispatch(setCurrentWorkspace({ name: 'gist-sample', isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace('code-sample'))
+      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
     } else if (window.location.pathname && window.location.pathname !== '/') {
@@ -95,7 +97,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             foundOnNetworks.push(network.name)
             await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
             plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
-            dispatch(setCurrentWorkspace('etherscan-code-sample'))
+            dispatch(setCurrentWorkspace({ name: 'etherscan-code-sample', isGitRepo: false }))
             let filePath
             count = count + (Object.keys(data.compilationTargets)).length
             for (filePath in data.compilationTargets)
@@ -119,7 +121,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           const content = response.data
           await createWorkspaceTemplate('github-code-sample', 'code-template')
           plugin.setWorkspace({ name: 'github-code-sample', isLocalhost: false })
-          dispatch(setCurrentWorkspace('github-code-sample'))
+          dispatch(setCurrentWorkspace({ name: 'github-code-sample', isGitRepo: false }))
           await workspaceProvider.set(route, content)
           plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(route))
         } else await basicWorkspaceInit(workspaces, workspaceProvider)
