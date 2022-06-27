@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { Dropdown } from 'react-bootstrap'
+import { CustomMenu, CustomToggle } from './components/custom-dropdown'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
@@ -10,8 +11,7 @@ export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
-  // const [toggleSelectWorkspace, setToggleSelectWorkspace] = useState<string | JSX.Element>("")
-  const [dropdownWorkspacesList, setDropdownWorkspacesList] = useState<{string: string | JSX.Element}[]>([])
+  const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -34,18 +34,20 @@ export function Workspace () {
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
 
   useEffect(() => {
-    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.includes(global.fs.browser.currentWorkspace)) {
+    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.find(({ name }) => name === global.fs.browser.currentWorkspace)) {
       if (global.fs.browser.workspaces.length > 0) {
-        switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1])
+        switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1].name)
       } else {
         switchWorkspace(NO_WORKSPACE)
       }
     }
-    const dropdownList = global.fs.browser.workspaces.map((workspace) => {
-
-    })
-    setDropdownWorkspacesList(dropdownList)
   }, [global.fs.browser.workspaces])
+
+  useEffect(() => {
+    const workspace = global.fs.browser.workspaces.find(workspace => workspace.name === currentWorkspace)
+
+    setSelectedWorkspace(workspace)
+  }, [currentWorkspace])
 
   const renameCurrentWorkspace = () => {
     global.modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
@@ -255,34 +257,34 @@ export function Workspace () {
                     title='Clone Git Repository'>
                   </span>
                 </span>
-                {/* <Dropdown
-                  onSelect={value => {
-                    const { code, title } = [{ code: 'NG', title: 'Nigeria' }].find(({ code }) => value === code)
-
-                    setSelectedCountry(value)
-                    setToggleContents(<><i className="fas fa-code-branch"></i> {title}</>)
-                  }}
-                >
-                  <Dropdown.Toggle variant="secondary" id="dropdown-flags" className="text-left" style={{ width: 300 }}>
-                    {toggleContents}
+                <Dropdown id="workspacesSelect" data-id="workspacesSelect">
+                  <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo ? 'far fa-code-branch' : null}>
+                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    {[{ code: 'NG', title: 'Nigeria' }].map(({ code, title }) => (
-                      <Dropdown.Item key={code} eventKey={code}><i className="fas fa-code-branch"></i> {title}</Dropdown.Item>
-                    ))}
+                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' >
+                    {
+                      global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          onClick={() => {
+                            switchWorkspace(name)
+                          }}
+                        >
+                            { isGitRepo ? 
+                              <div className='d-flex justify-content-between'>
+                                <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
+                                <i className='fas fa-code-branch pt-1'></i>
+                              </div> : 
+                              <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
+                            }
+                        </Dropdown.Item>
+                      ))
+                    }
+                    <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
+                    { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                   </Dropdown.Menu>
-                </Dropdown> */}
-              <select id="workspacesSelect" value={currentWorkspace} data-id="workspacesSelect" onChange={(e) => switchWorkspace(e.target.value)} className="form-select">
-                {
-                  global.fs.browser.workspaces
-                    .map((folder, index) => {
-                      return <option key={index} value={folder}>{folder}</option>
-                    })
-                }
-                <option value={LOCALHOST}>{currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
-                { global.fs.browser.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
-              </select>
+                </Dropdown>
             </div>
           </header>
         </div>

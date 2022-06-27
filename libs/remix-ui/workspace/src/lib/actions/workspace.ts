@@ -48,7 +48,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
-    dispatch(createWorkspaceSuccess(workspaceName))
+    dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo: false }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
@@ -254,8 +254,10 @@ export const switchToWorkspace = async (name: string) => {
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
+    const isGitRepo = await plugin.fileManager.isGitRepo()
+
     dispatch(setMode('browser'))
-    dispatch(setCurrentWorkspace(name))
+    dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
   }
 }
