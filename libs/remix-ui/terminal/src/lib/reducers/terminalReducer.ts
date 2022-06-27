@@ -154,7 +154,7 @@ export const registerScriptRunnerReducer = (state, action) => {
     case INFO:
       return {
         ...state,
-        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-log', provider: action.payload.provider })
+        journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, style: 'text-success', provider: action.payload.provider })
       }
     case WARN:
       return {
