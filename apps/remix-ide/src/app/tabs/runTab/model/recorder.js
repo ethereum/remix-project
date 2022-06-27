@@ -258,7 +258,9 @@ class Recorder {
   }
 
   runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+    _paq.push(['trackEvent', 'run', 'recorder', 'start'])
     if (!json) {
+      _paq.push(['trackEvent', 'run', 'recorder', 'wrong-json'])
       return cb('a json content must be provided')
     }
     if (typeof json === 'string') {
