@@ -1,5 +1,6 @@
 import { useDialogDispatchers } from '@remix-ui/app'
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { SearchContext } from '../../context/context'
 import { SearchResult, SearchResultLine } from '../../types'
 import { ResultFileName } from './ResultFileName'
@@ -123,12 +124,14 @@ export const ResultItem = (props: ResultItemProps) => {
           {loading ? <div className="loading">Loading...</div> : null}
           {!toggleExpander && !loading ? (
             <div className="search_plugin_wrap_summary">
-              {state.replaceEnabled? 
+              {state.replaceEnabled?
                 <div className="search_plugin_wrap_summary_replace">
-                  <div data-id={`replace-all-${props.file.filename}`} onClick={async() => replace()} className='btn btn-secondary mb-2 btn-sm'>Replace all</div>
+                  <div data-id={`replace-all-${props.file.filename}`} onClick={async() => replace()} className='btn btn-secondary mb-2 btn-sm'>
+                  <FormattedMessage id='search.replaceAll' defaultMessage='Replace all' />
+                  </div>
                 </div>
               :null}
-              {lines.map((line, index) => (   
+              {lines.map((line, index) => (
                 <ResultSummary
                   setLoading={setLoading}
                   key={index}

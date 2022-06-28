@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { SearchContext } from '../context/context'
 
 export const Find = () => {
@@ -11,6 +12,8 @@ export const Find = () => {
     toggleMatchWholeWord,
     toggleUseRegex
   } = useContext(SearchContext)
+
+  const intl = useIntl()
 
   const [inputValue, setInputValue] = useState('')
   const change = async e => {
@@ -35,7 +38,7 @@ export const Find = () => {
         <div className="search_plugin_search-input">
           <input
             id="search_input"
-            placeholder="Search ( Enter to search )"
+            placeholder={intl.formatMessage({id: 'search.placeholder1', defaultMessage: "Search ( Enter to search )"})}
             className="form-control"
             value={inputValue}
             onChange={async e => await change(e)}
@@ -44,7 +47,7 @@ export const Find = () => {
           <div className="search_plugin_controls">
             <div
               data-id="search_case_sensitive"
-              title="Match Case"
+              title={intl.formatMessage({id: 'search.matchCase', defaultMessage: "Match Case"})}
               className={`monaco-custom-checkbox codicon codicon-case-sensitive ${
                 state.casesensitive ? 'checked' : ''
               }`}
@@ -58,7 +61,7 @@ export const Find = () => {
             ></div>
             <div
               data-id="search_whole_word"
-              title="Match Whole Word"
+              title={intl.formatMessage({id: 'search.matchWholeWord', defaultMessage: "Match Whole Word"})}
               className={`monaco-custom-checkbox codicon codicon-whole-word ${
                 state.matchWord ? 'checked' : ''
               }`}
@@ -72,7 +75,7 @@ export const Find = () => {
             ></div>
             <div
               data-id="search_use_regex"
-              title="Use Regular Expression"
+              title={intl.formatMessage({id: 'search.useRegularExpression', defaultMessage: "Use Regular Expression"})}
               className={`monaco-custom-checkbox codicon codicon-regex ${
                 state.useRegExp ? 'checked' : ''
               }`}
