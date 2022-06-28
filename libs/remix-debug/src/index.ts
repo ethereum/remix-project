@@ -10,6 +10,7 @@ import { BreakpointManager } from './code/breakpointManager'
 import * as sourceMappingDecoder from './source/sourceMappingDecoder'
 import * as traceHelper from './trace/traceHelper'
 
+
 /*
   Use of breakPointManager :
 

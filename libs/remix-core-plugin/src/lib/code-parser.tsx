@@ -8,8 +8,10 @@ import { AstNode, CompilationError, CompilationResult, CompilationSource } from 
 import { helper } from '@remix-project/remix-solidity'
 
 import React from 'react'
+import { fileState, fileStateType } from '@remix-ui/file-states'
 // eslint-disable-next-line
-import { fileState, fileStateType } from '@remix-ui/workspace'
+
+
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
 const profile = {
@@ -111,12 +113,18 @@ export class CodeParser extends Plugin {
                 }
                 console.log('allErrors', allErrors)
                 await this.call('editor', 'addErrorMarker', allErrors)
+
+                for(const error of allErrors){
+                    
+                }
+
+
                 try {
                    
                     let fileState:fileState = {
                         path: this.currentFile,
                         isDirectory: false,
-                        fileStateType: [fileStateType.Custom],
+                        fileStateType: fileStateType.Custom,
                         fileStateLabelClass: 'text-success',
                         fileStateIconClass: '',
                         fileStateIcon: <i className="text-success fas fa-smile"></i>,
@@ -124,27 +132,53 @@ export class CodeParser extends Plugin {
                         owner: 'code-parser',
                         bubble: true
                     }
-                    await this.call('filePanel', 'setFileState', [fileState])
+                    await this.call('fileStates', 'setFileState', fileState)
                     fileState = {
                         ...fileState,
-                        path: 'contracts/1_Storage.sol',
                         fileStateLabelClass: 'text-danger',
                         fileStateIcon: <i className="text-danger fas fa-spinner fa-spin"></i>,
                     }
-                    await this.call('filePanel', 'setFileState', [fileState])
                     fileState = {
                         ...fileState,
                         path: 'scripts/ethers-lib.ts',
                         fileStateLabelClass: 'text-danger',
-                        fileStateIcon: <div className='btn btn-danger btn-sm'><li className='fa fa-phone'></li>call rob now!</div>,
+                        fileStateIcon: <div className='btn btn-danger btn-sm'>call rob now!</div>,
                     }
-                    await this.call('filePanel', 'setFileState', [fileState])
+                    await this.call('fileStates', 'setFileState', fileState)
+
+                    const states:fileState[] = [
+                        {
+                            path: 'contracts/2_Owner.sol',
+                            isDirectory: false,
+                            fileStateType: fileStateType.Custom,
+                            fileStateLabelClass: 'text-success',
+                            fileStateIconClass: '',
+                            fileStateIcon: <i className="text-success fas fa-smile"></i>,
+                            comment: '',
+                            owner: 'code-parser',
+                            bubble: true
+                        },
+                        {
+                            path: 'contracts/2_Owner.sol',
+                            isDirectory: false,
+                            fileStateType: fileStateType.Custom,
+                            fileStateLabelClass: 'text-danger',
+                            fileStateIconClass: '',
+                            fileStateIcon: <i className="text-danger fas fa-smile"></i>,
+                            comment: '',
+                            owner: 'code-parser',
+                            bubble: true
+                        }
+                    ]
+
+                    await this.call('fileStates', 'setFileState', states)
+
                     
-                } catch (e) {
+                } catch (e) { 
                     console.log('error calling filePanel', e)
                 }
             } else {
-                await this.call('filePanel', 'setFileState', [{
+                await this.call('fileStates', 'setFileState', [{
                     path: this.currentFile,
                     isDirectory: false,
                     fileStateType: [],

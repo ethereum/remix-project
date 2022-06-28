@@ -1125,6 +1125,21 @@
         }
       }
     },
+    "remix-ui-file-states": {
+      "root": "libs/remix-ui/file-states",
+      "sourceRoot": "libs/remix-ui/file-states/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/file-states/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/file-states/**/*"]
+          }
+        }
+      }
+    },
     "remix-ui-panel": {
       "root": "libs/remix-ui/panel",
       "sourceRoot": "libs/remix-ui/panel/src",

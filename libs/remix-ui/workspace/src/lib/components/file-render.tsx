@@ -1,12 +1,13 @@
 // eslint-disable-next-line no-use-before-define
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { fileState, FileType } from '../types'
+import { FileType } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileLabel } from './file-label'
-import FileState from './file-state'
+
+import { fileState, FileStateIcons } from '@remix-ui/file-states'
 
 export interface RenderFileProps {
   file: FileType,
@@ -118,7 +119,7 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <div className="d-flex flex-row">
               <FileLabel file={file} fileState={props.fileState} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-              <FileState file={file} fileState={props.fileState}/>
+              <FileStateIcons file={file} fileState={props.fileState}/>
             </div>
           </>
         }
