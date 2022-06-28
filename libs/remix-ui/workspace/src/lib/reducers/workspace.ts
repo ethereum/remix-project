@@ -2,8 +2,8 @@ import { extractNameFromKey } from '@remix-ui/helper'
 import { action, fileState, FileType } from '../types'
 import * as _ from 'lodash'
 interface Action {
-    type: string
-    payload: any
+  type: string
+  payload: any
 }
 export interface BrowserState {
   browser: {
@@ -93,8 +93,8 @@ export const browserInitialState: BrowserState = {
   notification: {
     title: '',
     message: '',
-    actionOk: () => {},
-    actionCancel: () => {},
+    actionOk: () => { },
+    actionCancel: () => { },
     labelOk: '',
     labelCancel: ''
   },
@@ -604,29 +604,11 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'SET_FILE_STATE_SUCCESS': {
-      const payload = action.payload as fileState[]
-      console.log('SET_FILE_STATE_SUCCESS', payload)
-      const a = state.browser.fileState
-      const b = payload
-      const merge = _.merge({}, _.keyBy(a, 'path'), _.keyBy(b, 'path'))
-      const vals = _.values(merge)
-      console.log(a)
-      console.log(vals)
-      vals.map(function (x) {
-        const c = a.find(function (el) {
-          return el.path === x.path
-        })
-        if (c && c.fileStateType) {
-          x.fileStateType = _.uniq([...c.fileStateType, ...x.fileStateType])
-        }
-        return x
-      })
-      console.log(vals)
       return {
         ...state,
         browser: {
           ...state.browser,
-          fileState: vals
+          fileState: action.payload
         }
       }
     }

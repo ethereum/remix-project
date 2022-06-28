@@ -85,9 +85,9 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  async setFileState (items) {
-    console.log(items)
-    this.emit('setFileState', items)
+  async setFileState (fileState) {
+    console.log(fileState)
+    this.emit('setFileState', fileState)
   }
 
   getCurrentWorkspace () {

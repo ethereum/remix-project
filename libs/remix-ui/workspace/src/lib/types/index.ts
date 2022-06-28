@@ -1,5 +1,6 @@
 import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { fileState } from '@remix-ui/file-states';
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 export interface JSONStandardInput {
@@ -64,35 +65,6 @@ export interface FileType {
   isDirectory: boolean,
   type: 'folder' | 'file' | 'gist',
   child?: File[]
-}
-
-export enum fileStateType {
-  Error = 'ERROR',
-  Warning = 'WARNING',
-  Success = 'SUCCESS',
-  Loading = 'LOADING',
-  Unsaved = 'UNSAVED',
-  Untracked = 'UNTRACKED',
-  Modified = 'MODIFIED',
-  Staged = 'STAGED',
-  Committed = 'COMMITTED',
-  Deleted = 'DELETED',
-  Added = 'ADDED',
-  New = 'NEW',
-  Compiled = 'COMPILED',
-  Custom = 'CUSTOM',
-}
-
-export type fileState = {
-  path: string,
-  isDirectory: boolean,
-  fileStateType: fileStateType[],
-  fileStateLabelClass: string,
-  fileStateIconClass: string,
-  fileStateIcon: string | HTMLDivElement | JSX.Element,
-  bubble: boolean,
-  comment: string,
-  owner: string,
 }
 
 /* eslint-disable-next-line */
