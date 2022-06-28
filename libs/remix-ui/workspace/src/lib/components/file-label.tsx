@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-use-before-define
+import { fileState } from '@remix-ui/file-states'
 import React, { useEffect, useRef, useState } from 'react'
-import { fileState, FileType } from '../types'
+import { FileType } from '../types'
 
 export interface FileLabelProps {
   file: FileType,
@@ -27,11 +28,12 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [file.path, focusEdit])
 
   useEffect(() => {
+    console.log('fileState', fileState, file.name)
     const state = props.fileState.find((state: fileState) => {
+      console.log('FOUND STATE', state)
       if(state.path === props.file.path) return true
       if(state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
     })
-    console.log(props)
     if (state && state.fileStateLabelClass) {
       setFileStateClasses(state.fileStateLabelClass)
     }

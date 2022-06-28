@@ -6,7 +6,6 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "declaration": true,
-    "rootDir": "./src",
     "types": ["node"]
   },
   "exclude": [

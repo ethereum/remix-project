@@ -2,7 +2,7 @@
 import React from 'react'
 import { fileState } from '../../types'
 
-const FileStateError = (props: {
+const FileStateCustomIcon = (props: {
     fileState: fileState
 }) => {
     return <><span className={`${props.fileState.fileStateIconClass}pr-2`}>
@@ -10,4 +10,4 @@ const FileStateError = (props: {
     </span></>
 }
 
-export default FileStateError
+export default FileStateCustomIcon

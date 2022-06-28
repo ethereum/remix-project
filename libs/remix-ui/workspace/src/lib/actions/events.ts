@@ -38,7 +38,7 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
     uploadFile(target, dir, cb)
   })
 
-  plugin.on('filePanel', 'setFileState', async (items: fileState[]) => {
+  plugin.on('fileStates', 'fileStateChanged', async (items: fileState[]) => {
     setFileState(items)
   })
 
