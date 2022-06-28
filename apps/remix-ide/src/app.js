@@ -28,6 +28,7 @@ import { Blockchain } from './blockchain/blockchain.js'
 import { HardhatProvider } from './app/tabs/hardhat-provider'
 import { GanacheProvider } from './app/tabs/ganache-provider'
 import { FoundryProvider } from './app/tabs/foundry-provider'
+import { BasicHttpProvider } from './app/tabs/basic-http-provider'
 
 const isElectron = require('is-electron')
 
@@ -179,6 +180,7 @@ class AppComponent {
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
+    const basicHttpProvider = new BasicHttpProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -236,6 +238,7 @@ class AppComponent {
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
+      basicHttpProvider,
       this.walkthroughService,
       search
     ])

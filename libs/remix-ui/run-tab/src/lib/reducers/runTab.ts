@@ -135,12 +135,6 @@ export const runTabInitialState: RunTabState = {
       title: 'Execution environment has been provided by Metamask or similar provider.',
       value: 'injected',
       content: `Injected Provider${(window && window.ethereum && window.ethereum.isMetaMask) ? ' - Metamask' : ''}`
-    }, {
-      id: 'web3-mode',
-      dataId: 'settingsWeb3Mode',
-      title: `Execution environment connects to an external node. For security, only connect to trusted networks. If Remix is served via https and your node is accessed via http, it might not work. In this case, try cloning the repository and serving it via http.`,
-      value: 'web3',
-      content: 'External HTTP Provider'
     }],
     isRequesting: false,
     isSuccessful: false,
