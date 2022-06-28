@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-
+import { FormattedMessage } from 'react-intl'
 import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
@@ -63,7 +63,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             else {
               workspace.addExternal(type + '/' + cleanUrl, content, url)
               plugin.call('menuicons', 'select', 'filePanel')
-            }   
+            }
           } catch (e) {
             toast(e.message)
           }
@@ -237,15 +237,15 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           <div>
             <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
             <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              Scam Alert: Beware of online videos promoting "liquidity front runner bots".
+              <FormattedMessage id='home.scamAlert' defaultMessage='Scam Alert: Beware of online videos promoting "liquidity front runner bots".' />
             </span>
-            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d"><FormattedMessage id='home.learnMore' defaultMessage='Learn more' /></a>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
           <div className="ml-3">
             <div className="mb-3">
-              <h4>Featured Plugins</h4>
+              <h4><FormattedMessage id='home.featuredPlugins' defaultMessage='Featured Plugins' /></h4>
               <div className="d-flex flex-row pt-2">
                 <ThemeContext.Provider value={ state.themeQuality }>
                   <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" callback={() => startSolidity()} />
@@ -259,15 +259,15 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             </div>
             <div className="d-flex">
               <div className="file">
-                <h4>File</h4>
+                <h4><FormattedMessage id='home.file' defaultMessage='File' /></h4>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file"></i>
-                  <label className="ml-1 mb-1 remixui_home_text" onClick={() => createNewFile()}>New File</label>
+                  <label className="ml-1 mb-1 remixui_home_text" onClick={() => createNewFile()}><FormattedMessage id='home.newFile' defaultMessage='New File' /></label>
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file-alt"></i>
                   <label className="ml-1 remixui_home_labelIt remixui_home_bigLabelSize remixui_home_text" htmlFor="openFileInput">
-                    Open Files
+                    <FormattedMessage id='home.openFiles' defaultMessage='Open Files' />
                   </label>
                   <input title="open file" type="file" id="openFileInput" onChange={(event) => {
                     event.stopPropagation()
@@ -277,9 +277,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </p>
                 <p className="mb-1">
                   <i className="mr-1 far fa-hdd"></i>
-                  <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
+                  <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}><FormattedMessage id='home.connectToLocalhost' defaultMessage='Connect to Localhost' /></label>
                 </p>
-                <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
+                <p className="mt-3 mb-0"><label><FormattedMessage id='home.loadFrom' defaultMessage='LOAD FROM' />:</label></p>
                 <div className="btn-group">
                   <button className="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
                   <button className="btn mx-1 btn-secondary" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
@@ -288,7 +288,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </div>
               </div>
               <div className="ml-4 pl-4">
-                <h4>Resources</h4>
+                <h4><FormattedMessage id='home.resources' defaultMessage='Resources' /></h4>
                 <p className="mb-1">
                   <i className="mr-2 fas fa-book"></i>
                   <a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
