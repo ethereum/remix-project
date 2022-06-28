@@ -77,7 +77,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             {id: 5, name: 'goerli'}
           ]
           let found = false
-          let foundOnNetworks = []
+          const foundOnNetworks = []
           for (const network of networks) {
             const target = `/${network.name}/${contractAddress}`
             try {
