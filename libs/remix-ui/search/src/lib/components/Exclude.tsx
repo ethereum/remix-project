@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { SearchContext } from '../context/context'
 
 export const Exclude = props => {
   const { setExclude, cancelSearch, startSearch } = useContext(SearchContext)
   const [excludeInput, setExcludeInput] = useState<string>('.*/**/*')
+
+  const intl = useIntl()
 
   const change = async e => {
     setExcludeInput(e.target.value)
@@ -24,10 +27,10 @@ export const Exclude = props => {
   return (
     <>
       <div className="search_plugin_find-part pl-3">
-        <label className='mt-2'>Files to exclude</label>
+        <label className='mt-2'><FormattedMessage id='search.filesToExclude' defaultMessage='Files to exclude' /></label>
         <input
           id='search_exclude'
-          placeholder="Exclude ie .git/**/* ( Enter to exclude )"
+          placeholder={intl.formatMessage({id: 'search.placeholder3', defaultMessage: "Exclude ie .git/**/* ( Enter to exclude )"})}
           className="form-control"
           onKeyUp={handleKeypress}
           onChange={async (e) => change(e)}
