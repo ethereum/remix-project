@@ -64,7 +64,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       let route = window.location.pathname
       if (route.startsWith('/address/0x') && route.length === 51) {
         const contractAddress = route.split('/')[2]
-        plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
+        plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress}`)
         let data
         try {
           let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
@@ -76,8 +76,8 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             {id: 42, name: 'kovan'},
             {id: 5, name: 'goerli'}
           ]
-          plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
           let found = false
+          let foundOnNetworks = []
           for (const network of networks) {
             const target = `/${network.name}/${contractAddress}`
             try {
@@ -91,6 +91,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
               }
             }
             found = true
+            foundOnNetworks.push(network.name)
             await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
             plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
             dispatch(setCurrentWorkspace('etherscan-code-sample'))
@@ -98,6 +99,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
             plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
           }
+          plugin.call('notification', 'toast', `Added contract(s) verified on ${foundOnNetworks.join(',')} networks of Etherscan for contract address ${contractAddress}`)
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
