@@ -115,14 +115,14 @@ export const runTabInitialState: RunTabState = {
     providerList: [{
       id: 'vm-mode-london',
       dataId: 'settingsVMLondonMode',
-      title: 'Execution environment does not connect to any node. All data is stored in browser memory only.',
+      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-london',
       fork: 'london',
       content: 'JavaScript VM (London)'
     }, {
       id: 'vm-mode-berlin',
       dataId: 'settingsVMBerlinMode',
-      title: 'Execution environment does not connect to any node. All data is stored in browser memory only.',
+      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-berlin',
       fork: 'berlin',
       content: 'JavaScript VM (Berlin)'
