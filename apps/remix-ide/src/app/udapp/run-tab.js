@@ -155,6 +155,20 @@ export class RunTab extends ViewPlugin {
         }
       }
     })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Web3 Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('basic-http-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
   }
 
   writeFile (fileName, content) {
