@@ -32,10 +32,8 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   const onInputChanged = (event) => {
     if (props.validationFn) {
       const validation = props.validationFn(event.target.value)
-      setState({
-        ...props,
-        message: createModalMessage(props.defaultValue, validation),
-        validation
+      setState(prevState => {
+        return { ...prevState, message: createModalMessage(props.defaultValue, validation), validation }
       })
     }
   }
@@ -66,7 +64,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
         default:
           setState({
             ...props,
-            okFn: (onOkFn),
+            okFn: onOkFn,
             cancelFn: onCancelFn
           })
           break
@@ -82,9 +80,8 @@ const ModalWrapper = (props: ModalWrapperProps) => {
 
   // reset the message and input if any, so when the modal is shown again it doesn't show the previous value.
   const handleHide = () => {
-    setState({
-      ...props,
-      message: ''
+    setState(prevState => {
+      return { ...prevState, message: '' }
     })
     props.handleHide()
   }

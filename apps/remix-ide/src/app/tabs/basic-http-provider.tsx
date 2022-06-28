@@ -10,7 +10,7 @@ const profile = {
   name: 'basic-http-provider',
   displayName: 'Basic Http Provider',
   kind: 'provider',
-  description: 'Anvil',
+  description: '',
   methods: ['sendAsync'],
   version: packageJson.version
 }

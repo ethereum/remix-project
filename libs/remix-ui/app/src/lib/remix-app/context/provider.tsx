@@ -32,7 +32,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
   const handleHideModal = () => {
     dispatch({
       type: modalActionTypes.handleHideModal,
-      payload: null,
+      payload: null
     })
   }
 
