@@ -79,8 +79,8 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           plugin.call('notification', 'toast', `Looking for contract address ${contractAddress} on different networks`)
           let found = false
           for (const network of networks) {
-            const target = `/${network.name}`
-            try{
+            const target = `/${network.name}/${contractAddress}`
+            try {
               data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, etherscanKey)
             } catch (error) {
               if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
