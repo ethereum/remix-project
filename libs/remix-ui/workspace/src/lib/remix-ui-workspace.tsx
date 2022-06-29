@@ -262,7 +262,7 @@ export function Workspace () {
                     { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' >
+                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" >
                     {
                       global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                         <Dropdown.Item
@@ -270,6 +270,7 @@ export function Workspace () {
                           onClick={() => {
                             switchWorkspace(name)
                           }}
+                          data-id={`dropdown-item-${name}`}
                         >
                             { isGitRepo ? 
                               <div className='d-flex justify-content-between'>
