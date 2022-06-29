@@ -1,11 +1,13 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
+  const intl = useIntl()
   const [abiLabel, setAbiLabel] = useState<{
     display: string,
     content: string
@@ -105,7 +107,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const initSelectedContract = () => {
     const contracts = contractList[currentFile]
-  
+
     if (contracts && contracts.length > 0) {
       const contract = contracts.find(contract => contract.alias === currentContract)
 
@@ -212,7 +214,9 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
-      <label className="udapp_settingsLabel">Contract</label>
+      <label className="udapp_settingsLabel">
+        <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
+      </label>
       <div className="udapp_subcontainer">
         <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
@@ -223,7 +227,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       </div>
       <div>
         <div className="udapp_deployDropdown">
-          { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
+          { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
             : loadedContractData ? <div>
               <ContractGUI
                 title='Deploy'
@@ -252,18 +256,22 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                   className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                   title="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
                 >
-                  Publish to IPFS
+                  <FormattedMessage id='udapp.publishTo' defaultMessage='Publish to' /> IPFS
                 </label>
               </div>
             </div> : ''
           }
         </div>
-        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' ? 'none' : 'block' }}>or</div>
+        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+          <FormattedMessage id='udapp.or' defaultMessage='or' />
+        </div>
         <div className="udapp_button udapp_atAddressSect">
-          <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} title={atAddressOptions.title} onClick={loadFromAddress}>At Address</button>
+          <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} title={atAddressOptions.title} onClick={loadFromAddress}>
+            <FormattedMessage id='udapp.atAddress' defaultMessage='At Address' />
+          </button>
           <input
             className="udapp_input udapp_ataddressinput ataddressinput form-control"
-            placeholder="Load contract from Address"
+            placeholder={intl.formatMessage({id: 'udapp.loadContractFromAddress', defaultMessage: "Load contract from Address"})}
             title="address of contract"
             onChange={atAddressChanged}
           />
