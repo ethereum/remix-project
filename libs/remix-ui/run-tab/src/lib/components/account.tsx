@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState, useRef } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
@@ -12,6 +13,8 @@ export function AccountUI (props: AccountProps) {
     title: ''
   })
   const messageRef = useRef('')
+
+  const intl = useIntl()
 
   useEffect(() => {
     if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
@@ -78,7 +81,7 @@ export function AccountUI (props: AccountProps) {
           message='Enter your passphrase for this account to sign the message'
           setPassphrase={props.setPassphrase}
         />, 'OK', () => {
-          props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
+          props.modal(intl.formatMessage({id: 'udapp.signAMessage', defaultMessage: 'Sign a message'}), signMessagePrompt(), 'OK', () => {
             props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
             props.setPassphrase('')
           }, 'Cancel', null)
@@ -87,7 +90,7 @@ export function AccountUI (props: AccountProps) {
         })
     }
 
-    props.modal('Sign a message', signMessagePrompt(), 'OK', () => {
+    props.modal(intl.formatMessage({id: 'udapp.signAMessage', defaultMessage: 'Sign a message'}), signMessagePrompt(), 'OK', () => {
       props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
     }, 'Cancel', null)
   }
@@ -119,7 +122,7 @@ export function AccountUI (props: AccountProps) {
 
   const signMessagePrompt = () => {
     return (
-      <div> Enter a message to sign
+      <div> <FormattedMessage id='udapp.enterAMessageToSign' defaultMessage='Enter a message to sign' />
         <div>
           <textarea
             id="prompt_text"
@@ -138,9 +141,9 @@ export function AccountUI (props: AccountProps) {
   const signedMessagePrompt = (msgHash: string, signedData: string) => {
     return (
       <div>
-        <b>hash:</b><br />
+        <b><FormattedMessage id='udapp.hash' defaultMessage='hash' />:</b><br />
         <span id="remixRunSignMsgHash" data-id="settingsRemixRunSignMsgHash">{msgHash}</span>
-        <br /><b>signature:</b><br />
+        <br /><b><FormattedMessage id='udapp.signature' defaultMessage='signature' />:</b><br />
         <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">{signedData}</span>
       </div>
     )
@@ -149,7 +152,7 @@ export function AccountUI (props: AccountProps) {
   return (
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
-        Account
+        <FormattedMessage id='udapp.value' defaultMessage='Account' />
         <span id="remixRunPlusWraper" title={plusOpt.title}>
           <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
         </span>
