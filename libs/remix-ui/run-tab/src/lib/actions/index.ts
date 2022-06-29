@@ -26,7 +26,7 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
   setupEvents(plugin, dispatch)
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
-  }, 1000)
+  }, 10000000)
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
@@ -54,7 +54,7 @@ export const getExecutionContext = () => getContext(plugin)
 export const executeTransactions = (instanceIndex: number, lookupOnly: boolean, funcABI: FuncABI, inputsValues: string, contractName: string, contractABI, contract, address, logMsg:string, mainnetPrompt: MainnetPrompt, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, funcIndex?: number) => runTransactions(plugin, dispatch, instanceIndex, lookupOnly, funcABI, inputsValues, contractName, contractABI, contract, address, logMsg, mainnetPrompt, gasEstimationPrompt, passphrasePrompt, funcIndex)
 export const loadFromAddress = (contract: ContractData, address: string) => loadAddress(plugin, dispatch, contract, address)
 export const storeNewScenario = async (prompt: (msg: string, defaultValue: string) => JSX.Element) => storeScenario(plugin, dispatch, prompt)
-export const runScenario = (gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => runCurrentScenario(plugin, dispatch, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)
+export const runScenario = (liveMode: boolean, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => runCurrentScenario(liveMode, plugin, dispatch, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)
 export const setScenarioPath = (path: string) => updateScenarioPath(dispatch, path)
 export const getFuncABIValues = (funcABI: FuncABI) => getFuncABIInputs(plugin, funcABI)
 export const setNetworkName = (networkName: string) => setNetworkNameFromProvider(dispatch, networkName)
