@@ -35,6 +35,7 @@ export class EditorContextListener extends Plugin {
   }
 
   async onActivation() {
+    return
     this.on('editor', 'contentChanged', async () => {
       console.log('contentChanged')
       this._stopHighlighting()
@@ -45,6 +46,7 @@ export class EditorContextListener extends Plugin {
     })
 
     setInterval(async () => {
+      console.log('interval')
       const compilationResult = await this.call('codeParser', 'getLastCompilationResult')
       if (compilationResult && compilationResult.languageversion.indexOf('soljson') === 0) {
 
@@ -163,7 +165,7 @@ export class EditorContextListener extends Plugin {
   }
 
   async _highlightExpressions(node, compilationResult) {
-    
+
     const highlights = async (id) => {
       const refs = await this.call('codeParser', 'getDeclaration', id)
       if (refs) {
@@ -183,7 +185,7 @@ export class EditorContextListener extends Plugin {
     }
 
     this.results = compilationResult
-    
+
   }
 
   _stopHighlighting() {
@@ -221,11 +223,13 @@ export class EditorContextListener extends Plugin {
     for (const i in this.nodes) {
       if (this.nodes[i].id === node.scope) {
         const contract = this.nodes[i]
-        this.contract = this.results.data.contracts[path][contract.name]
-        if (contract) {
-          this.estimationObj = this.contract.evm.gasEstimates
-          this.creationCost = this.estimationObj === null ? '-' : this.estimationObj.creation.totalCost
-          this.codeDepositCost = this.estimationObj === null ? '-' : this.estimationObj.creation.codeDepositCost
+        this.contract = this.results.data.contracts && this.results.data.contracts[path] && this.results.data.contracts[path][contract.name]
+        if (this.contract) {
+          this.estimationObj = this.contract.evm && this.contract.evm.gasEstimates
+          if (this.estimationObj) {
+            this.creationCost = this.estimationObj === null ? '-' : this.estimationObj.creation.totalCost
+            this.codeDepositCost = this.estimationObj === null ? '-' : this.estimationObj.creation.codeDepositCost
+          }
         }
       }
     }
