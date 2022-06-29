@@ -42,7 +42,7 @@ module.exports = {
       .createContract(['12'])
       .clickInstance(0)
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
-      .click('i.savetransaction')
+      .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
         const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
@@ -77,7 +77,7 @@ module.exports = {
       .selectContract('t2est')
       .pause(1000)
       .createContract([])
-      .click('i.savetransaction')
+      .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
         const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
@@ -108,7 +108,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .click('*[data-id="runtabLivemodeInput"]')
-      .click('i.runtransaction')
+      .click('.runtransaction')
       .pause(1000)
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {
@@ -128,7 +128,7 @@ module.exports = {
       .openFile('scenario_live_mode.json')
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
-      .click('i.runtransaction')
+      .click('.runtransaction')
       .pause(5000)
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {
