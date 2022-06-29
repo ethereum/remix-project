@@ -297,12 +297,12 @@ class Recorder extends Plugin {
     }
 
     try {
-      var txArray = json.transactions || []
-      var accounts = json.accounts || []
-      var options = json.options || {}
-      var abis = json.abis || {}
-      var linkReferences = json.linkReferences || {}
-      var live = json.live || false
+      const txArray = json.transactions || []
+      const accounts = json.accounts || []
+      const options = json.options || {}
+      const abis = json.abis || {}
+      const linkReferences = json.linkReferences || {}
+      const live = json.live || false
     } catch (e) {
       return cb('Invalid Scenario File. Please try again')
     }
