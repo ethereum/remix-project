@@ -74,7 +74,7 @@ export class Blockchain extends Plugin {
         this.networkStatus = { network, error }
         this.event.trigger('networkStatus', [this.networkStatus])
       })
-    }, 100000)
+    }, 1000)
   }
 
   getCurrentNetworkStatus () {

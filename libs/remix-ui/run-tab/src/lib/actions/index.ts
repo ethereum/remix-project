@@ -26,7 +26,7 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
   setupEvents(plugin, dispatch)
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
-  }, 10000000)
+  }, 1000)
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
