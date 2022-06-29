@@ -3,18 +3,18 @@
 import { default as deepequal } from 'deep-equal' // eslint-disable-line
 
 import { Plugin } from '@remixproject/engine'
-import { fileState } from '@remix-ui/file-states'
+import { fileDecoration } from '@remix-ui/file-decorators'
 
 const profile = {
-    name: 'fileStates',
-    desciption: 'Keeps state of the files',
-    methods: ['setFileState'],
-    events: ['fileStateChanged'],
+    name: 'fileDecorator',
+    desciption: 'Keeps decorators of the files',
+    methods: ['setFileDecorators'],
+    events: ['fileDecoratorsChanged'],
     version: '0.0.1'
 }
 
-export class FileStates extends Plugin {
-    private _fileStates: fileState[] = []
+export class FileDecorator extends Plugin {
+    private _fileStates: fileDecoration[] = []
     constructor() {
         super(profile)
     }
@@ -22,9 +22,9 @@ export class FileStates extends Plugin {
      * 
      * @param fileStates Array of file states
      */
-    async setFileState(fileStates: fileState[] | fileState) {
+    async setFileDecorators(fileStates: fileDecoration[] | fileDecoration) {
         const workspace = await this.call('filePanel', 'getCurrentWorkspace')
-        function sortByPath( a, b ) {
+        function sortByPath( a: fileDecoration, b: fileDecoration ) {
             if ( a.path < b.path ){
               return -1;
             }
@@ -40,7 +40,7 @@ export class FileStates extends Plugin {
             state.workspace = workspace
         })
         const filteredState = this._fileStates.filter((state) => {
-            const index = fileStatesPayload.findIndex((payloadFileState: fileState) => {
+            const index = fileStatesPayload.findIndex((payloadFileState: fileDecoration) => {
                 return payloadFileState.owner == state.owner && payloadFileState.path == state.path
             })
             return index == -1
@@ -49,9 +49,8 @@ export class FileStates extends Plugin {
 
         if (!deepequal(newState, this._fileStates)) {
             this._fileStates = newState
-
             console.log('fileStates', this._fileStates)
-            this.emit('fileStateChanged', this._fileStates)
+            this.emit('fileDecoratorsChanged', this._fileStates)
         }
     }
 }

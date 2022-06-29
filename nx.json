@@ -170,7 +170,7 @@
     "remix-ui-permission-handler": {
       "tags": []
     },
-    "remix-ui-file-states": {
+    "remix-ui-file-decorators": {
       "tags": []
     }
   },

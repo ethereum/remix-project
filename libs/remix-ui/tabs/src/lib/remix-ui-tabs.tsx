@@ -1,5 +1,7 @@
-import { fileState } from '@remix-ui/workspace'
+
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
 import { Plugin } from '@remixproject/engine'
+
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
@@ -23,7 +25,7 @@ export interface TabsUIApi {
 
 interface ITabsState {
   selectedIndex: number,
-  fileStates: fileState[],
+  fileDecorations: fileDecoration[],
 }
 
 interface ITabsAction {
@@ -34,7 +36,7 @@ interface ITabsAction {
 
 const initialTabsState: ITabsState = {
   selectedIndex: -1,
-  fileStates: [],
+  fileDecorations: [],
 }
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
@@ -44,10 +46,10 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
         ...state,
         selectedIndex: action.payload,
       }
-    case 'SET_FILE_STATES':
+    case 'SET_FILE_DECORATIONS':
       return {
         ...state,
-        fileStates: action.payload,
+        fileDecorations: action.payload as fileDecoration[],
       }
     default:
       return state
@@ -64,15 +66,25 @@ export const TabsUI = (props: TabsUIProps) => {
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
   useEffect(() => {
-    console.log('TabsUI useEffect')
     if (props.tabs[tabsState.selectedIndex]) {
       tabsRef.current[tabsState.selectedIndex].scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }, [tabsState.selectedIndex])
 
-  const getFileState = (tab: any) => {
-    console.log('TAB', tab, tabsState.fileStates)
+
+
+  const getFileDecorationClasses = (tab: any) => {
+    console.log('TAB', tab, tabsState.fileDecorations)
+    const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
+      if(`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
+    })
+    return fileDecoration && fileDecoration.fileStateLabelClass
   }
+
+  const getFileDecorationIcons = (tab: any) => {
+    return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
+  }
+
 
   const renderTab = (tab, index) => {
     console.log('rendertab')
@@ -83,7 +95,8 @@ export const TabsUI = (props: TabsUIProps) => {
     return (
       <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} data-id={index === currentIndexRef.current ? 'tab-active' : ''} title={tab.tooltip}>
         {tab.icon ? (<img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} />) : (<i className={classNameImg}></i>)}
-        <span className={`title-tabs ${getFileState(tab)}`}>{tab.title}</span>
+        <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
+        {getFileDecorationIcons(tab)}
         <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
           <i className="text-dark fas fa-times"></i>
         </span>
@@ -101,8 +114,8 @@ export const TabsUI = (props: TabsUIProps) => {
     dispatch({ type: 'SELECT_INDEX', payload: index })
   }
 
-  const setFileStates = (fileStates: fileState[]) => {
-    dispatch({ type: 'SET_FILE_STATES', payload: fileStates })
+  const setFileDecorations = (fileStates: fileDecoration[]) => {
+    dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
   const transformScroll = (event) => {
@@ -118,7 +131,7 @@ export const TabsUI = (props: TabsUIProps) => {
     props.onReady({
       activateTab,
       active,
-      setFileStates
+      setFileDecorations
     })
 
     return () => { tabsElement.current.removeEventListener('wheel', transformScroll) }

@@ -1,4 +1,5 @@
-import { action, fileState } from '../types'
+import { fileDecoration } from '@remix-ui/file-decorators'
+import { action } from '../types'
 
 export const setCurrentWorkspace = (workspace: string) => {
   return {
@@ -240,9 +241,9 @@ export const fsInitializationCompleted = () => {
   }
 }
 
-export const setFileStateSuccess = (items: fileState[]) => {
+export const setFileDecorationSuccess = (items: fileDecoration[]) => {
   return {
-    type: 'SET_FILE_STATE_SUCCESS',
+    type: 'SET_FILE_DECORATION_SUCCESS',
     payload: items
   }
 }

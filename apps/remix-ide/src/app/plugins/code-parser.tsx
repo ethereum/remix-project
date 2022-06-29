@@ -8,7 +8,7 @@ import { AstNode, CompilationError, CompilationResult, CompilationSource } from 
 import { helper } from '@remix-project/remix-solidity'
 
 import React from 'react'
-import { fileState, fileStateType } from '@remix-ui/file-states'
+import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 // eslint-disable-next-line
 
 
@@ -121,18 +121,18 @@ export class CodeParser extends Plugin {
 
                 try {
                    
-                    let fileState:fileState = {
+                    let fileState:fileDecoration = {
                         path: this.currentFile,
                         isDirectory: false,
-                        fileStateType: fileStateType.Custom,
+                        fileStateType: fileDecorationType.Error,
                         fileStateLabelClass: 'text-success',
                         fileStateIconClass: '',
                         fileStateIcon: <i className="text-success fas fa-smile"></i>,
-                        comment: '',
+                        text: '2',
                         owner: 'code-parser',
                         bubble: true
                     }
-                    await this.call('fileStates', 'setFileState', fileState)
+                    await this.call('fileDecorator', 'setFileDecorators', fileState)
                     fileState = {
                         ...fileState,
                         fileStateLabelClass: 'text-danger',
@@ -144,41 +144,41 @@ export class CodeParser extends Plugin {
                         fileStateLabelClass: 'text-danger',
                         fileStateIcon: <div className='btn btn-danger btn-sm'>call rob now!</div>,
                     }
-                    await this.call('fileStates', 'setFileState', fileState)
+                    await this.call('fileDecorator', 'setFileDecorators', fileState)
 
-                    const states:fileState[] = [
+                    const states:fileDecoration[] = [
                         {
                             path: 'contracts/2_Owner.sol',
                             isDirectory: false,
-                            fileStateType: fileStateType.Custom,
+                            fileStateType: fileDecorationType.Custom,
                             fileStateLabelClass: 'text-success',
                             fileStateIconClass: '',
                             fileStateIcon: <i className="text-success fas fa-smile"></i>,
-                            comment: '',
+                            text: '',
                             owner: 'code-parser',
                             bubble: true
                         },
                         {
                             path: 'contracts/2_Owner.sol',
                             isDirectory: false,
-                            fileStateType: fileStateType.Custom,
+                            fileStateType: fileDecorationType.Custom,
                             fileStateLabelClass: 'text-danger',
                             fileStateIconClass: '',
                             fileStateIcon: <i className="text-danger fas fa-smile"></i>,
-                            comment: '',
+                            text: '',
                             owner: 'code-parser',
                             bubble: true
                         }
                     ]
 
-                    await this.call('fileStates', 'setFileState', states)
+                    await this.call('fileDecorator', 'setFileDecorators', states)
 
                     
                 } catch (e) { 
                     console.log('error calling filePanel', e)
                 }
             } else {
-                await this.call('fileStates', 'setFileState', [{
+                await this.call('fileDecorator', 'setFileDecorators', [{
                     path: this.currentFile,
                     isDirectory: false,
                     fileStateType: [],
