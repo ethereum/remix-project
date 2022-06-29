@@ -170,8 +170,8 @@ export class TabProxy extends Plugin {
       this.removeTab(profile.name)
     })
 
-    this.on('fileStates', 'fileStateChanged', async (items) => {
-      this.tabsApi.setFileStates(items)
+    this.on('fileDecorator', 'fileDecoratorsChanged', async (items) => {
+      this.tabsApi.setFileDecorations(items)
     })
     
     try {

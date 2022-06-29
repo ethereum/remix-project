@@ -432,7 +432,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               {
                 files[props.name] && Object.keys(files[props.name]).map((key, index) => <FileRender
                   file={files[props.name][key]}
-                  fileState={fileState}
+                  fileDecorations={fileState}
                   index={index}
                   focusContext={state.focusContext}
                   focusEdit={state.focusEdit}

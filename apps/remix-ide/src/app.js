@@ -13,7 +13,9 @@ import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 import { AstWalker } from '@remix-project/remix-astwalker'
-import { LinkLibraries, DeployLibraries, OpenZeppelinProxy, CodeParser, FileStates } from '@remix-project/core-plugin'
+import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
+import { CodeParser } from './app/plugins/code-parser'
+import { FileDecorator } from './app/plugins/file-decorator'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -204,7 +206,7 @@ class AppComponent {
     )
     const contextualListener = new EditorContextListener(new AstWalker())
     const codeParser = new CodeParser(new AstWalker())
-    const fileStates = new FileStates()
+    const fileDecorator = new FileDecorator()
 
     this.notification = new NotificationPlugin()
 
@@ -230,7 +232,7 @@ class AppComponent {
       offsetToLineColumnConverter,
       contextualListener,
       codeParser,
-      fileStates,
+      fileDecorator,
       terminal,
       web3Provider,
       compileAndRun,
@@ -357,7 +359,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'codeParser', 'fileStates', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'codeParser', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun'])
 

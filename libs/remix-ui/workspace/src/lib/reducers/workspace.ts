@@ -1,6 +1,7 @@
 import { extractNameFromKey } from '@remix-ui/helper'
-import { action, fileState, FileType } from '../types'
+import { action, FileType } from '../types'
 import * as _ from 'lodash'
+import { fileDecoration } from '@remix-ui/file-decorators'
 interface Action {
   type: string
   payload: any
@@ -21,7 +22,7 @@ export interface BrowserState {
       removedMenuItems: action[],
       error: string
     },
-    fileState: fileState[]
+    fileState: fileDecoration[]
   },
   localhost: {
     sharedFolder: string,
@@ -603,7 +604,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
-    case 'SET_FILE_STATE_SUCCESS': {
+    case 'SET_FILE_DECORATION_SUCCESS': {
       return {
         ...state,
         browser: {

@@ -30,7 +30,7 @@ const { SlitherHandle } = require('../files/slither-handle.js')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace', 'setFileState'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -85,10 +85,6 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  async setFileState (fileState) {
-    console.log(fileState)
-    this.emit('setFileState', fileState)
-  }
 
   getCurrentWorkspace () {
     return this.currentWorkspaceMetadata
