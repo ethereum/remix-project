@@ -1260,11 +1260,12 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/remix-ui/tooltip-popup/**/*.{ts,tsx,js,jsx}"
-            ]
+            "linter": "eslint",
+            "config": "libs/remix-ui/tooltip-popup/.eslintrc.json",
+            "tsConfig": ["libs/remix-ui/tooltip-popup/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
