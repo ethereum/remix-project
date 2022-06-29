@@ -51,8 +51,8 @@ export class CodeParser extends Plugin {
     }
 
     async onActivation() {
-        this.on('editor', 'contentChanged', async () => {
-            console.log('contentChanged')
+        this.on('editor', 'didChangeFile', async (file) => {
+            console.log('contentChanged', file)
             await this.getCurrentFileAST()
             await this.compile()
         })
@@ -156,7 +156,8 @@ export class CodeParser extends Plugin {
                         fileStateIcon: '',
                         text: errors.length,
                         owner: 'code-parser',
-                        bubble: true
+                        bubble: true,
+                        commment: errors.map((error) => error.message),
                     }
                     decorators.push(decorator)
                 }
