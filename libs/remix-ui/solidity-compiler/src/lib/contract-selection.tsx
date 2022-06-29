@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
@@ -10,6 +11,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, contractsDetails, contractList, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
+
+  const intl = useIntl()
 
   useEffect(() => {
     if (contractList.length) setSelectedContract(contractList[0].name)
@@ -152,7 +155,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         {
           Object.keys(contractProperties).map((propertyName, index) => {
             const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} direction='top' /></span>
-            const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
+            const questionMark = <span className="remixui_questionMark"><i title={ intl.formatMessage({id: `solidity.${propertyName}`, defaultMessage: help[propertyName]}) } className="fas fa-question-circle" aria-hidden="true"></i></span>
 
             return (
               <div className="remixui_log" key={index}>
@@ -190,15 +193,15 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           </div>
           <article className="mt-2 pb-0">
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" title="Publish on Ipfs" onClick={() => { handlePublishToStorage('ipfs') }}>
-              <span>Publish on Ipfs</span>
+              <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Ipfs</span>
               <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
             </button>
             <button id="publishOnSwarm" className="btn btn-secondary btn-block" title="Publish on Swarm" onClick={() => { handlePublishToStorage('swarm') }}>
-              <span>Publish on Swarm</span>
+              <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Swarm</span>
               <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
             </button>
             <button data-id="compilation-details" className="btn btn-secondary btn-block" title="Display Contract Details" onClick={() => { details() }}>
-              Compilation Details
+              <FormattedMessage id='solidity.compilationDetails' defaultMessage='Compilation Details' />
             </button>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
