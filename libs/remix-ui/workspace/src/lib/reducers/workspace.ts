@@ -18,6 +18,8 @@ export interface BrowserState {
     isSuccessfulDirectory: boolean,
     isRequestingWorkspace: boolean,
     isSuccessfulWorkspace: boolean,
+    isRequestingCloning: boolean,
+    isSuccessfulCloning: boolean,
     error: string,
     contextMenu: {
       registeredMenuItems: action[],
@@ -53,8 +55,7 @@ export interface BrowserState {
   popup: string,
   focusEdit: string,
   focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
-  initializingFS: boolean,
-  isGitRepo: boolean
+  initializingFS: boolean
 }
 
 export const browserInitialState: BrowserState = {
@@ -67,6 +68,8 @@ export const browserInitialState: BrowserState = {
     isSuccessfulDirectory: false,
     isRequestingWorkspace: false,
     isSuccessfulWorkspace: false,
+    isRequestingCloning: false,
+    isSuccessfulCloning: false,
     error: null,
     contextMenu: {
       registeredMenuItems: [],
@@ -102,8 +105,7 @@ export const browserInitialState: BrowserState = {
   popup: '',
   focusEdit: '',
   focusElement: [],
-  initializingFS: true,
-  isGitRepo: false
+  initializingFS: true
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -451,14 +453,25 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'RENAME_WORKSPACE': {
       const payload = action.payload as { oldName: string, workspaceName: string }
-      const workspaces = state.browser.workspaces.filter(({ name }) => name && (name !== payload.oldName))
+      let renamedWorkspace
+      const workspaces = state.browser.workspaces.filter(({ name, isGitRepo }) => {
+        if (name && (name !== payload.oldName)) {
+          return true
+        } else {
+          renamedWorkspace = {
+            name: payload.workspaceName,
+            isGitRepo
+          }
+          return false
+        }
+      })
 
       return {
         ...state,
         browser: {
           ...state.browser,
           currentWorkspace: payload.workspaceName,
-          workspaces: [...workspaces, payload.workspaceName],
+          workspaces: [...workspaces, renamedWorkspace],
           expandPath: []
         }
       }
@@ -593,6 +606,39 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           isRequestingLocalhost: false,
           isSuccessfulLocalhost: false,
           error: payload
+        }
+      }
+    }
+
+    case 'CLONE_REPOSITORY_REQUEST': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          isRequestingCloning: true,
+          isSuccessfulCloning: false
+        }
+      }
+    }
+
+    case 'CLONE_REPOSITORY_SUCCESS': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          isRequestingCloning: false,
+          isSuccessfulCloning: true
+        }
+      }
+    }
+
+    case 'CLONE_REPOSITORY_FAILED': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          isRequestingCloning: false,
+          isSuccessfulCloning: false
         }
       }
     }
