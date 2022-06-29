@@ -78,7 +78,7 @@ export interface EditorUIProps {
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     addErrorMarker: (errors: []) => void
-    clearErrorMarkers: (sources: {}) => void
+    clearErrorMarkers: (sources: any) => void
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   }
@@ -359,7 +359,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.addErrorMarker = async (errors: []) => {
 
-    let allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
+    const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
     for (const error of errors) {
       const marker = (error as any).error
       const lineColumn = (error as any).lineColumn
@@ -378,10 +378,10 @@ export const EditorUI = (props: EditorUIProps) => {
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
           severity: errorServerityMap[marker.severity],
-          startLineNumber: lineColumn.start.line + 1,
-          startColumn: lineColumn.start.column + 1,
-          endLineNumber: lineColumn.end.line + 1,
-          endColumn: lineColumn.end.column + 1,
+          startLineNumber: (lineColumn.start && lineColumn.start.line) || 0 + 1,
+          startColumn: (lineColumn.start && lineColumn.start.column) || 0 + 1,
+          endLineNumber: (lineColumn.end && lineColumn.end.line) || 0 + 1,
+          endColumn: (lineColumn.end && lineColumn.end.column) || 0 + 1,
           message: marker.message,
         }
         console.log(markerData)
@@ -399,13 +399,15 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: {}) => {
-    console.log('clear', sources)
-    for (const source of Object.keys(sources)) {
-      const filePath = source
-      const model = editorModelsState[filePath]?.model
-      if (model) {
-        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [])
+  props.editorAPI.clearErrorMarkers = async (sources: any) => {
+    if (sources) {
+      console.log('clear', sources)
+      for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
+        const filePath = source
+        const model = editorModelsState[filePath]?.model
+        if (model) {
+          monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [])
+        }
       }
     }
   }
@@ -518,6 +520,19 @@ export const EditorUI = (props: EditorUIProps) => {
       noSemanticValidation: false,
       noSyntaxValidation: false,
     });
+
+    monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', {
+      provideDocumentHighlights(model: any, position: any, token: any) {
+        console.log('HIghlight', position)
+        const hightlights = [
+          {
+            range: new monacoRef.current.Range(position.lineNumber, position.column, position.lineNumber, position.column+5),
+            kind: monacoRef.current.languages.DocumentHighlightKind.Write
+          }
+        ]
+        return hightlights
+      }
+    })
 
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))

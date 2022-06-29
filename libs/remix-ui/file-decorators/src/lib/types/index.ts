@@ -13,6 +13,7 @@ export enum fileDecorationType {
     New = 'NEW',
     Compiled = 'COMPILED',
     Custom = 'CUSTOM',
+    None = 'NONE'
   }
   
   export type fileDecoration = {
