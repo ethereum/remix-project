@@ -1,21 +1,10 @@
 export enum fileDecorationType {
     Error = 'ERROR',
     Warning = 'WARNING',
-    Success = 'SUCCESS',
-    Loading = 'LOADING',
-    Unsaved = 'UNSAVED',
-    Untracked = 'UNTRACKED',
-    Modified = 'MODIFIED',
-    Staged = 'STAGED',
-    Committed = 'COMMITTED',
-    Deleted = 'DELETED',
-    Added = 'ADDED',
-    New = 'NEW',
-    Compiled = 'COMPILED',
     Custom = 'CUSTOM',
     None = 'NONE'
   }
-  
+
   export type fileDecoration = {
     path: string,
     isDirectory: boolean,
@@ -28,6 +17,7 @@ export enum fileDecorationType {
     owner: string,
     workspace?: any
     tooltip?: string
+    commment?: string[] | string
   }
 
   export interface FileType {

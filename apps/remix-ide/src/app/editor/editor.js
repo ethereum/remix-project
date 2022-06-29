@@ -211,6 +211,7 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
+    this.triggerEvent('didChangeFile', [file])
     const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
