@@ -47,7 +47,7 @@ export function ValueUI (props: ValueProps) {
 
   return (
     <div className="udapp_crow">
-      <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Amount</label>
+      <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Value</label>
       <div className="udapp_gasValueContainer">
         <input
           ref={inputValue}
