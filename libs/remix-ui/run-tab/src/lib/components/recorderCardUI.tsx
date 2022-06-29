@@ -43,8 +43,8 @@ export function RecorderUI (props: RecorderProps) {
       </div>
       <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
-          <input ref={inputLive} type="checkbox" id="livemode-recorder" data-id="runtabLivemodeInput" className="custom-control-input custom-select" name="input-livemode"/>
-          <label className="form-check-label custom-control-label" htmlFor="livemode-recorder">When running transactions, get the contracts bytecodes from the last compilation result.</label>
+          <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
+          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">When running transactions, get the contracts bytecodes from the last compilation result.</label>
         </div>     
         <div className="mb-1 mt-1 udapp_transactionActions">
         <OverlayTrigger placement={'right'} overlay={
