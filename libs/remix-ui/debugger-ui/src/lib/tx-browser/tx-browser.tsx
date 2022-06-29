@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'  //eslint-disable-line
+import { useIntl } from 'react-intl'
 import './tx-browser.css'
 
 export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
@@ -7,6 +8,9 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
   })
 
   const inputValue = useRef(null)
+
+  const intl = useIntl()
+
   useEffect(() => {
     setState(prevState => {
       return {
@@ -58,7 +62,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
             type='text'
             onChange={({ target: { value } }) => txInputChanged(value)}
             onInput={txInputOnInput}
-            placeholder={'Transaction hash, should start with 0x'}
+            placeholder={intl.formatMessage({id: 'debugger.placeholder', defaultMessage: 'Transaction hash, should start with 0x'})}
             data-id='debuggerTransactionInput'
             disabled={debugging}
           />
@@ -67,12 +71,12 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
           <button
             className='btn btn-primary btn-sm txbutton'
             id='load'
-            title={debugging ? 'Stop debugging' : 'Start debugging'}
+            title={intl.formatMessage({id: `debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`, defaultMessage: debugging ? 'Stop debugging' : 'Start debugging'})}
             onClick={handleSubmit}
             data-id='debuggerTransactionStartButton'
             disabled={!state.txNumber }
           >
-            { debugging ? 'Stop' : 'Start' } debugging
+            { intl.formatMessage({id: `debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`, defaultMessage: debugging ? 'Stop debugging' : 'Start debugging'}) }
           </button>
         </div>
       </div>
