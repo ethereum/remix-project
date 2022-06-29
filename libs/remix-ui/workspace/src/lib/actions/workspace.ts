@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars, createNonClashingTitle } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
@@ -42,13 +42,13 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
-    dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo: false }))
+    dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
@@ -334,12 +334,26 @@ export const cloneRepository = async (url: string) => {
   const token = config.get('currentFile')
   const repoConfig = { url, token }
   const urlArray = url.split('/')
-  let repoName = urlArray[urlArray.length - 1]
+  let repoName = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
 
   try {
     repoName = await createNonClashingTitle(repoName, plugin.fileManager)
-    await plugin.call('dGitProvider', 'clone', repoConfig, repoName)
-    await plugin.call('manager', 'activatePlugin', 'dgit')
+    await createWorkspace(repoName, 'blank', true, null, true)
+    const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
+
+    dispatch(cloneRepositoryRequest())
+    promise.then(async () => {
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      await fetchWorkspaceDirectory(repoName)
+      dispatch(cloneRepositorySuccess())
+    }).catch((e) => {
+      dispatch(displayNotification('Clone Git Repository', 'An error occured: ' + e, 'Ok', null, async () => {
+        await deleteWorkspace(repoName)
+        dispatch(cloneRepositoryFailed())
+      }))
+    })
   } catch (e) {
     dispatch(displayPopUp('An error occured: ' + e))
   }
