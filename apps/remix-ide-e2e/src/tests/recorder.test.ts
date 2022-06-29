@@ -107,6 +107,7 @@ module.exports = {
       .openFile('scenario_live_mode.json')
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
+      .click('*[data-id="runtabLivemodeInput"]')
       .click('i.runtransaction')
       .pause(1000)
       .clickInstance(0)

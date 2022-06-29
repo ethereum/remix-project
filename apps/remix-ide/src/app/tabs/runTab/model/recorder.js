@@ -191,15 +191,16 @@ class Recorder extends Plugin {
     * @param {Function} promptCb
     * @param {Function} alertCb
     * @param {Function} logCallBack
-    * @param {Function} live
+    * @param {Function} liveMode
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, live, newContractFn) {
+  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, newContractFn) {
     this.setListen(false)
-    logCallBack(`Running ${records.length} transaction(s) ...`)
+    const liveMsg = liveMode ? ' in live mode' : ''
+    logCallBack(`Running ${records.length} transaction(s)${liveMsg} ...`)
     async.eachOfSeries(records, async (tx, index, cb) => {
-      if (live && tx.record.type === 'constructor') {
+      if (liveMode && tx.record.type === 'constructor') {
         // resolve the bytecode using the contract name, this ensure getting the last compiled one.
         const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
         tx.record.bytecode = data.artefact.evm.bytecode.object
@@ -282,7 +283,7 @@ class Recorder extends Plugin {
     }, () => { this.setListen(true) })
   }
 
-  runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+  runScenario (liveMode, json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
     _paq.push(['trackEvent', 'run', 'recorder', 'start'])
     if (!json) {
       _paq.push(['trackEvent', 'run', 'recorder', 'wrong-json'])
@@ -296,13 +297,17 @@ class Recorder extends Plugin {
       }
     }
 
+    let txArray
+    let accounts
+    let options
+    let abis
+    let linkReferences
     try {
-      const txArray = json.transactions || []
-      const accounts = json.accounts || []
-      const options = json.options || {}
-      const abis = json.abis || {}
-      const linkReferences = json.linkReferences || {}
-      const live = json.live || false
+      txArray = json.transactions || []
+      accounts = json.accounts || []
+      options = json.options || {}
+      abis = json.abis || {}
+      linkReferences = json.linkReferences || {}
     } catch (e) {
       return cb('Invalid Scenario File. Please try again')
     }
@@ -311,7 +316,7 @@ class Recorder extends Plugin {
       return
     }
 
-    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, live, (abi, address, contractName) => {
+    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, (abi, address, contractName) => {
       cb(null, abi, address, contractName)
     })
   }
