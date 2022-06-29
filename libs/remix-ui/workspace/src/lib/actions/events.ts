@@ -1,7 +1,8 @@
+import { fileDecoration } from '@remix-ui/file-decorators'
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { action, WorkspaceTemplate, fileState } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileStateSuccess } from './payload'
+import { action, WorkspaceTemplate } from '../types'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
@@ -38,8 +39,8 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
     uploadFile(target, dir, cb)
   })
 
-  plugin.on('fileStates', 'fileStateChanged', async (items: fileState[]) => {
-    setFileState(items)
+  plugin.on('fileDecorator', 'fileDecoratorsChanged', async (items: fileDecoration[]) => {
+    setFileDecorators(items)
   })
 
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
@@ -207,7 +208,7 @@ const rootFolderChanged = async (path) => {
   await dispatch(rootFolderChangedSuccess(path))
 }
 
-const setFileState = async (items: fileState[], cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-  await dispatch(setFileStateSuccess(items))
+const setFileDecorators = async (items: fileDecoration[], cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  await dispatch(setFileDecorationSuccess(items))
   cb && cb(null, true)
 }

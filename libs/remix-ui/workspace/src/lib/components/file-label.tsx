@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import { fileState } from '@remix-ui/file-states'
+import { fileDecoration } from '@remix-ui/file-decorators'
 import React, { useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
 
@@ -11,12 +11,12 @@ export interface FileLabelProps {
     isNew: boolean
     lastEdit: string
   }
-  fileState: fileState[],
+  fileDecorations: fileDecoration[],
   editModeOff: (content: string) => void
 }
 
 export const FileLabel = (props: FileLabelProps) => {
-  const { file, focusEdit, editModeOff, fileState } = props
+  const { file, focusEdit, editModeOff, fileDecorations } = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [fileStateClasses, setFileStateClasses] = useState<string>('')
   const labelRef = useRef(null)
@@ -28,16 +28,17 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [file.path, focusEdit])
 
   useEffect(() => {
-    console.log('fileState', fileState, file.name)
-    const state = props.fileState.find((state: fileState) => {
-      console.log('FOUND STATE', state)
+    console.log('fileState', fileDecorations, file.name)
+    const state = props.fileDecorations.find((state: fileDecoration) => {
       if(state.path === props.file.path) return true
       if(state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
     })
     if (state && state.fileStateLabelClass) {
       setFileStateClasses(state.fileStateLabelClass)
+    } else{
+      setFileStateClasses('')
     }
-  }, [fileState])
+  }, [fileDecorations])
 
   useEffect(() => {
     if (labelRef.current) {

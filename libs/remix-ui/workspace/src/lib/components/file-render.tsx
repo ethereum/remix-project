@@ -6,8 +6,11 @@ import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileLabel } from './file-label'
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
 
-import { fileState, FileStateIcons } from '@remix-ui/file-states'
+
+
+
 
 export interface RenderFileProps {
   file: FileType,
@@ -21,7 +24,7 @@ export interface RenderFileProps {
   handleClickFolder: (path: string, type: string) => void,
   handleClickFile: (path: string, type: string) => void,
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
-  fileState: fileState[]
+  fileDecorations: fileDecoration[]
 }
 
 export const FileRender = (props: RenderFileProps) => {
@@ -79,7 +82,7 @@ export const FileRender = (props: RenderFileProps) => {
         iconX='pr-3 fa fa-folder'
         iconY='pr-3 fa fa-folder-open'
         key={`${file.path + props.index}`}
-        label={<FileLabel fileState={props.fileState} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
+        label={<FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
         onClick={handleFolderClick}
         onContextMenu={handleContextMenu}
         labelClass={labelClass}
@@ -92,7 +95,7 @@ export const FileRender = (props: RenderFileProps) => {
           file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
             Object.keys(file.child).map((key, index) => <FileRender
               file={file.child[key]}
-              fileState={props.fileState}
+              fileDecorations={props.fileDecorations}
               index={index}
               focusContext={props.focusContext}
               focusEdit={props.focusEdit}
@@ -118,8 +121,8 @@ export const FileRender = (props: RenderFileProps) => {
         label={
           <>
             <div className="d-flex flex-row">
-              <FileLabel file={file} fileState={props.fileState} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-              <FileStateIcons file={file} fileState={props.fileState}/>
+              <FileLabel file={file} fileDecorations={props.fileDecorations} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+              <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
             </div>
           </>
         }
