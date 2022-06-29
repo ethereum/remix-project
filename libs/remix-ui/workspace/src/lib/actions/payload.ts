@@ -239,3 +239,21 @@ export const fsInitializationCompleted = () => {
     type: 'FS_INITIALIZATION_COMPLETED'
   }
 }
+
+export const cloneRepositoryRequest = () => {
+  return {
+    type: 'CLONE_REPOSITORY_REQUEST'
+  }
+}
+
+export const cloneRepositorySuccess = () => {
+  return {
+    type: 'CLONE_REPOSITORY_SUCCESS'
+  }
+}
+
+export const cloneRepositoryFailed = () => {
+  return {
+    type: 'CLONE_REPOSITORY_FAILED'
+  }
+}

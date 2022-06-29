@@ -33,9 +33,10 @@ const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean
   } else {
     if (workspaces.length > 0) {
       const workspace = workspaces[workspaces.length - 1]
+      const workspaceName = (workspace || {}).name
 
-      workspaceProvider.setWorkspace(workspace.name)
-      plugin.setWorkspace({ name: (workspace || {}).name, isLocalhost: false })
+      workspaceProvider.setWorkspace(workspaceName)
+      plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
       dispatch(setCurrentWorkspace(workspace))
     }
   }
