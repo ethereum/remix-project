@@ -118,14 +118,14 @@ export const runTabInitialState: RunTabState = {
       title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-london',
       fork: 'london',
-      content: 'Local VM (London)'
+      content: 'Remix VM (London)'
     }, {
       id: 'vm-mode-berlin',
       dataId: 'settingsVMBerlinMode',
       title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-berlin',
       fork: 'berlin',
-      content: 'Local VM (Berlin)'
+      content: 'Remix VM (Berlin)'
     }, {
       id: 'injected-mode',
       dataId: 'settingsInjectedMode',
@@ -137,7 +137,7 @@ export const runTabInitialState: RunTabState = {
       dataId: 'settingsWeb3Mode',
       title: `Execution environment connects to an external node. For security, only connect to trusted networks. If Remix is served via https and your node is accessed via http, it might not work. In this case, try cloning the repository and serving it via http.`,
       value: 'web3',
-      content: 'JSON-RPC Provider'
+      content: 'External HTTP Provider'
     }],
     isRequesting: false,
     isSuccessful: false,
