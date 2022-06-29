@@ -27,8 +27,7 @@ export function RecorderUI (props: RecorderProps) {
           <div className="ml-2 mb-2 badge badge-pill badge-primary" title="The number of recorded transactions">{props.count}</div>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="info-recorder">
-            <span>Save transactions (deployed contracts and function executions) and replay then in an
-            another environment. <br/> e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
+            <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
           </span>
           </Tooltip>
         }>
@@ -44,12 +43,12 @@ export function RecorderUI (props: RecorderProps) {
       <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
-          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">When running transactions, get the contracts bytecodes from the last compilation result.</label>
+          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Use live mode (Run transactions against latest compiled contracts).</label>
         </div>     
         <div className="mb-1 mt-1 udapp_transactionActions">
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-save-recorder">
-            <span>Save {props.count} transaction(s) to JSON.
+            <span>Save {props.count} transaction(s) as scenario file.
           </span>
           </Tooltip>
         }>
@@ -57,7 +56,7 @@ export function RecorderUI (props: RecorderProps) {
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-run-recorder">
-            <span>Run Transaction from the current scenario file.
+            <span>Run transaction(s) from the current scenario file.
           </span>
           </Tooltip>
         }>
