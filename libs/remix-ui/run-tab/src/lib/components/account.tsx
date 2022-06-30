@@ -160,8 +160,8 @@ export function AccountUI (props: AccountProps) {
             accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
           }
         </select>
-        <div style={{ marginLeft: -5 }}><CopyToClipboard content={selectedAccount} direction='top' /></div>
-        <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage} title="Sign a message using this account key"></i>
+        <div style={{ marginLeft: -5 }}><CopyToClipboard tip='Copy account to clipboard' content={selectedAccount} direction='top' /></div>
+        <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage} title="Sign a message using this account"></i>
       </div>
     </div>
   )
