@@ -235,7 +235,7 @@ module.exports = {
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .pause(2000)
-      .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
+      .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
@@ -249,23 +249,23 @@ module.exports = {
       .setValue('*[data-id="modalDialogCustomPromptTextRename"]', 'workspace_name_renamed')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
-      .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
+      .switchWorkspace('workspace_name_1')
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
-      .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
+      .switchWorkspace('workspace_name_renamed')
       .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
   'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
+      .switchWorkspace('workspace_name_1')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .waitForElementNotPresent('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
+      .waitForElementVisible('[data-id="workspacesSelect"]')
+      .click('[data-id="workspacesSelect"]')
+      .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
       .end()
   },
 
