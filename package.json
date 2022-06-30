@@ -172,6 +172,7 @@
     "core-js": "^3.6.5",
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
+    "eslint-config-prettier": "^8.5.0",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
