@@ -89,7 +89,7 @@ export default {
   'udapp.signature': '签名',
   'udapp.signedMessage': '已签名的消息',
   'udapp.environment': '环境',
-  'udapp.setupEnvironmentDocs': '查看环境设置文档',
+  'udapp.environmentDocs': '点击查看环境文档',
   'udapp.deploy': '部署',
   'udapp.publishTo': '发布到',
   'udapp.or': '或',
@@ -100,7 +100,6 @@ export default {
   'udapp.deployAndRunClearInstances': '清空合约实例并重置交易记录',
   'udapp.deployAndRunNoInstanceText': '当前您没有可交互的合约实例.',
   'udapp.transactionsRecorded': '已记录交易',
-  'udapp.transactionsRecordedText': '可以记录一个环境中的所有交易 (包括合约部署和函数调用）并在另一个环境中重放。 例如在Javascript虚拟机环境中记录的交易可以在注入的Web3环境中重放。',
 
   'search.displayName': '全文搜索',
   'search.replace': '替换',

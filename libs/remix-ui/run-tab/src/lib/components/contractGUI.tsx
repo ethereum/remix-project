@@ -292,7 +292,7 @@ export function ContractGUI (props: ContractGUIProps) {
               })}
             </div>
             <div className="udapp_group udapp_multiArg">
-              <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'left'} getContent={() => getContentOnCTC(multiFields.current)} />
+              <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={() => getContentOnCTC(multiFields.current)} />
               <button onClick={() => handleMultiValsSubmit(multiFields.current)} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
             </div>
           </div>
