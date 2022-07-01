@@ -29,7 +29,7 @@ const { SlitherHandle } = require('../files/slither-handle.js')
 
 const profile = {
   name: 'filePanel',
-  displayName: 'File explorers',
+  displayName: 'File explorer',
   intlId: 'filePanel.displayName',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],

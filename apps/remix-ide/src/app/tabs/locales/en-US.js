@@ -15,7 +15,7 @@ export default {
   'settings.themes': 'Themes',
   'settings.locales': 'Lanaguage',
 
-  'filePanel.displayName': 'File explorers',
+  'filePanel.displayName': 'File explorer',
   'filePanel.workspace': 'Workspaces',
   'filePanel.create': 'Create',
   'filePanel.workspace.create': 'Create Workspace',
@@ -89,7 +89,7 @@ export default {
   'udapp.signature': 'signature',
   'udapp.signedMessage': 'Signed Message',
   'udapp.environment': 'Environment',
-  'udapp.setupEnvironmentDocs': 'check out docs to setup Environment',
+  'udapp.environmentDocs': 'Click for docs about Environment',
   'udapp.deploy': 'Deploy',
   'udapp.publishTo': 'Publish to',
   'udapp.or': 'or',
@@ -100,7 +100,6 @@ export default {
   'udapp.deployAndRunClearInstances': 'Clear instances list and reset recorder',
   'udapp.deployAndRunNoInstanceText': 'Currently you have no contract instances to interact with.',
   'udapp.transactionsRecorded': 'Transactions recorded',
-  'udapp.transactionsRecordedText': 'All transactions (deployed contracts and function executions) can be saved and replayed inanother environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.',
 
   'search.displayName': 'Search in files',
   'search.replace': 'Replace',
