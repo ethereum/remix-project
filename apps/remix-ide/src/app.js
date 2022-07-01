@@ -326,7 +326,8 @@ class AppComponent {
       filePanel.slitherHandle,
       linkLibraries,
       deployLibraries,
-      openZeppelinProxy
+      openZeppelinProxy,
+      run.recorder
     ])
 
     this.layout.panels = {
@@ -360,7 +361,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun'])
+    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 
     this.appManager.on(
       'filePanel',
