@@ -19,8 +19,7 @@ const sensitiveCalls = {
 }
 
 export function isNative(name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic',
-    'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification', 'hardhat-provider', 'ganache-provider']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification', 'hardhat-provider', 'ganache-provider']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
