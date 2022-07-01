@@ -64,8 +64,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       let route = window.location.pathname
       if (route.startsWith('/address/0x') && route.length === 51) {
         const contractAddress = route.split('/')[2]
-        plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress}`)
+        plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress} .....`)
         let data
+        let count = 0
         try {
           let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
           if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
@@ -96,10 +97,12 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
             dispatch(setCurrentWorkspace('etherscan-code-sample'))
             let filePath
+            count = count + (Object.keys(data.compilationTargets)).length
             for (filePath in data.compilationTargets)
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
           }
-          plugin.call('notification', 'toast', `Added contract(s) verified on ${foundOnNetworks.join(',')} networks of Etherscan for contract address ${contractAddress}`)
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '': 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '': 's'} of Etherscan for contract address ${contractAddress} !!`)
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
