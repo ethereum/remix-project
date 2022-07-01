@@ -27,6 +27,7 @@ import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
 import { HardhatProvider } from './app/tabs/hardhat-provider'
 import { GanacheProvider } from './app/tabs/ganache-provider'
+import { FoundryProvider } from './app/tabs/foundry-provider'
 
 const isElectron = require('is-electron')
 
@@ -177,6 +178,7 @@ class AppComponent {
     const web3Provider = new Web3ProviderModule(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
+    const foundryProvider = new FoundryProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -233,6 +235,7 @@ class AppComponent {
       storagePlugin,
       hardhatProvider,
       ganacheProvider,
+      foundryProvider,
       this.walkthroughService,
       search
     ])
@@ -318,7 +321,8 @@ class AppComponent {
       filePanel.slitherHandle,
       linkLibraries,
       deployLibraries,
-      openZeppelinProxy
+      openZeppelinProxy,
+      run.recorder
     ])
 
     this.layout.panels = {
@@ -352,7 +356,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun'])
+    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 
     this.appManager.on(
       'filePanel',

@@ -13,7 +13,7 @@ export interface JSONStandardInput {
   };
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'erc20'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
