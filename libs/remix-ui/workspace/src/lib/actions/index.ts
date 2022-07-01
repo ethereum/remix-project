@@ -95,9 +95,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
             plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
             dispatch(setCurrentWorkspace('etherscan-code-sample'))
-            const filePath = Object.keys(data.compilationTargets)[0]
-            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
-            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+            let filePath
+            for (filePath in data.compilationTargets)
+              await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
           }
           plugin.call('notification', 'toast', `Added contract(s) verified on ${foundOnNetworks.join(',')} networks of Etherscan for contract address ${contractAddress}`)
         } catch (error) {
