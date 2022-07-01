@@ -13,7 +13,8 @@
     "npip": "npip",
     "lint": "eslint ./src --ext .ts",
     "build": "tsc -p ./ && chmod +x ./src/bin/remixd.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "postinstall": "node src/scripts/installSlither.js"
   },
   "publishConfig": {
     "access": "public"
