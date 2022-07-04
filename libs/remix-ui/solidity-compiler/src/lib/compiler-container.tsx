@@ -93,7 +93,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     const listener = (event) => {
-      if (configFilePathInput.current !== event.target) {
+      if (configFilePathInput.current !== event.target && event.target.innerText !== "Create") {
         setShowFilePathInput(false)
         configFilePathInput.current.value = ""
         return;
