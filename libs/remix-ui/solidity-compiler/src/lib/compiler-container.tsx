@@ -71,7 +71,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       api.setAppParameter('configFilePath', defaultPath)
       if (state.useFileConfiguration) {
         api.fileExists(defaultPath).then((exists) => {
-          if (!exists && state.useFileConfiguration) createNewConfigFile()
+          if (!exists && state.useFileConfiguration) {
+            configFilePathInput.current.value = defaultPath
+            createNewConfigFile()
+          }
         })
       }
       setShowFilePathInput(false)
@@ -90,8 +93,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     const listener = (event) => {
-      if (configFilePathInput.current !== event.target) {
+      if (configFilePathInput.current !== event.target && event.target.innerText !== "Create") {
         setShowFilePathInput(false)
+        configFilePathInput.current.value = ""
         return;
       }
     };
