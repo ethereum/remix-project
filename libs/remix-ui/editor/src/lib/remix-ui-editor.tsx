@@ -416,6 +416,20 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
+    
+    const editorService = editor._codeEditorService;
+    const openEditorBase = editorService.openCodeEditor.bind(editorService);
+    editorService.openCodeEditor = async (input, source) => {
+        const result = await openEditorBase(input, source)
+        if (input && input.resource && input.resource.path) {
+          try {
+            await props.plugin.call('fileManager', 'open', input.resource.path)
+          } catch (e) {
+            console.log(e)
+          }          
+        }
+        return result
+    }
   }
 
   function handleEditorWillMount (monaco) {
