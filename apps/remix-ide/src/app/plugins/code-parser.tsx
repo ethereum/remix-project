@@ -9,6 +9,7 @@ import { helper } from '@remix-project/remix-solidity'
 
 import React from 'react'
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
+import { lineText } from '@remix-ui/editor'
 // eslint-disable-next-line
 
 
@@ -16,7 +17,7 @@ const SolidityParser = (window as any).SolidityParser = (window as any).Solidity
 
 const profile = {
     name: 'codeParser',
-    methods: ['nodesAtPosition', 'getFunctionParamaters', 'getDeclaration', 'getFunctionReturnParameters', 'getVariableDeclaration', 'getNodeDocumentation', 'getNodeLink', 'listAstNodes', 'getBlockAtPosition', 'getLastNodeInLine', 'resolveImports', 'parseSolidity', 'getNodesWithScope', 'getNodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf'],
+    methods: ['nodesAtPosition', 'getFunctionParamaters', 'getDeclaration', 'getFunctionReturnParameters', 'getVariableDeclaration', 'getNodeDocumentation', 'getNodeLink', 'listAstNodes', 'getBlockAtPosition', 'getLastNodeInLine', 'resolveImports', 'parseSolidity', 'getNodesWithScope', 'getNodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'getGasEstimates'],
     events: [],
     version: '0.0.1'
 }
@@ -40,6 +41,7 @@ export class CodeParser extends Plugin {
     astWalker: any
     errorState: boolean = false
     onAstFinished: (success: any, data: CompilationResult, source: CompilationSource, input: any, version: any) => Promise<void>
+    gastEstimateTimeOut: any
 
     constructor(astWalker) {
         super(profile)
@@ -53,16 +55,18 @@ export class CodeParser extends Plugin {
     async onActivation() {
         this.on('editor', 'didChangeFile', async (file) => {
             console.log('contentChanged', file)
+            await this.call('editor', 'discardLineTexts')
             await this.getCurrentFileAST()
             await this.compile()
         })
 
-        this.on('filePanel', 'setWorkspace', async() => {
+        this.on('filePanel', 'setWorkspace', async () => {
             await this.call('fileDecorator', 'setFileDecorators', [])
         })
 
 
         this.on('fileManager', 'currentFileChanged', async () => {
+            await this.call('editor', 'discardLineTexts')
             await this.getCurrentFileAST()
             await this.compile()
         })
@@ -101,7 +105,6 @@ export class CodeParser extends Plugin {
                 for (const error of data.errors) {
                     const pos = helper.getPositionDetails(error.formattedMessage)
                     const filePosition = Object.keys(sources).findIndex((fileName) => fileName === error.sourceLocation.file)
-                    const source = sources[pos.file]
                     const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
                         {
                             start: error.sourceLocation.start,
@@ -109,7 +112,7 @@ export class CodeParser extends Plugin {
                         },
                         filePosition,
                         result.getSourceCode().sources,
-                        result.getAsts())
+                        null)
                     allErrors.push({ error, lineColumn })
                 }
                 console.log('allErrors', allErrors)
@@ -196,19 +199,33 @@ export class CodeParser extends Plugin {
                     decorators.push(decorator)
                 }
                 console.log(decorators)
+
                 await this.call('fileDecorator', 'setFileDecorators', decorators)
+
             }
 
 
             if (!data.sources) return
             if (data.sources && Object.keys(data.sources).length === 0) return
             this.lastCompilationResult = new CompilerAbstract('soljson', data, source, input)
+
             this.errorState = false
             this._index = {
                 Declarations: {},
-                FlatReferences: {}
+                FlatReferences: {},
+                NodesPerFile: {},
             }
             this._buildIndex(data, source)
+
+            if (this.gastEstimateTimeOut) {
+                window.clearTimeout(this.gastEstimateTimeOut)
+              }
+          
+              this.gastEstimateTimeOut = window.setTimeout(async () => {
+                this.setGasEstimates()
+              }, 500)
+
+            console.log("INDEX", this._index)
             this.emit('astFinished')
         }
 
@@ -274,13 +291,10 @@ export class CodeParser extends Plugin {
         const fileContent = text || await this.call('fileManager', 'readFile', this.currentFile)
         try {
             const ast = await this.parseSolidity(fileContent)
-
             this.currentFileAST = ast
-            console.log('AST PARSE SUCCESS', ast)
         } catch (e) {
             console.log(e)
         }
-        console.log('LAST PARSER AST', this.currentFileAST)
         return this.currentFileAST
     }
 
@@ -303,11 +317,85 @@ export class CodeParser extends Plugin {
             for (const s in compilationResult.sources) {
                 this.astWalker.walkFull(compilationResult.sources[s].ast, callback)
             }
-            console.log("INDEX", this._index)
+
         }
     }
 
     // NODE HELPERS
+
+    _getInputParams(node) {
+        const params = []
+        const target = node.parameters
+        if (target) {
+            const children = target.parameters
+            for (const j in children) {
+                if (children[j].nodeType === 'VariableDeclaration') {
+                    params.push(children[j].typeDescriptions.typeString)
+                }
+            }
+        }
+        return '(' + params.toString() + ')'
+    }
+
+
+    _flatNodeList(node: any, contractName: string, fileName: string, compilatioResult: any) {
+        const index = {}
+        const callback = (node) => {
+            node.gasEstimate = this._getContractGasEstimate(node, contractName, fileName, compilatioResult)
+            node.functionName = node.name + this._getInputParams(node)
+            index[node.id] = node
+        }
+        this.astWalker.walkFull(node, callback)
+        return index
+    }
+
+    _extractFileNodes(fileName: string, compilatioResult: any) {
+        const source = compilatioResult.data.sources[fileName]
+        const nodesByContract = []
+        this.astWalker.walkFull(source.ast, (node) => {
+            if (node.nodeType === 'ContractDefinition') {
+                const flatNodes = this._flatNodeList(node, node.name, fileName, compilatioResult)
+                node.gasEstimate = this._getContractGasEstimate(node, node.name, fileName, compilatioResult)
+                nodesByContract[node.name] = { contractDefinition: node, contractNodes: flatNodes }
+            }
+        })
+        return nodesByContract
+    }
+
+    _getContractGasEstimate(node: any, contractName: string, fileName: string, compilationResult: any) {
+
+        const contracts = compilationResult.data.contracts && compilationResult.data.contracts[this.currentFile]
+        for (const name in contracts) {
+            if (name === contractName) {
+                const contract = contracts[name]
+                const estimationObj = contract.evm && contract.evm.gasEstimates
+                if (node.nodeType === 'ContractDefinition') {
+                    return {
+                        creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,
+                        codeDepositCost: estimationObj === null ? '-' : estimationObj.creation.codeDepositCost,
+                    }
+                }
+                let executionCost = null
+                if (node.nodeType === 'FunctionDefinition') {
+                    const visibility = node.visibility
+                    if (node.kind !== 'constructor') {
+                        const fnName = node.name
+                        const fn = fnName + this._getInputParams(node)
+
+                        if (visibility === 'public' || visibility === 'external') {
+                            executionCost = estimationObj === null ? '-' : estimationObj.external[fn]
+                        } else if (visibility === 'private' || visibility === 'internal') {
+                            executionCost = estimationObj === null ? '-' : estimationObj.internal[fn]
+                        }
+                        return { executionCost }
+                    }
+                }
+            }
+        }
+    }
+
+
+
 
     /**
     * Returns the block surrounding the given position
@@ -317,7 +405,6 @@ export class CodeParser extends Plugin {
     * @return {any}
     * */
     async getBlockAtPosition(position: any, text: string = null) {
-        console.log('GET BLOCK AT ', position)
         await this.getCurrentFileAST(text)
         const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
 
@@ -397,6 +484,7 @@ export class CodeParser extends Plugin {
         const lastCompilationResult = this.lastCompilationResult
         if (!lastCompilationResult) return false
         const urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
+        console.log('URL FROM PATH', urlFromPath)
         if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data && lastCompilationResult.data.sources && lastCompilationResult.data.sources[this.currentFile]) {
             const nodes = sourceMappingDecoder.nodesAtPosition(type, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
             return nodes
@@ -656,15 +744,23 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getNodeLink(node: any) {
+        const lineColumn = await this.getNodeLineColumn(node)
+        return lineColumn ? `${lineColumn.fileName} ${lineColumn.position.start.line}:${lineColumn.position.start.column}` : null
+    }
+
+    /*
+    * @param node   
+    */
+    async getNodeLineColumn(node: any) {
         const position = await this.positionOfDefinition(node)
         if (position) {
-            const filename = this.lastCompilationResult.getSourceName(position.file)
-            const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
-                position,
-                position.file,
-                this.lastCompilationResult.getSourceCode().sources,
-                this.lastCompilationResult.getAsts())
-            return `${filename} ${lineColumn.start.line}:${lineColumn.start.column}`
+            const fileName = this.lastCompilationResult.getSourceName(position.file)
+            const lineBreaks = sourceMappingDecoder.getLinebreakPositions(this.lastCompilationResult.source.sources[fileName].content)
+            const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn(position, lineBreaks)
+            return {
+                fileName,
+                position: lineColumn
+            }
         }
     }
 
@@ -736,6 +832,69 @@ export class CodeParser extends Plugin {
         }
     }
 
+    /**
+     * 
+     * @param fileName 
+     */
+    async getGasEstimates(fileName: string) {
+        if (!fileName) {
+            fileName = await this.currentFile
+        }
+        if (this._index.NodesPerFile && this._index.NodesPerFile[fileName]) {
+            const estimates = []
+            for (const contract in this._index.NodesPerFile[fileName]) {
+                console.log(contract)
+                const nodes = this._index.NodesPerFile[fileName][contract].contractNodes
+                for (const node of Object.values(nodes) as any[]) {
+                    if (node.gasEstimate) {
+                        estimates.push({
+                            node,
+                            range: await this.getNodeLineColumn(node)
+                        })
+                    }
+                }
+            }
+            return estimates
+        }
+
+    }
+
+
+    async setGasEstimates() {
+        this.currentFile = await this.call('fileManager', 'file')
+        this._index.NodesPerFile[this.currentFile] = await this._extractFileNodes(this.currentFile, this.lastCompilationResult)
+
+        const gasEstimates = await this.getGasEstimates(this.currentFile)
+        console.log('all estimates', gasEstimates)
+
+        const friendlyNames = {
+            'executionCost': 'Estimated execution cost',
+            'codeDepositCost': 'Estimated code deposit cost',
+            'creationCost': 'Estimated creation cost',
+        }
+        await this.call('editor', 'discardLineTexts')
+        if (gasEstimates) {
+            for (const estimate of gasEstimates) {
+                console.log(estimate)
+                const linetext: lineText = {
+                    content: Object.entries(estimate.node.gasEstimate).map(([key, value]) => `${value} gas`).join(' '),
+                    position: estimate.range.position,
+                    hide: false,
+                    className: 'text-muted small',
+                    afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+                    from: 'codeParser',
+                    hoverMessage: [{
+                        value: `${Object.entries(estimate.node.gasEstimate).map(([key, value]) => `${friendlyNames[key]}: ${value} gas`).join(' ')}`,
+                    },
+                    ],
+                }
+
+                this.call('editor', 'addLineText', linetext, estimate.range.fileName)
+
+
+            }
+        }
+    }
 
 
 }

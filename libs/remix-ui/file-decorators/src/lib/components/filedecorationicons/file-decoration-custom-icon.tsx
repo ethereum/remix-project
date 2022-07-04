@@ -3,10 +3,10 @@ import React from 'react'
 import { fileDecoration } from '../../types'
 
 const FileDecorationCustomIcon = (props: {
-    fileState: fileDecoration
+    fileDecoration: fileDecoration
 }) => {
-    return <><span className={`${props.fileState.fileStateIconClass}pr-2`}>
-        {props.fileState.fileStateIcon}
+    return <><span className={`${props.fileDecoration.fileStateIconClass}pr-2`}>
+        {props.fileDecoration.fileStateIcon}
     </span></>
 }
 
