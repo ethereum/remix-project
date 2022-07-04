@@ -145,6 +145,7 @@
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@erebos/bzz-node": "^0.13.0",
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/common": "^2.5.0",
@@ -153,6 +154,7 @@
     "@ethersphere/bee-js": "^3.2.0",
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "@monaco-editor/react": "^4.3.1",
+    "@myetherwallet/mewconnect-web-client": "^2.2.0-beta.16",
     "@remixproject/engine": "^0.3.28",
     "@remixproject/engine-web": "^0.3.28",
     "@remixproject/plugin": "^0.3.28",
@@ -160,6 +162,8 @@
     "@remixproject/plugin-utils": "^0.3.28",
     "@remixproject/plugin-webview": "^0.3.28",
     "@remixproject/plugin-ws": "^0.3.28",
+    "@toruslabs/torus-embed": "^1.25.0",
+    "@walletconnect/web3-provider": "^1.7.8",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.2",
     "axios": ">=0.26.0",
@@ -208,6 +212,7 @@
     "ts-loader": "^9.2.6",
     "tslib": "^2.3.0",
     "web3": "^1.5.1",
+    "web3modal": "^1.9.8",
     "winston": "^3.3.3",
     "ws": "^7.3.0"
   },

@@ -87,6 +87,9 @@
       "@remix-ui/run-tab": ["libs/remix-ui/run-tab/src/index.ts"],
       "@remix-ui/permission-handler": [
         "libs/remix-ui/permission-handler/src/index.ts"
+      ],
+      "@remix-ui/wallet-connect": [
+        "libs/remix-ui/wallet-connect/src/index.ts"
       ]
     }
   },
