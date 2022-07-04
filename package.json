@@ -333,5 +333,8 @@
     "worker-loader": "^2.0.0",
     "yo-yo": "github:ioedeveloper/yo-yo",
     "yo-yoify": "^3.7.3"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.24"
   }
 }
