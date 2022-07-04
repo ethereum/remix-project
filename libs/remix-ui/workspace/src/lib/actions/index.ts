@@ -6,7 +6,9 @@ import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryR
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
 import { QueryParams } from '@remix-project/remix-lib'
+import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
+import axios, { AxiosResponse } from 'axios'
 
 export * from './events'
 export * from './workspace'
@@ -22,6 +24,21 @@ export type UrlParametersType = {
   url: string
 }
 
+const basicWorkspaceInit = async (workspaces, workspaceProvider) => {
+  if (workspaces.length === 0) {
+    await createWorkspaceTemplate('default_workspace', 'remixDefault')
+    plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
+    dispatch(setCurrentWorkspace('default_workspace'))
+    await loadWorkspacePreset('remixDefault')
+  } else {
+    if (workspaces.length > 0) {
+      workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
+      plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
+      dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+    }
+  }
+}
+
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
   if (filePanelPlugin) {
     plugin = filePanelPlugin
@@ -31,7 +48,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const localhostProvider = filePanelPlugin.fileProviders.localhost
     const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
-
     dispatch(setWorkspaces(workspaces))
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
@@ -44,19 +60,72 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       dispatch(setCurrentWorkspace('code-sample'))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-    } else {
-      if (workspaces.length === 0) {
-        await createWorkspaceTemplate('default_workspace', 'remixDefault')
-        plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
-        dispatch(setCurrentWorkspace('default_workspace'))
-        await loadWorkspacePreset('remixDefault')
-      } else {
-        if (workspaces.length > 0) {
-          workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-          plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
-          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+    } else if (window.location.pathname && window.location.pathname !== '/') {
+      let route = window.location.pathname
+      if (route.startsWith('/address/0x') && route.length === 51) {
+        const contractAddress = route.split('/')[2]
+        plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress} .....`)
+        let data
+        let count = 0
+        try {
+          let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+          if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
+          const networks = [
+            {id: 1, name: 'mainnet'},
+            {id: 3, name: 'ropsten'},
+            {id: 4, name: 'rinkeby'},
+            {id: 42, name: 'kovan'},
+            {id: 5, name: 'goerli'}
+          ]
+          let found = false
+          const foundOnNetworks = []
+          for (const network of networks) {
+            const target = `/${network.name}/${contractAddress}`
+            try {
+              data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, etherscanKey)
+            } catch (error) {
+              if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
+                continue
+              else {
+                if (!found) await basicWorkspaceInit(workspaces, workspaceProvider)
+                break
+              }
+            }
+            found = true
+            foundOnNetworks.push(network.name)
+            await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
+            plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
+            dispatch(setCurrentWorkspace('etherscan-code-sample'))
+            let filePath
+            count = count + (Object.keys(data.compilationTargets)).length
+            for (filePath in data.compilationTargets)
+              await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+          }
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '': 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '': 's'} of Etherscan for contract address ${contractAddress} !!`)
+        } catch (error) {
+          await basicWorkspaceInit(workspaces, workspaceProvider)
         }
-      }
+      } else if (route.endsWith('.sol')) {
+        if (route.includes('blob')) route = route.replace('/blob', '')
+        let response: AxiosResponse
+        try {
+          response = await axios.get(`https://raw.githubusercontent.com${route}`)
+        } catch (error) {
+          plugin.call('notification', 'toast', `cound not find ${route} on GitHub`)
+          await basicWorkspaceInit(workspaces, workspaceProvider)
+        }
+        if (response && response.status === 200) {
+          const content = response.data
+          await createWorkspaceTemplate('github-code-sample', 'code-template')
+          plugin.setWorkspace({ name: 'github-code-sample', isLocalhost: false })
+          dispatch(setCurrentWorkspace('github-code-sample'))
+          await workspaceProvider.set(route, content)
+          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(route))
+        } else await basicWorkspaceInit(workspaces, workspaceProvider)
+      } else await basicWorkspaceInit(workspaces, workspaceProvider)
+    } else {
+      await basicWorkspaceInit(workspaces, workspaceProvider)
     }
 
     listenOnPluginEvents(plugin)
