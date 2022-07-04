@@ -166,11 +166,21 @@ export class ExecutionContext {
 
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
-        if (error) infoCb(error)
-        cb()
-      })
-    }
+      if (!this.customNetWorks[context].isInjected) {        
+        this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
+          if (error) infoCb(error)
+          cb()
+        })
+      } else {
+        // injected
+        this.askPermission()
+        this.executionContext = context
+        web3.setProvider(network.provider)
+        await this._updateChainContext()
+        this.event.trigger('contextChanged', [context])
+        return cb()
+      }
+    }   
   }
 
   currentblockGasLimit () {
