@@ -28,7 +28,6 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [file.path, focusEdit])
 
   useEffect(() => {
-    console.log('fileState', fileDecorations, file.name)
     const state = props.fileDecorations.find((state: fileDecoration) => {
       if(state.path === props.file.path) return true
       if(state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true

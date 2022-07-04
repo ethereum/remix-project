@@ -8,20 +8,12 @@ import { cairoLang, cairoConf } from './cairoSyntax'
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
 import monaco from '../types/monaco'
-import { IPosition, MarkerSeverity } from 'monaco-editor'
+import { IMarkdownString, IPosition, MarkerSeverity } from 'monaco-editor'
 
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
-import { RemixSignatureProvider } from './providers/signatureProvider'
-import { CompilationError } from '@remix-project/remix-solidity-ts'
-
-type cursorPosition = {
-  startLineNumber: number,
-  startColumn: number,
-  endLineNumber: number,
-  endColumn: number
-}
+import { RemixCodeLensProvider } from './providers/codeLensProvider'
 
 type sourceAnnotation = {
   row: number,
@@ -45,6 +37,25 @@ type sourceMarker = {
   },
   from: string // plugin name
   hide: boolean
+}
+
+export type lineText = {
+  position: {
+    start: {
+      line: number
+      column: number
+    },
+    end: {
+      line: number
+      column: number
+    }
+  },
+  from: string // plugin name
+  content: string
+  className: string
+  afterContentClassName: string
+  hide: boolean,
+  hoverMessage: IMarkdownString | IMarkdownString[]
 }
 
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
@@ -270,7 +281,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   }, [props.currentFile])
 
-  const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
+  const convertToMonacoDecoration = (decoration: any, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
       decoration = decoration as sourceAnnotation
       return {
@@ -300,6 +311,20 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }
     }
+    if (typeOfDecoration === 'lineTextPerFile') {
+      console.log('lineTextPerFile', decoration)
+      decoration = decoration as lineText
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(decoration.position.start.line + 1, decoration.position.start.column + 1, decoration.position.start.line + 1, 1024),
+        options: {
+          after: { content: ` ${decoration.content}`, inlineClassName: `${decoration.className}` },
+          afterContentClassName: `${decoration.afterContentClassName}`,
+          hoverMessage : decoration.hoverMessage
+        },
+        
+      }
+    }
   }
 
   props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
@@ -318,6 +343,7 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }
     }
+    console.log(decorations, currentDecorations)
     return {
       currentDecorations: model.deltaDecorations(currentDecorations, decorations),
       registeredDecorations: newRegisteredDecorations
@@ -343,10 +369,11 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
+    console.log("addDecoration", decoration, filePath, typeOfDecoration)
     const model = editorModelsState[filePath]?.model
     if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
-
+    console.log(monacoDecoration)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
       registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
@@ -378,10 +405,10 @@ export const EditorUI = (props: EditorUIProps) => {
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
           severity: errorServerityMap[marker.severity],
-          startLineNumber: (lineColumn.start && lineColumn.start.line) || 0 + 1,
-          startColumn: (lineColumn.start && lineColumn.start.column) || 0 + 1,
-          endLineNumber: (lineColumn.end && lineColumn.end.line) || 0 + 1,
-          endColumn: (lineColumn.end && lineColumn.end.column) || 0 + 1,
+          startLineNumber: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
+          startColumn: ((lineColumn.start && lineColumn.start.column) || 0) + 1,
+          endLineNumber: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
+          endColumn: ((lineColumn.end && lineColumn.end.column) || 0) + 1,
           message: marker.message,
         }
         console.log(markerData)
@@ -495,6 +522,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleEditorWillMount(monaco: Monaco) {
+    // MonacoEditorTextDecorationPatch.augmentEditor(monaco.editor)
     console.log('editor will mount', monaco, typeof monaco)
     monacoRef.current = monaco
     // Register a new language
@@ -526,7 +554,7 @@ export const EditorUI = (props: EditorUIProps) => {
         console.log('HIghlight', position)
         const hightlights = [
           {
-            range: new monacoRef.current.Range(position.lineNumber, position.column, position.lineNumber, position.column+5),
+            range: new monacoRef.current.Range(position.lineNumber, position.column, position.lineNumber, position.column + 5),
             kind: monacoRef.current.languages.DocumentHighlightKind.Write
           }
         ]
@@ -534,12 +562,20 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
+    // monacoRef.current.languages.registerCodeLensProvider('remix-solidity', new RemixCodeLensProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     // monacoRef.current.languages.registerSignatureHelpProvider('remix-solidity', new RemixSignatureProvider(props, monaco))
     loadTypes(monacoRef.current)
 
+    monacoRef.current.languages.registerDefinitionProvider('typescript', {
+
+      provideDefinition(model: any, position: any, token: any) {
+        console.log(token)
+        return null
+      }
+    })
   }
 
   return (

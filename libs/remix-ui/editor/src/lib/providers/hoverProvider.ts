@@ -1,6 +1,5 @@
 
 import { editor, languages, Position } from 'monaco-editor'
-import monaco from '../../types/monaco'
 import { EditorUIProps } from '../remix-ui-editor'
 export class RemixHoverProvider implements languages.HoverProvider {
 
@@ -62,7 +61,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
 
         const getOverrides = async (node: any) => {
             if (node.overrides) {
-                let overrides = []
+                const overrides = []
                 for (const override of node.overrides.overrides) {
                     overrides.push(override.name)
                 }
@@ -73,7 +72,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
         }
 
         const getlinearizedBaseContracts = async (node: any) => {
-            let params = []
+            const params = []
             if (node.linearizedBaseContracts) {
                 for (const id of node.linearizedBaseContracts) {
                     const baseContract = await this.props.plugin.call('codeParser', 'getNodeById', id)
@@ -111,10 +110,10 @@ export class RemixHoverProvider implements languages.HoverProvider {
                 })
 
             } else if (nodeAtPosition.nodeType === 'FunctionDefinition') {
-                if(!nodeAtPosition.name) return 
+                if (!nodeAtPosition.name) return
                 const returns = await getReturnParameters(nodeAtPosition)
                 contents.push({
-                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} ${returns? `returns ${returns}`: ''}`
+                    value: `function ${nodeAtPosition.name} ${await getParamaters(nodeAtPosition)} ${nodeAtPosition.visibility} ${nodeAtPosition.stateMutability}${await getOverrides(nodeAtPosition)} ${returns ? `returns ${returns}` : ''}`
                 })
 
             } else if (nodeAtPosition.nodeType === 'ModifierDefinition') {
@@ -134,6 +133,8 @@ export class RemixHoverProvider implements languages.HoverProvider {
                 contents.push({
                     value: `There are errors in the code.`
                 })
+            } else if (nodeAtPosition.nodeType === 'Block') {
+
             } else {
                 contents.push({
                     value: `${nodeAtPosition.nodeType}`
@@ -146,7 +147,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
             }
             getLinks(nodeAtPosition)
             getDocs(nodeAtPosition)
-            getScope(nodeAtPosition)
+            // getScope(nodeAtPosition)
         }
 
 
