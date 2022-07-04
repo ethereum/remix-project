@@ -3,9 +3,9 @@ import React from 'react'
 import { fileDecoration } from '../../types'
 
 const FileDecorationWarningIcon = (props: {
-    fileState: fileDecoration
+    fileDecoration: fileDecoration
 }) => {
-    return <><span className={`${props.fileState.fileStateIconClass} text-warning pr-2`}>{props.fileState.text}</span></>
+    return <><span className={`${props.fileDecoration.fileStateIconClass} text-warning pr-2`}>{props.fileDecoration.text}</span></>
 }
 
 export default FileDecorationWarningIcon
