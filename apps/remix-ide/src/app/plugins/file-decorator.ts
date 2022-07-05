@@ -49,7 +49,6 @@ export class FileDecorator extends Plugin {
 
         if (!deepequal(newState, this._fileStates)) {
             this._fileStates = newState
-            console.log('fileStates', this._fileStates)
             this.emit('fileDecoratorsChanged', this._fileStates)
         }
     }

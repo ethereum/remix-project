@@ -68,7 +68,6 @@ export function getLinebreakPositions (source) {
  * @return {Object} returns an object {start: {line, column}, end: {line, column}} (line/column count start at 0)
  */
 export function convertOffsetToLineColumn (sourceLocation, lineBreakPositions) {
-  console.log(sourceLocation, lineBreakPositions)
   if (sourceLocation.start >= 0 && sourceLocation.length >= 0) {
     return {
       start: convertFromCharPosition(sourceLocation.start, lineBreakPositions),

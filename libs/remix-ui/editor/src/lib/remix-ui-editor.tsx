@@ -13,7 +13,8 @@ import { IMarkdownString, IPosition, MarkerSeverity } from 'monaco-editor'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
-import { RemixCodeLensProvider } from './providers/codeLensProvider'
+import { RemixHighLightProvider } from './providers/highlightProvider'
+import { RemixDefinitionProvider } from './providers/definitionProvider'
 
 type sourceAnnotation = {
   row: number,
@@ -524,6 +525,7 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorWillMount(monaco: Monaco) {
     // MonacoEditorTextDecorationPatch.augmentEditor(monaco.editor)
     console.log('editor will mount', monaco, typeof monaco)
+
     monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
@@ -535,47 +537,21 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf as any)
 
-    // register Definition Provider
-    monacoRef.current.languages.registerDefinitionProvider('remix-solidity', {
 
-      provideDefinition(model: any, position: any, token: any) {
-        const cursorPosition = props.editorAPI.getCursorPosition()
-        props.plugin.call('contextualListener', 'jumpToDefinition', cursorPosition)
-        return null
-      }
-    })
+
     monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: false,
       noSyntaxValidation: false,
     });
 
-    monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', {
-      provideDocumentHighlights(model: any, position: any, token: any) {
-        console.log('HIghlight', position)
-        const hightlights = [
-          {
-            range: new monacoRef.current.Range(position.lineNumber, position.column, position.lineNumber, position.column + 5),
-            kind: monacoRef.current.languages.DocumentHighlightKind.Write
-          }
-        ]
-        return hightlights
-      }
-    })
-
-    // monacoRef.current.languages.registerCodeLensProvider('remix-solidity', new RemixCodeLensProvider(props, monaco))
+    
+    monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
+    monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     // monacoRef.current.languages.registerSignatureHelpProvider('remix-solidity', new RemixSignatureProvider(props, monaco))
     loadTypes(monacoRef.current)
-
-    monacoRef.current.languages.registerDefinitionProvider('typescript', {
-
-      provideDefinition(model: any, position: any, token: any) {
-        console.log(token)
-        return null
-      }
-    })
   }
 
   return (
