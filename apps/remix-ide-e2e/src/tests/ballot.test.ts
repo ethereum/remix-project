@@ -83,7 +83,7 @@ module.exports = {
     browser
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsSelectEnvOptions"] *[data-id="Basic Http Provider"]')
+      .click('*[data-id="settingsSelectEnvOptions"] *[data-id="External Http Provider"]')
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
       .execute(function () {
         const modal = document.querySelector('[data-id="basic-http-provider-modal-footer-ok-react"]') as any
@@ -96,7 +96,7 @@ module.exports = {
 
         return env.value
       }, [], function (result) {
-        browser.assert.ok(result.value === 'Basic Http Provider', 'Web3 Provider not selected')
+        browser.assert.ok(result.value === 'External Http Provider', 'Web3 Provider not selected')
       })
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
