@@ -134,7 +134,7 @@ export const runTabInitialState: RunTabState = {
       dataId: 'settingsInjectedMode',
       title: 'Execution environment has been provided by Metamask or similar provider.',
       value: 'injected',
-      content: `Injected Provider${(window && window.web3 && window.web3.currentProvider.isMetaMask) ? ' - Metamask' : ''}`
+      content: `Injected Provider${(window && window.ethereum && window.ethereum.isMetaMask) ? ' - Metamask' : ''}`
     }, {
       id: 'web3-mode',
       dataId: 'settingsWeb3Mode',
