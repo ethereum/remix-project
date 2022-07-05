@@ -15,7 +15,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     }
 
     triggerCharacters = ['.', '']
-    async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext) {
+    async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
         console.log('AUTOCOMPLETE', context)
         console.log(position)
 
