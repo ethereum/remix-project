@@ -204,7 +204,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   return (
     <div className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`} id={`instance${address}`} data-shared="universalDappUiInstance">
-      <div className="udapp_title alert alert-secondary">
+      <div className="udapp_title pb-0 alert alert-secondary">
         <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
         </span>
