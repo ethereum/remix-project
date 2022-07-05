@@ -157,7 +157,7 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Basic Http Provider',
+      name: 'External Http Provider',
       provider: {
         async sendAsync (payload, callback) {
           try {
