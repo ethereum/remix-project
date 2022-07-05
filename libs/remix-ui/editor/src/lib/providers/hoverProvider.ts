@@ -1,16 +1,17 @@
 
+import { Monaco } from '@monaco-editor/react'
 import { editor, languages, Position } from 'monaco-editor'
 import { EditorUIProps } from '../remix-ui-editor'
 export class RemixHoverProvider implements languages.HoverProvider {
 
     props: EditorUIProps
-    monaco: any
+    monaco: Monaco
     constructor(props: any, monaco: any) {
         this.props = props
         this.monaco = monaco
     }
 
-    provideHover = async function (model: editor.ITextModel, position: Position) {
+    provideHover = async function (model: editor.ITextModel, position: Position): Promise<languages.Hover> {
         console.log('HOVERING')
 
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
@@ -25,6 +26,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
             })
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const getScope = async (node: any) => {
             if (node.id) {
                 contents.push({

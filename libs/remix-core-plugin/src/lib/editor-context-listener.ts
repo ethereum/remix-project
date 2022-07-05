@@ -69,46 +69,7 @@ export class EditorContextListener extends Plugin {
     return [...this._activeHighlights]
   }
 
-  async jumpToDefinition(position: any) {
-    const node = await this.call('codeParser', 'definitionAtPosition', position)
-    const sourcePosition = await this.call('codeParser', 'positionOfDefinition', node)
-    console.log("JUMP", sourcePosition)
-    if (sourcePosition) {
-      await this.jumpToPosition(sourcePosition)
-    }
-  }
 
-
-
-  /*
-  * onClick jump to position of ast node in the editor
-  */
-  async jumpToPosition(position: any) {
-    const jumpToLine = async (fileName: string, lineColumn: any) => {
-      if (fileName !== await this.call('fileManager', 'file')) {
-        console.log('jump to file', fileName)
-        await this.call('contentImport', 'resolveAndSave', fileName, null, true)
-        await this.call('fileManager', 'open', fileName)
-      }
-      if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
-        this.call('editor', 'gotoLine', lineColumn.start.line, lineColumn.end.column + 1)
-      }
-    }
-    const lastCompilationResult = await this.call('codeParser', 'getLastCompilationResult')  // await this.call('compilerArtefacts', 'getLastCompilationResult')
-    console.log(lastCompilationResult.getSourceCode().sources)
-    console.log(position)
-    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
-      const lineColumn = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
-        position,
-        position.file,
-        lastCompilationResult.getSourceCode().sources,
-        lastCompilationResult.getAsts())
-      const filename = lastCompilationResult.getSourceName(position.file)
-      // TODO: refactor with rendererAPI.errorClick
-      console.log(filename, lineColumn)
-      jumpToLine(filename, lineColumn)
-    }
-  }
 
   async _highlightItems(cursorPosition, compilationResult, file) {
     if (this.currentPosition === cursorPosition) return

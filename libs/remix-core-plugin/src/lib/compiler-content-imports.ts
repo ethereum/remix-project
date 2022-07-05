@@ -125,7 +125,6 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave(url: string, targetPath: string, save: boolean = true) {
-    console.log(url, targetPath, save)
     try {
       if (targetPath && this.currentRequest) {
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)

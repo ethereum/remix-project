@@ -1866,7 +1866,7 @@ declare namespace monaco.editor {
         /**
          * Get the language associated with this model.
          */
-        getModeId(): string;
+        getModeId?(): string;
         /**
          * Get the word under or besides `position`.
          * @param position The position to look for a word.

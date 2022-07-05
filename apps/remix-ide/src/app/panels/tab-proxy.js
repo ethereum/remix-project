@@ -322,7 +322,6 @@ export class TabProxy extends Plugin {
   }
 
   renderComponent () {
-    console.log('rendering tabs')
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
