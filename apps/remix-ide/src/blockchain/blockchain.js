@@ -464,7 +464,7 @@ export class Blockchain extends Plugin {
   }
 
   /**
-   * This function send a tx only to javascript VM or testnet, will return an error for the mainnet
+   * This function send a tx only to Remix VM or testnet, will return an error for the mainnet
    * SHOULD BE TAKEN CAREFULLY!
    *
    * @param {Object} tx    - transaction.

@@ -2,6 +2,9 @@ import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData } from '@remix-project/core-plugin'
 import { DeployMode, DeployOption, DeployOptions } from '../types'
 import { ADD_DEPLOY_OPTION, ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_DEPLOY_OPTION, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_TX_FEE_CONTENT } from '../constants'
+import Web3 from 'web3'
+
+declare const window: any
 interface Action {
   type: string
   payload: any
@@ -118,26 +121,26 @@ export const runTabInitialState: RunTabState = {
       title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-london',
       fork: 'london',
-      content: 'JavaScript VM (London)'
+      content: 'Remix VM (London)'
     }, {
       id: 'vm-mode-berlin',
       dataId: 'settingsVMBerlinMode',
       title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-berlin',
       fork: 'berlin',
-      content: 'JavaScript VM (Berlin)'
+      content: 'Remix VM (Berlin)'
     }, {
       id: 'injected-mode',
       dataId: 'settingsInjectedMode',
       title: 'Execution environment has been provided by Metamask or similar provider.',
       value: 'injected',
-      content: 'Injected Web3'
+      content: `Injected Provider${(window && window.ethereum && window.ethereum.isMetaMask) ? ' - Metamask' : ''}`
     }, {
       id: 'web3-mode',
       dataId: 'settingsWeb3Mode',
       title: `Execution environment connects to an external node. For security, only connect to trusted networks. If Remix is served via https and your node is accessed via http, it might not work. In this case, try cloning the repository and serving it via http.`,
       value: 'web3',
-      content: 'Web3 Provider'
+      content: 'External HTTP Provider'
     }],
     isRequesting: false,
     isSuccessful: false,
