@@ -248,7 +248,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     let compilerConfig = configFileContent
     if (isFoundryProject && !compilerConfig.includes('remappings')) {
-      let config = JSON.parse(compilerConfig)
+      const config = JSON.parse(compilerConfig)
       config.settings.remappings = [
         'ds-test/=lib/forge-std/lib/ds-test/src/',
         'forge-std/=lib/forge-std/src/'
