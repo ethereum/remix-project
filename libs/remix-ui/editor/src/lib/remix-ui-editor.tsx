@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import { RemixUiEditorContextView, astNode } from '@remix-ui/editor-context-view'
+
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
@@ -578,17 +578,7 @@ export const EditorUI = (props: EditorUIProps) => {
         options={{ glyphMargin: true, readOnly: true }}
         defaultValue={defaultEditorValue}
       />
-      <div className="contextview">
-        <RemixUiEditorContextView
-          hide={false}
-          jumpToPosition={(position) => props.plugin.call('contextualListener', 'jumpToPosition', position)}
-          onContextListenerChanged={(listener) => { props.plugin.on('contextualListener', 'contextChanged', listener) }}
-          onCurrentFileChanged={(listener) => { props.plugin.on('fileManager', 'currentFileChanged', listener) }}
-          getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
-          gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}
-          declarationOf={(node: astNode) => { return props.plugin.call('codeParser', 'declarationOf', node) }}
-        />
-      </div>
+
     </div>
   )
 }
