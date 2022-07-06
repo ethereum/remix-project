@@ -179,6 +179,25 @@ export class Blockchain extends Plugin {
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
 
+  async upgradeProxy(proxyAddress, data, newImplementationContractObject) {
+    const args = { useCall: false, data, to: proxyAddress }
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      // continue using original authorization given by user
+      continueTxExecution(null)
+    }
+    const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
+    const promptCb = (okCb, cancelCb) => { okCb() }
+    const finalCb = (error, txResult, address, returnValue) => {
+      if (error) {
+        const log = logBuilder(error)
+
+        return this.call('terminal', 'logHtml', log)
+      }
+      return this.call('udapp', 'resolveContractAndAddInstance', newImplementationContractObject, proxyAddress)
+    }
+    this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
+  }
+
   async getEncodedFunctionHex (args, funABI) {
     return new Promise((resolve, reject) => {
       txFormat.encodeFunctionCall(args, funABI, (error, data) => {

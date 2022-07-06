@@ -135,6 +135,7 @@ export const createInstance = async (
   args,
   deployMode: DeployMode[]) => {
   const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
+  const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade Contract')
   const statusCb = (msg: string) => {
     const log = logBuilder(msg)
 
@@ -160,7 +161,9 @@ export const createInstance = async (
     if (isProxyDeployment) {
       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
 
-      plugin.call('openzeppelin-proxy', 'execute', addressToString(address), args, initABI, contractObject)
+      plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
+    } else if (isContractUpgrade) {
+      plugin.call('openzeppelin-proxy', 'executeUUPSContractUpgrade', args, addressToString(address), contractObject)
     }
   }
 
@@ -192,7 +195,7 @@ export const createInstance = async (
       return terminalLogger(plugin, log)
     }))
   }
-  deployContract(plugin, selectedContract, !isProxyDeployment ? args : '', contractMetadata, compilerContracts, {
+  deployContract(plugin, selectedContract, !isProxyDeployment && !isContractUpgrade ? args : '', contractMetadata, compilerContracts, {
     continueCb: (error, continueTxExecution, cancelCb) => {
       continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
     },

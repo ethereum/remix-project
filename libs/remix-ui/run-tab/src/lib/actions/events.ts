@@ -108,7 +108,7 @@ const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispat
   if (isUpgradeable) {
     const options = await plugin.call('openzeppelin-proxy', 'getDeployOptions', data.contracts[file])
   
-    dispatch(setDeployOptions({ options: [{ title: 'Deploy with Proxy', active: false }], initializeOptions: options }))
+    dispatch(setDeployOptions({ options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade Contract', active: false }], initializeOptions: options }))
   }
   else dispatch(setDeployOptions({} as any))
   dispatch(fetchContractListSuccess({ [file]: contracts }))
