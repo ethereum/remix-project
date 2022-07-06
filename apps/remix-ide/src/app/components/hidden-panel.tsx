@@ -5,7 +5,6 @@ import * as packageJson from '../../../../../package.json'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import { PluginViewWrapper } from '@remix-ui/helper'
 
-
 const profile = {
   name: 'hiddenPanel',
   displayName: 'Hidden Panel',

@@ -1,9 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "react",
-    "types": ["node"],
-    "esModuleInterop": true
-  },
-  "include": ["**/*.ts", "src/lib/code-parser.tsx"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
+  ]
 }

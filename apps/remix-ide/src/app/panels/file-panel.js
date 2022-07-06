@@ -85,7 +85,6 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-
   getCurrentWorkspace () {
     return this.currentWorkspaceMetadata
   }
