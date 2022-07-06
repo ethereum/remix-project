@@ -125,7 +125,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 // }
 
                 // brute force search in all nodes with the name
-                if (!nodes.length || 1) {
+                //if (!nodes.length || 1) {
                     const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithName', last)
                     console.log('NODES WITHE NAME ', last, nodesOfScope)
                     for (const nodeOfScope of nodesOfScope) {
@@ -142,7 +142,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                             }
                         }
                     }
-                }
+                //}
             }
         } else {
 
