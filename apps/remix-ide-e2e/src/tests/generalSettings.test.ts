@@ -41,7 +41,7 @@ module.exports = {
       .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
       .click('*[data-id="settingsTabSaveGistToken"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token has been saved')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'GitHub credentials updated')
       .pause(3000)
   },
 
