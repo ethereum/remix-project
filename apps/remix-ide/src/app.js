@@ -19,7 +19,7 @@ import { FileDecorator } from './app/plugins/file-decorator'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
@@ -206,7 +206,7 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener(new AstWalker())
+    
     const codeParser = new CodeParser(new AstWalker())
     const fileDecorator = new FileDecorator()
 
@@ -232,7 +232,6 @@ class AppComponent {
       compilersArtefacts,
       networkModule,
       offsetToLineColumnConverter,
-      contextualListener,
       codeParser,
       fileDecorator,
       terminal,
@@ -363,7 +362,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'codeParser', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 
