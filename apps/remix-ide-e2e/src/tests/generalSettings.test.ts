@@ -59,7 +59,7 @@ module.exports = {
       .pause(1000)
       .click('*[data-id="settingsTabRemoveGistToken"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token removed')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'GitHub credentials removed')
       .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 
