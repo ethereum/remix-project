@@ -58,6 +58,20 @@ export abstract class AbstractProvider extends Plugin {
                 modalType: ModalTypes.prompt,
                 okLabel: 'OK',
                 cancelLabel: 'Cancel',
+                validationFn: (value) => {
+                  if (!value) return { valid: false, message: "value is empty" }
+                  if (value.startsWith('https://') || value.startsWith('http://')) {
+                    return { 
+                      valid: true, 
+                      message: ''
+                    }
+                  } else {
+                    return {
+                      valid: false, 
+                      message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
+                    }
+                  }
+                },
                 okFn: (value: string) => {
                   setTimeout(() => resolve(value), 0)
                 },
