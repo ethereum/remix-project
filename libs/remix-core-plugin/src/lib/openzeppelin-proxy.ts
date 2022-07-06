@@ -1,6 +1,6 @@
 import { Plugin } from '@remixproject/engine';
 import { ContractABI, ContractAST, DeployOption } from '../types/contract';
-import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi } from './constants/uups';
+import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups';
 
 const proxyProfile = {
   name: 'openzeppelin-proxy',
@@ -73,5 +73,19 @@ export class OpenZeppelinProxy extends Plugin {
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
     implementationContractObject.name = proxyName
     this.blockchain.deployProxy(data, implementationContractObject)
+  }
+
+  async upgradeUUPSProxy (proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
+    const fnData = await this.blockchain.getEncodedParams([newImplAddress], UUPSupgradeAbi)
+    const proxyName = 'ERC1967Proxy'
+    const data = {
+      contractABI: UUPSABI,
+      contractName: proxyName,
+      funAbi: UUPSupgradeAbi,
+      funArgs: [newImplAddress],
+      linkReferences: {},
+      dataHex: fnData.replace('0x', '')
+    }
+    this.blockchain.upgradeProxy(proxyAddress, data, newImplementationContractObject)    
   }
 }
