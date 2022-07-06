@@ -563,7 +563,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
-    // monacoRef.current.languages.registerSignatureHelpProvider('remix-solidity', new RemixSignatureProvider(props, monaco))
+
     loadTypes(monacoRef.current)
   }
 
