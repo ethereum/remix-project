@@ -375,7 +375,6 @@ export class CodeParser extends Plugin {
     async positionOfDefinition(node: any): Promise<any | null> {
         if (node) {
             if (node.src) {
-                console.log('positionOfDefinition', node)
                 const position = sourceMappingDecoder.decode(node.src)
                 if (position) {
                     return position
@@ -393,7 +392,6 @@ export class CodeParser extends Plugin {
      */
     async resolveImports(node, imported = {}) {
         if (node.nodeType === 'ImportDirective' && !imported[node.sourceUnit]) {
-            console.log('IMPORTING', node)
             const importNode = await this.getNodeById(node.sourceUnit)
             imported[importNode.id] = importNode
             if (importNode.nodes) {
@@ -402,7 +400,6 @@ export class CodeParser extends Plugin {
                 }
             }
         }
-        console.log(imported)
         return imported
     }
 
