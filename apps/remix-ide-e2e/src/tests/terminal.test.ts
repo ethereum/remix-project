@@ -50,8 +50,8 @@ module.exports = {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsSelectEnvOptions"] *[data-id="External Http Provider"]')
-      .modalFooterOKClick('basic-http-provider')
+      .switchEnvironment('web3')
+      .modalFooterOKClick('envNotification')
       .executeScript('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
@@ -95,7 +95,7 @@ module.exports = {
     browser
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsVMLondonMode"]')
+      .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
