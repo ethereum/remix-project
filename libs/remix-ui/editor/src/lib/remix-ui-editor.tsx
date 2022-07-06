@@ -429,7 +429,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.clearErrorMarkers = async (sources: any) => {
     if (sources) {
-      console.log('clear', sources)
       for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
         const filePath = source
         const model = editorModelsState[filePath]?.model

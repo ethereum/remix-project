@@ -2,10 +2,10 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { Compiler } from '@remix-project/remix-solidity'
 
-import { AstNode, CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
-import { helper } from '@remix-project/remix-solidity'
+import { CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
 import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
 
 export default class CodeParserCompiler {
     plugin: CodeParser
@@ -22,7 +22,9 @@ export default class CodeParserCompiler {
     init() {
 
         this.onAstFinished = async (success, data: CompilationResult, source: CompilationSource, input: any, version) => {
-            console.log('compile success', success, data, this)
+
+            console.log('compile success', success, data)
+
             this.plugin.call('editor', 'clearAnnotations')
             this.errorState = true
             const checkIfFatalError = (error: CompilationError) => {
@@ -40,104 +42,20 @@ export default class CodeParserCompiler {
             if (data.errors) {
                 const sources = result.getSourceCode().sources
                 for (const error of data.errors) {
-                    const pos = helper.getPositionDetails(error.formattedMessage)
-                    const filePosition = Object.keys(sources).findIndex((fileName) => fileName === error.sourceLocation.file)
-                    const lineColumn = await this.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn',
-                        {
-                            start: error.sourceLocation.start,
-                            length: error.sourceLocation.end - error.sourceLocation.start
-                        },
-                        filePosition,
-                        result.getSourceCode().sources,
-                        null)
+
+                    const lineBreaks = sourceMappingDecoder.getLinebreakPositions(sources[error.sourceLocation.file].content)
+                    const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn({
+                        start: error.sourceLocation.start,
+                        length: error.sourceLocation.end - error.sourceLocation.start
+                    }, lineBreaks)
+
                     allErrors.push({ error, lineColumn })
                 }
-                console.log('allErrors', allErrors)
                 await this.plugin.call('editor', 'addErrorMarker', allErrors)
-
-                const errorsPerFiles = {}
-                for (const error of allErrors) {
-                    if (!errorsPerFiles[error.error.sourceLocation.file]) {
-                        errorsPerFiles[error.error.sourceLocation.file] = []
-                    }
-                    errorsPerFiles[error.error.sourceLocation.file].push(error.error)
-                }
-
-                const errorPriority = {
-                    'error': 0,
-                    'warning': 1,
-                }
-
-                // sort errorPerFiles by error priority
-                const sortedErrorsPerFiles = {}
-                for (const fileName in errorsPerFiles) {
-                    const errors = errorsPerFiles[fileName]
-                    errors.sort((a, b) => {
-                        return errorPriority[a.severity] - errorPriority[b.severity]
-                    }
-                    )
-                    sortedErrorsPerFiles[fileName] = errors
-                }
-                console.log('sortedErrorsPerFiles', sortedErrorsPerFiles)
-
-                const filesWithOutErrors = Object.keys(sources).filter((fileName) => !sortedErrorsPerFiles[fileName])
-
-                console.log('filesWithOutErrors', filesWithOutErrors)
-                // add decorators
-                const decorators: fileDecoration[] = []
-                for (const fileName in sortedErrorsPerFiles) {
-                    const errors = sortedErrorsPerFiles[fileName]
-                    const decorator: fileDecoration = {
-                        path: fileName,
-                        isDirectory: false,
-                        fileStateType: errors[0].severity === 'error' ? fileDecorationType.Error : fileDecorationType.Warning,
-                        fileStateLabelClass: errors[0].severity === 'error' ? 'text-danger' : 'text-warning',
-                        fileStateIconClass: '',
-                        fileStateIcon: '',
-                        text: errors.length,
-                        owner: 'code-parser',
-                        bubble: true,
-                        commment: errors.map((error) => error.message),
-                    }
-                    decorators.push(decorator)
-                }
-                for (const fileName of filesWithOutErrors) {
-                    const decorator: fileDecoration = {
-                        path: fileName,
-                        isDirectory: false,
-                        fileStateType: fileDecorationType.None,
-                        fileStateLabelClass: '',
-                        fileStateIconClass: '',
-                        fileStateIcon: '',
-                        text: '',
-                        owner: 'code-parser',
-                        bubble: false
-                    }
-                    decorators.push(decorator)
-                }
-                console.log(decorators)
-                await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
-                await this.plugin.call('editor', 'clearErrorMarkers', filesWithOutErrors)
+                this.addDecorators(allErrors, sources)
             } else {
                 await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
-                const decorators: fileDecoration[] = []
-                for (const fileName of Object.keys(result.getSourceCode().sources)) {
-                    const decorator: fileDecoration = {
-                        path: fileName,
-                        isDirectory: false,
-                        fileStateType: fileDecorationType.None,
-                        fileStateLabelClass: '',
-                        fileStateIconClass: '',
-                        fileStateIcon: '',
-                        text: '',
-                        owner: 'code-parser',
-                        bubble: false
-                    }
-                    decorators.push(decorator)
-                }
-                console.log(decorators)
-
-                await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
+                await this.clearDecorators(result.getSourceCode().sources)
 
             }
 
@@ -170,29 +88,136 @@ export default class CodeParserCompiler {
         this.compiler.event.register('compilationFinished', this.onAstFinished)
     }
 
-        // COMPILER
+    // COMPILER
 
     /**
      * 
      * @returns 
      */
-     async compile() {
+    async compile() {
         try {
-            const state = await this.plugin.call('solidity', 'getCompilerState')
-            this.compiler.set('optimize', state.optimize)
-            this.compiler.set('evmVersion', state.evmVersion)
-            this.compiler.set('language', state.language)
-            this.compiler.set('runs', state.runs)
-            this.compiler.set('useFileConfiguration', state.useFileConfiguration)
             this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-            console.log(this.plugin.currentFile)
-            if (!this.plugin.currentFile) return
-            const content = await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
-            const sources = { [this.plugin.currentFile]: { content } }
-            this.compiler.compile(sources, this.plugin.currentFile)
+            if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+                const state = await this.plugin.call('solidity', 'getCompilerState')
+                console.log('COMPILER STATE', state)
+                this.compiler.set('optimize', state.optimize)
+                this.compiler.set('evmVersion', state.evmVersion)
+                this.compiler.set('language', state.language)
+                this.compiler.set('runs', state.runs)
+                this.compiler.set('useFileConfiguration', true)
+
+                const configFileContent = {
+                    "language": "Solidity",
+                    "settings": {
+                        "optimizer": {
+                            "enabled": false,
+                            "runs": 200
+                        },
+                        "outputSelection": {
+                            "*": {
+                                "": ["ast"],
+                                "*": ["evm.gasEstimates"]
+                            }
+                        },
+                        "evmVersion": state.evmVersion && state.evmVersion.toString() || "byzantium",
+                    }
+                }
+
+                this.compiler.set('configFileContent', JSON.stringify(configFileContent))
+
+                this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
+                console.log(this.plugin.currentFile)
+                if (!this.plugin.currentFile) return
+                const content = await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+                const sources = { [this.plugin.currentFile]: { content } }
+                this.compiler.compile(sources, this.plugin.currentFile)
+            }
         } catch (e) {
             console.log(e)
         }
+    }
+
+    async addDecorators(allErrors: any[], sources: any) {
+        const errorsPerFiles = {}
+        for (const error of allErrors) {
+            if (!errorsPerFiles[error.error.sourceLocation.file]) {
+                errorsPerFiles[error.error.sourceLocation.file] = []
+            }
+            errorsPerFiles[error.error.sourceLocation.file].push(error.error)
+        }
+
+        const errorPriority = {
+            'error': 0,
+            'warning': 1,
+        }
+
+        // sort errorPerFiles by error priority
+        const sortedErrorsPerFiles = {}
+        for (const fileName in errorsPerFiles) {
+            const errors = errorsPerFiles[fileName]
+            errors.sort((a, b) => {
+                return errorPriority[a.severity] - errorPriority[b.severity]
+            }
+            )
+            sortedErrorsPerFiles[fileName] = errors
+        }
+        const filesWithOutErrors = Object.keys(sources).filter((fileName) => !sortedErrorsPerFiles[fileName])
+        // add decorators
+        const decorators: fileDecoration[] = []
+        for (const fileName in sortedErrorsPerFiles) {
+            const errors = sortedErrorsPerFiles[fileName]
+            const decorator: fileDecoration = {
+                path: fileName,
+                isDirectory: false,
+                fileStateType: errors[0].severity === 'error' ? fileDecorationType.Error : fileDecorationType.Warning,
+                fileStateLabelClass: errors[0].severity === 'error' ? 'text-danger' : 'text-warning',
+                fileStateIconClass: '',
+                fileStateIcon: '',
+                text: errors.length,
+                owner: 'code-parser',
+                bubble: true,
+                commment: errors.map((error) => error.message),
+            }
+            decorators.push(decorator)
+        }
+        for (const fileName of filesWithOutErrors) {
+            const decorator: fileDecoration = {
+                path: fileName,
+                isDirectory: false,
+                fileStateType: fileDecorationType.None,
+                fileStateLabelClass: '',
+                fileStateIconClass: '',
+                fileStateIcon: '',
+                text: '',
+                owner: 'code-parser',
+                bubble: false
+            }
+            decorators.push(decorator)
+        }
+        await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
+        await this.plugin.call('editor', 'clearErrorMarkers', filesWithOutErrors)
+
+    }
+
+    async clearDecorators(sources: any) {
+        const decorators: fileDecoration[] = []
+        for (const fileName of Object.keys(sources)) {
+            const decorator: fileDecoration = {
+                path: fileName,
+                isDirectory: false,
+                fileStateType: fileDecorationType.None,
+                fileStateLabelClass: '',
+                fileStateIconClass: '',
+                fileStateIcon: '',
+                text: '',
+                owner: 'code-parser',
+                bubble: false
+            }
+            decorators.push(decorator)
+        }
+
+
+        await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
     }
 
 }

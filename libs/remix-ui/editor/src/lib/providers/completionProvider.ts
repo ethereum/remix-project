@@ -48,17 +48,17 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
             console.log('expression elements', expressionElements)
             let dotCompleted = false
-            if (expressionElements.length === 2) {
-                const globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
-                if (globalCompletion) {
-                    dotCompleted = true
-                    suggestions = [...suggestions, ...globalCompletion]
-                }
-                if (lastNodeInExpression.name === 'this') {
-                    dotCompleted = true
-                    nodes = [...nodes, ...await this.getContractCompletions(nodes, position)]
-                }
+            //if (expressionElements.length === 2) {
+            const globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
+            if (globalCompletion) {
+                dotCompleted = true
+                suggestions = [...suggestions, ...globalCompletion]
             }
+            if (lastNodeInExpression.name === 'this') {
+                dotCompleted = true
+                nodes = [...nodes, ...await this.getContractCompletions(nodes, position)]
+            }
+            //}
             if (expressionElements.length > 1 && !dotCompleted) {
 
                 const last = lastNodeInExpression.name || lastNodeInExpression.memberName
@@ -72,7 +72,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 if (block) {
                     nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.body ? block.body.range[0] : block.range[0])
                     console.log('NODES AT POSITION WITH BLOCK', nodesAtPosition)
-                } else{
+                } else {
                     nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
                     console.log('NODES AT POSITION', nodesAtPosition)
                 }
@@ -87,7 +87,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                                 console.log('FOUND NODE', nodeOfScope)
                                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                                     const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
-                                    console.log('HAS DECLARATION OF', declarationOf)
+                                    console.log('METHOD 1 HAS DECLARATION OF', declarationOf)
                                     nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
                                     const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
                                     for (const baseContract of baseContracts) {
@@ -98,26 +98,26 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                         }
                     }
                     // anything within the block statements might provide a clue to what it is
-                    if (!nodes.length) {
-                        for (const node of nodesAtPosition) {
-                            if (node.statements) {
-                                for (const statement of node.statements) {
-                                    if (statement.expression && statement.expression.memberName === last) {
-                                        const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', statement.expression)
-                                        if (declarationOf.typeName && declarationOf.typeName.nodeType === 'UserDefinedTypeName') {
-                                            const baseDeclaration = await this.props.plugin.call('codeParser', 'declarationOf', declarationOf.typeName)
-                                            console.log('HAS BASE DECLARATION OF', baseDeclaration)
-                                            nodes = [...nodes, ...baseDeclaration.nodes || baseDeclaration.members]
-                                        }
+                    // if (!nodes.length) {
+                    for (const node of nodesAtPosition) {
+                        if (node.statements) {
+                            for (const statement of node.statements) {
+                                if (statement.expression && statement.expression.memberName === last) {
+                                    const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', statement.expression)
+                                    if (declarationOf.typeName && declarationOf.typeName.nodeType === 'UserDefinedTypeName') {
+                                        const baseDeclaration = await this.props.plugin.call('codeParser', 'declarationOf', declarationOf.typeName)
+                                        console.log('METHOD 2 HAS BASE DECLARATION OF', baseDeclaration)
+                                        nodes = [...nodes, ...baseDeclaration.nodes || baseDeclaration.members]
                                     }
                                 }
                             }
                         }
                     }
                 }
+                // }
 
                 // brute force search in all nodes with the name
-                if (!nodes.length) {
+                if (!nodes.length || 1) {
                     const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithName', last)
                     console.log('NODES WITHE NAME ', last, nodesOfScope)
                     for (const nodeOfScope of nodesOfScope) {
@@ -125,11 +125,11 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                             console.log('FOUND NODE', nodeOfScope)
                             if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                                 const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
-                                console.log('HAS DECLARATION OF', declarationOf)
-                                // nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
+                                console.log('METHOD 3 HAS DECLARATION OF', declarationOf)
+                                nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
                                 //const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
                                 //for (const baseContract of baseContracts) {
-                                    //nodes = [...nodes, ...baseContract.nodes]
+                                //nodes = [...nodes, ...baseContract.nodes]
                                 //}
                             }
                         }
@@ -153,6 +153,18 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         console.log('WORD', word, wordAt)
         console.log('NODES', nodes)
 
+        // remove duplicates
+        const nodeIds = {};
+        const filteredNodes = nodes.filter((node) => {
+            if (node.id) {
+                if (nodeIds[node.id]) {
+                    return false;
+                }
+                nodeIds[node.id] = true;
+            }
+            return true;
+        });
+
         const getNodeLink = async (node: any) => {
             return await this.props.plugin.call('codeParser', 'getNodeLink', node)
         }
@@ -166,7 +178,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         }
 
         const completeParameters = async (parameters: any) => {
-            const localParam = ( parameters && parameters.parameters ) || (parameters)
+            const localParam = (parameters && parameters.parameters) || (parameters)
             if (localParam) {
                 const params = []
                 for (const key in localParam) {
@@ -178,11 +190,18 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
 
         const getVariableDeclaration = async (node: any) => {
-            return await this.props.plugin.call('codeParser', 'getVariableDeclaration', node)
+            let variableDeclaration = await this.props.plugin.call('codeParser', 'getVariableDeclaration', node)
+            if (node.scope) {
+                const scopeNode = await this.props.plugin.call('codeParser', 'getNodeById', node.scope)
+                if (scopeNode) {
+                    variableDeclaration = `${scopeNode.name}.${variableDeclaration}`
+                }
+            }
+            return variableDeclaration
         }
 
 
-        for (const node of Object.values(nodes) as any[]) {
+        for (const node of Object.values(filteredNodes) as any[]) {
             if (!node.name) continue
             if (node.nodeType === 'VariableDeclaration') {
                 const completion = {
@@ -327,7 +346,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
      */
     private async getLastNodeInExpression(lineTextBeforeCursor: string) {
 
-        const wrapLineInFunction = async(text: string) => {
+        const wrapLineInFunction = async (text: string) => {
             return `function() {
                 ${text}
             }`
@@ -351,11 +370,11 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             try {
                 const lineAst = await this.props.plugin.call('codeParser', 'parseSolidity', line)
                 const lastNode = await this.props.plugin.call('codeParser', 'getLastNodeInLine', lineAst)
-                if(lastNode) {
+                if (lastNode) {
                     lastNodeInExpression = lastNode
                     break
                 }
-                    
+
             } catch (e) {
 
             }
