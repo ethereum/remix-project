@@ -1,4 +1,4 @@
-import { shortenAddress, web3Dialog } from "@remix-ui/helper"
+import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setExternalEndpoint, setMatchPassphrase, setPassphrase } from "./payload"
@@ -74,28 +74,7 @@ const _getProviderDropdownValue = (plugin: RunTab): string => {
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
-  const displayContent = web3Dialog(plugin.REACT_API.externalEndpoint, (endpoint: string) => {
-    dispatch(setExternalEndpoint(endpoint))
-  })
-
-  plugin.blockchain.changeExecutionContext(executionContext, () => {
-    plugin.call('notification', 'modal', {
-      id: 'envNotification',
-      title: 'External node request',
-      message: displayContent,
-      okLabel: 'OK',
-      cancelLabel: 'Cancel',
-      okFn: () => {
-        plugin.blockchain.setProviderFromEndpoint(plugin.REACT_API.externalEndpoint, executionContext, (alertMsg) => {
-          if (alertMsg) plugin.call('notification', 'toast', alertMsg)
-          setFinalContext(plugin, dispatch)
-        })
-      },
-      cancelFn: () => {
-        setFinalContext(plugin, dispatch)
-      }
-    })
-  }, (alertMsg) => {
+  plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
     plugin.call('notification', 'toast', alertMsg)
   }, () => { setFinalContext(plugin, dispatch) })
 }
