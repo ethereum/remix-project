@@ -56,6 +56,7 @@ export class CodeParser extends Plugin {
     getLastNodeInLine: (ast: string) => Promise<any>
     listAstNodes: () => Promise<any>
     getBlockAtPosition: (position: any, text?: string) => Promise<any>
+    getCurrentFileAST: (text?: string) => Promise<any>
 
     constructor(astWalker) {
         super(profile)
@@ -73,10 +74,11 @@ export class CodeParser extends Plugin {
         this.antlrService = new CodeParserAntlrService(this)
         this.nodeHelper = new CodeParserNodeHelper(this)
 
-        this.parseSolidity = this.antlrService.parseSolidity
-        this.getLastNodeInLine = this.antlrService.getLastNodeInLine
-        this.listAstNodes = this.antlrService.listAstNodes
-        this.getBlockAtPosition = this.antlrService.getBlockAtPosition
+        this.parseSolidity = this.antlrService.parseSolidity.bind(this.antlrService)
+        this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
+        this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
+        this.getBlockAtPosition = this.antlrService.getBlockAtPosition.bind(this.antlrService)
+        this.getCurrentFileAST = this.antlrService.getCurrentFileAST.bind(this.antlrService)
 
         this.on('editor', 'didChangeFile', async (file) => {
             console.log('contentChanged', file)
@@ -143,6 +145,7 @@ export class CodeParser extends Plugin {
             }
 
         }
+        
     }
 
     // NODE HELPERS
@@ -512,17 +515,19 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getVariableDeclaration(node: any) {
+        const nodeVisibility = node.visibility && node.visibility.length ? node.visibility + ' ' : ''
+        const nodeName = node.name && node.name.length ? node.name : ''
         if (node.typeDescriptions && node.typeDescriptions.typeString) {
-            return `${node.typeDescriptions.typeString} ${node.visibility}${node.name && node.name.length ? ` ${node.name}` : ''}`
+            return `${node.typeDescriptions.typeString} ${nodeVisibility}${nodeName}`
         } else {
             if (node.typeName && node.typeName.name) {
-                return `${node.typeName.name} ${node.visibility}${node.name && node.name.length ? ` ${node.name}` : ''}`
+                return `${node.typeName.name} ${nodeVisibility}${nodeName}`
             }
             else if (node.typeName && node.typeName.namePath) {
-                return `${node.typeName.namePath} ${node.visibility}${node.name && node.name.length ? ` ${node.name}` : ''}`
+                return `${node.typeName.namePath} ${nodeVisibility}${nodeName}`
             }
             else {
-                return `${node.visibility}${node.name && node.name.length ? ` ${node.name}` : ''}`
+                return `${nodeName}${nodeName}`
             }
         }
     }

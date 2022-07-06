@@ -31,15 +31,17 @@ export default class CodeParserAntlrService {
      */
     async getCurrentFileAST(text: string | null = null) {
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        if (!this.plugin.currentFile) return
-        const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
-        try {
-            const ast = await this.parseSolidity(fileContent)
-            this.plugin.currentFileAST = ast
-        } catch (e) {
-            console.log(e)
+        if(this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+            if (!this.plugin.currentFile) return
+            const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+            try {
+                const ast = await this.parseSolidity(fileContent)
+                this.plugin.currentFileAST = ast
+            } catch (e) {
+                console.log(e)
+            }
+            return this.plugin.currentFileAST
         }
-        return this.plugin.currentFileAST
     }
 
     /**
@@ -84,7 +86,14 @@ export default class CodeParserAntlrService {
             },
             InvalidNode: function (node) {
                 nodes.push({ ...node, nodeType: node.type })
+            },
+            EnumDefinition: function (node) {
+                nodes.push({ ...node, nodeType: node.type })
+            },
+            StructDefinition: function (node) {
+                nodes.push({ ...node, nodeType: node.type })
             }
+
         })
         console.log("LIST NODES", nodes)
         return nodes
@@ -117,8 +126,8 @@ export default class CodeParserAntlrService {
             }
         })
         if (lastNode && lastNode.expression && lastNode.expression.expression) {
-            console.log('lastNode with expression', lastNode, lastNode.expression)
-            return lastNode.expression.expression
+            console.log('lastNode with expression', lastNode, lastNode.expression, lastNode.expression.expression)
+            // return lastNode.expression.expression
         }
         if (lastNode && lastNode.expression) {
             console.log('lastNode with expression', lastNode, lastNode.expression)
@@ -138,9 +147,7 @@ export default class CodeParserAntlrService {
     async getBlockAtPosition(position: any, text: string = null) {
         await this.getCurrentFileAST(text)
         const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
-
         const walkAst = (node) => {
-            console.log(node)
             if (node.loc.start.line <= position.lineNumber && node.loc.end.line >= position.lineNumber) {
                 const children = node.children || node.subNodes
                 if (children && allowedTypes.indexOf(node.type) !== -1) {
