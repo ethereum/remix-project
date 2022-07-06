@@ -33,6 +33,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     configurationSettings,
     isHardhatProject,
     isTruffleProject,
+    isFoundryProject,
     workspaceName,
     configFilePath,
     setConfigFilePath,
@@ -245,7 +246,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (filePath === '') filePath = defaultPath
     if (!filePath.endsWith('.json')) filePath = filePath + '.json'
 
-    await api.writeFile(filePath, configFileContent)
+    let compilerConfig = configFileContent
+    if (isFoundryProject && !compilerConfig.includes('remappings')) {
+      let config = JSON.parse(compilerConfig)
+      config.settings.remappings = [
+        'ds-test/=lib/forge-std/lib/ds-test/src/',
+        'forge-std/=lib/forge-std/src/'
+      ]
+      compilerConfig = JSON.stringify(config, null, '\t')
+    }
+    await api.writeFile(filePath, compilerConfig)
     api.setAppParameter('configFilePath', filePath)
     setConfigFilePath(filePath)
     compileTabLogic.setConfigFilePath(filePath)
