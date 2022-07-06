@@ -57,9 +57,13 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             if (lastNodeInExpression.name === 'this') {
                 dotCompleted = true
                 let thisCompletionNodes = await this.getContractCompletions(nodes, position)
-                thisCompletionNodes = thisCompletionNodes.filter(node => 
-                {
-                    if(node.visibility && node.visibility === 'internal') {
+
+                // with this. you can't have internal nodes and no contractDefinitions
+                thisCompletionNodes = thisCompletionNodes.filter(node => {
+                    if (node.visibility && node.visibility === 'internal') {
+                        return false
+                    }
+                    if(node.nodeType && node.nodeType === 'ContractDefinition') {
                         return false
                     }
                     return true
@@ -126,22 +130,22 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
                 // brute force search in all nodes with the name
                 //if (!nodes.length || 1) {
-                    const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithName', last)
-                    console.log('NODES WITHE NAME ', last, nodesOfScope)
-                    for (const nodeOfScope of nodesOfScope) {
-                        if (nodeOfScope.name === last) {
-                            console.log('FOUND NODE', nodeOfScope)
-                            if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
-                                const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
-                                console.log('METHOD 3 HAS DECLARATION OF', declarationOf)
-                                nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
-                                //const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
-                                //for (const baseContract of baseContracts) {
-                                //nodes = [...nodes, ...baseContract.nodes]
-                                //}
-                            }
+                const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithName', last)
+                console.log('NODES WITHE NAME ', last, nodesOfScope)
+                for (const nodeOfScope of nodesOfScope) {
+                    if (nodeOfScope.name === last) {
+                        console.log('FOUND NODE', nodeOfScope)
+                        if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
+                            const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
+                            console.log('METHOD 3 HAS DECLARATION OF', declarationOf)
+                            nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
+                            //const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
+                            //for (const baseContract of baseContracts) {
+                            //nodes = [...nodes, ...baseContract.nodes]
+                            //}
                         }
                     }
+                }
                 //}
             }
         } else {
@@ -154,7 +158,15 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             ...GetGlobalFunctions(range, this.monaco),
             ...GeCompletionUnits(range, this.monaco),
             ]
-            nodes = [...nodes, ...await this.getContractCompletions(nodes, position)]
+            let thisCompletionNodes = await this.getContractCompletions(nodes, position)
+            // we can't have external nodes without using this.
+            thisCompletionNodes = thisCompletionNodes.filter(node => {
+                if (node.visibility && node.visibility === 'external') {
+                    return false
+                }
+                return true
+            })
+            nodes = [...nodes, ...thisCompletionNodes]
 
         }
 
@@ -321,6 +333,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         if (isArray(nodesAtPosition) && nodesAtPosition.length) {
             for (const node of nodesAtPosition) {
                 const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', node.id)
+
                 for (const nodeOfScope of nodesOfScope) {
                     const imports = await this.props.plugin.call('codeParser', 'resolveImports', nodeOfScope)
                     if (imports) {
@@ -328,6 +341,12 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                             if (imports[key].nodes)
                                 nodes = [...nodes, ...imports[key].nodes]
                         }
+                    }
+                }
+                // if the node is a contract at this positio mark the nodes as the contractNodes
+                if (node.nodeType === 'ContractDefinition') {
+                    for (const node of nodesOfScope) {
+                        node.isInContract = true
                     }
                 }
                 nodes = [...nodes, ...nodesOfScope]
@@ -344,6 +363,15 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             nodes = [...nodes, ...await this.props.plugin.call('codeParser', 'listAstNodes')]
         }
 
+        // filter private nodes, only allow them when isContract is true
+        nodes = nodes.filter(node => {
+            if (node.visibility) {
+                if (!node.isInContract) {
+                    return node.visibility !== 'private'
+                }
+            }
+            return true
+        })
         return nodes
     }
 
