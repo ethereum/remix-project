@@ -78,8 +78,8 @@ module.exports = {
     browser
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsSelectEnvOptions"] *[data-id="External Http Provider"]')
-      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
+      .switchEnvironment('web3')
+      .waitForElementPresent('[data-id="envNotification-modal-footer-ok-react"]')
       .execute(function () {
         const modal = document.querySelector('[data-id="basic-http-provider-modal-footer-ok-react"]') as any
 
