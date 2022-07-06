@@ -8,7 +8,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
     const fork = provider.fork // can be undefined if connected to an external source (web3 provider / injected)
     let context = provider.value
 
-    context = context.startsWith('vm') ? 'vm' : context // context has to be 'vm', 'web3' or 'injected'
+    context = context.startsWith('vm') ? 'vm' : context
 
     props.setExecutionContext({ context, fork })
   }
