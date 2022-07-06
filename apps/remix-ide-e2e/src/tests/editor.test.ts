@@ -234,6 +234,7 @@ contract Storage {
     }
 }`
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BallotWithARefToOwner = `
 
 

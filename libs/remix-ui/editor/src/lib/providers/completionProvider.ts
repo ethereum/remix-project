@@ -56,7 +56,15 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             }
             if (lastNodeInExpression.name === 'this') {
                 dotCompleted = true
-                nodes = [...nodes, ...await this.getContractCompletions(nodes, position)]
+                let thisCompletionNodes = await this.getContractCompletions(nodes, position)
+                thisCompletionNodes = thisCompletionNodes.filter(node => 
+                {
+                    if(node.visibility && node.visibility === 'internal') {
+                        return false
+                    }
+                    return true
+                })
+                nodes = [...nodes, ...thisCompletionNodes]
             }
             //}
             if (expressionElements.length > 1 && !dotCompleted) {
