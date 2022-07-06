@@ -331,7 +331,7 @@ export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean
 
 export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
-  const token = config.get('currentFile')
+  const token = config.get('settings/gist-access-token')
   const repoConfig = { url, token }
   const urlArray = url.split('/')
   let repoName = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
@@ -349,10 +349,22 @@ export const cloneRepository = async (url: string) => {
       await fetchWorkspaceDirectory(repoName)
       dispatch(cloneRepositorySuccess())
     }).catch((e) => {
-      dispatch(displayNotification('Clone Git Repository', 'An error occured: ' + e, 'Ok', null, async () => {
-        await deleteWorkspace(repoName)
-        dispatch(cloneRepositoryFailed())
-      }))
+      const cloneModal = {
+        id: 'cloneGitRepository',
+        title: 'Clone Git Repository',
+        message: 'An error occured: ' + e,
+        modalType: 'modal',
+        okLabel: 'OK',
+        okFn: async () => {
+          await deleteWorkspace(repoName)
+          dispatch(cloneRepositoryFailed())
+        },
+        hideFn: async () => {
+          await deleteWorkspace(repoName)
+          dispatch(cloneRepositoryFailed())
+        }
+      }
+      plugin.call('notification', 'modal', cloneModal)
     })
   } catch (e) {
     dispatch(displayPopUp('An error occured: ' + e))
