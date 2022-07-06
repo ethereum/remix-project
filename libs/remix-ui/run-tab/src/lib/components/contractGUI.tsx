@@ -3,8 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { MultiDeployInput } from './multiDeployInput'
-import { DeployInput } from './deployInput'
+import { shortenAddress } from '@remix-ui/helper'
 
 const txFormat = remixLib.execution.txFormat
 export function ContractGUI (props: ContractGUIProps) {
@@ -15,20 +14,15 @@ export function ContractGUI (props: ContractGUIProps) {
     title: string,
     content: string,
     classList: string,
-    dataId: string,
-    widthClass: string
-  }>({ title: '', content: '', classList: '', dataId: '', widthClass: '' })
-  const [selectedDeployIndex, setSelectedDeployIndex] = useState<number>(null)
-  const [showOptions, setShowOptions] = useState<boolean>(false)
-  const [hasArgs, setHasArgs] = useState<boolean>(false)
-  const [isMultiField, setIsMultiField] = useState<boolean>(false)
-  const [deployInputs, setDeployInputs] = useState<{
-    internalType?: string,
-    name: string,
-    type: string
-  }[]>([])
-  const [deployPlaceholder, setDeployPlaceholder] = useState<string>('')
+    dataId: string
+  }>({ title: '', content: '', classList: '', dataId: '' })
+  const [toggleDeployProxy, setToggleDeployProxy] = useState<boolean>(false)
+  const [toggleUpgradeImp, setToggleUpgradeImp] = useState<boolean>(false)
+  const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
+  const [useLastProxy, setUseLastProxy] = useState<boolean>(false)
+  const [proxyAddress, setProxyAddress] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
+  const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
@@ -41,7 +35,7 @@ export function ContractGUI (props: ContractGUIProps) {
     }
     setBasicInput('')
     // we have the reset the fields before reseting the previous references.
-    if (basicInputRef.current) basicInputRef.current.value = ''
+    basicInputRef.current.value = ''
     multiFields.current.filter((el) => el !== null && el !== undefined).forEach((el) => el.value = '')
     multiFields.current = []
   }, [props.title, props.funcABI])
@@ -53,8 +47,7 @@ export function ContractGUI (props: ContractGUIProps) {
         title: title + ' - call',
         content: 'call',
         classList: 'btn-info',
-        dataId: title + ' - call',
-        widthClass: props.widthClass
+        dataId: title + ' - call'
       })
     } else if (props.funcABI.stateMutability === 'payable' || props.funcABI.payable) {
     //   // transact. stateMutability = payable
@@ -62,8 +55,7 @@ export function ContractGUI (props: ContractGUIProps) {
         title: title + ' - transact (payable)',
         content: 'transact',
         classList: 'btn-danger',
-        dataId: title + ' - transact (payable)',
-        widthClass: props.widthClass
+        dataId: title + ' - transact (payable)'
       })
     } else {
     //   // transact. stateMutability = nonpayable
@@ -71,59 +63,13 @@ export function ContractGUI (props: ContractGUIProps) {
         title: title + ' - transact (not payable)',
         content: 'transact',
         classList: 'btn-warning',
-        dataId: title + ' - transact (not payable)',
-        widthClass: props.widthClass
+        dataId: title + ' - transact (not payable)'
       })
     }
   }, [props.lookupOnly, props.funcABI, title])
 
-  useEffect(() => {
-    if (props.deployOption && props.deployOption[selectedDeployIndex]) {
-      if (props.deployOption[selectedDeployIndex].title === 'Deploy with Proxy') {
-        if (props.initializerOptions) {
-          setDeployInputs(props.initializerOptions.inputs.inputs)
-          setDeployPlaceholder(props.initializerOptions.initializeInputs)
-          setHasArgs(true)
-          if (props.initializerOptions.inputs.inputs.length > 1) setIsMultiField(true)
-          else setIsMultiField(false)
-        } else {
-          setDeployInputs([])
-          setDeployPlaceholder('')
-          setHasArgs(false)
-          setIsMultiField(false)
-        }
-      } else {
-        if (props.funcABI) {
-          setDeployInputs(props.funcABI.inputs)
-          setDeployPlaceholder(props.inputs)
-          setHasArgs(true)
-          if (props.funcABI.inputs.length > 1) setIsMultiField(true)
-          else setIsMultiField(false)
-        } else {
-          setDeployInputs([])
-          setDeployPlaceholder('')
-          setHasArgs(false)
-          setIsMultiField(false)
-        }
-      }
-    } else {
-      if (props.funcABI) {
-        setDeployInputs(props.funcABI.inputs)
-        setDeployPlaceholder(props.inputs)
-        setHasArgs(true)
-        if (props.funcABI.inputs.length > 1) setIsMultiField(true)
-        else setIsMultiField(false)
-      } else {
-        setDeployInputs([])
-        setDeployPlaceholder('')
-        setHasArgs(false)
-        setIsMultiField(false)
-      }
-    }
-  }, [selectedDeployIndex, props.funcABI, props.initializerOptions])
-
-  const getContentOnCTC = (fields: HTMLInputElement[]) => {
-    const multiString = getMultiValsString(fields)
+  const getContentOnCTC = () => {
+    const multiString = getMultiValsString(multiFields.current)
     // copy-to-clipboard icon is only visible for method requiring input params
     if (!multiString) {
       return 'cannot encode empty arguments'
@@ -191,8 +137,7 @@ export function ContractGUI (props: ContractGUIProps) {
     if (inputString) {
       inputString = inputString.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
       inputString = inputString.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      inputString = JSON.stringify([inputString])
-      const inputJSON = JSON.parse(inputString)
+      const inputJSON = JSON.parse('[' + inputString + ']')
       const multiInputs = multiFields.current
 
       for (let k = 0; k < multiInputs.length; k++) {
@@ -204,9 +149,15 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const handleActionClick = () => {
-    const deployMode = selectedDeployIndex !== null ? [props.deployOption[selectedDeployIndex].title] : []
+    if (deployState.deploy) {
+      const proxyInitializeString = getMultiValsString(initializeFields.current)
 
-    props.clickCallBack(props.funcABI.inputs, basicInput, deployMode)
+      props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
+    } else if (deployState.upgrade) {
+      props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade Contract'])
+    } else {
+      props.clickCallBack(props.funcABI.inputs, basicInput)
+    }
   }
 
   const handleBasicInput = (e) => {
@@ -215,90 +166,193 @@ export function ContractGUI (props: ContractGUIProps) {
     setBasicInput(value)
   }
 
-  const handleMultiValsSubmit = (fields: HTMLInputElement[]) => {
-    const valsString = getMultiValsString(fields)
-    const deployMode = selectedDeployIndex !== null ? [props.deployOption[selectedDeployIndex].title] : []
+  const handleExpandMultiClick = () => {
+    const valsString = getMultiValsString(multiFields.current)
 
     if (valsString) {
-      props.clickCallBack(props.funcABI.inputs, valsString, deployMode)
+      props.clickCallBack(props.funcABI.inputs, valsString)
     } else {
-      props.clickCallBack(props.funcABI.inputs, '', deployMode)
+      props.clickCallBack(props.funcABI.inputs, '')
     }
   }
 
-  const setSelectedDeploy = (index: number) => {
-    setSelectedDeployIndex(index !== selectedDeployIndex ? index : null)
-    if (basicInputRef.current) basicInputRef.current.value = ''
-    setBasicInput('')
+  const handleToggleDeployProxy = () => {
+    setToggleDeployProxy(!toggleDeployProxy)
   }
 
-  const toggleOptions = () => {
-    setShowOptions(!showOptions)
+  const handleDeployProxySelect = (e) => {
+    const value = e.target.checked
+
+    if (value) setToggleUpgradeImp(false)
+    setToggleDeployProxy(value)
+    setDeployState({ upgrade: false, deploy: value })
+  }
+
+  const handleToggleUpgradeImp = () => {
+    setToggleUpgradeImp(!toggleUpgradeImp)
+  }
+
+  const handleUpgradeImpSelect = (e) => {
+    const value = e.target.checked
+
+    setToggleUpgradeImp(value)
+    if (value) setToggleDeployProxy(false)
+    setDeployState({ deploy: false, upgrade: value })
+  }
+
+  const handleUseLastProxySelect = (e) => {
+    const value = e.target.checked
+
+    setUseLastProxy(value)
+    setProxyAddress('')
+  }
+
+  const handleSetProxyAddress = (e) => {
+    const value = e.target.value
+
+    setProxyAddress(value)
   }
 
   return (
-    <div className={`udapp_contractProperty ${hasArgs ? 'udapp_hasArgs' : ''}`}>
-    {
-      props.isDeploy ? !isMultiField ? 
-      <DeployInput 
-        buttonOptions={buttonOptions}
-        funcABI={props.initializerOptions ? props.initializerOptions.inputs : props.funcABI}
-        inputs={deployPlaceholder}
-        handleBasicInput={handleBasicInput}
-        basicInputRef={basicInputRef}
-        selectedIndex={selectedDeployIndex}
-        setSelectedIndex={setSelectedDeploy}
-        handleActionClick={handleActionClick}
-        deployOptions={props.deployOption}
-      /> : <MultiDeployInput
-        buttonOptions={buttonOptions}
-        selectedIndex={selectedDeployIndex}
-        setSelectedIndex={setSelectedDeploy}
-        handleMultiValsSubmit={handleMultiValsSubmit}
-        inputs={deployInputs}
-        getMultiValsString={getMultiValsString}
-        deployOptions={props.deployOption}
-      /> :
-      <>
-        <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
-          <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
-          <input
-            className="form-control"
-            data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
-            placeholder={props.inputs}
-            title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
-            onChange={handleBasicInput}
-            ref={basicInputRef}
-            style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
-          <i
-            className="fas fa-angle-down udapp_methCaret"
-            onClick={switchMethodViewOn}
-            title={title}
-            style={{ visibility: !(props.funcABI.inputs && props.funcABI.inputs.length > 0) ? 'hidden' : 'visible' }}></i>
-        </div>
-        <div className="udapp_contractActionsContainerMulti" style={{ display: toggleContainer ? 'flex' : 'none' }}>
-          <div className="udapp_contractActionsContainerMultiInner text-dark">
-            <div onClick={switchMethodViewOff} className="udapp_multiHeader">
-              <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
-              <i className='fas fa-angle-up udapp_methCaret'></i>
-            </div>
-            <div>
-              {props.funcABI.inputs.map((inp, index) => {
-                return (
-                  <div className="udapp_multiArg" key={index}>
-                    <label htmlFor={inp.name}> {inp.name}: </label>
-                    <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
-                  </div>)
-              })}
-            </div>
-            <div className="udapp_group udapp_multiArg">
-              <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={() => getContentOnCTC(multiFields.current)} />
-              <button onClick={() => handleMultiValsSubmit(multiFields.current)} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
-            </div>
+    <div className={`udapp_contractProperty ${(props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive') ? 'udapp_hasArgs' : ''}`}>
+      <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
+        <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+        <input
+          className="form-control"
+          data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
+          placeholder={props.inputs}
+          title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
+          onChange={handleBasicInput}
+          ref={basicInputRef}
+          style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
+        <i
+          className="fas fa-angle-down udapp_methCaret"
+          onClick={switchMethodViewOn}
+          title={title}
+          style={{ visibility: !(props.funcABI.inputs && props.funcABI.inputs.length > 0) ? 'hidden' : 'visible' }}></i>
+      </div>
+      <div className="udapp_contractActionsContainerMulti" style={{ display: toggleContainer ? 'flex' : 'none' }}>
+        <div className="udapp_contractActionsContainerMultiInner text-dark">
+          <div onClick={switchMethodViewOff} className="udapp_multiHeader">
+            <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
+            <i className='fas fa-angle-up udapp_methCaret'></i>
+          </div>
+          <div>
+            {props.funcABI.inputs.map((inp, index) => {
+              return (
+                <div className="udapp_multiArg" key={index}>
+                  <label htmlFor={inp.name}> {inp.name}: </label>
+                  <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
+                </div>)
+            })}
+          </div>
+          <div className="udapp_group udapp_multiArg">
+            <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getContentOnCTC} />
+            <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
           </div>
         </div>
-      </>
-    }
+      </div>
+      { props.deployOption && (props.deployOption || []).length > 0 ?
+        <>
+          <div className='d-flex justify-content-between'>
+            <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+              <input
+                id="deployWithProxy"
+                data-id="contractGUIDeployWithProxy"
+                className="form-check-input custom-control-input"
+                type="checkbox"
+                onChange={handleDeployProxySelect}
+                checked={deployState.deploy}
+              />
+              <label
+                htmlFor="deployWithProxy"
+                data-id="contractGUIDeployWithProxyLabel"
+                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                title="An ERC1967 proxy contract will be deployed along with the selected implementation contract."
+              >
+                Deploy With Proxy
+              </label>
+            </div>
+            <div>
+              {
+                props.initializerOptions && props.initializerOptions.initializeInputs ? 
+                <span onClick={handleToggleDeployProxy}>
+                  <i className={!toggleDeployProxy ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
+                </span> : null
+              }
+            </div>
+          </div>
+            {
+              props.initializerOptions && props.initializerOptions.initializeInputs ?
+                <div className={`pl-4 flex-column ${toggleDeployProxy ? "d-flex" : "d-none"}`}>
+                  <div className={`flex-column 'd-flex'}`}>{
+                    props.initializerOptions.inputs.inputs.map((inp, index) => {
+                      return (
+                        <div className="mb-2" key={index}>
+                          <label className='mt-2 text-left d-block' htmlFor={inp.name}> {inp.name}: </label>
+                          <input ref={el => { initializeFields.current[index] = el }} style={{ height: 32 }} className="form-control udapp_input" placeholder={inp.type} title={inp.name} />
+                        </div>
+                      )})
+                    }
+                  </div>
+                </div> : null
+            }
+          <div className='d-flex justify-content-between'>
+            <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+              <input
+                id="upgradeImplementation"
+                data-id="contractGUIUpgradeImplementation"
+                className="form-check-input custom-control-input"
+                type="checkbox"
+                onChange={handleUpgradeImpSelect}
+                checked={deployState.upgrade}
+              />
+              <label
+                htmlFor="upgradeImplementation"
+                data-id="contractGUIUpgradeImplementationLabel"
+                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                title="The implemetation address will be updated to a new address in the proxy contract."
+              >
+                Upgrade Contract
+              </label>
+            </div>
+            <span onClick={handleToggleUpgradeImp}>
+              <i className={!toggleUpgradeImp ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
+            </span>
+          </div>
+          <div className={`pl-4 flex-column ${toggleUpgradeImp ? "d-flex" : "d-none"}`}>
+            <div className={`flex-column 'd-flex'}`}>
+              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+                <input
+                  id="proxyAddress"
+                  data-id="contractGUIProxyAddress"
+                  className="form-check-input custom-control-input"
+                  type="checkbox"
+                  onChange={handleUseLastProxySelect}
+                  checked={useLastProxy}
+                />
+                <label
+                  htmlFor="proxyAddress"
+                  data-id="contractGUIProxyAddressLabel"
+                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                  title="Select this option to use the last deployed ERC1967 contract on the current network."
+                  style={{ fontSize: 12 }}
+                >
+                  Use last deployed ERC1967 contract
+                </label>
+              </div>
+              {
+                !useLastProxy ? 
+                <div className="mb-2">
+                  <label className='mt-2 text-left d-block'>Proxy Address: </label>
+                  <input style={{ height: 32 }} className="form-control udapp_input" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} />
+                </div> :
+                <span className='text-capitalize'>{ shortenAddress(proxyAddress) || 'No proxy address available' }</span>
+              }
+            </div>
+          </div>
+        </> : null
+      }
     </div>
   )
 }
