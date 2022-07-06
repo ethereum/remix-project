@@ -9,7 +9,6 @@ import {
   FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult
 } from '../../types'
 
-
 type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean, version: string) => ReportObj[])
 
 export default class abstractAstView {
