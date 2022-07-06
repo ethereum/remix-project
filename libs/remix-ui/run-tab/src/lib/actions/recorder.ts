@@ -36,12 +36,13 @@ export const storeScenario = async (plugin: RunTab, dispatch: React.Dispatch<any
   )
 }
 
-const runScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => {
+const runScenario = (liveMode: boolean, plugin: RunTab, dispatch: React.Dispatch<any>, file: string, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => {
   if (!file) return dispatch(displayNotification('Alert', 'Unable to run scenerio, no specified scenario file', 'OK', null))
 
   plugin.fileManager.readFile(file).then((json) => {
     // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
     plugin.recorder.runScenario(
+      liveMode,
       json,
       (error, continueTxExecution, cancelCb) => {
         continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
@@ -64,9 +65,9 @@ const runScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, file: string
   }).catch((error) => dispatch(displayNotification('Alert', error, 'OK', null)))
 }
 
-export const runCurrentScenario = (plugin: RunTab, dispatch: React.Dispatch<any>, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => {
+export const runCurrentScenario = (liveMode: boolean, plugin: RunTab, dispatch: React.Dispatch<any>, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => {
   const file = plugin.config.get('currentFile')
 
   if (!file) return dispatch(displayNotification('Alert', 'A scenario file has to be selected', 'Ok', null))
-  runScenario(plugin, dispatch, file, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)
+  runScenario(liveMode, plugin, dispatch, file, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)
 }

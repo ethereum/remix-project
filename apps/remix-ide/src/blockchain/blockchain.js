@@ -464,7 +464,7 @@ export class Blockchain extends Plugin {
   }
 
   /**
-   * This function send a tx only to javascript VM or testnet, will return an error for the mainnet
+   * This function send a tx only to Remix VM or testnet, will return an error for the mainnet
    * SHOULD BE TAKEN CAREFULLY!
    *
    * @param {Object} tx    - transaction.
@@ -530,6 +530,7 @@ export class Blockchain extends Plugin {
         if (this.transactionContextAPI.getAddress) {
           return this.transactionContextAPI.getAddress(function (err, address) {
             if (err) return reject(err)
+            if (!address) return reject('"from" is not defined. Please make sure an account is selected. If you are using a public node, it is likely that no account will be provided. In that case, add the public node to your injected provider (type Metamask) and use injected provider in Remix.')
             return resolve(address)
           })
         }
@@ -548,9 +549,18 @@ export class Blockchain extends Plugin {
     const runTransaction = async () => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
-        const fromAddress = await getAccount()
-        const value = await queryValue()
-        const gasLimit = await getGasLimit()
+        let fromAddress
+        let value
+        let gasLimit
+        try {
+          fromAddress = await getAccount()
+          value = await queryValue()
+          gasLimit = await getGasLimit()
+        } catch (e) {
+          reject(e)
+          return
+        }
+
         const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
 

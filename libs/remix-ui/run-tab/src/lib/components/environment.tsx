@@ -8,7 +8,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
     const fork = provider.fork // can be undefined if connected to an external source (web3 provider / injected)
     let context = provider.value
 
-    context = context.startsWith('vm') ? 'vm' : context // context has to be 'vm', 'web3' or 'injected'
+    context = context.startsWith('vm') ? 'vm' : context
 
     props.setExecutionContext({ context, fork })
   }
@@ -29,7 +29,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
             )
           }
         </select>
-        <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
+        <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info" title="Click for docs about Environment"></i></a>
       </div>
     </div>
   )

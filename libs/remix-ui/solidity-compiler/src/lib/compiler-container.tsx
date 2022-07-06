@@ -33,6 +33,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     configurationSettings,
     isHardhatProject,
     isTruffleProject,
+    isFoundryProject,
     workspaceName,
     configFilePath,
     setConfigFilePath,
@@ -71,7 +72,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       api.setAppParameter('configFilePath', defaultPath)
       if (state.useFileConfiguration) {
         api.fileExists(defaultPath).then((exists) => {
-          if (!exists && state.useFileConfiguration) createNewConfigFile()
+          if (!exists && state.useFileConfiguration) {
+            configFilePathInput.current.value = defaultPath
+            createNewConfigFile()
+          }
         })
       }
       setShowFilePathInput(false)
@@ -90,8 +94,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     const listener = (event) => {
-      if (configFilePathInput.current !== event.target) {
+      if (configFilePathInput.current !== event.target && event.target.innerText !== "Create") {
         setShowFilePathInput(false)
+        configFilePathInput.current.value = ""
         return;
       }
     };
@@ -241,7 +246,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (filePath === '') filePath = defaultPath
     if (!filePath.endsWith('.json')) filePath = filePath + '.json'
 
-    await api.writeFile(filePath, configFileContent)
+    let compilerConfig = configFileContent
+    if (isFoundryProject && !compilerConfig.includes('remappings')) {
+      const config = JSON.parse(compilerConfig)
+      config.settings.remappings = [
+        'ds-test/=lib/forge-std/lib/ds-test/src/',
+        'forge-std/=lib/forge-std/src/'
+      ]
+      compilerConfig = JSON.stringify(config, null, '\t')
+    }
+    await api.writeFile(filePath, compilerConfig)
     api.setAppParameter('configFilePath', filePath)
     setConfigFilePath(filePath)
     compileTabLogic.setConfigFilePath(filePath)
@@ -754,7 +768,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className={`flex-column 'd-flex'}`}>
             <div className="mb-2 ml-4">
               <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-              <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+              <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Language specification available from Compiler >= v0.5.7">
                 <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
                 <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
               </select>
@@ -789,7 +803,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             { (!showFilePathInput && state.useFileConfiguration) && <span
-              title="Click to open the config file."
+              title="Click to open the config file"
               onClick={configFilePath === '' ? () => {} : openFile}
               className="py-2 remixui_compilerConfigPath"
             >{configFilePath === '' ? 'No file selected.' : configFilePath}</span> }
@@ -861,7 +875,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             }>
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
             </OverlayTrigger>
-            <CopyToClipboard tip="Copy tag to use in contract NatSpec" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
+            <CopyToClipboard tip="Click to copy the custom NatSpec tag" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
               <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
               </button>

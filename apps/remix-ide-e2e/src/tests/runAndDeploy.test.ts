@@ -198,7 +198,7 @@ module.exports = {
       .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
   },
 
-  'Call web3.eth.getAccounts() using Injected web3 (Metamask)': '' + function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask)': '' + function (browser: NightwatchBrowser) {
     browser
       .executeScript('web3.eth.getAccounts()')
       .pause(2000)

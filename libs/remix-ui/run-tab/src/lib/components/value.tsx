@@ -58,7 +58,7 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          title="Enter the value and choose the unit"
+          title="Enter an amount and choose its unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}
           value={props.sendValue}
