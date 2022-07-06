@@ -144,7 +144,7 @@ export function Workspace () {
     if (url) {
       global.dispatchCloneRepository(url)
     } else {
-      global.modal('Create Workspace', 'Please provide a valid github repository url.', 'OK', () => {}, '')
+      global.modal('Clone Git Repository', 'Please provide a valid git repository url.', 'OK', () => {}, '')
     }
   }
 
