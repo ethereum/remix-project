@@ -18,13 +18,13 @@ export type ResolvedImport = {
 export class CompilerImports extends Plugin {
   previouslyHandled: Record<string, ResolvedImport>
   urlResolver: any
-  constructor() {
+  constructor () {
     super(profile)
     this.urlResolver = new RemixURLResolver()
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
-  async setToken() {
+  async setToken () {
     try {
       const protocol = typeof window !== 'undefined' && window.location.protocol
       const token = await this.call('settings', 'get', 'settings/gist-access-token')
@@ -35,11 +35,11 @@ export class CompilerImports extends Plugin {
     }
   }
 
-  isRelativeImport(url) {
+  isRelativeImport (url) {
     return /^([^/]+)/.exec(url)
   }
 
-  isExternalUrl(url) {
+  isExternalUrl (url) {
     const handlers = this.urlResolver.getHandlers()
     // we filter out "npm" because this will be recognized as internal url although it's not the case.
     return handlers.filter((handler) => handler.type !== 'npm').some(handler => handler.match(url))
@@ -51,7 +51,7 @@ export class CompilerImports extends Plugin {
     * @param {String} url  - external URL of the content. can be basically anything like raw HTTP, ipfs URL, github address etc...
     * @returns {Promise} - { content, cleanUrl, type, url }
     */
-  resolve(url) {
+  resolve (url) {
     return new Promise((resolve, reject) => {
       this.import(url, null, (error, content, cleanUrl, type, url) => {
         if (error) return reject(error)
@@ -60,15 +60,15 @@ export class CompilerImports extends Plugin {
     })
   }
 
-  async import(url, force, loadingCb, cb) {
+  async import (url, force, loadingCb, cb) {
     if (typeof force !== 'boolean') {
       const temp = loadingCb
       loadingCb = force
       cb = temp
       force = false
     }
-    if (!loadingCb) loadingCb = () => { }
-    if (!cb) cb = () => { }
+    if (!loadingCb) loadingCb = () => {}
+    if (!cb) cb = () => {}
 
     const self = this
     if (force) delete this.previouslyHandled[url]
@@ -93,21 +93,19 @@ export class CompilerImports extends Plugin {
     }
   }
 
-  importExternal(url: string, targetPath: string, save: boolean = true) {
+  importExternal (url, targetPath) {
     return new Promise((resolve, reject) => {
       this.import(url,
         // TODO: handle this event
         (loadingMsg) => { this.emit('message', loadingMsg) },
         async (error, content, cleanUrl, type, url) => {
           if (error) return reject(error)
-          if (save) {
-            try {
-              const provider = await this.call('fileManager', 'getProviderOf', null)
-              const path = targetPath || type + '/' + cleanUrl
-              if (provider) await provider.addExternal('.deps/' + path, content, url)
-            } catch (err) {
-              console.error(err)
-            }
+          try {
+            const provider = await this.call('fileManager', 'getProviderOf', null)
+            const path = targetPath || type + '/' + cleanUrl
+            if (provider) await provider.addExternal('.deps/' + path, content, url)
+          } catch (err) {
+            console.error(err)
           }
           resolve(content)
         }, null)
@@ -124,12 +122,12 @@ export class CompilerImports extends Plugin {
     * @param {String} targetPath - (optional) internal path where the content should be saved to
     * @returns {Promise} - string content
     */
-  async resolveAndSave(url: string, targetPath: string, save: boolean = true) {
+  async resolveAndSave (url, targetPath) {
     try {
       if (targetPath && this.currentRequest) {
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
         if (!canCall) throw new Error('No permission to update ' + targetPath)
-      }
+      }      
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
         if (provider.type === 'localhost' && !provider.isConnected()) {
@@ -141,8 +139,8 @@ export class CompilerImports extends Plugin {
           Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
         */
         if (!exist && (url === 'remix_tests.sol' || url === 'remix_accounts.sol')) {
-          await this.call('solidityUnitTesting', 'createTestLibs')
-          exist = await provider.exists(url)
+            await this.call('solidityUnitTesting', 'createTestLibs')
+            exist = await provider.exists(url)
         }
         if (!exist && url.startsWith('browser/')) throw new Error(`not found ${url}`)
         if (!exist && url.startsWith('localhost/')) throw new Error(`not found ${url}`)
@@ -175,11 +173,11 @@ export class CompilerImports extends Plugin {
                   localhostProvider.addNormalizedName(path.replace('localhost/', ''), url)
                   return content
                 }
-              } catch (e) { }
+              } catch (e) {}
             }
-            return await this.importExternal(url, targetPath, save)
+            return await this.importExternal(url, targetPath)
           }
-          return await this.importExternal(url, targetPath, save)
+          return await this.importExternal(url, targetPath)
         }
       }
     } catch (e) {
