@@ -50,7 +50,7 @@ module.exports = {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
-      .switchEnvironment('web3')
+      .switchEnvironment('External Http Provider')
       .modalFooterOKClick('envNotification')
       .executeScript('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
