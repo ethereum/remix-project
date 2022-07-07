@@ -1,3 +1,4 @@
+import { AstNode } from "@remix-project/remix-solidity-ts"
 import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
@@ -31,8 +32,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         console.log('WORD', word)
 
         const line = model.getLineContent(position.lineNumber)
-        let nodes = []
-        let suggestions = []
+        let nodes: AstNode[] =  []
+        let suggestions: monaco.languages.CompletionItem[] = []
 
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         console.log('cursor', cursorPosition)
@@ -92,13 +93,13 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 // explore nodes at the BLOCK
                 if (nodesAtPosition) {
                     for (const node of nodesAtPosition) {
-                        const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', node.id)
+                        const nodesOfScope: AstNode[] = await this.props.plugin.call('codeParser', 'getNodesWithScope', node.id)
                         console.log('NODES OF SCOPE ', node.name, node.id, nodesOfScope)
                         for (const nodeOfScope of nodesOfScope) {
                             if (nodeOfScope.name === last) {
                                 console.log('FOUND NODE', nodeOfScope)
                                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
-                                    const declarationOf = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
+                                    const declarationOf:AstNode = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
                                     console.log('METHOD 1 HAS DECLARATION OF', declarationOf)
                                     nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
                                     const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
