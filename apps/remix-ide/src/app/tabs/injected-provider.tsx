@@ -31,6 +31,7 @@ export class InjectedProvider extends Plugin {
     }
     try {
       if ((window as any) && typeof (window as any).ethereum.enable === 'function') (window as any).ethereum.enable()
+      if (!await (window as any).ethereum._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       await addL2Network(this.chainName, this.chainId, this.rpcUrls)
       const resultData = await this.provider.currentProvider.send(data.method, data.params)
       resolve({ jsonrpc: '2.0', result: resultData.result, id: data.id })

@@ -155,6 +155,7 @@ export class ExecutionContext {
         infoCb('No injected Web3 provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
         return cb()
       } else {
+        if (!await injected._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
         this.askPermission()
         this.executionContext = context
         web3.setProvider(injectedProvider)
