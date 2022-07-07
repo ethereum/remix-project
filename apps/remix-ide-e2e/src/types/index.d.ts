@@ -62,7 +62,8 @@ declare module 'nightwatch' {
         clearConsole (this: NightwatchBrowser): NightwatchBrowser
         clearTransactions (this: NightwatchBrowser): NightwatchBrowser
         getBrowserLogs (this: NightwatchBrowser): NightwatchBrowser
-        currentSelectedFileIs (name: string): NightwatchBrowser
+        currentSelectedFileIs (name: string): NightwatchBrowser,
+        switchWorkspace: (workspaceName: string) => NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
