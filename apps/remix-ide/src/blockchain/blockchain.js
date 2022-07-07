@@ -161,7 +161,9 @@ export class Blockchain extends Plugin {
 
   async runProxyTx (proxyData, implementationContractObject) {
     const args = { useCall: false, data: proxyData }
+    let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      networkInfo = network
       // continue using original authorization given by user
       continueTxExecution(null)
     }
@@ -173,6 +175,8 @@ export class Blockchain extends Plugin {
   
         return this.call('terminal', 'logHtml', log)
       }
+      if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
+      else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
       return this.call('udapp', 'resolveContractAndAddInstance', implementationContractObject, address)
     }
 
