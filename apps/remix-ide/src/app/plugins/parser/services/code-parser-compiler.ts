@@ -62,8 +62,8 @@ export default class CodeParserCompiler {
 
             if (!data.sources) return
             if (data.sources && Object.keys(data.sources).length === 0) return
-            this.plugin.lastCompilationResult = new CompilerAbstract('soljson', data, source, input)
-
+            this.plugin.compilerAbstract = new CompilerAbstract('soljson', data, source, input)
+            console.log('ABSTRACT', this.plugin.compilerAbstract)
             this.errorState = false
             this.plugin._index = {
                 Declarations: {},

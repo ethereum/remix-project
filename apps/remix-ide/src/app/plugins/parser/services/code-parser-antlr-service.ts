@@ -1,6 +1,8 @@
 'use strict'
 
+import { AstNode } from "@remix-project/remix-solidity-ts"
 import { CodeParser } from "../code-parser"
+import { antlr } from '../types'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -15,10 +17,7 @@ export default class CodeParserAntlrService {
     */
 
     async parseSolidity(text: string) {
-        const t0 = performance.now();
-        const ast = (SolidityParser as any).parse(text, { loc: true, range: true, tolerant: true })
-        const t1 = performance.now();
-        console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
+        const ast: antlr.ParseResult = (SolidityParser as any).parse(text, { loc: true, range: true, tolerant: true })
         console.log('AST PARSE SUCCESS', ast)
         return ast
     }
@@ -31,16 +30,16 @@ export default class CodeParserAntlrService {
      */
     async getCurrentFileAST(text: string | null = null) {
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        if(this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+        if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
             if (!this.plugin.currentFile) return
             const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
             try {
                 const ast = await this.parseSolidity(fileContent)
-                this.plugin.currentFileAST = ast
+                this.plugin.antlrParserResult = ast
             } catch (e) {
                 console.log(e)
             }
-            return this.plugin.currentFileAST
+            return this.plugin.antlrParserResult
         }
     }
 
@@ -51,47 +50,47 @@ export default class CodeParserAntlrService {
     */
     async listAstNodes() {
         await this.getCurrentFileAST();
-        const nodes: any = [];
-        (SolidityParser as any).visit(this.plugin.currentFileAST, {
-            StateVariableDeclaration: (node) => {
+        const nodes: AstNode[] = [];
+        (SolidityParser as any).visit(this.plugin.antlrParserResult, {
+            StateVariableDeclaration: (node: antlr.StateVariableDeclaration) => {
                 if (node.variables) {
                     for (const variable of node.variables) {
-                        nodes.push({ ...variable, nodeType: 'VariableDeclaration' })
+                        nodes.push({ ...variable, nodeType: 'VariableDeclaration', id: null, src: null })
                     }
                 }
             },
-            VariableDeclaration: (node) => {
-                nodes.push({ ...node, nodeType: node.type })
+            VariableDeclaration: (node: antlr.VariableDeclaration) => {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            UserDefinedTypeName: (node) => {
-                nodes.push({ ...node, nodeType: node.type })
+            UserDefinedTypeName: (node: antlr.UserDefinedTypeName) => {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            FunctionDefinition: (node) => {
-                nodes.push({ ...node, nodeType: node.type })
+            FunctionDefinition: (node: antlr.FunctionDefinition) => {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            ContractDefinition: (node) => {
-                nodes.push({ ...node, nodeType: node.type })
+            ContractDefinition: (node: antlr.ContractDefinition) => {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            MemberAccess: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            MemberAccess: function (node: antlr.MemberAccess) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            Identifier: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            Identifier: function (node: antlr.Identifier) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            EventDefinition: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            EventDefinition: function (node: antlr.EventDefinition) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            ModifierDefinition: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            ModifierDefinition: function (node: antlr.ModifierDefinition) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            InvalidNode: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            InvalidNode: function (node: antlr.InvalidNode) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            EnumDefinition: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            EnumDefinition: function (node: antlr.EnumDefinition) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             },
-            StructDefinition: function (node) {
-                nodes.push({ ...node, nodeType: node.type })
+            StructDefinition: function (node: antlr.StructDefinition) {
+                nodes.push({ ...node, nodeType: node.type, id: null, src: null })
             }
 
         })
@@ -118,7 +117,7 @@ export default class CodeParserAntlrService {
         }
 
         (SolidityParser as any).visit(ast, {
-            MemberAccess: function (node) {
+            MemberAccess: function (node: any) {
                 checkLastNode(node)
             },
             Identifier: function (node) {
@@ -160,8 +159,8 @@ export default class CodeParserAntlrService {
             }
             return null
         }
-        if (!this.plugin.currentFileAST) return
-        return walkAst(this.plugin.currentFileAST)
+        if (!this.plugin.antlrParserResult) return
+        return walkAst(this.plugin.antlrParserResult)
     }
 
 }
