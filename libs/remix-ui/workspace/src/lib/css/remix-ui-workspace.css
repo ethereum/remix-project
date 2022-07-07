@@ -88,6 +88,7 @@
   .custom-dropdown-items {
     padding: 0.25rem 0.25rem;
     border-radius: .25rem;
+    background: var(--light);
   }
   .custom-dropdown-items a {
     border-radius: .25rem;
@@ -97,5 +98,6 @@
     font-size: 0.875rem;
     padding: 0.25rem 0.25rem;
     width: auto;
+    color: var(--text);
   }
   
