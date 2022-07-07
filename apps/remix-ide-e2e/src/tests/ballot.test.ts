@@ -91,14 +91,7 @@ module.exports = {
         modal.click()
       })
       .pause(5000)
-      .waitForElementContainsText('#selectExEnvOptions button', 'External HTTP Provider')
-      .execute(function () {
-        const env: any = document.getElementById('selectExEnvOptions')
-
-        return env.value
-      }, [], function (result) {
-        browser.assert.ok(result.value === 'External Http Provider', 'Web3 Provider not selected')
-      })
+      .waitForElementContainsText('#selectExEnvOptions button', 'External Http Provider')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
