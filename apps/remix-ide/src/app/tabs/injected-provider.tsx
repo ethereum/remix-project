@@ -11,7 +11,9 @@ export class InjectedProvider extends Plugin {
 
   constructor (profile) {
     super(profile)
-    this.provider = new Web3((window as any).ethereum)
+    if ((window as any).ethereum) {
+      this.provider = new Web3((window as any).ethereum)
+    }
   }
 
   sendAsync (data: JsonDataRequest): Promise<any> {
@@ -23,7 +25,10 @@ export class InjectedProvider extends Plugin {
   private async sendAsyncInternal (data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
     // Check the case where current environment is VM on UI and it still sends RPC requests
     // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
-    
+    if (!this.provider) {
+      this.call('notification', 'toast', 'No injected provider (e.g Metamask) has been found.')
+      return reject(new Error('no injected provider found.'))
+    }
     try {
       if ((window as any) && typeof (window as any).ethereum.enable === 'function') (window as any).ethereum.enable()
       await addL2Network(this.chainName, this.chainId, this.rpcUrls)
