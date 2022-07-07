@@ -202,9 +202,10 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const handleUseLastProxySelect = (e) => {
     const value = e.target.checked
+    const address = props.savedProxyAddress
 
     setUseLastProxy(value)
-    setProxyAddress('')
+    setProxyAddress(address || '')
   }
 
   const handleSetProxyAddress = (e) => {
@@ -347,7 +348,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   <label className='mt-2 text-left d-block'>Proxy Address: </label>
                   <input style={{ height: 32 }} className="form-control udapp_input" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} />
                 </div> :
-                <span className='text-capitalize'>{ shortenAddress(proxyAddress) || 'No proxy address available' }</span>
+                <span className='text-capitalize'>{ proxyAddress ? shortenAddress(proxyAddress) : 'No proxy address available' }</span>
               }
             </div>
           </div>
