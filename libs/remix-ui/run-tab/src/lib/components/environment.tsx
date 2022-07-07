@@ -31,7 +31,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
       <label id="selectExEnv" className="udapp_settingsLabel">
         Environment <OverlayTrigger placement={'right'} overlay={
               <Tooltip className="text-nowrap" id="info-recorder">
-                <span>Click here to open chainlist and add a new provider for the chain you want to interact to.</span>
+                <span>Open chainlist and add a new provider for the chain you want to interact to.</span>
               </Tooltip>
             }>
             <a href='https://chainlist.org/' target='_blank'><i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i></a>
@@ -45,7 +45,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
             { currentProvider && currentProvider.content }
             { currentProvider && bridges[currentProvider.value] && <OverlayTrigger placement={'right'} overlay={
               <Tooltip className="text-nowrap" id="info-recorder">
-                <span>Click here to open a bridge.</span>
+                <span>Click to open a bridge for converting L1 mainnet ETH to the selected network currency.</span>
               </Tooltip>
             }>
             <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-plug'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
