@@ -214,10 +214,10 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsSelectEnvOptions"] *[data-id="External Http Provider"]') // select web3 provider with debug nodes URL
-      .clearValue('*[data-id="modalDialogCustomPromp"]')
-      .setValue('*[data-id="modalDialogCustomPromp"]', 'https://remix-rinkeby.ethdevops.io')
-      .modalFooterOKClick('basic-http-provider')
+      .switchEnvironment('External Http Provider') // select web3 provider with debug nodes URL
+      .clearValue('*[data-id="modalDialogCustomPromptText"]')
+      .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
+      .modalFooterOKClick()
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000) // wait for the compilation to succeed
       .clickLaunchIcon('debugger')
       .clearValue('*[data-id="debuggerTransactionInput"]')
