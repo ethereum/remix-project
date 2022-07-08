@@ -22,7 +22,7 @@ export function AccountUI (props: AccountProps) {
       case 'injected':
         setPlusOpt({
           classList: 'udapp_disableMouseEvents',
-          title: "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
+          title: "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type)."
         })
         break
 
