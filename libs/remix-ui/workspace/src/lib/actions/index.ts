@@ -128,12 +128,12 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         } else await basicWorkspaceInit(workspaces, workspaceProvider)
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (localStorage.getItem("currentWorkspace")) {
-      const index = workspaces.indexOf(localStorage.getItem("currentWorkspace"))
+      const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))
       if (index !== -1) {
         const name = localStorage.getItem("currentWorkspace")
         workspaceProvider.setWorkspace(name)
-        plugin.setWorkspace({ name, isLocalhost: false })
-        dispatch(setCurrentWorkspace(name))
+        plugin.setWorkspace({ name: name, isLocalhost: false })
+        dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
       } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
