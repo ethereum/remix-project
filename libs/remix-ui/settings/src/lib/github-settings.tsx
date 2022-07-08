@@ -1,18 +1,20 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettingsProps } from '../types'
 
 export function GithubSettings (props: GithubSettingsProps) {
   const [githubToken, setGithubToken] = useState<string>("")
   const [githubUserName, setGithubUsername] = useState<string>("")
   const [githubEmail, setGithubEmail] = useState<string>("")
+  const intl = useIntl()
 
   useEffect(() => {
     if (props.config) {
       const githubToken = props.config.get('settings/gist-access-token')
       const githubUserName = props.config.get('settings/github-user-name')
       const githubEmail = props.config.get('settings/github-email')
-  
+
       setGithubToken(githubToken)
       setGithubUsername(githubUserName)
       setGithubEmail(githubEmail)
@@ -42,13 +44,18 @@ export function GithubSettings (props: GithubSettingsProps) {
     setGithubEmail('')
     props.removeTokenToast()
   }
-  
+
   return (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">GitHub Credentials</h6>
-        <p className="mb-1">Manage your GitHub credentials used to publish to Gist and retrieve GitHub contents.</p>
-        <p className="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only \'create gist\' permission.</p>
+        <h6 className="card-title"><FormattedMessage id='settings.githubTitle' defaultMessage='GitHub Credentials' /></h6>
+        <p className="mb-1"><FormattedMessage id='settings.githubText' defaultMessage='Manage your GitHub credentials used to publish to Gist and retrieve GitHub contents.' /></p>
+        <p className="">
+          <FormattedMessage
+            id='settings.githubText2'
+            defaultMessage="Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only \'create gist\' permission."
+          />
+        </p>
         <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
         <div>
           <label>TOKEN:</label>
@@ -70,8 +77,10 @@ export function GithubSettings (props: GithubSettingsProps) {
           <div className="text-secondary mb-0 h6">
             <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={ githubEmail } />
             <div className="d-flex justify-content-end pt-2">
-              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={saveGithubToken} value="Save" type="button" disabled={githubToken === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub Credentials" onClick={removeToken}>Remove</button>
+              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={saveGithubToken} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button" disabled={githubToken === ''}></input>
+              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub Credentials" onClick={removeToken}>
+                <FormattedMessage id='settings.remove' defaultMessage='Remove' />
+              </button>
             </div>
           </div>
         </div>
