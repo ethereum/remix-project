@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { shortenAddress } from '@remix-ui/helper'
 
 const txFormat = remixLib.execution.txFormat
 export function ContractGUI (props: ContractGUIProps) {
@@ -196,7 +195,10 @@ export function ContractGUI (props: ContractGUIProps) {
     const value = e.target.checked
 
     setToggleUpgradeImp(value)
-    if (value) setToggleDeployProxy(false)
+    if (value) {
+      setToggleDeployProxy(false)
+      if (useLastProxy) setProxyAddress(props.savedProxyAddress)
+    }
     setDeployState({ deploy: false, upgrade: value })
   }
 
@@ -314,7 +316,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                 title="The implemetation address will be updated to a new address in the proxy contract."
               >
-                Upgrade Contract
+                Upgrade With Proxy
               </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
@@ -343,12 +345,12 @@ export function ContractGUI (props: ContractGUIProps) {
                 </label>
               </div>
               {
-                !useLastProxy ? 
+                !useLastProxy ?
                 <div className="mb-2">
                   <label className='mt-2 text-left d-block'>Proxy Address: </label>
                   <input style={{ height: 32 }} className="form-control udapp_input" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} />
                 </div> :
-                <span className='text-capitalize'>{ proxyAddress ? shortenAddress(proxyAddress) : 'No proxy address available' }</span>
+                <span className='text-capitalize' style={{ fontSize: '.8em' }}>{ proxyAddress || 'No proxy address available' }</span>
               }
             </div>
           </div>

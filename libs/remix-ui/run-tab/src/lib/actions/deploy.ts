@@ -179,7 +179,7 @@ export const createInstance = async (
 
   if (selectedContract.isOverSizeLimit()) {
     return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(), 'Force Send', 'Cancel', () => {
-      deployContract(plugin, selectedContract, !isProxyDeployment ? args : '', contractMetadata, compilerContracts, {
+      deployContract(plugin, selectedContract, !isProxyDeployment && !isContractUpgrade ? args : '', contractMetadata, compilerContracts, {
         continueCb: (error, continueTxExecution, cancelCb) => {
           continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
         },
