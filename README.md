@@ -1,8 +1,8 @@
 <p align="center">
   <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>
 </p>
-<p align="center"><font size="6">Remix Project</font></p>
-
+<h3 align="center">Remix Project</h3>
+    
 <div align="center">
 
 [![CircleCI](https://circleci.com/gh/ethereum/remix-project.svg?style=svg)](https://circleci.com/gh/ethereum/remix-project)
@@ -16,7 +16,8 @@
 
 </div>
 
----
+## Remix Project
+
 **Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
 
 ## Remix IDE
