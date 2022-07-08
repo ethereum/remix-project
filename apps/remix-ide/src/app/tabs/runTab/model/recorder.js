@@ -33,7 +33,13 @@ class Recorder extends Plugin {
 
       // convert to and from to tokens
       if (this.data._listen) {
-        var record = { value, parameters: payLoad.funArgs }
+        var record = { 
+          value,
+          inputs: txHelper.serializeInputs(payLoad.funAbi),
+          parameters: payLoad.funArgs,
+          name: payLoad.funAbi.name,          
+          type: payLoad.funAbi.type
+        }
         if (!to) {
           var abi = payLoad.contractABI
           var keccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(abi)))
@@ -55,10 +61,7 @@ class Recorder extends Plugin {
           var creationTimestamp = this.data._createdContracts[to]
           record.to = `created{${creationTimestamp}}`
           record.abi = this.data._contractABIReferences[creationTimestamp]
-        }
-        record.name = payLoad.funAbi.name
-        record.inputs = txHelper.serializeInputs(payLoad.funAbi)
-        record.type = payLoad.funAbi.type
+        }        
         for (var p in record.parameters) {
           var thisarg = record.parameters[p]
           var thistimestamp = this.data._createdContracts[thisarg]

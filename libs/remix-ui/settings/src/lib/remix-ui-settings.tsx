@@ -10,6 +10,7 @@ import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
 import { RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { GithubSettings } from './github-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -362,7 +363,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}
-      {token('gist')}
+      <GithubSettings
+        saveTokenToast={(githubToken: string, githubUserName: string, githubEmail: string) => {
+          saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token")
+          saveTokenToast(props.config, dispatchToast, githubUserName, "github-user-name")
+          saveTokenToast(props.config, dispatchToast, githubEmail, "github-email")
+        }}
+        removeTokenToast={() => {
+          removeTokenToast(props.config, dispatchToast, "gist-access-token")
+          removeTokenToast(props.config, dispatchToast, "github-user-name")
+          removeTokenToast(props.config, dispatchToast, "github-email")
+        }}
+        config={props.config}
+      />
       {token('etherscan')}
       {swarmSettings()}
       {ipfsSettings()}

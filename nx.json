@@ -172,6 +172,9 @@
     },
     "remix-ui-locale-module": {
       "tags": []
+    },
+    "remix-ui-tooltip-popup": {
+      "tags": []
     }
   },
   "targetDependencies": {

@@ -164,9 +164,6 @@ export class ExecutionContext {
       }
     }
 
-    if (context === 'web3') {
-      confirmCb(cb)
-    }
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
