@@ -37,7 +37,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
   const intl = useIntl()
 
-
   const initValue = () => {
     const metadataConfig =  props.config.get('settings/generate-contract-metadata')
     if (metadataConfig === undefined || metadataConfig === null) generateContractMetadat(props.config, true, dispatch)
@@ -221,9 +220,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const token = (type: string) => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title"><FormattedMessage id='settings.gitAccessTokenTitle' defaultMessage={ labels[type].title } /></h6>
-        <p className="mb-1"><FormattedMessage id='settings.gitAccessTokenText' defaultMessage={ labels[type].message1 } /></p>
-        <p className=""><FormattedMessage id='settings.gitAccessTokenText2' defaultMessage={ labels[type].message2 } /></p>
+        <h6 className="card-title"><FormattedMessage id='settings.etherscanTokenTitle' defaultMessage={ labels[type].title } /></h6>
+        <p className="mb-1"><FormattedMessage id='settings.etherscanAccessTokenText' defaultMessage={ labels[type].message1 } /></p>
+        <p className=""><FormattedMessage id='settings.etherscanAccessTokenText2' defaultMessage={ labels[type].message2 } /></p>
         <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{ labels[type].link }</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
@@ -262,7 +261,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const swarmSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ swarmSettingsTitle }</h6>
+        <h6 className="card-title"><FormattedMessage id='settings.swarm' defaultMessage={ swarmSettingsTitle } /></h6>
         <div className="pt-2 mb-1"><label>PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={ privateBeeAddress } />
@@ -326,7 +325,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const ipfsSettings = () => (
     <div className="border-top">
     <div className="card-body pt-3 pb-2">
-      <h6 className="card-title">{ ipfsSettingsText }</h6>
+      <h6 className="card-title"><FormattedMessage id='settings.ipfs' defaultMessage={ ipfsSettingsText } /></h6>
       <div className="pt-2 mb-1"><label>IPFS HOST:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
