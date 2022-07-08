@@ -136,19 +136,25 @@ export interface ContractABI {
     };
 }
 
+export type DeployMode = 'Deploy with Proxy' | 'Upgrade Contract'
+
 export type DeployOption = {
-    initializeInputs: string,
+  initializeInputs: string,
+  inputs: {
     inputs: {
-      inputs: {
-        internalType?: string,
-        name: string,
-        type: string
-      }[],
-      name: "initialize",
-      outputs?: any[],
-      stateMutability: string,
-      type: string,
-      payable?: boolean,
-      constant?: any
-    }
+      internalType?: string,
+      name: string,
+      type: string
+    }[],
+    name: "initialize",
+    outputs?: any[],
+    stateMutability: string,
+    type: string,
+    payable?: boolean,
+    constant?: any
   }
+}
+export interface DeployOptions {
+  initializeOptions: DeployOption,
+  options: { title: DeployMode, active: boolean }[]
+}
