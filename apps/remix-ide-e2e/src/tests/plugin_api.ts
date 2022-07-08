@@ -214,7 +214,7 @@ module.exports = {
           }
         })
         .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-        .rightClick('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
+        .rightClickCustom('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
           // @ts-ignore
           browser.click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
             await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [] }, null, null)

@@ -66,7 +66,7 @@ module.exports = {
   'Should delete Browser_E2E_Tests folder': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
-      .rightClick('[data-path="Browser_E2E_Tests"]')
+      .rightClickCustom('[data-path="Browser_E2E_Tests"]')
       .click('*[id="menuitemdelete"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', 60000)
       .pause(2000)

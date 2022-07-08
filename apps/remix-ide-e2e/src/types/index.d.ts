@@ -28,7 +28,7 @@ declare module 'nightwatch' {
         checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser,
         openFile(name: string): NightwatchBrowser,
         renamePath(path: string, newFileName: string, renamedPath: string): NightwatchBrowser,
-        rightClick(cssSelector: string): NightwatchBrowser,
+        rightClickCustom(cssSelector: string): NightwatchBrowser,
         scrollToLine(line: number): NightwatchBrowser,
         waitForElementContainsText(id: string, value: string, timeout?: number): NightwatchBrowser,
         getModalBody(callback: (value: string, cb: VoidFunction) => void): NightwatchBrowser,
