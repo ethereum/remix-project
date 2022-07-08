@@ -10,7 +10,7 @@ module.exports = {
   'Should switch to ganache provider, set a custom URL and fail to connect': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
-      .click('*[data-id="Ganache Provider"]')
+      .switchEnvironment('Ganache Provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
       .execute(() => {
         (document.querySelector('*[data-id="ganache-providerModalDialogModalBody-react"] input') as any).focus()
@@ -25,7 +25,7 @@ module.exports = {
   },
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect': function (browser: NightwatchBrowser) {
-    browser.click('*[data-id="Ganache Provider"]')
+    browser.switchEnvironment('Ganache Provider')
     .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
     .modalFooterOKClick('ganache-provider')
     .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
@@ -33,7 +33,7 @@ module.exports = {
 
   'Should switch to foundry provider, set a custom URL and fail to connect': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .click('*[data-id="Foundry Provider"]')
+    .switchEnvironment('Foundry Provider')
     .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
     .execute(() => {
       (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
@@ -48,7 +48,7 @@ module.exports = {
 
 },
   'Should switch to foundry provider, use the default foundry URL and succeed to connect': function (browser: NightwatchBrowser) {
-    browser.click('*[data-id="Foundry Provider"]')
+    browser.switchEnvironment('Foundry Provider')
     .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
     .modalFooterOKClick('foundry-provider')
     .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
