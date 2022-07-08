@@ -27,7 +27,7 @@ export function RecorderUI (props: RecorderProps) {
           <div className="ml-2 mb-2 badge badge-pill badge-primary" title="The number of recorded transactions">{props.count}</div>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="info-recorder">
-            <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
+            <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Remix VM can be replayed in the Injected Provider.
           </span>
           </Tooltip>
         }>
