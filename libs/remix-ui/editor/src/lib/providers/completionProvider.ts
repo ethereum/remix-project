@@ -13,6 +13,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     constructor(props: any, monaco: any) {
         this.props = props
         this.monaco = monaco
+
+        
     }
 
     triggerCharacters = ['.', '']
@@ -29,19 +31,16 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             endColumn: word.endColumn
         };
 
-        console.log('WORD', word)
-
         const line = model.getLineContent(position.lineNumber)
         let nodes: AstNode[] =  []
         let suggestions: monaco.languages.CompletionItem[] = []
 
-        const cursorPosition = this.props.editorAPI.getCursorPosition()
-        console.log('cursor', cursorPosition)
-
+        const cursorPosition: number = this.props.editorAPI.getCursorPosition()
+        
         if (context.triggerCharacter === '.') {
             console.clear()
             console.log('TEXT', line)
-            const lineTextBeforeCursor = line.substring(0, position.column - 1)
+            const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
             const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
             console.log('lastNode found', lastNodeInExpression)
             console.log(lineTextBeforeCursor)
@@ -130,7 +129,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 // }
 
                 // brute force search in all nodes with the name
-                //if (!nodes.length || 1) {
                 const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithName', last)
                 console.log('NODES WITHE NAME ', last, nodesOfScope)
                 for (const nodeOfScope of nodesOfScope) {
@@ -147,7 +145,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                         }
                     }
                 }
-                //}
             }
         } else {
 

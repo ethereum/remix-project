@@ -105,8 +105,8 @@ export default class CodeParserAntlrService {
      * @returns 
      */
     async getLastNodeInLine(ast: string) {
-        let lastNode
-        const checkLastNode = (node) => {
+        let lastNode: any
+        const checkLastNode = (node: antlr.MemberAccess | antlr.Identifier) => {
             if (lastNode && lastNode.range && lastNode.range[1]) {
                 if (node.range[1] > lastNode.range[1]) {
                     lastNode = node
@@ -117,10 +117,10 @@ export default class CodeParserAntlrService {
         }
 
         (SolidityParser as any).visit(ast, {
-            MemberAccess: function (node: any) {
+            MemberAccess: function (node: antlr.MemberAccess) {
                 checkLastNode(node)
             },
-            Identifier: function (node) {
+            Identifier: function (node: antlr.Identifier) {
                 checkLastNode(node)
             }
         })
@@ -146,7 +146,7 @@ export default class CodeParserAntlrService {
     async getBlockAtPosition(position: any, text: string = null) {
         await this.getCurrentFileAST(text)
         const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
-        const walkAst = (node) => {
+        const walkAst = (node: any) => {
             if (node.loc.start.line <= position.lineNumber && node.loc.end.line >= position.lineNumber) {
                 const children = node.children || node.subNodes
                 if (children && allowedTypes.indexOf(node.type) !== -1) {

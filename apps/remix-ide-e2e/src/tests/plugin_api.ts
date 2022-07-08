@@ -417,7 +417,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .addFile('test_modal.js', { content: testModalToasterApi })
-      .executeScript('remix.execute(\'test_modal.js\')')
+      .ExecuteScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
       .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')

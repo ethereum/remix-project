@@ -152,6 +152,10 @@ export class RemixHoverProvider implements languages.HoverProvider {
             // getScope(nodeAtPosition)
         }
 
+        setTimeout(() => {
+           // eslint-disable-next-line no-debugger
+           // debugger
+        },1000)
 
         return {
             range: new this.monaco.Range(

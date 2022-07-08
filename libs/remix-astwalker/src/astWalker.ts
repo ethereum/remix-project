@@ -87,6 +87,8 @@ export class AstWalker extends EventEmitter {
     return normalizedNodes
   }
 
+
+
   getASTNodeChildren (ast: AstNode): AstNode[] {
     let nodes = ast.nodes || // for ContractDefinition
               ast.body || // for FunctionDefinition, ModifierDefinition, WhileStatement, DoWhileStatement, ForStatement
