@@ -1,7 +1,7 @@
 <p align="center">
   <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>
 </p>
-<p align="center">Remix Project</p>
+<p align="center"><font size="6">Remix Project</font></p>
 
 <div align="center">
 
