@@ -21,7 +21,7 @@ declare module 'nightwatch' {
         modalFooterOKClick(id?: string): NightwatchBrowser,
         clickInstance(index: number): NightwatchBrowser,
         journalLastChildIncludes(val: string): NightwatchBrowser,
-        executeScript(script: string): NightwatchBrowser,
+        ExecuteScriptInTerminal(script: string): NightwatchBrowser,
         clearEditableContent(cssSelector: string): NightwatchBrowser,
         journalChildIncludes(val: string, opts = { shouldHaveOnlyOneOccurence: boolean }): NightwatchBrowser,
         debugTransaction(index: number): NightwatchBrowser,
