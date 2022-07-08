@@ -1,5 +1,7 @@
-<img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200" style="display: block;margin-left: auto; margin-right: auto;"/>
-<p style="font-size: 2rem;text-align:center;">Remix Project</p>
+<p align="center">
+  <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>
+</p>
+<p align="center">Remix Project</p>
 
 <div align="center">
 
