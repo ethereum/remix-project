@@ -188,7 +188,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .clickLaunchIcon('udapp')
-      .waitForElementContainsText('#selectExEnvOptions option:checked', 'Remix VM (Berlin)')
+      .waitForElementContainsText('#selectExEnvOptions button', 'Remix VM (Berlin)')
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
@@ -391,7 +391,7 @@ module.exports = {
       .useCss()
       .clickLaunchIcon('pluginManager')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="Hardhat Provider"]')
+      .switchEnvironment('Hardhat Provider')
       .modalFooterOKClick('hardhat-provider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
       .clickLaunchIcon('localPlugin')
