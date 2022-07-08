@@ -1,8 +1,8 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
-import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { checkSlash, checkSpecialChars, createNonClashingTitle } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
@@ -42,13 +42,13 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
-    dispatch(createWorkspaceSuccess(workspaceName))
+    dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
@@ -254,8 +254,10 @@ export const switchToWorkspace = async (name: string) => {
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
+    const isGitRepo = await plugin.fileManager.isGitRepo()
+
     dispatch(setMode('browser'))
-    dispatch(setCurrentWorkspace(name))
+    dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
   }
 }
@@ -302,22 +304,69 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   })
 }
 
-export const getWorkspaces = async (): Promise<string[]> | undefined => {
+export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean}[]> | undefined => {
   try {
-    const workspaces: string[] = await new Promise((resolve, reject) => {
+    const workspaces: {name: string, isGitRepo: boolean}[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           return reject(error)
         }
-        resolve(Object.keys(items)
+        Promise.all(Object.keys(items)
           .filter((item) => items[item].isDirectory)
-          .map((folder) => folder.replace(workspacesPath + '/', '')))
+          .map(async (folder) => {
+            const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
+            return {
+              name: folder.replace(workspacesPath + '/', ''),
+              isGitRepo
+            }
+          })).then(workspacesList => resolve(workspacesList))
       })
     })
-
     await plugin.setWorkspaces(workspaces)
     return workspaces
-  } catch (e) {}
+ } catch (e) {}
+}
+
+export const cloneRepository = async (url: string) => {
+  const config = plugin.registry.get('config').api
+  const token = config.get('settings/gist-access-token')
+  const repoConfig = { url, token }
+  const urlArray = url.split('/')
+  let repoName = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
+
+  try {
+    repoName = await createNonClashingTitle(repoName, plugin.fileManager)
+    await createWorkspace(repoName, 'blank', true, null, true)
+    const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
+
+    dispatch(cloneRepositoryRequest())
+    promise.then(async () => {
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      await fetchWorkspaceDirectory(repoName)
+      dispatch(cloneRepositorySuccess())
+    }).catch((e) => {
+      const cloneModal = {
+        id: 'cloneGitRepository',
+        title: 'Clone Git Repository',
+        message: 'An error occured: ' + e,
+        modalType: 'modal',
+        okLabel: 'OK',
+        okFn: async () => {
+          await deleteWorkspace(repoName)
+          dispatch(cloneRepositoryFailed())
+        },
+        hideFn: async () => {
+          await deleteWorkspace(repoName)
+          dispatch(cloneRepositoryFailed())
+        }
+      }
+      plugin.call('notification', 'modal', cloneModal)
+    })
+  } catch (e) {
+    dispatch(displayPopUp('An error occured: ' + e))
+  }
 }

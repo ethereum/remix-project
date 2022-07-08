@@ -46,7 +46,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
                 run: true
             }
         case 'SET_UNDO_ENABLED':
-            if(state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
+            if(action.payload.workspace && state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
                 state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].enabled = (action.payload.content === state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].newContent)
                 state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].visible = (action.payload.content !== state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].oldContent)
             }
