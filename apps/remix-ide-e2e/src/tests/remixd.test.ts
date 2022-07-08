@@ -102,7 +102,7 @@ module.exports = {
 
   'Run git status': '' + function (browser) {
     browser
-      .executeScript('git status')
+      .ExecuteScriptInTerminal('git status')
       .pause(3000)
       .journalLastChildIncludes('On branch ')
   },

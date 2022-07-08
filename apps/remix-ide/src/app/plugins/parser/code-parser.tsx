@@ -14,9 +14,12 @@ import React from 'react'
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 
 import { Profile } from '@remixproject/plugin-utils'
-import { ContractDefinitionAstNode, FunctionCallAstNode, FunctionDefinitionAstNode, ImportDirectiveAstNode, ModifierDefinitionAstNode, VariableDeclarationAstNode } from 'dist/libs/remix-analyzer/src/types'
-import { lastCompilationResult } from '@remixproject/plugin-api'
+import { ContractDefinitionAstNode, EventDefinitionAstNode, FunctionCallAstNode, FunctionDefinitionAstNode, IdentifierAstNode, ImportDirectiveAstNode, ModifierDefinitionAstNode, SourceUnitAstNode, StructDefinitionAstNode, VariableDeclarationAstNode } from 'dist/libs/remix-analyzer/src/types'
+import { lastCompilationResult, RemixApi } from '@remixproject/plugin-api'
 import { antlr } from './types'
+import { ParseResult } from './types/antlr-types'
+import { ConfigPlugin } from '../config'
+
 
 const profile: Profile = {
     name: 'codeParser',
@@ -25,7 +28,7 @@ const profile: Profile = {
     version: '0.0.1'
 }
 
-export function isNodeDefinition(node: AstNode) {
+export function isNodeDefinition(node: genericASTNode) {
     return node.nodeType === 'ContractDefinition' ||
         node.nodeType === 'FunctionDefinition' ||
         node.nodeType === 'ModifierDefinition' ||
@@ -34,13 +37,39 @@ export function isNodeDefinition(node: AstNode) {
         node.nodeType === 'EventDefinition'
 }
 
+export type genericASTNode = 
+ContractDefinitionAstNode 
+| FunctionDefinitionAstNode 
+| ModifierDefinitionAstNode 
+| VariableDeclarationAstNode 
+| StructDefinitionAstNode 
+| EventDefinitionAstNode
+| IdentifierAstNode
+| FunctionCallAstNode
+| ImportDirectiveAstNode
+| SourceUnitAstNode
+
+interface flatReferenceIndexNode {
+    [id: number]: genericASTNode
+}
+
+interface declarationIndexNode {
+    [id: number]: genericASTNode[]
+}
+
+interface codeParserIndex {
+    declarations: declarationIndexNode,
+    flatReferences: flatReferenceIndexNode,
+    nodesPerFile: any
+}
+
 export class CodeParser extends Plugin {
 
     antlrParserResult: antlr.ParseResult // contains the simple parsed AST for the current file
 
     compilerAbstract: CompilerAbstract
     currentFile: string
-    _index: any
+    nodeIndex: codeParserIndex
     astWalker: any
     errorState: boolean = false
 
@@ -55,15 +84,15 @@ export class CodeParser extends Plugin {
     getLastNodeInLine: (ast: string) => Promise<any>
     listAstNodes: () => Promise<any>
     getBlockAtPosition: (position: any, text?: string) => Promise<any>
-    getCurrentFileAST: (text?: string) => Promise<any>
+    getCurrentFileAST: (text?: string) => Promise<ParseResult>
 
-    constructor(astWalker) {
+    constructor(astWalker: any) {
         super(profile)
         this.astWalker = astWalker
-        this._index = {
-            Declarations: {},
-            FlatReferences: {}
-        }
+        this.nodeIndex = {
+            declarations: [[]],
+            flatReferences: [],
+            nodesPerFile: {}        }
     }
 
     async onActivation() {
@@ -78,6 +107,7 @@ export class CodeParser extends Plugin {
         this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
         this.getBlockAtPosition = this.antlrService.getBlockAtPosition.bind(this.antlrService)
         this.getCurrentFileAST = this.antlrService.getCurrentFileAST.bind(this.antlrService)
+
 
         this.on('editor', 'didChangeFile', async (file) => {
             console.log('contentChanged', file)
@@ -120,8 +150,12 @@ export class CodeParser extends Plugin {
     }
 
 
+     
 
 
+    getSubNodes<T extends genericASTNode>(node: T): number[] {
+        return node.nodeType=="ContractDefinition" && node.contractDependencies;
+    }
 
     /**
      * Builds a flat index and declarations of all the nodes in the compilation result
@@ -130,14 +164,14 @@ export class CodeParser extends Plugin {
      */
     _buildIndex(compilationResult: CompilationResult, source) {
         if (compilationResult && compilationResult.sources) {
-            const callback = (node: AstNode) => {
-                if (node && node.referencedDeclaration) {
-                    if (!this._index.Declarations[node.referencedDeclaration]) {
-                        this._index.Declarations[node.referencedDeclaration] = []
+            const callback = (node: genericASTNode) => {
+                if (node && ("referencedDeclaration" in node) && node.referencedDeclaration) {
+                    if (!this.nodeIndex.declarations[node.referencedDeclaration]) {
+                        this.nodeIndex.declarations[node.referencedDeclaration] = []
                     }
-                    this._index.Declarations[node.referencedDeclaration].push(node)
+                    this.nodeIndex.declarations[node.referencedDeclaration].push(node)
                 }
-                this._index.FlatReferences[node.id] = node
+                this.nodeIndex.flatReferences[node.id] = node
             }
             for (const s in compilationResult.sources) {
                 this.astWalker.walkFull(compilationResult.sources[s].ast, callback)
@@ -197,12 +231,7 @@ export class CodeParser extends Plugin {
             if (name === contractName) {
                 const contract = contracts[name]
                 const estimationObj = contract.evm && contract.evm.gasEstimates
-                if (node.nodeType === 'ContractDefinition') {
-                    return {
-                        creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,
-                        codeDepositCost: estimationObj === null ? '-' : estimationObj.creation.codeDepositCost,
-                    }
-                }
+                
                 let executionCost = null
                 if (node.nodeType === 'FunctionDefinition') {
                     const visibility = node.visibility
@@ -216,6 +245,11 @@ export class CodeParser extends Plugin {
                             executionCost = estimationObj === null ? '-' : estimationObj.internal[fn]
                         }
                         return { executionCost }
+                    } else {
+                        return {
+                            creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,
+                            codeDepositCost: estimationObj === null ? '-' : estimationObj.creation.codeDepositCost,
+                        }
                     }
                 }
             }
@@ -235,13 +269,12 @@ export class CodeParser extends Plugin {
      * @param type 
      * @returns 
      */
-    async nodesAtPosition(position: number, type = '') {
+    async nodesAtPosition(position: number, type = ''): Promise<genericASTNode[]> {
         const lastCompilationResult = this.compilerAbstract
-        if (!lastCompilationResult) return false
+        if (!lastCompilationResult) return []
         const urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
-        console.log('URL FROM PATH', urlFromPath)
         if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data && lastCompilationResult.data.sources && lastCompilationResult.data.sources[this.currentFile]) {
-            const nodes = sourceMappingDecoder.nodesAtPosition(type, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
+            const nodes: genericASTNode[] = sourceMappingDecoder.nodesAtPosition(type, position, lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file])
             return nodes
         }
         return []
@@ -253,9 +286,9 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getNodeById(id: number) {
-        for (const key in this._index.FlatReferences) {
-            if (this._index.FlatReferences[key].id === id) {
-                return this._index.FlatReferences[key]
+        for (const key in this.nodeIndex.flatReferences) {
+            if (this.nodeIndex.flatReferences[key].id === id) {
+                return this.nodeIndex.flatReferences[key]
             }
         }
     }
@@ -266,7 +299,7 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getDeclaration(id: number) {
-        if (this._index.Declarations && this._index.Declarations[id]) return this._index.Declarations[id]
+        if (this.nodeIndex.declarations && this.nodeIndex.declarations[id]) return this.nodeIndex.declarations[id]
     }
 
     /**
@@ -276,7 +309,7 @@ export class CodeParser extends Plugin {
      */
     async getNodesWithScope(scope: number) {
         const nodes = []
-        for (const node of Object.values(this._index.FlatReferences) as any[]) {
+        for (const node of Object.values(this.nodeIndex.flatReferences)) {
             if (node.scope === scope) nodes.push(node)
         }
         return nodes
@@ -288,8 +321,8 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async getNodesWithName(name: string) {
-        const nodes = []
-        for (const node of Object.values(this._index.FlatReferences) as any[]) {
+        const nodes: genericASTNode[] = []
+        for (const node of Object.values(this.nodeIndex.flatReferences)) {
             if (node.name === name) nodes.push(node)
         }
         return nodes
@@ -299,9 +332,9 @@ export class CodeParser extends Plugin {
      * @param node 
      * @returns 
      */
-    declarationOf(node: AstNode) {
-        if (node && node.referencedDeclaration) {
-            return this._index.FlatReferences[node.referencedDeclaration]
+    declarationOf<T extends genericASTNode>(node: T) {
+        if (node && ('referencedDeclaration' in node) && node.referencedDeclaration) {
+            return this.nodeIndex.flatReferences[node.referencedDeclaration]
         } else {
             // console.log(this._index.FlatReferences)
         }
@@ -316,9 +349,9 @@ export class CodeParser extends Plugin {
     async definitionAtPosition(position: number) {
         const nodes = await this.nodesAtPosition(position)
         console.log('nodes at position', nodes, position)
-        console.log(this._index.FlatReferences)
+        console.log(this.nodeIndex.flatReferences)
         let nodeDefinition: any
-        let node: any
+        let node: genericASTNode
         if (nodes && nodes.length && !this.errorState) {
             node = nodes[nodes.length - 1]
             nodeDefinition = node
@@ -326,9 +359,9 @@ export class CodeParser extends Plugin {
                 nodeDefinition = await this.declarationOf(node) || node
             }
             if (node.nodeType === 'ImportDirective') {
-                for (const key in this._index.FlatReferences) {
-                    if (this._index.FlatReferences[key].id === node.sourceUnit) {
-                        nodeDefinition = this._index.FlatReferences[key]
+                for (const key in this.nodeIndex.flatReferences) {
+                    if (this.nodeIndex.flatReferences[key].id === node.sourceUnit) {
+                        nodeDefinition = this.nodeIndex.flatReferences[key]
                     }
                 }
             }
@@ -371,7 +404,7 @@ export class CodeParser extends Plugin {
      * @param node 
      * @returns 
      */
-    async positionOfDefinition(node: AstNode): Promise<any | null> {
+    async positionOfDefinition(node: genericASTNode): Promise<any | null> {
         if (node) {
             if (node.src) {
                 const position = sourceMappingDecoder.decode(node.src)
@@ -389,11 +422,11 @@ export class CodeParser extends Plugin {
      * @param imported 
      * @returns 
      */
-    async resolveImports(node: AstNode, imported = {}) {
+    async resolveImports(node: any, imported = {}) {
         if (node.nodeType === 'ImportDirective' && !imported[node.sourceUnit]) {
-            const importNode = await this.getNodeById(node.sourceUnit)
+            const importNode: any = await this.getNodeById(node.sourceUnit)
             imported[importNode.id] = importNode
-            if (importNode.nodes) {
+            if (importNode.nodeType=='ImportDirective' && importNode.nodes) {
                 for (const child of importNode.nodes) {
                     imported = await this.resolveImports(child, imported)
                 }
@@ -409,20 +442,20 @@ export class CodeParser extends Plugin {
      * @param node 
      * @returns 
      */
-    referencesOf(node: AstNode) {
-        const results = []
-        const highlights = (id) => {
-            if (this._index.Declarations && this._index.Declarations[id]) {
-                const refs = this._index.Declarations[id]
+    referencesOf(node: genericASTNode) {
+        const results: genericASTNode[] = []
+        const highlights = (id: number) => {
+            if (this.nodeIndex.declarations && this.nodeIndex.declarations[id]) {
+                const refs = this.nodeIndex.declarations[id]
                 for (const ref in refs) {
                     const node = refs[ref]
                     results.push(node)
                 }
             }
         }
-        if (node && node.referencedDeclaration) {
+        if (node && ("referencedDeclaration" in node) && node.referencedDeclaration) {
             highlights(node.referencedDeclaration)
-            const current = this._index.FlatReferences[node.referencedDeclaration]
+            const current = this.nodeIndex.flatReferences[node.referencedDeclaration]
             results.push(current)
         } else {
             highlights(node.id)
@@ -435,7 +468,7 @@ export class CodeParser extends Plugin {
      * @param position 
      * @returns 
      */
-    async referrencesAtPosition(position: any) {
+    async referrencesAtPosition(position: any): Promise<genericASTNode[]> {
         const nodes = await this.nodesAtPosition(position)
         if (nodes && nodes.length) {
             const node = nodes[nodes.length - 1]
@@ -449,8 +482,8 @@ export class CodeParser extends Plugin {
      * 
      * @returns 
      */
-    async getNodes() {
-        return this._index.FlatReferences
+    async getNodes(): Promise<flatReferenceIndexNode> {
+        return this.nodeIndex.flatReferences
     }
 
 
@@ -460,7 +493,7 @@ export class CodeParser extends Plugin {
      * @param node 
      * @returns 
      */
-    async getNodeLink(node: AstNode) {
+    async getNodeLink(node: genericASTNode) {
         const lineColumn = await this.getLineColumnOfNode(node)
         const position = await this.positionOfDefinition(node)
         if (this.compilerAbstract && this.compilerAbstract.source) {
@@ -495,10 +528,10 @@ export class CodeParser extends Plugin {
      * @param node 
      * @returns 
      */
-    async getNodeDocumentation(node: AstNode) {
-        if (node.documentation && node.documentation.text) {
-            let text = ''
-            node.documentation.text.split('\n').forEach(line => {
+    async getNodeDocumentation(node: genericASTNode) {
+        if (("documentation" in node) && node.documentation && (node.documentation as any).text) {
+            let text = '';
+            (node.documentation as any).text.split('\n').forEach(line => {
                 text += `${line.trim()}\n`
             })
             return text

@@ -65,11 +65,13 @@ export default class CodeParserCompiler {
             this.plugin.compilerAbstract = new CompilerAbstract('soljson', data, source, input)
             console.log('ABSTRACT', this.plugin.compilerAbstract)
             this.errorState = false
-            this.plugin._index = {
-                Declarations: {},
-                FlatReferences: {},
-                NodesPerFile: {},
+            this.plugin.nodeIndex = {
+                declarations: {},
+                flatReferences: {},
+                nodesPerFile: {},
             }
+
+        
             this.plugin._buildIndex(data, source)
 
             if (this.gastEstimateTimeOut) {
@@ -80,7 +82,7 @@ export default class CodeParserCompiler {
                 await this.plugin.gasService.showGasEstimates()
             }, 1000)
 
-            console.log("INDEX", this.plugin._index)
+            console.log("INDEX", this.plugin.nodeIndex)
             this.plugin.emit('astFinished')
         }
 
