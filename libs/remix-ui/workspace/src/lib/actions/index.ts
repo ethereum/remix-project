@@ -127,6 +127,14 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(route))
         } else await basicWorkspaceInit(workspaces, workspaceProvider)
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
+    } else if (localStorage.getItem("currentWorkspace")) {
+      const index = workspaces.indexOf(localStorage.getItem("currentWorkspace"))
+      if (index !== -1) {
+        const name = localStorage.getItem("currentWorkspace")
+        workspaceProvider.setWorkspace(name)
+        plugin.setWorkspace({ name, isLocalhost: false })
+        dispatch(setCurrentWorkspace(name))
+      } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
     }
