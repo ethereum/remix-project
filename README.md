@@ -1,3 +1,8 @@
+<img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200" style="display: block;margin-left: auto; margin-right: auto;"/>
+<p style="font-size: 2rem;text-align:center;">Remix Project</p>
+
+<div align="center">
+
 [![CircleCI](https://circleci.com/gh/ethereum/remix-project.svg?style=svg)](https://circleci.com/gh/ethereum/remix-project)
 [![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
@@ -7,7 +12,9 @@
 [![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Twitter Follow](https://img.shields.io/twitter/follow/ethereumremix?style=social)](https://twitter.com/ethereumremix)
 
-# Remix Project
+</div>
+
+---
 **Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
 
 ## Remix IDE
