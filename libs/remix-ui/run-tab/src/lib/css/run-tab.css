@@ -286,7 +286,6 @@
 .udapp_instance {
   display: block;
   flex-direction: column;
-  margin-bottom: 12px;
   background: none;
   border-radius: 2px;
 }

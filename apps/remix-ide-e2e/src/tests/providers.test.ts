@@ -44,9 +44,6 @@ module.exports = {
     .waitForElementContainsText('*[data-id="foundry-providerModalDialogModalBody-react"]', 'Error while connecting to the provider')
     .modalFooterOKClick('foundry-provider')
     .waitForElementNotVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
-    .waitForElementVisible('*[data-id="PermissionHandler-modal-footer-ok-react"]')
-    .click('*[data-id="PermissionHandler-modal-footer-ok-react"]')
-    .waitForElementNotVisible('*[data-id="PermissionHandler-modal-footer-ok-react"]')
     .pause(1000)
 
 },

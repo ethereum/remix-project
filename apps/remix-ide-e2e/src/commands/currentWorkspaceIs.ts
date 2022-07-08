@@ -3,15 +3,15 @@ import EventEmitter from 'events'
 
 class CurrentWorkspaceIs extends EventEmitter {
   command (this: NightwatchBrowser, name: string): NightwatchBrowser {
-    this.api
-      .execute(function () {
-        const el = document.querySelector('select[data-id="workspacesSelect"]') as HTMLSelectElement
-        return el.value
-      }, [], (result) => {
-        console.log(result)
-        this.api.assert.equal(result.value, name)
-        this.emit('complete')
-      })
+    const browser = this.api
+
+    browser.getText('[data-id="workspacesSelect"]', function (result) {
+      browser.assert.equal(result.value, name)
+    })
+    .perform((done) => {
+      done()
+      this.emit('complete')
+    })
     return this
   }
 }
