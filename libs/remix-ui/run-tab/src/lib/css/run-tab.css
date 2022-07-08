@@ -286,7 +286,6 @@
 .udapp_instance {
   display: block;
   flex-direction: column;
-  margin-bottom: 12px;
   background: none;
   border-radius: 2px;
 }
@@ -529,5 +528,8 @@
   color: #fff;
   text-decoration: none;
   background-color: #007aa6;
+}
+.udapp_selectExEnvOptions {
+  width: 100%;
 }
 

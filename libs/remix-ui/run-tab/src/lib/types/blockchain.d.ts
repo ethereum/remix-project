@@ -1,3 +1,6 @@
+import { Plugin } from "@remixproject/engine/lib/abstract";
+import { ExecutionContext } from "./execution-context";
+import { EventEmitter } from "events";
 export class Blockchain extends Plugin<any, any> {
     constructor(config: any);
     event: any;
@@ -70,7 +73,7 @@ export class Blockchain extends Plugin<any, any> {
     getBalanceInEther(address: any, cb: any): void;
     pendingTransactionsCount(): number;
     /**
-     * This function send a tx only to javascript VM or testnet, will return an error for the mainnet
+     * This function send a tx only to Remix VM or testnet, will return an error for the mainnet
      * SHOULD BE TAKEN CAREFULLY!
      *
      * @param {Object} tx    - transaction.
@@ -78,6 +81,4 @@ export class Blockchain extends Plugin<any, any> {
     sendTransaction(tx: any): any;
     runTx(args: any, confirmationCb: any, continueCb: any, promptCb: any, cb: any): void;
 }
-import { Plugin } from "@remixproject/engine/lib/abstract";
-import { ExecutionContext } from "./execution-context";
-import { EventEmitter } from "events";
+

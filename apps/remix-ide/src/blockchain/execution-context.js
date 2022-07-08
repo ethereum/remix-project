@@ -155,6 +155,9 @@ export class ExecutionContext {
         infoCb('No injected Web3 provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
         return cb()
       } else {
+        if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
+          if (!await injectedProvider._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
+        }
         this.askPermission()
         this.executionContext = context
         web3.setProvider(injectedProvider)
@@ -164,16 +167,23 @@ export class ExecutionContext {
       }
     }
 
-    if (context === 'web3') {
-      confirmCb(cb)
-    }
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
-        if (error) infoCb(error)
-        cb()
-      })
-    }
+      if (!this.customNetWorks[context].isInjected) {        
+        this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
+          if (error) infoCb(error)
+          cb()
+        })
+      } else {
+        // injected
+        this.askPermission()
+        this.executionContext = context
+        web3.setProvider(network.provider)
+        await this._updateChainContext()
+        this.event.trigger('contextChanged', [context])
+        return cb()
+      }
+    }   
   }
 
   currentblockGasLimit () {

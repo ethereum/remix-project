@@ -10,7 +10,7 @@ export function GasPriceUI (props: GasPriceProps) {
   return (
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">Gas limit</label>
-      <input type="number" className="form-control udapp_gasNval udapp_col2" id="gasLimit" value={props.gasLimit} onChange={handleGasLimit} />
+      <input type="number" className="form-control udapp_gasNval udapp_col2" title="The default gas limit is 3M. Adjust as needed." id="gasLimit" value={props.gasLimit} onChange={handleGasLimit} />
     </div>
   )
 }
