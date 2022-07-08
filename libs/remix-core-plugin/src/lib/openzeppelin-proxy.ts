@@ -1,12 +1,12 @@
 import { Plugin } from '@remixproject/engine';
-import { ContractABI, ContractAST, DeployOption } from '../types/contract';
+import { ContractABI, ContractAST, DeployOptions } from '../types/contract';
 import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups';
 
 const proxyProfile = {
   name: 'openzeppelin-proxy',
   displayName: 'openzeppelin-proxy',
   description: 'openzeppelin-proxy',
-  methods: ['isConcerned', 'executeUUPSProxy', 'executeUUPSContractUpgrade', 'getDeployOptions', 'getUpgradeOptions']
+  methods: ['isConcerned', 'executeUUPSProxy', 'executeUUPSContractUpgrade', 'getProxyOptions', 'getUpgradeOptions']
 };
 export class OpenZeppelinProxy extends Plugin {
   blockchain: any
@@ -28,7 +28,7 @@ export class OpenZeppelinProxy extends Plugin {
     return false
   }
 
-  async getDeployOptions (contracts: ContractABI): Promise<{ [name: string]: DeployOption }> {
+  async getProxyOptions (contracts: ContractABI): Promise<{ [name: string]: DeployOptions }> {
     const inputs = {}
 
     if (this.kind === 'UUPS') {
@@ -36,8 +36,9 @@ export class OpenZeppelinProxy extends Plugin {
         const abi = contracts[name].abi
         const initializeInput = abi.find(node => node.name === 'initialize')
 
-        if (initializeInput) {
-          inputs[name] = {
+        inputs[name] = {
+          options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade Contract', active: false }],
+          initializeOptions: {
             inputs: initializeInput,
             initializeInputs: this.blockchain.getInputs(initializeInput)
           }
@@ -95,6 +96,6 @@ export class OpenZeppelinProxy extends Plugin {
     }
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
     newImplementationContractObject.name = proxyName
-    this.blockchain.upgradeProxy(proxyAddress, data, newImplementationContractObject)    
+    this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
   }
 }

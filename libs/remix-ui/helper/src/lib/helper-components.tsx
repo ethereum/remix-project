@@ -89,3 +89,9 @@ export const cancelProxyMsg = () => (
     <b>Proxy deployment cancelled.</b>
   </div>
 )
+
+export const cancelUpgradeMsg = () => (
+  <div>
+    <b>Upgrade with proxy cancelled.</b>
+  </div>
+)

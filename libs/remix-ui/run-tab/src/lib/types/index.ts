@@ -128,7 +128,8 @@ export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
-    deployOptions: DeployOptions,
+    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
+    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
     currentContract: string,
@@ -238,11 +239,8 @@ export type DeployOption = {
   }
 }
 export interface DeployOptions {
-  initializeOptions: {
-    [key: string]: DeployOption
-  },
-  options: { title: DeployMode, active: boolean }[],
-  proxyKey?: string
+  initializeOptions: DeployOption,
+  options: { title: DeployMode, active: boolean }[]
 }
 
 export interface ContractGUIProps {

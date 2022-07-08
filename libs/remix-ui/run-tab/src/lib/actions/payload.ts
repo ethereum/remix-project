@@ -280,21 +280,21 @@ export const resetUdapp = () => {
   }
 }
 
-export const addDeployOption = (deployOption: DeployOptions) => {
+export const addDeployOption = (deployOption: { [file: string]: { [name: string]: DeployOptions } }) => {
   return {
     payload: deployOption,
     type: ADD_DEPLOY_OPTION
   }
 }
 
-export const removeDeployOption = (title: DeployMode) => {
+export const removeDeployOption = (file: string) => {
   return {
-    payload: title,
+    payload: file,
     type: REMOVE_DEPLOY_OPTION
   }
 }
 
-export const setDeployOptions = (deployOptions: DeployOptions) => {
+export const setDeployOptions = (deployOptions: { [file: string]: { [name: string]: DeployOptions } }) => {
   return {
     payload: deployOptions,
     type: SET_DEPLOY_OPTIONS
