@@ -83,21 +83,15 @@ module.exports = {
     browser
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]')
-      .waitForElementPresent('[data-id="envNotification-modal-footer-ok-react"]')
+      .switchEnvironment('External Http Provider')
+      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
       .execute(function () {
-        const modal = document.querySelector('[data-id="envNotification-modal-footer-ok-react"]') as any
+        const modal = document.querySelector('[data-id="basic-http-provider-modal-footer-ok-react"]') as any
 
         modal.click()
       })
       .pause(5000)
-      .execute(function () {
-        const env: any = document.getElementById('selectExEnvOptions')
-
-        return env.value
-      }, [], function (result) {
-        browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
-      })
+      .waitForElementContainsText('#selectExEnvOptions button', 'External Http Provider')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
