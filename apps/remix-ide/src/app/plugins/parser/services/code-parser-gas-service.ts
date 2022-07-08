@@ -1,4 +1,4 @@
-import { CodeParser } from "../code-parser";
+import { CodeParser, genericASTNode } from "../code-parser";
 import { lineText } from '@remix-ui/editor'
 
 export default class CodeParserGasService {
@@ -12,11 +12,11 @@ export default class CodeParserGasService {
         if (!fileName) {
             fileName = await this.plugin.currentFile
         }
-        if (this.plugin._index.NodesPerFile && this.plugin._index.NodesPerFile[fileName]) {
+        if (this.plugin.nodeIndex.nodesPerFile && this.plugin.nodeIndex.nodesPerFile[fileName]) {
             const estimates: any = []
-            for (const contract in this.plugin._index.NodesPerFile[fileName]) {
+            for (const contract in this.plugin.nodeIndex.nodesPerFile[fileName]) {
                 console.log(contract)
-                const nodes = this.plugin._index.NodesPerFile[fileName][contract].contractNodes
+                const nodes = this.plugin.nodeIndex.nodesPerFile[fileName][contract].contractNodes
                 for (const node of Object.values(nodes) as any[]) {
                     if (node.gasEstimate) {
                         estimates.push({
@@ -34,7 +34,7 @@ export default class CodeParserGasService {
 
     async showGasEstimates() {
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        this.plugin._index.NodesPerFile[this.plugin.currentFile] = await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
+        this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
 
         const gasEstimates = await this.getGasEstimates(this.plugin.currentFile)
         console.log('all estimates', gasEstimates)
@@ -49,7 +49,7 @@ export default class CodeParserGasService {
             for (const estimate of gasEstimates) {
                 console.log(estimate)
                 const linetext: lineText = {
-                    content: Object.entries(estimate.node.gasEstimate).map(([key, value]) => `${value} gas`).join(' '),
+                    content: Object.entries(estimate.node.gasEstimate).map(([, value]) => `${value} gas`).join(' '),
                     position: estimate.range,
                     hide: false,
                     className: 'text-muted small',
