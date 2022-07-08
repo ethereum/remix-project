@@ -59,10 +59,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         content: currentFile
       })
       enableAtAddress(true)
-    } else if (/.(.sol)$/.exec(currentFile) ||
-        /.(.vy)$/.exec(currentFile) || // vyper
-        /.(.lex)$/.exec(currentFile) || // lexon
-        /.(.contract)$/.exec(currentFile)) {
+    } else if (isContractFile(currentFile)) {
       setAbiLabel({
         display: 'none',
         content: ''
@@ -115,6 +112,13 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       else if (!contract) props.setSelectedContract(currentContract)
       // TODO highlight contractlist box with css.
     }
+  }
+
+  const isContractFile = (file) => {
+    return /.(.sol)$/.exec(file) ||
+        /.(.vy)$/.exec(file) || // vyper
+        /.(.lex)$/.exec(file) || // lexon
+        /.(.contract)$/.exec(file)
   }
 
   const enableAtAddress = (enable: boolean) => {
@@ -218,7 +222,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
       </label>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
@@ -262,7 +266,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             </div> : ''
           }
         </div>
-        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           <FormattedMessage id='udapp.or' defaultMessage='or' />
         </div>
         <div className="udapp_button udapp_atAddressSect">

@@ -11,6 +11,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
         id: action.payload.id || timestamp.toString(),
         hide: false,
         title: action.payload.title,
+        validationFn: action.payload.validationFn,
         message: action.payload.message,
         okLabel: action.payload.okLabel,
         okFn: action.payload.okFn,
