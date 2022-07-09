@@ -149,9 +149,11 @@ export class Blockchain extends Plugin {
       cancelLabel: 'Cancel',
       okFn: () => {
         this.runProxyTx(proxyData, implementationContractObject)
+        _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'modal ok confirmation'])
       },
       cancelFn: () => {
         this.call('notification', 'toast', cancelProxyMsg())
+        _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'cancel proxy deployment'])
       },
       hideFn: () => null
     }
@@ -172,10 +174,12 @@ export class Blockchain extends Plugin {
       if (error) {
         const log = logBuilder(error)
   
+        _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
       if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
       else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
+      _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       return this.call('udapp', 'resolveContractAndAddInstance', implementationContractObject, address)
     }
 
@@ -192,9 +196,11 @@ export class Blockchain extends Plugin {
       cancelLabel: 'Cancel',
       okFn: () => {
         this.runUpgradeTx(proxyAddress, data, newImplementationContractObject)
+        _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'proxy upgrade confirmation click'])
       },
       cancelFn: () => {
         this.call('notification', 'toast', cancelUpgradeMsg())
+        _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'proxy upgrade cancel click'])
       },
       hideFn: () => null
     }
@@ -213,8 +219,10 @@ export class Blockchain extends Plugin {
       if (error) {
         const log = logBuilder(error)
 
+        _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade failed'])
         return this.call('terminal', 'logHtml', log)
       }
+      _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
       return this.call('udapp', 'resolveContractAndAddInstance', newImplementationContractObject, proxyAddress)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
