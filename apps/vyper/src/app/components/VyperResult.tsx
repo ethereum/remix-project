@@ -28,8 +28,8 @@ function VyperResult({ output }: VyperResultProps) {
 
     <div id="result">
       <p>No contract compiled yet.</p>
-      <Button data-id="add-repository" variant="info" onClick={() => remixClient.cloneVyperRepo()}>
-          Clone Vyper repository and play with the contract examples
+      <Button variant="info" onClick={() => remixClient.loadContract(Ballot)}>
+        Create Ballot.vy example
       </Button>
     </div>
   )
@@ -38,7 +38,7 @@ function VyperResult({ output }: VyperResultProps) {
     return (
     <div id="result" className="error">
       <i className="fas fa-exclamation-circle text-danger"></i>
-      <pre data-id="error-message" className="alert alert-danger">{output.message}</pre>
+      <p className="alert alert-danger">{output.message}</p>
     </div>)
   }
 
