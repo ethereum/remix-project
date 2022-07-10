@@ -88,10 +88,10 @@ const App: React.FC = () => {
           type="radio"
           value={state.environment}
         >
-          <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
+          <ToggleButton variant="secondary" name="remote" value="remote">
             Remote Compiler
           </ToggleButton>
-          <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
+          <ToggleButton variant="secondary" name="local" value="local">
             Local Compiler
           </ToggleButton>
         </ToggleButtonGroup>
