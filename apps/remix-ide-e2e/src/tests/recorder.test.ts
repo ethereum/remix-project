@@ -85,6 +85,7 @@ module.exports = {
 
         modalOk.click()
       })
+      .pause(1000)
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
