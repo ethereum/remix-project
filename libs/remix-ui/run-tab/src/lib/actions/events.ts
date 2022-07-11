@@ -6,6 +6,7 @@ import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractLi
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
+import { ContractSources } from "../types"
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
@@ -92,7 +93,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 }
 
-const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
+const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data: ContractSources, input?) => {
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
 
@@ -108,7 +109,7 @@ const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispat
   const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file] ? data.sources[file].ast : {})
 
   if (isUpgradeable) {
-    const options = await plugin.call('openzeppelin-proxy', 'getProxyOptions', data.contracts[file])
+    const options = await plugin.call('openzeppelin-proxy', 'getProxyOptions', data, file)
   
     dispatch(addDeployOption({ [file]: options }))
   } else {
