@@ -18,6 +18,7 @@
             "assets": [
               "apps/remix-ide/src/assets",
               "apps/remix-ide/src/index.html",
+              "apps/remix-ide/src/404.html",
               "apps/remix-ide/src/favicon.ico"
             ],
             "styles": [],
