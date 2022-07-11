@@ -22,7 +22,7 @@ function InactivePluginCard ({
           <h6 className="remixui_displayName plugin-name">
             <div>
               { profile.displayName || profile.name }
-              { profile.maintainedBy.toLowerCase() == "remix" &&
+              { profile?.maintainedBy?.toLowerCase() == "remix" &&
                 <i aria-hidden="true" className="px-1 text-success fas fa-check" title="Verified by Remix"></i>
               }
               { profile.documentation &&
