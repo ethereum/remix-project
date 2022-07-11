@@ -6,7 +6,6 @@ import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractLi
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
-import { ContractSources } from "../types"
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
@@ -93,7 +92,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 }
 
-const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data: ContractSources, input?) => {
+const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
 
