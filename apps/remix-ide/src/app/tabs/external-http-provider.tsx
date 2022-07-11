@@ -30,7 +30,7 @@ export class ExternalHttpProvider extends AbstractProvider {
           <br />
           <b>WARNING:</b> It is not safe to use the --http.corsdomain flag with a wildcard: <b>--http.corsdomain *</b>
           <br />
-          <br />For more info: <a href="https://remix-ide.readthedocs.io/en/latest/run.html#more-about-web3-provider" target="_blank" rel="noreferrer">Remix Docs on Web3 Provider</a>
+          <br />For more info: <a href="https://remix-ide.readthedocs.io/en/latest/run.html#more-about-web3-provider" target="_blank" rel="noreferrer">Remix Docs on External HTTP Provider</a>
           <br />
           <br />
           External HTTP Provider Endpoint
