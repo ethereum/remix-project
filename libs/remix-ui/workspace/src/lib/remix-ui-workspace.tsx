@@ -188,7 +188,7 @@ export function Workspace () {
         <div>
           <header>
             <div className="mb-2">
-              <label className="form-check-label" htmlFor="workspacesSelect">
+              <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
                 <span className="remixui_menu">
