@@ -152,7 +152,7 @@ export class ExecutionContext {
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
-        infoCb('No injected Web3 provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
+        infoCb('No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
         return cb()
       } else {
         if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
