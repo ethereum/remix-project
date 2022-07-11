@@ -3,26 +3,88 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
-  '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080', false)
-  },
-  'Should show hover over contract in editor #group1': function (browser: NightwatchBrowser) {
-    browser.openFile('contracts')
-      .openFile('contracts/3_Ballot.sol')
-      .waitForElementVisible('#editorView')
-      .setEditorValue(BallotWithARefToOwner)
-      .useXpath()
-      .waitForElementVisible("//*[contains(text(),'BallotHoverTest')]")
-      .click("//*[contains(text(),'BallotHoverTest')]")
-      .moveToElement("//*[contains(text(),'BallotHoverTest')]", 0, 0)
-      .useCss()
-      .waitForElementContainsText('.monaco-hover-content', 'contract BallotHoverTest is BallotHoverTest')
-      .waitForElementContainsText('.monaco-hover-content', 'contracts/3_Ballot.sol 10:0')
-      .waitForElementContainsText('.monaco-hover-content', '@title Ballot')
-    const elements = browser.findElements('.view-line')
-    elements.forEach(item => console.log('Element Id:', item.getText()));
-  }
+    '@disabled': true,
+    before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        init(browser, done, 'http://127.0.0.1:8080', false)
+    },
+    'Should show hover over contract in editor #group1': function (browser: NightwatchBrowser) {
+        browser.openFile('contracts')
+            .openFile('contracts/3_Ballot.sol')
+            .waitForElementVisible('#editorView')
+            .setEditorValue(BallotWithARefToOwner)
+            .useXpath()
+            .waitForElementVisible("//*[contains(text(),'BallotHoverTest')]")
+            .click("//*[contains(text(),'BallotHoverTest')]")
+            //.moveToElement("//*[contains(text(),'BallotHoverTest')]", 0, 0)
+            .useCss()
+            .findElements('.view-line', function (res) {
+
+                if (Array.isArray(res.value)) {
+                    let found = false
+                    for (const jsonWebElement of res.value) {
+                        const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
+                        if (!found) {
+                            browser.elementIdText(jsonWebElementId, (jsonElement) => {
+
+                                const text = jsonElement.value
+                                if (typeof text == 'string') {
+
+                                    if (text.indexOf('contract BallotHoverTest') !== -1) {
+                                        console.log(text)
+                                        console.log(jsonWebElementId)
+                                        browser
+                                        browser.moveTo(jsonWebElementId, 0, 0).pause(20000)
+                                        found = true
+                                    }
+                                }
+                            }
+                            )
+                        }
+                    }
+                    /*
+                    res.value.forEach(function (jsonWebElement) {
+                        
+                        
+                        browser.elementIdText(jsonWebElementId, (jsonElement) => {
+                           
+                            const text = jsonElement.value
+                            if (typeof text == 'string') {
+                               
+                                if (text.indexOf('contract BallotHoverTest') !== -1) {
+                                    console.log(text)
+                                    console.log(jsonWebElementId)
+                                    browser.moveTo(jsonWebElementId, 0, 0).pause(20000)
+                                    
+                                }
+                            }
+                        })
+                    })*/
+                }
+            })
+        /*
+        .useCss()
+        .waitForElementContainsText('.monaco-hover-content', 'contract BallotHoverTest is BallotHoverTest')
+        .waitForElementContainsText('.monaco-hover-content', 'contracts/3_Ballot.sol 10:0')
+        .waitForElementContainsText('.monaco-hover-content', '@title Ballot')
+        .findElements('.view-line', function (res) {
+            Array.isArray(res.value) && res.value.forEach(function (jsonWebElement) {
+                const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
+
+                browser.elementIdText(jsonWebElementId, (jsonElement) => {
+                   
+                    const text = jsonElement.value
+                    if (typeof text == 'string') {
+                        if (text.indexOf('address public chairperson;') !== -1) {
+                            console.log(jsonWebElementId)
+                            browser.moveTo(jsonWebElementId, 20, 0).pause(20000)
+                        }
+                    }
+                })
+            })
+        })
+        */
+
+    }
 }
 
 
