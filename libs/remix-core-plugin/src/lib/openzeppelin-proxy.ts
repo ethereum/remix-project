@@ -1,6 +1,6 @@
-import { Plugin } from '@remixproject/engine';
-import { ContractABI, ContractAST, DeployOptions } from '../types/contract';
-import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups';
+import { Plugin } from '@remixproject/engine'
+import { ContractABI, ContractAST, ContractSources, DeployOptions } from '../types/contract'
+import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups'
 
 const proxyProfile = {
   name: 'openzeppelin-proxy',
@@ -28,20 +28,30 @@ export class OpenZeppelinProxy extends Plugin {
     return false
   }
 
-  async getProxyOptions (contracts: ContractABI): Promise<{ [name: string]: DeployOptions }> {
+  async getProxyOptions (data: ContractSources, file: string): Promise<{ [name: string]: DeployOptions }> {
+    const contracts = data.contracts[file]
+    const ast = data.sources[file].ast
     const inputs = {}
 
     if (this.kind === 'UUPS') {
       Object.keys(contracts).map(name => {
-        const abi = contracts[name].abi
-        const initializeInput = abi.find(node => node.name === 'initialize')
+        if (ast) {
+          const UUPSSymbol = ast.exportedSymbols['UUPSUpgradeable'] ? ast.exportedSymbols['UUPSUpgradeable'][0] : null
 
-        inputs[name] = {
-          options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade with Proxy', active: false }],
-          initializeOptions: {
-            inputs: initializeInput,
-            initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
-          }
+          ast.absolutePath === file && ast.nodes.map((node) => {
+            if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
+              const abi = contracts[name].abi
+              const initializeInput = abi.find(node => node.name === 'initialize')
+      
+              inputs[name] = {
+                options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade with Proxy', active: false }],
+                initializeOptions: {
+                  inputs: initializeInput,
+                  initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
+                }
+              }
+            }
+          })
         }
       })
     }

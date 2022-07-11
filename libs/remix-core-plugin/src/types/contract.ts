@@ -54,86 +54,40 @@ export interface ContractAST {
     }[]
 }
 
-export interface ContractABI {
-    [key: string]: {
-        abi: ({
-            inputs: never[];
-            stateMutability: string;
-            type: string;
-            anonymous?: undefined;
-            name?: undefined;
-            outputs?: undefined;
-        } | {
-            anonymous: boolean;
-            inputs: {
-                indexed: boolean;
-                internalType: string;
-                name: string;
-                type: string;
-            }[];
-            name: string;
-            type: string;
-            stateMutability?: undefined;
-            outputs?: undefined;
-        } | {
-            inputs: {
-                internalType: string;
-                name: string;
-                type: string;
-            }[];
-            name: string;
-            outputs: {
-                internalType: string;
-                name: string;
-                type: string;
-            }[];
-            stateMutability: string;
-            type: string;
-            anonymous?: undefined;
-        })[];
-        devdoc: {
-            kind: string;
-            methods: {
-                [key: string]: {
-                    [key: string]: string
-                }
-            };
-            version: number;
-        };
-        evm: any
-        metadata: string;
-        storageLayout: {
-            storage: {
-                astId: number;
-                contract: string;
-                label: string;
-                offset: number;
-                slot: string;
-                type: string;
-            }[];
-            types: {
-                [key: string]: {
-                    base: string;
-                    encoding: string;
-                    label: string;
-                    numberOfBytes: string;
-                    members?: {
-                        astId: number;
-                        contract: string;
-                        label: string;
-                        offset: number;
-                        slot: string;
-                        type: string;
-                    }[];
-                };
-            };
-        };
-        userdoc: {
-            kind: string;
-            methods: any;
-            version: number;
-        };
-    };
+export type ContractABI = {
+    inputs: [];
+    stateMutability: string;
+    type: string;
+    anonymous?: undefined;
+    name?: string;
+    outputs?: undefined;
+} | {
+    anonymous: boolean;
+    inputs: {
+        indexed: boolean;
+        internalType: string;
+        name: string;
+        type: string;
+    }[];
+    name: string;
+    type: string;
+    stateMutability?: undefined;
+    outputs?: undefined;
+} | {
+    inputs: {
+        internalType: string;
+        name: string;
+        type: string;
+    }[];
+    name: string;
+    outputs: {
+        internalType: string;
+        name: string;
+        type: string;
+    }[];
+    stateMutability: string;
+    type: string;
+    anonymous?: undefined;
 }
 
 export type DeployMode = 'Deploy with Proxy' | 'Upgrade with Proxy'
@@ -158,3 +112,74 @@ export interface DeployOptions {
   initializeOptions: DeployOption,
   options: { title: DeployMode, active: boolean }[]
 }
+
+export interface ContractSources {
+    contracts: {
+      [path: string]: {
+        [contractName: string]: {
+          abi: ContractABI[],
+            devdoc: {
+                kind: string
+                methods: {
+                    [key: string]: {
+                        [key: string]: string
+                    }
+                };
+                version: number
+            }
+            evm: any
+            metadata: string
+            storageLayout: {
+                storage: {
+                    astId: number
+                    contract: string
+                    label: string
+                    offset: number
+                    slot: string
+                    type: string
+                }[]
+                types: {
+                    [key: string]: {
+                        base: string
+                        encoding: string
+                        label: string
+                        numberOfBytes: string
+                        members?: {
+                            astId: number
+                            contract: string
+                            label: string
+                            offset: number
+                            slot: string
+                            type: string
+                        }[]
+                    }
+                }
+            }
+                userdoc: {
+                    kind: string
+                    methods: any
+                    version: number
+                }
+            }
+        }
+    },
+    error: {
+      component: string,
+      errorCode: string,
+      formattedMessage: string,
+      message: string,
+      severity: string,
+      sourceLocation: {
+        end: number,
+        file: string,
+        start: number
+      },
+      type: string
+    }[],
+    sources: {
+      [path: string]: {
+        ast: ContractAST,
+        id: number
+      }
+    }
+  }
