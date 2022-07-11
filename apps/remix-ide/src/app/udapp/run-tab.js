@@ -103,6 +103,7 @@ export class RunTab extends ViewPlugin {
 
     await this.call('blockchain', 'addProvider', {
       name: 'Hardhat Provider',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -117,6 +118,7 @@ export class RunTab extends ViewPlugin {
 
     await this.call('blockchain', 'addProvider', {
       name: 'Ganache Provider',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -131,6 +133,7 @@ export class RunTab extends ViewPlugin {
 
     await this.call('blockchain', 'addProvider', {
       name: 'Foundry Provider',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -145,6 +148,7 @@ export class RunTab extends ViewPlugin {
 
     await this.call('blockchain', 'addProvider', {
       name: 'Wallet Connect',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -163,6 +167,36 @@ export class RunTab extends ViewPlugin {
         async sendAsync (payload, callback) {
           try {
             const result = await udapp.call('basic-http-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+    
+    await this.call('blockchain', 'addProvider', {
+      name: 'Optimism Provider',
+      isInjected: true,
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('injected-optimism-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Arbitrum One Provider',
+      isInjected: true,
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('injected-arbitrum-one-provider', 'sendAsync', payload)
             callback(null, result)
           } catch (e) {
             callback(e)

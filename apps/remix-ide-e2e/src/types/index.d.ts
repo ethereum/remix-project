@@ -64,6 +64,7 @@ declare module 'nightwatch' {
         getBrowserLogs (this: NightwatchBrowser): NightwatchBrowser
         currentSelectedFileIs (name: string): NightwatchBrowser,
         switchWorkspace: (workspaceName: string) => NightwatchBrowser
+        switchEnvironment: (provider: string) => NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
