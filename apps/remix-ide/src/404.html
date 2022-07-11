@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Test Remix</title>
+    <title></title>
   </head>
   <body></body>
   <script>
-    window.location.href = '/address/#' + window.location.pathname.replace('/address', '')
+    let route = window.location.pathname
+    if (route.startsWith('/address/0x') && route.length === 51) {
+      window.location.href = '/#/#address=' + route.replace('/address/', '')
+    } else if (route.endsWith('.sol')) {
+      window.location.href = '/#/#url=https://github.com' + route 
+    } else window.location.href = '/' 
   </script>
 </html>
