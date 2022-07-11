@@ -18,7 +18,7 @@ export class QueryParams  {
 
   get () {
     let qs 
-    if (window.location.hash.startsWith('#/#')) qs = window.location.hash.substr(3)
+    if (window.location.hash.startsWith('#/')) qs = window.location.hash.substr(2)
     else qs = window.location.hash.substr(1)
 
     if (window.location.search.length > 0) {
