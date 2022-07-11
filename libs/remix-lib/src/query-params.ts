@@ -17,7 +17,9 @@ export class QueryParams  {
   }
 
   get () {
-    const qs = window.location.hash.substr(1)
+    let qs 
+    if (window.location.hash.startsWith('#/#')) qs = window.location.hash.substr(3)
+    else qs = window.location.hash.substr(1)
 
     if (window.location.search.length > 0) {
       // use legacy query params instead of hash
