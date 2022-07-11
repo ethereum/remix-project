@@ -19,6 +19,9 @@ function ActivePluginCard ({
           <h6 className="remixui_displayName plugin-name">
             <div>
               { profile.displayName || profile.name }
+              { profile?.maintainedBy?.toLowerCase() == "remix" &&
+                <i aria-hidden="true" className="px-1 text-success fas fa-check" title="Maintained by Remix"></i>
+              }
               { profile.documentation &&
                 <a href={profile.documentation} className="px-1" title="link to documentation" target="_blank" rel="noreferrer">
                   <i aria-hidden="true" className="fas fa-book"/>
