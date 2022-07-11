@@ -8,7 +8,6 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin 
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import axios, { AxiosResponse } from 'axios'
 
 export * from './events'
 export * from './workspace'
