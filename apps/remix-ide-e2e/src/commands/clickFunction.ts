@@ -9,9 +9,7 @@ class ClickFunction extends EventEmitter {
           document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
         }, [], function () {
           if (expectedInput) {
-            client
-            .scrollInto('#runTabView input[title="' + expectedInput.types + '"]')
-            .setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, _ => _)
+            client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, _ => _)
           }
           done()
         })
