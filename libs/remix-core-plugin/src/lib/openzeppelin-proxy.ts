@@ -40,7 +40,7 @@ export class OpenZeppelinProxy extends Plugin {
           options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade Contract', active: false }],
           initializeOptions: {
             inputs: initializeInput,
-            initializeInputs: this.blockchain.getInputs(initializeInput)
+            initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
           }
         }
       })
