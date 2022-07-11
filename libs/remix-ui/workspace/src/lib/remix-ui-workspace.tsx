@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
-import { CustomMenu, CustomToggle } from './components/custom-dropdown'
+import { CustomMenu, CustomToggle } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
@@ -21,6 +21,7 @@ export function Workspace () {
   const cloneUrlRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
+    setCurrentWorkspace(localStorage.getItem('currentWorkspace') ? localStorage.getItem('currentWorkspace') : '')
     resetFocus()
   }, [])
 
@@ -280,13 +281,13 @@ export function Workspace () {
                           }}
                           data-id={`dropdown-item-${name}`}
                         >
-                            { isGitRepo ?
-                              <div className='d-flex justify-content-between'>
-                                <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
-                                <i className='fas fa-code-branch pt-1'></i>
-                              </div> :
+                          { isGitRepo ?
+                            <div className='d-flex justify-content-between'>
                               <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
-                            }
+                              <i className='fas fa-code-branch pt-1'></i>
+                            </div> :
+                            <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
+                          }
                         </Dropdown.Item>
                       ))
                     }
