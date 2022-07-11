@@ -153,7 +153,7 @@ export function ContractGUI (props: ContractGUIProps) {
 
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
-      props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade Contract'])
+      props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
     }
