@@ -4,6 +4,7 @@ import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
+import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [abiLabel, setAbiLabel] = useState<{
@@ -156,7 +157,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
     if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
-    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+    const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
+    const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
+  
+    if (isProxyDeployment || isContractUpgrade) {
+      props.modal('ERC1967', isProxyDeployment ? deployWithProxyMsg() : upgradeWithProxyMsg(), 'Proceed', () => {
+        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+      }, 'Cancel', () => {})
+    } else {
+      props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+    }
   }
 
   const atAddressChanged = (event) => {
