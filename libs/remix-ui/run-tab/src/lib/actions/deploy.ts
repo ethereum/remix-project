@@ -135,7 +135,7 @@ export const createInstance = async (
   args,
   deployMode: DeployMode[]) => {
   const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
-  const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade Contract')
+  const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
   const statusCb = (msg: string) => {
     const log = logBuilder(msg)
 
