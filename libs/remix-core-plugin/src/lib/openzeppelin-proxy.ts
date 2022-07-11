@@ -37,7 +37,7 @@ export class OpenZeppelinProxy extends Plugin {
         const initializeInput = abi.find(node => node.name === 'initialize')
 
         inputs[name] = {
-          options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade Contract', active: false }],
+          options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade with Proxy', active: false }],
           initializeOptions: {
             inputs: initializeInput,
             initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null

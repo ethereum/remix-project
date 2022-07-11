@@ -220,7 +220,7 @@ export interface Modal {
   cancelFn: () => void
 }
 
-export type DeployMode = 'Deploy with Proxy' | 'Upgrade Contract'
+export type DeployMode = 'Deploy with Proxy' | 'Upgrade with Proxy'
 
 export type DeployOption = {
   initializeInputs: string,
