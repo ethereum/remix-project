@@ -24,7 +24,7 @@ module.exports = {
       .pause(1000)
   },
 
-  'Test Failed Import #group1': function (browser: NightwatchBrowser) {
+  'Test Failed Import #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled3.sol', sources[2]['Untitled3.sol'])
       .clickLaunchIcon('solidity')
       .assert.containsText('#compileTabView .error pre', 'not found Untitled11.sol')
