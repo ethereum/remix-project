@@ -38,21 +38,21 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         </div>
       </div>
       <div className={`bg-light p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
-        {plugin?.profile.author && <span className="d-flex flex-row align-items-center">
+        {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Author:</label>
           <span> plugin.profile.author </span>
         </span>}
-        {plugin?.profile.maintainedBy && <span className="d-flex flex-row align-items-center">
+        {plugin?.profile?.maintainedBy && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Maintained by:</label>
           <span> plugin.profile.maintainedBy</span>
         </span>}
-        {plugin?.profile.documentation && <span className="d-flex flex-row align-items-center">
+        {plugin?.profile?.documentation && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Documentation:</label>
           <span>
-            <a href={plugin.profile.documentation} className="titleInfo mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
+            <a href={plugin.profile?.documentation} className="titleInfo mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
           </span>
         </span>}
-        {plugin?.profile.description && <span className="d-flex flex-row align-items-center">
+        {plugin?.profile?.description && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Description:</label>
           <span> plugin?.profile.description</span>
         </span>}
