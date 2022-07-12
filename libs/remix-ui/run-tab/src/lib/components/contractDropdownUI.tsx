@@ -160,8 +160,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
     const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
   
-    if (isProxyDeployment || isContractUpgrade) {
-      props.modal('ERC1967', isProxyDeployment ? deployWithProxyMsg() : upgradeWithProxyMsg(), 'Proceed', () => {
+    if (isProxyDeployment) {
+      props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), 'Proceed', () => {
+        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+      }, 'Cancel', () => {})
+    } else if (isContractUpgrade) {
+      props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), 'Proceed', () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
       }, 'Cancel', () => {})
     } else {
