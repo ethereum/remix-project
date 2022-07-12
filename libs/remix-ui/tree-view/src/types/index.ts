@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+import { FileType } from 'libs/remix-ui/workspace/src/lib/types/index'
+
 export interface TreeViewProps {
     children?: React.ReactNode,
     id?: string
@@ -23,4 +25,7 @@ export interface TreeViewItemProps {
     onContextMenu?: (...args: any) => void,
     onBlur?: (...args: any) => void,
     showIcon?: boolean
+    expandedPaths?: string[];
+    handleClickFolder?: (path: string, type: string) => void;
+    file?: FileType
 }
