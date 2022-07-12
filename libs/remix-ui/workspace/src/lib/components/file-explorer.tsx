@@ -11,6 +11,18 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
 
+interface MoveContextType{
+  dragged: string,
+  moveFile: (dest: string) => void
+  currentlyMoved: (path: string) => void
+}
+
+export const MoveContext = React.createContext<MoveContextType>({
+  dragged:"",
+  moveFile:( )=> {},
+  currentlyMoved: () => {}
+})
+
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
   const [state, setState] = useState<FileExplorerState>({
@@ -36,6 +48,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
+  const [dragged, setDragged] = useState<string>("")
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -409,7 +422,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
+
   return (
+    <MoveContext.Provider value={{
+      dragged: dragged,
+      moveFile: ( dest: string) => {
+        try {
+          props.dispatchMoveFile(dragged, dest)
+        } catch (error) {
+          props.modal('Moving File Failed', 'Unexpected error while moving file: ' + dragged, 'Close', async () => {})
+        }   
+    },
+    currentlyMoved:(path)=>{
+      setDragged(path) 
+    }
+    }}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
@@ -444,6 +471,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   handleClickFolder={handleClickFolder}
                   handleContextMenu={handleContextMenu}
                   key={index}
+                  
                 />)
               }
             </TreeView>
@@ -473,7 +501,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         />
       }
     </div>
-  )
+    </MoveContext.Provider> )
 }
 
 export default FileExplorer
