@@ -12,6 +12,7 @@ export function Workspace () {
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
+  const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -149,6 +150,10 @@ export function Workspace () {
     }
   }
 
+  const toggleDropdown = (isOpen: boolean) => {
+    setShowDropdown(isOpen)
+  }
+
   const createModalMessage = () => {
     return (
       <>
@@ -258,12 +263,12 @@ export function Workspace () {
                     title='Clone Git Repository'>
                   </span>
                 </span>
-                <Dropdown id="workspacesSelect" data-id="workspacesSelect">
+                <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
                     { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" >
+                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
                     {
                       global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                         <Dropdown.Item
@@ -290,7 +295,7 @@ export function Workspace () {
             </div>
           </header>
         </div>
-        <div className='h-100 remixui_fileExplorerTree'>
+        <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
           <div className='h-100'>
             { global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
               : <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
