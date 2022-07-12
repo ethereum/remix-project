@@ -207,6 +207,9 @@ class Recorder extends Plugin {
         // resolve the bytecode using the contract name, this ensure getting the last compiled one.
         const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
         tx.record.bytecode = data.artefact.evm.bytecode.object
+        const updatedABIKeccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(data.artefact.abi)))
+        abis[updatedABIKeccak] = data.artefact.abi
+        tx.record.abi = updatedABIKeccak
       }
       var record = this.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
