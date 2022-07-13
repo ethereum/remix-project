@@ -48,12 +48,12 @@ export const useAutoCompletion = (config, checked, dispatch) => {
 
 export const saveTokenToast = (config, dispatch, tokenValue, key) => {
   config.set('settings/' + key, tokenValue)
-  dispatch({ type: 'save', payload: { message: 'Access token has been saved' } })
+  dispatch({ type: 'save', payload: { message: 'GitHub credentials updated' } })
 }
 
 export const removeTokenToast = (config, dispatch, key) => {
   config.set('settings/' + key, '')
-  dispatch({ type: 'removed', payload: { message: 'Access token removed' } })
+  dispatch({ type: 'removed', payload: { message: 'GitHub credentials removed' } })
 }
 
 export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, postageStampId) => {

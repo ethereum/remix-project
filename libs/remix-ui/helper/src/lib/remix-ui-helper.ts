@@ -47,6 +47,22 @@ export const createNonClashingNameAsync = async (name: string, fileManager, pref
   return name + counter + prefix + '.' + ext
 }
 
+export const createNonClashingTitle = async (name: string, fileManager) => {
+  if (!name) name = 'Undefined'
+  let _counter
+  let exist = true
+
+  do {
+    const isDuplicate = await fileManager.exists(name + (_counter || ''))
+
+    if (isDuplicate) _counter = (_counter || 0) + 1
+    else exist = false
+  } while (exist)
+  const counter = _counter || ''
+
+  return name + counter
+}
+
 export const joinPath = (...paths) => {
   paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
   if (paths.length === 1) return paths[0]

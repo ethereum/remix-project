@@ -34,7 +34,7 @@ declare module 'nightwatch' {
         getModalBody(callback: (value: string, cb: VoidFunction) => void): NightwatchBrowser,
         modalFooterCancelClick(id?: string): NightwatchBrowser,
         selectContract(contractName: string): NightwatchBrowser,
-        createContract(inputParams: string[]): NightwatchBrowser,
+        createContract(inputParams: string): NightwatchBrowser,
         getAddressAtPosition(index: number, cb: (pos: string) => void): NightwatchBrowser,
         testConstantFunction(address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput | null, expectedOutput: string): NightwatchBrowser,
         getEditorValue(callback: (content: string) => void): NightwatchBrowser,
@@ -62,7 +62,9 @@ declare module 'nightwatch' {
         clearConsole (this: NightwatchBrowser): NightwatchBrowser
         clearTransactions (this: NightwatchBrowser): NightwatchBrowser
         getBrowserLogs (this: NightwatchBrowser): NightwatchBrowser
-        currentSelectedFileIs (name: string): NightwatchBrowser
+        currentSelectedFileIs (name: string): NightwatchBrowser,
+        switchWorkspace: (workspaceName: string) => NightwatchBrowser
+        switchEnvironment: (provider: string) => NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

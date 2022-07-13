@@ -9,13 +9,18 @@ interface Action {
 export interface BrowserState {
   browser: {
     currentWorkspace: string,
-    workspaces: string[],
+    workspaces: {
+      name: string;
+      isGitRepo: boolean;
+    }[],
     files: { [x: string]: Record<string, FileType> },
     expandPath: string[]
     isRequestingDirectory: boolean,
     isSuccessfulDirectory: boolean,
     isRequestingWorkspace: boolean,
     isSuccessfulWorkspace: boolean,
+    isRequestingCloning: boolean,
+    isSuccessfulCloning: boolean,
     error: string,
     contextMenu: {
       registeredMenuItems: action[],
@@ -66,6 +71,8 @@ export const browserInitialState: BrowserState = {
     isSuccessfulDirectory: false,
     isRequestingWorkspace: false,
     isSuccessfulWorkspace: false,
+    isRequestingCloning: false,
+    isSuccessfulCloning: false,
     error: null,
     contextMenu: {
       registeredMenuItems: [],
@@ -109,21 +116,21 @@ export const browserInitialState: BrowserState = {
 export const browserReducer = (state = browserInitialState, action: Action) => {
   switch (action.type) {
     case 'SET_CURRENT_WORKSPACE': {
-      const payload = action.payload as string
-      const workspaces = state.browser.workspaces.includes(payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+      const payload = action.payload as { name: string; isGitRepo: boolean; }
+      const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
       return {
         ...state,
         browser: {
           ...state.browser,
-          currentWorkspace: payload,
+          currentWorkspace: payload.name,
           workspaces: workspaces.filter(workspace => workspace)
         }
       }
     }
 
     case 'SET_WORKSPACES': {
-      const payload = action.payload as string[]
+      const payload = action.payload as { name: string; isGitRepo: boolean; }[]
 
       return {
         ...state,
@@ -421,14 +428,14 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'CREATE_WORKSPACE_SUCCESS': {
-      const payload = action.payload as string
-      const workspaces = state.browser.workspaces.includes(payload) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+      const payload = action.payload as { name: string; isGitRepo: boolean; }
+      const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
       return {
         ...state,
         browser: {
           ...state.browser,
-          currentWorkspace: payload,
+          currentWorkspace: payload.name,
           workspaces: workspaces.filter(workspace => workspace),
           isRequestingWorkspace: false,
           isSuccessfulWorkspace: true,
@@ -451,14 +458,25 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'RENAME_WORKSPACE': {
       const payload = action.payload as { oldName: string, workspaceName: string }
-      const workspaces = state.browser.workspaces.filter(name => name && (name !== payload.oldName))
+      let renamedWorkspace
+      const workspaces = state.browser.workspaces.filter(({ name, isGitRepo }) => {
+        if (name && (name !== payload.oldName)) {
+          return true
+        } else {
+          renamedWorkspace = {
+            name: payload.workspaceName,
+            isGitRepo
+          }
+          return false
+        }
+      })
 
       return {
         ...state,
         browser: {
           ...state.browser,
           currentWorkspace: payload.workspaceName,
-          workspaces: [...workspaces, payload.workspaceName],
+          workspaces: [...workspaces, renamedWorkspace],
           expandPath: []
         }
       }
@@ -466,7 +484,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'DELETE_WORKSPACE': {
       const payload = action.payload as string
-      const workspaces = state.browser.workspaces.filter(name => name && (name !== payload))
+      const workspaces = state.browser.workspaces.filter(({ name }) => name && (name !== payload))
 
       return {
         ...state,
@@ -593,6 +611,39 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
           isRequestingLocalhost: false,
           isSuccessfulLocalhost: false,
           error: payload
+        }
+      }
+    }
+
+    case 'CLONE_REPOSITORY_REQUEST': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          isRequestingCloning: true,
+          isSuccessfulCloning: false
+        }
+      }
+    }
+
+    case 'CLONE_REPOSITORY_SUCCESS': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          isRequestingCloning: false,
+          isSuccessfulCloning: true
+        }
+      }
+    }
+
+    case 'CLONE_REPOSITORY_FAILED': {
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          isRequestingCloning: false,
+          isSuccessfulCloning: false
         }
       }
     }

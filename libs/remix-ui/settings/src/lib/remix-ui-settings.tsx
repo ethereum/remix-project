@@ -7,7 +7,8 @@ import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
-import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
+import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
+import { GithubSettings } from './github-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -357,9 +358,21 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   return (
     <div>
-      {state.message ? <Toaster message={state.message} /> : null}
-      {generalConfig()}
-      {token('gist')}
+      {state.message ? <Toaster message= {state.message}/> : null}
+      {generalConfig()}     
+      <GithubSettings
+        saveTokenToast={(githubToken: string, githubUserName: string, githubEmail: string) => {
+          saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token")
+          saveTokenToast(props.config, dispatchToast, githubUserName, "github-user-name")
+          saveTokenToast(props.config, dispatchToast, githubEmail, "github-email")
+        }}
+        removeTokenToast={() => { 
+          removeTokenToast(props.config, dispatchToast, "gist-access-token")
+          removeTokenToast(props.config, dispatchToast, "github-user-name")
+          removeTokenToast(props.config, dispatchToast, "github-email")
+        }}
+        config={props.config}
+      />
       {token('etherscan')}
       {swarmSettings()}
       {ipfsSettings()}
