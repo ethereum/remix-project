@@ -11,8 +11,7 @@ import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
-import { logBuilder, confirmProxyMsg } from "@remix-ui/helper"
-import { cancelProxyMsg } from '@remix-ui/helper'
+import { logBuilder, cancelUpgradeMsg, cancelProxyMsg } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
@@ -150,9 +149,11 @@ export class Blockchain extends Plugin {
       cancelLabel: 'Cancel',
       okFn: () => {
         this.runProxyTx(proxyData, implementationContractObject)
+        _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'modal ok confirmation'])
       },
       cancelFn: () => {
         this.call('notification', 'toast', cancelProxyMsg())
+        _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'cancel proxy deployment'])
       },
       hideFn: () => null
     }
@@ -161,7 +162,9 @@ export class Blockchain extends Plugin {
 
   async runProxyTx (proxyData, implementationContractObject) {
     const args = { useCall: false, data: proxyData }
+    let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      networkInfo = network
       // continue using original authorization given by user
       continueTxExecution(null)
     }
@@ -171,11 +174,57 @@ export class Blockchain extends Plugin {
       if (error) {
         const log = logBuilder(error)
   
+        _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
+      if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
+      else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
+      _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       return this.call('udapp', 'resolveContractAndAddInstance', implementationContractObject, address)
     }
 
+    this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
+  }
+
+  async upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject) {
+    const upgradeModal = {
+      id: 'confirmProxyDeployment',
+      title: 'ERC1967',
+      message: `Confirm you want to upgrade your contract to new implementation ${newImplAddress}.`,
+      modalType: 'modal',
+      okLabel: 'OK',
+      cancelLabel: 'Cancel',
+      okFn: () => {
+        this.runUpgradeTx(proxyAddress, data, newImplementationContractObject)
+        _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'proxy upgrade confirmation click'])
+      },
+      cancelFn: () => {
+        this.call('notification', 'toast', cancelUpgradeMsg())
+        _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'proxy upgrade cancel click'])
+      },
+      hideFn: () => null
+    }
+    this.call('notification', 'modal', upgradeModal)
+  }
+
+  async runUpgradeTx (proxyAddress, data, newImplementationContractObject) {
+    const args = { useCall: false, data, to: proxyAddress }
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      // continue using original authorization given by user
+      continueTxExecution(null)
+    }
+    const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
+    const promptCb = (okCb, cancelCb) => { okCb() }
+    const finalCb = (error, txResult, address, returnValue) => {
+      if (error) {
+        const log = logBuilder(error)
+
+        _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade failed'])
+        return this.call('terminal', 'logHtml', log)
+      }
+      _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
+      return this.call('udapp', 'resolveContractAndAddInstance', newImplementationContractObject, proxyAddress)
+    }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
 

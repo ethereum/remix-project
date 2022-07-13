@@ -89,3 +89,17 @@ export const UUPSfunAbi = {
   outputs: [],
   stateMutability: "payable"
 }
+
+export const UUPSupgradeAbi = {
+    "inputs": [
+        {
+            "internalType": "address",
+            "name": "newImplementation",
+            "type": "address"
+        }
+    ],
+    "name": "upgradeTo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}

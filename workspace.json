@@ -18,6 +18,7 @@
             "assets": [
               "apps/remix-ide/src/assets",
               "apps/remix-ide/src/index.html",
+              "apps/remix-ide/src/404.html",
               "apps/remix-ide/src/favicon.ico"
             ],
             "styles": [],
@@ -1247,6 +1248,22 @@
                 "output": "/"
               }
             ]
+          }
+        }
+      }
+    },
+    "remix-ui-tooltip-popup": {
+      "root": "libs/remix-ui/tooltip-popup",
+      "sourceRoot": "libs/remix-ui/tooltip-popup/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-ui/tooltip-popup/.eslintrc.json",
+            "tsConfig": ["libs/remix-ui/tooltip-popup/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

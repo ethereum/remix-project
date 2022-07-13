@@ -3,6 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -11,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Run Scenario': function (browser: NightwatchBrowser) {
+  'Run Scenario #group1': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
       .pause(5000)
@@ -36,10 +37,10 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
 
     },
-    'Save scenario': function (browser: NightwatchBrowser) {
+    'Save scenario #group1': function (browser: NightwatchBrowser) {
       browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
-      .createContract(['12'])
+      .createContract('12')
       .clickInstance(0)
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
       .click('.savetransaction')
@@ -64,7 +65,7 @@ module.exports = {
       })
   },
 
-  'Record more than one contract': function (browser: NightwatchBrowser) {
+  'Record more than one contract #group1': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     browser
       .click('*[data-id="deployAndRunClearInstances"]')
@@ -72,11 +73,11 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
       .pause(1000)
-      .createContract([])
+      .createContract('')
       .clickInstance(0)
       .selectContract('t2est')
       .pause(1000)
-      .createContract([])
+      .createContract('')
       .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
@@ -84,6 +85,7 @@ module.exports = {
 
         modalOk.click()
       })
+      .pause(1000)
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
@@ -98,7 +100,7 @@ module.exports = {
       
   },
 
-  'Run with live "mode"': function (browser: NightwatchBrowser) {
+  'Run with live "mode" #group1': function (browser: NightwatchBrowser) {
     let addressRef: string
     browser.addFile('scenario_live_mode.json', { content: JSON.stringify(liveModeScenario, null, '\t') })
       .addFile('scenario_live_mode_storage.sol', { content: testStorageForLiveMode })

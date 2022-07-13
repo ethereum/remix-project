@@ -1,8 +1,7 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData } from '@remix-project/core-plugin'
-import { DeployMode, DeployOption, DeployOptions } from '../types'
-import { ADD_DEPLOY_OPTION, ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_DEPLOY_OPTION, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_TX_FEE_CONTENT } from '../constants'
-import Web3 from 'web3'
+import { DeployOptions } from '../types'
+import { ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_TX_FEE_CONTENT, SET_PROXY_ENV_ADDRESS, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION } from '../constants'
 
 declare const window: any
 interface Action {
@@ -67,7 +66,8 @@ export interface RunTabState {
         compiler: CompilerAbstract
       }[]
     },
-    deployOptions: DeployOptions
+    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
+    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
     currentContract: string,
@@ -155,6 +155,7 @@ export const runTabInitialState: RunTabState = {
   contracts: {
     contractList: {},
     deployOptions: {} as any,
+    proxyKey: '',
     loadType: 'other',
     currentFile: '',
     currentContract: '',
@@ -680,45 +681,51 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case ADD_DEPLOY_OPTION: {
-      const payload: { title: DeployMode, active: boolean } = action.payload
+      const payload: { [file: string]: { [name: string]: DeployOptions } } = action.payload
 
       return {
         ...state,
         contracts: {
           ...state.contracts,
-          deployOptions: { 
-            ...state.contracts.deployOptions,
-            options: [...state.contracts.deployOptions.options, payload]
-          }
+          deployOptions: {...state.contracts.deployOptions, ...payload }
         }
       }
     }
 
     case REMOVE_DEPLOY_OPTION: {
       const payload: string = action.payload
-      const options = state.contracts.deployOptions.options.filter(val => val.title !== payload)
+      const options = state.contracts.deployOptions
 
-      
+      delete options[payload]
       return {
         ...state,
         contracts: {
           ...state.contracts,
-          deployOptions: {
-            ...state.contracts.deployOptions,
-            options
-          }
+          deployOptions: options
         }
       }
     }
 
     case SET_DEPLOY_OPTIONS: {
-      const payload: DeployOptions = action.payload
+      const payload: { [file: string]: { [name: string]: DeployOptions } } = action.payload
 
       return {
         ...state,
         contracts: {
           ...state.contracts,
           deployOptions: payload
+        }
+      }
+    }
+
+    case SET_PROXY_ENV_ADDRESS: {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+            proxyKey: payload
         }
       }
     }
