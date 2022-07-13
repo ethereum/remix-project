@@ -10,7 +10,6 @@ const testData = {
 }
 
 module.exports = {
-
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
