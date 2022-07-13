@@ -10,7 +10,7 @@ const profile = {
   name: 'foundry-provider',
   displayName: 'Foundry Provider',
   kind: 'provider',
-  description: 'Anvil',
+  description: 'Foundry Anvil provider',
   methods: ['sendAsync'],
   version: packageJson.version
 }
