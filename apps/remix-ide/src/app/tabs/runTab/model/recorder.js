@@ -204,7 +204,7 @@ class Recorder extends Plugin {
     logCallBack(`Running ${records.length} transaction(s)${liveMsg} ...`)
     async.eachOfSeries(records, async (tx, index, cb) => {
       if (liveMode && tx.record.type === 'constructor') {
-        // resolve the bytecode using the contract name, this ensure getting the last compiled one.
+        // resolve the bytecode and ABI using the contract name, this ensure getting the last compiled one.
         const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
         tx.record.bytecode = data.artefact.evm.bytecode.object
         const updatedABIKeccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(data.artefact.abi)))
@@ -315,11 +315,11 @@ class Recorder extends Plugin {
       abis = json.abis || {}
       linkReferences = json.linkReferences || {}
     } catch (e) {
-      return cb('Invalid Scenario File. Please try again')
+      return cb('Invalid scenario file. Please try again')
     }
 
     if (!txArray.length) {
-      return
+      return cb('No transactions found in scenario file')
     }
 
     this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, (abi, address, contractName) => {
