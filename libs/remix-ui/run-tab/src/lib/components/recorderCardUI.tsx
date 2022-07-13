@@ -66,7 +66,7 @@ export function RecorderUI (props: RecorderProps) {
           </span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
+          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" title={enableRunButton ? 'No scenario file selected' : ''} disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
         </OverlayTrigger>
         </div>        
       </div>
