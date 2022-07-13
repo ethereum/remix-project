@@ -8,7 +8,7 @@ const profile = {
     methods: [''],
     events: [],
     icon: 'assets/img/search_icon.webp',
-    description: '',
+    description: 'Find and replace in file explorer',
     kind: '',
     location: 'sidePanel',
     documentation: '',

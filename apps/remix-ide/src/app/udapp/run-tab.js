@@ -12,7 +12,7 @@ const profile = {
   name: 'udapp',
   displayName: 'Deploy & run transactions',
   icon: 'assets/img/deployAndRun.webp',
-  description: 'execute and save transactions',
+  description: 'Execute, save and replay transactions',
   kind: 'udapp',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',

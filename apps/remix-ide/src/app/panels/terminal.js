@@ -20,7 +20,7 @@ const profile = {
   name: 'terminal',
   methods: ['log', 'logHtml'],
   events: [],
-  description: ' - ',
+  description: 'Remix IDE terminal',
   version: packageJson.version
 }
 
