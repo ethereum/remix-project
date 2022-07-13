@@ -200,7 +200,7 @@ class Recorder extends Plugin {
     */
   run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, newContractFn) {
     this.setListen(false)
-    const liveMsg = liveMode ? ' in live mode' : ''
+    const liveMsg = liveMode ? ' with updated contracts' : ''
     logCallBack(`Running ${records.length} transaction(s)${liveMsg} ...`)
     async.eachOfSeries(records, async (tx, index, cb) => {
       if (liveMode && tx.record.type === 'constructor') {
