@@ -4,6 +4,7 @@ import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
+import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [abiLabel, setAbiLabel] = useState<{
@@ -27,7 +28,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
   const contractsRef = useRef<HTMLSelectElement>(null)
-  const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions } = props.contracts
+  const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
 
   useEffect(() => {
     enableAtAddress(false)
@@ -155,7 +156,17 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+    if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
+    const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
+    const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
+  
+    if (isProxyDeployment || isContractUpgrade) {
+      props.modal('ERC1967', isProxyDeployment ? deployWithProxyMsg() : upgradeWithProxyMsg(), 'Proceed', () => {
+        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+      }, 'Cancel', () => {})
+    } else {
+      props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+    }
   }
 
   const atAddressChanged = (event) => {
@@ -232,14 +243,15 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
               <ContractGUI
                 title='Deploy'
                 isDeploy={true}
-                deployOption={deployOptions.options}
-                initializerOptions={deployOptions.initializeOptions ? deployOptions.initializeOptions[currentContract] : null}
+                deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
+                initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
                 funcABI={constructorInterface}
                 clickCallBack={clickCallback}
                 inputs={constructorInputs}
                 widthClass='w-50'
                 evmBC={loadedContractData.bytecodeObject}
                 lookupOnly={false}
+                savedProxyAddress={proxyKey}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input

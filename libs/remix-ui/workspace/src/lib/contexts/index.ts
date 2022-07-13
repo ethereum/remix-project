@@ -4,7 +4,7 @@ import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
-  modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,
   dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
@@ -29,5 +29,6 @@ export const FileSystemContext = createContext<{
   dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
   dispatchHandleDownloadFiles: () => Promise<void>,
-  dispatchHandleRestoreBackup: () => Promise<void>
+  dispatchHandleRestoreBackup: () => Promise<void>,
+  dispatchCloneRepository: (url: string) => Promise<void>
     }>(null)

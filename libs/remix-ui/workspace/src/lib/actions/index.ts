@@ -8,7 +8,6 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin 
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import axios, { AxiosResponse } from 'axios'
 
 export * from './events'
 export * from './workspace'
@@ -21,20 +20,24 @@ let plugin, dispatch: React.Dispatch<any>
 export type UrlParametersType = {
   gist: string,
   code: string,
-  url: string
+  url: string,
+  address: string
 }
 
-const basicWorkspaceInit = async (workspaces, workspaceProvider) => {
+const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
   if (workspaces.length === 0) {
     await createWorkspaceTemplate('default_workspace', 'remixDefault')
     plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
-    dispatch(setCurrentWorkspace('default_workspace'))
+    dispatch(setCurrentWorkspace({ name: 'default_workspace', isGitRepo: false }))
     await loadWorkspacePreset('remixDefault')
   } else {
     if (workspaces.length > 0) {
-      workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-      plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
-      dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+      const workspace = workspaces[workspaces.length - 1]
+      const workspaceName = (workspace || {}).name
+
+      workspaceProvider.setWorkspace(workspaceName)
+      plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+      dispatch(setCurrentWorkspace(workspace))
     }
   }
 }
@@ -52,18 +55,17 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace('gist-sample'))
+      dispatch(setCurrentWorkspace({ name: 'gist-sample', isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace('code-sample'))
+      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-    } else if (window.location.pathname && window.location.pathname !== '/') {
-      let route = window.location.pathname
-      if (route.startsWith('/address/0x') && route.length === 51) {
-        const contractAddress = route.split('/')[2]
+    } else if (params.address) {
+      if (params.address.startsWith('0x') && params.address.length === 42) {
+        const contractAddress = params.address
         plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress} .....`)
         let data
         let count = 0
@@ -95,7 +97,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             foundOnNetworks.push(network.name)
             await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
             plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
-            dispatch(setCurrentWorkspace('etherscan-code-sample'))
+            dispatch(setCurrentWorkspace({ name: 'etherscan-code-sample', isGitRepo: false }))
             let filePath
             count = count + (Object.keys(data.compilationTargets)).length
             for (filePath in data.compilationTargets)
@@ -106,24 +108,15 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
-      } else if (route.endsWith('.sol')) {
-        if (route.includes('blob')) route = route.replace('/blob', '')
-        let response: AxiosResponse
-        try {
-          response = await axios.get(`https://raw.githubusercontent.com${route}`)
-        } catch (error) {
-          plugin.call('notification', 'toast', `cound not find ${route} on GitHub`)
-          await basicWorkspaceInit(workspaces, workspaceProvider)
-        }
-        if (response && response.status === 200) {
-          const content = response.data
-          await createWorkspaceTemplate('github-code-sample', 'code-template')
-          plugin.setWorkspace({ name: 'github-code-sample', isLocalhost: false })
-          dispatch(setCurrentWorkspace('github-code-sample'))
-          await workspaceProvider.set(route, content)
-          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(route))
-        } else await basicWorkspaceInit(workspaces, workspaceProvider)
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
+    } else if (localStorage.getItem("currentWorkspace")) {
+      const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))
+      if (index !== -1) {
+        const name = localStorage.getItem("currentWorkspace")
+        workspaceProvider.setWorkspace(name)
+        plugin.setWorkspace({ name: name, isLocalhost: false })
+        dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
+      } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
     }

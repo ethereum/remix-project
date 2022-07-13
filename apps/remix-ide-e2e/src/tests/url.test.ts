@@ -29,6 +29,7 @@ module.exports = {
       .click('[for="autoCompile"]') // we set it too false again
       .click('[for="autoCompile"]') // back to True in the local storage
       .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
+      .clickLaunchIcon('filePanel')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
@@ -57,6 +58,7 @@ module.exports = {
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
       .refresh() // we do one reload for making sure we already have the default workspace
       .pause(5000)
+      .clickLaunchIcon('filePanel')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
@@ -113,7 +115,7 @@ module.exports = {
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&evmVersion=null&version=soljson-v0.6.12+commit.27d51765.js&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refresh()
       .pause(5000)
-      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="code-sample"]')
+      .switchWorkspace('code-sample')
       .openFile('@openzeppelin')
       .openFile('@openzeppelin/contracts')
       .openFile('@openzeppelin/contracts/access')

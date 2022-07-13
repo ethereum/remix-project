@@ -161,7 +161,7 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp')
       .clearTransactions()
-      .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
+      .switchEnvironment('vm-london') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
@@ -202,10 +202,10 @@ module.exports = {
       .addFile('Storage.sol', sources[6]['Storage.sol'])
       .addFile('Owner.sol', sources[6]['Owner.sol'])
       .clickLaunchIcon('udapp')
-      .createContract(['42', '24'])
+      .createContract('42, 24')
       .openFile('Storage.sol')
       .clickLaunchIcon('udapp')
-      .createContract(['102']) // this creation will fail if the component hasn't been properly reset.
+      .createContract('102') // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })
       .testFunction('last', // we check if the contract is actually reachable.
