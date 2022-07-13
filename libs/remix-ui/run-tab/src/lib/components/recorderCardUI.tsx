@@ -49,7 +49,7 @@ export function RecorderUI (props: RecorderProps) {
       <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
-          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Use live mode (Run transactions against latest compiled contracts).</label>
+          <label className="form-check-label custom-control-label" title="If contracts are updated after recording transactions, checking this box will run recorded transactions with latest copy of compiled contracts" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Use latest compiled copy of contracts</label>
         </div>     
         <div className="mb-1 mt-1 udapp_transactionActions">
         <OverlayTrigger placement={'right'} overlay={
