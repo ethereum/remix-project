@@ -54,15 +54,15 @@ export function RecorderUI (props: RecorderProps) {
         <div className="mb-1 mt-1 udapp_transactionActions">
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-save-recorder">
-            <span>Save {props.count} transaction(s) as scenario file.
+            <span>Save {props.count} transaction{props.count === 1 ? '' : 's'} as scenario file
           </span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info savetransaction udapp_recorder" onClick={triggerRecordButton}>Save</button>
+          <button className="btn btn-sm btn-info savetransaction udapp_recorder" title={props.count === 0 ? 'No transactions to save' : ''} disabled={props.count === 0 ? true: false} onClick={triggerRecordButton}>Save</button>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-run-recorder">
-            <span>Run transaction(s) from the current scenario file.
+            <span>Run transaction(s) from the current scenario file
           </span>
           </Tooltip>
         }>
