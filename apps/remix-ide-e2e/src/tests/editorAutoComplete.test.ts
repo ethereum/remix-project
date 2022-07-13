@@ -2,21 +2,79 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
+const autoCompleteLineElement = (name: string) => {
+  return `//*[@class='editor-widget suggest-widget visible']//*[@class='contents' and contains(.,'${name}')]`
+}
+
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
   'Should load the test file': function (browser: NightwatchBrowser) {
-    browser
-      .openFile('contracts')
+    browser.openFile('contracts')
       .openFile('contracts/3_Ballot.sol')
       .waitForElementVisible('#editorView')
-
+      .setEditorValue(BallotWithARefToOwner)
+      .pause(4000) // wait for the compiler to finish
   },
-  'Should open local filesystem explorer': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
-      .click('[data-id="remixUIWorkspaceExplorer"]')
-      .setValue('*[data-id="fileExplorerFileUpload"]', 'burnt-coffee.sol')
+  'Should put cursor at the end of a line': function (browser: NightwatchBrowser) {
+    const path = "//*[@class='view-line' and contains(.,'new') and contains(.,'owner')]//span//span[contains(.,';')]"
+    browser.waitForElementVisible('#editorView')
+    .useXpath()
+    .click(path).pause(1000)
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        // right arrow key
+        sendKeys(this.Keys.ARROW_RIGHT).
+        sendKeys(this.Keys.ARROW_RIGHT)
+    })
+  },
+  'Should type and get msg + sender': function (browser: NightwatchBrowser) {
+    browser.
+      perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('msg.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('sender'))
+      .click(autoCompleteLineElement('sender'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';').
+          sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should type and get completions in the context without this': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(this.Keys.ENTER).
+        sendKeys('co')
+    })
+    .waitForElementVisible(autoCompleteLineElement('chairperson'))
+    .waitForElementVisible(autoCompleteLineElement('cowner'))
+    .waitForElementVisible(autoCompleteLineElement('constructor'))
+    .waitForElementVisible(autoCompleteLineElement('continue'))
+    .waitForElementVisible(autoCompleteLineElement('contract'))
+    .waitForElementVisible(autoCompleteLineElement('constant'))
+    .click(autoCompleteLineElement('cowner'))
+  },
+  'Perform dot completion on cowner': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('.')
+    })
+    // publicly available functions
+    .waitForElementVisible(autoCompleteLineElement('changeOwner'))
+    .waitForElementVisible(autoCompleteLineElement('getOwner'))
+    // do not show private vars, functions & modifiers & events
+    .waitForElementNotPresent(autoCompleteLineElement('private'))
+    .waitForElementNotPresent(autoCompleteLineElement('isOwner'))
+    .waitForElementNotPresent(autoCompleteLineElement('ownerSet'))
   }
 }
 
@@ -59,7 +117,6 @@ contract BallotHoverTest {
      */
     constructor(bytes32[] memory proposalNames) {
         cowner = new Owner();
-        cowner.getOwner();
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
 
