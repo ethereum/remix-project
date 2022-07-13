@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useRef, useState} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import { RecorderProps } from '../types'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 
 export function RecorderUI (props: RecorderProps) {
   const inputLive = useRef<HTMLInputElement>()
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
+  const [enableRunButton, setEnableRunButton] = useState<boolean>(true)
   const triggerRecordButton = () => {
     props.storeScenario(props.scenarioPrompt)
   }
@@ -14,6 +15,11 @@ export function RecorderUI (props: RecorderProps) {
     const liveMode = inputLive.current ? inputLive.current.checked : false
     props.runCurrentScenario(liveMode, props.gasEstimationPrompt, props.passphrasePrompt, props.mainnetPrompt)
   }
+
+  useEffect(() => {
+    if (props.currentFile.endsWith('.json')) setEnableRunButton(false)
+    else setEnableRunButton(true)
+  }, [props.currentFile])
 
   const toggleClass = () => {
     setToggleExpander(!toggleExpander)
@@ -60,7 +66,7 @@ export function RecorderUI (props: RecorderProps) {
           </span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" onClick={handleClickRunButton}>Run</button>
+          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
         </OverlayTrigger>
         </div>        
       </div>
