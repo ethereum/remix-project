@@ -14,7 +14,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         this.props = props
         this.monaco = monaco
 
-        
+
     }
 
     triggerCharacters = ['.', '']
@@ -32,11 +32,11 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         };
 
         const line = model.getLineContent(position.lineNumber)
-        let nodes: AstNode[] =  []
+        let nodes: AstNode[] = []
         let suggestions: monaco.languages.CompletionItem[] = []
 
         const cursorPosition: number = this.props.editorAPI.getCursorPosition()
-        
+
         if (context.triggerCharacter === '.') {
             console.clear()
             console.log('TEXT', line)
@@ -53,6 +53,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             if (globalCompletion) {
                 dotCompleted = true
                 suggestions = [...suggestions, ...globalCompletion]
+                setTimeout(() => {
+                    // eslint-disable-next-line no-debugger
+                    // debugger
+                }, 2000)
             }
             if (lastNodeInExpression.name === 'this') {
                 dotCompleted = true
@@ -63,12 +67,16 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     if (node.visibility && node.visibility === 'internal') {
                         return false
                     }
-                    if(node.nodeType && node.nodeType === 'ContractDefinition') {
+                    if (node.nodeType && node.nodeType === 'ContractDefinition') {
                         return false
                     }
                     return true
                 })
                 nodes = [...nodes, ...thisCompletionNodes]
+                setTimeout(() => {
+                    // eslint-disable-next-line no-debugger
+                    // debugger
+                }, 2000)
             }
             //}
             if (expressionElements.length > 1 && !dotCompleted) {
@@ -98,7 +106,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                             if (nodeOfScope.name === last) {
                                 console.log('FOUND NODE', nodeOfScope)
                                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
-                                    const declarationOf:AstNode = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
+                                    const declarationOf: AstNode = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
                                     console.log('METHOD 1 HAS DECLARATION OF', declarationOf)
                                     nodes = [...nodes, ...declarationOf.nodes || declarationOf.members]
                                     const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
@@ -145,6 +153,17 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                         }
                     }
                 }
+
+                const filterNodeTypes = ['ContractDefinition', 'ModifierDefinition', 'EventDefinition']
+                nodes = nodes.filter(node => {
+                    if (node.visibility && node.visibility === 'private') {
+                        return false
+                    }
+                    if (node.nodeType && filterNodeTypes.indexOf(node.nodeType) !== -1) {
+                        return false
+                    }
+                    return true
+                })
             }
         } else {
 
