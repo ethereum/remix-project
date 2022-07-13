@@ -6,6 +6,7 @@ import { CompilationError, CompilationResult, CompilationSource } from '@remix-p
 import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { CompilerRetriggerMode } from '@remix-project/remix-solidity-ts';
 
 export default class CodeParserCompiler {
     plugin: CodeParser
@@ -56,7 +57,6 @@ export default class CodeParserCompiler {
             } else {
                 await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
                 await this.clearDecorators(result.getSourceCode().sources)
-
             }
 
 
@@ -71,16 +71,15 @@ export default class CodeParserCompiler {
                 nodesPerFile: {},
             }
 
-        
+
             this.plugin._buildIndex(data, source)
 
             if (this.gastEstimateTimeOut) {
                 window.clearTimeout(this.gastEstimateTimeOut)
             }
 
-            this.gastEstimateTimeOut = window.setTimeout(async () => {
-                await this.plugin.gasService.showGasEstimates()
-            }, 1000)
+            await this.plugin.gasService.showGasEstimates()
+
 
             console.log("INDEX", this.plugin.nodeIndex)
             this.plugin.emit('astFinished')
@@ -107,7 +106,7 @@ export default class CodeParserCompiler {
                 this.compiler.set('language', state.language)
                 this.compiler.set('runs', state.runs)
                 this.compiler.set('useFileConfiguration', true)
-
+                this.compiler.set('compilerRetriggerMode', CompilerRetriggerMode.retrigger)
                 const configFileContent = {
                     "language": "Solidity",
                     "settings": {
