@@ -56,10 +56,11 @@ export function RunTabUI (props: RunTabProps) {
     storage: null,
     contract: null
   })
-  runTabInitialState.selectExEnv = props.plugin.blockchain.getProvider()
+  runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
   runTabInitialState.selectExEnv = runTabInitialState.selectExEnv === 'vm' ? 'vm-london' : runTabInitialState.selectExEnv
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = { runTab }
+  const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
     initRunTab(plugin)(dispatch)
@@ -249,6 +250,7 @@ export function RunTabUI (props: RunTabProps) {
             runCurrentScenario={runScenario}
             scenarioPrompt={scenarioPrompt}
             count={runTab.recorder.transactionCount}
+            currentFile={currentfile}
           />
           <InstanceContainerUI
             instances={runTab.instances}
@@ -266,7 +268,7 @@ export function RunTabUI (props: RunTabProps) {
       </div>
       <ModalDialog id='udappNotify' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
-      <PublishToStorage id='udapp' api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
+      <PublishToStorage id='udapp' api={plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
     </Fragment>
   )
 }
