@@ -6,21 +6,18 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
-  'Should show hover over contract in editor #group1': function (browser: NightwatchBrowser) {
-    browser.useCss().element('css selector', '[data-id="verticalIconsKindfilePanel"] img[data-id="selected"]', (result) => {
-      console.log(result)
-    })
-  },
   'Should load the test file': function (browser: NightwatchBrowser) {
-    browser.openFile('README.txt')
-      // .openFile('contracts')
-      // .openFile('contracts/3_Ballot.sol')
-      // .waitForElementVisible('#editorView')
-      // .setEditorValue('bad')
-      // .pause(4000) // wait for the compiler to finish
-      // .openFile('contracts')
-      // .openFile('contracts/3_Ballot.sol')
+    browser
+      .openFile('contracts')
+      .openFile('contracts/3_Ballot.sol')
+      .waitForElementVisible('#editorView')
+
   },
+  'Should open local filesystem explorer': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
+      .click('[data-id="remixUIWorkspaceExplorer"]')
+      .setValue('*[data-id="fileExplorerFileUpload"]', 'burnt-coffee.sol')
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
