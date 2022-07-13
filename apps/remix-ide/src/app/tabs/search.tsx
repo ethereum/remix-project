@@ -12,7 +12,8 @@ const profile = {
     kind: '',
     location: 'sidePanel',
     documentation: '',
-    version: packageJson.version
+    version: packageJson.version,
+    maintainedBy: 'Remix'
   }
 
 export class SearchPlugin extends ViewPlugin {

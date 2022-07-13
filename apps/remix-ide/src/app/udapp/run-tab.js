@@ -17,6 +17,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
   version: packageJson.version,
+  maintainedBy: 'Remix',
   permission: true,
   events: ['newTransaction'],
   methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContractAndAddInstance']
