@@ -2,7 +2,7 @@ import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
-import { checkSlash, checkSpecialChars, createNonClashingTitle } from '@remix-ui/helper'
+import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
@@ -333,11 +333,10 @@ export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
   const token = config.get('settings/gist-access-token')
   const repoConfig = { url, token }
-  const urlArray = url.split('/')
-  let repoName = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
 
   try {
-    repoName = await createNonClashingTitle(repoName, plugin.fileManager)
+    const repoName = await getRepositoryTitle(url)
+
     await createWorkspace(repoName, 'blank', true, null, true)
     const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
 
@@ -348,11 +347,11 @@ export const cloneRepository = async (url: string) => {
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
       await fetchWorkspaceDirectory(repoName)
       dispatch(cloneRepositorySuccess())
-    }).catch((e) => {
+    }).catch(() => {
       const cloneModal = {
         id: 'cloneGitRepository',
         title: 'Clone Git Repository',
-        message: 'An error occured: ' + e,
+        message: 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
         modalType: 'modal',
         okLabel: 'OK',
         okFn: async () => {
@@ -369,4 +368,23 @@ export const cloneRepository = async (url: string) => {
   } catch (e) {
     dispatch(displayPopUp('An error occured: ' + e))
   }
+}
+
+export const getRepositoryTitle = async (url: string) => {
+  const urlArray = url.split('/')
+  let name = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
+
+  if (!name) name = 'Undefined'
+  let _counter
+  let exist = true
+
+  do {
+    const isDuplicate = await workspaceExists(name + (_counter || ''))
+
+    if (isDuplicate) _counter = (_counter || 0) + 1
+    else exist = false
+  } while (exist)
+  const counter = _counter || ''
+
+  return name + counter
 }
