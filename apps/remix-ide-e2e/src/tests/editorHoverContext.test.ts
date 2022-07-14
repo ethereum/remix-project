@@ -24,6 +24,7 @@ module.exports = {
             .waitForElementVisible('#editorView')
             .setEditorValue(BallotWithARefToOwner)
             .pause(4000) // wait for the compiler to finish
+            .scrollToLine(37)
     },
     'Should show hover over contract in editor #group1': function (browser: NightwatchBrowser) {
         const path = "//*[contains(text(),'BallotHoverTest')]"
