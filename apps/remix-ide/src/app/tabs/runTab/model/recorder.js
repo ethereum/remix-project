@@ -13,7 +13,7 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 const profile = {
   name: 'recorder',
   displayName: 'Recorder',
-  description: '',
+  description: 'Records transactions to save and run',
   version: packageJson.version,
   methods: [  ]
 }

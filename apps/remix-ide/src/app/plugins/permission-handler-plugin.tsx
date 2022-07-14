@@ -7,7 +7,7 @@ import { Profile } from '@remixproject/plugin-utils'
 const profile = {
     name: 'permissionhandler',
     displayName: 'permissionhandler',
-    description: 'permissionhandler',
+    description: 'Plugin to handle permissions',
     methods: ['askPermission']
 }
 
