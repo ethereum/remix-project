@@ -16,19 +16,20 @@ module.exports = {
       .waitForElementVisible('#editorView')
       .setEditorValue(BallotWithARefToOwner)
       .pause(4000) // wait for the compiler to finish
+      .scrollToLine(37)
   },
   'Should put cursor at the end of a line': function (browser: NightwatchBrowser) {
     const path = "//*[@class='view-line' and contains(.,'new') and contains(.,'owner')]//span//span[contains(.,';')]"
     browser.waitForElementVisible('#editorView')
-    .useXpath()
-    .click(path).pause(1000)
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        // right arrow key
-        sendKeys(this.Keys.ARROW_RIGHT).
-        sendKeys(this.Keys.ARROW_RIGHT)
-    })
+      .useXpath()
+      .click(path).pause(1000)
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          // right arrow key
+          sendKeys(this.Keys.ARROW_RIGHT).
+          sendKeys(this.Keys.ARROW_RIGHT)
+      })
   },
   'Should type and get msg + sender': function (browser: NightwatchBrowser) {
     browser.
@@ -54,13 +55,13 @@ module.exports = {
         sendKeys(this.Keys.ENTER).
         sendKeys('co')
     })
-    .waitForElementVisible(autoCompleteLineElement('chairperson'))
-    .waitForElementVisible(autoCompleteLineElement('cowner'))
-    .waitForElementVisible(autoCompleteLineElement('constructor'))
-    .waitForElementVisible(autoCompleteLineElement('continue'))
-    .waitForElementVisible(autoCompleteLineElement('contract'))
-    .waitForElementVisible(autoCompleteLineElement('constant'))
-    .click(autoCompleteLineElement('cowner'))
+      .waitForElementVisible(autoCompleteLineElement('chairperson'))
+      .waitForElementVisible(autoCompleteLineElement('cowner'))
+      .waitForElementVisible(autoCompleteLineElement('constructor'))
+      .waitForElementVisible(autoCompleteLineElement('continue'))
+      .waitForElementVisible(autoCompleteLineElement('contract'))
+      .waitForElementVisible(autoCompleteLineElement('constant'))
+      .click(autoCompleteLineElement('cowner'))
   },
   'Perform dot completion on cowner': function (browser: NightwatchBrowser) {
     browser.perform(function () {
@@ -68,13 +69,53 @@ module.exports = {
       return actions.
         sendKeys('.')
     })
-    // publicly available functions
-    .waitForElementVisible(autoCompleteLineElement('changeOwner'))
-    .waitForElementVisible(autoCompleteLineElement('getOwner'))
-    // do not show private vars, functions & modifiers & events
-    .waitForElementNotPresent(autoCompleteLineElement('private'))
-    .waitForElementNotPresent(autoCompleteLineElement('isOwner'))
-    .waitForElementNotPresent(autoCompleteLineElement('ownerSet'))
+      // publicly available functions
+      .waitForElementVisible(autoCompleteLineElement('changeOwner'))
+      .waitForElementVisible(autoCompleteLineElement('getOwner'))
+      // do not show private vars, functions & modifiers & events
+      .waitForElementNotPresent(autoCompleteLineElement('private'))
+      .waitForElementNotPresent(autoCompleteLineElement('isOwner'))
+      .waitForElementNotPresent(autoCompleteLineElement('ownerSet'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('msg.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('sender'))
+      .click(autoCompleteLineElement('sender'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          // right arrow key
+          sendKeys(this.Keys.ARROW_RIGHT).
+          sendKeys(this.Keys.ARROW_RIGHT).
+          sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Dot complete struct': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(this.Keys.ENTER).
+        sendKeys('Proposal m')
+    })
+      .waitForElementVisible(autoCompleteLineElement('memory'))
+      .click(autoCompleteLineElement('memory'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' p;').
+          sendKeys(this.Keys.ENTER).pause(2000).
+          sendKeys('p.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('name'))
+      .waitForElementVisible(autoCompleteLineElement('voteCount'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' =1;')
+      })
   }
 }
 
