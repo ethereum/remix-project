@@ -9,7 +9,7 @@ export interface RemixPanelProps {
 const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const [plugin, setPlugin] = useState<PluginRecord>()
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
-   
+
   useEffect(() => {
     setToggleExpander(false)
     if (props.plugins) {
@@ -31,7 +31,6 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (<i aria-hidden="true" className="text-success fas fa-check" title="Maintained by Remix"></i>)}
-            {plugin?.profile.documentation && (<a href={plugin.profile.documentation} className="titleInfo mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>)}
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass} title="Plugin info">
             <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
