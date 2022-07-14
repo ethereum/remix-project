@@ -173,6 +173,7 @@ export interface RecorderProps {
   passphrasePrompt: (msg: string) => JSX.Element,
   scenarioPrompt: (msg: string, defaultValue: string) => JSX.Element,
   count: number
+  currentFile: string
 }
 
 export interface InstanceContainerProps {
