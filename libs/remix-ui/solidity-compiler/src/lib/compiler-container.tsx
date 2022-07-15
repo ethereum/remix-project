@@ -725,7 +725,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation' target={'_blank'}>
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="overlay-tooltip-hardhat">
-                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>
+                    <span className="p-1 pr-3" style={{ minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>
                   </Tooltip>
                 }>
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
@@ -741,7 +741,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/truffle.html#enable-truffle-compilation' target={'_blank'}>
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="overlay-tooltip-truffle">
-                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Truffle Compilation</span>
+                    <span className="p-1 pr-3" style={{ minWidth: '230px' }}>Learn how to use Truffle Compilation</span>
                   </Tooltip>
                 }>
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
