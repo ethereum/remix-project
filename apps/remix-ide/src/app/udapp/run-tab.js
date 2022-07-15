@@ -13,11 +13,12 @@ const profile = {
   displayName: 'Deploy & run transactions',
   intlId: 'udapp.displayName',
   icon: 'assets/img/deployAndRun.webp',
-  description: 'execute and save transactions',
+  description: 'Execute, save and replay transactions',
   kind: 'udapp',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
   version: packageJson.version,
+  maintainedBy: 'Remix',
   permission: true,
   events: ['newTransaction'],
   methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContractAndAddInstance']

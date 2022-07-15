@@ -8,7 +8,6 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin 
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import axios, { AxiosResponse } from 'axios'
 
 export * from './events'
 export * from './workspace'
@@ -21,7 +20,8 @@ let plugin, dispatch: React.Dispatch<any>
 export type UrlParametersType = {
   gist: string,
   code: string,
-  url: string
+  url: string,
+  address: string
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -63,10 +63,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-    } else if (window.location.pathname && window.location.pathname !== '/') {
-      let route = window.location.pathname
-      if (route.startsWith('/address/0x') && route.length === 51) {
-        const contractAddress = route.split('/')[2]
+    } else if (params.address) {
+      if (params.address.startsWith('0x') && params.address.length === 42) {
+        const contractAddress = params.address
         plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress} .....`)
         let data
         let count = 0
@@ -109,23 +108,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
-      } else if (route.endsWith('.sol')) {
-        if (route.includes('blob')) route = route.replace('/blob', '')
-        let response: AxiosResponse
-        try {
-          response = await axios.get(`https://raw.githubusercontent.com${route}`)
-        } catch (error) {
-          plugin.call('notification', 'toast', `cound not find ${route} on GitHub`)
-          await basicWorkspaceInit(workspaces, workspaceProvider)
-        }
-        if (response && response.status === 200) {
-          const content = response.data
-          await createWorkspaceTemplate('github-code-sample', 'code-template')
-          plugin.setWorkspace({ name: 'github-code-sample', isLocalhost: false })
-          dispatch(setCurrentWorkspace({ name: 'github-code-sample', isGitRepo: false }))
-          await workspaceProvider.set(route, content)
-          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(route))
-        } else await basicWorkspaceInit(workspaces, workspaceProvider)
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (localStorage.getItem("currentWorkspace")) {
       const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))

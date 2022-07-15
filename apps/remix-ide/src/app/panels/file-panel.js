@@ -34,11 +34,12 @@ const profile = {
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
-  description: ' - ',
+  description: 'Remix IDE file explorer',
   kind: 'fileexplorer',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
-  version: packageJson.version
+  version: packageJson.version,
+  maintainedBy: 'Remix'
 }
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {

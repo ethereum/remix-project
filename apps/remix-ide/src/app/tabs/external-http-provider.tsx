@@ -6,7 +6,7 @@ const profile = {
   name: 'basic-http-provider',
   displayName: 'External Http Provider',
   kind: 'provider',
-  description: '',
+  description: 'External Http Provider',
   methods: ['sendAsync'],
   version: packageJson.version
 }

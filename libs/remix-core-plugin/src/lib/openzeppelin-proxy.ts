@@ -1,12 +1,12 @@
-import { Plugin } from '@remixproject/engine';
-import { ContractABI, ContractAST, DeployOption } from '../types/contract';
-import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi } from './constants/uups';
+import { Plugin } from '@remixproject/engine'
+import { ContractABI, ContractAST, ContractSources, DeployOptions } from '../types/contract'
+import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups'
 
 const proxyProfile = {
   name: 'openzeppelin-proxy',
   displayName: 'openzeppelin-proxy',
   description: 'openzeppelin-proxy',
-  methods: ['isConcerned', 'execute', 'getDeployOptions']
+  methods: ['isConcerned', 'executeUUPSProxy', 'executeUUPSContractUpgrade', 'getProxyOptions', 'getUpgradeOptions']
 };
 export class OpenZeppelinProxy extends Plugin {
   blockchain: any
@@ -28,32 +28,50 @@ export class OpenZeppelinProxy extends Plugin {
     return false
   }
 
-  async getDeployOptions (contracts: ContractABI): Promise<{ [name: string]: DeployOption }> {
+  async getProxyOptions (data: ContractSources, file: string): Promise<{ [name: string]: DeployOptions }> {
+    const contracts = data.contracts[file]
+    const ast = data.sources[file].ast
     const inputs = {}
 
     if (this.kind === 'UUPS') {
       Object.keys(contracts).map(name => {
-        const abi = contracts[name].abi
-        const initializeInput = abi.find(node => node.name === 'initialize')
+        if (ast) {
+          const UUPSSymbol = ast.exportedSymbols['UUPSUpgradeable'] ? ast.exportedSymbols['UUPSUpgradeable'][0] : null
 
-        if (initializeInput) {
-          inputs[name] = {
-            inputs: initializeInput,
-            initializeInputs: this.blockchain.getInputs(initializeInput)
-          }
+          ast.absolutePath === file && ast.nodes.map((node) => {
+            if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
+              const abi = contracts[name].abi
+              const initializeInput = abi.find(node => node.name === 'initialize')
+      
+              inputs[name] = {
+                options: [{ title: 'Deploy with Proxy', active: false }, { title: 'Upgrade with Proxy', active: false }],
+                initializeOptions: {
+                  inputs: initializeInput,
+                  initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
+                }
+              }
+            }
+          })
         }
       })
     }
     return inputs
   }
 
-  async execute(implAddress: string, args: string | string [] = '', initializeABI, implementationContractObject): Promise<void> {
+  async executeUUPSProxy(implAddress: string, args: string | string [] = '', initializeABI, implementationContractObject): Promise<void> {
     // deploy the proxy, or use an existing one
     if (!initializeABI) throw new Error('Cannot deploy proxy: Missing initialize ABI')
     args = args === '' ? [] : args
     const _data = await this.blockchain.getEncodedFunctionHex(args || [], initializeABI)
 
     if (this.kind === 'UUPS') this.deployUUPSProxy(implAddress, _data, implementationContractObject)
+  }
+
+  async executeUUPSContractUpgrade (proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
+    if (!newImplAddress) throw new Error('Cannot upgrade: Missing implementation address')
+    if (!proxyAddress) throw new Error('Cannot upgrade: Missing proxy address')
+
+    if (this.kind === 'UUPS') this.upgradeUUPSProxy(proxyAddress, newImplAddress, newImplementationContractObject)
   }
 
   async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject): Promise<void> {
@@ -73,5 +91,21 @@ export class OpenZeppelinProxy extends Plugin {
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
     implementationContractObject.name = proxyName
     this.blockchain.deployProxy(data, implementationContractObject)
+  }
+
+  async upgradeUUPSProxy (proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
+    const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress], UUPSupgradeAbi)
+    const proxyName = 'ERC1967Proxy'
+    const data = {
+      contractABI: UUPSABI,
+      contractName: proxyName,
+      funAbi: UUPSupgradeAbi,
+      funArgs: [newImplAddress],
+      linkReferences: {},
+      dataHex: fnData.replace('0x', '')
+    }
+    // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
+    newImplementationContractObject.name = proxyName
+    this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
   }
 }

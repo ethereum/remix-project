@@ -89,3 +89,29 @@ export const cancelProxyMsg = () => (
     <b>Proxy deployment cancelled.</b>
   </div>
 )
+
+export const cancelUpgradeMsg = () => (
+  <div>
+    <b>Upgrade with proxy cancelled.</b>
+  </div>
+)
+
+export const deployWithProxyMsg = () => (
+  <div>
+   <b>Deploy with Proxy</b> will initiate two (2) transactions:
+    <ol className="pl-3">
+      <li>Deploying the implementation contract</li>
+      <li>Deploying an ERC1967 proxy contract</li>
+    </ol>
+  </div>
+)
+
+export const upgradeWithProxyMsg = () => (
+  <div>
+    <b>Upgrade with Proxy</b> will initiate two (2) transactions:
+    <ol className="pl-3">
+      <li>Deploying the new implementation contract</li>
+      <li>Updating the proxy contract with the address of the new implementation contract</li>
+    </ol>
+  </div>
+)
