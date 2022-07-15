@@ -10,11 +10,12 @@ const testData = {
 }
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
 
-  'Should create a new file `5_New_contract.sol` in file explorer': function (browser: NightwatchBrowser) {
+  'Should create a new file `5_New_contract.sol` in file explorer': !function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
@@ -27,7 +28,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]', 7000)
   },
 
-  'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': function (browser: NightwatchBrowser) {
+  'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]')
       .click('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]')
@@ -35,14 +36,14 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"]')
   },
 
-  'Should delete file `5_Renamed_Contract.sol` from file explorer': function (browser: NightwatchBrowser) {
+  'Should delete file `5_Renamed_Contract.sol` from file explorer': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"]')
       .removeFile('5_Renamed_Contract.sol', 'default_workspace')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"')
   },
 
-  'Should create a new folder': function (browser: NightwatchBrowser) {
+  'Should create a new folder': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.txt"]')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
@@ -54,7 +55,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
   },
 
-  'Should rename Browser_Tests folder to Browser_E2E_Tests': function (browser: NightwatchBrowser) {
+  'Should rename Browser_Tests folder to Browser_E2E_Tests': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .click('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
@@ -62,7 +63,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
   },
 
-  'Should delete Browser_E2E_Tests folder': function (browser: NightwatchBrowser) {
+  'Should delete Browser_E2E_Tests folder': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
       .rightClickCustom('[data-path="Browser_E2E_Tests"]')
@@ -98,9 +99,12 @@ module.exports = {
       })
   },
 
-  'Should open local filesystem explorer': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
+  'Should open local filesystem explorer #group1': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
       .click('[data-id="remixUIWorkspaceExplorer"]')
+      .waitForElementPresent('*[data-id="fileExplorerFileUpload"]')
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
