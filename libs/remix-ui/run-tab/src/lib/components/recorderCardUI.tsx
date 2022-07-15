@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useRef, useState} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import { RecorderProps } from '../types'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 
 export function RecorderUI (props: RecorderProps) {
   const inputLive = useRef<HTMLInputElement>()
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
+  const [enableRunButton, setEnableRunButton] = useState<boolean>(true)
   const triggerRecordButton = () => {
     props.storeScenario(props.scenarioPrompt)
   }
@@ -14,6 +15,11 @@ export function RecorderUI (props: RecorderProps) {
     const liveMode = inputLive.current ? inputLive.current.checked : false
     props.runCurrentScenario(liveMode, props.gasEstimationPrompt, props.passphrasePrompt, props.mainnetPrompt)
   }
+
+  useEffect(() => {
+    if (props.currentFile.endsWith('.json')) setEnableRunButton(false)
+    else setEnableRunButton(true)
+  }, [props.currentFile])
 
   const toggleClass = () => {
     setToggleExpander(!toggleExpander)
@@ -43,24 +49,28 @@ export function RecorderUI (props: RecorderProps) {
       <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
-          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Use live mode (Run transactions against latest compiled contracts).</label>
+          <OverlayTrigger placement={'right'} overlay={
+            <Tooltip className="text-nowrap" id="tooltip-livemode-recorder">
+              <span>If contracts are updated after recording transactions, checking this box<br/>will run recorded transactions with the latest copy of the compiled contracts</span>
+            </Tooltip>
+          }>
+          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
+          </OverlayTrigger>
         </div>     
         <div className="mb-1 mt-1 udapp_transactionActions">
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-save-recorder">
-            <span>Save {props.count} transaction(s) as scenario file.
-          </span>
+            <span>Save {props.count} transaction{props.count === 1 ? '' : 's'} as scenario file</span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info savetransaction udapp_recorder" onClick={triggerRecordButton}>Save</button>
+          <button className="btn btn-sm btn-info savetransaction udapp_recorder" title={props.count === 0 ? 'No transactions to save' : ''} disabled={props.count === 0 ? true: false} onClick={triggerRecordButton}>Save</button>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-run-recorder">
-            <span>Run transaction(s) from the current scenario file.
-          </span>
+            <span>Run transaction(s) from the current scenario file</span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" onClick={handleClickRunButton}>Run</button>
+          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" title={enableRunButton ? 'No scenario file selected' : ''} disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
         </OverlayTrigger>
         </div>        
       </div>

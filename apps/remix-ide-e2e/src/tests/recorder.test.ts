@@ -118,7 +118,7 @@ module.exports = {
       })
       .clickFunction('retrieve - call')
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, ['', '0:uint256: 350'])
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 350'])
           .perform(() => done())
       })
       // change the init state and recompile the same contract.
@@ -138,7 +138,7 @@ module.exports = {
       })
       .clickFunction('retrieve - call')
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, ['', '0:uint256: 300'])
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 300'])
           .perform(() => done())
       })
       .end()

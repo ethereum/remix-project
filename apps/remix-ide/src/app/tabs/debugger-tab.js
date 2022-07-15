@@ -17,7 +17,8 @@ const profile = {
   kind: 'debugging',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/debugger.html',
-  version: packageJson.version
+  version: packageJson.version,
+  maintainedBy: 'Remix'
 }
 
 export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
