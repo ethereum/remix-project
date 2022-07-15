@@ -54,7 +54,7 @@ Note: It contains the latest supported version of Solidity available at the time
     "npm": "^6.14.15"
   }
 ```
-* Install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
+* Install [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
 ```bash
 yarn global add @nrwl/cli
 ```
@@ -127,7 +127,7 @@ curl https://raw.githubusercontent.com/ethereum/remix-project/master/docker-comp
 
 ### Troubleshooting
 
-If you have trouble building the project, make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure [Nx CLI](https://nx.dev/react/cli/overview) is installed globally.
+If you have trouble building the project, make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure [Nx CLI](https://nx.dev/using-nx/nx-cli) is installed globally.
 
 Run:
 

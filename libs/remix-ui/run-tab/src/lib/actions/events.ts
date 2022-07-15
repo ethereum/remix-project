@@ -2,7 +2,7 @@ import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
 import { addExternalProvider, addInstance, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentContract, setCurrentFile, setDeployOptions, setLoadType, setRecorderCount, setSendValue } from "./payload"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setProxyEnvAddress, setRecorderCount, setSendValue } from "./payload"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
@@ -24,7 +24,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
     if (error) {
-      const netUI = 'can\'t detect network '
+      const netUI = 'can\'t detect network'
       setNetworkNameFromProvider(dispatch, netUI)
 
       return
@@ -33,6 +33,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const netUI = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
 
     setNetworkNameFromProvider(dispatch, netUI)
+    if (network.name === 'VM') dispatch(setProxyEnvAddress(plugin.config.get('vm/proxy')))
+    else dispatch(setProxyEnvAddress(plugin.config.get(`${network.name}/${network.currentFork}/${network.id}/proxy`)))
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
@@ -106,11 +108,12 @@ const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispat
   const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file] ? data.sources[file].ast : {})
 
   if (isUpgradeable) {
-    const options = await plugin.call('openzeppelin-proxy', 'getDeployOptions', data.contracts[file])
+    const options = await plugin.call('openzeppelin-proxy', 'getProxyOptions', data, file)
   
-    dispatch(setDeployOptions({ options: [{ title: 'Deploy with Proxy', active: false }], initializeOptions: options }))
+    dispatch(addDeployOption({ [file]: options }))
+  } else {
+    dispatch(addDeployOption({ [file]: {} }))
   }
-  else dispatch(setDeployOptions({} as any))
   dispatch(fetchContractListSuccess({ [file]: contracts }))
   dispatch(setCurrentFile(file))
   // TODO: set current contract

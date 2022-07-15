@@ -128,7 +128,8 @@ export interface ContractDropdownProps {
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
-    deployOptions: DeployOptions,
+    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
+    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
     currentContract: string,
@@ -172,6 +173,7 @@ export interface RecorderProps {
   passphrasePrompt: (msg: string) => JSX.Element,
   scenarioPrompt: (msg: string, defaultValue: string) => JSX.Element,
   count: number
+  currentFile: string
 }
 
 export interface InstanceContainerProps {
@@ -219,7 +221,7 @@ export interface Modal {
   cancelFn: () => void
 }
 
-export type DeployMode = 'Deploy with Proxy' | 'Upgrade Proxy'
+export type DeployMode = 'Deploy with Proxy' | 'Upgrade with Proxy'
 
 export type DeployOption = {
   initializeInputs: string,
@@ -238,10 +240,8 @@ export type DeployOption = {
   }
 }
 export interface DeployOptions {
-  initializeOptions: {
-    [key: string]: DeployOption
-  },
-  options: { title: DeployMode, active: boolean }[],
+  initializeOptions: DeployOption,
+  options: { title: DeployMode, active: boolean }[]
 }
 
 export interface ContractGUIProps {
@@ -255,7 +255,8 @@ export interface ContractGUIProps {
   disabled?: boolean,
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
-  initializerOptions?: DeployOption
+  initializerOptions?: DeployOption,
+  savedProxyAddress?: string
 }
 export interface MainnetProps {
   network: Network,
