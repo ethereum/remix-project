@@ -106,7 +106,7 @@ module.exports = {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(' p;').
-          sendKeys(this.Keys.ENTER).pause(2000).
+          sendKeys(this.Keys.ENTER).pause(5000).
           sendKeys('p.')
       })
       .waitForElementVisible(autoCompleteLineElement('name'))
