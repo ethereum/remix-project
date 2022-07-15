@@ -43,6 +43,7 @@ module.exports = {
         checkEditorHoverContent(browser, path, expectedContent)
     },
     'Should show hover over function in editor #group1': function (browser: NightwatchBrowser) {
+        browser.scrollToLine(58)
         const path: string = "//*[@class='view-line' and contains(.,'giveRightToVote(address') and contains(.,'function') and contains(.,'public')]//span//span[contains(.,'giveRightToVote')]"
         let expectedContent = 'Estimated execution cost'
         checkEditorHoverContent(browser, path, expectedContent)
@@ -52,6 +53,7 @@ module.exports = {
         checkEditorHoverContent(browser, path, expectedContent)
     },
     'Should show hover over var components in editor #group1': function (browser: NightwatchBrowser) {
+        browser.scrollToLine(37)
         let path = "//*[@class='view-line' and contains(.,'voters') and contains(.,'weight')]//span//span[contains(.,'voters')]"
         let expectedContent = 'mapping(address => struct BallotHoverTest.Voter) public voters'
         checkEditorHoverContent(browser, path, expectedContent, 15)
