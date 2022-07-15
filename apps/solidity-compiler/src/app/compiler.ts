@@ -23,6 +23,7 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
     this.initCompilerApi()
+    
   }
 
   getCompilerParameters () {
