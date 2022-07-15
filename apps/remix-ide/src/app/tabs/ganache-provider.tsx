@@ -10,7 +10,7 @@ const profile = {
   name: 'ganache-provider',
   displayName: 'Ganache Provider',
   kind: 'provider',
-  description: 'Ganache',
+  description: 'Truffle Ganache provider',
   methods: ['sendAsync'],
   version: packageJson.version
 }

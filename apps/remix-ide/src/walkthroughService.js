@@ -5,7 +5,7 @@ const introJs = require('intro.js')
 const profile = {
   name: 'walkthrough',
   displayName: 'Walkthrough',
-  description: '',
+  description: 'Remix walkthrough for beginner',
   version: packageJson.version,
   methods: ['start']
 }

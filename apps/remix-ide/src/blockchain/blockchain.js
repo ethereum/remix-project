@@ -141,9 +141,9 @@ export class Blockchain extends Plugin {
   async deployProxy (proxyData, implementationContractObject) {
     const proxyModal = {
       id: 'confirmProxyDeployment',
-      title: 'ERC1967',
+      title: 'Confirm Deploy Proxy (ERC1967)',
       message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.           
-      For more info on ERC1967, see https://docs.openzeppelin.com/contracts/4.x/api/proxy#ERC1967Proxy`,
+      For more info on ERC1967, see: https://docs.openzeppelin.com/contracts/4.x/api/proxy#ERC1967Proxy`,
       modalType: 'modal',
       okLabel: 'OK',
       cancelLabel: 'Cancel',
@@ -189,8 +189,8 @@ export class Blockchain extends Plugin {
   async upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject) {
     const upgradeModal = {
       id: 'confirmProxyDeployment',
-      title: 'ERC1967',
-      message: `Confirm you want to upgrade your contract to new implementation ${newImplAddress}.`,
+      title: 'Confirm Update Proxy (ERC1967)',
+      message: `Confirm you want to update your proxy contract with the new implementation contract's address:  ${newImplAddress}.`,
       modalType: 'modal',
       okLabel: 'OK',
       cancelLabel: 'Cancel',
