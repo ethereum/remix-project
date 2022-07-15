@@ -10,7 +10,7 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 const sidePanel = {
   name: 'sidePanel',
   displayName: 'Side Panel',
-  description: '',
+  description: 'Remix IDE side panel',
   version: packageJson.version,
   methods: ['addView', 'removeView']
 }

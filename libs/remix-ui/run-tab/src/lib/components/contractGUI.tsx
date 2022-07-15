@@ -273,7 +273,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                 title="An ERC1967 proxy contract will be deployed along with the selected implementation contract."
               >
-                Deploy With Proxy
+                Deploy with Proxy
               </label>
             </div>
             <div>
@@ -314,9 +314,9 @@ export function ContractGUI (props: ContractGUIProps) {
                 htmlFor="upgradeImplementation"
                 data-id="contractGUIUpgradeImplementationLabel"
                 className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                title="The implemetation address will be updated to a new address in the proxy contract."
+                title="The implementation contract will be deployed and then the proxy contract will be updated with new implementation's address."
               >
-                Upgrade With Proxy
+                Upgrade with Proxy
               </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
