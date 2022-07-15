@@ -82,6 +82,7 @@ module.exports = {
         checkEditorHoverContent(browser, path, expectedContent, 0)
     },
     'Should show hover over struct definition in editor #group1': function (browser: NightwatchBrowser) {
+        browser.scrollToLine(13)
         const path = "//*[@class='view-line' and contains(.,'Voter') and contains(.,'struct')]//span//span[contains(.,'Voter')]"
         const expectedContent = 'StructDefinition'
         checkEditorHoverContent(browser, path, expectedContent)
