@@ -73,13 +73,8 @@ export default class CodeParserCompiler {
 
 
             this.plugin._buildIndex(data, source)
-
-            if (this.gastEstimateTimeOut) {
-                window.clearTimeout(this.gastEstimateTimeOut)
-            }
-
+            this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
             await this.plugin.gasService.showGasEstimates()
-
 
             console.log("INDEX", this.plugin.nodeIndex)
             this.plugin.emit('astFinished')
