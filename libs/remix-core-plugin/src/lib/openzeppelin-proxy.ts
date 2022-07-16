@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import { ContractABI, ContractAST, ContractSources, DeployOptions } from '../types/contract'
+import { ContractAST, ContractSources, DeployOptions } from '../types/contract'
 import { UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups'
 
 const proxyProfile = {
@@ -18,7 +18,9 @@ export class OpenZeppelinProxy extends Plugin {
 
   async isConcerned(ast: ContractAST = {} as ContractAST): Promise<boolean> {
     // check in the AST if it's an upgradable contract
-    if (ast.nodes && ast.nodes.find(node => node.absolutePath && node.absolutePath.includes(UUPS))) {
+    const UUPSSymbol = ast.exportedSymbols[UUPS] ? ast.exportedSymbols[UUPS][0] : null
+
+    if (UUPSSymbol) {
       this.kind = 'UUPS'
       return true
     }
@@ -36,7 +38,7 @@ export class OpenZeppelinProxy extends Plugin {
     if (this.kind === 'UUPS') {
       Object.keys(contracts).map(name => {
         if (ast) {
-          const UUPSSymbol = ast.exportedSymbols['UUPSUpgradeable'] ? ast.exportedSymbols['UUPSUpgradeable'][0] : null
+          const UUPSSymbol = ast.exportedSymbols[UUPS] ? ast.exportedSymbols[UUPS][0] : null
 
           ast.absolutePath === file && ast.nodes.map((node) => {
             if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
