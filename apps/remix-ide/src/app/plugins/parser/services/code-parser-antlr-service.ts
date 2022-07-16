@@ -143,7 +143,7 @@ export default class CodeParserAntlrService {
     * @param {string} text // optional
     * @return {any}
     * */
-    async getBlockAtPosition(position: any, text: string = null) {
+    async getANTLRBlockAtPosition(position: any, text: string = null) {
         await this.getCurrentFileAST(text)
         const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
         const walkAst = (node: any) => {

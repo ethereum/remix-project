@@ -23,7 +23,7 @@ import { ConfigPlugin } from '../config'
 
 const profile: Profile = {
     name: 'codeParser',
-    methods: ['nodesAtPosition', 'getLineColumnOfNode', 'getLineColumnOfPosition', 'getFunctionParamaters', 'getDeclaration', 'getFunctionReturnParameters', 'getVariableDeclaration', 'getNodeDocumentation', 'getNodeLink', 'listAstNodes', 'getBlockAtPosition', 'getLastNodeInLine', 'resolveImports', 'parseSolidity', 'getNodesWithScope', 'getNodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'getGasEstimates'],
+    methods: ['nodesAtPosition', 'getContractNodes', 'getCurrentFileNodes', 'getLineColumnOfNode', 'getLineColumnOfPosition', 'getFunctionParamaters', 'getDeclaration', 'getFunctionReturnParameters', 'getVariableDeclaration', 'getNodeDocumentation', 'getNodeLink', 'listAstNodes', 'getANTLRBlockAtPosition', 'getLastNodeInLine', 'resolveImports', 'parseSolidity', 'getNodesWithScope', 'getNodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'getGasEstimates'],
     events: [],
     version: '0.0.1'
 }
@@ -37,17 +37,17 @@ export function isNodeDefinition(node: genericASTNode) {
         node.nodeType === 'EventDefinition'
 }
 
-export type genericASTNode = 
-ContractDefinitionAstNode 
-| FunctionDefinitionAstNode 
-| ModifierDefinitionAstNode 
-| VariableDeclarationAstNode 
-| StructDefinitionAstNode 
-| EventDefinitionAstNode
-| IdentifierAstNode
-| FunctionCallAstNode
-| ImportDirectiveAstNode
-| SourceUnitAstNode
+export type genericASTNode =
+    ContractDefinitionAstNode
+    | FunctionDefinitionAstNode
+    | ModifierDefinitionAstNode
+    | VariableDeclarationAstNode
+    | StructDefinitionAstNode
+    | EventDefinitionAstNode
+    | IdentifierAstNode
+    | FunctionCallAstNode
+    | ImportDirectiveAstNode
+    | SourceUnitAstNode
 
 interface flatReferenceIndexNode {
     [id: number]: genericASTNode
@@ -83,7 +83,7 @@ export class CodeParser extends Plugin {
     parseSolidity: (text: string) => Promise<antlr.ParseResult>
     getLastNodeInLine: (ast: string) => Promise<any>
     listAstNodes: () => Promise<any>
-    getBlockAtPosition: (position: any, text?: string) => Promise<any>
+    getANTLRBlockAtPosition: (position: any, text?: string) => Promise<any>
     getCurrentFileAST: (text?: string) => Promise<ParseResult>
 
     constructor(astWalker: any) {
@@ -92,7 +92,8 @@ export class CodeParser extends Plugin {
         this.nodeIndex = {
             declarations: [[]],
             flatReferences: [],
-            nodesPerFile: {}        }
+            nodesPerFile: {}
+        }
     }
 
     async onActivation() {
@@ -105,7 +106,7 @@ export class CodeParser extends Plugin {
         this.parseSolidity = this.antlrService.parseSolidity.bind(this.antlrService)
         this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
         this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
-        this.getBlockAtPosition = this.antlrService.getBlockAtPosition.bind(this.antlrService)
+        this.getANTLRBlockAtPosition = this.antlrService.getANTLRBlockAtPosition.bind(this.antlrService)
         this.getCurrentFileAST = this.antlrService.getCurrentFileAST.bind(this.antlrService)
 
 
@@ -150,11 +151,11 @@ export class CodeParser extends Plugin {
     }
 
 
-     
+
 
 
     getSubNodes<T extends genericASTNode>(node: T): number[] {
-        return node.nodeType=="ContractDefinition" && node.contractDependencies;
+        return node.nodeType == "ContractDefinition" && node.contractDependencies;
     }
 
     /**
@@ -178,7 +179,7 @@ export class CodeParser extends Plugin {
             }
 
         }
-        
+
     }
 
     // NODE HELPERS
@@ -198,26 +199,77 @@ export class CodeParser extends Plugin {
     }
 
 
-    _flatNodeList(node: ContractDefinitionAstNode, contractName: string, fileName: string, compilatioResult: any) {
+    _flatNodeList(contractNode: ContractDefinitionAstNode, fileName: string, inScope: boolean, compilatioResult: any) {
         const index = {}
+        const contractName: string = contractNode.name
         const callback = (node) => {
+            if(inScope && node.scope !== contractNode.id) return
+            if(inScope) node.isClassNode = true;
             node.gasEstimate = this._getContractGasEstimate(node, contractName, fileName, compilatioResult)
             node.functionName = node.name + this._getInputParams(node)
+            node.contractName = contractName
+            node.contractId = contractNode.id
             index[node.id] = node
         }
-        this.astWalker.walkFull(node, callback)
+        this.astWalker.walkFull(contractNode, callback)
         return index
     }
 
     _extractFileNodes(fileName: string, compilationResult: lastCompilationResult) {
         if (compilationResult && compilationResult.data.sources && compilationResult.data.sources[fileName]) {
             const source = compilationResult.data.sources[fileName]
-            const nodesByContract = []
-            this.astWalker.walkFull(source.ast, (node) => {
+            const nodesByContract: any = {}
+            nodesByContract.imports = {}
+            nodesByContract.contracts = {}
+            this.astWalker.walkFull(source.ast, async (node) => {
                 if (node.nodeType === 'ContractDefinition') {
-                    const flatNodes = this._flatNodeList(node, node.name, fileName, compilationResult)
+                    const flatNodes = this._flatNodeList(node, fileName, false, compilationResult)
                     node.gasEstimate = this._getContractGasEstimate(node, node.name, fileName, compilationResult)
-                    nodesByContract[node.name] = { contractDefinition: node, contractNodes: flatNodes }
+                    nodesByContract.contracts[node.name] = { contractDefinition: node, contractNodes: flatNodes }
+                    const baseNodes = {}
+                    const baseNodesWithBaseContractScope = {}
+                    if (node.linearizedBaseContracts) {
+                        for (const id of node.linearizedBaseContracts) {
+                            if (id !== node.id) {
+                                const baseContract = await this.getNodeById(id)
+                                console.log('baseContract', baseContract)
+                                const callback = (node) => {
+                                    node.contractName = (baseContract as any).name
+                                    node.contractId = (baseContract as any).id
+                                    node.isBaseNode = true;
+                                    baseNodes[node.id] = node
+                                    if ((node.scope && node.scope === baseContract.id)
+                                        || node.nodeType === 'EnumDefinition'
+                                        || node.nodeType === 'EventDefinition'
+                                        ) {
+                                        baseNodesWithBaseContractScope[node.id] = node
+                                    }
+                                    if(node.members){
+                                        for(const member of node.members){
+                                            member.contractName = (baseContract as any).name
+                                            member.contractId = (baseContract as any).id
+                                            member.isBaseNode = true;
+                                        }
+                                    }
+                                }
+                                this.astWalker.walkFull(baseContract, callback)
+                            }
+                        }
+                    }
+                    nodesByContract.contracts[node.name].baseNodes = baseNodes
+                    nodesByContract.contracts[node.name].baseNodesWithBaseContractScope = baseNodesWithBaseContractScope
+                    nodesByContract.contracts[node.name].contractScopeNodes = this._flatNodeList(node, fileName, true, compilationResult)
+                }
+                if (node.nodeType === 'ImportDirective') {
+
+                    const imported = await this.resolveImports(node, {})
+                    console.log('import resolve', node, (Object.values(imported) as any))
+                    for (const importedNode of (Object.values(imported) as any)) {
+                        if (importedNode.nodes)
+                            for (const subNode of importedNode.nodes) {
+                                nodesByContract.imports[subNode.id] = subNode
+                            }
+                    }
                 }
             })
             return nodesByContract
@@ -231,7 +283,7 @@ export class CodeParser extends Plugin {
             if (name === contractName) {
                 const contract = contracts[name]
                 const estimationObj = contract.evm && contract.evm.gasEstimates
-                
+
                 let executionCost = null
                 if (node.nodeType === 'FunctionDefinition') {
                     const visibility = node.visibility
@@ -385,6 +437,24 @@ export class CodeParser extends Plugin {
 
     }
 
+    async getContractNodes(contractName: string) {
+        if (this.nodeIndex.nodesPerFile
+            && this.nodeIndex.nodesPerFile[this.currentFile]
+            && this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName]
+            && this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName].contractNodes) {
+            return this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName]
+        }
+        return false
+    }
+
+    async getCurrentFileNodes() {
+        if (this.nodeIndex.nodesPerFile
+            && this.nodeIndex.nodesPerFile[this.currentFile]) {
+            return this.nodeIndex.nodesPerFile[this.currentFile]
+        }
+        return false
+    }
+
     /**
      * 
      * @param identifierNode 
@@ -426,7 +496,7 @@ export class CodeParser extends Plugin {
         if (node.nodeType === 'ImportDirective' && !imported[node.sourceUnit]) {
             const importNode: any = await this.getNodeById(node.sourceUnit)
             imported[importNode.id] = importNode
-            if (importNode.nodeType=='ImportDirective' && importNode.nodes) {
+            if (importNode.nodes) {
                 for (const child of importNode.nodes) {
                     imported = await this.resolveImports(child, imported)
                 }

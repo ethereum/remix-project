@@ -1,26 +1,77 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
+import examples from '../examples/editor-test-contracts'
 
 const autoCompleteLineElement = (name: string) => {
   return `//*[@class='editor-widget suggest-widget visible']//*[@class='contents' and contains(.,'${name}')]`
 }
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
-  'Should load the test file': function (browser: NightwatchBrowser) {
-    browser.openFile('contracts')
-      .openFile('contracts/3_Ballot.sol')
-      .waitForElementVisible('#editorView')
-      .setEditorValue(BallotWithARefToOwner)
-      .pause(4000) // wait for the compiler to finish
-      .scrollToLine(37)
+  'Should add test and base files #group2': function (browser: NightwatchBrowser) {
+    browser.addFile('contracts/test.sol', examples.testContract)
+      .addFile('contracts/base.sol', examples.baseContract)
+      .addFile('contracts/baseofbase.sol', examples.baseOfBaseContract)
+      .openFile('contracts/test.sol').pause(3000)
   },
-  'Should put cursor at the end of a line': function (browser: NightwatchBrowser) {
-    const path = "//*[@class='view-line' and contains(.,'new') and contains(.,'owner')]//span//span[contains(.,';')]"
+  'Should put cursor in the () of the function #group2': function (browser: NightwatchBrowser) {
+    browser.scrollToLine(18)
+    const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'(')]"
     browser.waitForElementVisible('#editorView')
+      .useXpath()
+      .click(path).pause(1000)
+  },
+  'Should complete variable declaration types in a function definition #group2': function (browser: NightwatchBrowser) {
+    browser
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('uint25')
+    })
+    .waitForElementPresent(autoCompleteLineElement('uint256'))
+    .click(autoCompleteLineElement('uint256'))
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(' abc, testb')
+    })
+    .waitForElementPresent(autoCompleteLineElement('"TestBookDefinition"'))
+    .click(autoCompleteLineElement('"TestBookDefinition"'))
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(' memo')
+    })
+    .waitForElementPresent(autoCompleteLineElement('memory'))
+    .click(autoCompleteLineElement('memory'))
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(' t, BaseB')
+    })
+    .waitForElementPresent(autoCompleteLineElement('"BaseBook"'))
+    .click(autoCompleteLineElement('"BaseBook"'))
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(' stor')
+    })
+    .waitForElementPresent(autoCompleteLineElement('storage'))
+    .click(autoCompleteLineElement('storage'))
+    .perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys(' b')
+    })
+  },
+  'Should put cursor at the end of function #group2': function (browser: NightwatchBrowser) {
+    
+    const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'{')]"
+    browser
       .useXpath()
       .click(path).pause(1000)
       .perform(function () {
@@ -31,7 +82,42 @@ module.exports = {
           sendKeys(this.Keys.ARROW_RIGHT)
       })
   },
-  'Should type and get msg + sender': function (browser: NightwatchBrowser) {
+
+  'Should autocomplete derived and local event when not using this. #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('emit base')
+    })
+      .waitForElementVisible(autoCompleteLineElement('BaseEvent'))
+      .click(autoCompleteLineElement('BaseEvent'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys('msg.sender')
+          .sendKeys(this.Keys.TAB)
+          .sendKeys(this.Keys.TAB) // somehow this is needed to get the cursor to the next parameter, only for selenium
+          .sendKeys('3232')
+          .sendKeys(this.Keys.TAB)
+          .sendKeys(this.Keys.ENTER)
+      })
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('emit MyEv')
+      })
+        .waitForElementVisible(autoCompleteLineElement('MyEvent'))
+        .click(autoCompleteLineElement('MyEvent'))
+        .perform(function () {
+          const actions = this.actions({ async: true });
+          return actions
+            .sendKeys('3232')
+            .sendKeys(this.Keys.TAB)
+            .sendKeys(this.Keys.ENTER)
+        })
+  },
+
+  'Should type and get msg options #group2': function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -40,6 +126,10 @@ module.exports = {
           sendKeys('msg.')
       })
       .waitForElementVisible(autoCompleteLineElement('sender'))
+      .waitForElementVisible(autoCompleteLineElement('data'))
+      .waitForElementVisible(autoCompleteLineElement('value'))
+      .waitForElementVisible(autoCompleteLineElement('gas'))
+      .waitForElementVisible(autoCompleteLineElement('sig'))
       .click(autoCompleteLineElement('sender'))
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -48,217 +138,176 @@ module.exports = {
           sendKeys(this.Keys.ENTER)
       })
   },
-  'Should type and get completions in the context without this': function (browser: NightwatchBrowser) {
-    browser.perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys(this.Keys.ENTER).
-        sendKeys('co')
-    })
-      .waitForElementVisible(autoCompleteLineElement('chairperson'))
-      .waitForElementVisible(autoCompleteLineElement('cowner'))
-      .waitForElementVisible(autoCompleteLineElement('constructor'))
-      .waitForElementVisible(autoCompleteLineElement('continue'))
-      .waitForElementVisible(autoCompleteLineElement('contract'))
-      .waitForElementVisible(autoCompleteLineElement('constant'))
-      .click(autoCompleteLineElement('cowner'))
+  'Should bo and get book #group2': function (browser: NightwatchBrowser) {
+    browser.
+      perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('bo')
+      })
+      .waitForElementVisible(autoCompleteLineElement('book'))
+      .click(autoCompleteLineElement('book'))
   },
-  'Perform dot completion on cowner': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct #group2': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
         sendKeys('.')
     })
-      // publicly available functions
-      .waitForElementVisible(autoCompleteLineElement('changeOwner'))
-      .waitForElementVisible(autoCompleteLineElement('getOwner'))
-      // do not show private vars, functions & modifiers & events
-      .waitForElementNotPresent(autoCompleteLineElement('private'))
-      .waitForElementNotPresent(autoCompleteLineElement('isOwner'))
-      .waitForElementNotPresent(autoCompleteLineElement('ownerSet'))
+      .waitForElementVisible(autoCompleteLineElement('author'))
+      .waitForElementVisible(autoCompleteLineElement('book_id'))
+      .waitForElementVisible(autoCompleteLineElement('title'))
+      .click(autoCompleteLineElement('title'))
       .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should bo and get basebook #group2': function (browser: NightwatchBrowser) {
+    browser.
+      perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
-          sendKeys('msg.')
+          sendKeys('base')
       })
-      .waitForElementVisible(autoCompleteLineElement('sender'))
-      .click(autoCompleteLineElement('sender'))
-      .perform(function () {
-        const actions = this.actions({ async: true });
-        return actions.
-          // right arrow key
-          sendKeys(this.Keys.ARROW_RIGHT).
-          sendKeys(this.Keys.ARROW_RIGHT).
-          sendKeys(this.Keys.ENTER)
-      })
+      .waitForElementVisible(autoCompleteLineElement('basebook'))
+      .click(autoCompleteLineElement('basebook'))
   },
-  'Dot complete struct': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct from base class #group2': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
-        sendKeys(this.Keys.ENTER).
-        sendKeys('Proposal m')
+        sendKeys('.')
     })
-      .waitForElementVisible(autoCompleteLineElement('memory'))
-      .click(autoCompleteLineElement('memory'))
+      .waitForElementVisible(autoCompleteLineElement('author'))
+      .waitForElementVisible(autoCompleteLineElement('book_id'))
+      .waitForElementVisible(autoCompleteLineElement('title'))
+      .click(autoCompleteLineElement('title'))
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(' p;').
-          sendKeys(this.Keys.ENTER).pause(5000).
-          sendKeys('p.')
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
       })
-      .waitForElementVisible(autoCompleteLineElement('name'))
-      .waitForElementVisible(autoCompleteLineElement('voteCount'))
+  },
+  'Should find private and internal local functions #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('my')
+    })
+      .waitForElementVisible(autoCompleteLineElement('myprivatefunction'))
+      .waitForElementVisible(autoCompleteLineElement('myinternalfunction'))
+      .waitForElementVisible(autoCompleteLineElement('memory'))
+      .click(autoCompleteLineElement('myinternalfunction'))
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(' =1;')
+          sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should find internal functions and var from base and owner #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('intern')
+    })
+      .waitForElementVisible(autoCompleteLineElement('internalbasefunction'))
+      .waitForElementVisible(autoCompleteLineElement('internalstring'))
+      .waitForElementVisible(autoCompleteLineElement('internalbasestring'))
+      // keyword internal
+      .waitForElementVisible(autoCompleteLineElement('internal keyword'))
+      .click(autoCompleteLineElement('internalbasefunction'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+
+  'Should not find external functions without this. #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('extern')
+    })
+      .waitForElementNotPresent(autoCompleteLineElement('externalbasefunction'))
+      .waitForElementNotPresent(autoCompleteLineElement('myexternalfunction'))
+      // keyword internal
+      .waitForElementVisible(autoCompleteLineElement('external keyword'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys(this.Keys.BACK_SPACE)
+          .sendKeys(this.Keys.BACK_SPACE)
+          .sendKeys(this.Keys.BACK_SPACE)
+          .sendKeys(this.Keys.BACK_SPACE)
+          .sendKeys(this.Keys.BACK_SPACE)
+          .sendKeys(this.Keys.BACK_SPACE)
+          .sendKeys(this.Keys.BACK_SPACE)
+      })
+  },
+  'Should find external functions using this. #group2': function (browser: NightwatchBrowser) {
+    browser.
+      perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('this.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('externalbasefunction'))
+      .waitForElementVisible(autoCompleteLineElement('myexternalfunction'))
+  },
+  'Should find public functions and vars using this. but not private & other types of nodes #group2': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible(autoCompleteLineElement('"publicbasefunction"'))
+      .waitForElementVisible(autoCompleteLineElement('"publicstring"'))
+      .waitForElementVisible(autoCompleteLineElement('"basebook"'))
+      .waitForElementVisible(autoCompleteLineElement('"mybook"'))
+      .waitForElementVisible(autoCompleteLineElement('"testing"'))
+      // but no private functions or vars or other types of nodes
+      .waitForElementNotPresent(autoCompleteLineElement('"private"'))
+      .waitForElementNotPresent(autoCompleteLineElement('"BaseEvent"'))
+      .waitForElementNotPresent(autoCompleteLineElement('"BaseEnum"'))
+      .waitForElementNotPresent(autoCompleteLineElement('"TestBookDefinition"'))
+      .click(autoCompleteLineElement('"publicbasefunction"'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should autocomplete local and derived ENUMS #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('BaseEnum.')
+    })
+      .waitForElementVisible(autoCompleteLineElement('SMALL'))
+      .waitForElementVisible(autoCompleteLineElement('MEDIUM'))
+      .waitForElementVisible(autoCompleteLineElement('LARGE'))
+      .click(autoCompleteLineElement('SMALL'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+          .sendKeys('MyEnum.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('SMALL'))
+      .waitForElementVisible(autoCompleteLineElement('MEDIUM'))
+      .waitForElementVisible(autoCompleteLineElement('LARGE'))
+      .click(autoCompleteLineElement('SMALL'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
       })
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const BallotWithARefToOwner = `// SPDX-License-Identifier: GPL-3.0
-
-pragma solidity >=0.7.0 <0.9.0;
-
-import "./2_Owner.sol";
-
-/** 
- * @title Ballot
- * @dev Implements voting process along with vote delegation
- */
-contract BallotHoverTest {
-   Owner cowner;
-    struct Voter {
-        uint weight; // weight is accumulated by delegation
-        bool voted;  // if true, that person already voted
-        address delegate; // person delegated to
-        uint vote;   // index of the voted proposal
-    }
-
-    struct Proposal {
-        // If you can limit the length to a certain number of bytes, 
-        // always use one of bytes1 to bytes32 because they are much cheaper
-        bytes32 name;   // short name (up to 32 bytes)
-        uint voteCount; // number of accumulated votes
-    }
-
-    address public chairperson;
-
-    mapping(address => Voter) public voters;
-
-    Proposal[] public proposals;
-
-    /** 
-     * @dev Create a new ballot to choose one of 'proposalNames'.
-     * @param proposalNames names of proposals
-     */
-    constructor(bytes32[] memory proposalNames) {
-        cowner = new Owner();
-        chairperson = msg.sender;
-        voters[chairperson].weight = 1;
-
-        for (uint i = 0; i < proposalNames.length; i++) {
-            // 'Proposal({...})' creates a temporary
-            // Proposal object and 'proposals.push(...)'
-            // appends it to the end of 'proposals'.
-            proposals.push(Proposal({
-                name: proposalNames[i],
-                voteCount: 0
-            }));
-        }
-    }
-    
-    /** 
-     * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
-     * @param voter address of voter
-     */
-    function giveRightToVote(address voter) public {
-        require(
-            msg.sender == chairperson,
-            "Only chairperson can give right to vote."
-        );
-        require(
-            !voters[voter].voted,
-            "The voter already voted."
-        );
-        require(voters[voter].weight == 0);
-        voters[voter].weight = 1;
-    }
-
-    /**
-     * @dev Delegate your vote to the voter 'to'.
-     * @param to address to which vote is delegated
-     */
-    function delegate(address to) public {
-        Voter storage sender = voters[msg.sender];
-        require(!sender.voted, "You already voted.");
-        require(to != msg.sender, "Self-delegation is disallowed.");
-
-        while (voters[to].delegate != address(0)) {
-            to = voters[to].delegate;
-
-            // We found a loop in the delegation, not allowed.
-            require(to != msg.sender, "Found loop in delegation.");
-        }
-        sender.voted = true;
-        sender.delegate = to;
-        Voter storage delegate_ = voters[to];
-        if (delegate_.voted) {
-            // If the delegate already voted,
-            // directly add to the number of votes
-            proposals[delegate_.vote].voteCount += sender.weight;
-        } else {
-            // If the delegate did not vote yet,
-            // add to her weight.
-            delegate_.weight += sender.weight;
-        }
-    }
-
-    /**
-     * @dev Give your vote (including votes delegated to you) to proposal 'proposals[proposal].name'.
-     * @param proposal index of proposal in the proposals array
-     */
-    function vote(uint proposal) public {
-        Voter storage sender = voters[msg.sender];
-        require(sender.weight != 0, "Has no right to vote");
-        require(!sender.voted, "Already voted.");
-        sender.voted = true;
-        sender.vote = proposal;
-
-        // If 'proposal' is out of the range of the array,
-        // this will throw automatically and revert all
-        // changes.
-        proposals[proposal].voteCount += sender.weight;
-    }
-
-    /** 
-     * @dev Computes the winning proposal taking all previous votes into account.
-     * @return winningProposal_ index of winning proposal in the proposals array
-     */
-    function winningProposal() public view
-            returns (uint winningProposal_)
-    {
-        uint winningVoteCount = 0;
-        for (uint p = 0; p < proposals.length; p++) {
-            if (proposals[p].voteCount > winningVoteCount) {
-                winningVoteCount = proposals[p].voteCount;
-                winningProposal_ = p;
-            }
-        }
-    }
-
-    /** 
-     * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
-     * @return winnerName_ the name of the winner
-     */
-    function winnerName() public view
-            returns (bytes32 winnerName_)
-    {
-        winnerName_ = proposals[winningProposal()].name;
-    }
-}
-`

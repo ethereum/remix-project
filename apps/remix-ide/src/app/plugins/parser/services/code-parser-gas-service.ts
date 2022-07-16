@@ -2,7 +2,7 @@ import { CodeParser, genericASTNode } from "../code-parser";
 import { lineText } from '@remix-ui/editor'
 
 export default class CodeParserGasService {
-    plugin: CodeParser  
+    plugin: CodeParser
 
     constructor(plugin: CodeParser) {
         this.plugin = plugin
@@ -12,17 +12,19 @@ export default class CodeParserGasService {
         if (!fileName) {
             fileName = await this.plugin.currentFile
         }
-        if (this.plugin.nodeIndex.nodesPerFile && this.plugin.nodeIndex.nodesPerFile[fileName]) {
+        if (this.plugin.nodeIndex.nodesPerFile && this.plugin.nodeIndex.nodesPerFile[fileName] && this.plugin.nodeIndex.nodesPerFile[fileName].contracts) {
             const estimates: any = []
-            for (const contract in this.plugin.nodeIndex.nodesPerFile[fileName]) {
+            for (const contract in this.plugin.nodeIndex.nodesPerFile[fileName].contracts) {
                 console.log(contract)
-                const nodes = this.plugin.nodeIndex.nodesPerFile[fileName][contract].contractNodes
-                for (const node of Object.values(nodes) as any[]) {
-                    if (node.gasEstimate) {
-                        estimates.push({
-                            node,
-                            range: await this.plugin.getLineColumnOfNode(node)
-                        })
+                if (this.plugin.nodeIndex.nodesPerFile[fileName].contracts[contract].contractNodes) {
+                    const nodes = this.plugin.nodeIndex.nodesPerFile[fileName].contracts[contract].contractNodes
+                    for (const node of Object.values(nodes) as any[]) {
+                        if (node.gasEstimate) {
+                            estimates.push({
+                                node,
+                                range: await this.plugin.getLineColumnOfNode(node)
+                            })
+                        }
                     }
                 }
             }

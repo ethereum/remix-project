@@ -260,7 +260,7 @@ function CreateCompletionItem(label: string, kind: monaco.languages.CompletionIt
 export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.CompletionItem[] {
     const completionItems = [];
     const keywords = ['modifier', 'mapping', 'break', 'continue', 'delete', 'else', 'for',
-        'if', 'new', 'return', 'returns', 'while', 'using',
+        'if', 'new', 'return', 'returns', 'while', 'using', 'emit',
         'private', 'public', 'external', 'internal', 'payable', 'nonpayable', 'view', 'pure', 'case', 'do', 'else', 'finally',
         'in', 'instanceof', 'return', 'throw', 'try', 'catch', 'typeof', 'yield', 'void', 'virtual', 'override'];
     keywords.forEach(unit => {
