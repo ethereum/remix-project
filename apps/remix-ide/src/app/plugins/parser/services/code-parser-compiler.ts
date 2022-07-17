@@ -39,7 +39,8 @@ export default class CodeParserCompiler {
 
                     allErrors.push({ error, lineColumn })
                 }
-                await this.plugin.call('editor', 'addErrorMarker', allErrors)
+                const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
+                if(displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
                 this.addDecorators(allErrors, sources)
             } else {
                 await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
@@ -115,6 +116,8 @@ export default class CodeParserCompiler {
     }
 
     async addDecorators(allErrors: any[], sources: any) {
+        const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
+        if(!displayErrors) return
         const errorsPerFiles = {}
         for (const error of allErrors) {
             if (!errorsPerFiles[error.error.sourceLocation.file]) {
