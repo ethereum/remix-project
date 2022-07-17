@@ -1,10 +1,10 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText } from './constants'
+import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText, useShowGasInEditorText, displayErrorsText } from './constants'
 
 import './remix-ui-settings.css'
-import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion } from './settingsAction'
+import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
@@ -42,6 +42,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     const useAutoComplete = props.config.get('settings/use-auto-complete')
     if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
+
+    const displayErrors = props.config.get('settings/display-errors')
+    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, true, dispatch)
+  
+    const useShowGas = props.config.get('settings/show-gas')
+    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -120,6 +126,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     useAutoCompletion(props.config, event.target.checked, dispatch)
   }
 
+  const onchangeShowGasInEditor = event => {
+    useShowGasInEditor(props.config, event.target.checked, dispatch)
+  }
+  const onchangeDisplayErrors = event => {
+    useDisplayErrors(props.config, event.target.checked, dispatch)
+  }
+
+
   const getTextClass = (key) => {
     if (props.config.get(key)) {
       return textDark
@@ -135,7 +149,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
     const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? true:props.config.get('settings/auto-completion')
-
+    const isShowGasInEditorChecked = props.config.get('settings/show-gas') === null ? true:props.config.get('settings/show-gas')
+    const displayErrorsChecked = props.config.get('settings/display-errors') === null ? true:props.config.get('settings/display-errors')
     return (
       <div className="$border-top">
         <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
@@ -175,6 +190,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsUseAutoComplete">
               <span>{useAutoCompleteText}</span>
+            </label>
+          </div>
+          <div className='custom-control custom-checkbox mb-1'>
+            <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsUseShowGas">
+              <span>{useShowGasInEditorText}</span>
+            </label>
+          </div>
+          <div className='custom-control custom-checkbox mb-1'>
+            <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsDisplayErrors">
+              <span>{displayErrorsText}</span>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
