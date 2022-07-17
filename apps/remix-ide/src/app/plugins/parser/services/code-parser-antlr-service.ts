@@ -18,7 +18,6 @@ export default class CodeParserAntlrService {
 
     async parseSolidity(text: string) {
         const ast: antlr.ParseResult = (SolidityParser as any).parse(text, { loc: true, range: true, tolerant: true })
-        console.log('AST PARSE SUCCESS', ast)
         return ast
     }
 
@@ -37,7 +36,7 @@ export default class CodeParserAntlrService {
                 const ast = await this.parseSolidity(fileContent)
                 this.plugin.antlrParserResult = ast
             } catch (e) {
-                console.log(e)
+                // do nothing
             }
             return this.plugin.antlrParserResult
         }
@@ -94,7 +93,6 @@ export default class CodeParserAntlrService {
             }
 
         })
-        console.log("LIST NODES", nodes)
         return nodes
     }
 
@@ -124,15 +122,9 @@ export default class CodeParserAntlrService {
                 checkLastNode(node)
             }
         })
-        if (lastNode && lastNode.expression && lastNode.expression.expression) {
-            console.log('lastNode with expression', lastNode, lastNode.expression, lastNode.expression.expression)
-            // return lastNode.expression.expression
-        }
         if (lastNode && lastNode.expression) {
-            console.log('lastNode with expression', lastNode, lastNode.expression)
             return lastNode.expression
         }
-        console.log('lastNode', lastNode)
         return lastNode
     }
 

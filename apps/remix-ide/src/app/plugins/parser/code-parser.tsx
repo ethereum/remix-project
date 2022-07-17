@@ -107,7 +107,6 @@ export class CodeParser extends Plugin {
 
 
         this.on('editor', 'didChangeFile', async (file) => {
-            console.log('contentChanged', file)
             await this.call('editor', 'discardLineTexts')
             await this.antlrService.getCurrentFileAST()
             await this.compilerService.compile()
@@ -125,11 +124,7 @@ export class CodeParser extends Plugin {
         })
 
         this.on('solidity', 'loadingCompiler', async (url) => {
-            console.log('loading compiler', url)
             this.compilerService.compiler.loadVersion(true, url)
-            this.compilerService.compiler.event.register('compilerLoaded', async () => {
-                console.log('compiler loaded')
-            })
         })
 
         await this.compilerService.init()
@@ -230,7 +225,6 @@ export class CodeParser extends Plugin {
                         for (const id of node.linearizedBaseContracts) {
                             if (id !== node.id) {
                                 const baseContract = await this.getNodeById(id)
-                                console.log('baseContract', baseContract)
                                 const callback = (node) => {
                                     node.contractName = (baseContract as any).name
                                     node.contractId = (baseContract as any).id
@@ -261,7 +255,7 @@ export class CodeParser extends Plugin {
                 if (node.nodeType === 'ImportDirective') {
 
                     const imported = await this.resolveImports(node, {})
-                    console.log('import resolve', node, (Object.values(imported) as any))
+                    
                     for (const importedNode of (Object.values(imported) as any)) {
                         if (importedNode.nodes)
                             for (const subNode of importedNode.nodes) {
@@ -378,8 +372,6 @@ export class CodeParser extends Plugin {
     declarationOf<T extends genericASTNode>(node: T) {
         if (node && ('referencedDeclaration' in node) && node.referencedDeclaration) {
             return this.nodeIndex.flatReferences[node.referencedDeclaration]
-        } else {
-            // console.log(this._index.FlatReferences)
         }
         return null
     }
@@ -391,8 +383,6 @@ export class CodeParser extends Plugin {
      */
     async definitionAtPosition(position: number) {
         const nodes = await this.nodesAtPosition(position)
-        console.log('nodes at position', nodes, position)
-        console.log(this.nodeIndex.flatReferences)
         let nodeDefinition: any
         let node: genericASTNode
         if (nodes && nodes.length && !this.errorState) {

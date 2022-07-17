@@ -15,7 +15,6 @@ export default class CodeParserGasService {
         if (this.plugin.nodeIndex.nodesPerFile && this.plugin.nodeIndex.nodesPerFile[fileName] && this.plugin.nodeIndex.nodesPerFile[fileName].contracts) {
             const estimates: any = []
             for (const contract in this.plugin.nodeIndex.nodesPerFile[fileName].contracts) {
-                console.log(contract)
                 if (this.plugin.nodeIndex.nodesPerFile[fileName].contracts[contract].contractNodes) {
                     const nodes = this.plugin.nodeIndex.nodesPerFile[fileName].contracts[contract].contractNodes
                     for (const node of Object.values(nodes) as any[]) {
@@ -39,7 +38,6 @@ export default class CodeParserGasService {
         this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
 
         const gasEstimates = await this.getGasEstimates(this.plugin.currentFile)
-        console.log('all estimates', gasEstimates)
 
         const friendlyNames = {
             'executionCost': 'Estimated execution cost',
@@ -49,7 +47,6 @@ export default class CodeParserGasService {
         await this.plugin.call('editor', 'discardLineTexts')
         if (gasEstimates) {
             for (const estimate of gasEstimates) {
-                console.log(estimate)
                 const linetext: lineText = {
                     content: Object.entries(estimate.node.gasEstimate).map(([, value]) => `${value} gas`).join(' '),
                     position: estimate.range,
