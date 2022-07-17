@@ -2,8 +2,6 @@
 import { Plugin } from '@remixproject/engine'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { Compiler } from '@remix-project/remix-solidity'
-
 import { AstNode, CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
 import { helper } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
@@ -11,8 +9,6 @@ import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
 import CodeParserNodeHelper from './services/code-parser-node-helper'
 import React from 'react'
-import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
-
 import { Profile } from '@remixproject/plugin-utils'
 import { ContractDefinitionAstNode, EventDefinitionAstNode, FunctionCallAstNode, FunctionDefinitionAstNode, IdentifierAstNode, ImportDirectiveAstNode, ModifierDefinitionAstNode, SourceUnitAstNode, StructDefinitionAstNode, VariableDeclarationAstNode } from 'dist/libs/remix-analyzer/src/types'
 import { lastCompilationResult, RemixApi } from '@remixproject/plugin-api'
@@ -203,7 +199,9 @@ export class CodeParser extends Plugin {
         const index = {}
         const contractName: string = contractNode.name
         const callback = (node) => {
-            if(inScope && node.scope !== contractNode.id) return
+            if(inScope && node.scope !== contractNode.id
+                && !(node.nodeType === 'EnumDefinition' || node.nodeType === 'EventDefinition' || node.nodeType === 'ModifierDefinition'))
+                return
             if(inScope) node.isClassNode = true;
             node.gasEstimate = this._getContractGasEstimate(node, contractName, fileName, compilatioResult)
             node.functionName = node.name + this._getInputParams(node)
@@ -307,13 +305,6 @@ export class CodeParser extends Plugin {
             }
         }
     }
-
-
-
-
-
-
-
 
     /**
      * Nodes at position where position is a number, offset
