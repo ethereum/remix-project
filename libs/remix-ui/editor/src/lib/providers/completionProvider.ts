@@ -18,7 +18,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
     triggerCharacters = ['.', '']
     async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
-        console.log('AUTOCOMPLETE', context)
 
         const word = model.getWordUntilPosition(position);
         const range = {
@@ -38,7 +37,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             console.clear()
             const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
             const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
-            console.log('lastNode found', lastNodeInExpression)
             const expressionElements = lineTextBeforeCursor.split('.')
 
             let dotCompleted = false
@@ -92,7 +90,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             nodes = [...nodes, ...contractCompletions]
 
         }
-        console.log('NODES', nodes)
 
         // remove duplicates
         const nodeIds = {};
@@ -224,12 +221,9 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 }
                 suggestions.push(completion)
 
-            } else {
-                console.log('UNKNOWN NODE', node)
-            }
+            } 
         }
 
-        console.log(suggestions)
         return {
             suggestions
         }
@@ -244,8 +238,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         // if the block has a name and a type we can maybe find it in the contract nodes
         const fileNodes = await this.props.plugin.call('codeParser', 'getCurrentFileNodes')
 
-        console.log('file nodes', fileNodes);
-
         if (isArray(nodesAtPosition) && nodesAtPosition.length) {
             for (const node of nodesAtPosition) {
                 // try to find the real block in the AST and get the nodes in that scope
@@ -253,7 +245,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     const contractNodes = fileNodes.contracts[node.name].contractNodes
                     for (const contractNode of Object.values(contractNodes)) {
                         if (contractNode['name'] === ANTLRBlock.name) {
-                            console.log('found real block', contractNode)
                             let nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode as any).id)
                             nodes = [...nodes, ...nodeOfScope]
                             if (contractNode['body']) {
@@ -291,8 +282,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             return false
         })
 
-        console.log('NODES AT BLOCK SCOPE', nodes)
-
         return nodes;
     }
 
@@ -300,10 +289,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         let nodes: any[] = []
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         let nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-        console.log('NODES AT POSITION', nodesAtPosition)
         // if no nodes exits at position, try to get the block of which the position is in
         const block = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', position, null)
-        console.log('BLOCK AT POSITION', block)
         if (!nodesAtPosition.length) {
             if (block) {
                 nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.range[0])
@@ -316,7 +303,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 if (node.nodeType === 'ContractDefinition') {
                     contractNode = node
                     const fileNodes = await this.props.plugin.call('codeParser', 'getCurrentFileNodes')
-                    console.log('FILE NODES', fileNodes)
                     const contractNodes = fileNodes.contracts[node.name]
                     nodes = [...Object.values(contractNodes.contractScopeNodes), ...nodes]
                     nodes = [...Object.values(contractNodes.baseNodesWithBaseContractScope), ...nodes]
@@ -349,7 +335,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         const allowedTypesForThisCompletion = ['VariableDeclaration', 'FunctionDefinition']
         // with this. you can't have internal nodes and no contractDefinitions
         thisCompletionNodes = thisCompletionNodes.filter(node => {
-            console.log('node filter', node)
             if (node.visibility && (node.visibility === 'internal' || node.visibility === 'private')) {
                 return false
             }
@@ -387,12 +372,9 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
 
         for (const nodeOfScope of contractCompletions) {
-            console.log('nodeOfScope', nodeOfScope.name, nodeOfScope.memberName, nodeOfScope)
             if (nodeOfScope.name === nameOfLastTypedExpression) {
-                console.log('FOUND NODE', nodeOfScope)
                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                     const declarationOf: AstNode = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
-                    console.log('METHOD 1 HAS DECLARATION OF', declarationOf)
                     nodes = [...nodes,
                     ...filterNodes(declarationOf.nodes, nodeOfScope, declarationOf)
                     || filterNodes(declarationOf.members, nodeOfScope, declarationOf)]

@@ -12,12 +12,8 @@ export class RemixHoverProvider implements languages.HoverProvider {
     }
 
     provideHover = async function (model: editor.ITextModel, position: Position): Promise<languages.Hover> {
-        console.log('HOVERING')
-
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
-
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
-        console.log(nodeAtPosition)
         const contents = []
 
         const getDocs = async (node: any) => {
@@ -38,7 +34,6 @@ export class RemixHoverProvider implements languages.HoverProvider {
                     value: `scope: ${node.scope}`
                 })
             }
-
         }
 
         const getLinks = async (node: any) => {
