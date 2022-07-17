@@ -34,6 +34,11 @@ export default class CodeParserGasService {
 
 
     async showGasEstimates() {
+        const showGasConfig = await this.plugin.call('config', 'getAppParameter', 'show-gas')
+        if(!showGasConfig) {
+            await this.plugin.call('editor', 'discardLineTexts')
+            return
+        }
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
         this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
 

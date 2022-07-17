@@ -19,6 +19,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     triggerCharacters = ['.', '']
     async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
 
+        const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
+        if(!completionSettings) return
         const word = model.getWordUntilPosition(position);
         const range = {
             startLineNumber: position.lineNumber,

@@ -28,7 +28,6 @@ export const reducerActions = (models = initialState, action: Action) => {
 
       }
       models[uri].model = model
-      console.log('ADD_MODEL', models[uri].model)
       model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
       return models
     }
