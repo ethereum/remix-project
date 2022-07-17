@@ -313,7 +313,6 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     }
     if (typeOfDecoration === 'lineTextPerFile') {
-      console.log('lineTextPerFile', decoration)
       decoration = decoration as lineText
       return {
         type: typeOfDecoration,
@@ -344,7 +343,6 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }
     }
-    console.log(decorations, currentDecorations)
     return {
       currentDecorations: model.deltaDecorations(currentDecorations, decorations),
       registeredDecorations: newRegisteredDecorations
@@ -370,11 +368,9 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
-    console.log("addDecoration", decoration, filePath, typeOfDecoration)
     const model = editorModelsState[filePath]?.model
     if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
-    console.log(monacoDecoration)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
       registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
@@ -412,7 +408,6 @@ export const EditorUI = (props: EditorUIProps) => {
           endColumn: ((lineColumn.end && lineColumn.end.column) || 0) + 1,
           message: marker.message,
         }
-        console.log(markerData)
         if (!allMarkersPerfile[filePath]) {
           allMarkersPerfile[filePath] = []
         }
@@ -536,8 +531,6 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleEditorWillMount(monaco: Monaco) {
-    // MonacoEditorTextDecorationPatch.augmentEditor(monaco.editor)
-    console.log('editor will mount', monaco, typeof monaco)
 
     monacoRef.current = monaco
     // Register a new language
@@ -550,14 +543,11 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf as any)
 
-
-
     monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: false,
       noSyntaxValidation: false,
     });
 
-    
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
