@@ -31,10 +31,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         let nodes: AstNode[] = []
         let suggestions: monaco.languages.CompletionItem[] = []
 
-
-
         if (context.triggerCharacter === '.') {
-            console.clear()
             const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
             const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
             const expressionElements = lineTextBeforeCursor.split('.')
