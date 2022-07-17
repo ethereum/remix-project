@@ -4,7 +4,7 @@ import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable } from "./completion/completionGlobals"
+import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
@@ -44,6 +44,9 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             let dotCompleted = false
 
             // handles completion from for builtin types
+            if(lastNodeInExpression.memberName === 'sender') { // exception for this member
+                lastNodeInExpression.name = 'sender'
+            }
             const globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
             if (globalCompletion) {
                 dotCompleted = true
@@ -62,8 +65,9 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             if (expressionElements.length > 1 && !dotCompleted) {
 
                 const nameOfLastTypedExpression = lastNodeInExpression.name || lastNodeInExpression.memberName
-                nodes = [...nodes, ...await this.getDotCompletions(position, nameOfLastTypedExpression)]
-                
+                const dotCompletions = await this.getDotCompletions(position, nameOfLastTypedExpression, range)
+                nodes = [...nodes, ...dotCompletions.nodes]
+                suggestions = [...suggestions, ...dotCompletions.suggestions]
             }
         } else {
 
@@ -278,27 +282,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         return nodes;
     }
 
-    private getContractAtPosition = async (position: Position) => {
-        const cursorPosition = this.props.editorAPI.getCursorPosition()
-        let nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-        console.log('NODES AT POSITION', nodesAtPosition)
-        // if no nodes exits at position, try to get the block of which the position is in
-        const ANTLRBlock = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', position, null)
-        if (!nodesAtPosition.length) {
-            if (ANTLRBlock) {
-                nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', ANTLRBlock.range[0])
-            }
-        }
-        if (isArray(nodesAtPosition) && nodesAtPosition.length) {
-            for (const node of nodesAtPosition) {
-                if (node.nodeType === 'ContractDefinition') {
-                    return node
-                }
-            }
-        }
-        return null
-    }
-
     private getContractCompletions = async (position: Position) => {
         let nodes: any[] = []
         const cursorPosition = this.props.editorAPI.getCursorPosition()
@@ -324,8 +307,6 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     nodes = [...Object.values(contractNodes.contractScopeNodes), ...nodes]
                     nodes = [...Object.values(contractNodes.baseNodesWithBaseContractScope), ...nodes]
                     nodes = [...Object.values(fileNodes.imports), ...nodes]
-                    // some types like Enum and Events are not scoped so we need to add them manually
-                    nodes = [...contractNodes.contractDefinition.nodes, ...nodes]
                     // at the nodes at the block itself
                     nodes = [...nodes, ...await this.getBlockNodesAtPosition(position)]
                     // filter private nodes, only allow them when contract ID is the same as the current contract
@@ -371,14 +352,15 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         return nodes
     }
 
-    private getDotCompletions = async (position: Position, nameOfLastTypedExpression: string) => {
+    private getDotCompletions = async (position: Position, nameOfLastTypedExpression: string, range) => {
         const contractCompletions = await this.getContractCompletions(position)
         let nodes: any[] = []
+        let suggestions: monaco.languages.CompletionItem[] = []
 
         const filterNodes = (nodes: any[], parentNode: any, declarationOf: any = null) => {
             return nodes && nodes.filter(node => {
                 if (node.visibility) {
-                    if(declarationOf && declarationOf.nodeType && declarationOf.nodeType === 'StructDefinition') {
+                    if (declarationOf && declarationOf.nodeType && declarationOf.nodeType === 'StructDefinition') {
                         return true
                     }
                     if ((node.visibility === 'internal' && !parentNode.isBaseNode) || node.visibility === 'private') {
@@ -397,23 +379,28 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
                     const declarationOf: AstNode = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
                     console.log('METHOD 1 HAS DECLARATION OF', declarationOf)
-                    nodes = [...nodes, 
-                        ...filterNodes(declarationOf.nodes, nodeOfScope, declarationOf) 
-                        || filterNodes(declarationOf.members, nodeOfScope, declarationOf)]
+                    nodes = [...nodes,
+                    ...filterNodes(declarationOf.nodes, nodeOfScope, declarationOf)
+                    || filterNodes(declarationOf.members, nodeOfScope, declarationOf)]
                     const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
                     for (const baseContract of baseContracts) {
                         nodes = [...nodes, ...filterNodes(baseContract.nodes, nodeOfScope)]
                     }
                 } else if (nodeOfScope.members) {
-                    console.log('METHOD 1 HAS MEMBERS OF')
                     nodes = [...nodes, ...filterNodes(nodeOfScope.members, nodeOfScope)]
+                } else if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'ArrayTypeName') {
+                    suggestions = [...suggestions, ...getContextualAutoCompleteBTypeName('ArrayTypeName', range, this.monaco)]
+                } else if(nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'ElementaryTypeName' && nodeOfScope.typeName.name === 'bytes') {
+                    suggestions = [...suggestions, ...getContextualAutoCompleteBTypeName('bytes', range, this.monaco)]
+                } else if(nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'ElementaryTypeName' && nodeOfScope.typeName.name === 'address') {
+                    suggestions = [...suggestions, ...getContextualAutoCompleteBTypeName('address', range, this.monaco)]
                 }
             }
         }
 
 
 
-        return nodes
+        return { nodes, suggestions }
     }
 
     private getlinearizedBaseContracts = async (node: any) => {

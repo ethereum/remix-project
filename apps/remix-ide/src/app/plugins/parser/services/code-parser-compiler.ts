@@ -95,7 +95,6 @@ export default class CodeParserCompiler {
             this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
             if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
                 const state = await this.plugin.call('solidity', 'getCompilerState')
-                console.log('COMPILER STATE', state)
                 this.compiler.set('optimize', state.optimize)
                 this.compiler.set('evmVersion', state.evmVersion)
                 this.compiler.set('language', state.language)

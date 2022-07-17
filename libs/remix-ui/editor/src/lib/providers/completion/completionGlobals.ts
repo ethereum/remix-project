@@ -1,6 +1,33 @@
 import { IRange } from "monaco-editor";
 import monaco from "../../../types/monaco";
 
+export function getStringCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+    return [
+        {
+            detail: 'concatenate an arbitrary number of string values',
+            kind: monaco.languages.CompletionItemKind.Property,
+            insertText: 'concat(${1:string})',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'concat()',
+            range,
+        },
+    ]
+}
+
+export function getBytesCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+    return [
+        {
+            detail: 'concatenate an arbitrary number of values',
+            kind: monaco.languages.CompletionItemKind.Property,
+            insertText: 'concat(${1:bytes})',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'concat()',
+            range,
+        },
+    ]
+}
+
+
 export function getBlockCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
     return [
         {
@@ -8,6 +35,20 @@ export function getBlockCompletionItems(range: IRange, monaco): monaco.languages
             kind: monaco.languages.CompletionItemKind.Property,
             insertText: 'coinbase',
             label: 'coinbase',
+            range,
+        },
+        {
+            detail: '(uint): Current block’s base fee',
+            kind: monaco.languages.CompletionItemKind.Property,
+            insertText: 'basefee',
+            label: 'basefee',
+            range,
+        },
+        {
+            detail: '(uint): Current chain id',
+            kind: monaco.languages.CompletionItemKind.Property,
+            insertText: 'chainid',
+            label: 'chainid',
             range,
         },
         {
@@ -201,6 +242,14 @@ export function getAbiCompletionItems(range: IRange, monaco): monaco.languages.C
             range
         },
         {
+            detail: 'encodeCall(function functionPointer, (...)) returns (bytes memory) ABI-encodes a call to functionPointer with the arguments found in the tuple',
+            insertText: 'encode(${1:arg});',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'encodecall',
+            range
+        },
+        {
             detail: 'encodePacked(..) returns (bytes): Performes packed encoding of the given arguments',
             insertText: 'encodePacked(${1:arg});',
             kind: monaco.languages.CompletionItemKind.Method,
@@ -260,7 +309,10 @@ function CreateCompletionItem(label: string, kind: monaco.languages.CompletionIt
 export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.CompletionItem[] {
     const completionItems = [];
     const keywords = ['modifier', 'mapping', 'break', 'continue', 'delete', 'else', 'for',
-        'if', 'new', 'return', 'returns', 'while', 'using', 'emit',
+        'after', 'promise', 'alias', 'apply','auto', 'copyof', 'default', 'define', 'final', 'implements',
+        'inline', 'let', 'macro', 'match', 'mutable', 'null', 'of', 'partial', 'reference', 'relocatable',
+        'sealed', 'sizeof', 'static', 'supports', 'switch', 'typedef',
+        'if', 'new', 'return', 'returns', 'while', 'using', 'emit', 'anonymous', 'indexed', 
         'private', 'public', 'external', 'internal', 'payable', 'nonpayable', 'view', 'pure', 'case', 'do', 'else', 'finally',
         'in', 'instanceof', 'return', 'throw', 'try', 'catch', 'typeof', 'yield', 'void', 'virtual', 'override'];
     keywords.forEach(unit => {
@@ -277,6 +329,7 @@ export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.C
     completionItems.push(CreateCompletionItem('contract', monaco.languages.CompletionItemKind.Class, null, range));
     completionItems.push(CreateCompletionItem('library', monaco.languages.CompletionItemKind.Class, null, range));
     completionItems.push(CreateCompletionItem('storage', monaco.languages.CompletionItemKind.Field, null, range));
+    completionItems.push(CreateCompletionItem('calldata', monaco.languages.CompletionItemKind.Field, null, range));
     completionItems.push(CreateCompletionItem('memory', monaco.languages.CompletionItemKind.Field, null, range));
     completionItems.push(CreateCompletionItem('var', monaco.languages.CompletionItemKind.Field, null, range));
     completionItems.push(CreateCompletionItem('constant', monaco.languages.CompletionItemKind.Constant, null, range));
@@ -491,14 +544,119 @@ export function getContextualAutoCompleteByGlobalVariable(word: string, range: I
     if (word === 'block') {
         return getBlockCompletionItems(range, monaco);
     }
+    if (word === 'string') {
+        return getStringCompletionItems(range, monaco);
+    }
+    if (word === 'bytes') {
+        return getBytesCompletionItems(range, monaco);
+    }
     if (word === 'msg') {
         return getMsgCompletionItems(range, monaco);
     }
     if (word === 'tx') {
         return getTxCompletionItems(range, monaco);
     }
-    if (word === 'address') {
+    if (word === 'abi') {
         return getAbiCompletionItems(range, monaco);
     }
+    if (word === 'sender') {
+        return getAddressCompletionItems(range, monaco);
+    }
     return null;
+}
+
+export function getArrayCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+    return [
+        {
+            detail: '',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'length;',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'length',
+            range,
+        },
+        {
+            detail: '',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'push(${1:value});',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'push(value)',
+            range,
+        },
+        {
+            detail: '',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'push();',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'push()',
+            range,
+        },
+        {
+            detail: '',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'pop();',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'pop()',
+            range,
+        },
+    ]
+}
+
+export function getAddressCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+    return [
+        {
+            detail: '(uint256): balance of the Address in Wei',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'balance;',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'balance',
+            range,
+        },
+        {
+            detail: '(bytes memory): code at the Address (can be empty)',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'code;',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'code',
+            range,
+        },
+        {
+            detail: '(bytes32): the codehash of the Address',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'codehash;',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'codehash',
+            range,
+        },
+        {
+            detail: '(uint256 amount) returns (bool): send given amount of Wei to Address, returns false on failure',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'send(${1:value});',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'send()',
+            range,
+        },
+        {
+            detail: '(uint256 amount): send given amount of Wei to Address, throws on failure',
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: 'transfer(${1:value});',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            label: 'transfer()',
+            range,
+        },
+    ]
+
+}
+    
+export function getContextualAutoCompleteBTypeName(word: string, range: IRange, monaco): monaco.languages.CompletionItem[] {
+    if (word === 'ArrayTypeName') {
+        return getArrayCompletionItems(range, monaco);
+    }
+    if (word === 'bytes') {
+        return getBytesCompletionItems(range, monaco);
+    }
+    if (word === 'address') {
+        return getAddressCompletionItems(range, monaco);
+    }
+    return [];
 }
