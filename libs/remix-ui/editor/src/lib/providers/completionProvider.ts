@@ -263,11 +263,22 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                         }
                     }
                 }
-                //const nodesOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', node.id)
-                // nodes = [...nodes, ...nodesOfScope]
+                // blocks can have statements
+                /*
+                if (node.statements){
+                    console.log('statements', node.statements)
+                    for (const statement of node.statements) {
+                        if(statement.expression){
+                            const declaration = await this.props.plugin.call('codeParser', 'declarationOf', statement.expression)
+                            declaration.outSideBlock = true
+                            nodes = [...nodes, declaration]
+                        }
+                    }
+                }
+                */
             }
         }
-        console.log('NODES AT BLOCK SCOPE', nodes)
+        
         // we are only interested in nodes that are in the same block as the cursor
         nodes = nodes.filter(node => {
             if (node.src) {
@@ -276,8 +287,11 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     return true
                 }
             }
+            if(node.outSideBlock){ return true }
             return false
         })
+
+        console.log('NODES AT BLOCK SCOPE', nodes)
 
         return nodes;
     }
@@ -373,7 +387,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
 
         for (const nodeOfScope of contractCompletions) {
-            // console.log('nodeOfScope', nodeOfScope.name, nodeOfScope)
+            console.log('nodeOfScope', nodeOfScope.name, nodeOfScope.memberName, nodeOfScope)
             if (nodeOfScope.name === nameOfLastTypedExpression) {
                 console.log('FOUND NODE', nodeOfScope)
                 if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
@@ -396,6 +410,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     suggestions = [...suggestions, ...getContextualAutoCompleteBTypeName('address', range, this.monaco)]
                 }
             }
+
         }
 
 
