@@ -114,7 +114,7 @@ export class CodeParser extends Plugin {
         })
 
         this.on('filePanel', 'setWorkspace', async () => {
-            await this.call('fileDecorator', 'setFileDecorators', [])
+            await this.call('fileDecorator', 'clearFileDecorators')
         })
 
 

@@ -8,7 +8,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 const profile = {
     name: 'fileDecorator',
     desciption: 'Keeps decorators of the files',
-    methods: ['setFileDecorators'],
+    methods: ['setFileDecorators', 'clearFileDecorators'],
     events: ['fileDecoratorsChanged'],
     version: '0.0.1'
 }
@@ -46,10 +46,15 @@ export class FileDecorator extends Plugin {
             return index == -1
         })
         const newState = [...filteredState, ...fileStatesPayload].sort(sortByPath)
-
+        
         if (!deepequal(newState, this._fileStates)) {
             this._fileStates = newState
             this.emit('fileDecoratorsChanged', this._fileStates)
         }
+    }
+
+    async clearFileDecorators() {
+        this._fileStates = []
+        this.emit('fileDecoratorsChanged', [])
     }
 }
