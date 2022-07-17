@@ -18,18 +18,14 @@ class OpenFile extends EventEmitter {
 function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction) {
   browser.perform((done) => {
     browser.isVisible('[data-id="remixIdeSidePanel"]', (result) => {
-      console.log('visible remixIdeSidePanel',result)
       if (result.value) {
         // if side panel is shown, check this is the file panel
         browser.element('css selector', '[data-id="verticalIconsKindfilePanel"] img[data-id="selected"]', (result) => {
-          console.log('selected file panel', result)
           if (result.status === 0) {
-              console.log('selected file panel')
               done()
           } else browser.clickLaunchIcon('filePanel').perform(done())
         })
       } else {
-        
         browser.clickLaunchIcon('filePanel').perform(done())
       }
       
