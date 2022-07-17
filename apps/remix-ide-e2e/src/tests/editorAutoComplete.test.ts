@@ -22,7 +22,7 @@ module.exports = {
       .openFile(examples.testContract.name)
   },
   'Should put cursor in the () of the function #group2': function (browser: NightwatchBrowser) {
-    browser.scrollToLine(18)
+    browser.scrollToLine(36)
     const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'(')]"
     browser.waitForElementVisible('#editorView')
       .useXpath()
