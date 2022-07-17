@@ -40,7 +40,9 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(' abc, testb')
+          sendKeys(' abc')
+          .sendKeys(this.Keys.ENTER) // we need to split lines for FF texts to pass because the screen is too narrow
+          .sendKeys(', testb')
       })
       .waitForElementPresent(autoCompleteLineElement('"TestBookDefinition"'))
       .click(autoCompleteLineElement('"TestBookDefinition"'))
@@ -54,7 +56,9 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(' btextbook, BaseB')
+          sendKeys(' btextbook')
+          .sendKeys(this.Keys.ENTER)
+          .sendKeys(', BaseB')
       })
       .waitForElementPresent(autoCompleteLineElement('"BaseBook"'))
       .click(autoCompleteLineElement('"BaseBook"'))
@@ -73,7 +77,7 @@ module.exports = {
   },
   'Should put cursor at the end of function #group2': function (browser: NightwatchBrowser) {
 
-    const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'{')]"
+    const path = "//*[@class='view-line' and contains(.,'localbbook') and contains(.,'private')]//span//span[contains(.,'{')]"
     browser
       .useXpath()
       .click(path).pause(1000)
