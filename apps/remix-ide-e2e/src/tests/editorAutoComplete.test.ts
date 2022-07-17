@@ -13,10 +13,13 @@ module.exports = {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
   'Should add test and base files #group2': function (browser: NightwatchBrowser) {
-    browser.addFile('contracts/test.sol', examples.testContract)
-      .addFile('contracts/base.sol', examples.baseContract)
-      .addFile('contracts/baseofbase.sol', examples.baseOfBaseContract)
-      .openFile('contracts/test.sol').pause(3000)
+    browser.addFile(examples.testContract.name, examples.testContract)
+      .addFile(examples.baseContract.name, examples.baseContract)
+      .addFile(examples.import1Contract.name, examples.import1Contract)
+      .addFile(examples.baseOfBaseContract.name, examples.baseOfBaseContract)
+      .addFile(examples.secondimport.name, examples.secondimport)
+      .addFile(examples.importbase.name, examples.importbase)
+      .openFile(examples.testContract.name)
   },
   'Should put cursor in the () of the function #group2': function (browser: NightwatchBrowser) {
     browser.scrollToLine(18)
@@ -27,49 +30,49 @@ module.exports = {
   },
   'Should complete variable declaration types in a function definition #group2': function (browser: NightwatchBrowser) {
     browser
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys('uint25')
-    })
-    .waitForElementPresent(autoCompleteLineElement('uint256'))
-    .click(autoCompleteLineElement('uint256'))
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys(' abc, testb')
-    })
-    .waitForElementPresent(autoCompleteLineElement('"TestBookDefinition"'))
-    .click(autoCompleteLineElement('"TestBookDefinition"'))
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys(' memo')
-    })
-    .waitForElementPresent(autoCompleteLineElement('memory'))
-    .click(autoCompleteLineElement('memory'))
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys(' t, BaseB')
-    })
-    .waitForElementPresent(autoCompleteLineElement('"BaseBook"'))
-    .click(autoCompleteLineElement('"BaseBook"'))
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys(' stor')
-    })
-    .waitForElementPresent(autoCompleteLineElement('storage'))
-    .click(autoCompleteLineElement('storage'))
-    .perform(function () {
-      const actions = this.actions({ async: true });
-      return actions.
-        sendKeys(' b')
-    })
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('uint25')
+      })
+      .waitForElementPresent(autoCompleteLineElement('uint256'))
+      .click(autoCompleteLineElement('uint256'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' abc, testb')
+      })
+      .waitForElementPresent(autoCompleteLineElement('"TestBookDefinition"'))
+      .click(autoCompleteLineElement('"TestBookDefinition"'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' memo')
+      })
+      .waitForElementPresent(autoCompleteLineElement('memory'))
+      .click(autoCompleteLineElement('memory'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' btextbook, BaseB')
+      })
+      .waitForElementPresent(autoCompleteLineElement('"BaseBook"'))
+      .click(autoCompleteLineElement('"BaseBook"'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' stor')
+      })
+      .waitForElementPresent(autoCompleteLineElement('storage'))
+      .click(autoCompleteLineElement('storage'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' localbbook')
+      }).pause(3000)
   },
   'Should put cursor at the end of function #group2': function (browser: NightwatchBrowser) {
-    
+
     const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'{')]"
     browser
       .useXpath()
@@ -82,7 +85,139 @@ module.exports = {
           sendKeys(this.Keys.ARROW_RIGHT)
       })
   },
+  'Should autcomplete address types': function (browser: NightwatchBrowser) {
+    browser
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('addre')
+      })
+      .waitForElementPresent(autoCompleteLineElement('address'))
+      .click(autoCompleteLineElement('address'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' someaddress;')
+          .sendKeys(this.Keys.ENTER)
+      }).pause(2000)
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('someaddress.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('balance'))
+      .waitForElementVisible(autoCompleteLineElement('send'))
+      .waitForElementVisible(autoCompleteLineElement('transfer'))
+      .waitForElementVisible(autoCompleteLineElement('code'))
+      .click(autoCompleteLineElement('balance'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should autcomplete array types': function (browser: NightwatchBrowser) {
+    browser
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('uin')
+      })
+      .waitForElementPresent(autoCompleteLineElement('uint'))
+      .click(autoCompleteLineElement('uint'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('[] mem')
+      })
+      .waitForElementVisible(autoCompleteLineElement('memory'))
+      .click(autoCompleteLineElement('memory'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' somearray;')
+      }
+      ).pause(2000)
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys(this.Keys.ENTER)
+          .sendKeys('somearray.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('push'))
+      .waitForElementVisible(autoCompleteLineElement('pop'))
+      .waitForElementVisible(autoCompleteLineElement('length'))
+      .click(autoCompleteLineElement('length'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should see and autocomplete second import because it was imported by the first import #group2': function (browser: NightwatchBrowser) {
+    browser
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('secondi')
+      })
+      .waitForElementPresent(autoCompleteLineElement('secondimport'))
+      .click(autoCompleteLineElement('secondimport'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(' sec;')
+          .sendKeys(this.Keys.ENTER)
+      }).pause(3000)
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('sec.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('secondimportstring'))
+      .click(autoCompleteLineElement('secondimportstring'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+      })
 
+  },
+  'Should see and autocomplete imported local class #group2': function (browser: NightwatchBrowser) {
+    browser
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('import')
+      })
+      .waitForElementPresent(autoCompleteLineElement('importedcontract'))
+      .click(autoCompleteLineElement('importedcontract'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys('.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('externalimport'))
+      .waitForElementVisible(autoCompleteLineElement('importbasestring'))
+      .waitForElementVisible(autoCompleteLineElement('importedbook'))
+      .waitForElementVisible(autoCompleteLineElement('importpublicstring'))
+      .waitForElementVisible(autoCompleteLineElement('publicimport'))
+      // no private 
+      .waitForElementNotPresent(autoCompleteLineElement('importprivatestring'))
+      .waitForElementNotPresent(autoCompleteLineElement('privateimport'))
+      // no internal
+      .waitForElementNotPresent(autoCompleteLineElement('importinternalstring'))
+      .waitForElementNotPresent(autoCompleteLineElement('internalimport'))
+      .click(autoCompleteLineElement('importbasestring'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+      })
+
+  },
   'Should autocomplete derived and local event when not using this. #group2': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
@@ -106,15 +241,15 @@ module.exports = {
         return actions.
           sendKeys('emit MyEv')
       })
-        .waitForElementVisible(autoCompleteLineElement('MyEvent'))
-        .click(autoCompleteLineElement('MyEvent'))
-        .perform(function () {
-          const actions = this.actions({ async: true });
-          return actions
-            .sendKeys('3232')
-            .sendKeys(this.Keys.TAB)
-            .sendKeys(this.Keys.ENTER)
-        })
+      .waitForElementVisible(autoCompleteLineElement('MyEvent'))
+      .click(autoCompleteLineElement('MyEvent'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+          .sendKeys('3232')
+          .sendKeys(this.Keys.TAB)
+          .sendKeys(this.Keys.ENTER)
+      })
   },
 
   'Should type and get msg options #group2': function (browser: NightwatchBrowser) {
@@ -134,7 +269,17 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(';').
+          sendKeys('.')
+      })
+      .waitForElementVisible(autoCompleteLineElement('balance'))
+      .waitForElementVisible(autoCompleteLineElement('code'))
+      .waitForElementVisible(autoCompleteLineElement('codehash'))
+      .waitForElementVisible(autoCompleteLineElement('send'))
+      .waitForElementVisible(autoCompleteLineElement('transfer'))
+      .click(autoCompleteLineElement('balance'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
           sendKeys(this.Keys.ENTER)
       })
   },
@@ -178,6 +323,62 @@ module.exports = {
       .click(autoCompleteLineElement('basebook'))
   },
   'Should autcomplete derived struct from base class #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('.')
+    })
+      .waitForElementVisible(autoCompleteLineElement('author'))
+      .waitForElementVisible(autoCompleteLineElement('book_id'))
+      .waitForElementVisible(autoCompleteLineElement('title'))
+      .click(autoCompleteLineElement('title'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should block scoped localbbook #group2': function (browser: NightwatchBrowser) {
+    browser.pause(4000).
+      perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('localb')
+      })
+      .waitForElementVisible(autoCompleteLineElement('localbbook'))
+      .click(autoCompleteLineElement('localbbook'))
+  },
+  'Should autcomplete derived struct from block localbbook #group2': function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('.')
+    })
+      .waitForElementVisible(autoCompleteLineElement('author'))
+      .waitForElementVisible(autoCompleteLineElement('book_id'))
+      .waitForElementVisible(autoCompleteLineElement('title'))
+      .click(autoCompleteLineElement('title'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
+  'Should block scoped btextbook #group2': function (browser: NightwatchBrowser) {
+    browser.
+      perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('btext')
+      })
+      .waitForElementVisible(autoCompleteLineElement('btextbook'))
+      .click(autoCompleteLineElement('btextbook'))
+  },
+  'Should autcomplete derived struct from block btextbook #group2': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
