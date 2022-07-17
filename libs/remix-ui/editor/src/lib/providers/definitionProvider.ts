@@ -20,13 +20,10 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
     async jumpToDefinition(position: any) {
         const node = await this.props.plugin.call('codeParser', 'definitionAtPosition', position)
         const sourcePosition = await this.props.plugin.call('codeParser', 'positionOfDefinition', node)
-        console.log("JUMP", sourcePosition)
         if (sourcePosition) {
             await this.jumpToPosition(sourcePosition)
         }
     }
-
-
 
     /*
     * onClick jump to position of ast node in the editor
@@ -34,7 +31,6 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
     async jumpToPosition(position: any) {
         const jumpToLine = async (fileName: string, lineColumn: any) => {
             if (fileName !== await this.props.plugin.call('fileManager', 'file')) {
-                console.log('jump to file', fileName)
                 await this.props.plugin.call('contentImport', 'resolveAndSave', fileName, null)
                 await this.props.plugin.call('fileManager', 'open', fileName)
             }
@@ -43,14 +39,10 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
             }
         }
         const lastCompilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult')  // await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
-        console.log(lastCompilationResult.getSourceCode().sources)
-        console.log(position)
         if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
 
             const lineColumn = await this.props.plugin.call('codeParser', 'getLineColumnOfPosition', position)
             const filename = lastCompilationResult.getSourceName(position.file)
-            // TODO: refactor with rendererAPI.errorClick
-            console.log(filename, lineColumn)
             jumpToLine(filename, lineColumn)
         }
     }
