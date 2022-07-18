@@ -245,9 +245,8 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('localhost'))
     plugin.emit('setWorkspace', { name: null, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
-    await plugin.fileProviders.workspace.clearWorkspace()
-    await plugin.setWorkspace({ name: null, isLocalhost: false })
-    dispatch(setCurrentWorkspace(null))
+    // if there is no other workspace, create remix default workspace
+    await createWorkspace('default_workspace', 'remixDefault')
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
