@@ -22,7 +22,10 @@ class TestFunction extends EventEmitter {
         })
       })
       .perform((done) => {
-        browser.waitForElementVisible(`[data-id="block_tx${txHash}"]`, 60000)
+        browser
+          .waitForElementVisible(`[data-id="block_tx${txHash}"]`, 60000)
+          .moveToElement(`[data-id="block_tx${txHash}"]`, 0, 0)
+          .pause(2000)
           .click(`[data-id="block_tx${txHash}"]`)
           .pause(3000)
           .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`, 60000)
