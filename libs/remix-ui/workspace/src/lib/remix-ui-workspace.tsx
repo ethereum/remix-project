@@ -253,6 +253,7 @@ export function Workspace () {
                     title='Restore Workspaces Backup'>
                   </span>
                   <span
+                    hidden={currentWorkspace === LOCALHOST}
                     id='cloneGitRepository'
                     data-id='cloneGitRepository'
                     onClick={(e) => {
