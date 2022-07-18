@@ -166,7 +166,7 @@ function errorHandler (error: any, service: string) {
   async function isValidOrigin (origin: string): Promise<any> {
     if (!origin) return false
     const domain = getDomain(origin)
-    const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/3367e019335746b73288e3710af2922d4c8ef5a3/origins.json'
+    const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/59cedab38ae94cc72b68854b3706f11819e4a0af/origins.json'
 
     try {
       const { data } = (await Axios.get(gistUrl)) as { data: any }

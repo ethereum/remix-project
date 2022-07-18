@@ -375,6 +375,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
           const compilerPath = state.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
+            // @ts-ignore
+            api.call('notification', 'toast', `Updating compiler version to match current contract file pragma i.e ${_retrieveVersion(compilerPath)}`)
             setState((prevState) => {
               return { ...prevState, selectedVersion: compilerPath }
             })
