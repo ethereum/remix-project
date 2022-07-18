@@ -23,8 +23,8 @@ export class GanacheProvider extends AbstractProvider {
   body (): JSX.Element {
     return (
       <div> Note: To run Ganache on your system, run:
-        <div className="p-1 pl-3">yarn global add ganache</div> 
-        <div className="p-1 pl-3">ganache</div>       
+        <div className="p-1 pl-3"><b>yarn global add ganache</b></div> 
+        <div className="p-1 pl-3"><b>ganache</b></div>       
         <div className="pt-2 pb-4">
           For more info, visit: <a href="https://github.com/trufflesuite/ganache" target="_blank">Ganache Documentation</a>
         </div>
