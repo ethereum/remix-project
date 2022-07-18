@@ -67,7 +67,6 @@ module.exports = {
   'Should interact with deployed contract via ERC1967 (proxy)': function (browser: NightwatchBrowser) {
     browser
       .getAddressAtPosition(1, (address) => {
-        console.log('Proxy address: ' + address)
         firstProxyAddress = address
       })
       .clickInstance(1)
@@ -115,7 +114,6 @@ module.exports = {
   'Should interact with initialized contract to verify parameters': function (browser: NightwatchBrowser) {
     browser
       .getAddressAtPosition(1, (address) => {
-        console.log('Proxy address: ' + address)
         lastProxyAddress = address
       })
       .clickInstance(1)
