@@ -39,8 +39,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
       .click('*[data-id="signMessageTextarea"]')
       .setValue('*[data-id="signMessageTextarea"]', 'Remix is cool!')
-      .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
-      .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
+      .assert.not.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
+      .assert.not.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .pause(2000)
       .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
       .click('[data-id="udappNotify-modal-footer-ok-react"]')
@@ -200,7 +200,7 @@ module.exports = {
 
   'Call web3.eth.getAccounts() using Injected Provider (Metamask)': '' + function (browser: NightwatchBrowser) {
     browser
-      .executeScript('web3.eth.getAccounts()')
+      .executeScriptInTerminal('web3.eth.getAccounts()')
       .pause(2000)
       .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
       .end()
