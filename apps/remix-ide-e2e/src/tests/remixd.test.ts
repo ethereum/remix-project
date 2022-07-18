@@ -55,6 +55,7 @@ module.exports = {
   },
   'start Remixd': function (browser) {
     startRemixd(browser)
+
   },
   'run Remixd tests #group4': function (browser) {
     runTests(browser)
@@ -73,7 +74,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
-  'Import from node_modules and reference a github import #group2': function (browser) {
+  'Import from node_modules and reference a github import #group2 #flaky': function (browser) {
     browser.waitForElementVisible('#icon-panel', 2000)
       .clickLaunchIcon('filePanel')
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
@@ -131,6 +132,7 @@ function startRemixd (browser: NightwatchBrowser) {
     .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
+    .pause(10000)
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 
