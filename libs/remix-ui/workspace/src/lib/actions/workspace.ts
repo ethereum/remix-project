@@ -246,6 +246,7 @@ export const switchToWorkspace = async (name: string) => {
     plugin.emit('setWorkspace', { name: null, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
     // if there is no other workspace, create remix default workspace
+    plugin.call('notification', 'toast', `No workspace found! Creating default workspace ....`)
     await createWorkspace('default_workspace', 'remixDefault')
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
