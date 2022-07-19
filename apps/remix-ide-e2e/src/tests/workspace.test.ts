@@ -33,7 +33,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E START
 
-  'Should create Remix default workspace with files': function (browser: NightwatchBrowser) {
+  'Should create Remix default workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
@@ -90,7 +90,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemREADME.txt"]')
   },
 
-  'Should create blank workspace with no files': function (browser: NightwatchBrowser) {
+  'Should create blank workspace with no files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -111,7 +111,7 @@ module.exports = {
       });
   },
 
-  'Should create ERC20 workspace with files': function (browser: NightwatchBrowser) {
+  'Should create ERC20 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -159,7 +159,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
 
-  'Should create ERC721 workspace with files': function (browser: NightwatchBrowser) {
+  'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -209,7 +209,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]') // create workspace_name
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
