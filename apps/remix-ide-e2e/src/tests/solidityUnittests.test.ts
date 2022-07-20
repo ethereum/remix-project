@@ -191,6 +191,7 @@ module.exports = {
       //.verify.attributeEquals('*[data-id="modalDialogCustomPromptTextCreate"]', 'value', 'workspace_new')
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
       .click('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .pause(3000)
       .currentWorkspaceIs('workspace_new')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
