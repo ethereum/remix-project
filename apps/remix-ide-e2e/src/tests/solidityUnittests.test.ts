@@ -178,7 +178,10 @@ module.exports = {
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
-      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_new')
+      .execute(() => {
+        (document.querySelector('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]') as any).value = "workspace_new"
+      }, [], () => {})
+      .pause(2000)
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
       .click('*[data-id="fileSystem-modal-footer-ok-react"]')
       .currentWorkspaceIs('workspace_new')
