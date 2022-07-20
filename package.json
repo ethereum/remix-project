@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.25.0-dev",
+  "version": "0.26.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "keywords": [
@@ -96,6 +96,7 @@
     "nightwatch_local_verticalIconscontextmenu": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/verticalIconsPanel.test.js --env=chrome",
     "nightwatch_local_pluginApi": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/plugin_api_*.js --env=chrome",
     "nightwatch_local_migrate_filesystem": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/migrateFileSystem.test.js --env=chrome",
+    "nightwatch_local_proxy": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/proxy.test.js --env=chrome",
     "nightwatch_local_stress_editor": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/stressEditor.test.js --env=chromeDesktop",
     "nightwatch_local_search": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/search.test.js --env=chromeDesktop",
     "nightwatch_local_providers": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/providers.test.js --env=chromeDesktop",

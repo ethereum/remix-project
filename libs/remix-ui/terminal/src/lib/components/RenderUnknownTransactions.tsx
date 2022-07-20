@@ -33,7 +33,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
       </div>
       {showTableHash.includes(tx.hash) ? showTable({
         hash: tx.hash,
-        status: receipt !== null ? receipt.status : null,
+        status: receipt ? receipt.status : null,
         isCall: tx.isCall,
         contractAddress: tx.contractAddress,
         data: tx,
