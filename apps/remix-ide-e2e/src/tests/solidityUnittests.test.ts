@@ -177,11 +177,18 @@ module.exports = {
       // creating a new workspace
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_new')
       // eslint-disable-next-line dot-notation
-      .execute(() => {
-        (document.querySelector('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]') as any).value = "workspace_new"
-      }, [], () => {})
+      //.execute(() => {
+      //  (document.querySelector('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]') as any).value = "workspace_new"
+      //}, [], () => {})
       .pause(2000)
+      .getValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', (result) => {
+        console.log(result)
+        browser.assert.equal(result.value, 'workspace_new')
+      })
+      //.verify.attributeEquals('*[data-id="modalDialogCustomPromptTextCreate"]', 'value', 'workspace_new')
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
       .click('*[data-id="fileSystem-modal-footer-ok-react"]')
       .currentWorkspaceIs('workspace_new')
