@@ -129,7 +129,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      
+      .pause(5000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
         'Incorrect content')
