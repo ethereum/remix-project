@@ -14,7 +14,12 @@ yarn run remixd &
 sleep 5
 
 yarn run build:e2e
+grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort
+echo -------
+grep -IRiL "\'\@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort
+echo -------
 grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort
+echo -------
 grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort | circleci tests split 
 cat dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort | circleci tests split )
