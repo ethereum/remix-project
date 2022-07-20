@@ -280,8 +280,7 @@ module.exports = {
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner')
-      .pause(5000)
-      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementNotPresent('.fa-spinner', 120000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix')
   },
