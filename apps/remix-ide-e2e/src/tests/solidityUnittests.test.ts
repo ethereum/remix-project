@@ -164,7 +164,7 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
   },
 
-  'Changing current path when workspace changed and checking test files creation #group4': function (browser: NightwatchBrowser) {
+  'Changing current path when workspace changed and checking test files creation #flaky #group4': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('settings')
