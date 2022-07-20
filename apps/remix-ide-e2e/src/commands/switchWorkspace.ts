@@ -6,6 +6,7 @@ class switchWorkspace extends EventEmitter {
     this.api.waitForElementVisible('[data-id="workspacesSelect"]')
     .click('[data-id="workspacesSelect"]')
     .waitForElementVisible(`[data-id="dropdown-item-${workspaceName}"]`)
+    .pause(2000)
     .click(`[data-id="dropdown-item-${workspaceName}"]`)
     .perform((done) => {
       done()
