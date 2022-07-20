@@ -159,7 +159,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
 
-  'Should create ERC721 workspace with files #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -209,8 +209,10 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group3': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="workspaceCreate"]')
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
@@ -236,7 +238,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
-  'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group3': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceRename"]') // rename workspace_name
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
@@ -254,7 +256,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
-  'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
+  'Should delete a workspace #group3': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('workspace_name_1')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
