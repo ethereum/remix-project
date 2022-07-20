@@ -178,9 +178,9 @@ module.exports = {
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_new')
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
-      .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
+      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
       .currentWorkspaceIs('workspace_new')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
