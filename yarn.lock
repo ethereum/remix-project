@@ -16570,7 +16570,7 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-nightwatch@^2.2.2:
+nightwatch@2.2.3:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/nightwatch/-/nightwatch-2.2.3.tgz#07291c03130df5a39aa9ae2babd718048078866f"
   integrity sha512-W2effHkwoSu+eSXsnkraiUW/CdO9B9+yiSqDeUZ3h9vL3WZmA/hfzC4ZQnrWzXJd4qvj2CsgCeKo9njSvlplog==
