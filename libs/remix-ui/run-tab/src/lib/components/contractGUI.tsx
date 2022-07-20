@@ -348,9 +348,9 @@ export function ContractGUI (props: ContractGUIProps) {
                 !useLastProxy ?
                 <div className="mb-2">
                   <label className='mt-2 text-left d-block'>Proxy Address: </label>
-                  <input style={{ height: 32 }} className="form-control udapp_input" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} />
+                  <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} />
                 </div> :
-                <span className='text-capitalize' style={{ fontSize: '.8em' }}>{ proxyAddress || 'No proxy address available' }</span>
+                <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || 'No proxy address available' }</span>
               }
             </div>
           </div>
