@@ -1,5 +1,6 @@
 import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { fileDecoration } from '@remix-ui/file-decorators';
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 export interface JSONStandardInput {
@@ -73,6 +74,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
