@@ -48,7 +48,7 @@ const testScript = `
                     text: '2',
                     owner: 'code-parser',
                     bubble: true,
-                    commment: 'error on owner',
+                    comment: 'error on owner',
                 }
     let decorator2: any = {
                     path: 'contracts/2_Owner.sol',
@@ -60,7 +60,7 @@ const testScript = `
                     text: '',
                     owner: 'code-parser',
                     bubble: true,
-                    commment: 'modified',
+                    comment: 'modified',
                 }
     remix.call('fileDecorator' as any, 'setFileDecorators', [decorator, decorator2])
     
@@ -74,7 +74,7 @@ const testScript = `
                     text: '2',
                     owner: 'code-parser',
                     bubble: true,
-                    commment: 'warning on storage',
+                    comment: 'warning on storage',
                 }
     remix.call('fileDecorator' as any, 'setFileDecorators', decorator)
     
@@ -88,7 +88,7 @@ const testScript = `
                     text: 'w',
                     owner: 'dgit',
                     bubble: true,
-                    commment: '',
+                    comment: '',
                 }
     remix.call('fileDecorator' as any, 'setFileDecorators', decorator)
     

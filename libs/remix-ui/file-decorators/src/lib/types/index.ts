@@ -17,7 +17,7 @@ export enum fileDecorationType {
     owner: string,
     workspace?: any
     tooltip?: string
-    commment?: string[] | string
+    comment?: string[] | string
   }
 
   export interface FileType {
