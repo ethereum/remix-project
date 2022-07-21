@@ -17,7 +17,7 @@ import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-projec
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
@@ -208,7 +208,6 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener(new AstWalker())
 
     this.notification = new NotificationPlugin()
 
@@ -232,7 +231,6 @@ class AppComponent {
       compilersArtefacts,
       networkModule,
       offsetToLineColumnConverter,
-      contextualListener,
       terminal,
       web3Provider,
       compileAndRun,
@@ -363,7 +361,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 

@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import { RemixUiEditorContextView, astNode } from '@remix-ui/editor-context-view'
 import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { language, conf } from './syntax'
@@ -458,22 +457,6 @@ export const EditorUI = (props: EditorUIProps) => {
         options={{ glyphMargin: true, readOnly: true}}
         defaultValue={defaultEditorValue}
       />
-      <div className="contextview">
-        <RemixUiEditorContextView
-          hide={false}
-          gotoLine={(line, column) => props.plugin.call('editor', 'gotoLine', line, column)}
-          openFile={(file) => props.plugin.call('fileManager', 'switchFile', file)}
-          getLastCompilationResult={() => { return props.plugin.call('compilerArtefacts', 'getLastCompilationResult') } }
-          offsetToLineColumn={(position, file, sources, asts) => { return props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn', position, file, sources, asts) } }
-          getCurrentFileName={() => { return props.plugin.call('fileManager', 'file') } }
-          onContextListenerChanged={(listener) => { props.plugin.on('contextualListener', 'contextChanged', listener) }}
-          onCurrentFileChanged={(listener) => { props.plugin.on('fileManager', 'currentFileChanged', listener) }}
-          referencesOf={(node: astNode) => { return props.plugin.call('contextualListener', 'referencesOf', node) }}
-          getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
-          gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}
-          declarationOf={(node: astNode) => { return props.plugin.call('contextualListener', 'declarationOf', node) }}
-        />
-      </div>
     </div>
   )
 }
