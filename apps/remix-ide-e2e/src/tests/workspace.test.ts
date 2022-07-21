@@ -239,6 +239,8 @@ module.exports = {
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .pause(2000)
       .switchWorkspace('workspace_name')
+      .switchWorkspace('workspace_name')
+      .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
