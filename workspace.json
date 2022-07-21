@@ -1270,6 +1270,21 @@
           }
         }
       }
+    },
+    "remix-ui-file-decorators": {
+      "root": "libs/remix-ui/file-decorators",
+      "sourceRoot": "libs/remix-ui/file-decorators/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/file-decorators/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/file-decorators/**/*"]
+          }
+        }
+      }
     }
   },
   "cli": {
