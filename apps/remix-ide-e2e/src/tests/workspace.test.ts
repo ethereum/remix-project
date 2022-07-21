@@ -273,6 +273,7 @@ module.exports = {
 
     'Should clone a repository #group2 #flaky': function (browser: NightwatchBrowser) {
       browser
+        .clickLaunchIcon('filePanel')
         .waitForElementVisible('[data-id="cloneGitRepository"]')
         .click('[data-id="cloneGitRepository"]')
         .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
