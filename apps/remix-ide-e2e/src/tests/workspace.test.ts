@@ -209,7 +209,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -234,6 +234,7 @@ module.exports = {
       .pause(2000)
       .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .currentWorkspaceIs('workspace_name')
   },
 
   'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
@@ -248,9 +249,11 @@ module.exports = {
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .switchWorkspace('workspace_name_1')
       .pause(2000)
+      .currentWorkspaceIs('workspace_name_1')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .switchWorkspace('workspace_name_renamed')
       .pause(2000)
+      .currentWorkspaceIs('workspace_name_renamed')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
