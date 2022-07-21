@@ -1,6 +1,11 @@
 # Remixd
 
-`remixd` is an NPM module that intends to be used with [Remix IDE](https://remix.ethereum.org/) web and desktop applications. It establishes a two-way websocket connection between the local computer and Remix IDE for a particular project directory.
+[![npm version](https://badge.fury.io/js/%40remix-project%2Fremixd.svg)](https://www.npmjs.com/package/@remix-project/remixd)
+[![npm](https://img.shields.io/npm/dt/@remix-project/remixd.svg?label=Total%20Downloads&logo=npm)](https://www.npmjs.com/package/@remix-project/remixd)
+[![npm](https://img.shields.io/npm/dw/@remix-project/remixd.svg?logo=npm)](https://www.npmjs.com/package/@remix-project/remixd)
+
+
+`@remix-project/remixd` is an NPM module that intends to be used with [Remix IDE](https://remix.ethereum.org/) web and desktop applications. It establishes a two-way websocket connection between the local computer and Remix IDE for a particular project directory.
 
 `remixd` can be used to setup a development environment with other popular frameworks like Hardhat, Truffle, Slither etc.
 
