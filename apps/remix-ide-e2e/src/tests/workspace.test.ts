@@ -209,7 +209,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #group3': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group3  #flaky': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
@@ -271,7 +271,7 @@ module.exports = {
 
     // CLONE REPOSITORY E2E START
 
-    'Should clone a repository #group2 #flaky': function (browser: NightwatchBrowser) {
+    'Should clone a repository #group2': function (browser: NightwatchBrowser) {
       browser
         .clickLaunchIcon('filePanel')
         .waitForElementVisible('[data-id="cloneGitRepository"]')
