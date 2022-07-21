@@ -88,6 +88,7 @@
       "@remix-ui/permission-handler": [
         "libs/remix-ui/permission-handler/src/index.ts"
       ],
+      "@remix-ui/file-decorators": ["libs/remix-ui/file-decorators/src/index.ts"],
       "@remix-ui/tooltip-popup": ["libs/remix-ui/tooltip-popup/src/index.ts"]
     }
   },
