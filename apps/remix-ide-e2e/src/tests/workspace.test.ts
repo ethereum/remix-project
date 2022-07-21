@@ -16,7 +16,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
   },
 
-  'Editor should be focused on the 3_Ballot.sol #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Editor should be focused on the 3_Ballot.sol #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .refresh()
@@ -271,7 +271,7 @@ module.exports = {
 
     // CLONE REPOSITORY E2E START
 
-    'Should clone a repository #group2': function (browser: NightwatchBrowser) {
+    'Should clone a repository #group2 #flaky': function (browser: NightwatchBrowser) {
       browser
         .waitForElementVisible('[data-id="cloneGitRepository"]')
         .click('[data-id="cloneGitRepository"]')
