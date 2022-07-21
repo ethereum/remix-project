@@ -88,7 +88,7 @@
   .custom-dropdown-items {
     padding: 0.25rem 0.25rem;
     border-radius: .25rem;
-    background: var(--light);
+    background: var(--custom-select);
   }
   .custom-dropdown-items a {
     border-radius: .25rem;
