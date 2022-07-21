@@ -331,7 +331,8 @@ export class Compiler {
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
-          input: input
+          input: input,
+          timestamp: this.state.compilationStartTime
         })
       }
     }
