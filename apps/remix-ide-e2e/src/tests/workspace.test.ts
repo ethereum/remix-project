@@ -16,7 +16,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
   },
 
-  'Editor should be focused on the 3_Ballot.sol #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Editor should be focused on the 3_Ballot.sol #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .refresh()
@@ -33,7 +33,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E START
 
-  'Should create Remix default workspace with files': function (browser: NightwatchBrowser) {
+  'Should create Remix default workspace with files #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
@@ -90,7 +90,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemREADME.txt"]')
   },
 
-  'Should create blank workspace with no files': function (browser: NightwatchBrowser) {
+  'Should create blank workspace with no files #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -111,7 +111,7 @@ module.exports = {
       });
   },
 
-  'Should create ERC20 workspace with files': function (browser: NightwatchBrowser) {
+  'Should create ERC20 workspace with files #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -159,7 +159,7 @@ module.exports = {
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
 
-  'Should create ERC721 workspace with files': function (browser: NightwatchBrowser) {
+  'Should create ERC721 workspace with files #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -209,8 +209,9 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #flaky #group3': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
@@ -239,7 +240,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
-  'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group3': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceRename"]') // rename workspace_name
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
@@ -257,7 +258,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
-  'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
+  'Should delete a workspace #group3': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('workspace_name_1')
       .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
