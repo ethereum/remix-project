@@ -7,6 +7,8 @@ import { cairoLang, cairoConf } from './cairoSyntax'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
+import monaco from '../types/monaco'
+import { MarkerSeverity } from 'monaco-editor'
 
 type cursorPosition = {
   startLineNumber: number,
@@ -70,6 +72,8 @@ export interface EditorUIProps {
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+    addErrorMarker: (errors: []) => void
+    clearErrorMarkers: (sources: any) => void
   }
 }
 
@@ -344,6 +348,63 @@ export const EditorUI = (props: EditorUIProps) => {
   
   props.editorAPI.addDecoration = (marker: sourceMarker, filePath: string, typeOfDecoration: string) => {
     return addDecoration(marker, filePath, typeOfDecoration)
+  }
+
+  props.editorAPI.addErrorMarker = async (errors: []) => {
+
+    const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
+    console.log(errors)
+    for (const error of errors) {
+      const marker = (error as any).error
+      const lineColumn = (error as any).lineColumn
+      let filePath = marker.sourceLocation.file
+
+      if (!filePath) return
+      const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
+      filePath = fileFromUrl.file
+      const model = editorModelsState[filePath]?.model
+      console.log(filePath)
+      const errorServerityMap = {
+        'error': MarkerSeverity.Error,
+        'warning': MarkerSeverity.Warning,
+        'info': MarkerSeverity.Info
+      }
+      if (model) {
+        const markerData: monaco.editor.IMarkerData = {
+          severity: errorServerityMap[marker.severity],
+          startLineNumber: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
+          startColumn: ((lineColumn.start && lineColumn.start.column) || 0) + 1,
+          endLineNumber: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
+          endColumn: ((lineColumn.end && lineColumn.end.column) || 0) + 1,
+          message: marker.message,
+        }
+        console.log(markerData)
+        if (!allMarkersPerfile[filePath]) {
+          allMarkersPerfile[filePath] = []
+        }
+        allMarkersPerfile[filePath].push(markerData)
+      }
+    }
+    console.log(allMarkersPerfile)
+    for (const filePath in allMarkersPerfile) {
+      const model = editorModelsState[filePath]?.model
+      if (model) {
+        console.log(model)
+        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', allMarkersPerfile[filePath])
+      }
+    }
+  }
+
+  props.editorAPI.clearErrorMarkers = async (sources: any) => {
+    if (sources) {
+      for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
+        const filePath = source
+        const model = editorModelsState[filePath]?.model
+        if (model) {
+          monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [])
+        }
+      }
+    }
   }
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
