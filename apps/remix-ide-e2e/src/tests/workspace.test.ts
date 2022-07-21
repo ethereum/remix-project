@@ -16,7 +16,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
   },
 
-  'Editor should be focused on the 3_Ballot.sol #group1': function (browser: NightwatchBrowser) {
+  'Editor should be focused on the 3_Ballot.sol #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .refresh()
@@ -33,7 +33,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E START
 
-  'Should create Remix default workspace with files #group4 #flaky ': function (browser: NightwatchBrowser) {
+  'Should create Remix default workspace with files #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
