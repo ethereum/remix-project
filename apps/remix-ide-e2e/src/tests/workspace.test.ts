@@ -33,7 +33,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E START
 
-  'Should create Remix default workspace with files #group4': function (browser: NightwatchBrowser) {
+  'Should create Remix default workspace with files #group4 #flaky ': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
@@ -209,7 +209,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #flaky #group3': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group3': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
