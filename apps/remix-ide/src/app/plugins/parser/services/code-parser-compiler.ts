@@ -156,7 +156,7 @@ export default class CodeParserCompiler {
                 text: errors.length,
                 owner: 'code-parser',
                 bubble: true,
-                commment: errors.map((error) => error.message),
+                comment: errors.map((error) => error.message),
             }
             decorators.push(decorator)
         }
