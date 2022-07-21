@@ -188,7 +188,7 @@ export function Workspace () {
   }
 
   return (
-    <div className='remixui_container'>
+    <div className='px-2 remixui_container'>
       <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
