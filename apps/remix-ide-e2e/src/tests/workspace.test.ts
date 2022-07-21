@@ -224,6 +224,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(1000)
       .addFile('test.sol', { content: 'test' })
+      .addFile('test.sol', { content: 'test' })
+      .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
