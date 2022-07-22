@@ -19,6 +19,11 @@ export class FileDecorator extends Plugin {
         super(profile)
     }
 
+    onActivation(): void {
+        this.on('filePanel', 'setWorkspace', async () => {
+            await this.clearAllFileDecorators()
+        })
+    }
 
     /**
      * 
