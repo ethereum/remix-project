@@ -14,7 +14,7 @@ export enum fileDecorationType {
     fileStateIcon: string | HTMLDivElement | JSX.Element,
     bubble: boolean,
     text?: string,
-    owner: string,
+    owner?: string,
     workspace?: any
     tooltip?: string
     comment?: string[] | string
