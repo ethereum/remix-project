@@ -255,6 +255,7 @@ module.exports = {
       .switchWorkspace('workspace_name')
       .switchWorkspace('workspace_name')
       .pause(5000)
+      .currentWorkspaceIs('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
 
