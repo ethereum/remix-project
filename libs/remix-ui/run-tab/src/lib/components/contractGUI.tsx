@@ -25,6 +25,16 @@ export function ContractGUI (props: ContractGUIProps) {
   const basicInputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
+    if (props.deployOption && Array.isArray(props.deployOption)) {
+      if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy') {
+        handleDeployProxySelect(props.deployOption[0].active)
+      } else if (props.deployOption[1] && props.deployOption[1].title === 'Deploy with Proxy') {
+        handleUpgradeImpSelect(props.deployOption[1].active)
+      }
+    }
+  }, [props.deployOption])
+
+  useEffect(() => {
     if (props.title) {
       setTitle(props.title)
     } else if (props.funcABI.name) {
@@ -179,9 +189,7 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleDeployProxy(!toggleDeployProxy)
   }
 
-  const handleDeployProxySelect = (e) => {
-    const value = e.target.checked
-
+  const handleDeployProxySelect = (value: boolean) => {
     if (value) setToggleUpgradeImp(false)
     setToggleDeployProxy(value)
     setDeployState({ upgrade: false, deploy: value })
@@ -191,9 +199,7 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleUpgradeImp(!toggleUpgradeImp)
   }
 
-  const handleUpgradeImpSelect = (e) => {
-    const value = e.target.checked
-
+  const handleUpgradeImpSelect = (value: boolean) => {
     setToggleUpgradeImp(value)
     if (value) {
       setToggleDeployProxy(false)
@@ -264,7 +270,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 data-id="contractGUIDeployWithProxy"
                 className="form-check-input custom-control-input"
                 type="checkbox"
-                onChange={handleDeployProxySelect}
+                onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
               <label
@@ -307,7 +313,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 data-id="contractGUIUpgradeImplementation"
                 className="form-check-input custom-control-input"
                 type="checkbox"
-                onChange={handleUpgradeImpSelect}
+                onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
               <label
