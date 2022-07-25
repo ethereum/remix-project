@@ -104,3 +104,4 @@ export const UUPSupgradeAbi = {
     "type": "function"
 }
 export const EnableProxyURLParam = 'deployProxy'
+export const EnableUpgradeURLParam = 'upgradeProxy'

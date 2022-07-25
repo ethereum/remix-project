@@ -1,6 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import { ContractAST, ContractSources, DeployOptions } from '../types/contract'
-import { EnableProxyURLParam, UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups'
+import { EnableProxyURLParam, EnableUpgradeURLParam, UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups'
 
 const proxyProfile = {
   name: 'openzeppelin-proxy',
@@ -53,9 +53,10 @@ export class OpenZeppelinProxy extends Plugin {
             const abi = contracts[name].abi
             const initializeInput = abi.find(node => node.name === 'initialize')
             const isDeployWithProxyEnabled: boolean = await this.call('config', 'getAppParameter', EnableProxyURLParam) || false
+            const isDeployWithUpgradeEnabled: boolean = await this.call('config', 'getAppParameter', EnableUpgradeURLParam) || false
     
             options[name] = {
-              options: [{ title: 'Deploy with Proxy', active: isDeployWithProxyEnabled }, { title: 'Upgrade with Proxy', active: false }],
+              options: [{ title: 'Deploy with Proxy', active: isDeployWithProxyEnabled }, { title: 'Upgrade with Proxy', active: isDeployWithUpgradeEnabled }],
               initializeOptions: {
                 inputs: initializeInput,
                 initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
