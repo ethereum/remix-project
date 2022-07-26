@@ -18,7 +18,7 @@ export function RecorderUI (props: RecorderProps) {
   }
 
   useEffect(() => {
-    if (props.currentFile.endsWith('.json')) setEnableRunButton(false)
+    if (props.currentFile && props.currentFile.endsWith('.json')) setEnableRunButton(false)
     else setEnableRunButton(true)
   }, [props.currentFile])
 

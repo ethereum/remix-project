@@ -12,6 +12,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
 
   useEffect(() => {
+    setToggleExpander(false)
     if (props.plugins) {
       const p = Object.values(props.plugins).find((pluginRecord) => {
         return pluginRecord.active === true
@@ -26,22 +27,21 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
 
   return (
     <header className='d-flex flex-column'>
-      <div className="swapitHeader px-3 pt-3 pb-0 d-flex flex-row">
-      <h6 data-id='sidePanelSwapitTitle'>
-        {/* @ts-ignore */}
-        <FormattedMessage id={plugin?.profile.intlId || 'defaultId'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
-      </h6>
-        <div className="d-flex flex-row">
+      <div className="swapitHeader px-3 pt-2 pb-0 d-flex flex-row">
+        <h6 className="mb-2" data-id='sidePanelSwapitTitle'>
+          {/* @ts-ignore */}
+          <FormattedMessage id={plugin?.profile.intlId || 'defaultId'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
+        </h6>
+        <div className="mt-2 d-flex flex-row">
           <div className="d-flex flex-row">
-            {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (<i aria-hidden="true" className="text-success fas fa-check" title="Maintained by Remix"></i>)}
-            {plugin?.profile.documentation && (<a href={plugin.profile.documentation} className="titleInfo mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>)}
+            {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (<i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check" title="Maintained by Remix"></i>)}
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass} title="Plugin info">
-            <i className={`px-2 ml-2 pt-1 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+            <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
           </div>
         </div>
       </div>
-      <div className={`bg-light p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
+      <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Author:</label>
           <span> { plugin?.profile.author } </span>
@@ -53,7 +53,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         {plugin?.profile?.documentation && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Documentation:</label>
           <span>
-            <a href={plugin?.profile?.documentation} className="titleInfo mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
+            <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
           </span>
         </span>}
         {plugin?.profile?.description && <span className="d-flex flex-row align-items-baseline">
