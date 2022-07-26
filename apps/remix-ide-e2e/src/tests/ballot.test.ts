@@ -134,6 +134,27 @@ module.exports = {
       .sendKeys('*[data-id$="scConfigFilePathInput"]', browser.Keys.ENTER)
       .openFile('Untitled.sol')
       .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
+  },
+
+  'Compile and deploy sample yul file': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('sample.yul', {content: yulSample})
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      .click('*[data-id="scManualConfiguration"]')
+      .waitForElementVisible('select[id="compilierLanguageSelector"]', 10000)
+      .click('select[id="compilierLanguageSelector"]')
+      .click('select[id="compilierLanguageSelector"] option[value=Yul]')
+      .waitForElementContainsText('[data-id="compiledContracts"]', 'Contract', 60000)
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .testFunction('last',
+        {
+          status: 'true Transaction mined and execution succeed',
+          to: 'Contract.(constructor)'
+        })
+      .pause(3000)
       .end()
   }
 }
@@ -386,5 +407,20 @@ const configFile = `
 		},
 		"evmVersion": "byzantium"
 	}
+}
+`
+
+const yulSample = `
+object "Contract" {
+  code {
+      function power(base, exponent) -> result
+      {
+          result := 1
+          for { let i := 0 } lt(i, exponent) { i := add(i, 1) }
+          {
+              result := mul(result, base)
+          }
+      }
+  }
 }
 `
