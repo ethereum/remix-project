@@ -349,7 +349,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <Toaster message={state.toastMessage} />
       <div className="px-2" ref={debuggerTopRef}>
         <div>
-          <div className="mb-2 debuggerConfig custom-control custom-checkbox">
+          <div className="mb-2 debuggerConfig custom-control custom-checkbox" title="Using Generated Sources lets you step into compiler outputs while debugging.">
             <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
