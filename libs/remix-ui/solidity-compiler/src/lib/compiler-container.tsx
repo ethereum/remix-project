@@ -378,6 +378,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
           const compilerPath = state.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
+            // @ts-ignore
+            api.call('notification', 'toast', `Updating compiler version to match current contract file pragma i.e ${_retrieveVersion(compilerPath)}`)
             setState((prevState) => {
               return { ...prevState, selectedVersion: compilerPath }
             })
@@ -753,7 +755,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation' target={'_blank'}>
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="overlay-tooltip-hardhat">
-                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>
+                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
                       <FormattedMessage id='solidity.learnHardhat' defaultMessage='Learn how to use Hardhat Compilation' />
                     </span>
                   </Tooltip>
@@ -773,7 +775,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/truffle.html#enable-truffle-compilation' target={'_blank'}>
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="overlay-tooltip-truffle">
-                    <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>
+                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
                       <FormattedMessage id='solidity.learnTruffle' defaultMessage='Learn how to use Truffle Compilation' />
                     </span>
                   </Tooltip>
