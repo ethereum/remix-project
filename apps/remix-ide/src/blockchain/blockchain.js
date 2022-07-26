@@ -617,30 +617,43 @@ export class Blockchain extends Plugin {
         const timestamp = tx.timestamp
 
         this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-        this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
-          async (error, result) => {
-            if (error) return reject(error)
-
-            const isVM = this.executionContext.isVM()
-            if (isVM && tx.useCall) {
-              try {
-                result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
-              } catch (e) {
-                console.log('unable to retrieve back the "call" hash', e)
+        try {
+          this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
+            async (error, result) => {
+              if (error) {
+                if (typeof (error) !== 'string') {
+                  if (error.message) error = error.message
+                  else {
+                    try { error = 'error: ' + JSON.stringify(error) } catch (e) { console.log(e) }
+                  }
+                }
+                return reject(error)
               }
-            }
-            const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
-
-            if (error && (typeof (error) !== 'string')) {
-              if (error.message) error = error.message
-              else {
-                try { error = 'error: ' + JSON.stringify(error) } catch (e) { console.log(e) }
+  
+              const isVM = this.executionContext.isVM()
+              if (isVM && tx.useCall) {
+                try {
+                  result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
+                } catch (e) {
+                  console.log('unable to retrieve back the "call" hash', e)
+                }
               }
+              const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+
+              this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+              return resolve({ result, tx })
             }
-            return resolve({ result, tx })
+          )
+        } catch (err) {
+          let error = err
+          if (error && (typeof (error) !== 'string')) {
+            if (error.message) error = error.message
+            else {
+              try { error = 'error: ' + JSON.stringify(error) } catch (e) { console.log(e) }
+            }
           }
-        )
+          return reject(error)
+        }
       })
     }
     try {

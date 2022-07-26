@@ -196,7 +196,7 @@ export function Workspace () {
   }
 
   return (
-    <div className='remixui_container'>
+    <div className='px-2 remixui_container'>
       <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
@@ -261,6 +261,7 @@ export function Workspace () {
                     title={intl.formatMessage({id: 'filePanel.workspace.restore', defaultMessage: 'Restore Workspaces Backup'})}>
                   </span>
                   <span
+                    hidden={currentWorkspace === LOCALHOST}
                     id='cloneGitRepository'
                     data-id='cloneGitRepository'
                     onClick={(e) => {
