@@ -26,11 +26,8 @@ export function ContractGUI (props: ContractGUIProps) {
 
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
-      if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy') {
-        handleDeployProxySelect(props.deployOption[0].active)
-      } else if (props.deployOption[1] && props.deployOption[1].title === 'Deploy with Proxy') {
-        handleUpgradeImpSelect(props.deployOption[1].active)
-      }
+      if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy' && props.deployOption[0].active) handleDeployProxySelect(true)
+      else if (props.deployOption[1] && props.deployOption[1].title === 'Upgrade with Proxy' && props.deployOption[1].active)  handleUpgradeImpSelect(true)
     }
   }, [props.deployOption])
 
