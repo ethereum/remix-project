@@ -149,12 +149,8 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .testFunction('last',
-        {
-          status: 'true Transaction mined and execution succeed',
-          to: 'Contract.(constructor)'
-        })
-      .pause(3000)
+      .journalLastChildIncludes('Contract.(constructor)')
+      .journalLastChildIncludes('data: 0x602...0565b')
       .end()
   }
 }
