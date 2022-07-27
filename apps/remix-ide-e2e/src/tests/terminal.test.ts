@@ -161,7 +161,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: expected \'14\' to equal \'34\'')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0 passing, 1 failing')
   },
-  'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
+  'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .addFile('printHardhatlog.sol', { content: hardhatLog })
