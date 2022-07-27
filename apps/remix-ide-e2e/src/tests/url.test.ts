@@ -124,6 +124,41 @@ module.exports = {
       })
   },
 
+  'Should select deploy with proxy option from URL params': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#optimize=false&runs=200&deployProxy=true')
+      .refresh()
+      .pause(5000)
+      .switchWorkspace('default_workspace')
+      .addFile('myTokenV1.sol', sources[1]['myTokenV1.sol'])
+      .clickLaunchIcon('solidity')
+      .pause(2000)
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
+      .clickLaunchIcon('udapp')
+      .click('select.udapp_contractNames')
+      .click('select.udapp_contractNames option[value=MyToken]')
+      .waitForElementPresent('[data-id="contractGUIDeployWithProxyLabel"]')
+      .expect.element('[data-id="contractGUIDeployWithProxy"]').to.be.selected
+  },
+
+  'Should select upgrade with proxy option from URL params': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
+      .refresh()
+      .pause(5000)
+      .openFile('myTokenV1.sol')
+      .clickLaunchIcon('solidity')
+      .pause(2000)
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
+      .clickLaunchIcon('udapp')
+      .click('select.udapp_contractNames')
+      .click('select.udapp_contractNames option[value=MyToken]')
+      .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
+      .expect.element('[data-id="contractGUIUpgradeImplementation"]').to.be.selected
+  },
+
   'Should load using URL compiler params': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
