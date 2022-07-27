@@ -187,7 +187,7 @@ module.exports = {
             ).pause(1000)
             .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
     },
-    'Should disable/enable button when edited content changed #group1': function (browser: NightwatchBrowser) {
+    'Should disable/enable button when edited content changed #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
@@ -225,7 +225,7 @@ module.exports = {
             .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
     },
 
-    'should clear search #group1': function (browser: NightwatchBrowser) {
+    'should clear search #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'nodata').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(1000)
