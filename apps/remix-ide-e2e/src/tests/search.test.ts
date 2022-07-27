@@ -164,7 +164,7 @@ module.exports = {
                 browser.assert.ok(content.includes("Storage' contract"), 'should replace text ok')
             })
     },
-    'Should hide button when edited content is the same #group2 #flaky': function (browser: NightwatchBrowser) {
+    'Should hide button when edited content is the same #group2': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
             .addFile('test.sol', { content: '123' })
             .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
