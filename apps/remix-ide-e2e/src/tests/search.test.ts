@@ -191,6 +191,7 @@ module.exports = {
         browser
             .waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
+            .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', '123').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', 'replaced').pause(1000)
