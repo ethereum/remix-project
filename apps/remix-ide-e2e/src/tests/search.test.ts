@@ -4,10 +4,11 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+    '@disbled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', true)
     },
-    'Should find text': function (browser: NightwatchBrowser) {
+    'Should find text #group1': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
             .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
             .waitForElementVisible('*[id="search_include"]')
@@ -26,7 +27,7 @@ module.exports = {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
             })
     },
-    'Should find text with exclude': function (browser: NightwatchBrowser) {
+    'Should find text with exclude #group1': function (browser: NightwatchBrowser) {
         browser
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'contract').pause(1000)
@@ -42,7 +43,7 @@ module.exports = {
             .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
             .clearValue('*[id="search_exclude"]').setValue('*[id="search_exclude"]', '.*/**/*')
     },
-    'Should find regex': function (browser: NightwatchBrowser) {
+    'Should find regex #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]').pause(2000)
@@ -57,7 +58,7 @@ module.exports = {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 4)
             })
     },
-    'Should find matchcase': function (browser: NightwatchBrowser) {
+    'Should find matchcase #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="search_use_regex"]').click('*[data-id="search_use_regex"]')
             .waitForElementVisible('*[data-id="search_case_sensitive"]').click('*[data-id="search_case_sensitive"]').pause(4000)
@@ -71,7 +72,7 @@ module.exports = {
             })
             .waitForElementContainsText('*[data-id="search_results"]', 'STORAGE.TEST.JS', 60000)
     },
-    'Should find matchword': function (browser: NightwatchBrowser) {
+    'Should find matchword #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="search_case_sensitive"]').click('*[data-id="search_case_sensitive"]')
             .waitForElementVisible('*[data-id="search_whole_word"]').click('*[data-id="search_whole_word"]').pause(2000)
@@ -81,7 +82,7 @@ module.exports = {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 15)
             })
     },
-    'Should replace text': function (browser: NightwatchBrowser) {
+    'Should replace text #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
             .waitForElementVisible('*[id="search_replace"]')
@@ -95,7 +96,7 @@ module.exports = {
                 browser.assert.ok(content.includes('replacing deployer for a constructor'), 'should replace text ok')
             })
     },
-    'Should replace text without confirmation': function (browser: NightwatchBrowser) {
+    'Should replace text without confirmation #group1': function (browser: NightwatchBrowser) {
         browser.click('*[data-id="confirm_replace_label"]').pause(500)
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'replacing').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(1000)
@@ -108,7 +109,7 @@ module.exports = {
                 browser.assert.ok(content.includes('replacing2 deployer for a constructor'), 'should replace text ok')
             })
     },
-    'Should replace all & undo': function (browser: NightwatchBrowser) {
+    'Should replace all & undo #group1': function (browser: NightwatchBrowser) {
         browser
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
@@ -127,7 +128,7 @@ module.exports = {
                 browser.assert.ok(content.includes('title Storage'), 'should undo text ok')
             })
     },
-    'Should replace all & undo & switch between files': function (browser: NightwatchBrowser) {
+    'Should replace all & undo & switch between files #group1': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
@@ -163,7 +164,7 @@ module.exports = {
                 browser.assert.ok(content.includes("Storage' contract"), 'should replace text ok')
             })
     },
-    'Should hide button when edited content is the same': function (browser: NightwatchBrowser) {
+    'Should hide button when edited content is the same #group2 #flaky': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
             .addFile('test.sol', { content: '123' })
             .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
@@ -184,7 +185,7 @@ module.exports = {
             ).pause(1000)
             .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
     },
-    'Should disable/enable button when edited content changed': function (browser: NightwatchBrowser) {
+    'Should disable/enable button when edited content changed #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
@@ -222,7 +223,7 @@ module.exports = {
             .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
     },
 
-    'should clear search': function (browser: NightwatchBrowser) {
+    'should clear search #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'nodata').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(1000)
