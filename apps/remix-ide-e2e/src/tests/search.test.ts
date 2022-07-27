@@ -173,6 +173,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', '456').pause(1000)
+            .click('*[data-id="confirm_replace_label"]').pause(500)
             .waitForElementVisible('*[data-id="replace-all-test.sol"]')
             .click('*[data-id="replace-all-test.sol"]').pause(2000)
             .getEditorValue((content) => {
