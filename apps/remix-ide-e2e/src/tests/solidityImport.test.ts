@@ -16,7 +16,7 @@ module.exports = {
     browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['test1', 'test2'])
   },
 
-  'Test Success Import #group1 #lfaky': function (browser: NightwatchBrowser) {
+  'Test Success Import #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled1.sol', sources[1]['Untitled1.sol'])
       .addFile('Untitled2.sol', sources[1]['Untitled2.sol']).pause(4000)
       .openFile('Untitled1.sol')
@@ -81,7 +81,7 @@ module.exports = {
       })
   },
 
-  'Test NPM Import (with unpkg.com) #group3 #lfaky': function (browser: NightwatchBrowser) {
+  'Test NPM Import (with unpkg.com) #group3 #flaky': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .clickLaunchIcon('filePanel')
