@@ -181,7 +181,6 @@ module.exports = {
       .click('select.udapp_contractNames')
       .click('select.udapp_contractNames option[value=MyTokenV2]')
       .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
-      .click('[data-id="contractGUIUpgradeImplementationLabel"]')
       .waitForElementPresent('[data-id="contractGUIProxyAddressLabel"]')
       .click('[data-id="contractGUIProxyAddressLabel"]')
       .waitForElementPresent('[data-id="ERC1967AddressInput"]')
