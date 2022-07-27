@@ -170,6 +170,7 @@ module.exports = {
             .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', '123').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
+            .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', '456').pause(1000)
             .waitForElementVisible('*[data-id="replace-all-test.sol"]')
