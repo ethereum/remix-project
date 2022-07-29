@@ -298,7 +298,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
         this.compilationDetails = {
           contractMap: {},
           contractsDetails: {},
-          target: source.target
+          target: source ? source.target : null
         }
       }
       if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)

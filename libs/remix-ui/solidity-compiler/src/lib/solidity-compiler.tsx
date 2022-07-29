@@ -13,6 +13,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [state, setState] = useState({
     isHardhatProject: false,
     isTruffleProject: false,
+    isFoundryProject: false,
     workspaceName: '',
     currentFile,
     configFilePath: 'compiler_config.json',
@@ -67,9 +68,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   api.onSetWorkspace = async (isLocalhost: boolean, workspaceName: string) => {
     const isHardhat = isLocalhost && await compileTabLogic.isHardhatProject()
-    const isTruffle =  await compileTabLogic.isTruffleProject()
+    const isTruffle = isLocalhost && await compileTabLogic.isTruffleProject()
+    const isFoundry = isLocalhost && await compileTabLogic.isFoundryProject()
     setState(prevState => {
-      return { ...prevState, currentFile, isHardhatProject: isHardhat, workspaceName: workspaceName, isTruffleProject:  isTruffle }
+      return { ...prevState, currentFile, isHardhatProject: isHardhat, workspaceName: workspaceName, isTruffleProject:  isTruffle, isFoundryProject: isFoundry }
     })
   }
   
@@ -171,6 +173,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           isHardhatProject={state.isHardhatProject}
           workspaceName={state.workspaceName}
           isTruffleProject={state.isTruffleProject}
+          isFoundryProject={state.isFoundryProject}
           compileTabLogic={compileTabLogic}
           tooltip={toast}
           modal={modal}
