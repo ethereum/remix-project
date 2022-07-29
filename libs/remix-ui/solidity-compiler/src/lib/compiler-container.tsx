@@ -886,7 +886,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             }>
               <span>
                 { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-                <FormattedMessage id='solidity.compile' defaultMessage='Compile' /> { typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>' }
+                <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
+                {typeof state.compiledFileName === 'string'
+                  ? extractNameFromKey(state.compiledFileName) ||
+                    `<${intl.formatMessage({
+                      id: 'solidity.noFileSelected',
+                      defaultMessage: 'no file selected',
+                    })}>`
+                  : `<${intl.formatMessage({
+                      id: 'solidity.noFileSelected',
+                      defaultMessage: 'no file selected',
+                    })}>`}
               </span>
             </OverlayTrigger>
           </button>

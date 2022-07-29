@@ -1,4 +1,9 @@
 export default {
+  'panel.author': '作者',
+  'panel.maintainedBy': '维护者',
+  'panel.documentation': '文档',
+  'panel.description': '描述',
+
   'settings.displayName': '设置',
   'settings.reset': '恢复默认设置',
   'settings.general': '常规设置',
@@ -31,6 +36,8 @@ export default {
   'filePanel.workspace.chooseTemplate': '选择一个工作空间模板',
   'filePanel.workspace.download': '下载工作空间',
   'filePanel.workspace.restore': '恢复工作空间',
+  'filePanel.workspace.clone': '克隆 Git 仓库',
+  'filePanel.workspace.enterGitUrl': '输入 Git 仓库地址',
   'filePanel.newFile': '新建文件',
   'filePanel.newFolder': '新建文件夹',
   'filePanel.rename': '重命名',
@@ -139,6 +146,7 @@ export default {
   'solidity.useConfigurationFile': '使用配置文件',
   'solidity.change': '修改',
   'solidity.compile': '编译',
+  'solidity.noFileSelected': '未选中文件',
   'solidity.compileAndRunScript': '编译且执行脚本',
   'solidity.publishOn': '发布到',
   'solidity.Assembly': '合约的汇编操作码，包含对应的solidity源程序',

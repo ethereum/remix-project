@@ -1,4 +1,9 @@
 export default {
+  'panel.author': 'Author',
+  'panel.maintainedBy': 'Maintained By',
+  'panel.documentation': 'Documentation',
+  'panel.description': 'Description',
+
   'settings.displayName': 'Settings',
   'settings.reset': 'Reset to Default settings',
   'settings.general': 'General settings',
@@ -31,6 +36,8 @@ export default {
   'filePanel.workspace.chooseTemplate': 'Choose a template',
   'filePanel.workspace.download': 'Download Workspaces',
   'filePanel.workspace.restore': 'Restore Workspaces Backup',
+  'filePanel.workspace.clone': 'Clone Git Repository',
+  'filePanel.workspace.enterGitUrl': 'Enter git repository url',
   'filePanel.newFile': 'New File',
   'filePanel.newFolder': 'New Folder',
   'filePanel.rename': 'Rename',
@@ -139,6 +146,7 @@ export default {
   'solidity.useConfigurationFile': 'Use configuration file',
   'solidity.change': 'Change',
   'solidity.compile': 'Compile',
+  'solidity.noFileSelected': 'no file selected',
   'solidity.compileAndRunScript': 'Compile and Run script',
   'solidity.publishOn': 'Publish on',
   'solidity.Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',

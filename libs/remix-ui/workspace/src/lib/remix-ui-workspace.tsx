@@ -72,7 +72,13 @@ export function Workspace () {
   }
 
   const cloneGitRepository = () => {
-    global.modal('Clone Git Repository', cloneModalMessage(), 'OK', handleTypingUrl, '')
+    global.modal(
+      intl.formatMessage({id: 'filePanel.workspace.clone', defaultMessage: 'Clone Git Repository'}),
+      cloneModalMessage(),
+      'OK',
+      handleTypingUrl,
+      ''
+    )
   }
 
   const downloadWorkspaces = async () => {
@@ -190,7 +196,13 @@ export function Workspace () {
   const cloneModalMessage = () => {
     return (
       <>
-        <input type="text" data-id="modalDialogCustomPromptTextClone" placeholder='Enter git repository url' ref={cloneUrlRef} className="form-control" />
+        <input
+          type="text"
+          data-id="modalDialogCustomPromptTextClone"
+          placeholder={intl.formatMessage({id: 'filePanel.workspace.enterGitUrl', defaultMessage: 'Enter git repository url'})}
+          ref={cloneUrlRef}
+          className="form-control"
+        />
       </>
     )
   }
@@ -269,7 +281,7 @@ export function Workspace () {
                       cloneGitRepository()
                     }}
                     className='far fa-clone remixui_menuicon'
-                    title='Clone Git Repository'>
+                    title={intl.formatMessage({id: 'filePanel.workspace.clone', defaultMessage: 'Clone Git Repository'})}>
                   </span>
                 </span>
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
