@@ -18,7 +18,7 @@ const axios = require('axios')
 const profile = {
   name: 'dGitProvider',
   displayName: 'Decentralized git',
-  description: '',
+  description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
   methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
@@ -233,12 +233,11 @@ class DGitProvider extends Plugin {
     return this.calculateLocalStorage()
   }
 
-  async clone (input) {
+  async clone (input, workspaceName, workspaceExists = false) {
     const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
     if (!permission) return false
     if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
-    await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
-
+    if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
     const cmd = {
       url: input.url,
       singleBranch: input.singleBranch,
@@ -249,9 +248,11 @@ class DGitProvider extends Plugin {
     }
 
     const result = await git.clone(cmd)
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (!workspaceExists) {
+      setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
     return result
   }
 

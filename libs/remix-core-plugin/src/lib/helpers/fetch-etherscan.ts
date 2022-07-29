@@ -1,8 +1,11 @@
-export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath) => {
+export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath, key?) => {
   let data
   const compilationTargets = {}
+  let etherscanKey
 
-  const etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+  if (!key) etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+  else etherscanKey = key
+  
   if (etherscanKey) {
     const endpoint = network.id == 1 ? 'api.etherscan.io' : 'api-' + network.name + '.etherscan.io'
     data = await fetch('https://' + endpoint + '/api?module=contract&action=getsourcecode&address='  + contractAddress + '&apikey=' + etherscanKey)
@@ -10,7 +13,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
     // etherscan api doc https://docs.etherscan.io/api-endpoints/contracts
     if (data.message === 'OK' && data.status === "1") {
       if (data.result.length) {
-        if (data.result[0].SourceCode === '') throw new Error('contract not verified in Etherscan')
+        if (data.result[0].SourceCode === '') throw new Error(`contract not verified on Etherscan ${network.name} network`)
         if (data.result[0].SourceCode.startsWith('{')) {
           data.result[0].SourceCode = JSON.parse(data.result[0].SourceCode.replace(/(?:\r\n|\r|\n)/g, '').replace(/^{{/,'{').replace(/}}$/,'}'))
         }

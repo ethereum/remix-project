@@ -63,6 +63,7 @@ function errorHandler (error: any, service: string) {
     .description('Establish a two-way websocket connection between the local computer and Remix IDE for a folder')
     .option('-u, --remix-ide  <url>', 'URL of remix instance allowed to connect')
     .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE (Default: CWD)')
+    .option('-i, --install <name>', 'Module name to install locally (Supported: ["slither"])')
     .option('-r, --read-only', 'Treat shared folder as read-only (experimental)')
     .on('--help', function () {
       console.log('\nExample:\n\n    remixd -s ./shared_project -u http://localhost:8080')
@@ -70,6 +71,11 @@ function errorHandler (error: any, service: string) {
   // eslint-disable-next-line
 
   await warnLatestVersion()
+
+  if(program.install && !program.readOnly) {
+    if (program.install.toLowerCase() === 'slither') require('./../scripts/installSlither')
+    process.exit(0)
+  }
 
   if (!program.remixIde) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You can only connect to remixd from one of the supported origins.')
@@ -160,7 +166,7 @@ function errorHandler (error: any, service: string) {
   async function isValidOrigin (origin: string): Promise<any> {
     if (!origin) return false
     const domain = getDomain(origin)
-    const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/3367e019335746b73288e3710af2922d4c8ef5a3/origins.json'
+    const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/59cedab38ae94cc72b68854b3706f11819e4a0af/origins.json'
 
     try {
       const { data } = (await Axios.get(gistUrl)) as { data: any }

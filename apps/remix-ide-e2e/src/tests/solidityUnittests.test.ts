@@ -181,7 +181,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
       .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
       .execute(function () { (document.querySelector('[data-id="fileSystem-modal-footer-ok-react"]') as HTMLElement).click() })
-      .waitForElementPresent('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      .currentWorkspaceIs('workspace_new')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
       .openFile('.deps/remix-tests/remix_tests.sol')

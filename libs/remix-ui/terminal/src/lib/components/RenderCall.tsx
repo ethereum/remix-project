@@ -15,7 +15,7 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && tx.envMode !== 'vm') {
-      modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
+      modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in Remix VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
     }

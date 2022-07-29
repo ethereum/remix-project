@@ -1,9 +1,10 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
-import { ContractDropdownProps } from '../types'
+import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
+import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [abiLabel, setAbiLabel] = useState<{
@@ -22,13 +23,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
-  const [selectedContract, setSelectedContract] = useState<string>('')
   const [compFails, setCompFails] = useState<'none' | 'block'>('none')
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
   const contractsRef = useRef<HTMLSelectElement>(null)
-  const { contractList, loadType, currentFile, compilationCount } = props.contracts
+  const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
 
   useEffect(() => {
     enableAtAddress(false)
@@ -58,21 +58,18 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         content: currentFile
       })
       enableAtAddress(true)
-    } else if (/.(.sol)$/.exec(currentFile) ||
-        /.(.vy)$/.exec(currentFile) || // vyper
-        /.(.lex)$/.exec(currentFile) || // lexon
-        /.(.contract)$/.exec(currentFile)) {
+    } else if (isContractFile(currentFile)) {
       setAbiLabel({
         display: 'none',
         content: ''
       })
-      if (!selectedContract) enableAtAddress(false)
+      if (!currentContract) enableAtAddress(false)
     } else {
       setAbiLabel({
         display: 'none',
         content: ''
       })
-      if (!selectedContract) enableAtAddress(false)
+      if (!currentContract) enableAtAddress(false)
     }
     if (currentFile) {
       enableContractNames(true)
@@ -85,11 +82,11 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [loadType, currentFile, compilationCount])
 
   useEffect(() => {
-    if (selectedContract && contractList[currentFile]) {
-      const contract = contractList[currentFile].find(contract => contract.alias === selectedContract)
+    if (currentContract && contractList[currentFile]) {
+      const contract = contractList[currentFile].find(contract => contract.alias === currentContract)
 
       if (contract) {
-        const loadedContractData = props.getSelectedContract(selectedContract, contract.compiler)
+        const loadedContractData = props.getSelectedContract(currentContract, contract.compiler)
 
         if (loadedContractData) {
           setLoadedContractData(loadedContractData)
@@ -98,7 +95,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         }
       }
     }
-  }, [selectedContract, compilationCount])
+  }, [currentContract, compilationCount])
 
   useEffect(() => {
     initSelectedContract()
@@ -108,23 +105,31 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     const contracts = contractList[currentFile]
   
     if (contracts && contracts.length > 0) {
-      const contract = contracts.find(contract => contract.alias === selectedContract)
+      const contract = contracts.find(contract => contract.alias === currentContract)
 
-      if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
+      if (!currentContract) props.setSelectedContract(contracts[0].alias)
+      else if (!contract) props.setSelectedContract(currentContract)
       // TODO highlight contractlist box with css.
     }
+  }
+
+  const isContractFile = (file) => {
+    return /.(.sol)$/.exec(file) ||
+        /.(.vy)$/.exec(file) || // vyper
+        /.(.lex)$/.exec(file) || // lexon
+        /.(.contract)$/.exec(file)
   }
 
   const enableAtAddress = (enable: boolean) => {
     if (enable) {
       setAtAddressOptions({
         disabled: false,
-        title: 'Interact with the given contract.'
+        title: 'Interact with the deployed contract - requires the .abi file or compiled .sol file to be selected in the editor (with the same compiler configuration)'
       })
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: loadedAddress ? '⚠ Compile *.sol file or select *.abi file.' : '⚠ Compile *.sol file or select *.abi file & then enter the address of deployed contract.'
+        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : 'To interact with a deployed contract, enter its address and compile its source *.sol file (with the same compiler settings) or select its .abi file in the editor. '
       })
     }
   }
@@ -133,25 +138,39 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setContractOptions({
         disabled: false,
-        title: 'Select contract for Deploy or At Address.'
+        title: 'Select a compiled contract to deploy or to use with At Address.'
       })
     } else {
       setContractOptions({
         disabled: true,
-        title: loadType === 'sol' ? '⚠ Select and compile *.sol file to deploy or access a contract.' : '⚠ Selected *.abi file allows accessing contracts, select and compile *.sol file to deploy and access one.'
+        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : 'When there is a compiled .sol file, the choice of contracts to deploy or to use with AtAddress is made here.'
       })
     }
   }
 
-  const clickCallback = (inputs, value) => {
-    createInstance(loadedContractData, value)
+  const clickCallback = (inputs, value, deployMode?: DeployMode[]) => {
+    createInstance(loadedContractData, value, deployMode)
   }
 
-  const createInstance = (selectedContract, args) => {
+  const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
     if (selectedContract.bytecodeObject.length === 0) {
       return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
-    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
+    if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
+    const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
+    const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
+  
+    if (isProxyDeployment) {
+      props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), 'Proceed', () => {
+        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+      }, 'Cancel', () => {})
+    } else if (isContractUpgrade) {
+      props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), 'Proceed', () => {
+        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+      }, 'Cancel', () => {})
+    } else {
+      props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+    }
   }
 
   const atAddressChanged = (event) => {
@@ -189,7 +208,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const handleContractChange = (e) => {
     const value = e.target.value
 
-    setSelectedContract(value)
+    props.setSelectedContract(value)
   }
 
   const checkSumWarning = () => {
@@ -214,19 +233,30 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <label className="udapp_settingsLabel">Contract</label>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={selectedContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' ? 'none' : 'block' }}>
+        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
         </select>
-        { (contractList[currentFile] || []).length <= 0 && <i style={{ display: compFails }} title="No contract compiled yet or compilation failed. Please check the compile tab for more information." className="m-2 ml-3 fas fa-times-circle udapp_errorIcon" ></i> }
         <span className="py-1" style={{ display: abiLabel.display }}>{ abiLabel.content }</span>
       </div>
       <div>
         <div className="udapp_deployDropdown">
           { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
             : loadedContractData ? <div>
-              <ContractGUI title='Deploy' funcABI={constructorInterface} clickCallBack={clickCallback} inputs={constructorInputs} widthClass='w-50' evmBC={loadedContractData.bytecodeObject} lookupOnly={false} />
+              <ContractGUI
+                title='Deploy'
+                isDeploy={true}
+                deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
+                initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
+                funcABI={constructorInterface}
+                clickCallBack={clickCallback}
+                inputs={constructorInputs}
+                widthClass='w-50'
+                evmBC={loadedContractData.bytecodeObject}
+                lookupOnly={false}
+                savedProxyAddress={proxyKey}
+              />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
                   id="deployAndRunPublishToIPFS"
@@ -248,7 +278,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             </div> : ''
           }
         </div>
-        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' ? 'none' : 'block' }}>or</div>
+        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>or</div>
         <div className="udapp_button udapp_atAddressSect">
           <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} title={atAddressOptions.title} onClick={loadFromAddress}>At Address</button>
           <input
