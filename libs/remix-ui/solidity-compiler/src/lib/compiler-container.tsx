@@ -801,7 +801,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         <div className={`px-4 pb-4 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
             <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
-            <label className="form-check-label custom-control-label" htmlFor="scManualConfig">
+            <label className="form-check-label custom-control-label" htmlFor="scManualConfig" data-id="scManualConfiguration">
               <FormattedMessage id='solidity.compilerConfiguration' defaultMessage='Compiler configuration' />
             </label>
           </div>
