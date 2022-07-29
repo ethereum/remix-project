@@ -1,50 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 :root {
-  --blue: #007aa6;
+  --blue: #2cc1f7;
   --indigo: #6610f2;
   --purple: #6f42c1;
   --pink: #e83e8c;
   --red: #b84040;
-  --orange: #c97539;
+  --orange: #E5D17D;
   --yellow: #ffc107;
-  --green: #1b8649;
+  --green: #C4E07F;
   --teal: #20c997;
   --cyan: #355f7d;
   --white: #fff;
-  --gray: #868e96;
+  --gray: #8B99A6;
   --gray-dark: #343a40;
   --primary: #007aa6;
-  --secondary: #50667b;
-  --success: #1b8649;
+  --secondary: #0E2A3E;
+  --success: #C4E07F;
   --info: #086CB5;
   --warning: #c97539;
   --danger: #b84040;
   --light: #011C32;
-  --dark: #051624;
+  --dark: #fff4fd; // light purple
+  --custom-select: #011627;
+  --text-background: #011626;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
+
   --theme-divider-color: #04101ad4;
   --theme-foreground-gray: #4b6479;
   --theme-foreground-comment: #637777;
   --theme-foreground-alpha-1: #ffffffce;
-  --theme-background-input: #234d708c;
+  --theme-background-input: #0a1b28a3;
   --theme-background: #011627;
   --theme-background-panels: #011628;
   --theme-bg-btn-secondary: #011C32;
   --theme-bg-btn-dark--hover: #033863;
-  --theme-border-tab: 1px solid #7fdbca52;
+  --theme-border-tab: 1px solid #274052;
+  --theme-border-default: 1px solid #07121ca6;
+  --theme-form-placeholder: #dfe1ea; // replace var(--theme-form-placeholder)
+
+
   --theme-ace-identifier: #ffcb8bcc;
   --theme-ace-operator: #ffcb8b;
   --theme-ace-symbols: #7fdbca;
   --theme-ace-keyword: #c792ea;
-  --font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont,
+
+  --font-family-sans-serif: "Saira", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-family-monospace: "JetBrains Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+  --font-family-monospace: "Jetbrains Mono", Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
 }
 *,
@@ -72,7 +80,7 @@ section {
 }
 body {
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+  font-family: "Saira", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
@@ -81,7 +89,7 @@ body {
   font-kerning: normal;
   font-weight: 400;
   line-height: 1.5;
-  color: #ccd9e6;
+  color: #87A2B7; // #ccd9e6
   text-align: left;
   background-color: var(--theme-background-panels);
 }
@@ -96,6 +104,7 @@ body {
 [tabindex="-1"]:focus {
   outline: 0 !important;
 }
+
 hr {
   box-sizing: content-box;
   height: 0;
@@ -170,7 +179,7 @@ sup {
   top: -0.5em;
 }
 a {
-  color: #a2a3bd;
+  color: #d5d5d5;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -220,7 +229,7 @@ table {
 caption {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-  color: #868e96;
+  color: var(--theme-form-placeholder);
   text-align: left;
   caption-side: bottom;
 }
@@ -274,7 +283,7 @@ button {
 [type="reset"]:not(:disabled),
 [type="submit"]:not(:disabled),
 button:not(:disabled) {
-  cursor: pointer;
+  cursor: posaira;
 }
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
@@ -338,7 +347,7 @@ output {
 }
 summary {
   display: list-item;
-  cursor: pointer;
+  cursor: posaira;
 }
 template {
   display: none;
@@ -453,7 +462,7 @@ mark {
 .blockquote-footer {
   display: block;
   font-size: 80%;
-  color: #868e96;
+  color: var(--theme-form-placeholder);
 }
 .blockquote-footer::before {
   content: "\2014\00A0";
@@ -479,7 +488,7 @@ mark {
 }
 .figure-caption {
   font-size: 90%;
-  color: #868e96;
+  color: var(--theme-form-placeholder);
 }
 code {
   font-size: 90%;
@@ -1659,7 +1668,7 @@ pre code {
     0 0 0 3px rgba(0, 122, 166, 0.25);
 }
 .form-control::placeholder {
-  color: #868e96;
+  color: var(--theme-form-placeholder);
   opacity: 1;
 }
 .form-control:disabled,
@@ -1762,13 +1771,13 @@ textarea.form-control {
   margin-left: -1.25rem;
 }
 .form-check-input:disabled ~ .form-check-label {
-  color: #868e96;
+  color: var(--theme-form-placeholder);
 }
 .form-check-label {
   margin-bottom: 0;
   font-size: 13px;
   line-height: 18px;
-  color: #A2A3BD;
+  color: #D5D5D5;
   text-transform: initial;
   display: initial;
 }
@@ -1789,7 +1798,7 @@ textarea.form-control {
   width: 100%;
   margin-top: 0.25rem;
   font-size: 80%;
-  color: #1b8649;
+  color: #C4E07F;
 }
 .valid-tooltip {
   position: absolute;
@@ -2141,7 +2150,7 @@ textarea.form-control.is-invalid {
 }
 a.btn.disabled,
 fieldset:disabled a.btn {
-  pointer-events: none;
+  posaira-events: none;
 }
 .btn-primary {
   color: #fff;
@@ -2641,7 +2650,7 @@ fieldset:disabled a.btn {
 }
 .btn-link {
   font-weight: 400;
-  color: #a2a3bd;
+  color: #d5d5d5;
   text-decoration: underline;
 }
 .btn-link:hover {
@@ -2655,8 +2664,8 @@ fieldset:disabled a.btn {
 }
 .btn-link.disabled,
 .btn-link:disabled {
-  color: #868e96;
-  pointer-events: none;
+  color: var(--theme-form-placeholder);
+  posaira-events: none;
 }
 .btn-group-lg > .btn,
 .btn-lg {
@@ -2911,8 +2920,8 @@ input[type="submit"].btn-block {
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
-  color: #868e96;
-  pointer-events: none;
+  color: var(--theme-form-placeholder);
+  posaira-events: none;
   background-color: transparent;
 }
 .dropdown-menu.show {
@@ -2923,7 +2932,7 @@ input[type="submit"].btn-block {
   padding: 0.5rem 1.5rem;
   margin-bottom: 0;
   font-size: 0.875rem;
-  color: #868e96;
+  color: var(--theme-form-placeholder);
   white-space: nowrap;
 }
 .dropdown-item-text {
@@ -3031,7 +3040,7 @@ input[type="submit"].btn-block {
 .btn-group-toggle > .btn-group > .btn input[type="radio"] {
   position: absolute;
   clip: rect(0, 0, 0, 0);
-  pointer-events: none;
+  posaira-events: none;
 }
 .input-group {
   position: relative;
@@ -3252,7 +3261,7 @@ input[type="submit"].btn-block {
   display: block;
   width: 1rem;
   height: 1rem;
-  pointer-events: none;
+  posaira-events: none;
   content: "";
   background-color: #2e3145;
   border: #51536b solid 1px;
@@ -3315,7 +3324,7 @@ input[type="submit"].btn-block {
 .custom-switch .custom-control-label::before {
   left: -2.25rem;
   width: 1.75rem;
-  pointer-events: all;
+  posaira-events: all;
   border-radius: 0.5rem;
 }
 .custom-switch .custom-control-label::after {
@@ -3508,7 +3517,7 @@ input[type="submit"].btn-block {
   width: 100%;
   height: 0.5rem;
   color: transparent;
-  cursor: pointer;
+  cursor: posaira;
   background-color: #dee2e6;
   border-color: transparent;
   border-radius: 1rem;
@@ -3535,7 +3544,7 @@ input[type="submit"].btn-block {
   width: 100%;
   height: 0.5rem;
   color: transparent;
-  cursor: pointer;
+  cursor: posaira;
   background-color: #dee2e6;
   border-color: transparent;
   border-radius: 1rem;
@@ -3565,7 +3574,7 @@ input[type="submit"].btn-block {
   width: 100%;
   height: 0.5rem;
   color: transparent;
-  cursor: pointer;
+  cursor: posaira;
   background-color: transparent;
   border-color: transparent;
   border-width: 0.5rem;
@@ -3623,8 +3632,8 @@ input[type="submit"].btn-block {
   text-decoration: none;
 }
 .nav-link.disabled {
-  color: #868e96;
-  pointer-events: none;
+  color: var(--theme-form-placeholder);
+  posaira-events: none;
   cursor: default;
 }
 
@@ -3641,7 +3650,7 @@ input[type="submit"].btn-block {
   border-color: var(--theme-divider-color);
 }
 .nav-tabs .nav-link.disabled {
-  color: #868e96;
+  color: var(--theme-form-placeholder);
   background-color: transparent;
   border-color: transparent;
 }
@@ -4213,7 +4222,7 @@ input[type="submit"].btn-block {
 .breadcrumb-item + .breadcrumb-item::before {
   display: inline-block;
   padding-right: 0.5rem;
-  color: #868e96;
+  color: var(--theme-form-placeholder);
   content: "/";
 }
 .breadcrumb-item + .breadcrumb-item:hover::before {
@@ -4270,7 +4279,7 @@ input[type="submit"].btn-block {
 }
 .page-item.disabled .page-link {
   color: #989ca4;
-  pointer-events: none;
+  posaira-events: none;
   cursor: auto;
   background-color: #323949;
   border-color: #ddd;
@@ -4674,8 +4683,8 @@ a.badge-dark:focus {
 }
 .list-group-item.disabled,
 .list-group-item:disabled {
-  color: #868e96;
-  pointer-events: none;
+  color: var(--theme-form-placeholder);
+  posaira-events: none;
   background-color: var(--theme-background);
 }
 .list-group-item.active {
@@ -4933,7 +4942,7 @@ button.close {
   appearance: none;
 }
 a.close.disabled {
-  pointer-events: none;
+  posaira-events: none;
 }
 .toast {
   max-width: 350px;
@@ -4964,7 +4973,7 @@ a.close.disabled {
   display: flex;
   align-items: center;
   padding: 0.25rem 0.75rem;
-  color: #868e96;
+  color: var(--theme-form-placeholder);
   background-color: rgba(255, 255, 255, 0.85);
   background-clip: padding-box;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -4994,7 +5003,7 @@ a.close.disabled {
   position: relative;
   width: auto;
   margin: 10px;
-  pointer-events: none;
+  posaira-events: none;
 }
 .modal.fade .modal-dialog {
   transition: transform 0.3s ease-out;
@@ -5050,7 +5059,7 @@ a.close.disabled {
   flex-direction: column;
   width: 100%;
   color: #fff;
-  pointer-events: auto;
+  posaira-events: auto;
   background-color: var(--theme-background-panels);
   background-clip: padding-box;
   border: 1px solid #2c3244;
@@ -5153,7 +5162,7 @@ a.close.disabled {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+  font-family: "Saira", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-style: normal;
@@ -5263,7 +5272,7 @@ a.close.disabled {
   z-index: 1060;
   display: block;
   max-width: 276px;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+  font-family: "Saira", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-style: normal;
@@ -5418,7 +5427,7 @@ a.close.disabled {
 .carousel {
   position: relative;
 }
-.carousel.pointer-event {
+.carousel.posaira-event {
   touch-action: pan-y;
 }
 .carousel-inner {
@@ -5551,7 +5560,7 @@ a.close.disabled {
   margin-right: 3px;
   margin-left: 3px;
   text-indent: -999px;
-  cursor: pointer;
+  cursor: posaira;
   background-color: #fff;
   background-clip: padding-box;
   border-top: 10px solid transparent;
@@ -5693,7 +5702,7 @@ button.bg-danger:hover {
   background-color: #923333 !important;
 }
 .bg-light {
-  background-color: var(--light) !important;
+  background-color: var(--theme-background) !important;
 }
 a.bg-light:focus,
 a.bg-light:hover,
@@ -6719,7 +6728,7 @@ button.bg-dark:hover {
   bottom: 0;
   left: 0;
   z-index: 1;
-  pointer-events: auto;
+  posaira-events: auto;
   content: "";
   background-color: rgba(0, 0, 0, 0);
 }
@@ -8467,6 +8476,7 @@ button.bg-dark:hover {
 }
 .text-center {
   text-align: center !important;
+  font-family: var(--font-family-sans-serif);
 }
 @media (min-width: 576px) {
   .text-sm-left {
@@ -8599,10 +8609,10 @@ a.text-dark:hover {
   color: #6f7087 !important;
 }
 .text-body {
-  color: #A2A3BD !important;
+  color: #D5D5D5 !important;
 }
 .text-muted {
-  color: #868e96 !important;
+  color: var(--theme-form-placeholder) !important;
 }
 .text-black-50 {
   color: rgba(0, 0, 0, 0.5) !important;
@@ -8720,9 +8730,12 @@ a.text-dark:hover {
   border-bottom: 1px solid #2c3244;
 }
 
+#icon-panel {
+  background-color: var(--light);
+}
 /* Plugins manager */
 .plugin-manager {
-  background: var(--light);
+  background: var(--text-background);
 }
 .plugins-header {
   background-color: var(--theme-background-panels) !important;
@@ -8768,11 +8781,11 @@ a.text-dark:hover {
   text-transform: uppercase;
 }
 .plugin-text {
-  color: #A2A3BD !important;
+  color: #D5D5D5 !important;
 }
 .plugin-version {
-  color: #A2A3BD;
-  border: 1px solid #A2A3BD;
+  color: #D5D5D5;
+  border: 1px solid #D5D5D5;
 }
 .settings-button {
   height: 32px;
@@ -8823,7 +8836,7 @@ a.text-dark:hover {
 }
 
 /* Theme Palette, Typography custom */
-#journal, .ace-content, .ace_editor {
+#journal, .ace-content, .monaco-editor {
     font-family: "JetBrains Mono", monospace!important;
 }
 
@@ -8837,7 +8850,7 @@ a.text-dark:hover {
   margin-bottom: -1px;
 }
 .mainview--tabs-proxy {
-  background-color: var(--light)!important;
+  background-color: var(--text-background)!important;
   border-bottom: 1.2px solid var(--theme-divider-color);
 }
 
@@ -8870,46 +8883,63 @@ remix-tab .fak {
     line-height: 1.2!important;
 }
 
-.ace-chaos .ace_keyword {
-    color: var(--theme-ace-keyword)!important;
-}
-
-.ace_storage .ace_type {
-    color: var(--theme-ace-keyword)!important;
-}
-
-.ace_identifier {
-    color: var(--theme-ace-identifier)!important;
-}
-
-.ace_paren > .ace_lparen, .ace_paren .ace_rparen {
-    color: var(--theme-ace-symbols)!important;
-}
-
-.ace_editor.ace_autocomplete .ace_completion-highlight {
-  color: var(--white)!important;
-}
-
-.ace_ {
-  color: var(--theme-foreground-alpha-1)!important;
-}
-
-.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
-  background-color: var(--theme-background-input)!important;
-}
-
-.ace-chaos .ace_marker-layer .ace_active-line {
-  background-color: var(--theme-divider-color)!important;
-}
-
-.ace-chaos .ace_gutter-active-line {
-  background-color: var(--theme-divider-color)!important;
-}
-
-.ace_rightAlignedText {
-  color: var(--theme-ace-symbols)!important;
-}
-
 div[data-id="remixIdeSidePanel"] {
   margin-right: -1px
+}
+
+/* Monaco Editor */
+.view-lines, .monaco-mouse-cursor-text {
+  font-family: "Jetbrains Mono" !important;
+}
+
+.monaco-editor .scroll-decoration {
+  box-shadow: #03030fbd 0 6px 6px -6px inset!important;
+}
+
+/* Remix utils */
+.remix_ui_terminal_welcome {
+  font-family: "Saira"!important;
+  margin-left: -.25rem;
+}
+
+.remix_ui_terminal_journal, .remix_ui_terminal_autoCompleteItem, .remix_ui_terminal_block ul {
+  font-family: "Saira" !important;
+}
+
+.remix_ui_terminal_block {
+  font-family: "Jetbrains Mono"!important;
+}
+
+.remixui_icon img {
+  filter: invert(0.75)!important;
+}
+
+.custom-dropdown-items {
+  background: #011627!important; // override --custom-select
+}
+
+.remix-ui-tabs {
+  border-bottom: var(--theme-border-default)!important;
+}
+
+/* use to create light padding top in the editor */
+.editor-wrap {
+  /* padding-top: 1rem; */
+  background-color: var(--text-background);
+}
+
+.monaco-scrollable-element > .visible,  
+.monaco-scrollable-element > .visible .scrollbar, 
+.monaco-scrollable-element > .invisible, 
+.monaco-scrollable-element > .invisible .scrollbar, 
+.monaco-scrollable-element > .invisible .fade {
+  background-color: var(--light)!important;
+  color: var(--light)!important;
+}
+.monaco-scrollable-element > .scrollbar > .slider {
+  background: #011627!important;
+}
+
+.monaco-editor .vertical {
+  box-shadow: none;
 }
