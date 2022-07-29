@@ -159,7 +159,7 @@ module.exports = {
       .expect.element('[data-id="contractGUIUpgradeImplementation"]').to.be.selected
   },
 
-  'Should load using URL compiler params': function (browser: NightwatchBrowser) {
+  'Should load using various URL compiler params': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&autoCompile=true&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&language=Yul')
@@ -173,6 +173,16 @@ module.exports = {
       .verify.elementPresent('#optimize:checked')
       .verify.elementPresent('#autoCompile:checked')
       .verify.attributeEquals('#runs', 'value', '300')
+      .url('http://127.0.0.1:8080/#version=0.8.7')
+      .refresh()
+      .pause(5000)
+      .clickLaunchIcon('solidity')
+      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.7+commit.e28d00a7')
+      .url('http://127.0.0.1:8080/#version=0.8.15+commit.e14f2714')
+      .refresh()
+      .pause(5000)
+      .clickLaunchIcon('solidity')
+      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.15+commit.e14f2714')
   },
 
   'Should load using compiler from link passed in remix URL': function (browser: NightwatchBrowser) {
