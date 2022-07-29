@@ -131,6 +131,12 @@ export class CompileTabLogic {
     } else return false
   }
 
+  async isFoundryProject () {
+    if (this.api.getFileManagerMode() === 'localhost') {
+      return await this.api.fileExists('foundry.toml')
+    } else return false
+  }
+
   runCompiler (externalCompType) {
     try {
       if (this.api.getFileManagerMode() === 'localhost') {

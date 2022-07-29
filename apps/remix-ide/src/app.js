@@ -28,6 +28,9 @@ import { Blockchain } from './blockchain/blockchain.js'
 import { HardhatProvider } from './app/tabs/hardhat-provider'
 import { GanacheProvider } from './app/tabs/ganache-provider'
 import { FoundryProvider } from './app/tabs/foundry-provider'
+import { ExternalHttpProvider } from './app/tabs/external-http-provider'
+import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
+import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 
 const isElectron = require('is-electron')
 
@@ -179,6 +182,9 @@ class AppComponent {
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
+    const externalHttpProvider = new ExternalHttpProvider(blockchain)
+    const injected0ptimismProvider = new Injected0ptimismProvider(blockchain)
+    const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -236,6 +242,9 @@ class AppComponent {
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
+      externalHttpProvider,
+      injected0ptimismProvider,
+      injectedArbitrumOneProvider,
       this.walkthroughService,
       search
     ])
@@ -321,7 +330,8 @@ class AppComponent {
       filePanel.slitherHandle,
       linkLibraries,
       deployLibraries,
-      openZeppelinProxy
+      openZeppelinProxy,
+      run.recorder
     ])
 
     this.layout.panels = {
@@ -355,7 +365,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun'])
+    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 
     this.appManager.on(
       'filePanel',
