@@ -309,12 +309,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
-      if (api.getCompilerParameters().version) selectedVersion = api.getCompilerParameters().version
-      // Check if version is a URL and corresponding filename starts with 'soljson'
-      if (selectedVersion.startsWith('https://')) {
-        const urlArr = selectedVersion.split('/')
-
-        if (urlArr[urlArr.length - 1].startsWith('soljson')) isURL = true
+      if (api.getCompilerParameters().version) {
+        const versionFromURL = api.getCompilerParameters().version
+        // Check if version is a URL and corresponding filename starts with 'soljson'
+        if (versionFromURL.startsWith('https://')) {
+          const urlArr = versionFromURL.split('/')
+          if (urlArr[urlArr.length - 1].startsWith('soljson')) {
+            isURL = true
+            selectedVersion = versionFromURL
+          }
+        } else {
+          // URL version can be like 0.8.7+commit.e28d00a7, 0.8.7 or soljson-v0.8.7+commit.e28d00a7.js
+          const selectedVersionArr = versions.filter(obj => obj.path === versionFromURL || obj.longVersion === versionFromURL || obj.version === versionFromURL)
+          // for version like 0.8.15, there will be more than one elements in the array
+          // In that case too, index 0 will have non-nightly version object
+          if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
+        }
       }
       if (wasmRes.event.type !== 'error') {
         allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
