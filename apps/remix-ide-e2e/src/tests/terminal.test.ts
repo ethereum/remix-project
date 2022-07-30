@@ -7,13 +7,6 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
   },
-  beforeEach: function (browser, done) {
-    require('nightwatch-video-recorder').start(browser, done)
-  },
-  afterEach: function (browser, done) {
-    require('nightwatch-video-recorder').stop(browser, done)
-  },
-
   'Should execution a simple console command #group1 #group999': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
