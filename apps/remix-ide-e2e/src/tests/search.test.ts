@@ -184,7 +184,7 @@ module.exports = {
             .getEditorValue((content) => {
                 browser.assert.ok(content.includes('123'), 'should have text ok')
             }
-            ).pause(1000)
+            ).pause(5000)
             .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
     },
     'Should disable/enable button when edited content changed #group2': function (browser: NightwatchBrowser) {
