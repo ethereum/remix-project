@@ -205,7 +205,7 @@ module.exports = {
             .getEditorValue((content) => {
                 browser.assert.ok(content.includes('changed'), 'should have text ok')
             }
-            ).pause(4000)
+            ).pause(5000)
             .waitForElementVisible('*[data-id="undo-replace-test.sol"]')
             .getAttribute('[data-id="undo-replace-test.sol"]', 'disabled', (result) => {
                 browser.assert.equal(result.value, 'true', 'should be disabled')
