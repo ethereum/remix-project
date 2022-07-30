@@ -4,7 +4,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
-    '@disbled': true,
+    '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', true)
     },
@@ -166,19 +166,15 @@ module.exports = {
     },
     'Should hide button when edited content is the same #group2 #flaky': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-            .saveScreenshot('./reports/screenshots/search_replace_test_0.png')
             .addFile('test.sol', { content: '123' })
             .click('*[plugin="search"]')
             .waitForElementVisible('*[id="search_input"]')
-            .saveScreenshot('./reports/screenshots/search_replace_test.png')
             .waitForElementVisible('*[data-id="toggle_replace"]')
             .click('*[data-id="toggle_replace"]')
-            .saveScreenshot('./reports/screenshots/search_replace_test_2.png')
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', '123')
             .sendKeys('*[id="search_input"]', browser.Keys.ENTER)
             .waitForElementVisible('*[id="search_replace"]')
-            .saveScreenshot('./reports/screenshots/search_replace_test_3.png')
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', '456').pause(1000)
             .click('*[data-id="confirm_replace_label"]').pause(500)
