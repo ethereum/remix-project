@@ -170,10 +170,12 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
+      .saveScreenshot('./reports/screenshots/hardhatLog_2.5.png')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
+      .saveScreenshot('./reports/screenshots/hardhatLog_2.8.png')
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
-      .saveScreenshot('./reports/screenshots/hardhatLog_2.5.png')
+      
       .selectContract('OwnerTest')
       .saveScreenshot('./reports/screenshots/hardhatLog_3.png')
       .createContract('')
