@@ -192,6 +192,7 @@
     "latest-version": "^5.1.0",
     "merge": "^2.1.1",
     "monaco-editor": "^0.30.1",
+    "nightwatch-video-recorder": "^3.0.0",
     "npm-install-version": "^6.0.2",
     "raw-loader": "^4.0.2",
     "react": "^17.0.2",
