@@ -162,7 +162,7 @@ jobs:
           command: |
               google-chrome --version
               chromedriver --version
-              apt install -y ffmpeg
+              sudo apt install -y ffmpeg
               java -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
@@ -206,7 +206,7 @@ jobs:
           command: |
               firefox --version
               geckodriver --version
-              apt install -y ffmpeg
+              sudo apt install -y ffmpeg
               java -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
