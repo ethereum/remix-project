@@ -162,6 +162,7 @@ jobs:
           command: |
               google-chrome --version
               chromedriver --version
+              sudo apt-get update -y
               sudo apt install -y ffmpeg
               java -jar /usr/local/bin/selenium.jar --version
           name: Check install
