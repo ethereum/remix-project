@@ -20,6 +20,17 @@ module.exports = {
         on_failure: true,
         on_error: true
       },
+      videos: {
+        enabled: true,          // Enable video recordings
+        delete_on_pass: true,   // Delete video when tests pass
+        dir: "./reports/videos",  // Video directory
+        ext: ".mp4",            // Video file extension
+        "resolution": "1440x900", // Display resolution
+        fps: 15,                // Frames per second
+        hostname: "localhost",  // X11 server hostname
+        display: "0",           // X11 server display
+        pixelFormat: "yuv420p"  // Output pixel format
+      },
       exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts']
     },
 
