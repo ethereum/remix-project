@@ -8,7 +8,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', true)
     },
-    'Should find text #group1': function (browser: NightwatchBrowser) {
+    'Should find text #group1 #flaky': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
             .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
             .waitForElementVisible('*[id="search_include"]')
