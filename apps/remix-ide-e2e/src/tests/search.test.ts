@@ -166,6 +166,7 @@ module.exports = {
     },
     'Should hide button when edited content is the same #group2 #flaky': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+            .saveScreenshot('./reports/screenshots/search_replace_test_0.png')
             .addFile('test.sol', { content: '123' })
             .click('*[plugin="search"]')
             .waitForElementVisible('*[id="search_input"]')
