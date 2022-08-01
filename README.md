@@ -213,7 +213,7 @@ To do this you need to:
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
 ```
 
-- add '@disable': true to the test file you want to split:
+- add '@disabled': true to the test file you want to split:
 
 ```
 module.exports = {
