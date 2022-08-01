@@ -10,18 +10,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
-
-interface MoveContextType{
-  dragged: string,
-  moveFile: (dest: string) => void
-  currentlyMoved: (path: string) => void
-}
-
-export const MoveContext = React.createContext<MoveContextType>({
-  dragged:"",
-  moveFile:( )=> {},
-  currentlyMoved: () => {}
-})
+import { MoveContext } from '../contexts'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
