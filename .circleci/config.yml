@@ -311,6 +311,48 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+  nightly-firefox:
+      docker:
+        # specify the version you desire here
+        - image: cimg/node:14.17.6-browsers
+
+        # Specify service dependencies here if necessary
+        # CircleCI maintains a library of pre-built images
+        # documented at https://circleci.com/docs/2.0/circleci-images/
+      resource_class: xlarge
+        # - image: circleci/mongo:3.4.4
+      environment:
+        - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+        - COMMIT_AUTHOR: "Circle CI"
+      working_directory: ~/remix-project
+
+      parallelism: 80
+      steps:
+        - browser-tools/install-firefox
+        - browser-tools/install-geckodriver
+        - run:
+            command: |
+                firefox --version
+                geckodriver --version
+                java -jar /usr/local/bin/selenium.jar --version
+            name: Check install
+        - checkout
+        - attach_workspace:
+              at: .
+        - run: unzip ./persist/dist.zip
+        - restore_cache:
+            keys:
+              - v1-deps-{{ checksum "yarn.lock" }}
+        - run: yarn install
+        - run:
+            name: Start Selenium
+            command: java -jar /usr/local/bin/selenium.jar
+            background: true
+        - run: ./apps/remix-ide/ci/nightly.sh firefox
+        - store_test_results:
+            path: ./reports/tests
+        - store_artifacts:
+            path: ./reports/screenshots
           
   remix-ide-plugin-api:
     docker:
@@ -457,6 +499,9 @@ workflows:
     jobs:
       - build
       - nightly-chrome:
+          requires:
+            - build
+      - nightly-firefox:
           requires:
             - build
   build_all:
