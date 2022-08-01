@@ -167,7 +167,7 @@ module.exports = {
       //.saveScreenshot('./reports/screenshots/hardhatLog.png')
       //.openFile('printHardhatlog.sol').pause(4000)
       //.saveScreenshot('./reports/screenshots/hardhatLog_2.png')
-      .clickLaunchIcon('solidity')
+      //.clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .clickLaunchIcon('udapp')
