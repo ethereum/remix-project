@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo, useContext } from 'react'; // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext } from 'react'; // eslint-disable-line
 import { TreeViewItemProps } from '../../types';
 
 import './tree-view-item.css';
-import { MoveContext } from '../../../../workspace/src/lib/components/file-explorer'
-
+import { MoveContext } from '@remix-ui/workspace'
+ 
 export const TreeViewItem = (props: TreeViewItemProps) => {
-  const { id, children, label, labelClass, expand, iconX = 'fas fa-caret-right', iconY = 'fas fa-caret-down', icon, controlBehaviour = false, innerRef, file, showIcon = true, ...otherProps } = props;
+  const { id, children, label, labelClass, expand, iconX = 'fas fa-caret-right', iconY = 'fas fa-caret-down', icon, controlBehaviour = false, file, showIcon = true, ...otherProps } = props;
   const [isExpanded, setIsExpanded] = useState(false);
   const dragRef = useRef<HTMLLIElement>();
   const moveContext = useContext(MoveContext)
