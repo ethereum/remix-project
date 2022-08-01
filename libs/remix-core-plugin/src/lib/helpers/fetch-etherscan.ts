@@ -1,4 +1,4 @@
-export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath, key?) => {
+export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath, shouldSetFile = true, key?) => {
   let data
   const compilationTargets = {}
   let etherscanKey
@@ -27,7 +27,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
 
   if (typeof data.result[0].SourceCode === 'string') {
     const fileName = `${targetPath}/${data.result[0].ContractName}.sol`
-    await plugin.call('fileManager', 'setFile', fileName , data.result[0].SourceCode)
+    if (shouldSetFile) await plugin.call('fileManager', 'setFile', fileName , data.result[0].SourceCode)
     compilationTargets[fileName] = { content: data.result[0].SourceCode }
   } else if (data.result[0].SourceCode && typeof data.result[0].SourceCode == 'object') {
     const sources = data.result[0].SourceCode.sources
@@ -39,7 +39,7 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
       } else {        
         const path = `${targetPath}/${file}`
         const content = (source as any).content
-        await plugin.call('fileManager', 'setFile', path, content)
+        if (shouldSetFile) await plugin.call('fileManager', 'setFile', path, content)
         compilationTargets[path] = { content }
       }
     }
