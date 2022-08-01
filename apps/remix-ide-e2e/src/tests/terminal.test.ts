@@ -163,24 +163,15 @@ module.exports = {
   'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
-      //.addFile('printHardhatlog.sol', { content: hardhatLog }).pause(4000)
-      //.saveScreenshot('./reports/screenshots/hardhatLog.png')
-      //.openFile('printHardhatlog.sol').pause(4000)
-      //.saveScreenshot('./reports/screenshots/hardhatLog_2.png')
-      //.clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .clickLaunchIcon('udapp')
-      .saveScreenshot('./reports/screenshots/hardhatLog_2.5.png')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
-      .saveScreenshot('./reports/screenshots/hardhatLog_2.8.png')
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
-      
       .selectContract('OwnerTest')
-      .saveScreenshot('./reports/screenshots/hardhatLog_3.png')
+  
       .createContract('')
-      .saveScreenshot('./reports/screenshots/hardhatLog_4.png')
       .pause(1000)
       .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
       .pause(5000)
