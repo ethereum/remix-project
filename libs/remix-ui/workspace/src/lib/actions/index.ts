@@ -80,7 +80,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             {id: 5, name: 'goerli'}
           ]
           let found = false
-          let workspaceName = 'etherscan-code-sample'
+          const workspaceName = 'etherscan-code-sample'
           let filePath
           const foundOnNetworks = []
           for (const network of networks) {
