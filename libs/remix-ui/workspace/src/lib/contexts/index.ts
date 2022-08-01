@@ -33,3 +33,16 @@ export const FileSystemContext = createContext<{
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
   dispatchCloneRepository: (url: string) => Promise<void>
     }>(null)
+
+interface MoveContextType{
+  dragged: string,
+  moveFile: (dest: string) => void
+  currentlyMoved: (path: string) => void
+}
+     
+export const MoveContext = createContext<MoveContextType>({
+  dragged:"",
+  moveFile:( )=> {},
+  currentlyMoved: () => {}
+})
+    
