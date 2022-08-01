@@ -14,7 +14,7 @@ module.exports = {
     return sources
   },
 
-  'Should show deploy proxy option for UUPS upgradeable contract #group1': function (browser: NightwatchBrowser) {
+  'Should show deploy proxy option for UUPS upgradeable contract #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .addFile('myTokenV1.sol', sources[0]['myTokenV1.sol'])
       .clickLaunchIcon('solidity')
