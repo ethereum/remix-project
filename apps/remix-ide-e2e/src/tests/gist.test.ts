@@ -12,6 +12,27 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
+  beforeEach: function(browser: NightwatchBrowser, done) {
+    // performing an async operation
+    let count = 0
+    const timer = setInterval(() => {
+      browser.saveScreenshot(`./reports/screenshots/${browser.currentTest.name}-${count}.test.png`)
+      count++
+    },2000)
+    setTimeout(function() {
+      // finished async duties
+      clearTimeout(timer)
+      done();
+    }, 100);
+  },
+
+  afterEach: function(browser, done) {
+    // performing an async operation
+    setTimeout(function() {
+      // finished async duties
+      done();
+    }, 200);
+  },
   UploadToGists: function (browser: NightwatchBrowser) {
     /*
        - set the access token
