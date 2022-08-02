@@ -4,7 +4,7 @@ import path from 'path'
 import axios, { AxiosResponse } from 'axios'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
-import { Provider } from '@remix-project/remix-simulator'
+import { Provider, extend } from '@remix-project/remix-simulator'
 import { CompilerConfiguration } from './types'
 import Log from './logger'
 import colors from 'colors'
@@ -115,7 +115,7 @@ commander
     const provider: any = new Provider()
     await provider.init()
     web3.setProvider(provider)
-
+    extend(web3)
     runTestFiles(path.resolve(testsPath), isDirectory, web3, compilerConfig)
   })
 

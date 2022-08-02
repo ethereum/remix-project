@@ -4,7 +4,7 @@ import { runTest } from './testRunner'
 import { TestResultInterface, ResultsInterface, CompilerConfiguration, compilationInterface, ASTInterface, Options, AstNode } from './types'
 import colors from 'colors'
 import Web3 from 'web3'
-
+import { format } from 'util'
 import { compileFileOrFiles } from './compiler'
 import { deployAll } from './deployer'
 
@@ -22,6 +22,15 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
   opts = opts || {}
   compilerConfig = compilerConfig || {} as CompilerConfiguration
   const sourceASTs: any = {}
+  const printLog = (log: string[]) => {
+    let formattedLog
+    if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+      formattedLog = format(log[0], ...log.slice(1))
+    } else {
+      formattedLog = log.join(' ')
+    }
+    signale.log(formattedLog)
+  }
   const { Signale } = require('signale') // eslint-disable-line
   // signale configuration
   const options = {
@@ -33,6 +42,11 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       },
       name: {
         badge: '\n\t◼',
+        label: '',
+        color: 'white'
+      },
+      log: {
+        badge: '\t',
         label: '',
         color: 'white'
       },
@@ -111,8 +125,10 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
         if (result.type === 'contract') {
           signale.name(result.value.white)
         } else if (result.type === 'testPass') {
-          signale.result(result.value)
+          if (result?.hhLogs?.length) result.hhLogs.forEach(printLog)
+          signale.result(result.value.green)
         } else if (result.type === 'testFailure') {
+          if (result?.hhLogs?.length) result.hhLogs.forEach(printLog)
           signale.error(result.value.red)
           errors.push(result)
         }
@@ -127,7 +143,7 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
         try {
           const fileAST: AstNode = sourceASTs[contracts[contractName]['filename']]
-          runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
+          runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts, web3 }, _testCallback, (err, result) => {
             if (err) {
               console.log(err)
               return cb(err)
