@@ -146,9 +146,11 @@ export class RemixAppManager extends PluginManager {
         }
       }
     }
-    return plugins.map(plugin => {
+    const testPluginName = localStorage.getItem('test-plugin-name')
+    const testPluginUrl = localStorage.getItem('test-plugin-url')
+    return plugins.map(plugin => {      
+      if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
-      // return new IframeReactPlugin(plugin)
     })
   }
 

@@ -1551,7 +1551,7 @@
           "builder": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "vyper:build",
-            "hmr": true
+            "port": 5002
           },
           "configurations": {
             "production": {
