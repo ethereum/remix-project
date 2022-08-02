@@ -357,7 +357,7 @@
   border-bottom-left-radius: 0;
 }
 .udapp_contractProperty button {
-  min-width: 100px;
+  min-width: 80px;
   width: 100px;
   margin:0;
   word-break: inherit;
