@@ -48,7 +48,9 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/AssertOkTest/)
+      expect(res.stdout.toString().trim()).toMatch(/AssertOkTest okPassTest/) // check if console.log is printed
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
+      expect(res.stdout.toString().trim()).toMatch(/AssertOkTest okFailTest/) // check if console.log is printed
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
