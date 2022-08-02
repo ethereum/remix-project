@@ -10,7 +10,6 @@ import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 import { CodeAnalysis } from '@remix-project/remix-analyzer'
-import { setIpfsCheckedState } from 'libs/remix-ui/run-tab/src/lib/actions/payload'
 
 declare global {
   interface Window {
