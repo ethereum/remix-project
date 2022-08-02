@@ -56,7 +56,7 @@ module.exports = {
   'start Remixd': function (browser) {
     startRemixd(browser)
   },
-  'run Remixd tests #group4': function (browser) {
+  'run Remixd tests #group4 #flaky': function (browser) {
     runTests(browser)
   },
   'Import from node_modules #group1': function (browser) {
