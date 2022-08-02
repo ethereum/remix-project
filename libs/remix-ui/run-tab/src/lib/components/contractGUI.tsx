@@ -267,21 +267,29 @@ export function ContractGUI (props: ContractGUIProps) {
                 </div>)
             })}
           </div>
-          <div className="udapp_group udapp_multiArg">
-           <button type="button" onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`btn udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
-          </div>
-          <CopyToClipboard tip='Copy call data to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedCall} >
+          <div className="d-flex udapp_group udapp_multiArg">
+            <CopyToClipboard tip='Copy calldata to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedCall} >
               <button className="btn remixui_copyButton">
-                <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                <span>Calldata</span>
+                <i id="copyCalldata" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <label htmlFor="copyCalldata">Calldata</label>
               </button>
             </CopyToClipboard>
             <CopyToClipboard tip='Copy encoded input parameters to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedParams} >
               <button className="btn remixui_copyButton">
-                <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-              <span>Parameters</span>
+                <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <label htmlFor="copyParameters">Parameters</label>
               </button>
             </CopyToClipboard>
+            <button
+              type="button"
+              onClick={handleExpandMultiClick}
+              title={buttonOptions.title}
+              data-id={buttonOptions.dataId}
+              className={`btn udapp_instanceButton ${buttonOptions.classList}`}
+            >
+              { buttonOptions.content }
+            </button>
+          </div>
         </div>
       </div>
       { props.deployOption && (props.deployOption || []).length > 0 ?
