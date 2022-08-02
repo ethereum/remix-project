@@ -88,16 +88,10 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
   const filepath: string = (isDirectory ? filename : path.dirname(filename))
   const importsCallback = (url, cb) => {
     try {
-      console.log('inside importsCallback----url--->', url)
       if(fs.existsSync(url)) cb(null, fs.readFileSync(url, 'utf-8'))
       else {
-        console.log('inside else------->')
         const urlResolver = new RemixURLResolver()
-        urlResolver.resolve(url).then((result) => {
-          console.log('result------->', result)
-          cb(null, result.content)
-        })
-        .catch((error) => cb(error.message))
+        urlResolver.resolve(url).then((result) => cb(null, result.content)).catch((error) => cb(error.message))
       }
     } catch (e) {
       cb(e.message)
