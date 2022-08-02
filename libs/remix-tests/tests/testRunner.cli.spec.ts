@@ -44,7 +44,7 @@ Commands:
     test('remix-tests running a test file', () => {
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/AssertOkTest/)
@@ -63,7 +63,7 @@ Commands:
       // match initial lines
       expect(res.stdout.toString().trim().includes('Compiler version set to 0.7.4. Latest version is')).toBeTruthy()
       expect(res.stdout.toString().trim().includes('Loading remote solc version v0.7.4+commit.3f05b770 ...')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
@@ -82,7 +82,7 @@ Commands:
       const res = spawnSync(executablePath, ['--evm', 'petersburg', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
       expect(res.stdout.toString().trim().includes('EVM set to petersburg')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
@@ -95,7 +95,7 @@ Commands:
       const res = spawnSync(executablePath, ['--optimize', 'true', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
       expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
@@ -109,7 +109,7 @@ Commands:
       // match initial lines
       expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
       expect(res.stdout.toString().trim().includes('Runs set to 300')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
@@ -132,7 +132,7 @@ Commands:
       expect(res.stdout.toString().trim().includes('EVM set to istanbul')).toBeTruthy()
       expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
       expect(res.stdout.toString().trim().includes('Runs set to 250')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
