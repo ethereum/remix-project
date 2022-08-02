@@ -68,7 +68,7 @@ commander
     }
 
     // Console message
-    console.log(colors.white('\n\t👁\t:: Running tests using remix-tests ::\t👁\n'))
+    console.log(colors.bold('\n\t👁\t:: Running tests using remix-tests ::\t👁\n'))
 
     // Set logger verbosity
     if (commander.verbose) {
