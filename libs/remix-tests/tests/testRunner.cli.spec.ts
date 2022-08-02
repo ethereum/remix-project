@@ -53,9 +53,9 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/AssertOkTest okFailTest/) // check if console.log is printed
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
-      expect(res.stdout.toString().trim()).toMatch(/expected value to be ok to: true/)
-      expect(res.stdout.toString().trim()).toMatch(/returned: false/)
+      expect(res.stdout.toString().trim()).toMatch(/Expected value should be ok to: true/)
+      expect(res.stdout.toString().trim()).toMatch(/Received: false/)
+      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
     })
 
     test('remix-tests running a test file with custom compiler version', () => {
@@ -69,7 +69,7 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
     })
 
     test('remix-tests running a test file with unavailable custom compiler version (should fail)', () => {
@@ -88,7 +88,7 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
     })
 
     test('remix-tests running a test file by enabling optimization', () => {
@@ -101,7 +101,7 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
     })
 
     test('remix-tests running a test file by enabling optimization and setting runs', () => {
@@ -115,7 +115,7 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
     })
 
     test('remix-tests running a test file without enabling optimization and setting runs (should fail)', () => {
@@ -138,7 +138,7 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
     })
   })
 })
