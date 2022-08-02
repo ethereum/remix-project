@@ -62,6 +62,7 @@ const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 class AppComponent {
   constructor () {
+    console.error(window.location.href)
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
