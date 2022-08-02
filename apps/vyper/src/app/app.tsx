@@ -59,7 +59,7 @@ const App: React.FC = () => {
 
   function compilerUrl() {
     return state.environment === 'remote'
-      ? 'https://vyper.live/compile'
+      ? 'https://vyper.remixproject.org/compile'
       : state.localUrl
   }
 
@@ -85,10 +85,10 @@ const App: React.FC = () => {
           type="radio"
           value={state.environment}
         >
-          <ToggleButton variant="secondary" name="remote" value="remote">
+          <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
             Remote Compiler
           </ToggleButton>
-          <ToggleButton variant="secondary" name="local" value="local">
+          <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
             Local Compiler
           </ToggleButton>
         </ToggleButtonGroup>
