@@ -138,12 +138,10 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const makeMultiVal = () => {
-    let inputString = basicInput
+    const inputString = basicInput
 
     if (inputString) {
-      inputString = inputString.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-      inputString = inputString.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      const inputJSON = JSON.parse('[' + inputString + ']')
+      const inputJSON = remixLib.execution.txFormat.parseFunctionParams(inputString)
       const multiInputs = multiFields.current
 
       for (let k = 0; k < multiInputs.length; k++) {
