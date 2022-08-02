@@ -103,7 +103,7 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   }
 
   return (
-    <Button onClick={compileContract} variant="primary">
+    <Button data-id="compile" onClick={compileContract} variant="primary">
       Compile {contract}
     </Button>
   )
