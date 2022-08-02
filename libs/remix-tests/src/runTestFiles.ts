@@ -43,7 +43,7 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       name: {
         badge: '\n\t◼',
         label: '',
-        color: 'white'
+        color: 'whiteBright'
       },
       log: {
         badge: '\t',
@@ -118,19 +118,24 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       let totalPassing = 0
       let totalFailing = 0
       let totalTime = 0
-      const errors: any[] = []
 
       const _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
         if (err) throw err
         if (result.type === 'contract') {
-          signale.name(result.value.white)
+          signale.name(result.value)
+          console.log('\n')
         } else if (result.type === 'testPass') {
           if (result?.hhLogs?.length) result.hhLogs.forEach(printLog)
-          signale.result(result.value.green)
+          signale.result(result.value.white)
         } else if (result.type === 'testFailure') {
           if (result?.hhLogs?.length) result.hhLogs.forEach(printLog)
-          signale.error(result.value.red)
-          errors.push(result)
+          signale.error(result.value.white)
+          if (result.assertMethod) {
+            console.log(colors.green('\t    Expected value should be ' + result.assertMethod + ' to: ' + result.expected))
+            console.log(colors.red('\t    Received: ' + result.returned))
+          }
+          console.log(colors.red('\t    Message: ' + result.errMsg))
+          console.log('\n')
         }
       }
       const _resultsCallback = (_err: Error | null | undefined, result: ResultsInterface, cb) => {
@@ -157,23 +162,16 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
         if (err) {
           return next(err)
         }
-
         console.log('\n')
-        if (totalPassing > 0) {
-          console.log(colors.green(totalPassing + ' passing ') + colors.grey('(' + totalTime + 's)'))
-        }
-        if (totalFailing > 0) {
-          console.log(colors.red(totalFailing + ' failing'))
-        }
-        console.log('')
+        console.log(colors.bold.underline('Tests Summary: '))
 
-        errors.forEach((error, index) => {
-          console.log('  ' + (index + 1) + ') ' + colors.bold(error.context + ': ') + error.value)
-          console.log('')
-          console.log(colors.red('\t error: ' + error.errMsg))
-          console.log(colors.green('\t expected value to be ' + error.assertMethod + ' to: ' + error.expected))
-          console.log(colors.red('\t returned: ' + error.returned))
-        })
+        if (totalPassing >= 0) {
+          console.log(colors.green('Passed: ' + totalPassing))
+        }
+        if (totalFailing >= 0) {
+          console.log(colors.red('Failed: ' + totalFailing))
+        }
+        console.log(colors.white('Time Taken: ' + totalTime + 's'))
         console.log('')
 
         next()
