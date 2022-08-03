@@ -4146,6 +4146,11 @@
   resolved "https://registry.yarnpkg.com/@types/caseless/-/caseless-0.12.2.tgz#f65d3d6389e01eeb458bd54dc8f52b95a9463bc8"
   integrity sha512-6ckxMjBBD8URvjB6J3NcnuAn5Pkl7t3TizAg+xdlzzQGSPSmBcXf8KoIH0ua/i+tio+ZRUHEXp0HEmvaR4kt0w==
 
+"@types/chai@*":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.1.tgz#e2c6e73e0bdeb2521d00756d099218e9f5d90a04"
+  integrity sha512-/zPMqDkzSZ8t3VtxOa4KPq7uzzW978M9Tvh+j7GHKuo6k6GTLxPJ4J5gE5cjfJ26pnXst0N5Hax8Sr0T2Mi9zQ==
+
 "@types/chai@^4.2.11":
   version "4.2.22"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.22.tgz#47020d7e4cf19194d43b5202f35f75bd2ad35ce7"
@@ -4301,12 +4306,14 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-7.0.2.tgz#b17f16cf933597e10d6d78eae3251e692ce8b0ce"
   integrity sha512-ZvO2tAcjmMi8V/5Z3JsyofMe3hasRcaw88cto5etSVMwVQfeivGAlEYmaQgceUSVYFofVjT+ioHsATjdWcFt1w==
 
-"@types/nightwatch@^2.0.9":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@types/nightwatch/-/nightwatch-2.0.9.tgz#c5d3ed42ead7a58563cac96ebc52f40f09897ea1"
-  integrity sha512-vA568B2hjedgtjNf/ZM1po9Y5GWz8+jox0748+YyqilWIxV5fXkpKFSUWk41Evoqn5WI3JENlNupzs2o6pHjRA==
+"@types/nightwatch@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@types/nightwatch/-/nightwatch-2.3.1.tgz#36cb1f2408f910c06e3de5b0365f6f6a606b1c69"
+  integrity sha512-K0Cr9e2YPC2g5aWnkcyo7w9kvhfNrMiKOCigJyuo3usl3kass1h3ktqHUwwUGupmTm02luzxf1aqNvg0Qfr/sw==
   dependencies:
+    "@types/chai" "*"
     "@types/selenium-webdriver" "*"
+    devtools-protocol "^0.0.1025565"
 
 "@types/node@*", "@types/node@>= 8", "@types/node@~8.9.4":
   version "8.9.5"
@@ -9131,6 +9138,11 @@ detective@^5.2.0:
     acorn-node "^1.6.1"
     defined "^1.0.0"
     minimist "^1.1.1"
+
+devtools-protocol@^0.0.1025565:
+  version "0.0.1025565"
+  resolved "https://registry.yarnpkg.com/devtools-protocol/-/devtools-protocol-0.0.1025565.tgz#0b3da0d3714c556aad06b0ec60f4fde68a701a90"
+  integrity sha512-0s5sbGQR/EfYQhd8EpZgphpndsv+CufTlaeUyA6vYXCA0H5kMAsHCS/cHtUFWoKJCO125hpoKicQCfpxRj4oqw==
 
 dezalgo@^1.0.0, dezalgo@^1.0.1, dezalgo@~1.0.3:
   version "1.0.3"
