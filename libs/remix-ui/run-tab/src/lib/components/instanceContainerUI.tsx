@@ -35,6 +35,7 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
             runTransactions={props.runTransactions}
             sendValue={props.sendValue}
             getFuncABIInputs={props.getFuncABIInputs}
+            blockchain={props.blockchain}
           />
         }) }
         </div>
