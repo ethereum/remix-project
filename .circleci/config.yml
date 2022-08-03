@@ -6,7 +6,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true
+    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
@@ -176,7 +176,7 @@ jobs:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
-      - run: ./apps/remix-ide/ci/flaky.sh chromeDesktop
+      - run: ./apps/remix-ide/ci/flaky.sh chrome
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:

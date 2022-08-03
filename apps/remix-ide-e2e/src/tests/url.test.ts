@@ -42,10 +42,8 @@ const sources = [
 
 module.exports = {
   '@disabled': true,
-  '@desktop': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done)
-    //init(browser, done, 'http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js', true)
+    init(browser, done, 'http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js', true)
   },
 
   '@sources': function () {
@@ -87,50 +85,33 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contractss from URL "address" param) #group2 #flaky': function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contractss from URL "address" param) #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
-      .url('http://127.0.0.1:8080/?address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
-      .pause(10000)
-      .getLog('browser', (logEntries) => {
-        if (logEntries && logEntries.length > 0) {
-          console.log('Browser log:')
-          console.log(logEntries)
-        }
-      }).
-      currentWorkspaceIs('etherscan-code-sample')
-      .getLog('browser', (logEntries) => {
-        if (logEntries && logEntries.length > 0) {
-          console.log('Browser log:')
-          console.log(logEntries)
-        }
+      .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
+      .refresh()
+      .pause(7000)
+      .currentWorkspaceIs('etherscan-code-sample')
+      .assert.elementPresent('*[data-id=treeViewLitreeViewItemropsten]')
+      .assert.elementPresent('*[data-id=treeViewLitreeViewItemrinkeby]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915/Sample.sol"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          'contract Sample {') !== -1)
       })
-    /*
-  .saveScreenshot('./reports/screenshots/etherscan-verified-contract-1.png')
-  .refresh()
-  .pause(7000)
-  .currentWorkspaceIs('etherscan-code-sample')
-  .assert.elementPresent('*[data-id=treeViewLitreeViewItemropsten]')
-  .assert.elementPresent('*[data-id=treeViewLitreeViewItemrinkeby]')
-  .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915"]')
-  .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915/Sample.sol"]')
-  .getEditorValue((content) => {
-    browser.assert.ok(content && content.indexOf(
-      'contract Sample {') !== -1)
-  })
-  .url('http://127.0.0.1:8080/#address=0xdac17f958d2ee523a2206206994597c13d831ec7')
-  .refresh()
-  .pause(7000)
-  .currentWorkspaceIs('etherscan-code-sample')
-  .assert.elementPresent('*[data-id=treeViewLitreeViewItemmainnet]')
-  .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
-  .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
-  .getEditorValue((content) => {
-    browser.assert.ok(content && content.indexOf(
-      'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
-      
-  })
-*/
+      .url('http://127.0.0.1:8080/#address=0xdac17f958d2ee523a2206206994597c13d831ec7')
+      .refresh()
+      .pause(7000)
+      .currentWorkspaceIs('etherscan-code-sample')
+      .assert.elementPresent('*[data-id=treeViewLitreeViewItemmainnet]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
+
+      })
   },
 
   'Should load the code from URL & code params #group1': function (browser: NightwatchBrowser) {

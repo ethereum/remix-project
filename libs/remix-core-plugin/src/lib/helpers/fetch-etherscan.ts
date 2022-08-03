@@ -1,5 +1,4 @@
 export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath, shouldSetFile = true, key?) => {
-  console.error('get etherscan contract', contractAddress);
   let data
   const compilationTargets = {}
   let etherscanKey
@@ -8,12 +7,10 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
   else etherscanKey = key
 
   if (etherscanKey) {
-    console.error('etherscan key found', etherscanKey);
     const endpoint = network.id == 1 ? 'api.etherscan.io' : 'api-' + network.name + '.etherscan.io'
     try {
       data = await fetch('https://' + endpoint + '/api?module=contract&action=getsourcecode&address=' + contractAddress + '&apikey=' + etherscanKey)
       data = await data.json()
-      console.error('etherscan contract data', data);
       // etherscan api doc https://docs.etherscan.io/api-endpoints/contracts
       if (data.message === 'OK' && data.status === "1") {
         if (data.result.length) {
@@ -24,7 +21,6 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
         }
       } else throw new Error('unable to retrieve contract data ' + data.message)
     } catch (e) {
-      console.error('etherscan contract data error', e);
       throw new Error('unable to retrieve contract data: ' + e.message)
     }
   } else throw new Error('unable to try fetching the source code from etherscan: etherscan access token not found. please go to the Remix settings page and provide an access token.')
