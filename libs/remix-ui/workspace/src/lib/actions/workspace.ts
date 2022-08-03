@@ -75,7 +75,8 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
 export type UrlParametersType = {
   gist: string,
   code: string,
-  url: string
+  url: string,
+  language: string
 }
 
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault') => {
@@ -91,7 +92,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       if (params.code) {
         const hash = bufferToHex(keccakFromString(params.code))
 
-        path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+        path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul': '.sol')
         content = atob(params.code)
         await workspaceProvider.set(path, content)
       }
