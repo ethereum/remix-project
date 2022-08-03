@@ -11,7 +11,7 @@ declare module 'nightwatch' {
         testContracts(fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser,
         setEditorValue(value: string, callback?: () => void): NightwatchBrowser,
         addFile(name: string, content: NightwatchContractContent): NightwatchBrowser,
-        verifyContracts(compiledContractNames: string[], opts?: { wait: number, version?: string }): NightwatchBrowser,
+        verifyContracts(compiledContractNames: string[], opts?: { wait: number, version?: string, runs?: string }): NightwatchBrowser,
         selectAccount(account?: string): NightwatchBrowser,
         clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser,
         testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
@@ -61,7 +61,10 @@ declare module 'nightwatch' {
         acceptAndRemember (this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
         clearConsole (this: NightwatchBrowser): NightwatchBrowser
         clearTransactions (this: NightwatchBrowser): NightwatchBrowser
-        currentSelectedFileIs (name: string): NightwatchBrowser
+        getBrowserLogs (this: NightwatchBrowser): NightwatchBrowser
+        currentSelectedFileIs (name: string): NightwatchBrowser,
+        switchWorkspace: (workspaceName: string) => NightwatchBrowser
+        switchEnvironment: (provider: string) => NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

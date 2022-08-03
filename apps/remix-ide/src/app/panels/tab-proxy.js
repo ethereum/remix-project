@@ -24,7 +24,7 @@ export class TabProxy extends Plugin {
     this.themeQuality = 'dark'
   }
 
-  onActivation () {
+  async onActivation () {
     this.on('theme', 'themeChanged', (theme) => {
       this.themeQuality = theme.quality
       // update invert for all icons
@@ -41,7 +41,13 @@ export class TabProxy extends Plugin {
 
       if (this.fileManager.mode === 'browser') {
         name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
-        this.removeTab(name)
+        // If deleted file is not current file and not an active tab in editor,
+        // ensure current file is active in the editor
+        if (this.fileManager.currentFile() && name !== this.fileManager.currentFile()) {
+          const currentFile = this.fileManager.currentFile()
+          const currentFileTabPath = currentFile.startsWith(workspace + '/') ? currentFile : workspace + '/' + currentFile
+          this.removeTab(name, { name: currentFileTabPath })
+        } else this.removeTab(name)
       } else {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
         this.removeTab(name)
@@ -50,10 +56,18 @@ export class TabProxy extends Plugin {
 
     this.on('fileManager', 'fileClosed', (name) => {
       const workspace = this.fileManager.currentWorkspace()
-
       if (this.fileManager.mode === 'browser') {
         name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
-        this.removeTab(name)
+        let tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+
+        // If tab doesn't exist, check if tab is opened because of abrupt disconnection with remixd
+        if (tabIndex === -1) {
+          const nameArray = name.split('/')
+          nameArray.shift()
+          name = 'localhost' + '/' + nameArray.join('/')
+          tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+          if(tabIndex !== -1) this.removeTab(name)
+        } else this.removeTab(name)
       } else {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
         this.removeTab(name)
@@ -139,6 +153,10 @@ export class TabProxy extends Plugin {
           displayName,
           () => this.emit('switchApp', name),
           () => {
+            if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
+              const files = Object.keys(this.editor.sessions)
+              files.forEach(filepath => this.editor.discard(filepath))
+            }
             this.emit('closeApp', name)
             this.call('manager', 'deactivatePlugin', name)
           },
@@ -151,6 +169,13 @@ export class TabProxy extends Plugin {
     this.on('manager', 'pluginDeactivated', (profile) => {
       this.removeTab(profile.name)
     })
+    
+    try {
+      this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
+    } catch (e) {
+      console.log('theme plugin has an issue: ', e)
+    }
+    this.renderComponent()
   }
 
   focus (name) {
@@ -190,6 +215,7 @@ export class TabProxy extends Plugin {
   }
 
   renameTab (oldName, newName) {
+    // The new tab is being added by FileManager
     this.removeTab(oldName)
   }
 
@@ -253,11 +279,16 @@ export class TabProxy extends Plugin {
     this._handlers[name] = { switchTo, close }
   }
 
-  removeTab (name) {
+  removeTab (name, currentFileTab) {
     delete this._handlers[name]
-    let previous = null
+    let previous = currentFileTab
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
-      if (tab.name === name) previous = this.loadedTabs[index - 1]
+      if (!previous && tab.name === name) {
+        if(index - 1  >= 0 && this.loadedTabs[index - 1])
+          previous = this.loadedTabs[index - 1]
+        else if (index + 1 && this.loadedTabs[index + 1]) 
+          previous = this.loadedTabs[index + 1]
+      }
       return tab.name !== name
     })
     this.renderComponent()
@@ -274,7 +305,15 @@ export class TabProxy extends Plugin {
   }
 
   updateComponent(state) {
-    return <TabsUI tabs={state.loadedTabs} onSelect={state.onSelect} onClose={state.onClose} onZoomIn={state.onZoomIn} onZoomOut={state.onZoomOut} onReady={state.onReady} themeQuality={state.themeQuality} />
+    return <TabsUI
+      tabs={state.loadedTabs}
+      onSelect={state.onSelect}
+      onClose={state.onClose}
+      onZoomIn={state.onZoomIn}
+      onZoomOut={state.onZoomOut}
+      onReady={state.onReady}
+      themeQuality={state.themeQuality}
+    />
   }
 
   renderComponent () {

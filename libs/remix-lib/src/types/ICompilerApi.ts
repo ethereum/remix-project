@@ -24,7 +24,8 @@ export interface ICompilerApi {
 
     onCurrentFileChanged: (fileName: string) => void
     // onResetResults: () => void,
-    onSetWorkspace: (workspace: any) => void
+    onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
+    onFileRemoved: (path: string) => void
     onNoFileSelected: () => void
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
@@ -42,7 +43,7 @@ export interface ICompilerApi {
     logToTerminal: (log: terminalLog) => void
 
     compileWithHardhat: (configPath: string) => Promise<string>
-    compileWithTruffle: () => Promise<string>
+    compileWithTruffle: (configPath: string) => Promise<string>
     statusChanged: (data: { key: string, title?: string, type?: string }) => void,
     emit?: (key: string, ...payload: any) => void
 }

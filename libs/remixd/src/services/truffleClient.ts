@@ -20,19 +20,18 @@ export class TruffleClient extends PluginClient {
     this.currentSharedFolder = currentSharedFolder
   }
 
-  compile () {
+  compile (configPath: string) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Truffle Compilation]: Cannot compile in read-only mode'
         return reject(new Error(errMsg))
       }
-      const cmd = `truffle compile`
+      const cmd = `truffle compile --config ${configPath}`
       const options = { cwd: this.currentSharedFolder, shell: true }
       const child = spawn(cmd, options)
       let result = ''
       let error = ''
       child.stdout.on('data', (data) => {
-        console.log('data in truffle-->', data)
         const msg = `[Truffle Compilation]: ${data.toString()}`
         console.log('\x1b[32m%s\x1b[0m', msg)
         result += msg + '\n'

@@ -1,5 +1,4 @@
 import React from 'react'
-import { Web3ProviderDialog } from './components/web3Dialog'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
   <div><i className="fas fa-exclamation-triangle text-danger mr-1"></i>
@@ -54,10 +53,6 @@ export const sourceVerificationNotAvailableToastMsg = () => (
   </div>
 )
 
-export const web3Dialog = (externalEndpoint: string, setWeb3Endpoint: (value: string) => void) => (
-  <Web3ProviderDialog externalEndpoint={externalEndpoint} setWeb3Endpoint={setWeb3Endpoint} />
-)
-
 export const envChangeNotification = (env: { context: string, fork: string }, from: string) => (
   <div>
     <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
@@ -76,5 +71,47 @@ export const storageFullMessage = () => (
     <span className="font-weight-bold">
       <span>Cannot save this file due to full LocalStorage. Backup existing files and free up some space.</span>
     </span>
+  </div>
+)
+
+export const recursivePasteToastMsg = () => (
+  <div>
+    File(s) to paste is an ancestor of the destination folder
+  </div>
+)
+
+export const logBuilder = (msg: string) => {
+  return <pre>{msg}</pre>
+}
+
+export const cancelProxyMsg = () => (
+  <div>
+    <b>Proxy deployment cancelled.</b>
+  </div>
+)
+
+export const cancelUpgradeMsg = () => (
+  <div>
+    <b>Upgrade with proxy cancelled.</b>
+  </div>
+)
+
+export const deployWithProxyMsg = () => (
+  <div>
+   <b>Deploy with Proxy</b> will initiate two (2) transactions:
+    <ol className="pl-3">
+      <li>Deploying the implementation contract</li>
+      <li>Deploying an ERC1967 proxy contract</li>
+    </ol>
+  </div>
+)
+
+export const upgradeWithProxyMsg = () => (
+  <div>
+    <b>Upgrade with Proxy</b> will initiate two (2) transactions:
+    <ol className="pl-3">
+      <li>Deploying the new implementation contract</li>
+      <li>Updating the proxy contract with the address of the new implementation contract</li>
+    </ol>
   </div>
 )

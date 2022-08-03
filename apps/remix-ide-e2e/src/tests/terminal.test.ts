@@ -7,7 +7,6 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
   },
-
   'Should execution a simple console command #group1 #group999': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
@@ -40,18 +39,18 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
-  'Call web3.eth.getAccounts() using JavaScript VM #group2': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Remix VM #group2': function (browser: NightwatchBrowser) {
     browser
       .executeScript('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db","0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB","0x617F2E2fD72FD9D5503197092aC168c91465E7f2","0x17F6AD8Ef982297579C203069C1DbfFE4348c372","0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678","0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7","0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C","0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC","0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c","0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C","0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB","0x583031D1113aD414F02576BD6afaBfb302140225","0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
   },
 
-  'Call web3.eth.getAccounts() using Web3 Provider #group5': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using External Http Provider #group5': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]')
-      .modalFooterOKClick('envNotification')
+      .switchEnvironment('External Http Provider')
+      .modalFooterOKClick('basic-http-provider')
       .executeScript('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
@@ -88,13 +87,14 @@ module.exports = {
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
+
   },
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsVMLondonMode"]')
+      .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
@@ -163,10 +163,9 @@ module.exports = {
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
-      .addFile('printHardhatlog.sol', { content: hardhatLog })
-      .clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
+      .clickLaunchIcon('udapp')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
@@ -199,7 +198,7 @@ module.exports = {
       .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
-      .pause(5000)
+      .pause(15000)
       .journalLastChildIncludes('147')
   }
 }
@@ -290,7 +289,7 @@ const deployWithEthersJs = `
         // 'web3Provider' is a remix global variable object
         const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     
-        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     
         let contract = await factory.deploy(...constructorArgs);
     
@@ -319,7 +318,7 @@ describe("Storage with lib", function () {
     // Make sure contract is compiled and artifacts are generated
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     console.log('storage contract Address: ' + storage.address);
     await storage.deployed()
@@ -329,7 +328,7 @@ describe("Storage with lib", function () {
   it("test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     await storage.deployed()
     const setValue = await storage.store(56);
@@ -340,7 +339,7 @@ describe("Storage with lib", function () {
   it("fail test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     await storage.deployed()
     const setValue = await storage.store(56);

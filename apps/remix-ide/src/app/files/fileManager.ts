@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
-import { fileChangedToastMsg, storageFullMessage } from '@remix-ui/helper'
+import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 
 /*
@@ -19,7 +19,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -275,7 +275,7 @@ class FileManager extends Plugin {
 
       const provider = this.fileProviderOf(src)
       if (provider.isSubDirectory(src, dest)) {
-        this.call('notification', 'toast', 'File(s) to paste is an ancestor of the destination folder')
+        this.call('notification', 'toast', recursivePasteToastMsg())
       } else {
         await this.inDepthCopy(src, dest)
       }
@@ -484,7 +484,7 @@ class FileManager extends Plugin {
     this.emit('filesAllClosed')
     this.events.emit('filesAllClosed')
     for (const file in this.openedFiles) {
-      this.closeFile(file)
+      await this.closeFile(file)
     }
   }
 
@@ -600,7 +600,7 @@ class FileManager extends Plugin {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
     this.events.emit('fileRemoved', path)
-    this.openFile()
+    this.openFile(this._deps.config.get('currentFile'))
   }
 
   async unselectCurrentFile() {
@@ -809,6 +809,13 @@ class FileManager extends Plugin {
 
       return provider.workspace
     }
+  }
+
+  async isGitRepo (directory: string): Promise<boolean> {
+    const path = directory + '/.git'
+    const exists = await this.exists(path)
+
+    return exists
   }
 }
 

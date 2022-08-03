@@ -11,14 +11,19 @@ export interface CompilerContainerProps {
   compileTabLogic: CompileTabLogic,
   isHardhatProject: boolean,
   isTruffleProject: boolean,
+  isFoundryProject: boolean,
+  workspaceName: string,
   tooltip: (message: string | JSX.Element) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   compiledFileName: string,
   updateCurrentVersion: any,
-  configurationSettings: ConfigurationSettings
+  configurationSettings: ConfigurationSettings,
+  configFilePath: string,
+  setConfigFilePath: (path: string) => void
 }
 export interface ContractSelectionProps {
   api: ICompilerApi,
+  compiledFileName: string,
   contractList: { file: string, name: string }[],
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
@@ -45,4 +50,3 @@ export interface CompilationDetails {
 export interface ContractsFile {
  [currentFile: string]: CompilationDetails
 }
-

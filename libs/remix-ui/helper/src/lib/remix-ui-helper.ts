@@ -47,6 +47,22 @@ export const createNonClashingNameAsync = async (name: string, fileManager, pref
   return name + counter + prefix + '.' + ext
 }
 
+export const createNonClashingTitle = async (name: string, fileManager) => {
+  if (!name) name = 'Undefined'
+  let _counter
+  let exist = true
+
+  do {
+    const isDuplicate = await fileManager.exists(name + (_counter || ''))
+
+    if (isDuplicate) _counter = (_counter || 0) + 1
+    else exist = false
+  } while (exist)
+  const counter = _counter || ''
+
+  return name + counter
+}
+
 export const joinPath = (...paths) => {
   paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
   if (paths.length === 1) return paths[0]
@@ -56,15 +72,15 @@ export const joinPath = (...paths) => {
 export const getPathIcon = (path: string) => {
   return path.endsWith('.txt')
     ? 'far fa-file-alt' : path.endsWith('.md')
-      ? 'far fa-file-alt' : path.endsWith('.sol')
+      ? 'fab fa-markdown' : path.endsWith('.sol')
         ? 'fak fa-solidity-mono' : path.endsWith('.js')
           ? 'fab fa-js' : path.endsWith('.json')
-            ? 'fas fa-brackets-curly' : path.endsWith('.vy')
-              ? 'fak fa-vyper-mono' : path.endsWith('.lex')
+            ? 'small fas fa-brackets-curly' : path.endsWith('.vy')
+              ? 'small fak fa-vyper2' : path.endsWith('.lex')
                 ? 'fak fa-lexon' : path.endsWith('ts')
-                 ? 'fad fa-brackets-curly' : path.endsWith('.contract')
-                   ? 'fab fa-ethereum' : path.endsWith('.cairo')
-                     ? 'fab fa-ethereum' : 'far fa-file' // TODO: add cairo icon
+                  ? 'small fak fa-ts-logo' : path.endsWith('.tsc')
+                   ? 'fad fa-brackets-curly' : path.endsWith('.cairo')
+                     ? 'small fak fa-cairo' : 'far fa-file'
 }
 
 export const isNumeric = (value) => {

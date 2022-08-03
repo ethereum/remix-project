@@ -6,6 +6,7 @@ import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryR
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
 import { QueryParams } from '@remix-project/remix-lib'
+import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 
 export * from './events'
@@ -19,7 +20,26 @@ let plugin, dispatch: React.Dispatch<any>
 export type UrlParametersType = {
   gist: string,
   code: string,
-  url: string
+  url: string,
+  address: string
+}
+
+const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
+  if (workspaces.length === 0) {
+    await createWorkspaceTemplate('default_workspace', 'remixDefault')
+    plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
+    dispatch(setCurrentWorkspace({ name: 'default_workspace', isGitRepo: false }))
+    await loadWorkspacePreset('remixDefault')
+  } else {
+    if (workspaces.length > 0) {
+      const workspace = workspaces[workspaces.length - 1]
+      const workspaceName = (workspace || {}).name
+
+      workspaceProvider.setWorkspace(workspaceName)
+      plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+      dispatch(setCurrentWorkspace(workspace))
+    }
+  }
 }
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
@@ -31,32 +51,74 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const localhostProvider = filePanelPlugin.fileProviders.localhost
     const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
-
     dispatch(setWorkspaces(workspaces))
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace('gist-sample'))
+      dispatch(setCurrentWorkspace({ name: 'gist-sample', isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace('code-sample'))
+      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-    } else {
-      if (workspaces.length === 0) {
-        await createWorkspaceTemplate('default_workspace', 'default-template')
-        plugin.setWorkspace({ name: 'default_workspace', isLocalhost: false })
-        dispatch(setCurrentWorkspace('default_workspace'))
-        await loadWorkspacePreset('default-template')
-      } else {
-        if (workspaces.length > 0) {
-          workspaceProvider.setWorkspace(workspaces[workspaces.length - 1])
-          plugin.setWorkspace({ name: workspaces[workspaces.length - 1], isLocalhost: false })
-          dispatch(setCurrentWorkspace(workspaces[workspaces.length - 1]))
+    } else if (params.address) {
+      if (params.address.startsWith('0x') && params.address.length === 42) {
+        const contractAddress = params.address
+        plugin.call('notification', 'toast', `Looking for contract(s) verified on different networks of Etherscan for contract address ${contractAddress} .....`)
+        let data
+        let count = 0
+        try {
+          let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+          if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
+          const networks = [
+            {id: 1, name: 'mainnet'},
+            {id: 3, name: 'ropsten'},
+            {id: 4, name: 'rinkeby'},
+            {id: 42, name: 'kovan'},
+            {id: 5, name: 'goerli'}
+          ]
+          let found = false
+          const foundOnNetworks = []
+          for (const network of networks) {
+            const target = `/${network.name}/${contractAddress}`
+            try {
+              data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, etherscanKey)
+            } catch (error) {
+              if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
+                continue
+              else {
+                if (!found) await basicWorkspaceInit(workspaces, workspaceProvider)
+                break
+              }
+            }
+            found = true
+            foundOnNetworks.push(network.name)
+            await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
+            plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
+            dispatch(setCurrentWorkspace({ name: 'etherscan-code-sample', isGitRepo: false }))
+            let filePath
+            count = count + (Object.keys(data.compilationTargets)).length
+            for (filePath in data.compilationTargets)
+              await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+          }
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '': 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '': 's'} of Etherscan for contract address ${contractAddress} !!`)
+        } catch (error) {
+          await basicWorkspaceInit(workspaces, workspaceProvider)
         }
-      }
+      } else await basicWorkspaceInit(workspaces, workspaceProvider)
+    } else if (localStorage.getItem("currentWorkspace")) {
+      const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))
+      if (index !== -1) {
+        const name = localStorage.getItem("currentWorkspace")
+        workspaceProvider.setWorkspace(name)
+        plugin.setWorkspace({ name: name, isLocalhost: false })
+        dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
+      } 
+    } else {
+      await basicWorkspaceInit(workspaces, workspaceProvider)
     }
 
     listenOnPluginEvents(plugin)

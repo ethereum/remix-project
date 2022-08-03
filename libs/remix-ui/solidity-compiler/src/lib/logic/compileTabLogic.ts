@@ -18,11 +18,13 @@ export class CompileTabLogic {
   public compilerImport
   public event
   public evmVersions: Array<string>
+  public useFileConfiguration: boolean
+  public configFilePath: string
 
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.evmVersions = ['default', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
+    this.evmVersions = ['default', 'berlin', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
   init () {
@@ -52,10 +54,19 @@ export class CompileTabLogic {
     }
   }
 
-  setOptimize (newOptimizeValue) {
+  setOptimize (newOptimizeValue: boolean) {
     this.optimize = newOptimizeValue
     this.api.setCompilerParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
+  }
+
+  setUseFileConfiguration (useFileConfiguration: boolean) {
+    this.useFileConfiguration = useFileConfiguration
+    this.compiler.set('useFileConfiguration', useFileConfiguration)
+  }
+
+  setConfigFilePath (path) {
+    this.configFilePath = path
   }
 
   setRuns (runs) {
@@ -95,6 +106,11 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
+        if (this.configFilePath) {
+          this.api.readFile(this.configFilePath).then( contentConfig => {
+            this.compiler.set('configFileContent', contentConfig)
+          })
+        }
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {
@@ -112,6 +128,12 @@ export class CompileTabLogic {
   async isTruffleProject () {
     if (this.api.getFileManagerMode() === 'localhost') {
       return await this.api.fileExists('truffle-config.js')
+    } else return false
+  }
+
+  async isFoundryProject () {
+    if (this.api.getFileManagerMode() === 'localhost') {
+      return await this.api.fileExists('foundry.toml')
     } else return false
   }
 
@@ -141,11 +163,31 @@ export class CompileTabLogic {
             })
           }
         } else if (externalCompType === 'truffle') {
-            this.api.compileWithTruffle().then((result) => {
+          const { currentVersion, optimize, runs, evmVersion } = this.compiler.state
+          if (currentVersion) {
+            const fileContent = `module.exports = {
+              compilers: {
+                solc: {
+                  version: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+                  settings: {
+                    optimizer: {
+                      enabled: ${optimize},
+                      runs: ${runs},
+                    },
+                    evmVersion: ${evmVersion}
+                  }
+                }
+              }
+            }`
+            const configFilePath = 'remix-compiler.config.js'
+            this.api.writeFile(configFilePath, fileContent)
+            _paq.push(['trackEvent', 'compiler', 'compileWithTruffle'])
+            this.api.compileWithTruffle(configFilePath).then((result) => {
               this.api.logToTerminal({ type: 'info', value: result })
             }).catch((error) => {
               this.api.logToTerminal({ type: 'error', value: error })
             })
+          }
         }
       }
       // TODO readd saving current file

@@ -76,10 +76,9 @@ export class RemixdHandle extends WebsocketPlugin {
         const intervalId = setInterval(() => {
           if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
             clearInterval(intervalId)
-            console.log(error)
             const alert:AlertModal = {
               id: 'connectionAlert',
-              message: 'Connection to remixd terminated.Please make sure remixd is still running in the background.'
+              message: 'Connection to remixd terminated. Please make sure remixd is still running in the background.'
             }
             this.call('notification', 'alert', alert)
             this.canceled()
@@ -135,22 +134,29 @@ export class RemixdHandle extends WebsocketPlugin {
 }
 
 function remixdDialog () {
-  const commandText = 'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
+  const commandText = 'remixd'
+  const fullCommandText = 'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
   return (<>
     <div className=''>
       <div className='mb-2 text-break'>
-        Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.<br/><br/>
-        Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
+        Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.
       </div>
       <div className='mb-2 text-break'>
-        If you are just looking for the remixd command, here it is:
-        <br></br><br></br><b>{commandText}</b>
-        <CopyToClipboard data-id='remixdCopyCommand' content={commandText}></CopyToClipboard>
+        Remixd <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">documentation</a>.
       </div>
       <div className='mb-2 text-break'>
-        When connected, a session will be started between <em>{window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>.
-         The shared folder will be in the "File Explorers" workspace named "localhost".
-        <br/>Read more about other <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#ports-usage">Remixd ports usage</a>
+        The remixd command is:
+        <br/><b>{commandText}</b>
+      </div>
+      <div className='mb-2 text-break'>
+        The remixd command without options uses the terminal's current directory as the shared directory and the shared Remix domain can only be https://remix.ethereum.org, https://remix-alpha.ethereum.org, or https://remix-beta.ethereum.org
+      </div>
+      <div className='mb-2 text-break'>
+        Example command with flags: <br/>
+        <b>{fullCommandText}</b>
+      </div>
+      <div className='mb-2 text-break'>
+        For info about ports, see <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#ports-usage">Remixd ports usage</a>
       </div>
       <div className='mb-2 text-break'>
         This feature is still in Alpha. We recommend to keep a backup of the shared folder.

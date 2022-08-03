@@ -10,7 +10,7 @@ const profile = {
   name: 'ganache-provider',
   displayName: 'Ganache Provider',
   kind: 'provider',
-  description: 'Ganache',
+  description: 'Truffle Ganache provider',
   methods: ['sendAsync'],
   version: packageJson.version
 }
@@ -22,10 +22,12 @@ export class GanacheProvider extends AbstractProvider {
 
   body (): JSX.Element {
     return (
-      <div> Note: To run Ganache on your system, run
-        <div className="border p-1">npm install -g ganache</div> 
-        <div className="border p-1">ganache</div>       
-        For more info, visit: <a href="https://github.com/trufflesuite/ganache" target="_blank">Ganache Documentation</a>
+      <div> Note: To run Ganache on your system, run:
+        <div className="p-1 pl-3"><b>yarn global add ganache</b></div> 
+        <div className="p-1 pl-3"><b>ganache</b></div>       
+        <div className="pt-2 pb-4">
+          For more info, visit: <a href="https://github.com/trufflesuite/ganache" target="_blank">Ganache Documentation</a>
+        </div>
         <div>Ganache JSON-RPC Endpoint:</div>
       </div>
     )

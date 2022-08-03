@@ -83,10 +83,35 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
     browser.frameParent(() => {
       browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
         if (visible.status && visible.status === -1) {
-          // @ts-ignore
-          browser.frame(0, () => { resolve(true) })
+
+          browser.pause(1000).element('xpath', '//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okPresent: any) => {
+            if ((okPresent.status && okPresent.status === -1) || okPresent.value === false) {
+              // @ts-ignore
+              browser.frame(0, () => { resolve(true) })
+            } else {
+              browser
+              .useXpath()
+              .isVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okVisible: any) => {
+                if (okVisible.value) {
+                  browser.click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+                    // @ts-ignore
+                    browser.frame(0, () => { resolve(true) })
+                  })
+                } else {
+                  // @ts-ignore
+                  browser.frame(0, () => { resolve(true) })
+                }
+              })
+            }
+          })
+
+
+
         } else {
-          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]').click('//*[@data-id="permissionHandlerRememberUnchecked"]').waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]').click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]')
+          .click('//*[@data-id="permissionHandlerRememberUnchecked"]')
+          .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
+          .click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
             // @ts-ignore
             browser.frame(0, () => { resolve(true) })
           })
@@ -163,7 +188,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .clickLaunchIcon('udapp')
-      .waitForElementContainsText('#selectExEnvOptions option:checked', 'JavaScript VM (Berlin)')
+      .waitForElementContainsText('#selectExEnvOptions button', 'Remix VM (Berlin)')
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
@@ -205,7 +230,12 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, tests: { isDirectory: true }, scripts: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false }
+    }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -260,28 +290,33 @@ module.exports = {
   'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, tests: { isDirectory: true }, scripts: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false } 
+    }, null, null)
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['default_workspace', 'emptyworkspace', 'testspace'], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false}, {name:"emptyworkspace",isGitRepo:false}, {name:"testspace",isGitRepo:false}], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
   },
   'Should have event when switching workspace #group2': async function (browser: NightwatchBrowser) {
     // @ts-ignore
-    browser.frameParent().useCss().clickLaunchIcon('filePanel').click('*[data-id="workspacesSelect"] option[value="default_workspace"]').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
+    browser.frameParent().useCss().clickLaunchIcon('filePanel').switchWorkspace('default_workspace').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
       await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
     })
   },
 
   'Should rename workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"testspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
   },
   'Should delete workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:deleteWorkspace', null, null, ['testspace'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'newspace', 'renamed'], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
   },
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
@@ -356,7 +391,7 @@ module.exports = {
       .useCss()
       .clickLaunchIcon('pluginManager')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="Hardhat Provider"]')
+      .switchEnvironment('Hardhat Provider')
       .modalFooterOKClick('hardhat-provider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
       .clickLaunchIcon('localPlugin')
@@ -384,7 +419,7 @@ module.exports = {
       .addFile('test_modal.js', { content: testModalToasterApi })
       .executeScript('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications

@@ -75,6 +75,25 @@ export interface EditorUIProps {
 
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
+  const defaultEditorValue = `
+  \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
+  \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
+  \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
+  \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
+  \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
+  \t\t\t\t\t\t\tKeyboard Shortcuts:\n
+  \t\t\t\t\t\t\t\tCTRL + S: Compile the current contract\n
+  \t\t\t\t\t\t\t\tCtrl + Shift + F : Open the File Explorer\n
+  \t\t\t\t\t\t\t\tCtrl + Shift + A : Open the Plugin Manager\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n\n
+  \t\t\t\t\t\t\tImportant Links:\n
+  \t\t\t\t\t\t\t\tOfficial website about the Remix Project: https://remix-project.org/\n
+  \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
+  \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
+  \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
+  \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
+  \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
+  `
   const editorRef = useRef(null)
   const monacoRef = useRef(null)
   const currentFileRef = useRef('')
@@ -226,9 +245,8 @@ export const EditorUI = (props: EditorUIProps) => {
     defineAndSetTheme(monacoRef.current)
   })
 
-
   useEffect(() => {
-    if (!editorRef.current) return
+    if (!editorRef.current || !props.currentFile) return
     currentFileRef.current = props.currentFile
     const file = editorModelsState[props.currentFile]
     editorRef.current.setModel(file.model)
@@ -391,12 +409,54 @@ export const EditorUI = (props: EditorUIProps) => {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
+
+    // zoomin zoomout
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
+    
+    // add context menu items
+    const zoominAction = {
+      id: "zoomIn",
+      label: "Zoom In",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "zooming", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
+      ],
+      run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 }) },
+    }
+    const zoomOutAction = {
+      id: "zoomOut",
+      label: "Zoom Out",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "zooming", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
+      ],
+      run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 }) },
+    }
+    editor.addAction(zoomOutAction)
+    editor.addAction(zoominAction)
+
+    const editorService = editor._codeEditorService;
+    const openEditorBase = editorService.openCodeEditor.bind(editorService);
+    editorService.openCodeEditor = async (input, source) => {
+        const result = await openEditorBase(input, source)
+        if (input && input.resource && input.resource.path) {
+          try {
+            await props.plugin.call('fileManager', 'open', input.resource.path)
+          } catch (e) {
+            console.log(e)
+          }          
+        }
+        return result
+    }
   }
 
   function handleEditorWillMount (monaco) {
@@ -422,7 +482,8 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true }}
+        options={{ glyphMargin: true, readOnly: true}}
+        defaultValue={defaultEditorValue}
       />
       <div className="contextview">
         <RemixUiEditorContextView

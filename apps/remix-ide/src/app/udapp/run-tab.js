@@ -1,6 +1,7 @@
 import React from 'react' // eslint-disable-line
 import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { addressToString } from '@remix-ui/helper'
 import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
@@ -11,14 +12,15 @@ const profile = {
   name: 'udapp',
   displayName: 'Deploy & run transactions',
   icon: 'assets/img/deployAndRun.webp',
-  description: 'execute and save transactions',
+  description: 'Execute, save and replay transactions',
   kind: 'udapp',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
   version: packageJson.version,
+  maintainedBy: 'Remix',
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance']
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContractAndAddInstance']
 }
 
 export class RunTab extends ViewPlugin {
@@ -101,6 +103,7 @@ export class RunTab extends ViewPlugin {
 
     await this.call('blockchain', 'addProvider', {
       name: 'Hardhat Provider',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -115,6 +118,7 @@ export class RunTab extends ViewPlugin {
 
     await this.call('blockchain', 'addProvider', {
       name: 'Ganache Provider',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -128,11 +132,71 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
+      name: 'Foundry Provider',
+      isInjected: false,
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('foundry-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
       name: 'Wallet Connect',
+      isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
           try {
             const result = await udapp.call('walletconnect', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'External Http Provider',
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('basic-http-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+    
+    await this.call('blockchain', 'addProvider', {
+      name: 'Optimism Provider',
+      isInjected: true,
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('injected-optimism-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+
+    await this.call('blockchain', 'addProvider', {
+      name: 'Arbitrum One Provider',
+      isInjected: true,
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('injected-arbitrum-one-provider', 'sendAsync', payload)
             callback(null, result)
           } catch (e) {
             callback(e)
@@ -148,5 +212,12 @@ export class RunTab extends ViewPlugin {
 
   readFile (fileName) {
     return this.call('fileManager', 'readFile', fileName)
+  }
+
+  resolveContractAndAddInstance (contractObject, address) {
+    const data = this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+
+    this.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    this.addInstance(address, contractObject.abi, contractObject.name)
   }
 }
