@@ -20,6 +20,7 @@ export function UniversalDappUI (props: UdappProps) {
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
+  const [contractBal, setContractBal] = useState(0)
 
   useEffect(() => {
     if (!props.instance.abi) {
@@ -33,6 +34,10 @@ export function UniversalDappUI (props: UdappProps) {
 
   useEffect(() => {
     if (props.instance.address) {
+        props.blockchain.getBalanceInEther(props.instance.address, (err, balInEth) => {
+          if (!err) setContractBal(balInEth)
+        })
+
       // @ts-ignore
       let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
 
@@ -228,6 +233,7 @@ export function UniversalDappUI (props: UdappProps) {
         </button>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
+        <label>Balance: {contractBal} ETH</label>
         <div className="udapp_contractActionsContainer">
           {
             contractABI && contractABI.map((funcABI, index) => {

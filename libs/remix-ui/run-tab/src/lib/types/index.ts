@@ -208,6 +208,7 @@ export interface InstanceContainerProps {
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
+  blockchain: any
 }
 
 export interface Modal {
@@ -306,6 +307,7 @@ export interface UdappProps {
     funcIndex?: number) => void,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
+  blockchain: any
 }
 
 export interface DeployButtonProps {
