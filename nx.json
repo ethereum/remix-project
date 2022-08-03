@@ -198,6 +198,9 @@
     },
     "vyper": {
       "tags": []
+    },
+    "etherscan": {
+      "tags": []
     }
   },
   "targetDependencies": {
