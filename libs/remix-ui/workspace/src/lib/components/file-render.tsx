@@ -7,7 +7,7 @@ import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileLabel } from './file-label'
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
-
+import {Draggable} from "@remix-ui/drag-n-drop"
 
 
 
@@ -122,7 +122,9 @@ export const FileRender = (props: RenderFileProps) => {
         label={
           <>
             <div className="d-flex flex-row">
-              <FileLabel file={file} fileDecorations={props.fileDecorations} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+              <Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+                <FileLabel file={file} fileDecorations={props.fileDecorations} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+              </Draggable>
               <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
             </div>
           </>
