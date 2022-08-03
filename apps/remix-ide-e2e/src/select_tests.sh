@@ -3,13 +3,18 @@
 # Bash Menu Script Example
 
 PS3='Select a browser: '
-BROWSERS=( "chrome" "firefox" "exit" )
+BROWSERS=( "chrome" "chrome headless" "firefox" "exit" )
 select opt in "${BROWSERS[@]}"
 do
     case $opt in
         "chrome")
             echo "Chrome selected"
             BROWSER="chromeDesktop"
+            break
+            ;;
+        "chrome headless")
+            echo "Chrome headless selected"
+            BROWSER="chrome"
             break
             ;;
         "firefox")
