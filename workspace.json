@@ -1505,34 +1505,15 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["libs/remix-ui/file-decorators/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/remix-ui/file-decorators/**/*"]
+            "tsConfig": [
+              "libs/remix-ui/file-decorators/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/file-decorators/**/*"
+            ]
           }
         }
-      }
-    }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "schematics": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/react": {
-      "application": {
-        "style": "css",
-        "linter": "eslint",
-        "babel": true
-      },
-      "component": {
-        "style": "css"
-      },
-      "library": {
-        "style": "css",
-        "linter": "eslint"
       }
     },
     "vyper": {
@@ -1605,7 +1586,8 @@
             "linter": "eslint",
             "config": "apps/vyper/.eslintrc",
             "files": [
-              "apps/vyper/src/**/*.js", "apps/vyper/src/**/*.ts"
+              "apps/vyper/src/**/*.js",
+              "apps/vyper/src/**/*.ts"
             ],
             "exclude": [
               "**/node_modules/**"
