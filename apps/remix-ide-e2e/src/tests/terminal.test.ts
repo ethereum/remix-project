@@ -7,7 +7,6 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
   },
-
   'Should execution a simple console command #group1 #group999': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
@@ -164,10 +163,9 @@ module.exports = {
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
-      .addFile('printHardhatlog.sol', { content: hardhatLog })
-      .clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
+      .clickLaunchIcon('udapp')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
