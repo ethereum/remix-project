@@ -40,7 +40,7 @@ export function RecorderUI (props: RecorderProps) {
           <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
         </OverlayTrigger>
         </div>
-        <div>
+        <div className="p-3">
           <span data-id='udappRecorderTitleExpander' onClick={toggleClass}>
             <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
           </span>
