@@ -159,7 +159,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
 
-  'Should create ERC721 workspace with files #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -209,7 +209,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
