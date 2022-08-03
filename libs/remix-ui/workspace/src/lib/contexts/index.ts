@@ -30,7 +30,6 @@ export const FileSystemContext = createContext<{
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
   dispatchHandleDownloadFiles: () => Promise<void>,
   dispatchHandleRestoreBackup: () => Promise<void>
-  dispatchMoveFile: (src: string, dest: string) => Promise<void>,
   dispatchCloneRepository: (url: string) => Promise<void>
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
 
