@@ -25,6 +25,7 @@ export function RecorderUI (props: RecorderProps) {
     setToggleExpander(!toggleExpander)
   }
 
+
   return (
     <div className="udapp_cardContainer list-group-item border border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
