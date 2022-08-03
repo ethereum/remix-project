@@ -5,7 +5,6 @@ class OpenFile extends EventEmitter {
   command (this: NightwatchBrowser, name: string) {
     this.api.perform((done) => {
       openFile(this.api, name, () => {
-        console.log('doing done')
         done()
         this.emit('complete')
       })
