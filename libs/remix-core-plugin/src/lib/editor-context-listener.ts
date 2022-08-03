@@ -92,7 +92,7 @@ export class EditorContextListener extends Plugin {
     this._stopHighlighting()
     this.currentPosition = cursorPosition
     this.currentFile = file
-    if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
+    if (compilationResult && compilationResult.data && compilationResult.data.sources && compilationResult.data.sources[file]) {
       const nodes = sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
       this.nodes = nodes
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
