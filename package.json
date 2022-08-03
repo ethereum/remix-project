@@ -307,7 +307,7 @@
     "mkdirp": "^0.5.1",
     "mocha": "^8.0.1",
     "nanohtml": "^1.6.3",
-    "nightwatch": "^2.2.2",
+    "nightwatch": "^2.3",
     "nodemon": "^2.0.4",
     "notify-error": "^1.2.0",
     "npm-link-local": "^1.1.0",
