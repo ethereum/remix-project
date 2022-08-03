@@ -309,12 +309,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
-      if (api.getCompilerParameters().version) selectedVersion = api.getCompilerParameters().version
-      // Check if version is a URL and corresponding filename starts with 'soljson'
-      if (selectedVersion.startsWith('https://')) {
-        const urlArr = selectedVersion.split('/')
-
-        if (urlArr[urlArr.length - 1].startsWith('soljson')) isURL = true
+      if (api.getCompilerParameters().version) {
+        const versionFromURL = api.getCompilerParameters().version
+        // Check if version is a URL and corresponding filename starts with 'soljson'
+        if (versionFromURL.startsWith('https://')) {
+          const urlArr = versionFromURL.split('/')
+          if (urlArr[urlArr.length - 1].startsWith('soljson')) {
+            isURL = true
+            selectedVersion = versionFromURL
+          }
+        } else {
+          // URL version can be like 0.8.7+commit.e28d00a7, 0.8.7 or soljson-v0.8.7+commit.e28d00a7.js
+          const selectedVersionArr = versions.filter(obj => obj.path === versionFromURL || obj.longVersion === versionFromURL || obj.version === versionFromURL)
+          // for version like 0.8.15, there will be more than one elements in the array
+          // In that case too, index 0 will have non-nightly version object
+          if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
+        }
       }
       if (wasmRes.event.type !== 'error') {
         allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
@@ -765,7 +775,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         <div className={`px-4 pb-4 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
             <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
-            <label className="form-check-label custom-control-label" htmlFor="scManualConfig">Compiler configuration</label>
+            <label className="form-check-label custom-control-label" htmlFor="scManualConfig" data-id="scManualConfiguration">Compiler configuration</label>
           </div>
           <div className={`flex-column 'd-flex'}`}>
             <div className="mb-2 ml-4">
@@ -813,7 +823,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <input
               ref={configFilePathInput}
               className={`py-0 my-0 form-control ${showFilePathInput ? "d-flex" : "d-none"}`}
-              placeholder={"Enter the new path"}
+              placeholder={"/folder_path/file_name.json"}
               title="If the file you entered does not exist you will be able to create one in the next step."
               disabled={!state.useFileConfiguration}
               data-id="scConfigFilePathInput"
