@@ -47,7 +47,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
   useEffect(() => {
     handleResize()
-  })
+  }, )
 
   useEffect(() => {
     window.addEventListener('resize', handleResize)
@@ -55,7 +55,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     setTimeout(() =>
       handleResize(), 2000)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [state.debugging])
 
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
 
     providerChanged()
-  }, [state.debugger])
+  }, [state.debugger, state.isActive])
 
   const listenToEvents = (debuggerInstance, currentReceipt) => {
     if (!debuggerInstance) return
