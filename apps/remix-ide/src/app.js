@@ -425,7 +425,11 @@ class AppComponent {
                   );
 
                   // @todo(remove the timeout when activatePlugin is on 0.3.0)
-                  await this.appManager.call(...callDetails).catch(console.error);
+                  try {
+                    await this.appManager.call(...callDetails)
+                  } catch (e) {
+                    console.error(e)
+                  }
                 }
               }
             }
