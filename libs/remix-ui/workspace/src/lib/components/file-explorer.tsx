@@ -10,7 +10,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
-import { MoveContext } from '../contexts'
+import { Drag } from '@remix-project/remix-ui/draggable'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
@@ -411,21 +411,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
+  const handleFileMove = (dest: string, dragged:string)=>{
+    try {
+      props.dispatchMoveFile(dragged, dest)
+    } catch (error) {
+      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + dragged, 'Close', async () => {})
+    }   
+}
 
   return (
-    <MoveContext.Provider value={{
-      dragged: dragged,
-      moveFile: ( dest: string) => {
-        try {
-          props.dispatchMoveFile(dragged, dest)
-        } catch (error) {
-          props.modal('Moving File Failed', 'Unexpected error while moving file: ' + dragged, 'Close', async () => {})
-        }   
-    },
-    currentlyMoved:(path)=>{
-      setDragged(path) 
-    }
-    }}>
+    <Drag onFileMoved={handleFileMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
@@ -490,7 +485,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         />
       }
     </div>
-    </MoveContext.Provider> )
+    </Drag>
+  )
 }
 
 export default FileExplorer
