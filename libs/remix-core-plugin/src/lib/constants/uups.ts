@@ -103,3 +103,5 @@ export const UUPSupgradeAbi = {
     "stateMutability": "nonpayable",
     "type": "function"
 }
+export const EnableProxyURLParam = 'deployProxy'
+export const EnableUpgradeURLParam = 'upgradeProxy'
