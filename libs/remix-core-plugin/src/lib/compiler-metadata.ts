@@ -87,7 +87,7 @@ export class CompilerMetadata extends Plugin {
 
     let parsedMetadata
     try {
-      parsedMetadata = JSON.parse(contract.object.metadata)
+      parsedMetadata = contract.object && contract.object.metadata ? JSON.parse(contract.object.metadata) : null
     } catch (e) {
       console.log(e)
     }
