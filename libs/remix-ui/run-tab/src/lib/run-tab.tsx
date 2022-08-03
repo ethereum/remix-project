@@ -263,6 +263,7 @@ export function RunTabUI (props: RunTabProps) {
             runTransactions={executeTransactions}
             sendValue={runTab.sendValue}
             getFuncABIInputs={getFuncABIValues}
+            blockchain={plugin.blockchain}
           />
         </div>
       </div>
