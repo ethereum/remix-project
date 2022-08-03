@@ -21,5 +21,5 @@ module.exports = {
       "<rootDir>/../../dist/libs/remix-ws-templates/src/index.js"
     ,
     "@remix-project/remixd": "<rootDir>/../../dist/libs/remixd/index.js"
-  }
+  },"projects": "<rootDir>/libs/remix-ui/draggable"
 };
