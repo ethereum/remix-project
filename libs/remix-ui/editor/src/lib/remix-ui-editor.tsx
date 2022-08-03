@@ -244,7 +244,6 @@ export const EditorUI = (props: EditorUIProps) => {
     defineAndSetTheme(monacoRef.current)
   })
 
-
   useEffect(() => {
     if (!editorRef.current || !props.currentFile) return
     currentFileRef.current = props.currentFile
@@ -409,6 +408,8 @@ export const EditorUI = (props: EditorUIProps) => {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
+
+    // zoomin zoomout
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
@@ -416,6 +417,32 @@ export const EditorUI = (props: EditorUIProps) => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
     
+    // add context menu items
+    const zoominAction = {
+      id: "zoomIn",
+      label: "Zoom In",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "zooming", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
+      ],
+      run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 }) },
+    }
+    const zoomOutAction = {
+      id: "zoomOut",
+      label: "Zoom Out",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "zooming", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
+      ],
+      run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 }) },
+    }
+    editor.addAction(zoomOutAction)
+    editor.addAction(zoominAction)
+
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input, source) => {

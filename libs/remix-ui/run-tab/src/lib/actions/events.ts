@@ -95,17 +95,20 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 const broadcastCompilationResult = async (plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
-
   plugin.compilersArtefacts[languageVersion] = compiler
   plugin.compilersArtefacts.__last = compiler
 
   const contracts = getCompiledContracts(compiler).map((contract) => {
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
   })
-  const index = contracts.findIndex(contract => contract.alias === plugin.REACT_API.contracts.currentContract)
-
-  if ((index < 0) && (contracts.length > 0)) dispatch(setCurrentContract(contracts[0].alias))
-  const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources[file] ? data.sources[file].ast : {})
+  if ((contracts.length > 0)) {
+    const contractsInCompiledFile = contracts.filter(obj => obj.file === file)
+    let currentContract
+    if (contractsInCompiledFile.length) currentContract = contractsInCompiledFile[0].alias
+    else currentContract = contracts[0].alias
+    dispatch(setCurrentContract(currentContract))
+  }
+  const isUpgradeable = await plugin.call('openzeppelin-proxy', 'isConcerned', data.sources && data.sources[file] ? data.sources[file].ast : {})
 
   if (isUpgradeable) {
     const options = await plugin.call('openzeppelin-proxy', 'getProxyOptions', data, file)
