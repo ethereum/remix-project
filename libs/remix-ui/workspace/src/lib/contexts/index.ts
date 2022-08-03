@@ -32,6 +32,8 @@ export const FileSystemContext = createContext<{
   dispatchHandleRestoreBackup: () => Promise<void>
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
   dispatchCloneRepository: (url: string) => Promise<void>
+  dispatchMoveFile: (src: string, dest: string) => Promise<void>,
+
     }>(null)
 
 interface MoveContextType{
