@@ -51,7 +51,7 @@ export const Drag = (props: DragType) => {
 };
 
 export const Draggable = (props: DraggableType) => {
-  const dragRef = useRef<HTMLSpanElement>(),
+  const dragRef = useRef<HTMLSpanElement | null>(null),
     file = props.file,
     context = useContext(MoveContext);
 

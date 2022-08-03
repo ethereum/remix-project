@@ -1516,6 +1516,26 @@
         }
       }
     },
+    "remix-ui-drag-n-drop": {
+      "root": "libs/remix-ui/drag-n-drop",
+      "sourceRoot": "libs/remix-ui/drag-n-drop/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-ui/drag-n-drop/.eslintrc.json",
+            "tsConfig": [
+              "libs/remix-ui/drag-n-drop/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
     "vyper": {
       "root": "apps/vyper",
       "sourceRoot": "apps/vyper/src",

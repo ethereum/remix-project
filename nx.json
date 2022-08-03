@@ -204,14 +204,9 @@
     },
     "etherscan": {
       "tags": []
+    },
+    "remix-ui-drag-n-drop": {
+      "tags": []
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   }
 }
