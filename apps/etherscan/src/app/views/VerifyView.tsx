@@ -170,7 +170,11 @@ export const VerifyView: React.FC<Props> = ({
         }
         return result
       } catch (error) {
+<<<<<<< HEAD
         console.error(error)
+=======
+        console.log("Error, something wrong happened", error)
+>>>>>>> e02014ca4 (add etherscan plugin)
         setResults("Something wrong happened, try again")
       }
     }
@@ -284,12 +288,20 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
+<<<<<<< HEAD
             <SubmitButton dataId="verify-contract" text="Verify Contract" isSubmitting={isSubmitting} />
+=======
+            <SubmitButton text="Verify Contract" isSubmitting={isSubmitting} />
+>>>>>>> e02014ca4 (add etherscan plugin)
           </form>
         )}
       </Formik>
 
+<<<<<<< HEAD
       <div data-id="verify-result"
+=======
+      <div
+>>>>>>> e02014ca4 (add etherscan plugin)
         style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center" }}
         dangerouslySetInnerHTML={{ __html: results }}
       />

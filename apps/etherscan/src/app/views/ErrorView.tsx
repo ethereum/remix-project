@@ -21,7 +21,11 @@ export const ErrorView: React.FC = () => {
         Please raise an issue:{" "}
         <a
           style={{ color: "red" }}
+<<<<<<< HEAD
           href="https://github.com/ethereum/remix-project/issues"
+=======
+          href="https://github.com/machinalabs/remix-etherscan/issues"
+>>>>>>> e02014ca4 (add etherscan plugin)
         >
           Here
         </a>

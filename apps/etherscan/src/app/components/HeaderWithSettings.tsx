@@ -18,7 +18,10 @@ interface IconProps {
 const HomeIcon: React.FC<IconProps> = ({ from, themeType }: IconProps) => {
   return (
     <NavLink
+<<<<<<< HEAD
       data-id="home"
+=======
+>>>>>>> e02014ca4 (add etherscan plugin)
       data-toggle="tooltip"
       data-placement="top"
       title="Home"

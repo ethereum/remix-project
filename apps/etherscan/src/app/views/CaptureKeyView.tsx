@@ -48,7 +48,11 @@ export const CaptureKeyView: React.FC = () => {
               </div>
 
               <div>
+<<<<<<< HEAD
                 <SubmitButton text="Save API key" dataId="save-api-key" />
+=======
+                <SubmitButton text="Save API key" />
+>>>>>>> e02014ca4 (add etherscan plugin)
               </div>
             </form>
           )}

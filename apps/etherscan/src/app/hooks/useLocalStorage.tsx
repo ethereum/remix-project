@@ -11,7 +11,11 @@ export function useLocalStorage(key: string, initialValue: any) {
       return item ? JSON.parse(item) : initialValue
     } catch (error) {
       // If error also return initialValue
+<<<<<<< HEAD
       console.error(error)
+=======
+      console.log(error)
+>>>>>>> e02014ca4 (add etherscan plugin)
       return initialValue
     }
   })
@@ -29,7 +33,11 @@ export function useLocalStorage(key: string, initialValue: any) {
       window.localStorage.setItem(key, JSON.stringify(valueToStore))
     } catch (error) {
       // A more advanced implementation would handle the error case
+<<<<<<< HEAD
       console.error(error)
+=======
+      console.log(error)
+>>>>>>> e02014ca4 (add etherscan plugin)
     }
   }
 
