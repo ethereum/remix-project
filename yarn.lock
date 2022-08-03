@@ -16630,10 +16630,10 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-nightwatch@^2.2.2:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/nightwatch/-/nightwatch-2.2.3.tgz#07291c03130df5a39aa9ae2babd718048078866f"
-  integrity sha512-W2effHkwoSu+eSXsnkraiUW/CdO9B9+yiSqDeUZ3h9vL3WZmA/hfzC4ZQnrWzXJd4qvj2CsgCeKo9njSvlplog==
+nightwatch@^2.3:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/nightwatch/-/nightwatch-2.3.0.tgz#3f883b7ef0a34e98754028783d82c3641869a608"
+  integrity sha512-JouglJuxReLoCWfwud6U6mKTqTlEapJZYEvFzsBZ8CDJ77jzaiBLkgbpSJ6nt51kHJRH+xZtdTTiKFNjX0vS8w==
   dependencies:
     "@nightwatch/chai" "5.0.2"
     ansi-to-html "^0.7.2"
