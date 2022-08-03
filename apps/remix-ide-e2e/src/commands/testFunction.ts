@@ -1,4 +1,4 @@
-import { NightwatchBrowser, NightwatchTestFunctionExpectedInput } from 'nightwatch'
+import { ELEMENT_KEY, NightwatchBrowser, NightwatchTestFunctionExpectedInput } from 'nightwatch'
 import EventEmitter from 'events'
 
 const deepequal = require('deep-equal')
@@ -32,7 +32,7 @@ class TestFunction extends EventEmitter {
         // fetch and format transaction logs as key => pair object
           .elements('css selector', `*[data-shared="key_${txHash}"]`, (res) => {
             Array.isArray(res.value) && res.value.forEach(function (jsonWebElement) {
-              const jsonWebElementId: string = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
+              const jsonWebElementId: string = jsonWebElement[ELEMENT_KEY] || jsonWebElement[Object.keys(jsonWebElement)[0]]
 
               browser.elementIdText(jsonWebElementId, (jsonElement) => {
                 const key = typeof jsonElement.value === 'string' ? jsonElement.value.trim() : null
@@ -43,7 +43,7 @@ class TestFunction extends EventEmitter {
           })
           .elements('css selector', `*[data-shared="pair_${txHash}"]`, (res) => {
             Array.isArray(res.value) && res.value.forEach(function (jsonWebElement, index) {
-              const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
+              const jsonWebElementId = jsonWebElement[ELEMENT_KEY] || jsonWebElement[Object.keys(jsonWebElement)[0]]
 
               browser.elementIdText(jsonWebElementId, (jsonElement) => {
                 let value = jsonElement.value
