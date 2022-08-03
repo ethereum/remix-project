@@ -24,6 +24,4 @@ export interface TreeViewItemProps {
     onBlur?: (...args: any) => void,
     showIcon?: boolean
     expandedPaths?: string[];
-    handleClickFolder?: (path: string, type: string) => void;
-    file?: any
 }
