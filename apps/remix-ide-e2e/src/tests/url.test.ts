@@ -227,7 +227,7 @@ module.exports = {
       // default values
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'default')
       .verify.elementPresent('#optimize')
-      .assert.elementNotPresent('#optimize:checked')
+      .assert.not.elementPresent('#optimize:checked')
       .verify.elementPresent('#runs:disabled')
       .click('[for="optimize"')
       .verify.attributeEquals('#runs', 'value', '200')
