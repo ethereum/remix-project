@@ -33,6 +33,7 @@ module.exports = {
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
+      .pause(10000)
       .assert.textContains('[data-id="error-message"]', 'unexpected indent')
   },
 
