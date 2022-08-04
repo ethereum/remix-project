@@ -242,7 +242,7 @@ export function UniversalDappUI (props: UdappProps) {
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
         <div className="d-flex">
-          Balance: {contractBal} ETH
+          <label>Balance: {contractBal} ETH</label>
         </div>
           {
             contractABI && contractABI.map((funcABI, index) => {
