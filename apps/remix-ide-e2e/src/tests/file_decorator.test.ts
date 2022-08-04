@@ -17,7 +17,7 @@ module.exports = {
             .openFile('contracts/3_Ballot.sol')
             .addFile('scripts/decorators.ts', { content: testScriptSet })
             .pause(2000)
-            .executeScript('remix.exeCurrent()')
+            .executeScriptInTerminal('remix.exeCurrent()')
             .pause(4000)
             .useXpath()
             .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
@@ -38,7 +38,7 @@ module.exports = {
             .useCss()
             .addFile('scripts/clearballot.ts', { content: testScriptClearBallot })
             .pause(2000)
-            .executeScript('remix.exeCurrent()')
+            .executeScriptInTerminal('remix.exeCurrent()')
             .pause(4000)
             .waitForElementNotPresent('[data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 10000)
     },
@@ -46,7 +46,7 @@ module.exports = {
         browser
             .addFile('scripts/clearall.ts', { content: testScriptClear })
             .pause(2000)
-            .executeScript('remix.exeCurrent()')
+            .executeScriptInTerminal('remix.exeCurrent()')
             .pause(4000)
             .waitForElementNotPresent('[data-id="file-decoration-error-contracts/2_Owner.sol"]', 10000)
             .waitForElementNotPresent('[data-id="file-decoration-warning-contracts/1_Storage.sol"]', 10000)
