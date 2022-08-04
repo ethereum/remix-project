@@ -13,9 +13,7 @@ export const getNetworkName = async (client: RemixClient) => {
   if (!network) {
     throw new Error("no known network to verify against")
   }
-  const name = network.name!.toLowerCase()
-  // TODO : remove that when https://github.com/ethereum/remix-ide/issues/2017 is fixe
-  return name === "görli" ? "goerli" : name
+  return network.name!.toLowerCase()
 }
 
 export const getReceiptStatus = async (
