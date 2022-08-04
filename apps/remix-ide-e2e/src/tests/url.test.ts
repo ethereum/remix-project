@@ -246,6 +246,15 @@ module.exports = {
       .openFile('contracts')
       .openFile('contracts/governance')
       .openFile('contracts/governance/UnionGovernor.sol')
-      .end()
+  },
+
+  'Should execute function call from URL parameters #group2': function (browser: NightwatchBrowser) {
+    browser
+      .switchWorkspace('default_workspace')
+      .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')
+      .refresh()
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating fileManager and calling "open" ...')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating terminal and calling "log" ...')
   }
 }
