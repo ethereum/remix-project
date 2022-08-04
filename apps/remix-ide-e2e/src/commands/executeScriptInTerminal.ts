@@ -1,7 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
-class ExecuteScript extends EventEmitter {
+class ExecuteScriptInTerminal extends EventEmitter {
   command (this: NightwatchBrowser, script: string): NightwatchBrowser {
     this.api
       .clearEditableContent('*[data-id="terminalCliInput"]')
@@ -17,4 +17,4 @@ class ExecuteScript extends EventEmitter {
   }
 }
 
-module.exports = ExecuteScript
+module.exports = ExecuteScriptInTerminal
