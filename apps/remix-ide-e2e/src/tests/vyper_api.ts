@@ -27,7 +27,7 @@ module.exports = {
       .openFile('ballot.vy')
   },
 
-  'Compile ballot.vy should error #group1': function (browser: NightwatchBrowser) {
+  'Compile ballot.vy should error #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('vyper')
       // @ts-ignore
       .frame(0)
