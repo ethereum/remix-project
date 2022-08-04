@@ -233,8 +233,10 @@ export function UniversalDappUI (props: UdappProps) {
         </button>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
-        <label>Balance: {contractBal} ETH</label>
         <div className="udapp_contractActionsContainer">
+        <div className="d-flex">
+          Balance: {contractBal} ETH
+        </div>
           {
             contractABI && contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null
