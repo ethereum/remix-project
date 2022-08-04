@@ -99,15 +99,16 @@ module.exports = {
       })
   },
 
-  'Should open local filesystem explorer #group2': !function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
+  'Should open local filesystem explorer #group2': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('div[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
       .click('[data-id="remixUIWorkspaceExplorer"]')
       .waitForElementPresent('*[data-id="fileExplorerFileUpload"]')
-      .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
-      .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
-      .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
+      .uploadFile('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
+      .uploadFile('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
+      .uploadFile('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
       .waitForElementVisible('[data-id="treeViewLitreeViewItemeditor.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemfileExplorer.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemgeneralSettings.test.js"]')
