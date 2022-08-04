@@ -43,14 +43,11 @@ const App = () => {
   contractsRef.current = contracts
 
   useEffect(() => {
-    console.log("Remix Etherscan loading...")
     const client = new PluginClient()
     createClient(client)
     const loadClient = async () => {
       await client.onload()
       setClientInstance(client)
-      console.log("Remix Etherscan Plugin has been loaded")
-
       client.on("solidity",
         "compilationFinished",
         (
@@ -59,7 +56,6 @@ const App = () => {
           languageVersion: string,
           data: CompilationResult
         ) => {
-          console.log("New compilation received")
           const newContractsNames = getNewContractNames(data)
 
           const newContractsToSave: string[] = [
