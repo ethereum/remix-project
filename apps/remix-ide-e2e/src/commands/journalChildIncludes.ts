@@ -1,4 +1,4 @@
-import { NightwatchBrowser } from 'nightwatch'
+import { ELEMENT_KEY, NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 /*
@@ -11,7 +11,7 @@ class JournalChildIncludes extends EventEmitter {
     let occurence = 0
     this.api.elements('css selector', '*[data-id="terminalJournal"]', (res) => {
       Array.isArray(res.value) && res.value.forEach(function (jsonWebElement) {
-        const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
+        const jsonWebElementId = jsonWebElement[ELEMENT_KEY] || jsonWebElement[Object.keys(jsonWebElement)[0]]
 
         browser.elementIdText(jsonWebElementId, (jsonElement) => {
           const text = jsonElement.value
