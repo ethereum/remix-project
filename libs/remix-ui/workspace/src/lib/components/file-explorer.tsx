@@ -10,7 +10,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
-import {Drag} from "@remix-ui/drag-n-drop"
+import { Drag } from "@remix-ui/drag-n-drop"
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
@@ -37,7 +37,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-  const [dragged, setDragged] = useState<string>("")
 
   useEffect(() => {
     if (contextMenuItems) {
