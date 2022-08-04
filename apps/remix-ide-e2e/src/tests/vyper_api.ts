@@ -33,7 +33,7 @@ module.exports = {
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
-      .assert.containsText('[data-id="error-message"]', 'unexpected indent')
+      .assert.textContains('[data-id="error-message"]', 'unexpected indent')
   },
 
   'Compile test contract should success #group1': function (browser: NightwatchBrowser) {
