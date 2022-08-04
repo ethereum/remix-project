@@ -29,6 +29,6 @@ export const getReceiptStatus = async (
     const { result } = response.data
     return result
   } catch (error) {
-    console.log("Error", error)
+    console.error(error)
   }
 }

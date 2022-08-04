@@ -170,7 +170,7 @@ export const VerifyView: React.FC<Props> = ({
         }
         return result
       } catch (error) {
-        console.log("Error, something wrong happened", error)
+        console.error(error)
         setResults("Something wrong happened, try again")
       }
     }
