@@ -34,10 +34,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   useEffect(() => {
     if (props.instance.address) {
-        props.blockchain.getBalanceInEther(props.instance.address, (err, balInEth) => {
-          if (!err) setContractBal(balInEth)
-        })
-
+      updateBalance()
       // @ts-ignore
       let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
 
@@ -51,6 +48,16 @@ export function UniversalDappUI (props: UdappProps) {
       setEvmBC(props.instance.contractData.bytecodeObject)
     }
   }, [props.instance.contractData])
+
+  props.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload) => {
+    if (!error) updateBalance()
+  })
+
+  const updateBalance = () => {
+    props.blockchain.getBalanceInEther(props.instance.address, (err, balInEth) => {
+      if (!err) setContractBal(balInEth)
+    })
+  }
 
   const sendData = () => {
     setLlIError('')
