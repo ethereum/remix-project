@@ -48,7 +48,7 @@ export const CaptureKeyView: React.FC = () => {
               </div>
 
               <div>
-                <SubmitButton text="Save API key" />
+                <SubmitButton text="Save API key" dataId="save-api-key" />
               </div>
             </form>
           )}

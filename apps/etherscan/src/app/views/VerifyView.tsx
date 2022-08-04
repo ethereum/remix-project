@@ -284,12 +284,12 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <SubmitButton text="Verify Contract" isSubmitting={isSubmitting} />
+            <SubmitButton dataId="verify-contract" text="Verify Contract" isSubmitting={isSubmitting} />
           </form>
         )}
       </Formik>
 
-      <div
+      <div data-id="verify-result"
         style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center" }}
         dangerouslySetInnerHTML={{ __html: results }}
       />
