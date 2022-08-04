@@ -1,4 +1,3 @@
-import { FileType } from "libs/remix-ui/workspace/src/lib/types";
 import React, {
   createContext,
   ReactNode,
@@ -6,6 +5,15 @@ import React, {
   useRef,
   useState,
 } from "react";
+
+
+export interface FileType {
+  path: string,
+  name: string,
+  isDirectory: boolean,
+  type: 'folder' | 'file' | 'gist',
+  child?: File[]
+}
 
 interface MoveContextType {
   dragged: string;
