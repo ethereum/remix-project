@@ -183,7 +183,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           configFilePath={state.configFilePath}
           setConfigFilePath={setConfigFilePath}
         />
-        { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
+        { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} compiledFileName={currentFile} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
         { compileErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
             <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
