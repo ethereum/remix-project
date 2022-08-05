@@ -34,7 +34,6 @@ export function UniversalDappUI (props: UdappProps) {
 
   useEffect(() => {
     if (props.instance.address) {
-      updateBalance()
       // @ts-ignore
       let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
 
@@ -49,15 +48,11 @@ export function UniversalDappUI (props: UdappProps) {
     }
   }, [props.instance.contractData])
 
-  props.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload) => {
-    if (!error) updateBalance()
-  })
-
-  const updateBalance = () => {
-    props.blockchain.getBalanceInEther(props.instance.address, (err, balInEth) => {
-      if (!err) setContractBal(balInEth)
-    })
-  }
+  useEffect(() => {
+    if (props.instance.balance) {
+      setContractBal(props.instance.balance)
+    }
+  }, [props.instance.balance])
 
   const sendData = () => {
     setLlIError('')
