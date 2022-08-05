@@ -20,7 +20,7 @@ export function UniversalDappUI (props: UdappProps) {
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
-  const [contractBal, setContractBal] = useState(0)
+  const [instanceBalance, setInstanceBalance] = useState(0)
 
   useEffect(() => {
     if (!props.instance.abi) {
@@ -50,7 +50,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   useEffect(() => {
     if (props.instance.balance) {
-      setContractBal(props.instance.balance)
+      setInstanceBalance(props.instance.balance)
     }
   }, [props.instance.balance])
 
@@ -236,8 +236,8 @@ export function UniversalDappUI (props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-        <div className="d-flex">
-          <label>Balance: {contractBal} ETH</label>
+        <div data-id="instanceBalance" className="d-flex">
+          <label>Balance: {instanceBalance} ETH</label>
         </div>
           {
             contractABI && contractABI.map((funcABI, index) => {
