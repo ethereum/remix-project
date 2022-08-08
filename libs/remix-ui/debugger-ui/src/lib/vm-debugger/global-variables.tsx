@@ -1,6 +1,7 @@
 import React from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import { BN } from 'ethereumjs-util'
+import Web3 from 'web3'
 
 export const GlobalVariables = ({ block, receipt, tx }) => {
   // see https://docs.soliditylang.org/en/latest/units-and-global-variables.html#block-and-transaction-properties
@@ -17,7 +18,7 @@ export const GlobalVariables = ({ block, receipt, tx }) => {
     'tx.origin': tx.from
   }
   if (block.baseFeePerGas) {
-    globals['block.basefee'] = (new BN(block.baseFeePerGas.replace('0x', ''), 'hex')).toString(10) + ` Wei (${block.baseFeePerGas})`
+    globals['block.basefee'] = Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
   }
 
   return (
