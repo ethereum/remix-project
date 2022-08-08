@@ -236,7 +236,7 @@ export function UniversalDappUI (props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-        <div data-id="instanceBalance" className="d-flex">
+        <div data-id="instanceBal" className="d-flex">
           <label>Balance: {instanceBalance} ETH</label>
         </div>
           {
