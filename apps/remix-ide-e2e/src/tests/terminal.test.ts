@@ -200,7 +200,27 @@ module.exports = {
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
       .pause(15000)
       .journalLastChildIncludes('147')
-  }
+  },
+
+  'Should run a script which log transaction and block using web3.js and ethers #group6': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('External Http Provider')
+      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+      }, [], () => {})
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
+      .modalFooterOKClick('basic-http-provider')
+      .addFile('contracts/log_tx_block.sol', { content: scriptBlockAndTransaction } )
+      .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
+      // check if the input of the transaction is being logged (web3 call)
+      .journalChildIncludes('0x775526410000000000000000000000000000000000000000000000000000000000000060464c0335b2f1609abd9de25141c0a3b49db516fc7375970dc737c32b986e88e3000000000000000000000000000000000000000000000000000000000000039e000000000000000000000000000000000000000000000000000000000000000602926b30b10e7a514d92bc71e085f5bff2687fac2856ae43ef7621bf1756fa370516d310bec5727543089be9a4d5f68471174ee528e95a2520b0ca36c2b6c6eb0000000000000000000000000000000000000000000000000000000000046f49036f5e4ea4dd042801c8841e3db8e654124305da0f11824fc1db60c405dbb39f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000')
+      // check if the logsBloom is being logged (web3 call)
+      .journalChildIncludes('0x00000000000000000000000000100000000000000000020000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000040000000060000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000100000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001')
+      // check if the logsBloom is being logged (ethers.js call)
+      .journalChildIncludes('"hex": "0x025cd8"')
+    }
 }
 
 const asyncAwait = `
@@ -605,3 +625,17 @@ const scriptAutoExec = {
     })()
   `
 }
+
+const scriptBlockAndTransaction = `
+// Right click on the script name and hit "Run" to execute
+(async () => {
+    try {
+        web3.eth.getTransaction('0x022ccd55747677ac50f8d9dfd1bf5b843fa2f36438a28c1d0a0958e057bb3e2a').then(console.log)
+        web3.eth.getBlock('7367447').then(console.log);
+        let ethersProvider = new ethers.providers.Web3Provider(web3Provider)
+        ethersProvider.getBlock(7367447).then(console.log)
+    } catch (e) {
+        console.log(e.message)
+    }
+})()
+`
