@@ -18,7 +18,7 @@ export const GlobalVariables = ({ block, receipt, tx }) => {
     'tx.origin': tx.from
   }
   if (block.baseFeePerGas) {
-    globals['block.basefee'] = Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
+    globals['block.basefee'] = (Web3.utils.toBN(block.baseFeePerGas)) + ` Wei (${block.baseFeePerGas})`
   }
 
   return (
