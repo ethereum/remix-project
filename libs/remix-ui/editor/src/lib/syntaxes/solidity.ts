@@ -1,5 +1,5 @@
 /* eslint-disable */
-export const conf = {
+export const solidityLanguageConfig = {
   comments: {
     lineComment: '//',
     blockComment: ['/*', '*/']
@@ -19,7 +19,7 @@ export const conf = {
   ]
 }
 
-export const language = {
+export const solidityTokensProvider = {
   defaultToken: '',
   tokenPostfix: '.sol',
 

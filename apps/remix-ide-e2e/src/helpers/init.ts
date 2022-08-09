@@ -22,7 +22,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
       }, [loadPlugin])
       .refresh()
       .pause(6000)
-      .perform(done)
+      .perform(done())
     })
     .maximizeWindow()
     .fullscreenWindow(() => {
