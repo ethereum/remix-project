@@ -25,22 +25,23 @@ export function RecorderUI (props: RecorderProps) {
     setToggleExpander(!toggleExpander)
   }
 
+
   return (
     <div className="udapp_cardContainer list-group-item border border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
-        <div className="d-flex">
+        <div className="d-flex justify-content-center align-items-center">
           <label className="mt-1 udapp_recorderSectionLabel">Transactions recorded</label>
-          <div className="ml-2 mb-2 badge badge-pill badge-primary" title="The number of recorded transactions">{props.count}</div>
+          <div className="ml-2 badge badge-pill badge-primary text-center" title="The number of recorded transactions">{props.count}</div>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="info-recorder">
             <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Remix VM can be replayed in the Injected Provider.
           </span>
           </Tooltip>
         }>
-          <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+          <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
         </OverlayTrigger>
         </div>
-        <div>
+        <div className="p-3">
           <span data-id='udappRecorderTitleExpander' onClick={toggleClass}>
             <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
           </span>
@@ -56,7 +57,7 @@ export function RecorderUI (props: RecorderProps) {
           }>
           <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
           </OverlayTrigger>
-        </div>     
+        </div>
         <div className="mb-1 mt-1 udapp_transactionActions">
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-save-recorder">
@@ -72,7 +73,7 @@ export function RecorderUI (props: RecorderProps) {
         }>
           <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" title={enableRunButton ? 'No scenario file selected' : ''} disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
         </OverlayTrigger>
-        </div>        
+        </div>
       </div>
     </div>
   )
