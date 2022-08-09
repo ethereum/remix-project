@@ -59,7 +59,7 @@ const App: React.FC = () => {
 
   function compilerUrl() {
     return state.environment === 'remote'
-      ? 'https://vyper.live/compile'
+      ? 'https://vyper.remixproject.org/compile'
       : state.localUrl
   }
 
