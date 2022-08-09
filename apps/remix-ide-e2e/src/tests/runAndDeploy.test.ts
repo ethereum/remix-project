@@ -66,6 +66,7 @@ module.exports = {
   },
 
   'Should show and update balance for deployed contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
+    let instanceAddress
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('checkBalance.sol', sources[0]['checkBalance.sol'])
@@ -76,8 +77,12 @@ module.exports = {
       .pause(1000)
       .clickInstance(1)
       .pause(1000)
-      .waitForElementVisible('*[data-id="instanceBal"]', 45000)
-      .assert.containsText('*[data-id="instanceBal"]', 'Balance')
+      .getAddressAtPosition(1, (address) => {
+        instanceAddress = address
+        browser
+        .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
+        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance:')
+      })
   },
 
   'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
