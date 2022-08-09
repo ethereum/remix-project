@@ -34,7 +34,7 @@ module.exports = {
       .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .addFile('File.sol', { content: '' })
-      .executeScript(`remix.loadgist('${gistid}')`)
+      .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
       .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
       .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
@@ -58,7 +58,7 @@ module.exports = {
           const gistid = id[1]
           browser
             .click('[data-id="default_workspace-modal-footer-cancel-react"]')
-            .executeScript(`remix.loadgist('${gistid}')`)
+            .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
             // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
             .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
             .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)

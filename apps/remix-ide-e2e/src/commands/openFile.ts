@@ -22,9 +22,16 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
         browser.element('css selector', '[data-id="verticalIconsKindfilePanel"] img[data-id="selected"]', (result) => {
           if (result.status === 0) {
               done()
-          } else browser.clickLaunchIcon('filePanel').perform(done)
+          } else browser.clickLaunchIcon('filePanel').perform(() => {
+            done()
+          })
         })
-      } else browser.clickLaunchIcon('filePanel').perform(done)
+      } else {
+        browser.clickLaunchIcon('filePanel').perform(() => {
+          done()
+        })
+      }
+      
     })    
   })
   .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
