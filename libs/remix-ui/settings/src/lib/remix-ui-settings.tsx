@@ -248,12 +248,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">{ swarmSettingsTitle }</h6>
-        <div className="pt-2 mb-1"><label>PRIVATE BEE ADDRESS:</label>
+        <div className="pt-2 pt-2 mb-0 pb-0"><label>PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={ privateBeeAddress } />
           </div>
         </div>
-        <div className=""><label>POSTAGE STAMP ID:</label>
+        <div className="pt-2 mb-0 pb-0"><label>POSTAGE STAMP ID:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmpostagestamp" data-id="settingsPostageStampId" className="form-control" onChange={handleSavePostageStampId} value={ postageStampId } />
             <div className="d-flex justify-content-end pt-2">
@@ -312,27 +312,27 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
     <div className="card-body pt-3 pb-2">
       <h6 className="card-title">{ ipfsSettingsText }</h6>
-      <div className="pt-2 mb-1"><label>IPFS HOST:</label>
+      <div className="pt-2 mb-0"><label>IPFS HOST:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
         </div>
       </div>
-      <div className=""><label>IPFS PROTOCOL:</label>
+      <div className="pt-2 mb-0 pb-0"><label>IPFS PROTOCOL:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ ipfsProtocol } />
         </div>
       </div>
-      <div className=""><label>IPFS PORT:</label>
+      <div className="pt-2 mb-0 pb-0"><label>IPFS PORT:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ ipfsPort } />
         </div>
       </div>
-      <div className=""><label>IPFS PROJECT ID [ INFURA ]:</label>
+      <div className="pt-2 mb-0 pb-0"><label>IPFS PROJECT ID [ INFURA ]:</label>
         <div className="text-secondary mb-0 h6">
           <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ ipfsProjectId } />
         </div>
       </div>
-      <div className=""><label>IPFS PROJECT SECRET [ INFURA ]:</label>
+      <div className="pt-2 mb-0 pb-0"><label>IPFS PROJECT SECRET [ INFURA ]:</label>
         <div className="text-secondary mb-0 h6">
           <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ ipfsProjectSecret } />
         </div>
