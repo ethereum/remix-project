@@ -33,7 +33,7 @@ module.exports = {
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
             .journalLastChildIncludes('value: 0 wei')
             .journalLastChildIncludes('data: 0xaa')
-            .perform(done)
+            .perform(done())
         })
       })
   },
@@ -46,7 +46,7 @@ module.exports = {
           .pause(1000)
           .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
           .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, 'The calldata should be a valid hexadecimal value with size of at least one byte.')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -58,7 +58,7 @@ module.exports = {
           .pause(1000)
           .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
           .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, 'The calldata should be a valid hexadecimal value.')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -71,7 +71,7 @@ module.exports = {
           .journalLastChildIncludes('to: CheckSpecials.(receive)')
           .journalLastChildIncludes('value: 1 wei')
           .journalLastChildIncludes('data: 0x')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -83,7 +83,7 @@ module.exports = {
           .pause(1000)
           .journalLastChildIncludes('to CheckSpecials.(fallback) errored:')
           .journalLastChildIncludes('The called function should be payable if you send value')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -101,7 +101,7 @@ module.exports = {
             .journalLastChildIncludes('to: CheckSpecials.(receive)')
             .journalLastChildIncludes('value: 1 wei')
             .journalLastChildIncludes('data: 0x')
-            .perform(done)
+            .perform(done())
         })
       })
   },
@@ -113,7 +113,7 @@ module.exports = {
           .pause(1000)
           .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
           .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, '\'Fallback\' function is not defined')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -131,7 +131,7 @@ module.exports = {
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
             .journalLastChildIncludes('value: 1 wei')
             .journalLastChildIncludes('data: 0x')
-            .perform(done)
+            .perform(done())
         })
       })
   },
@@ -144,7 +144,7 @@ module.exports = {
           .journalLastChildIncludes('to: CheckSpecials.(fallback)')
           .journalLastChildIncludes('value: 1 wei')
           .journalLastChildIncludes('data: 0xaa')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -161,7 +161,7 @@ module.exports = {
             .pause(1000)
             .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
             .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, 'should have either \'receive\' or payable \'fallback\'')
-            .perform(done)
+            .perform(done())
         })
       })
   },
@@ -184,7 +184,7 @@ module.exports = {
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
             .journalLastChildIncludes('value: 999999998765257135 wei')
             .journalLastChildIncludes('data: 0xaa')
-            .perform(done)
+            .perform(done())
         })
       })
   },
@@ -196,7 +196,7 @@ module.exports = {
           .journalLastChildIncludes('to: CheckSpecials.(receive)')
           .journalLastChildIncludes('value: 1 wei')
           .journalLastChildIncludes('data: 0x')
-          .perform(done)
+          .perform(done())
       })
     })
   },
@@ -217,7 +217,7 @@ module.exports = {
             .pause(1000)
             .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
             .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, 'Both \'receive\' and \'fallback\' functions are not defined')
-            .perform(done)
+            .perform(done())
         })
       })
       .end()
