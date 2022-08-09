@@ -5,6 +5,7 @@ import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { IMarkdownString } from 'monaco-editor'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
@@ -38,6 +39,25 @@ type sourceMarker = {
   },
   from: string // plugin name
   hide: boolean
+}
+
+export type lineText = {
+  position: {
+    start: {
+      line: number
+      column: number
+    },
+    end: {
+      line: number
+      column: number
+    }
+  },
+  from?: string // plugin name
+  content: string
+  className: string
+  afterContentClassName: string
+  hide: boolean,
+  hoverMessage: IMarkdownString | IMarkdownString[]
 }
 
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
@@ -261,7 +281,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }    
   }, [props.currentFile])
 
-  const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
+  const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
       decoration = decoration as sourceAnnotation
       return {
@@ -289,6 +309,19 @@ export const EditorUI = (props: EditorUIProps) => {
           isWholeLine,
           inlineClassName: `${isWholeLine ? 'alert-info' : 'inline-class'}  border-0 highlightLine${decoration.position.start.line + 1}`
         }
+      }
+    }
+    if (typeOfDecoration === 'lineTextPerFile') {
+      const lineTextDecoration = decoration as lineText
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
+        options: {
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
+          afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
+
       }
     }
   }
