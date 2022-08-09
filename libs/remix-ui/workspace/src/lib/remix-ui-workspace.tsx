@@ -188,7 +188,8 @@ export function Workspace () {
   }
 
   return (
-    <div className='px-2 remixui_container'>
+    <>
+    <div className='px-2 remixui_container' style={{ height: '95%' }}>
       <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
@@ -377,6 +378,10 @@ export function Workspace () {
         </div>
       </div>
     </div>
+    <div className='bg-light' style={{ height: '5%' }}>
+      <span>DGIT</span>
+    </div>
+    </>
   )
 }
 
