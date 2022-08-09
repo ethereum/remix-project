@@ -4637,6 +4637,11 @@
   integrity sha512-NxxZZek50ylIACiXebKQYHD3D4One3WXOasEXWazL6aTfYbZob7ClNKxUpg8I4/oWArX87oPWvj1cHKqfel3Hg==
   dependencies:
     "@types/ws" "*"
+    
+"@types/semver@^7.3.10":
+  version "7.3.10"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.10.tgz#5f19ee40cbeff87d916eedc8c2bfe2305d957f73"
+  integrity sha512-zsv3fsC7S84NN6nPK06u79oWgrPVd0NvOyqgghV1haPaFcVxIrP4DLomRwGAXk0ui4HZA7mOcSFL98sMVW9viw==
 
 "@types/source-list-map@*":
   version "0.1.2"
