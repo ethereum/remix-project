@@ -57,7 +57,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.slitherHandle = new SlitherHandle()
     this.workspaces = []
     this.appManager = appManager
-    this.currentWorkspaceMetadata = {}
+    this.currentWorkspaceMetadata = null
   }
 
   render () {
