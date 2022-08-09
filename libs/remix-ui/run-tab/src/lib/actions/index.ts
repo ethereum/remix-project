@@ -6,7 +6,7 @@ import { createNewBlockchainAccount, fillAccountsList, setExecutionContext, sign
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath, updateTxFeeContent } from './actions'
-import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions } from './deploy'
+import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
 import { ContractData, FuncABI } from "@remix-project/core-plugin"
 import { DeployMode, MainnetPrompt } from '../types'
@@ -28,13 +28,7 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
   setupEvents(plugin, dispatch)
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
-    if (plugin.REACT_API?.instances?.instanceList?.length){
-      for (const instance of plugin.REACT_API.instances.instanceList) {
-        plugin.blockchain.getBalanceInEther(instance.address, (err, balInEth) => {
-          if (!err) instance.balance = balInEth
-        })
-      }
-    }
+    updateInstanceBalance(plugin)
   }, 1000)
 }
 
