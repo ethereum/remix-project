@@ -156,7 +156,7 @@ export class ExecutionContext {
         return cb()
       } else {
         if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
-          if (!await injectedProvider._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
+          if (!await injectedProvider._metamask.isUnlocked()) infoCb('Please make sure the injected provider is unlocked (e.g Metamask).')
         }
         this.askPermission()
         this.executionContext = context
