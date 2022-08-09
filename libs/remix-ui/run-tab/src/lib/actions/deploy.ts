@@ -301,3 +301,13 @@ export const runTransactions = (
 export const getFuncABIInputs = (plugin: RunTab, funcABI: FuncABI) => {
   return plugin.blockchain.getInputs(funcABI)
 }
+
+export const updateInstanceBalance = (plugin: RunTab) => {
+  if (plugin.REACT_API?.instances?.instanceList?.length) {
+    for (const instance of plugin.REACT_API.instances.instanceList) {
+      plugin.blockchain.getBalanceInEther(instance.address, (err, balInEth) => {
+        if (!err) instance.balance = balInEth
+      })
+    }
+  }
+}
