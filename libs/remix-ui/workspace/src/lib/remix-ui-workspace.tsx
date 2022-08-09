@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent, MouseEvent } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
-import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractParentFromKey } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH } from './utils/constants'
 import { HamburgerMenu } from './components/workspace-hamburger'
+import { FileExplorerRootMenu } from './components/file-explorer-root-menu'
+import { CopyElementType, FileFocusContextType } from './types'
 const _paq = window._paq = window._paq || []
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -35,6 +37,10 @@ export function Workspace () {
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
+  const [focusContext, setFocusContext] = useState<FileFocusContextType>() 
+  const [copyElement, setCopyElement] = useState<CopyElementType>()
+  const [contextType, setContextType] = useState<"file" | "folder">(null);
+  const [showContextMenu, setShowContextMenu] = useState(false)
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -42,7 +48,7 @@ export function Workspace () {
       workspaceName = global.fs.browser.workspaces[0].name
     }
     setCurrentWorkspace(workspaceName)
-    resetFocus()
+    resetFocus()    
   }, [])
 
   useEffect(() => {
@@ -387,10 +393,243 @@ export function Workspace () {
     )
   }
 
+  const handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowContextMenu(true)
+    setFocusContext({element: "", x: e.pageX, y: e.pageY, type:""})
+  }
+
+
+  const handleCanCopy = (path: string, type: 'folder' | 'gist' | 'file') => {
+    setCopyElement({ key: path, type })
+  }
+
+
+  const handleCloseContextMenu = () => {
+    setShowContextMenu(false)
+  };
+
+  const workspaceMenuIcons = [
+    <CustomTooltip
+      placement="right"
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.create' />}
+    >
+      <div
+        data-id='workspaceCreate'
+        onClick={() => {
+          createWorkspace()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        key={`workspacesCreate-fe-ws`}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='workspaceCreate'
+          data-id='workspaceCreate'
+          onClick={() => {
+            createWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='far fa-plus pl-2'
+        >
+        </span>
+        <span className="pl-3"><FormattedMessage id='filePanel.create' /></span>
+      </div>
+    </CustomTooltip>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.delete' />}
+    >
+      <div
+        data-id='workspaceDelete'
+        onClick={() => {
+          deleteCurrentWorkspace()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        key={`workspacesDelete-fe-ws`}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+          id='workspaceDelete'
+          data-id='workspaceDelete'
+          onClick={() => {
+            deleteCurrentWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='far fa-trash pl-2'
+        >
+        </span>
+        <span className="pl-3"><FormattedMessage id='filePanel.delete' /></span>
+      </div>
+    </CustomTooltip>,
+    <CustomTooltip
+      placement='right-start'
+      tooltipClasses="text-nowrap"
+      tooltipId="workspaceRenametooltip"
+      tooltipText={<FormattedMessage id='filePanel.workspace.rename' />}
+    >
+      <div onClick={() => {
+            renameCurrentWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          data-id='workspaceRename'
+          key={`workspacesRename-fe-ws`}
+        >
+        <span
+          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+          id='workspaceRename'
+          data-id='workspaceRename'
+          onClick={() => {
+            renameCurrentWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='far fa-edit pl-2'>
+        </span>
+        <span className="pl-3"><FormattedMessage id='filePanel.rename' /></span>
+      </div>
+    </CustomTooltip>,
+    <Dropdown.Divider className="border mb-0 mt-0" />,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="cloneWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.clone' />}
+    >
+      <div
+        data-id='cloneGitRepository'
+        onClick={() => {
+          cloneGitRepository()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        key={`cloneGitRepository-fe-ws`}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='cloneGitRepository'
+          data-id='cloneGitRepository'
+          onClick={() => {
+            cloneGitRepository()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='fab fa-github pl-2'
+        >
+        </span>
+        <span className="pl-3"><FormattedMessage id='filePanel.clone' /></span>
+      </div>
+    </CustomTooltip>,
+    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.download' />}
+    >
+      <div
+        data-id='workspacesDownload'
+        onClick={() => {
+          downloadWorkspaces()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        key={`workspacesDownload-fe-ws`}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+          id='workspacesDownload'
+          data-id='workspacesDownload'
+          onClick={() => {
+            downloadWorkspaces()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='far fa-download pl-2 '
+        >
+        </span>
+        <span className="pl-3"><FormattedMessage id='filePanel.download' /></span>
+      </div>
+    </CustomTooltip>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.restore' />}
+    >
+      <div
+        data-id='workspacesRestore'
+        onClick={() => {
+          restoreBackup()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        key={`workspacesRestore-fe-ws`}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='workspacesRestore'
+          data-id='workspacesRestore'
+          onClick={() => {
+            restoreBackup()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='far fa-upload pl-2'
+        >
+        </span>
+        <span className="pl-3"><FormattedMessage id='filePanel.restore' /></span>
+      </div>
+    </CustomTooltip>,
+    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createSolGHActionTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' />}
+    >
+    <div
+      data-id='soliditygithubaction'
+      onClick={(e) => {
+        e.stopPropagation()
+        addGithubAction()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
+        hideIconsMenu(!showIconsMenu)
+      }}
+    >
+      <span
+        hidden={currentWorkspace === LOCALHOST}
+        id='soliditygithubaction'
+        data-id='soliditygithubaction'
+        onClick={(e) => {
+          e.stopPropagation()
+          addGithubAction()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        className='fab fa-github pl-2'
+      >
+      </span>
+      <span className="pl-3">{<FormattedMessage id='filePanel.solghaction' />}</span>
+    </div>
+  </CustomTooltip>
+  ]
+  const menuLength = workspaceMenuIcons.length
+  let count = 0
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
-      <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
-        <div className='d-flex flex-column w-100 mb-1 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
+      <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }} onContextMenu={handleContextMenu}>
+        <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
               <div className="mx-2 mb-2 d-flex flex-column">
@@ -460,28 +699,31 @@ export function Workspace () {
                     { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly("localhost") : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
-                <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
-                  <Dropdown.Item
-                    onClick={() => {
-                      createWorkspace()
-                    }}
-                  >
+                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
+                    <Dropdown.Item
+                      onClick={() => {
+                        createWorkspace()
+                      }}
+                    >
+                      {
+                        <span className="pl-3"> - create a new workspace - </span>
+                      }
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
                     {
-                      <span className="pl-3"> - create a new workspace - </span>
-                    }
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
-                  {
-                    global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => {
-                          switchWorkspace(name)
-                        }}
-                        data-id={`dropdown-item-${name}`}
-                      >
-                        { isGitRepo ?
-                          <div className='d-flex justify-content-between'>
+                      global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          onClick={() => {
+                            switchWorkspace(name)
+                          }}
+                          data-id={`dropdown-item-${name}`}
+                        >
+                          { isGitRepo ?
+                            <div className='d-flex justify-content-between'>
+                              <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
+                              <i className='fas fa-code-branch pt-1'></i>
+                            </div> :
                             <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
                           }
                           </Dropdown.Item>
@@ -493,7 +735,7 @@ export function Workspace () {
                 </div>
               </header>
             </div>
-            <div className='h-100 mb-4 pb-4 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
+            <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
             <div className='h-100'>
             { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
             { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
@@ -533,12 +775,15 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  contextType={contextType}
+                  closeContextMenu={handleCloseContextMenu}
+                  dispatchCanCopy={handleCanCopy}
                   />
               </div>
             }
             { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
             { (global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost) &&
-              <div className='h-100 filesystemexplorer pb-4 mb-4  remixui_treeview'>
+              <div className='h-100 filesystemexplorer remixui_treeview'>
                 <FileExplorer
                   name='localhost'
                   menuItems={['createNewFile', 'createNewFolder']}
@@ -639,6 +884,11 @@ export function Workspace () {
             </div>
           </div>
         }
+        {showContextMenu && <FileExplorerRootMenu focusContext={focusContext} 
+          changeContextType={setContextType} 
+          copyElement={copyElement}
+          handleCloseContextMenu={handleCloseContextMenu}
+           />}
     </div>
   )
 }
