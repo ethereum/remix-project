@@ -222,9 +222,10 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
-    this.data.eventHandlers.onCompilerLoaded = () => {
+    this.data.eventHandlers.onCompilerLoaded = (version) => {
       this.data.loading = false
       this.statusChanged({ key: 'none' })
+      this.emit('compilerLoaded', version)
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 

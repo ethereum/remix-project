@@ -338,8 +338,10 @@ export const SearchProvider = ({
     async function fetchWorkspace() {
       try {
         const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
-        if (workspace) value.setCurrentWorkspace(workspace.name)
-        setFiles(await getDirectory('/', plugin))
+        if (workspace) {
+          value.setCurrentWorkspace(workspace.name)
+          setFiles(await getDirectory('/', plugin))
+        }
       } catch (e) {
         console.log(e)
       }

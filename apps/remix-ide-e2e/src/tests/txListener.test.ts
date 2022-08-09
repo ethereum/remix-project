@@ -9,13 +9,14 @@ const sources = [
 ]
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': function () {
     return sources
   },
-  'The sequence: Compiling / Deploying / Compiling another contract / calling the first contract - should display in the log the transaction with all the decoded information': function (browser: NightwatchBrowser) {
+  'The sequence: Compiling / Deploying / Compiling another contract / calling the first contract - should display in the log the transaction with all the decoded information #group1': function (browser: NightwatchBrowser) {
     // https://github.com/ethereum/remix-ide/issues/2864
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -36,8 +37,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .testContracts('Untitled1.sol', sources[1]['Untitled1.sol'], ['test'])
       .clickLaunchIcon('udapp')
-      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '' })
-      .pause(5000)
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {
           status: 'false Transaction mined but execution failed',

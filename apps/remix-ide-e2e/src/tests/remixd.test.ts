@@ -55,6 +55,7 @@ module.exports = {
   },
   'start Remixd': function (browser) {
     startRemixd(browser)
+
   },
   'run Remixd tests #group4': function (browser) {
     runTests(browser)
@@ -102,7 +103,7 @@ module.exports = {
 
   'Run git status': '' + function (browser) {
     browser
-      .executeScript('git status')
+      .executeScriptInTerminal('git status')
       .pause(3000)
       .journalLastChildIncludes('On branch ')
   },
@@ -131,6 +132,7 @@ function startRemixd (browser: NightwatchBrowser) {
     .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
+    .pause(10000)
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 
