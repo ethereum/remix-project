@@ -53,15 +53,17 @@ export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, curren
 
   return (
     <div id='vmdebugger' className="px-2">
-      <div>
-        <StackPanel calldata={stackPanel} />
-        <MemoryPanel calldata={memoryPanel} />
-        <StoragePanel calldata={storagePanel.calldata} header={storagePanel.header} />
-        <CallstackPanel calldata={callStackPanel} />
-        <CalldataPanel calldata={calldataPanel} />
-        <GlobalVariables block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
-        <ReturnValuesPanel dropdownName='Return Value' calldata={returnValuesPanel || {}} />
-        <FullStoragesChangesPanel calldata={fullStoragesChangesPanel} />
+      <div className='row align-items-center'>
+        <StackPanel className="col" calldata={stackPanel} />
+        <MemoryPanel className="col" calldata={memoryPanel} />
+        <StoragePanel className="col" calldata={storagePanel.calldata} header={storagePanel.header} />
+        <CallstackPanel className="col" calldata={callStackPanel} />
+        <CalldataPanel className="col" calldata={calldataPanel} />
+        <GlobalVariables className="col" block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
+        <div className='col align-items-center'>
+          <ReturnValuesPanel dropdownName='Return Value' calldata={returnValuesPanel || {}} />
+          <FullStoragesChangesPanel calldata={fullStoragesChangesPanel} />
+        </div>
       </div>
     </div>
   )
