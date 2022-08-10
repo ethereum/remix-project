@@ -497,7 +497,6 @@ export function Workspace () {
   return (
     <>
     <div className='remixui_container' style={{ height: '95%' }}>
-    <div className='remixui_container'>
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
@@ -679,10 +678,22 @@ export function Workspace () {
           </div>
         </div>
       </div>
-    </div>
-    </div>
-      <div className='bg-light' style={{ height: '5%' }}>
-        <span>DGIT</span>
+      </div>
+      <div className='bg-light border-top' style={{ height: '5%' }}>
+        <div className='d-flex justify-space-between p-1'>
+          <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
+          <div className="pt-1 mr-1">
+            <Dropdown style={{ height: 30, minWidth: 80 }}>
+              <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark" icon={null}>
+                Main
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items' data-id="custom-dropdown-items">
+                <Dropdown.Item><span className="pl-3">setup</span></Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        </div>
       </div>
     </>
   )
