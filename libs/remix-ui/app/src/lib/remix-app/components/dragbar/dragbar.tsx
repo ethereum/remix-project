@@ -20,7 +20,7 @@ const DragBar = (props: IRemixDragBarUi) => {
 
   useEffect(() => {
     setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))
-  }, [props.hidden, offset])
+  }, [props.hidden, offset, props.resizeTo])
 
   useEffect(() => {
     initialWidth.current = props.refObject.current.clientWidth

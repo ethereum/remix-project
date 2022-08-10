@@ -282,36 +282,36 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     setTimeout(async() => {
-    try {
       debuggerModule.onStartDebugging()
-      await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-        listenToEvents(debuggerInstance, currentReceipt)
+      try {
+        await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
+          listenToEvents(debuggerInstance, currentReceipt)
+          setState(prevState => {
+            return {
+              ...prevState,
+              blockNumber,
+              txNumber,
+              debugging: true,
+              currentReceipt,
+              currentBlock,
+              currentTransaction,
+              debugger: debuggerInstance,
+              toastMessage: `debugging ${txNumber}`,
+              validationError: ''
+            }
+          })
+        })
+      } catch (error) {
+        unLoad()
         setState(prevState => {
           return {
             ...prevState,
-            blockNumber,
-            txNumber,
-            debugging: true,
-            currentReceipt,
-            currentBlock,
-            currentTransaction,
-            debugger: debuggerInstance,
-            toastMessage: `debugging ${txNumber}`,
-            validationError: ''
+            validationError: error.message || error
           }
         })
-      })
-    } catch (error) {
-      unLoad()
-      setState(prevState => {
-        return {
-          ...prevState,
-          validationError: error.message || error
-        }
-      })
-    }
-  }, 300)
-  handleResize()
+      }
+    }, 300)
+    handleResize()
   }
 
   const debug = (txHash, web3?) => {
