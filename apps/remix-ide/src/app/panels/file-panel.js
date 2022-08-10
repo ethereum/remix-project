@@ -61,7 +61,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   render () {
-    return <div id='fileExplorerView'><FileSystemProvider plugin={this} /></div>
+    return <div id='fileExplorerView' className='overflow-hidden'><FileSystemProvider plugin={this} /></div>
   }
 
   /**
