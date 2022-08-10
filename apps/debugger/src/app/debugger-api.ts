@@ -154,6 +154,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   }
 
   showMessage (title: string, message: string) {}
+
+  onStartDebugging () {
+    this.call('layout', 'maximiseSidePanel')
+  }
 }
 
 export class CompilerAbstract implements CompilationOutput { // this is a subset of /remix-ide/src/app/compiler/compiler-abstract.js

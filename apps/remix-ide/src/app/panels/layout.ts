@@ -6,7 +6,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 const profile: Profile = {
   name: 'layout',
   description: 'layout',
-  methods: ['minimize']
+  methods: ['minimize', 'maximiseSidePanel']
 }
 
 interface panelState {
@@ -91,5 +91,9 @@ export class Layout extends Plugin {
   minimize (name: string, minimized:boolean): void {
     this.panels[name].minimized = minimized
     this.event.emit('change', null)
+  }
+
+  maximiseSidePanel () {
+    this.event.emit('maximisesidepanel')
   }
 }
