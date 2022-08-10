@@ -283,13 +283,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     setTimeout(async() => {
-<<<<<<< HEAD
-    try {
-      debuggerModule.onStartDebugging()
-      await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-        listenToEvents(debuggerInstance, currentReceipt)
-=======
       try {
+        debuggerModule.onStartDebugging()
         await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
           listenToEvents(debuggerInstance, currentReceipt)
           setState(prevState => {
@@ -309,7 +304,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         })
       } catch (error) {
         unLoad()
->>>>>>> b238cbd71... debuger UI
         setState(prevState => {
           return {
             ...prevState,
