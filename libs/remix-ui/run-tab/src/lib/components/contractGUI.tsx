@@ -5,6 +5,7 @@ import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 
 const txFormat = remixLib.execution.txFormat
+const txHelper = remixLib.execution.txHelper
 export function ContractGUI (props: ContractGUIProps) {
   const [title, setTitle] = useState<string>('')
   const [basicInput, setBasicInput] = useState<string>('')
@@ -23,6 +24,13 @@ export function ContractGUI (props: ContractGUIProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
+
+  useEffect(() => {
+    if (props.deployOption && Array.isArray(props.deployOption)) {
+      if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy' && props.deployOption[0].active) handleDeployProxySelect(true)
+      else if (props.deployOption[1] && props.deployOption[1].title === 'Upgrade with Proxy' && props.deployOption[1].active)  handleUpgradeImpSelect(true)
+    }
+  }, [props.deployOption])
 
   useEffect(() => {
     if (props.title) {
@@ -67,7 +75,7 @@ export function ContractGUI (props: ContractGUIProps) {
     }
   }, [props.lookupOnly, props.funcABI, title])
 
-  const getContentOnCTC = () => {
+  const getEncodedCall = () => {
     const multiString = getMultiValsString(multiFields.current)
     // copy-to-clipboard icon is only visible for method requiring input params
     if (!multiString) {
@@ -85,6 +93,20 @@ export function ContractGUI (props: ContractGUIProps) {
       return encodeObj.error
     } else {
       return encodeObj.data
+    }
+  }
+
+  const getEncodedParams = () => {
+    try {
+      const multiString = getMultiValsString(multiFields.current)
+      // copy-to-clipboard icon is only visible for method requiring input params
+      if (!multiString) {
+        return 'cannot encode empty arguments'
+      }
+      const multiJSON = JSON.parse('[' + multiString + ']')
+      return txHelper.encodeParams(props.funcABI, multiJSON)
+    } catch (e) {
+      console.error(e)
     }
   }
 
@@ -131,12 +153,10 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   const makeMultiVal = () => {
-    let inputString = basicInput
+    const inputString = basicInput
 
     if (inputString) {
-      inputString = inputString.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-      inputString = inputString.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-      const inputJSON = JSON.parse('[' + inputString + ']')
+      const inputJSON = remixLib.execution.txFormat.parseFunctionParams(inputString)
       const multiInputs = multiFields.current
 
       for (let k = 0; k < multiInputs.length; k++) {
@@ -179,9 +199,7 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleDeployProxy(!toggleDeployProxy)
   }
 
-  const handleDeployProxySelect = (e) => {
-    const value = e.target.checked
-
+  const handleDeployProxySelect = (value: boolean) => {
     if (value) setToggleUpgradeImp(false)
     setToggleDeployProxy(value)
     setDeployState({ upgrade: false, deploy: value })
@@ -191,9 +209,7 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleUpgradeImp(!toggleUpgradeImp)
   }
 
-  const handleUpgradeImpSelect = (e) => {
-    const value = e.target.checked
-
+  const handleUpgradeImpSelect = (value: boolean) => {
     setToggleUpgradeImp(value)
     if (value) {
       setToggleDeployProxy(false)
@@ -249,9 +265,28 @@ export function ContractGUI (props: ContractGUIProps) {
                 </div>)
             })}
           </div>
-          <div className="udapp_group udapp_multiArg">
-            <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getContentOnCTC} />
-            <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
+          <div className="d-flex udapp_group udapp_multiArg">
+            <CopyToClipboard tip='Copy calldata to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedCall} >
+              <button className="btn remixui_copyButton">
+                <i id="copyCalldata" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <label htmlFor="copyCalldata">Calldata</label>
+              </button>
+            </CopyToClipboard>
+            <CopyToClipboard tip='Copy encoded input parameters to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedParams} >
+              <button className="btn remixui_copyButton">
+                <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <label htmlFor="copyParameters">Parameters</label>
+              </button>
+            </CopyToClipboard>
+            <button
+              type="button"
+              onClick={handleExpandMultiClick}
+              title={buttonOptions.title}
+              data-id={buttonOptions.dataId}
+              className={`btn udapp_instanceButton ${buttonOptions.classList}`}
+            >
+              { buttonOptions.content }
+            </button>
           </div>
         </div>
       </div>
@@ -264,7 +299,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 data-id="contractGUIDeployWithProxy"
                 className="form-check-input custom-control-input"
                 type="checkbox"
-                onChange={handleDeployProxySelect}
+                onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
               <label
@@ -307,7 +342,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 data-id="contractGUIUpgradeImplementation"
                 className="form-check-input custom-control-input"
                 type="checkbox"
-                onChange={handleUpgradeImpSelect}
+                onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
               <label

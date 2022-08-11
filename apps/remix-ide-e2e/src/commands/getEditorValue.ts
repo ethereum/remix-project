@@ -9,11 +9,10 @@ class GetEditorValue extends EventEmitter {
 
         return elem.currentContent()
       }, [], (result) => {
-        done()
         const value = typeof result.value === 'string' ? result.value : null
-
         callback(value)
         this.emit('complete')
+        done()
       })
     })
     return this

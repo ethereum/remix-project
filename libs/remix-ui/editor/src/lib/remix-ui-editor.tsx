@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint
 
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
-import { language, conf } from './syntax'
-import { cairoLang, cairoConf } from './cairoSyntax'
+import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
+import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
+import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { IMarkdownString } from 'monaco-editor'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
@@ -51,7 +53,7 @@ export type lineText = {
       column: number
     }
   },
-  from: string // plugin name
+  from?: string // plugin name
   content: string
   className: string
   afterContentClassName: string
@@ -267,7 +269,6 @@ export const EditorUI = (props: EditorUIProps) => {
     defineAndSetTheme(monacoRef.current)
   })
 
-
   useEffect(() => {
     if (!editorRef.current || !props.currentFile) return
     currentFileRef.current = props.currentFile
@@ -278,11 +279,12 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
-    }
-
+    } else if (file.language === 'zokrates') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
+    }    
   }, [props.currentFile])
 
-  const convertToMonacoDecoration = (decoration: any, typeOfDecoration: string) => {
+  const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
       decoration = decoration as sourceAnnotation
       return {
@@ -313,6 +315,20 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     }
     if (typeOfDecoration === 'lineTextPerFile') {
+      const lineTextDecoration = decoration as lineText
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
+        options: {
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
+          afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
+
+      }
+    }
+    if (typeOfDecoration === 'lineTextPerFile') {
+<<<<<<< HEAD
       decoration = decoration as lineText
       return {
         type: typeOfDecoration,
@@ -323,6 +339,18 @@ export const EditorUI = (props: EditorUIProps) => {
           hoverMessage : decoration.hoverMessage
         },
         
+=======
+      const lineTextDecoration = decoration as lineText
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
+        options: {
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
+          afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
+
+>>>>>>> 74becf0e1b2f9500395be90167d3b6c237d13735
       }
     }
   }
@@ -508,13 +536,41 @@ export const EditorUI = (props: EditorUIProps) => {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
+
+    // zoomin zoomout
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
     
+    // add context menu items
+    const zoominAction = {
+      id: "zoomIn",
+      label: "Zoom In",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "zooming", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
+      ],
+      run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 }) },
+    }
+    const zoomOutAction = {
+      id: "zoomOut",
+      label: "Zoom Out",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "zooming", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
+      ],
+      run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 }) },
+    }
+    editor.addAction(zoomOutAction)
+    editor.addAction(zoominAction)
+
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input, source) => {
@@ -536,17 +592,14 @@ export const EditorUI = (props: EditorUIProps) => {
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
+    monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    
     // Register a tokens provider for the language
-    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', conf as any)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any )
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf as any)
-
-    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
-      noSyntaxValidation: false,
-    });
+    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))

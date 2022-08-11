@@ -15,7 +15,7 @@ export class CompilerMetadata extends Plugin {
   innerPath: string
   constructor () {
     super(profile)
-    this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
+    this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'goerli:5', 'Custom']
     this.innerPath = 'artifacts'
   }
 
@@ -87,7 +87,7 @@ export class CompilerMetadata extends Plugin {
 
     let parsedMetadata
     try {
-      parsedMetadata = JSON.parse(contract.object.metadata)
+      parsedMetadata = contract.object && contract.object.metadata ? JSON.parse(contract.object.metadata) : null
     } catch (e) {
       console.log(e)
     }

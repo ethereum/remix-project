@@ -11,31 +11,50 @@ module.exports = {
 
     'Test decorators with script': function (browser: NightwatchBrowser) {
         browser
-        .openFile('contracts')
-        .openFile('contracts/2_Owner.sol')
-        .openFile('contracts/1_Storage.sol')
-        .openFile('contracts/3_Ballot.sol')
-        .addFile('scripts/decorators.ts', { content: testScript })
-        .pause(2000)
-        .executeScript('remix.exeCurrent()')
-        .pause(4000)
-        .useXpath()
-        .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
-        .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
-        .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U')
-        .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U')
-        .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2')
-        .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2')
-        .useCss()
-        .waitForElementNotPresent('[data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 10000)
-        .useXpath()
-        .moveToElement('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', 0,0)
-        .waitForElementVisible('//*[@id="error-tooltip-contracts/2_Owner.sol"]')
-        .waitForElementContainsText('//*[@id="error-tooltip-contracts/2_Owner.sol"]', 'error on owner')
+            .openFile('contracts')
+            .openFile('contracts/2_Owner.sol')
+            .openFile('contracts/1_Storage.sol')
+            .openFile('contracts/3_Ballot.sol')
+            .addFile('scripts/decorators.ts', { content: testScriptSet })
+            .pause(2000)
+            .executeScriptInTerminal('remix.exeCurrent()')
+            .pause(4000)
+            .useXpath()
+            .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
+            .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
+            .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U')
+            .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U')
+            .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2')
+            .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2')
+            .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 'customtext')
+            .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 'customtext')
+            .moveToElement('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', 0, 0)
+            .waitForElementVisible('//*[@id="error-tooltip-contracts/2_Owner.sol"]')
+            .waitForElementContainsText('//*[@id="error-tooltip-contracts/2_Owner.sol"]', 'error on owner')
+    },
+
+    'clear ballot decorator': function (browser: NightwatchBrowser) {
+        browser
+            .useCss()
+            .addFile('scripts/clearballot.ts', { content: testScriptClearBallot })
+            .pause(2000)
+            .executeScriptInTerminal('remix.exeCurrent()')
+            .pause(4000)
+            .waitForElementNotPresent('[data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 10000)
+    },
+    'clear all decorators': function (browser: NightwatchBrowser) {
+        browser
+            .addFile('scripts/clearall.ts', { content: testScriptClear })
+            .pause(2000)
+            .executeScriptInTerminal('remix.exeCurrent()')
+            .pause(4000)
+            .waitForElementNotPresent('[data-id="file-decoration-error-contracts/2_Owner.sol"]', 10000)
+            .waitForElementNotPresent('[data-id="file-decoration-warning-contracts/1_Storage.sol"]', 10000)
     }
 
+
 }
-const testScript = `
+const testScriptSet = `
 (async () => {
     remix.call('fileDecorator' as any, 'clearFileDecorators')
     let decorator: any = {
@@ -46,7 +65,6 @@ const testScript = `
                     fileStateIconClass: '',
                     fileStateIcon: '',
                     text: '2',
-                    owner: 'code-parser',
                     bubble: true,
                     comment: 'error on owner',
                 }
@@ -58,11 +76,10 @@ const testScript = `
                     fileStateIconClass: 'text-success',
                     fileStateIcon: 'U',
                     text: '',
-                    owner: 'code-parser',
                     bubble: true,
                     comment: 'modified',
                 }
-    remix.call('fileDecorator' as any, 'setFileDecorators', [decorator, decorator2])
+    await remix.call('fileDecorator' as any, 'setFileDecorators', [decorator, decorator2])
     
     decorator = {
                     path: 'contracts/1_Storage.sol',
@@ -72,11 +89,10 @@ const testScript = `
                     fileStateIconClass: '',
                     fileStateIcon: '',
                     text: '2',
-                    owner: 'code-parser',
                     bubble: true,
                     comment: 'warning on storage',
                 }
-    remix.call('fileDecorator' as any, 'setFileDecorators', decorator)
+    await remix.call('fileDecorator' as any, 'setFileDecorators', decorator)
     
     decorator = {
                     path: 'contracts/3_Ballot.sol',
@@ -85,13 +101,25 @@ const testScript = `
                     fileStateLabelClass: '',
                     fileStateIconClass: '',
                     fileStateIcon: 'customtext',
-                    text: 'w',
-                    owner: 'dgit',
+                    text: 'with text',
                     bubble: true,
-                    comment: '',
+                    comment: 'custom comment',
                 }
-    remix.call('fileDecorator' as any, 'setFileDecorators', decorator)
-    
-    remix.call('fileDecorator' as any, 'clearFileDecorators', 'dgit')
+    await remix.call('fileDecorator' as any, 'setFileDecorators', decorator)
     
     })()`
+
+
+const testScriptClearBallot = `
+    (async () => {
+        
+    await remix.call('fileDecorator' as any, 'clearFileDecorators', 'contracts/3_Ballot.sol')
+        
+        })()`
+
+const testScriptClear = `
+    (async () => {
+        await remix.call('fileDecorator' as any, 'clearAllFileDecorators')
+        
+        
+        })()`

@@ -101,7 +101,7 @@ export abstract class AbstractProvider extends Plugin {
               reject('Unable to connect')
             }
           }, 2000)
-          await this.provider.ready
+          await this.provider.detectNetwork() // this throws if the network cannot be detected
           this.connected = true
         } catch (e) {
           this.switchAway(true)
@@ -116,6 +116,7 @@ export abstract class AbstractProvider extends Plugin {
   }
 
   private async switchAway (showError) {
+    if (!this.provider) return
     this.provider = null
     this.blocked = true
     this.connected = false
