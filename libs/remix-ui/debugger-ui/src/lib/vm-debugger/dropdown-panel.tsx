@@ -54,7 +54,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }
   const [state, setState] = useState({
     header: '',
-    toggleDropdown: false,
+    toggleDropdown: true,
     message: {
       innerText: 'No data available.',
       display: 'block'
@@ -163,7 +163,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           display: isEmpty ? 'block' : 'none'
         },
         updating: false,
-        toggleDropdown: !isEmpty,
+        toggleDropdown: true,
         data: calldata
       }
     })
