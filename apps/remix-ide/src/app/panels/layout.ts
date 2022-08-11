@@ -6,7 +6,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 const profile: Profile = {
   name: 'layout',
   description: 'layout',
-  methods: ['minimize', 'maximiseSidePanel']
+  methods: ['minimize', 'maximiseSidePanel', 'resetSidePanel']
 }
 
 interface panelState {
@@ -95,5 +95,9 @@ export class Layout extends Plugin {
 
   maximiseSidePanel () {
     this.event.emit('maximisesidepanel')
+  }
+
+  resetSidePanel () {
+    this.event.emit('resetsidepanel')
   }
 }
