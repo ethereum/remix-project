@@ -65,6 +65,29 @@ module.exports = {
       })
   },
 
+  'Should show and update balance for deployed contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
+    let instanceAddress
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .clickLaunchIcon('filePanel')
+      .addFile('checkBalance.sol', sources[0]['checkBalance.sol'])
+      .clickLaunchIcon('udapp')
+      .setValue('*[data-id="dandrValue"]', '111')
+      .waitForElementVisible('*[data-id="Deploy - transact (payable)"]', 45000)
+      .click('*[data-id="Deploy - transact (payable)"]')
+      .pause(1000)
+      .clickInstance(1)
+      .pause(1000)
+      .getAddressAtPosition(1, (address) => {
+        instanceAddress = address
+        browser
+        .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
+        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
+        .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
+        .pause(1000)
+        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
+      })
+  },
+
   'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickInstance(0)
@@ -224,6 +247,17 @@ const sources = [
               message = _message;
           }
       }`
+    },
+    'checkBalance.sol': {
+      content: `pragma solidity ^0.8.0;
+      contract checkBalance {
+        constructor () payable {}
+
+        function sendSomeEther(uint256 num) public {
+            payable(msg.sender).transfer(num);
+        }
+    
+    }`
     }
   }
 ]

@@ -86,8 +86,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         scriptRunnerDispatch({ type: 'html', payload: { message: [html ? html.innerText ? html.innerText : html : null] } })
       },
 
-      log: (message) => {
-        scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
+      log: (message, type) => {
+        scriptRunnerDispatch({ type: type ? type : 'log', payload: { message: [message] } })
       }
     })
   }, [])
