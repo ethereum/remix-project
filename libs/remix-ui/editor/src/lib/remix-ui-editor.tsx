@@ -110,7 +110,7 @@ export interface EditorUIProps {
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     addErrorMarker: (errors: []) => void
-    clearErrorMarkers: (sources: any) => void
+    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}) => void
   }
 }
 
@@ -441,7 +441,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: any) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}) => {
     if (sources) {
       for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
         const filePath = source
