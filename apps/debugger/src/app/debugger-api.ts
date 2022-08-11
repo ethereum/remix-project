@@ -8,8 +8,6 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   initialWeb3
 
   initDebuggerApi () {
-    this.debugHash = null
-        
     const self = this
     this.web3Provider = {
       sendAsync (payload, callback) {
@@ -132,7 +130,6 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     } catch (e) {
       console.error(e)
     }
-    this.debugHash = hash
     if (web3) this._web3 = web3
     else this._web3 = this.initialWeb3
     remixDebug.init.extendWeb3(this._web3)
@@ -161,7 +158,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   onStopDebugging () {
     this.call('layout', 'resetSidePanel')
-  }  
+  }
 }
 
 export class CompilerAbstract implements CompilationOutput { // this is a subset of /remix-ide/src/app/compiler/compiler-abstract.js
