@@ -227,7 +227,7 @@ export function Workspace () {
                       e.stopPropagation()
                       deleteCurrentWorkspace()
                     }}
-                    className='fas fa-trash remixui_menuicon'
+                    className='far fa-trash remixui_menuicon'
                     title='Delete'>
                   </span>
                   <span

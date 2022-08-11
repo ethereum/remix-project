@@ -4,7 +4,7 @@ import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
-import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin } from './workspace'
+import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
@@ -80,11 +80,13 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             {id: 5, name: 'goerli'}
           ]
           let found = false
+          const workspaceName = 'etherscan-code-sample'
+          let filePath
           const foundOnNetworks = []
           for (const network of networks) {
             const target = `/${network.name}/${contractAddress}`
             try {
-              data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, etherscanKey)
+              data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, false, etherscanKey)
             } catch (error) {
               if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
                 continue
@@ -95,15 +97,15 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             }
             found = true
             foundOnNetworks.push(network.name)
-            await createWorkspaceTemplate('etherscan-code-sample', 'code-template')
-            plugin.setWorkspace({ name: 'etherscan-code-sample', isLocalhost: false })
-            dispatch(setCurrentWorkspace({ name: 'etherscan-code-sample', isGitRepo: false }))
-            let filePath
+            if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
+            else await createWorkspaceTemplate(workspaceName, 'code-template')
+            plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+            dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
             count = count + (Object.keys(data.compilationTargets)).length
             for (filePath in data.compilationTargets)
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
-            plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
           }
+          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
           plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '': 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '': 's'} of Etherscan for contract address ${contractAddress} !!`)
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
