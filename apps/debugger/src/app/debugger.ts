@@ -12,8 +12,6 @@ export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {
   }
 
   offsetToLineColumnConverter: IDebuggerApi['offsetToLineColumnConverter']
-  debugHash: string
-  debugHashRequest: number
   removeHighlights: boolean
   onBreakpointCleared: (listener: onBreakpointClearedListener) => void
   onBreakpointAdded: (listener: onBreakpointAddedListener) => void
