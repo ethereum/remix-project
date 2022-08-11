@@ -28,13 +28,25 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   /** Compile a Contract */
   async function compileContract() {
     try {
-      const _contract = await remixClient.getContract()
+      let _contract
+      try {
+        _contract = await remixClient.getContract()
+      } catch (e) {
+        setOutput('', { status: 'failed', message: err.message})
+        return
+      }      
       remixClient.changeStatus({
         key: 'loading',
         type: 'info',
         title: 'Compiling'
       })
-      const output = await compile(compilerUrl, _contract)
+      let output
+      try {
+        output = await compile(compilerUrl, _contract)
+      } catch (e) {
+        setOutput(_contract.name, { status: 'failed', message: err.message})
+        return
+      }      
       setOutput(_contract.name, output)
       // ERROR
       if (isCompilationError(output)) {
@@ -61,7 +73,6 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
         type: 'error',
         title: err.message
       })
-      console.error(err)
     }
   }
 
