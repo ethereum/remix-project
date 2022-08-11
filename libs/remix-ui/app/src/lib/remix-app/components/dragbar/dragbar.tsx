@@ -7,7 +7,7 @@ interface IRemixDragBarUi {
   setHideStatus: (hide: boolean) => void;
   hidden: boolean
   minWidth: number
-  resizeTo?: number
+  maximiseTrigger: number
 }
 
 const DragBar = (props: IRemixDragBarUi) => {
@@ -18,7 +18,15 @@ const DragBar = (props: IRemixDragBarUi) => {
 
   useEffect(() => {
     setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))
-  }, [props.hidden, offset, props.resizeTo])
+  }, [props.hidden, offset])
+
+  useEffect(() => {
+    if (props.maximiseTrigger > 0) {
+      const width =  0.4 * window.innerWidth
+      props.refObject.current.style.width = width + 'px'
+      setDragBarPosX(offset + width)  
+    }
+  }, [props.maximiseTrigger])
 
   const handleResize = () => {
     setOffSet(props.refObject.current.offsetLeft)
