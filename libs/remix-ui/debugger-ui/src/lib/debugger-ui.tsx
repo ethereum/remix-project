@@ -169,6 +169,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }
 
   const unLoad = () => {
+    debuggerModule.onStopDebugging()
     if (state.debugger) state.debugger.unload()
     setState(prevState => {
       return {
