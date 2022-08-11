@@ -43,7 +43,7 @@ export const SolidityLocals = ({ data, message, registerEvent, triggerEvent, cla
   }
 
   return (
-    <div id='soliditylocals' data-id="solidityLocals" className="col">
+    <div id='soliditylocals' data-id="solidityLocals">
       <DropdownPanel
         dropdownName='Solidity Locals'
         dropdownMessage={message}
