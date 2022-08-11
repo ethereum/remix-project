@@ -30,8 +30,10 @@ export type PanelConfiguration = {
 export class Layout extends Plugin {
   event: any
   panels: panels
+  maximised: { [key: string]: boolean }
   constructor () {
     super(profile)
+    this.maximised = {}
     this.event = new EventEmitter()
   }
 
@@ -64,6 +66,14 @@ export class Layout extends Plugin {
           break
       }
     })
+    this.on('sidePanel', 'focusChanged', async (name) => {
+      const current = await this.call('sidePanel', 'currentFocus')
+      if (this.maximised[current]) {
+        this.event.emit('maximisesidepanel')
+      } else {
+        this.event.emit('resetsidepanel')
+      }
+    })
     document.addEventListener('keypress', e => {
       if (e.shiftKey && e.ctrlKey) {
         if (e.code === 'KeyF') {
@@ -93,11 +103,15 @@ export class Layout extends Plugin {
     this.event.emit('change', null)
   }
 
-  maximiseSidePanel () {
+  async maximiseSidePanel () {
     this.event.emit('maximisesidepanel')
+    const current = await this.call('sidePanel', 'currentFocus')
+    this.maximised[current] = true
   }
 
-  resetSidePanel () {
+  async resetSidePanel () {
     this.event.emit('resetsidepanel')
+    const current = await this.call('sidePanel', 'currentFocus')
+    this.maximised[current] = false
   }
 }
