@@ -46,8 +46,6 @@ export type onEnvChangedListener = (provider: string) => void
 
 export interface IDebuggerApi {
     offsetToLineColumnConverter: { offsetToLineColumn: (sourceLocation: RawLocation, file: number, contents: Sources, asts: Asts) => Promise<LineColumnLocation> }
-    debugHash: string
-    debugHashRequest: number
     removeHighlights: boolean
     onRemoveHighlights: (listener: VoidFunction) => void
     onDebugRequested: (listener: onDebugRequested) => void
