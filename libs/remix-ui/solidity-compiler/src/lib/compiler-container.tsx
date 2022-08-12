@@ -48,6 +48,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     timeout: 300,
     allversions: [],
     customVersions: [],
+    compilerLicense: null,
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.7+commit.e28d00a7.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
@@ -437,10 +438,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compilerLoaded = (license) => {
-    console.log('inside compilerLoaded----->', license)
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
+    setState(prevState => {
+      return { ...prevState, compilerLicense: license ? license : 'could not retreive license' }
+    })
     if (state.autoCompile) compile()
     const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
 
@@ -553,6 +556,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const promptCompiler = () => {
     // custom url https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js
     modal('Add a custom compiler', promptMessage('URL'), 'OK', addCustomCompiler, 'Cancel', () => {})
+  }
+
+  const showCompilerLicense = () => {
+    modal('Compiler License', state.compilerLicense ? state.compilerLicense : 'License can be seen once compiler is loaded', 'OK', () => {})
   }
 
   const promptMessage = (message) => {
@@ -705,6 +712,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               Compiler
               <button className="far fa-plus btn-light border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
+              <button className="fa fa-file-text-o btn-light border-0 p-0 mx-2 btn-sm" onClick={showCompilerLicense} title="See compiler license"></button>
             </label>
             <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
