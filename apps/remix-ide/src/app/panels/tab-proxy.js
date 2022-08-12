@@ -169,6 +169,10 @@ export class TabProxy extends Plugin {
     this.on('manager', 'pluginDeactivated', (profile) => {
       this.removeTab(profile.name)
     })
+
+    this.on('fileDecorator', 'fileDecoratorsChanged', async (items) => {
+      this.tabsApi.setFileDecorations(items)
+    })
     
     try {
       this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
@@ -306,6 +310,7 @@ export class TabProxy extends Plugin {
 
   updateComponent(state) {
     return <TabsUI
+      plugin={state.plugin}
       tabs={state.loadedTabs}
       onSelect={state.onSelect}
       onClose={state.onClose}
@@ -339,6 +344,7 @@ export class TabProxy extends Plugin {
     const onReady = (api) => { this.tabsApi = api }
 
     this.dispatch({
+      plugin: this,
       loadedTabs: this.loadedTabs,
       onSelect,
       onClose,

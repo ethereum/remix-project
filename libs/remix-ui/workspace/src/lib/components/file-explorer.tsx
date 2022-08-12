@@ -12,7 +12,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files } = props
+  const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -432,6 +432,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               {
                 files[props.name] && Object.keys(files[props.name]).map((key, index) => <FileRender
                   file={files[props.name][key]}
+                  fileDecorations={fileState}
                   index={index}
                   focusContext={state.focusContext}
                   focusEdit={state.focusEdit}

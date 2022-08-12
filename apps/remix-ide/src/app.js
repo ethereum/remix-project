@@ -32,6 +32,7 @@ import { FoundryProvider } from './app/tabs/foundry-provider'
 import { ExternalHttpProvider } from './app/tabs/external-http-provider'
 import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
+import { FileDecorator } from './app/plugins/file-decorator'
 
 const isElectron = require('is-electron')
 
@@ -160,6 +161,9 @@ class AppComponent {
     // ----------------- Storage plugin ---------------------------------
     const storagePlugin = new StoragePlugin()
 
+    // ------- FILE DECORATOR PLUGIN ------------------
+    const fileDecorator = new FileDecorator()
+
     //----- search
     const search = new SearchPlugin()
 
@@ -244,6 +248,7 @@ class AppComponent {
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
+      fileDecorator,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
@@ -368,7 +373,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'fileDecorator', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 
@@ -410,9 +415,32 @@ class AppComponent {
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
+                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
                 this.appManager.call(...callDetails).catch(console.error)
+              }
+            }
+
+            if (params.calls) {
+              const calls = params.calls.split("///");
+
+              // call all functions in the list, one after the other
+              for (const call of calls) {
+                const callDetails = call.split("//");
+                if (callDetails.length > 1) {
+                  this.appManager.call(
+                    "notification",
+                    "toast",
+                    `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`
+                  );
+
+                  // @todo(remove the timeout when activatePlugin is on 0.3.0)
+                  try {
+                    await this.appManager.call(...callDetails)
+                  } catch (e) {
+                    console.error(e)
+                  }
+                }
               }
             }
           })

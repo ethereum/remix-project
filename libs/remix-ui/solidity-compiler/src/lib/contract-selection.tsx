@@ -8,14 +8,20 @@ import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { api, contractsDetails, contractList, modal } = props
+  const { api, compiledFileName, contractsDetails, contractList, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
 
   const intl = useIntl()
 
   useEffect(() => {
-    if (contractList.length) setSelectedContract(contractList[0].name)
+    if (contractList.length) {
+      const compiledPathArr = compiledFileName.split('/')
+      const compiledFile = compiledPathArr[compiledPathArr.length - 1]
+      const contractsInCompiledFile = contractList.filter(obj => obj.file === compiledFile)
+      if (contractsInCompiledFile.length) setSelectedContract(contractsInCompiledFile[0].name)
+      else setSelectedContract(contractList[0].name)
+    }
   }, [contractList])
 
   const resetStorage = () => {

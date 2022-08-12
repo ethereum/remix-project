@@ -57,7 +57,7 @@ export default {
   'filePanel.uploadFile': 'Load a local file into current workspace',
   'filePanel.updateGist': 'Update the current [gist] explorer',
 
-  'home.scamAlert': 'Scam Alert: Beware of online videos promoting "liquidity front runner bots".',
+  'home.scamAlert': 'Scam Alert: There are video tutorials going around that provide urls other than remix.ethereum.org, and could be scams. Also, beware of online videos promoting "liquidity front runner bots".',
   'home.learnMore': 'Learn more',
   'home.featuredPlugins': 'Featured Plugins',
   'home.file': 'File',
