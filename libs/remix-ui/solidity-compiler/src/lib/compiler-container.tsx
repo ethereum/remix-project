@@ -49,6 +49,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     allversions: [],
     customVersions: [],
     compilerLicense: null,
+    loadedVersion: null,
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.7+commit.e28d00a7.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
@@ -186,7 +187,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           loadingCompiler()
           break
         case 'compilerLoaded':
-          compilerLoaded(compilerContainer.compiler.args[1])
+          compilerLoaded(compilerContainer.compiler.args[0], compilerContainer.compiler.args[1])
           break
         case 'compilationFinished':
           compilationFinished()
@@ -437,12 +438,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setDisableCompileButton(true)
   }
 
-  const compilerLoaded = (license) => {
+  const compilerLoaded = (version, license) => {
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     setState(prevState => {
-      return { ...prevState, compilerLicense: license ? license : 'could not retreive license' }
+      return { ...prevState, compilerLicense: license ? license : 'could not retreive license', loadedVersion: version }
     })
     if (state.autoCompile) compile()
     const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
@@ -559,7 +560,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const showCompilerLicense = () => {
-    modal('Compiler License', state.compilerLicense ? state.compilerLicense : 'License can be seen once compiler is loaded', 'OK', () => {})
+    let licenseText
+    if (state.loadedVersion) {
+      const tmp: RegExpExecArray | null = /(\d+.\d+.\d+)/.exec(state.loadedVersion)
+      const version = tmp ? tmp[0] : state.loadedVersion
+      licenseText = `---- Compiler license for loaded version ${version} ---- \n\n` + state.compilerLicense
+    } else 
+      licenseText = 'License can be seen once compiler is loaded'
+    modal('Compiler License', licenseText, 'OK', () => {})
   }
 
   const promptMessage = (message) => {
