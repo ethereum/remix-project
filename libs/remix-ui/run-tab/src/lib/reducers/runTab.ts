@@ -88,6 +88,7 @@ export interface RunTabState {
     instanceList: {
       contractData?: ContractData,
       address: string,
+      balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
       abi?: any

@@ -57,7 +57,7 @@ export default {
   'filePanel.uploadFile': '加载本地文件到当前工作空间',
   'filePanel.updateGist': '更新当前 [gist] 浏览',
 
-  'home.scamAlert': '诈骗警告: 当心在线视频推广“流动性领先者机器人”.',
+  'home.scamAlert': '诈骗警报：有一些视频教程提供了 remix.ethereum.org 以外的网址，并且可能是诈骗。此外，请注意宣传“流动性领先机器人”的在线视频。',
   'home.learnMore': '了解更多',
   'home.featuredPlugins': '精选插件',
   'home.file': '文件',

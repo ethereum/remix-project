@@ -3,8 +3,10 @@ import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents } from './events'
 import { createNewBlockchainAccount, fillAccountsList, setExecutionContext, signMessageWithAddress } from './account'
-import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath, updateTxFeeContent } from './actions'
-import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions } from './deploy'
+import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
+  setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
+  updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath, updateTxFeeContent } from './actions'
+import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
 import { ContractData, FuncABI } from "@remix-project/core-plugin"
 import { DeployMode, MainnetPrompt } from '../types'
@@ -26,6 +28,7 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
   setupEvents(plugin, dispatch)
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
+    updateInstanceBalance(plugin)
   }, 1000)
 }
 

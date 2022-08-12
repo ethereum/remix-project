@@ -181,6 +181,7 @@ export interface InstanceContainerProps {
     instanceList: {
       contractData?: ContractData,
       address: string,
+      balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
       abi?: any
@@ -281,6 +282,7 @@ export interface UdappProps {
   instance: {
     contractData?: ContractData,
     address: string,
+    balance?: number,
     name: string,
     decodedResponse?: Record<number, any>,
     abi?: any

@@ -1,10 +1,10 @@
 import EventEmitter from 'events'
 import { NightwatchBrowser } from 'nightwatch'
 
-class RightClick extends EventEmitter {
+class RightClickCustom extends EventEmitter {
   command (this: NightwatchBrowser, cssSelector: string) {
     this.api.perform((done) => {
-      rightClick(this.api, cssSelector, () => {
+      rightClickCustom(this.api, cssSelector, () => {
         done()
         this.emit('complete')
       })
@@ -13,7 +13,7 @@ class RightClick extends EventEmitter {
   }
 }
 
-function rightClick (browser: NightwatchBrowser, cssSelector: string, callback: VoidFunction) {
+function rightClickCustom (browser: NightwatchBrowser, cssSelector: string, callback: VoidFunction) {
   browser.execute(function (cssSelector: string) {
     const element: any = document.querySelector(cssSelector)
     const evt = element.ownerDocument.createEvent('MouseEvents')
@@ -34,4 +34,4 @@ function rightClick (browser: NightwatchBrowser, cssSelector: string, callback: 
   })
 }
 
-module.exports = RightClick
+module.exports = RightClickCustom
