@@ -140,7 +140,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setSlitherEnabled(false)
       }
     })
-    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     props.analysisModule.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
       setDisableForRun(version)
     })
