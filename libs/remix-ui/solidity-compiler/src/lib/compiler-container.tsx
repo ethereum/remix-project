@@ -185,7 +185,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           loadingCompiler()
           break
         case 'compilerLoaded':
-          compilerLoaded()
+          compilerLoaded(compilerContainer.compiler.args[1])
           break
         case 'compilationFinished':
           compilationFinished()
@@ -436,7 +436,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setDisableCompileButton(true)
   }
 
-  const compilerLoaded = () => {
+  const compilerLoaded = (license) => {
+    console.log('inside compilerLoaded----->', license)
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
