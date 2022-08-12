@@ -141,7 +141,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       }
     })
     
-    props.analysisModule.on('solidity', 'compilerLoaded', async (version: string) => {
+    props.analysisModule.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
       setDisableForRun(version)
     })
     return () => { }
