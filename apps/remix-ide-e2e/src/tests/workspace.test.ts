@@ -33,7 +33,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E START
 
-  'Should create Remix default workspace with files': function (browser: NightwatchBrowser) {
+  'Should create Remix default workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
@@ -44,53 +44,53 @@ module.exports = {
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(1000)
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      
+
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`const { expect } = require("chai");`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/Ballot_test.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemREADME.txt"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/Ballot_test.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.txt"]')
   },
 
-  'Should create blank workspace with no files': function (browser: NightwatchBrowser) {
+  'Should create blank workspace with no files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -102,16 +102,16 @@ module.exports = {
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
-      .assert.elementPresent('*[data-id="treeViewUltreeViewMenu"]')
+      .waitForElementPresent('*[data-id="treeViewUltreeViewMenu"]')
       .execute(function () {
         const fileList = document.querySelector('*[data-id="treeViewUltreeViewMenu"]')
         return fileList.getElementsByTagName('li').length;
-      }, [], function(result){
-          browser.assert.equal(result.value, 0, 'Incorrect number of files');
+      }, [], function (result) {
+        browser.assert.equal(result.value, 0, 'Incorrect number of files');
       });
   },
 
-  'Should create ERC20 workspace with files': function (browser: NightwatchBrowser) {
+  'Should create ERC20 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -123,43 +123,43 @@ module.exports = {
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC20.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC20.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      
-      .getEditorValue((content) => {
+      .pause(5000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
   },
 
-  'Should create ERC721 workspace with files': function (browser: NightwatchBrowser) {
+  'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
@@ -171,72 +171,70 @@ module.exports = {
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {
+      .pause(4000)
+      .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
-        'Incorrect content')
+          'Incorrect content')
       })
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemtests/SampleERC721_test.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/SampleERC721_test.sol"]')
   },
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]') // create workspace_name
+      .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .clearValue('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name')
+      .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(1000)
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .click('*[data-id="workspaceCreate"]') // create workspace_name_1
+      .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .clearValue('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name_1')
+      .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name_1')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')     
+      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .pause(2000)
       .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .currentWorkspaceIs('workspace_name')
   },
 
   'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
@@ -251,9 +249,11 @@ module.exports = {
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .switchWorkspace('workspace_name_1')
       .pause(2000)
+      .currentWorkspaceIs('workspace_name_1')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .switchWorkspace('workspace_name_renamed')
       .pause(2000)
+      .currentWorkspaceIs('workspace_name_renamed')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
@@ -268,84 +268,85 @@ module.exports = {
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
   },
 
-    // CLONE REPOSITORY E2E START
+  // CLONE REPOSITORY E2E START
 
-    'Should clone a repository #group2': function (browser: NightwatchBrowser) {
-      browser
-        .waitForElementVisible('[data-id="cloneGitRepository"]')
-        .click('[data-id="cloneGitRepository"]')
-        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-        .click('[data-id="fileSystemModalDialogModalBody-react"]')
-        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-        .click('[data-id="fileSystem-modal-footer-ok-react"]')
-        .waitForElementPresent('.fa-spinner')
-        .pause(5000)
-        .waitForElementNotPresent('.fa-spinner')
-        .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix')
-    },
+  'Should clone a repository #group2': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('[data-id="cloneGitRepository"]')
+      .click('[data-id="cloneGitRepository"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('.fa-spinner')
+      .pause(5000)
+      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix')
+  },
 
-    'Should display dgit icon for cloned workspace #group2': function (browser: NightwatchBrowser) {
-      browser
-        .switchWorkspace('default_workspace')
-        .waitForElementNotVisible('[data-id="workspacesSelect"] .fa-code-branch')
-        .switchWorkspace('awesome-remix')
-        .waitForElementVisible('[data-id="workspacesSelect"] .fa-code-branch')
-    },
-    
-    'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
-      browser
-        .waitForElementVisible('[data-id="cloneGitRepository"]')
-        .click('[data-id="cloneGitRepository"]')
-        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-        .click('[data-id="fileSystemModalDialogModalBody-react"]')
-        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-        .click('[data-id="fileSystem-modal-footer-ok-react"]')
-        .pause(5000)
-        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
-        .waitForElementVisible('[data-id="cloneGitRepository"]')
-        .click('[data-id="cloneGitRepository"]')
-        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-        .click('[data-id="fileSystemModalDialogModalBody-react"]')
-        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-        .click('[data-id="fileSystem-modal-footer-ok-react"]')
-        .pause(5000)
-        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
-        .waitForElementVisible('[data-id="cloneGitRepository"]')
-        .click('[data-id="cloneGitRepository"]')
-        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-        .click('[data-id="fileSystemModalDialogModalBody-react"]')
-        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-        .click('[data-id="fileSystem-modal-footer-ok-react"]')
-        .pause(5000)
-        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix3')
-        .switchWorkspace('awesome-remix')
-        .switchWorkspace('awesome-remix1')
-        .switchWorkspace('awesome-remix2')
-        .switchWorkspace('awesome-remix3')
-    },
+  'Should display dgit icon for cloned workspace #group2': function (browser: NightwatchBrowser) {
+    browser
+      .switchWorkspace('default_workspace')
+      .waitForElementNotVisible('[data-id="workspacesSelect"] .fa-code-branch')
+      .switchWorkspace('awesome-remix')
+      .waitForElementVisible('[data-id="workspacesSelect"] .fa-code-branch')
+  },
 
-    'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
-      browser
-        .waitForElementVisible('[data-id="cloneGitRepository"]')
-        .click('[data-id="cloneGitRepository"]')
-        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-        .click('[data-id="fileSystemModalDialogModalBody-react"]')
-        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/non-existent-repo')
-        .click('[data-id="fileSystem-modal-footer-ok-react"]')
-        .pause(5000)
-        .waitForElementVisible('[data-id="cloneGitRepositoryModalDialogModalBody-react"]')
-        .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin')
-        .click('[data-id="cloneGitRepository-modal-footer-ok-react"]')
-        .end()
-    },
+  'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('[data-id="cloneGitRepository"]')
+      .click('[data-id="cloneGitRepository"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .pause(5000)
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
+      .waitForElementVisible('[data-id="cloneGitRepository"]')
+      .click('[data-id="cloneGitRepository"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .pause(5000)
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
+      .waitForElementVisible('[data-id="cloneGitRepository"]')
+      .click('[data-id="cloneGitRepository"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .pause(5000)
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix3')
+      .switchWorkspace('awesome-remix')
+      .switchWorkspace('awesome-remix1')
+      .switchWorkspace('awesome-remix2')
+      .switchWorkspace('awesome-remix3')
+  },
 
-    // CLONE REPOSITORY E2E END
+  'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('[data-id="cloneGitRepository"]')
+      .click('[data-id="cloneGitRepository"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/non-existent-repo')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .pause(5000)
+      .waitForElementVisible('[data-id="cloneGitRepositoryModalDialogModalBody-react"]')
+      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin')
+      .click('[data-id="cloneGitRepository-modal-footer-ok-react"]')
+      .end()
+  },
+
+  // CLONE REPOSITORY E2E END
 
   tearDown: sauce
 }
