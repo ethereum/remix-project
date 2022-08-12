@@ -192,7 +192,7 @@ module.exports = {
   'Should call the debugger api: getTrace #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
@@ -200,7 +200,7 @@ module.exports = {
   'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')

@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint
 import { RemixUiEditorContextView, astNode } from '@remix-ui/editor-context-view'
 import Editor, { loader } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
-import { language, conf } from './syntax'
-import { cairoLang, cairoConf } from './cairoSyntax'
+import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
+import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
+import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { IMarkdownString } from 'monaco-editor'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
@@ -37,6 +39,25 @@ type sourceMarker = {
   },
   from: string // plugin name
   hide: boolean
+}
+
+export type lineText = {
+  position: {
+    start: {
+      line: number
+      column: number
+    },
+    end: {
+      line: number
+      column: number
+    }
+  },
+  from?: string // plugin name
+  content: string
+  className: string
+  afterContentClassName: string
+  hide: boolean,
+  hoverMessage: IMarkdownString | IMarkdownString[]
 }
 
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
@@ -255,10 +276,12 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
+    } else if (file.language === 'zokrates') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
     }    
   }, [props.currentFile])
 
-  const convertToMonacoDecoration = (decoration: sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
+  const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
       decoration = decoration as sourceAnnotation
       return {
@@ -286,6 +309,19 @@ export const EditorUI = (props: EditorUIProps) => {
           isWholeLine,
           inlineClassName: `${isWholeLine ? 'alert-info' : 'inline-class'}  border-0 highlightLine${decoration.position.start.line + 1}`
         }
+      }
+    }
+    if (typeOfDecoration === 'lineTextPerFile') {
+      const lineTextDecoration = decoration as lineText
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
+        options: {
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
+          afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
+
       }
     }
   }
@@ -464,12 +500,17 @@ export const EditorUI = (props: EditorUIProps) => {
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
+    monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    
     // Register a tokens provider for the language
-    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', language)
-    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', conf)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider)
+    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoLang)
-    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoConf)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider)
+    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider)
+    monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig)
 
     loadTypes(monacoRef.current)
   }

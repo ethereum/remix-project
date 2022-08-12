@@ -42,7 +42,7 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
       .clickLaunchIcon('filePanel')
-      .assert.hidden('div[data-id="remixIdeSidePanel"]')
+      .assert.not.visible('div[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .assert.visible('div[data-id="remixIdeSidePanel"]')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
