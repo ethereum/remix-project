@@ -56,7 +56,7 @@ Note: It contains the latest supported version of Solidity available at the time
 ```
 * Install [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
 ```bash
-yarn global add @nrwl/cli
+yarn global add nx
 ```
 * Clone the github repository (`wget` need to be installed first):
 
