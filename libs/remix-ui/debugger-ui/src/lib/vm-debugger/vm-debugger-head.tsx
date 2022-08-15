@@ -100,13 +100,13 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
   return (
     <div id='vmheadView' className="mt-1 px-2 d-flex">
       <div className='d-flex flex-column pr-2' style={{ flex:1 }}>
-        <FunctionPanel className="" data={functionPanel} />
-        <SolidityLocals className=""  data={solidityLocals.calldata} message={solidityLocals.message} registerEvent={registerEvent} triggerEvent={triggerEvent} />
-        <SolidityState className="" calldata={solidityState.calldata} message={solidityState.message} />
+        <FunctionPanel className="pb-1" data={functionPanel} />
+        <SolidityLocals className="pb-1"  data={solidityLocals.calldata} message={solidityLocals.message} registerEvent={registerEvent} triggerEvent={triggerEvent} />
+        <CodeListView className="pb-2 flex-grow-1" registerEvent={registerEvent} />
       </div>
       <div className='d-flex flex-column pl-2' style={{ flex:1 }}>
-        <CodeListView registerEvent={registerEvent} />
-        <StepDetail stepDetail={stepDetail} />
+        <SolidityState className="pb-1" calldata={solidityState.calldata} message={solidityState.message} />     
+        <StepDetail className="pb-1" stepDetail={stepDetail} />
       </div>
     </div>
   )
