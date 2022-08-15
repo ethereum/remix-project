@@ -170,6 +170,7 @@ export class TxListener {
       this.executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
         if (this._loopId === null) return
         if (error) return console.log(error)
+        if (this.lastBlock === -1) this.lastBlock = blockNumber - 1
         if (currentLoopId === this._loopId && blockNumber > this.lastBlock) {
           let current = this.lastBlock + 1
           this.lastBlock = blockNumber
