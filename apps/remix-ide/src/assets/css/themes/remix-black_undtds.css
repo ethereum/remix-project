@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap');
 :root {
-  --blue: #28282D;
+  --blue: #568acf;
   --indigo: #6610f2;
   --purple: #9e77f6;
   --pink: #f38abb;
@@ -8800,7 +8800,7 @@ a.text-dark:hover {
   padding: 0 !important;
   margin: 0 !important;
   border: 0 !important;
-  color: #aaaaaa !important; 
+  color: #aaaaaa !important;
 }
 .run-instance-list li {
   margin: 0 !important;
