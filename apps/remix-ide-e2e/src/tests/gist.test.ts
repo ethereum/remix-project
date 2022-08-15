@@ -127,7 +127,7 @@ module.exports = {
 
   'Import From Gist For Valid Gist ID': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
       .clickLaunchIcon('settings')
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
