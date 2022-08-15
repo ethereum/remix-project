@@ -20,6 +20,7 @@ export type RegisterEventType = (type: string, listener: any) => void // listene
 export type TriggerEventType = (type: string, payload: Array<any>) => void
 export interface DropdownPanelProps {
     dropdownName: string,
+    className?: string,
     dropdownMessage?: string,
     calldata?: {
         [key: string]: string
