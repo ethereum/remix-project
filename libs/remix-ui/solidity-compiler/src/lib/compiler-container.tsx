@@ -717,11 +717,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       <article>
         <div className='pt-0 remixui_compilerSection'>
           <div className="mb-1">
-            <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
-              Compiler
-              <button className="far fa-plus btn-light border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
-              <button className="fa fa-file-text-o btn-light border-0 p-0 mx-2 btn-sm" onClick={showCompilerLicense} title="See compiler license"></button>
-            </label>
+            <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">Compiler</label>
+            <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()} title="Add a custom compiler with URL"></span>
+            <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()} title="See compiler license"></span>
             <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
               { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option> }
