@@ -53,17 +53,17 @@ export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, curren
 
   return (
     <div id='vmdebugger' className="d-flex">
-      <div className='d-flex flex-column pr-2' style={{ flex:1 }}>
-        <CallstackPanel className="" calldata={callStackPanel} />
-        <StackPanel className="" calldata={stackPanel} />
-        <MemoryPanel className="" calldata={memoryPanel} />
-        <StoragePanel className="" calldata={storagePanel.calldata} header={storagePanel.header} />        
+      <div className='d-flex flex-column pr-2' style={{ flex: 1 }}>
+        <CallstackPanel className="pb-1" calldata={callStackPanel} />
+        <StackPanel className="pb-1" calldata={stackPanel} />
+        <MemoryPanel className="pb-1" calldata={memoryPanel} />
+        <StoragePanel className="pb-1" calldata={storagePanel.calldata} header={storagePanel.header} />
       </div>
-      <div className='d-flex flex-column pl-2' style={{ flex:1 }}>
-        <CalldataPanel className="" calldata={calldataPanel} />
-        <GlobalVariables className="" block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
-        <ReturnValuesPanel dropdownName='Return Value' calldata={returnValuesPanel || {}} />
-        <FullStoragesChangesPanel calldata={fullStoragesChangesPanel} />
+      <div className='d-flex flex-column pl-2' style={{ flex: 1 }}>
+        <CalldataPanel className="pb-1" calldata={calldataPanel} />
+        <GlobalVariables className="pb-1" block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
+        <ReturnValuesPanel className="pb-1" dropdownName='Return Value' calldata={returnValuesPanel || {}} />
+        <FullStoragesChangesPanel className="pb-1" calldata={fullStoragesChangesPanel} />
       </div>
     </div>
   )
