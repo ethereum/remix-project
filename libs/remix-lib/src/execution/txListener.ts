@@ -34,8 +34,7 @@ export class TxListener {
   _listenOnNetwork:boolean
   _loopId
   blocks
-  lastBlock
-
+  
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
@@ -123,9 +122,7 @@ export class TxListener {
     if (this._loopId) {
       clearInterval(this._loopId)
     }
-    if (this._listenOnNetwork) {
-      this._startListenOnNetwork()
-    }
+    this._listenOnNetwork ? this._startListenOnNetwork() : this.stopListening()
   }
 
   /**
@@ -133,7 +130,6 @@ export class TxListener {
     */
   init () {
     this.blocks = []
-    this.lastBlock = -1
   }
 
   /**
@@ -164,26 +160,33 @@ export class TxListener {
     this._isListening = false
   }
 
-  _startListenOnNetwork () {
+  async _startListenOnNetwork () {
+    let lastSeenBlock = this.executionContext.lastBlock?.number
     this._loopId = setInterval(() => {
       const currentLoopId = this._loopId
-      this.executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
-        if (this._loopId === null) return
-        if (error) return console.log(error)
-        if (currentLoopId === this._loopId && blockNumber > this.lastBlock) {
-          let current = this.lastBlock + 1
-          this.lastBlock = blockNumber
-          while (blockNumber >= current) {
-            try {
-              this._manageBlock(current)
-            } catch (e) {
-              console.log(e)
-            }
-            current++
+      if (this._loopId === null) return
+      if (!lastSeenBlock) {
+        lastSeenBlock = this.executionContext.lastBlock?.number // trying to resynchronize
+        console.log('listen on blocks, resynchronising')
+        return
+      }
+      const current = this.executionContext.lastBlock?.number
+      if (!current) {
+        console.error(new Error('no last block found'))
+        return
+      }
+      if (currentLoopId === this._loopId && lastSeenBlock < current) {
+        while (lastSeenBlock <= current) {
+          try {
+            this._manageBlock(lastSeenBlock)
+          } catch (e) {
+            console.log(e)
           }
+          lastSeenBlock++
         }
-      })
-    }, 2000)
+        lastSeenBlock = current
+      }
+    }, 10000)
   }
 
   _manageBlock (blockNumber) {
