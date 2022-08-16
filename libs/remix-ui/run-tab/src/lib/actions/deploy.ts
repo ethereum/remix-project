@@ -78,23 +78,7 @@ export const terminalLogger = (plugin: RunTab, view: JSX.Element) => {
 }
 
 export const confirmationHandler = (plugin: RunTab, dispatch: React.Dispatch<any>, confirmDialogContent: MainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-  if (network.name !== 'Main') {
-    return continueTxExecution(null)
-  }
-  const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
-  const content = confirmDialogContent(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
-
-  dispatch(displayNotification('Confirm transaction', content, 'Confirm', 'Cancel', () => {
-    plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', plugin.REACT_API.confirmSettings)
-    // TODO: check if this is check is still valid given the refactor
-    if (!plugin.REACT_API.gasPriceStatus) {
-      cancelCb('Given transaction fee is not correct')
-    } else {
-      continueTxExecution({ maxFee: plugin.REACT_API.maxFee, maxPriorityFee: plugin.REACT_API.maxPriorityFee, baseFeePerGas: plugin.REACT_API.baseFeePerGas, gasPrice: plugin.REACT_API.gasPrice })
-    }
-  }, () => {
-    return cancelCb('Transaction canceled by user.')
-  }))
+  return continueTxExecution(null)
 }
 
 const getConfirmationCb = (plugin: RunTab, dispatch: React.Dispatch<any>, confirmDialogContent: MainnetPrompt) => {
