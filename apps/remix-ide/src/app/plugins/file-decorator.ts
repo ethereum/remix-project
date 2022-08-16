@@ -18,22 +18,20 @@ export class FileDecorator extends Plugin {
     constructor() {
         super(profile)
     }
+
+    onActivation(): void {
+        this.on('filePanel', 'setWorkspace', async () => {
+            await this.clearAllFileDecorators()
+        })
+    }
+
     /**
      * 
      * @param fileStates Array of file states
      */
     async setFileDecorators(fileStates: fileDecoration[] | fileDecoration) {
+        const { from } = this.currentRequest
         const workspace = await this.call('filePanel', 'getCurrentWorkspace')
-        function sortByPath( a: fileDecoration, b: fileDecoration ) {
-            if ( a.path < b.path ){
-              return -1;
-            }
-            if ( a.path > b.path ){
-              return 1;
-            }
-            return 0;
-          }
-
         const fileStatesPayload = Array.isArray(fileStates) ? fileStates : [fileStates]
         // clear all file states in the previous state of this owner on the files called
         fileStatesPayload.forEach((state) => {
@@ -47,7 +45,23 @@ export class FileDecorator extends Plugin {
             return index == -1
         })
         const newState = [...filteredState, ...fileStatesPayload].sort(sortByPath)
-        
+
+        if (!deepequal(newState, this._fileStates)) {
+            this._fileStates = newState
+            this.emit('fileDecoratorsChanged', this._fileStates)
+        }
+    }
+
+    async clearFileDecorators(path?: string) {
+        const { from } = this.currentRequest
+        if (!from) return
+
+        const filteredState = this._fileStates.filter((state) => {
+            if(state.owner != from) return true
+            if(path && state.path != path) return true
+        })
+        const newState = [...filteredState].sort(sortByPath)
+
         if (!deepequal(newState, this._fileStates)) {
             this._fileStates = newState
             this.emit('fileDecoratorsChanged', this._fileStates)
@@ -55,8 +69,18 @@ export class FileDecorator extends Plugin {
 
     }
 
-    async clearFileDecorators() {
+    async clearAllFileDecorators() {
         this._fileStates = []
         this.emit('fileDecoratorsChanged', [])
     }
+}
+
+const sortByPath = (a: fileDecoration, b: fileDecoration) => {
+    if (a.path < b.path) {
+        return -1;
+    }
+    if (a.path > b.path) {
+        return 1;
+    }
+    return 0;
 }
