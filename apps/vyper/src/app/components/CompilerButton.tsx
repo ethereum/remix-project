@@ -31,8 +31,8 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
       let _contract
       try {
         _contract = await remixClient.getContract()
-      } catch (e) {
-        setOutput('', { status: 'failed', message: err.message})
+      } catch (e: any) {
+        setOutput('', { status: 'failed', message: e.message})
         return
       }      
       remixClient.changeStatus({
@@ -43,19 +43,21 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
       let output
       try {
         output = await compile(compilerUrl, _contract)
-      } catch (e) {
-        setOutput(_contract.name, { status: 'failed', message: err.message})
+      } catch (e: any) {
+        setOutput(_contract.name, { status: 'failed', message: e.message})
         return
       }      
       setOutput(_contract.name, output)
       // ERROR
       if (isCompilationError(output)) {
         const line = output.line
-        const lineColumnPos = {
-          start: { line: line - 1 },
-          end: { line: line - 1 }
+        if (line) {
+          const lineColumnPos = {
+            start: { line: line - 1 },
+            end: { line: line - 1 }
+          }
+          remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
         }
-        remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
         throw new Error(output.message)
       }
       // SUCCESS
