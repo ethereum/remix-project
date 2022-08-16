@@ -14,8 +14,14 @@ export class RemixClient extends PluginClient {
   /** Emit an event when file changed */
   async onFileChange(cb: (contract: string) => any) {
     this.client.on('fileManager', 'currentFileChanged', async (name: string) => {
-      if (!name) return
       cb(name)
+    })
+  }
+
+  /** Emit an event when file changed */
+  async onNoFileSelected(cb: () => any) {
+    this.client.on('fileManager', 'noFileSelected', async () => {
+      cb()
     })
   }
 
