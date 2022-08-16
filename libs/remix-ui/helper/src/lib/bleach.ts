@@ -45,7 +45,7 @@ export const bleach = {
         if (attr.name) attrs.push(attr)
       })
 
-      var tag = {
+      const tag = {
         full: match[0],
         name: match[1],
         attr: attrs
@@ -63,7 +63,7 @@ export const bleach = {
     const mode = options.mode || 'white'
     const list = options.list || bleach.whitelist
 
-    var matches = bleach.analyze(html)
+    const matches = bleach.analyze(html)
 
     if ((mode === 'white' && list.indexOf('script') === -1) ||
        (mode === 'black' && list.indexOf('script') !== -1)) {
