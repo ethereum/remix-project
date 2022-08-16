@@ -12,7 +12,7 @@ export function MainnetPrompt (props: MainnetProps) {
       if (txFeeText) props.setTxFeeContent(txFeeText)
       if (gasPriceValue) onGasPriceChange(gasPriceValue)
       if (props.network && props.network.lastBlock && props.network.lastBlock.baseFeePerGas) {
-        const baseFee = Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei')
+        const baseFee = Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')
 
         setBaseFee(baseFee)
         onMaxFeeChange(baseFee)
@@ -24,7 +24,7 @@ export function MainnetPrompt (props: MainnetProps) {
   const onMaxFeeChange = (value: string) => {
     const maxFee = value
     // @ts-ignore
-    if (parseInt(props.network.lastBlock.baseFeePerGas, 16) > Web3.utils.toWei(maxFee, 'Gwei')) {
+    if (Web3.utils.toBN(props.network.lastBlock.baseFeePerGas).gt(Web3.utils.toBN(Web3.utils.toWei(maxFee, 'Gwei')))) {
       props.setTxFeeContent('Transaction is invalid. Max fee should not be less than Base fee')
       props.updateGasPriceStatus(false)
       props.updateConfirmSettings(true)
@@ -105,7 +105,7 @@ export function MainnetPrompt (props: MainnetProps) {
               </div>
               <div className="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
                 <div className='d-flex'>
-                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei')} Gwei):</span>
+                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')} Gwei):</span>
                   <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} defaultValue={baseFee} />
                   <span>Gwei</span>
                   <span className="text-dark ml-2"></span>
