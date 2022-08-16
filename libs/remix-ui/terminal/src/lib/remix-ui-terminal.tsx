@@ -615,10 +615,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 }
 
 function isHtml (value) {
+  if (!value.indexOf) return false
   return value.indexOf('<div') !== -1
     || value.indexOf('<span') !== -1
     || value.indexOf('<p') !== -1
     || value.indexOf('<label') !== -1
+    || value.indexOf('<b') !== -1
 }
 
 export default RemixUiTerminal
