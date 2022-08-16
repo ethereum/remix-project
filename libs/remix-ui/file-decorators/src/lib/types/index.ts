@@ -14,17 +14,11 @@ export enum fileDecorationType {
     fileStateIcon: string | HTMLDivElement | JSX.Element,
     bubble: boolean,
     text?: string,
-<<<<<<< HEAD
-    owner?: string,
-    workspace?: any
-    tooltip?: string
     comment?: string[] | string
-=======
     owner: string,
     workspace?: any
     tooltip?: string
     commment?: string[] | string
->>>>>>> 43bc1038a (add test)
   }
 
   export interface FileType {
