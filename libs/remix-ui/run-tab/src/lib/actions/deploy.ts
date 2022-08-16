@@ -78,9 +78,12 @@ export const terminalLogger = (plugin: RunTab, view: JSX.Element) => {
 }
 
 export const confirmationHandler = (plugin: RunTab, dispatch: React.Dispatch<any>, confirmDialogContent: MainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+  // display the modal for all the network
+  /*
   if (network.name !== 'Main') {
     return continueTxExecution(null)
   }
+  */
   const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
   const content = confirmDialogContent(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
 

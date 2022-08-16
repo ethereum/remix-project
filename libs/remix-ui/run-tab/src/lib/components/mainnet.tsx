@@ -5,17 +5,22 @@ import Web3 from 'web3'
 import { MainnetProps } from '../types'
 
 export function MainnetPrompt (props: MainnetProps) {
-  const [baseFee, setBaseFee] = useState<string>('')
+  const [maxTransactionFee, setMaxTransactionFee] = useState<string>('')
 
   useEffect(() => {
     props.init((txFeeText, gasPriceValue, gasPriceStatus) => {
-      if (txFeeText) props.setTxFeeContent(txFeeText)
-      if (gasPriceValue) onGasPriceChange(gasPriceValue)
-      if (props.network && props.network.lastBlock && props.network.lastBlock.baseFeePerGas) {
-        const baseFee = Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei')
-
-        setBaseFee(baseFee)
-        onMaxFeeChange(baseFee)
+      if (txFeeText) setMaxTransactionFee(txFeeText)
+      if (props.network && props.network.lastBlock) {
+        if (props.network.lastBlock.baseFeePerGas) {
+          const baseFee = Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')
+          onMaxFeeChange(baseFee)
+          props.updateMaxFee(baseFee)
+          props.updateMaxPriorityFee('1')
+        } else {
+          if (gasPriceValue) {
+            onGasPriceChange(gasPriceValue)
+          }
+        }
       }
       if (gasPriceStatus !== undefined) props.updateGasPriceStatus(gasPriceStatus)
     })
@@ -24,18 +29,19 @@ export function MainnetPrompt (props: MainnetProps) {
   const onMaxFeeChange = (value: string) => {
     const maxFee = value
     // @ts-ignore
-    if (parseInt(props.network.lastBlock.baseFeePerGas, 16) > Web3.utils.toWei(maxFee, 'Gwei')) {
-      props.setTxFeeContent('Transaction is invalid. Max fee should not be less than Base fee')
+    if (Web3.utils.toBN(props.network.lastBlock.baseFeePerGas).gt(Web3.utils.toBN(Web3.utils.toWei(maxFee, 'Gwei')))) {
+      setMaxTransactionFee('Transaction is invalid. Max fee should not be less than Base fee')
       props.updateGasPriceStatus(false)
       props.updateConfirmSettings(true)
       return
     } else {
+      setMaxTransactionFee(maxFee)
       props.updateGasPriceStatus(true)
       props.updateConfirmSettings(false)
     }
 
     props.setNewGasPrice(maxFee, (txFeeText, priceStatus) => {
-      props.setTxFeeContent(txFeeText)
+      setMaxTransactionFee(txFeeText)
       if (priceStatus) {
         props.updateConfirmSettings(false)
       } else {
@@ -51,7 +57,7 @@ export function MainnetPrompt (props: MainnetProps) {
     const gasPrice = value
 
     props.setNewGasPrice(gasPrice, (txFeeText, priceStatus) => {
-      props.setTxFeeContent(txFeeText)
+      setMaxTransactionFee(txFeeText)
       props.updateGasPriceStatus(priceStatus)
       props.updateGasPrice(gasPrice)
     })
@@ -99,14 +105,14 @@ export function MainnetPrompt (props: MainnetProps) {
               <div className="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
                 <div className='d-flex'>
                   <span className="text-dark mr-2 text-nowrap">Max Priority fee:</span>
-                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxpriorityfee' onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)} defaultValue={props.maxPriorityFee} />
+                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxpriorityfee' onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)} defaultValue={'1'} />
                   <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
                 </div>
               </div>
               <div className="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
                 <div className='d-flex'>
-                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {Web3.utils.fromWei(Web3.utils.toBN(parseInt(props.network.lastBlock.baseFeePerGas, 16)), 'Gwei')} Gwei):</span>
-                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} defaultValue={baseFee} />
+                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')} Gwei):</span>
+                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} defaultValue={Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')} />
                   <span>Gwei</span>
                   <span className="text-dark ml-2"></span>
                 </div>
@@ -120,7 +126,7 @@ export function MainnetPrompt (props: MainnetProps) {
         }
         <div className="mb-3">
           <span className="text-dark mr-2">Max transaction fee:</span>
-          <span className="text-warning" id='txfee'>{ props.txFeeContent }</span>
+          <span className="text-warning" id='txfee'>{ maxTransactionFee }</span>
         </div>
       </div>
       <div className="d-flex py-1 align-items-center custom-control custom-checkbox remixui_checkbox">
