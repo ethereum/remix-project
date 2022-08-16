@@ -38,7 +38,8 @@ const App: React.FC = () => {
     async function start() {
       try {
         await remixClient.loaded()
-        remixClient.onFileChange(name => setContract(name))
+        remixClient.onFileChange(name => setContract(name))        
+        remixClient.onNoFileSelected(() => setContract(''))
         const name = await remixClient.getContractName()
         setContract(name)
       } catch (err) {
