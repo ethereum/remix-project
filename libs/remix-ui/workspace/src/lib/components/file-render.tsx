@@ -82,9 +82,14 @@ export const FileRender = (props: RenderFileProps) => {
         iconX='pr-3 fa fa-folder'
         iconY='pr-3 fa fa-folder-open'
         key={`${file.path + props.index}`}
-        label={<Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}> 
-        <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-        </Draggable>}
+        label={<>
+          <div className="d-flex flex-row">
+            <Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}> 
+              <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+            </Draggable>
+            <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
+            </div>
+          </>}
         onClick={handleFolderClick}
         onContextMenu={handleContextMenu}
         labelClass={labelClass}
@@ -122,13 +127,13 @@ export const FileRender = (props: RenderFileProps) => {
         id={`treeViewItem${file.path}`}
         key={`treeView${file.path}`}
         label={
-          <>
-            <div className="d-flex flex-row">
-              <Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
-                <FileLabel file={file} fileDecorations={props.fileDecorations} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-              </Draggable>
-              <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
-            </div>
+        <>
+        <div className="d-flex flex-row">
+          <Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+              <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+            </Draggable>
+            <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
+          </div>
           </>
         }
         onClick={handleFileClick}
