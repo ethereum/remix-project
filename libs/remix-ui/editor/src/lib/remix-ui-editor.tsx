@@ -60,6 +60,21 @@ export type lineText = {
   hoverMessage: IMarkdownString | IMarkdownString[]
 }
 
+type errorMarker = {
+  message: string
+  severity: MarkerSeverity
+  position: {
+    start: {
+      line: number
+      column: number
+    },
+    end: {
+      line: number
+      column: number
+    }
+  },
+  file: string
+}
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 export type DecorationsReturn = {
@@ -94,6 +109,8 @@ export interface EditorUIProps {
     clearErrorMarkers: (sources: any) => void
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+    addErrorMarker: (errors: []) => void
+    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}) => void
   }
 }
 export const EditorUI = (props: EditorUIProps) => {
@@ -280,7 +297,7 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     } else if (file.language === 'zokrates') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
-    }    
+    }
   }, [props.currentFile])
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
@@ -394,19 +411,17 @@ export const EditorUI = (props: EditorUIProps) => {
     return addDecoration(marker, filePath, typeOfDecoration)
   }
 
-  props.editorAPI.addErrorMarker = async (errors: []) => {
+  props.editorAPI.addErrorMarker = async (errors: errorMarker[]) => {
 
     const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
+
     for (const error of errors) {
-      const marker = (error as any).error
-      const lineColumn = (error as any).lineColumn
-      let filePath = marker.sourceLocation.file
+      let filePath = error.file
 
       if (!filePath) return
       const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
       filePath = fileFromUrl.file
       const model = editorModelsState[filePath]?.model
-
       const errorServerityMap = {
         'error': MarkerSeverity.Error,
         'warning': MarkerSeverity.Warning,
@@ -414,12 +429,12 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
-          severity: errorServerityMap[marker.severity],
-          startLineNumber: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
-          startColumn: ((lineColumn.start && lineColumn.start.column) || 0) + 1,
-          endLineNumber: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
-          endColumn: ((lineColumn.end && lineColumn.end.column) || 0) + 1,
-          message: marker.message,
+          severity: errorServerityMap[error.severity],
+          startLineNumber: ((error.position.start && error.position.start.line) || 0),
+          startColumn: ((error.position.start && error.position.start.column) || 0),
+          endLineNumber: ((error.position.end && error.position.end.line) || 0),
+          endColumn: ((error.position.end && error.position.end.column) || 0),
+          message: error.message,
         }
         if (!allMarkersPerfile[filePath]) {
           allMarkersPerfile[filePath] = []
@@ -427,6 +442,7 @@ export const EditorUI = (props: EditorUIProps) => {
         allMarkersPerfile[filePath].push(markerData)
       }
     }
+    console.log(allMarkersPerfile)
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
@@ -435,7 +451,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: any) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}) => {
     if (sources) {
       for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
         const filePath = source
@@ -529,7 +545,7 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
-    
+
     // add context menu items
     const zoominAction = {
       id: "zoomIn",
@@ -559,15 +575,15 @@ export const EditorUI = (props: EditorUIProps) => {
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input, source) => {
-        const result = await openEditorBase(input, source)
-        if (input && input.resource && input.resource.path) {
-          try {
-            await props.plugin.call('fileManager', 'open', input.resource.path)
-          } catch (e) {
-            console.log(e)
-          }          
+      const result = await openEditorBase(input, source)
+      if (input && input.resource && input.resource.path) {
+        try {
+          await props.plugin.call('fileManager', 'open', input.resource.path)
+        } catch (e) {
+          console.log(e)
         }
-        return result
+      }
+      return result
     }
   }
 
@@ -578,7 +594,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
-    
+
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any )
