@@ -17,3 +17,7 @@
 .validationError {
   overflow-wrap: break-word;
 }
+.debuggerPanels {
+  overflow-y: scroll; 
+  height: fit-content;
+}
