@@ -414,7 +414,7 @@ class AppComponent {
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
+                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
                 this.appManager.call(...callDetails).catch(console.error)
               }
@@ -430,7 +430,7 @@ class AppComponent {
                   this.appManager.call(
                     "notification",
                     "toast",
-                    `initiating ${callDetails[0]} ...`
+                    `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`
                   );
 
                   // @todo(remove the timeout when activatePlugin is on 0.3.0)
