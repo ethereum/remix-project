@@ -164,7 +164,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     testTab.fileManager.events.on('currentFileChanged', async (file: string) => {
       await updateForNewCurrent(file)
     })
-    testTab.on('solidity', 'compilerLoaded', async (version: string) => {
+    testTab.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
       const { currentVersion } = testTab.compileTab.getCurrentCompilerConfig()
 
       if (!semver.gt(truncateVersion(currentVersion), '0.4.12')) {
