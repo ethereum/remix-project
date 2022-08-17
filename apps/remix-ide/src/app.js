@@ -15,7 +15,6 @@ import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
-import { FileDecorator } from './app/plugins/file-decorator'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -216,7 +215,7 @@ class AppComponent {
     )
     
     const codeParser = new CodeParser(new AstWalker())
-    const fileDecorator = new FileDecorator()
+
 
     this.notification = new NotificationPlugin()
 
