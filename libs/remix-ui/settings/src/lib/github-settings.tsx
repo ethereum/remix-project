@@ -10,7 +10,7 @@ export function GithubSettings (props: GithubSettingsProps) {
   useEffect(() => {
     if (props.config) {
       const githubToken = props.config.get('settings/gist-access-token') || ''
-      const githubUserName = props.config.get('settings/github-user-name')|| ''
+      const githubUserName = props.config.get('settings/github-user-name') || ''
       const githubEmail = props.config.get('settings/github-email') || ''
   
       setGithubToken(githubToken)
