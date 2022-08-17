@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition']
 }
 
 class Editor extends Plugin {
@@ -26,8 +26,8 @@ class Editor extends Plugin {
       remixDark: 'remix-dark'
     }
 
-    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
-    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {}, lineTextPerFile: {} }
+    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {}, lineTextPerFile: {} }
 
     // Init
     this.event = new EventManager()
@@ -565,6 +565,18 @@ class Editor extends Plugin {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
       this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
+    }
+  }
+
+  async addLineText (lineText, filePath) {
+    filePath = filePath || this.currentFile
+    await this.addDecoration(lineText, filePath, 'lineTextPerFile')
+  }
+
+  discardLineTexts() {
+    const { from } = this.currentRequest
+    for (const session in this.sessions) {
+      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 }
