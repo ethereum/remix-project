@@ -67,7 +67,7 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
               const location = errorLocation.replace('line ', '').split(':')
               let message = errors[errorIndex]
               errorIndex = errorIndex + 4
-              if (message) {
+              if (message && message.split('\n\n').length > 0) {
                 try {
                   message = message.split('\n\n')[1]
                 } catch (e) {}                
