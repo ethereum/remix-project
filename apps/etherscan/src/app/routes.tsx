@@ -1,10 +1,6 @@
 import React from "react"
 import {
-<<<<<<< HEAD
   HashRouter as Router,
-=======
-  BrowserRouter as Router,
->>>>>>> e02014ca4 (add etherscan plugin)
   Route,
   Routes,
   RouteProps,
