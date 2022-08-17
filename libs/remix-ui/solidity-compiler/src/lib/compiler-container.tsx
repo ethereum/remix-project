@@ -49,7 +49,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     allversions: [],
     customVersions: [],
     compilerLicense: null,
-    loadedVersion: null,
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.7+commit.e28d00a7.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
@@ -187,7 +186,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           loadingCompiler()
           break
         case 'compilerLoaded':
-          compilerLoaded(compilerContainer.compiler.args[0], compilerContainer.compiler.args[1])
+          compilerLoaded(compilerContainer.compiler.args[1])
           break
         case 'compilationFinished':
           compilationFinished()
@@ -434,16 +433,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
     compileIcon.current.classList.add('remixui_spinningIcon')
+    setState(prevState => {
+      return { ...prevState, compilerLicense: 'Compiler is loading. License will be displayed once compiler is loaded'}
+    })
     _updateLanguageSelector()
     setDisableCompileButton(true)
   }
 
-  const compilerLoaded = (version, license) => {
+  const compilerLoaded = (license) => {
     if (!compileIcon.current) return
     compileIcon.current.setAttribute('title', '')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     setState(prevState => {
-      return { ...prevState, compilerLicense: license ? license : 'could not retreive license', loadedVersion: version }
+      return { ...prevState, compilerLicense: license ? license : 'Could not retreive license for selected compiler version' }
     })
     if (state.autoCompile) compile()
     const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
@@ -560,14 +562,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const showCompilerLicense = () => {
-    let licenseText
-    if (state.loadedVersion) {
-      const tmp: RegExpExecArray | null = /(\d+.\d+.\d+)/.exec(state.loadedVersion)
-      const version = tmp ? tmp[0] : state.loadedVersion
-      licenseText = `---- Compiler license for loaded version ${version} ---- \n\n` + state.compilerLicense
-    } else 
-      licenseText = 'License can be seen once compiler is loaded'
-    modal('Compiler License', licenseText, 'OK', () => {})
+    modal('Compiler License', state.compilerLicense ? state.compilerLicense : 'License not available', 'OK', () => {})
   }
 
   const promptMessage = (message) => {
