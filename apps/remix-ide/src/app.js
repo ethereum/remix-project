@@ -247,7 +247,6 @@ class AppComponent {
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
-      fileDecorator,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
