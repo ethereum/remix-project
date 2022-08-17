@@ -51,7 +51,7 @@ export function GithubSettings (props: GithubSettingsProps) {
         <p className="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only \'create gist\' permission.</p>
         <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
         <div>
-          <label>TOKEN:</label>
+          <label className="mb-0 pb-0">TOKEN:</label>
           <div className="input-group text-secondary mb-0 h6">
             <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleChangeTokenState(e)} value={ githubToken } />
             <div className="input-group-append">
@@ -60,13 +60,13 @@ export function GithubSettings (props: GithubSettingsProps) {
           </div>
         </div>
         <div>
-          <label>USERNAME:</label>
+          <label className="pt-2 mb-0 pb-0">USERNAME:</label>
           <div className="text-secondary mb-0 h6">
             <input id="githubusername" data-id="settingsTabGithubUsername" type="text" className="form-control" onChange={(e) => handleChangeUserNameState(e)} value={ githubUserName } />
           </div>
         </div>
         <div>
-          <label>EMAIL:</label>
+          <label className="pt-2 mb-0 pb-0">EMAIL:</label>
           <div className="text-secondary mb-0 h6">
             <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={ githubEmail } />
             <div className="d-flex justify-content-end pt-2">

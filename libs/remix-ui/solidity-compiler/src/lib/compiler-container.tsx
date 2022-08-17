@@ -823,7 +823,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <input
               ref={configFilePathInput}
               className={`py-0 my-0 form-control ${showFilePathInput ? "d-flex" : "d-none"}`}
-              placeholder={"Enter the new path"}
+              placeholder={"/folder_path/file_name.json"}
               title="If the file you entered does not exist you will be able to create one in the next step."
               disabled={!state.useFileConfiguration}
               data-id="scConfigFilePathInput"
