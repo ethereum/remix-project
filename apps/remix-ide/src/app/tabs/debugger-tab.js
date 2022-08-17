@@ -51,7 +51,7 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
       this.call('notification', 'toast', sourceVerificationNotAvailableToastMsg())
     })
-    return <div className={css.debuggerTabView} id='debugView'><DebuggerUI debuggerAPI={this} /></div>
+    return <div className="overflow-hidden px-1" id='debugView'><DebuggerUI debuggerAPI={this} /></div>
   }
 
   showMessage (title, message) {
