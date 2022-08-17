@@ -86,8 +86,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         scriptRunnerDispatch({ type: 'html', payload: { message: [html ? html.innerText ? html.innerText : html : null] } })
       },
 
-      log: (message) => {
-        scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
+      log: (message, type) => {
+        scriptRunnerDispatch({ type: type ? type : 'log', payload: { message: [message] } })
       }
     })
   }, [])
@@ -543,17 +543,25 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 })
               } else if (Array.isArray(x.message)) {
                 return x.message.map((msg, i) => {
+                  if (!msg) msg = 'null'
                   if (React.isValidElement(msg)) {
                     return (
                       <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg }</span></div>
                     )
                   } else if (typeof msg === 'object') {
+                    let stringified
+                    try {
+                      stringified = JSON.stringify(msg)
+                    } catch (e) {
+                      console.error(e)
+                      stringified = '< value not displayable >'
+                    }
                     return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ msg.value && typeof msg.value !== 'object' ? parse(msg.value) : JSON.stringify(msg) } </span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ stringified } </span></div>
                     )
                   } else {
                     return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg? msg.toString() : null}</span></div>
+                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg ? msg.toString() : null}</span></div>
                     )
                   }
                 })

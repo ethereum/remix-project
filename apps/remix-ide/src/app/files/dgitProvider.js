@@ -28,10 +28,10 @@ class DGitProvider extends Plugin {
   constructor () {
     super(profile)
     this.ipfsconfig = {
-      host: 'ipfs.remixproject.org',
+      host: 'jqgt.remixproject.org',
       port: 443,
       protocol: 'https',
-      ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
+      ipfsurl: 'https://jqgt.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
       host: 'ipfs.io',
@@ -40,10 +40,10 @@ class DGitProvider extends Plugin {
       ipfsurl: 'https://ipfs.io/ipfs/'
     }
     this.remixIPFS = {
-      host: 'ipfs.remixproject.org',
+      host: 'jqgt.remixproject.org',
       port: 443,
       protocol: 'https',
-      ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
+      ipfsurl: 'https://jqgt.remixproject.org/ipfs/'
     }
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }

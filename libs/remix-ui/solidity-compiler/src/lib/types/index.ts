@@ -23,6 +23,7 @@ export interface CompilerContainerProps {
 }
 export interface ContractSelectionProps {
   api: ICompilerApi,
+  compiledFileName: string,
   contractList: { file: string, name: string }[],
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>

@@ -2,13 +2,28 @@ import { NightwatchBrowser } from 'nightwatch'
 
 require('dotenv').config()
 
-export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true): void {
+type LoadPlugin = {
+  name: string
+  url: string
+}
+
+export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(6000)
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
+    .perform((done) => {
+      if (!loadPlugin) return done()
+      browser.execute(function (loadPlugin) { // override a plugin url for testing purpose
+        localStorage.setItem('test-plugin-name', loadPlugin.name)
+        localStorage.setItem('test-plugin-url', loadPlugin.url)
+      }, [loadPlugin])
+      .refresh()
+      .pause(6000)
+      .perform(done())
+    })
     .maximizeWindow()
     .fullscreenWindow(() => {
       if (preloadPlugins) {
