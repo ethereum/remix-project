@@ -25,6 +25,7 @@ export class Compiler {
       compileJSON: null,
       worker: null,
       currentVersion: null,
+      compilerLicense: null,
       optimize: false,
       runs: 200,
       evmVersion: null,
@@ -94,9 +95,10 @@ export class Compiler {
    * @param version compiler version
    */
 
-  onCompilerLoaded (version: string): void {
+  onCompilerLoaded (version: string, license: string): void {
     this.state.currentVersion = version
-    this.event.trigger('compilerLoaded', [version])
+    this.state.compilerLicense = license
+    this.event.trigger('compilerLoaded', [version, license])
   }
 
   /**
@@ -131,7 +133,7 @@ export class Compiler {
         }
         this.onCompilationFinished(result, missingInputs, source, input, this.state.currentVersion)
       }
-      this.onCompilerLoaded(compiler.version())
+      this.onCompilerLoaded(compiler.version(), compiler.license())
     }
   }
 
@@ -184,6 +186,7 @@ export class Compiler {
       if (err) {
         console.error('Error in loading remote solc compiler: ', err)
       } else {
+        let license
         this.state.compileJSON = (source: SourceWithTarget) => {
           const missingInputs: string[] = []
           const missingInputsCallback = (path: string) => {
@@ -203,13 +206,14 @@ export class Compiler {
               }
 
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
+              license = remoteCompiler.license()
             }
           } catch (exception) {
             result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
           }
           this.onCompilationFinished(result, missingInputs, source, input, version)
         }
-        this.onCompilerLoaded(version)
+        this.onCompilerLoaded(version, license)
       }
     })
   }
@@ -273,7 +277,7 @@ export class Compiler {
       const data: MessageFromWorker = msg.data
       switch (data.cmd) {
         case 'versionLoaded':
-          if (data.data) this.onCompilerLoaded(data.data)
+          if (data.data && data.license) this.onCompilerLoaded(data.data, data.license)
           break
         case 'compiled':
         {
