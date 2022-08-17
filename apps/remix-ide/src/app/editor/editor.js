@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel', 'addErrorMarker', 'clearErrorMarkers']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers'],
 }
 
 class Editor extends Plugin {
@@ -507,6 +507,15 @@ class Editor extends Plugin {
       this.clearDecorationsByPlugin(session, plugin, 'sourceAnnotationsPerFile')
       this.clearDecorationsByPlugin(session, plugin, 'markerPerFile')
     }
+  }
+
+  // error markers
+  async addErrorMarker (error){
+    this.api.addErrorMarker(error)
+  }
+
+  async clearErrorMarkers(sources){
+    this.api.clearErrorMarkers(sources)
   }
 
   /**
