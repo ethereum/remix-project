@@ -28,7 +28,8 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   /** Compile a Contract */
   async function compileContract() {
     try {
-      let _contract
+      await remixClient.discardHighlight()
+      let _contract: any
       try {
         _contract = await remixClient.getContract()
       } catch (e: any) {
@@ -53,10 +54,33 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
         const line = output.line
         if (line) {
           const lineColumnPos = {
-            start: { line: line - 1 },
-            end: { line: line - 1 }
+            start: { line: line - 1, column: 10 },
+            end: { line: line - 1,  column: 10 }
           }
           remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
+        } else {
+          const regex = output.message.match(/line ((\d+):(\d+))+/g)
+          const errors = output.message.split(/line ((\d+):(\d+))+/g) // extract error message
+          if (regex) {
+            let errorIndex = 0
+            regex.map((errorLocation) => {
+              const location = errorLocation.replace('line ', '').split(':')
+              let message = errors[errorIndex]
+              errorIndex = errorIndex + 4
+              if (message) {
+                try {
+                  message = message.split('\n\n')[1]
+                } catch (e) {}                
+              }
+              if (location.length > 0) {
+                const lineColumnPos = {
+                  start: { line: parseInt(location[0]) - 1, column: 10 },
+                  end: { line: parseInt(location[0]) - 1, column: 10 }
+                }
+                remixClient.highlight(lineColumnPos as any, _contract.name, message)
+              }
+            })
+          }
         }
         throw new Error(output.message)
       }
