@@ -47,7 +47,7 @@ export function RecorderUI (props: RecorderProps) {
           </span>
         </div>
       </div>
-      <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
+      <div style={{paddingBottom:"15px"}} className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
           <OverlayTrigger placement={'right'} overlay={
