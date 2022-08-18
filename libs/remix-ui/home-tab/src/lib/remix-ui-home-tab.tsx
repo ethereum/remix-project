@@ -234,12 +234,18 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               ></audio>
             </div>
           </div>
-          <div>
-            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
-            <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              Scam Alert: There are video tutorials going around that provide urls other than remix.ethereum.org, and could be scams. Also, beware of online videos promoting "liquidity front runner bots".
+          <div className="d-flex flex-column">
+            <span className="pl-4 text-danger mt-2">
+              <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
+              Scam Alerts:
             </span>
-            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+            <span className="pl-4 text-danger mt-1">
+              The only domain Remix uses is ethereum.org 
+            </span>
+            <span className="pl-4 text-danger mt-1">        
+              Beware of online videos promoting "liquidity front runner bots". 
+              <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+            </span>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
