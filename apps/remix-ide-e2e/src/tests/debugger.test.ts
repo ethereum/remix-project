@@ -241,7 +241,7 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('callA - transact (not payable)')
       .debugTransaction(1)
-      .pause(2000)
+      .pause(4000)
       .goToVMTraceStep(79)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')
