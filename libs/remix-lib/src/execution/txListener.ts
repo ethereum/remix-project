@@ -1,5 +1,4 @@
 'use strict'
-import { each } from 'async'
 import { ethers } from 'ethers'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
@@ -122,7 +121,7 @@ export class TxListener {
     if (this._loopId) {
       clearInterval(this._loopId)
     }
-    this._listenOnNetwork ? this._startListenOnNetwork() : this.stopListening()
+    this._listenOnNetwork ? this.startListening() : this.stopListening()
   }
 
   /**
@@ -162,22 +161,31 @@ export class TxListener {
 
   async _startListenOnNetwork () {
     let lastSeenBlock = this.executionContext.lastBlock?.number
+    let processingBlock = false
     this._loopId = setInterval(() => {
+      if (processingBlock) return
+      processingBlock = true
       const currentLoopId = this._loopId
-      if (this._loopId === null) return
+      if (this._loopId === null) {
+        processingBlock = false
+        return
+      }
       if (!lastSeenBlock) {
         lastSeenBlock = this.executionContext.lastBlock?.number // trying to resynchronize
         console.log('listen on blocks, resynchronising')
+        processingBlock = false
         return
       }
       const current = this.executionContext.lastBlock?.number
       if (!current) {
         console.log(new Error('no last block found'))
+        processingBlock = false
         return
       }
       if (currentLoopId === this._loopId && lastSeenBlock < current) {
         while (lastSeenBlock <= current) {
           try {
+            if (!this._isListening) break
             this._manageBlock(lastSeenBlock)
           } catch (e) {
             console.log(e)
@@ -186,7 +194,8 @@ export class TxListener {
         }
         lastSeenBlock = current
       }
-    }, 10000)
+      processingBlock = false
+    }, 20000)
   }
 
   _manageBlock (blockNumber) {
@@ -225,22 +234,30 @@ export class TxListener {
     })
   }
 
-  _resolve (transactions, callback) {
-    each(transactions, (tx, cb) => {
+  _resolveAsync (tx) {
+    return new Promise((resolve, reject) => {
       this._api.resolveReceipt(tx, (error, receipt) => {
-        if (error) return cb(error)
+        if (error) return reject(error)
         this._resolveTx(tx, receipt, (error, resolvedData) => {
-          if (error) cb(error)
+          if (error) return reject(error)
           if (resolvedData) {
             this.event.trigger('txResolved', [tx, receipt, resolvedData])
           }
           this.event.trigger('newTransaction', [tx, receipt])
-          cb()
+          resolve({})
         })
       })
-    }, () => {
-      callback()
     })
+  }
+
+  async _resolve (transactions, callback) {
+    for (const tx of transactions) {
+      try {
+        if (!this._isListening) break
+        await this._resolveAsync(tx)
+      } catch (e) {}
+    }
+    callback()
   }
 
   _resolveTx (tx, receipt, cb) {
