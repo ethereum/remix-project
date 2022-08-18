@@ -126,7 +126,7 @@ module.exports = {
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
   },
 
-  'Import From Gist For Valid Gist ID #group1 #lfaky': function (browser: NightwatchBrowser) {
+  'Import From Gist For Valid Gist ID #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('settings')
