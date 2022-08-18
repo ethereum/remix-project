@@ -159,10 +159,11 @@ export class TxListener {
   }
 
   async _startListenOnNetwork () {
-    let lastSeenBlock = this.executionContext.lastBlock?.number
+    let lastSeenBlock = this.executionContext.lastBlock?.number - 1
     let processingBlock = false
 
     const processBlocks = async () => {
+      if (!this._isListening) return
       if (processingBlock) return
       processingBlock = true
       const currentLoopId = this._loopId
@@ -196,8 +197,8 @@ export class TxListener {
       }
       processingBlock = false
     }
-    processBlocks()
     this._loopId = setInterval(processBlocks, 20000)
+    processBlocks()
   }
 
   async _manageBlock (blockNumber) {
