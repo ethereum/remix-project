@@ -10,7 +10,7 @@ const _paq = window._paq = window._paq || []
 
 const profile = {
   name: 'udapp',
-  displayName: 'Deploy & run transactions',
+  displayName: 'Deploy & run',
   icon: 'assets/img/deployAndRun.webp',
   description: 'Execute, save and replay transactions',
   kind: 'udapp',

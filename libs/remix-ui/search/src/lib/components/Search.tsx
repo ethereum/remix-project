@@ -12,8 +12,8 @@ export const SearchTab = props => {
   const plugin = props.plugin
 
   return (
-    <>
-      <div className="search_plugin_search_tab pr-4 px-2 pb-4">
+    <div className="px-2">
+      <div className="search_plugin_search_tab">
         <SearchProvider plugin={plugin}>
           <FindContainer></FindContainer>
           <Include></Include>
@@ -22,6 +22,6 @@ export const SearchTab = props => {
           <Results></Results>
         </SearchProvider>
       </div>
-    </>
+    </div>
   )
 }

@@ -196,7 +196,7 @@ export function RunTabUI (props: RunTabProps) {
 
   return (
     <Fragment>
-      <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
+      <div className="udapp_runTabView run-tab px-2" id="runTabView" data-id="runTabView">
         <div className="list-group list-group-flush">
           <SettingsUI
             networkName={runTab.networkName}

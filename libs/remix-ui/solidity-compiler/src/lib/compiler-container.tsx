@@ -709,8 +709,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
  return (
     <section>
-      <article>
-        <div className='pt-0 remixui_compilerSection'>
+      <article className="px-2">
+        <div className="remixui_compilerSection">
           <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">Compiler</label>
             <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()} title="Add a custom compiler with URL"></span>
@@ -772,7 +772,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
           }
         </div>
-        <div className="d-flex px-4 remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
+        <div className="d-flex remixui_compilerSection remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
           <div className="d-flex">
             <label className="mt-1 remixui_compilerConfigSection">Advanced Configurations</label>
           </div>
@@ -782,7 +782,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </span>
           </div>
         </div>
-        <div className={`px-4 pb-4 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
+        <div className={`remixui_compilerSection pb-4 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
           <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
             <input className="custom-control-input" type="radio" name="configradio" value="manual" onChange={toggleConfigType} checked={!state.useFileConfiguration} id="scManualConfig" />
             <label className="form-check-label custom-control-label" htmlFor="scManualConfig" data-id="scManualConfiguration">Compiler configuration</label>
@@ -843,10 +843,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 }
               }}
             />
-            { !showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
+            { !showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary py-2" onClick={() => {setShowFilePathInput(true)}}>Change</button> }
           </div>
         </div>
-        <div className="px-4">
+        <div style={{padding: "6px"}}>
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile">

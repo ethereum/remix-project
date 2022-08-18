@@ -6,7 +6,7 @@
   display: none;
 }
 .udapp_settings {
-  padding: 0 24px 16px;
+  padding: 6px;
 }
 .udapp_crow {
   display: block;
@@ -52,13 +52,17 @@
   width: 100%;
   overflow: hidden;
 }
+.udapp_cardContainer {
+  padding: 0 14px;
+  padding-bottom: 0;
+}
 .udapp_instanceContainer {
   display: flex;
   flex-direction: column;
   margin-bottom: 2%;
   border: none;
   text-align: center;
-  padding: 0 14px 16px;
+  padding: 0 6px;
 }
 .udapp_deployedContracts {
   font-size: 1rem;
@@ -71,7 +75,8 @@
   text-align: center;
 }
 .udapp_container {
-  padding: 0 24px 16px;
+  padding: 6px;
+  padding-bottom: 16px;
 }
 .udapp_contractNames {
   width: 100%;

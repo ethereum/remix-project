@@ -70,7 +70,7 @@
   margin: 0;
 }
 .remixui_compilerSection {
-  padding: 12px 24px 16px;
+  padding: 6px;
 }
 .remixui_compilerConfigSection:hover {
   cursor: pointer;
@@ -80,6 +80,12 @@
 }
 .remixui_compilerConfigPath {
   cursor: pointer;
+}
+.remixui_workspacesLabel {
+  margin-bottom: 2px;
+  font-size: 11px;
+  line-height: 12px;
+  text-transform: uppercase;
 }
 .remixui_compilerLabel {
   margin-bottom: 2px;

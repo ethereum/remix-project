@@ -27,7 +27,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
 
   const isL2 = (provider) => provider && (provider.value === 'Optimism Provider' || provider.value === 'Arbitrum One Provider')
   return (
-    <div className="udapp_crow">
+    <div style={{marginTop: "0px"}} className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
         Environment <OverlayTrigger placement={'right'} overlay={
               <Tooltip className="text-nowrap" id="info-recorder">
@@ -39,7 +39,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
       </label>
       <div className="udapp_environment">
 
-      <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className='udapp_selectExEnvOptions'>
+        <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className='udapp_selectExEnvOptions'>
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             { isL2(currentProvider) && 'L2 - '}
             { currentProvider && currentProvider.content }

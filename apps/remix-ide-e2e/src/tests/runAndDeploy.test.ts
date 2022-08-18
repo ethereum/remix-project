@@ -19,12 +19,12 @@ module.exports = {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
+      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN')
   },
 
   'Should load run and deploy tab and check value validation #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
+      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN')
       .validateValueInput('#value', '0000', '0')
       .validateValueInput('#value', '', '0')
       .validateValueInput('#value', 'dragon', '0')
