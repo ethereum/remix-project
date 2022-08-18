@@ -105,8 +105,7 @@ export class TxListener {
         addExecutionCosts(txResult, tx, execResult)
         tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.receipt.status // 0x0 or 0x1
-        this._resolve([tx], () => {
-        })
+        this._resolve([tx])
       })
     })
   }
@@ -162,7 +161,8 @@ export class TxListener {
   async _startListenOnNetwork () {
     let lastSeenBlock = this.executionContext.lastBlock?.number
     let processingBlock = false
-    this._loopId = setInterval(() => {
+
+    const processBlocks = async () => {
       if (processingBlock) return
       processingBlock = true
       const currentLoopId = this._loopId
@@ -186,7 +186,7 @@ export class TxListener {
         while (lastSeenBlock <= current) {
           try {
             if (!this._isListening) break
-            this._manageBlock(lastSeenBlock)
+            await this._manageBlock(lastSeenBlock)
           } catch (e) {
             console.log(e)
           }
@@ -195,15 +195,16 @@ export class TxListener {
         lastSeenBlock = current
       }
       processingBlock = false
-    }, 20000)
+    }
+    processBlocks()
+    this._loopId = setInterval(processBlocks, 20000)
   }
 
-  _manageBlock (blockNumber) {
-    this.executionContext.web3().eth.getBlock(blockNumber, true, (error, result) => {
-      if (!error) {
-        this._newBlock(Object.assign({ type: 'web3' }, result))
-      }
-    })
+  async _manageBlock (blockNumber) {
+    try {
+      const result = await this.executionContext.web3().eth.getBlock(blockNumber, true)
+      return await this._newBlock(Object.assign({ type: 'web3' }, result))  
+    } catch (e) {}
   }
 
   /**
@@ -227,11 +228,10 @@ export class TxListener {
     return this._resolvedTransactions[txHash]
   }
 
-  _newBlock (block) {
+  async _newBlock (block) {
     this.blocks.push(block)
-    this._resolve(block.transactions, () => {
-      this.event.trigger('newBlock', [block])
-    })
+    await this._resolve(block.transactions)
+    this.event.trigger('newBlock', [block])
   }
 
   _resolveAsync (tx) {
@@ -250,14 +250,13 @@ export class TxListener {
     })
   }
 
-  async _resolve (transactions, callback) {
+  async _resolve (transactions) {
     for (const tx of transactions) {
       try {
         if (!this._isListening) break
         await this._resolveAsync(tx)
       } catch (e) {}
     }
-    callback()
   }
 
   _resolveTx (tx, receipt, cb) {
