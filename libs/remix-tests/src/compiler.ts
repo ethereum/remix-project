@@ -134,7 +134,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
           if (runs) compiler.set('runs', runs)
           if (currentCompilerUrl) {
             compiler.loadRemoteVersion(currentCompilerUrl)
-            compiler.event.register('compilerLoaded', this, function (version) {
+            compiler.event.register('compilerLoaded', this, function (version, license) {
               next()
             })
           } else {
@@ -198,7 +198,7 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
         compiler.set('runs', runs)
         compiler.loadVersion(usingWorker, currentCompilerUrl)
         // @ts-ignore
-        compiler.event.register('compilerLoaded', this, (version) => {
+        compiler.event.register('compilerLoaded', this, (version, license) => {
           next()
         })
       } else {

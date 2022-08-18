@@ -33,7 +33,8 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
         }
         self.postMessage({
           cmd: 'versionLoaded',
-          data: compiler.version()
+          data: compiler.version(),
+          license: compiler.license()
         })
         break
       }

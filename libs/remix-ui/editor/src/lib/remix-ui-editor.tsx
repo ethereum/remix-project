@@ -75,6 +75,7 @@ type errorMarker = {
   },
   file: string
 }
+
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 export type DecorationsReturn = {
@@ -442,7 +443,6 @@ export const EditorUI = (props: EditorUIProps) => {
         allMarkersPerfile[filePath].push(markerData)
       }
     }
-    console.log(allMarkersPerfile)
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
@@ -587,8 +587,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  function handleEditorWillMount(monaco: Monaco) {
-
+  function handleEditorWillMount(monaco) {
     monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({ id: 'remix-solidity' })
