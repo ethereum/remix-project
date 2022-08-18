@@ -1,5 +1,7 @@
 import { checkSpecialChars } from '@remix-ui/helper'
 import { BadgeStatus, IconStatus } from '../components/Icon'
+import { bleach } from '@remix-ui/helper'
+
 
 export type IconBadgeReducerAction = {
   readonly type: string
@@ -20,13 +22,13 @@ function setIconStatus(name: string, status: IconStatus) {
   if (typeof status.key === 'number') {
     key = status.key
     text = key
-  } else key = checkSpecialChars(status.key) ? '' : status.key
+  } else key = checkSpecialChars(status.key) ? bleach.sanitize(status.key) : status.key
 
   let thisType = ''
   if (status.type === 'error') {
     thisType = 'danger' // to use with bootstrap
-  } else thisType = checkSpecialChars(status.type) ? '' : status.type!
-  const title = checkSpecialChars(status.title) ? '' : status.title
+  } else thisType = checkSpecialChars(status.type) ? bleach.sanitize(status.type) : status.type
+  const title = checkSpecialChars(status.title) ? bleach.sanitize(status.title) : status.title
   const pluginName = status.pluginName
   return { title, type: thisType, key, text, pluginName }
 }
