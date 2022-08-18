@@ -210,7 +210,7 @@ module.exports = {
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
       }, [], () => {})
-      .setValue('[data-id="modalDialogCustomPromp"]', 'https://goerli.infura.io/v3/08b2a484451e4635a28b3d8234f24332o')
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('filePanel')
       .openFile('README.txt')
@@ -225,8 +225,16 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
     },
 
-    'Should listen on all transactions #group7': function (browser: NightwatchBrowser) {
-      browser // it's already connected to goerli
+    'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
+      browser
+        .clickLaunchIcon('udapp') // connect to mainnet
+        .switchEnvironment('External Http Provider')
+        .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
+        .execute(() => {
+          (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+        }, [], () => {})
+        .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+        .modalFooterOKClick('basic-http-provider')
         .click('[data-id="terminalClearConsole"]') // clear the console
         .click('[data-id="listenNetworkCheckInput"]') // start to listen
         .waitForElementContainsText('*[data-id="terminalJournal"]', 'from:', 200000)
@@ -235,6 +243,8 @@ module.exports = {
         .waitForElementContainsText('*[data-id="terminalJournal"]', 'from:', 200000)
         .waitForElementContainsText('*[data-id="terminalJournal"]', 'to:', 200000)
         .click('[data-id="listenNetworkCheckInput"]') // stop to listen
+        .pause(30000)
+        .click('[data-id="terminalClearConsole"]') // clear the console
         .pause(20000)
         .execute(function () {
           return (document.querySelector('[data-id="terminalJournal"]') as any).innerText
