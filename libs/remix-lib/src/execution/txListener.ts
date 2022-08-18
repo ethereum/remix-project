@@ -172,7 +172,7 @@ export class TxListener {
       }
       const current = this.executionContext.lastBlock?.number
       if (!current) {
-        console.error(new Error('no last block found'))
+        console.log(new Error('no last block found'))
         return
       }
       if (currentLoopId === this._loopId && lastSeenBlock < current) {
