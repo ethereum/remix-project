@@ -432,7 +432,6 @@ export const EditorUI = (props: EditorUIProps) => {
         allMarkersPerfile[filePath].push(markerData)
       }
     }
-    console.log(allMarkersPerfile)
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
