@@ -126,7 +126,7 @@ module.exports = {
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
   },
 
-  'Import From Gist For Valid Gist ID #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Import From Gist For Valid Gist ID #group2 #flaky': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('settings')
@@ -141,6 +141,7 @@ module.exports = {
       })
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
+      .pause(10000)
       .openFile(`gist-${testData.validGistId}/README.txt`)
       .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
       .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
