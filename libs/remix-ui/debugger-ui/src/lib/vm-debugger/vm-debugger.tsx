@@ -59,11 +59,11 @@ export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, curren
         <MemoryPanel className="pb-1" calldata={memoryPanel} />
         <StoragePanel className="pb-1" calldata={storagePanel.calldata} header={storagePanel.header} />
         <ReturnValuesPanel className="pb-1" dropdownName='Return Value' calldata={returnValuesPanel || {}} />
+        <GlobalVariables className="pb-1" block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
       </div>
       <div className='d-flex flex-column px-2 pl-2' style={{ flex: 1 }}>
-        <CalldataPanel className="pb-1" calldata={calldataPanel} />
-        <GlobalVariables className="pb-1" block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
         <FullStoragesChangesPanel className="pb-1" calldata={fullStoragesChangesPanel} />
+        <CalldataPanel className="pb-1" calldata={calldataPanel} />
       </div>
     </div>
   )
