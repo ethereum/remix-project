@@ -245,6 +245,8 @@ module.exports = {
         .click('[data-id="listenNetworkCheckInput"]') // stop to listen
         .pause(30000)
         .click('[data-id="terminalClearConsole"]') // clear the console
+        .pause(5000)
+        .click('[data-id="terminalClearConsole"]') // clear the console
         .pause(20000)
         .execute(function () {
           return (document.querySelector('[data-id="terminalJournal"]') as any).innerText
