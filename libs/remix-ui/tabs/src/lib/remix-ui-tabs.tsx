@@ -96,7 +96,7 @@ export const TabsUI = (props: TabsUIProps) => {
         <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
         {getFileDecorationIcons(tab)}
         <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
-          <i className="text-dark fas fa-times"></i>
+          <i className="text-dark fal fa-times"></i>
         </span>
       </div>
     )
@@ -157,7 +157,7 @@ export const TabsUI = (props: TabsUIProps) => {
           }}
         >
           <TabList className="d-flex flex-row align-items-center">
-            {props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}
+            {props.tabs.map((tab, i) => <Tab className="py-0" key={tab.name}>{renderTab(tab, i)}</Tab>)}
           </TabList>
           {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
         </Tabs>
