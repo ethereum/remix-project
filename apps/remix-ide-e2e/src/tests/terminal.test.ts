@@ -210,7 +210,7 @@ module.exports = {
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
       }, [], () => {})
-      .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://goerli.infura.io/v3/08b2a484451e4635a28b3d8234f24332o')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('filePanel')
       .openFile('README.txt')
