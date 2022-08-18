@@ -17,6 +17,11 @@
   margin: 30px;
   padding-right: 90px;
 }
+.remixui_label_panel {
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+}
 .remixui_home_mediaBadge {
   font-size: 2em;
   height: 2em;

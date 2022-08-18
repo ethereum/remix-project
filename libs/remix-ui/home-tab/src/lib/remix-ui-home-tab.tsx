@@ -220,12 +220,36 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
-          <div className="d-flex justify-content-between ">
-            <div className="mx-4 my-4 d-flex">
-              <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+          <div className="d-flex justify-content-between">
+            <div className="mx-4 my-4 d-flex remixui_label_panel">
+              <div style={ { fontSize: 'xxx-large', height: 'auto' } }>Remix IDE</div>
+              <div className="d-flex pl-3 py-2" id="remixIDEMediaPanelsTitle">
+                <button
+                  className="btn-info p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-twitter"
+                  id="remixIDEHomeTwitterbtn"
+                  title="Twitter"
+                  onClick={(e) => {
+                    setState(prevState => {
+                      return { ...prevState, showMediaPanel: state.showMediaPanel === 'twitter' ? 'none' : 'twitter' }
+                    })
+                    _paq.push(['trackEvent', 'pluginManager', 'media', 'twitter'])
+                  }}
+                ></button>
+                <button
+                  className="btn-danger p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-medium"
+                  id="remixIDEHomeMediumbtn"
+                  title="Medium blogs"
+                  onClick={(e) => {
+                    setState(prevState => {
+                      return { ...prevState, showMediaPanel: state.showMediaPanel === 'medium' ? 'none' : 'medium' }
+                    })
+                    _paq.push(['trackEvent', 'pluginManager', 'media', 'medium'])
+                  }}
+                ></button>
+              </div>
             </div>
             <div className="mr-4 d-flex">
-              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
+              <img className="mt-4 mb-4 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
               <audio
                 id="remiAudio"
                 muted={false}
@@ -234,12 +258,14 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               ></audio>
             </div>
           </div>
-          <div>
-            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
-            <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              Scam Alert: There are video tutorials going around that provide urls other than remix.ethereum.org, and could be scams. Also, beware of online videos promoting "liquidity front runner bots".
+          <div className="mx-4">
+            <span className="remixui_home_text text-danger">
+              <i className="text-danger fas fa-exclamation-triangle"></i>  Scam Alert: There are video tutorials going around that provide urls other than remix.ethereum.org, and could be scams. Also, beware of online videos promoting "liquidity front runner bots".  <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
             </span>
-            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+            <br/>
+            {/* <span className="remixui_home_text text-danger">
+              There are video tutorials going around that provide urls other than remix.ethereum.org, and could be scams. Also, beware of online videos promoting "liquidity front runner bots".
+            </span> */}
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
@@ -260,11 +286,11 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <div className="d-flex">
               <div className="file">
                 <h4>File</h4>
-                <p className="mb-1">
+                <p className="mb-1 ml-1">
                   <i className="mr-2 far fa-file"></i>
                   <label className="ml-1 mb-1 remixui_home_text" onClick={() => createNewFile()}>New File</label>
                 </p>
-                <p className="mb-1">
+                <p className="mb-1 ml-1">
                   <i className="mr-2 far fa-file-alt"></i>
                   <label className="ml-1 remixui_home_labelIt remixui_home_bigLabelSize remixui_home_text" htmlFor="openFileInput">
                     Open Files
@@ -275,7 +301,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                     uploadFile(event.target)
                   }} multiple />
                 </p>
-                <p className="mb-1">
+                <p className="mb-1 ml-1">
                   <i className="mr-1 far fa-hdd"></i>
                   <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
                 </p>
@@ -289,15 +315,15 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               </div>
               <div className="ml-4 pl-4">
                 <h4>Resources</h4>
-                <p className="mb-1">
+                <p className="mb-1 ml-1">
                   <i className="mr-2 fas fa-book"></i>
                   <a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
                 </p>
-                <p className="mb-1">
+                <p className="mb-1 ml-1">
                   <i className="mr-2 fab fa-gitter"></i>
                   <a className="remixui_home_text" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
                 </p>
-                <p className="mb-1">
+                <p className="mb-1 ml-1">
                   <img id='remixHhomeWebsite' className="mr-2 remixui_home_image" src={ plugin.profile.icon } style={ { filter: state.themeQuality.filter } } alt=''></img>
                   <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Featuring website</a>
                 </p>
@@ -306,30 +332,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           </div>
         </div>
         <div className="d-flex flex-column remixui_home_rightPanel">
-          <div className="d-flex pr-3 py-2 align-self-end" id="remixIDEMediaPanelsTitle">
-            <button
-              className="btn-info p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-twitter"
-              id="remixIDEHomeTwitterbtn"
-              title="Twitter"
-              onClick={(e) => {
-                setState(prevState => {
-                  return { ...prevState, showMediaPanel: state.showMediaPanel === 'twitter' ? 'none' : 'twitter' }
-                })
-                _paq.push(['trackEvent', 'pluginManager', 'media', 'twitter'])
-              }}
-            ></button>
-            <button
-              className="btn-danger p-2 m-1 border rounded-circle remixui_home_mediaBadge fab fa-medium"
-              id="remixIDEHomeMediumbtn"
-              title="Medium blogs"
-              onClick={(e) => {
-                setState(prevState => {
-                  return { ...prevState, showMediaPanel: state.showMediaPanel === 'medium' ? 'none' : 'medium' }
-                })
-                _paq.push(['trackEvent', 'pluginManager', 'media', 'medium'])
-              }}
-            ></button>
-          </div>
           <div
             className="mr-3 d-flex bg-light remixui_home_panels"
             style={ { visibility: state.showMediaPanel === 'none' ? 'hidden' : 'visible' } }
