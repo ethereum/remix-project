@@ -5,7 +5,7 @@
  */
 import * as he from 'he'
 
-const remixBleach = {
+export const bleach = {
 
   matcher: /<\/?([a-zA-Z0-9]+)*(.*?)\/?>/igm,
 
@@ -24,7 +24,7 @@ const remixBleach = {
     let match
 
     // extract all tags
-    while ((match = remixBleach.matcher.exec(html)) != null) {
+    while ((match = bleach.matcher.exec(html)) != null) {
       const attrr = match[2].split(' ')
       const attrs = []
 
@@ -45,7 +45,7 @@ const remixBleach = {
         if (attr.name) attrs.push(attr)
       })
 
-      var tag = {
+      const tag = {
         full: match[0],
         name: match[1],
         attr: attrs
@@ -57,14 +57,13 @@ const remixBleach = {
     return matches
   },
 
-  sanitize: function (html, options) {
+  sanitize: function (html, options = { mode: 'white', list: bleach.whitelist, encode_entities: false}) {
     html = String(html) || ''
-    options = options || {}
-
+    
     const mode = options.mode || 'white'
-    const list = options.list || remixBleach.whitelist
+    const list = options.list || bleach.whitelist
 
-    var matches = remixBleach.analyze(html)
+    const matches = bleach.analyze(html)
 
     if ((mode === 'white' && list.indexOf('script') === -1) ||
        (mode === 'black' && list.indexOf('script') !== -1)) {
@@ -95,5 +94,3 @@ const remixBleach = {
     return html
   }
 }
-
-module.exports = remixBleach

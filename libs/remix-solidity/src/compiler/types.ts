@@ -163,6 +163,7 @@ export interface CompilerState {
     compileJSON: ((input: SourceWithTarget) => void) | null,
     worker: any,
     currentVersion: string| null| undefined,
+    compilerLicense: string| null
     optimize: boolean,
     runs: number
     evmVersion: EVMVersion| null,
@@ -193,6 +194,7 @@ export interface MessageToWorker {
 
 export interface MessageFromWorker {
   cmd: string,
+  license?: string,
   job?: number,
   missingInputs?: string[],
   input?: any,
