@@ -270,10 +270,8 @@ export interface MainnetProps {
   updateMaxFee: (fee: string) => void,
   updateBaseFeePerGas: (fee: string) => void,
   init: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void,
-  setTxFeeContent: (content: string) => void,
   updateGasPrice: (price: string) => void,
   updateMaxPriorityFee: (fee: string) => void
-  txFeeContent: string,
   maxFee: string,
   maxPriorityFee: string
 }

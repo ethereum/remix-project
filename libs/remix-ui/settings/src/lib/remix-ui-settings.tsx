@@ -214,7 +214,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{ labels[type].link }</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] } />
+            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] || '' } />
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
