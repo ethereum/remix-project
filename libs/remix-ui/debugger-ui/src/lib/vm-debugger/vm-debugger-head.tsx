@@ -98,7 +98,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
   }, [registerEvent])
 
   return (
-    <div id='vmheadView' className="mt-1 px-0">
+    <div id='vmheadView' className="mt-1 px-2">
       <div className='d-flex flex-column'>
         <div className='w-100'>
           <FunctionPanel data={functionPanel} />
