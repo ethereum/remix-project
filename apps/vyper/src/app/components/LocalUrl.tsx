@@ -26,7 +26,6 @@ function LocalUrlInput({ url, setUrl, environment }: Props) {
         type="email"
         placeholder="eg http://localhost:8000/compile" />
       <Form.Text className="text-muted">
-        The url to your local compiler
       </Form.Text>
     </Form.Group>
   </Form>

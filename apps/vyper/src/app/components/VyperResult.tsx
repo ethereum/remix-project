@@ -7,7 +7,6 @@ import {
 } from '../utils';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
-import { Ballot } from '../examples/ballot';
 import Button from 'react-bootstrap/Button';
 import JSONTree from 'react-json-view'
 import { CopyToClipboard } from '@remix-ui/clipboard'
@@ -17,14 +16,20 @@ interface VyperResultProps {
   output?: VyperCompilationOutput;
 }
 
+export type ExampleContract = {
+  name: string,
+  address: string
+}
+
 function VyperResult({ output }: VyperResultProps) {
-  const [ active, setActive ] = useState<keyof VyperCompilationResult>('abi');
-  
+  const [ active, setActive ] = useState<keyof VyperCompilationResult>('abi') 
+
   if (!output) return (
+
     <div id="result">
       <p>No contract compiled yet.</p>
-      <Button data-id="add-ballot" variant="info" onClick={() => remixClient.loadContract(Ballot)}>
-        Create Ballot.vy example
+      <Button data-id="add-repository" variant="info" onClick={() => remixClient.cloneVyperRepo()}>
+          Clone Vyper repository and play with the contract examples
       </Button>
     </div>
   )
@@ -33,7 +38,7 @@ function VyperResult({ output }: VyperResultProps) {
     return (
     <div id="result" className="error">
       <i className="fas fa-exclamation-circle text-danger"></i>
-      <p data-id="error-message" className="alert alert-danger">{output.message}</p>
+      <pre data-id="error-message" className="alert alert-danger">{output.message}</pre>
     </div>)
   }
 
@@ -41,7 +46,7 @@ function VyperResult({ output }: VyperResultProps) {
     <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
       <Tab eventKey="abi" title="ABI">
         <CopyToClipboard getContent={() => JSON.stringify(output.abi)}>
-          <Button variant="info" className="copy">Copy ABI</Button>
+          <Button variant="info" className="copy" data-id="copy-abi">Copy ABI</Button>
         </CopyToClipboard>
         <JSONTree src={output.abi} />
       </Tab>

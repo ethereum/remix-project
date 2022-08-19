@@ -205,6 +205,7 @@ module.exports = {
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')
       .goToVMTraceStep(154)
+      .scrollInto('*[data-id="stepdetail"]')
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
