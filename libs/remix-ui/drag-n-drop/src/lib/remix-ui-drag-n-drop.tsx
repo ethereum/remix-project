@@ -95,7 +95,7 @@ export const Draggable = (props: DraggableType) => {
       onDrop={(event) => {
         handleDrop(event);
       }}
-      onDragStart={(event) => {
+      onDragStart={() => {
         if (file) {
           handleDrag();
         }
