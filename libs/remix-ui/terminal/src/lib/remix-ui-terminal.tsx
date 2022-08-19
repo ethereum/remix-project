@@ -461,6 +461,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               className="pt-1 form-check-label custom-control-label text-nowrap"
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
               htmlFor="listenNetworkCheck"
+              data-id="listenNetworkCheckInput"
             >
               listen on all transactions
             </label>
