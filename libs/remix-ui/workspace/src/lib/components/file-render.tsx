@@ -7,7 +7,7 @@ import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileLabel } from './file-label'
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
-
+import {Draggable} from "@remix-ui/drag-n-drop"
 
 
 
@@ -82,7 +82,14 @@ export const FileRender = (props: RenderFileProps) => {
         iconX='pr-3 fa fa-folder'
         iconY='pr-3 fa fa-folder-open'
         key={`${file.path + props.index}`}
-        label={<FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
+        label={<>
+          <div className="d-flex flex-row">
+            <Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}> 
+              <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+            </Draggable>
+            <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
+            </div>
+          </>}
         onClick={handleFolderClick}
         onContextMenu={handleContextMenu}
         labelClass={labelClass}
@@ -90,6 +97,7 @@ export const FileRender = (props: RenderFileProps) => {
         expand={props.expandPath.includes(file.path)}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
+        expandedPaths={props.expandPath}
       >
         {
           file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
@@ -119,11 +127,13 @@ export const FileRender = (props: RenderFileProps) => {
         id={`treeViewItem${file.path}`}
         key={`treeView${file.path}`}
         label={
-          <>
-            <div className="d-flex flex-row">
-              <FileLabel file={file} fileDecorations={props.fileDecorations} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-              <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
-            </div>
+        <>
+        <div className="d-flex flex-row">
+          <Draggable isDraggable={props.focusEdit.element!==null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+              <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+            </Draggable>
+            <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
+          </div>
           </>
         }
         onClick={handleFileClick}
@@ -132,6 +142,7 @@ export const FileRender = (props: RenderFileProps) => {
         labelClass={labelClass}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
+        expandedPaths={props.expandPath}
       />
     )
   }
