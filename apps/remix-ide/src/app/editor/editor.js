@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'addErrorMarker', 'clearErrorMarkers']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers'],
 }
 
 class Editor extends Plugin {
@@ -211,6 +211,7 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
+    this.triggerEvent('didChangeFile', [file])
     const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
@@ -290,6 +291,10 @@ class Editor extends Plugin {
    */
   find (string) {
     return this.api.findMatches(this.currentFile, string)
+  }
+
+  addModel(path, content) {
+    this.emit('addModel', content, this._getMode(path), path, false)
   }
 
   /**
@@ -506,11 +511,13 @@ class Editor extends Plugin {
 
   // error markers
   async addErrorMarker (error){
-    this.api.addErrorMarker(error)
+    const { from } = this.currentRequest
+    this.api.addErrorMarker(error, from)
   }
 
   async clearErrorMarkers(sources){
-    this.api.clearErrorMarkers(sources)
+    const { from } = this.currentRequest
+    this.api.clearErrorMarkers(sources, from)
   }
 
   /**
