@@ -115,7 +115,7 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
 
   plugins.txListener.event.register(NEW_BLOCK, (block) => {
     if (!block.transactions || (block.transactions && !block.transactions.length)) {
-      dispatch({ type: EMPTY_BLOCK, payload: { message: 0, provider } })
+      dispatch({ type: EMPTY_BLOCK, payload: { message: block.number, provider } })
     }
   })
   plugins.txListener.event.register(KNOWN_TRANSACTION, () => {
