@@ -1,23 +1,21 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import { RemixUiEditorContextView, astNode } from '@remix-ui/editor-context-view'
-import Editor, { loader } from '@monaco-editor/react'
+
+import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
-import { IMarkdownString } from 'monaco-editor'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
 import monaco from '../types/monaco'
-import { MarkerSeverity } from 'monaco-editor'
+import { IMarkdownString, IPosition, MarkerSeverity } from 'monaco-editor'
 
-type cursorPosition = {
-  startLineNumber: number,
-  startColumn: number,
-  endLineNumber: number,
-  endColumn: number
-}
+import { RemixHoverProvider } from './providers/hoverProvider'
+import { RemixReferenceProvider } from './providers/referenceProvider'
+import { RemixCompletionProvider } from './providers/completionProvider'
+import { RemixHighLightProvider } from './providers/highlightProvider'
+import { RemixDefinitionProvider } from './providers/definitionProvider'
 
 type sourceAnnotation = {
   row: number,
@@ -64,7 +62,7 @@ export type lineText = {
 
 type errorMarker = {
   message: string
-  severity: MarkerSeverity
+  severity: MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
   position: {
     start: {
       line: number
@@ -105,15 +103,15 @@ export interface EditorUIProps {
     findMatches: (uri: string, value: string) => any
     getFontSize: () => number,
     getValue: (uri: string) => string
-    getCursorPosition: () => cursorPosition
+    getCursorPosition: () => number
+    getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: []) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}) => void
+    addErrorMarker: (errors: errorMarker[], from: string) => void
+    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
   }
 }
-
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
   const defaultEditorValue = `
@@ -136,7 +134,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
   const editorRef = useRef(null)
-  const monacoRef = useRef(null)
+  const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -344,6 +342,18 @@ export const EditorUI = (props: EditorUIProps) => {
 
       }
     }
+    if (typeOfDecoration === 'lineTextPerFile') {
+      const lineTextDecoration = decoration as lineText
+      return {
+        type: typeOfDecoration,
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
+        options: {
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
+          afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
+      }
+    }
   }
 
   props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
@@ -390,7 +400,6 @@ export const EditorUI = (props: EditorUIProps) => {
     const model = editorModelsState[filePath]?.model
     if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
-
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
       registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
@@ -401,7 +410,7 @@ export const EditorUI = (props: EditorUIProps) => {
     return addDecoration(marker, filePath, typeOfDecoration)
   }
 
-  props.editorAPI.addErrorMarker = async (errors: errorMarker[]) => {
+  props.editorAPI.addErrorMarker = async (errors: errorMarker[], from: string) => {
 
     const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
 
@@ -419,7 +428,7 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
-          severity: errorServerityMap[error.severity],
+          severity: (typeof error.severity === 'string') ? errorServerityMap[error.severity] : error.severity,
           startLineNumber: ((error.position.start && error.position.start.line) || 0),
           startColumn: ((error.position.start && error.position.start.column) || 0),
           endLineNumber: ((error.position.end && error.position.end.line) || 0),
@@ -435,18 +444,18 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
-        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', allMarkersPerfile[filePath])
+        monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}, from: string) => {
     if (sources) {
       for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
         const filePath = source
         const model = editorModelsState[filePath]?.model
         if (model) {
-          monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [])
+          monacoRef.current.editor.setModelMarkers(model, from, [])
         }
       }
     }
@@ -471,6 +480,16 @@ export const EditorUI = (props: EditorUIProps) => {
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
       return model.getOffsetAt(editorRef.current.getPosition())
+    }
+  }
+
+  props.editorAPI.getHoverPosition = (position: monaco.Position) => {
+    if (!monacoRef.current) return
+    const model = editorModelsState[currentFileRef.current]?.model
+    if (model) {
+      return model.getOffsetAt(position)
+    } else {
+      return 0
     }
   }
 
@@ -518,10 +537,10 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     // zoomin zoomout
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_EQUAL, () => {
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.US_MINUS, () => {
+    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
 
@@ -574,14 +593,20 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
 
     // Register a tokens provider for the language
-    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider)
-    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any )
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider)
-    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider)
-    monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig)
+    monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
+
+    monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
+    monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
+    monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
+    monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
+    monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
   }
@@ -597,22 +622,7 @@ export const EditorUI = (props: EditorUIProps) => {
         options={{ glyphMargin: true, readOnly: true }}
         defaultValue={defaultEditorValue}
       />
-      <div className="contextview">
-        <RemixUiEditorContextView
-          hide={false}
-          gotoLine={(line, column) => props.plugin.call('editor', 'gotoLine', line, column)}
-          openFile={(file) => props.plugin.call('fileManager', 'switchFile', file)}
-          getLastCompilationResult={() => { return props.plugin.call('compilerArtefacts', 'getLastCompilationResult') }}
-          offsetToLineColumn={(position, file, sources, asts) => { return props.plugin.call('offsetToLineColumnConverter', 'offsetToLineColumn', position, file, sources, asts) }}
-          getCurrentFileName={() => { return props.plugin.call('fileManager', 'file') }}
-          onContextListenerChanged={(listener) => { props.plugin.on('contextualListener', 'contextChanged', listener) }}
-          onCurrentFileChanged={(listener) => { props.plugin.on('fileManager', 'currentFileChanged', listener) }}
-          referencesOf={(node: astNode) => { return props.plugin.call('contextualListener', 'referencesOf', node) }}
-          getActiveHighlights={() => { return props.plugin.call('contextualListener', 'getActiveHighlights') }}
-          gasEstimation={(node: astNode) => { return props.plugin.call('contextualListener', 'gasEstimation', node) }}
-          declarationOf={(node: astNode) => { return props.plugin.call('contextualListener', 'declarationOf', node) }}
-        />
-      </div>
+
     </div>
   )
 }

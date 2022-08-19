@@ -21,7 +21,7 @@ function checkFilter (browser: NightwatchBrowser, filter: string, test: string, 
   const filterClass = '[data-id="terminalInputSearch"]'
   browser.setValue(filterClass, filter, function () {
     browser.execute(function () {
-      return document.querySelector('[data-id="terminalJournal"]').innerHTML === test
+      return document.querySelector('[data-id="terminalJournal"]').innerHTML === test || ''
     }, [], function (result) {
       browser.clearValue(filterClass).setValue(filterClass, '', function () {
         if (!result.value) {
