@@ -209,6 +209,6 @@ const rootFolderChanged = async (path) => {
 }
 
 const setFileDecorators = async (items: fileDecoration[], cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-  await dispatch(setFileDecorationSuccess(items))
+  dispatch && await dispatch(setFileDecorationSuccess(items))
   cb && cb(null, true)
 }
