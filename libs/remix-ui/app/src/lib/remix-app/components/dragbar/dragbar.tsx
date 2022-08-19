@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
@@ -7,17 +7,36 @@ interface IRemixDragBarUi {
   setHideStatus: (hide: boolean) => void;
   hidden: boolean
   minWidth: number
+  maximiseTrigger: number
+  resetTrigger: number
 }
 
 const DragBar = (props: IRemixDragBarUi) => {
   const [dragState, setDragState] = useState<boolean>(false)
   const [dragBarPosX, setDragBarPosX] = useState<number>(0)
   const [offset, setOffSet] = useState<number>(0)
+  const initialWidth = useRef<number>(props.minWidth)
   const nodeRef = React.useRef(null) // fix for strictmode
 
   useEffect(() => {
     setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))
   }, [props.hidden, offset])
+
+  useEffect(() => {
+    initialWidth.current = props.refObject.current.clientWidth
+    if (props.maximiseTrigger > 0) {
+      const width =  0.4 * window.innerWidth      
+      props.refObject.current.style.width = width + 'px'
+      setDragBarPosX(offset + width)  
+    }
+  }, [props.maximiseTrigger])
+
+  useEffect(() => {
+    if (props.maximiseTrigger > 0) {
+      props.refObject.current.style.width = initialWidth.current + 'px'
+      setDragBarPosX(offset + initialWidth.current)  
+    }
+  }, [props.resetTrigger])
 
   const handleResize = () => {
     setOffSet(props.refObject.current.offsetLeft)
