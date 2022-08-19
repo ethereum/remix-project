@@ -2,20 +2,16 @@
 import { Plugin } from '@remixproject/engine'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { AstNode, CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
-import { helper } from '@remix-project/remix-solidity'
+import { CompilationResult } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
-import CodeParserNodeHelper from './services/code-parser-node-helper'
 import React from 'react'
 import { Profile } from '@remixproject/plugin-utils'
 import { ContractDefinitionAstNode, EventDefinitionAstNode, FunctionCallAstNode, FunctionDefinitionAstNode, IdentifierAstNode, ImportDirectiveAstNode, ModifierDefinitionAstNode, SourceUnitAstNode, StructDefinitionAstNode, VariableDeclarationAstNode } from 'dist/libs/remix-analyzer/src/types'
 import { lastCompilationResult, RemixApi } from '@remixproject/plugin-api'
 import { antlr } from './types'
 import { ParseResult } from './types/antlr-types'
-import { ConfigPlugin } from '../config'
-
 
 const profile: Profile = {
     name: 'codeParser',
@@ -74,7 +70,6 @@ export class CodeParser extends Plugin {
     gasService: CodeParserGasService
     compilerService: CodeParserCompiler
     antlrService: CodeParserAntlrService
-    nodeHelper: CodeParserNodeHelper
 
     parseSolidity: (text: string) => Promise<antlr.ParseResult>
     getLastNodeInLine: (ast: string) => Promise<any>
@@ -97,7 +92,6 @@ export class CodeParser extends Plugin {
         this.gasService = new CodeParserGasService(this)
         this.compilerService = new CodeParserCompiler(this)
         this.antlrService = new CodeParserAntlrService(this)
-        this.nodeHelper = new CodeParserNodeHelper(this)
 
         this.parseSolidity = this.antlrService.parseSolidity.bind(this.antlrService)
         this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
