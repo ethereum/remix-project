@@ -7,7 +7,23 @@ import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerRetriggerMode } from '@remix-project/remix-solidity-ts';
+import { MarkerSeverity } from 'monaco-editor';
 
+type errorMarker = {
+    message: string
+    severity: MarkerSeverity
+    position: {
+      start: {
+        line: number
+        column: number
+      },
+      end: {
+        line: number
+        column: number
+      }
+    },
+    file: string
+  }
 export default class CodeParserCompiler {
     plugin: CodeParser
     compiler: any // used to compile the current file seperately from the main compiler
@@ -26,7 +42,7 @@ export default class CodeParserCompiler {
             this.plugin.call('editor', 'clearAnnotations')
             this.errorState = true
             const result = new CompilerAbstract('soljson', data, source, input)
-            const allErrors: any = []
+            let allErrors: errorMarker[] = []
             if (data.errors) {
                 const sources = result.getSourceCode().sources
                 for (const error of data.errors) {
@@ -37,7 +53,23 @@ export default class CodeParserCompiler {
                         length: error.sourceLocation.end - error.sourceLocation.start
                     }, lineBreaks)
 
-                    allErrors.push({ error, lineColumn })
+                    const filePath = error.sourceLocation.file
+
+                    allErrors = [...allErrors, {
+                        message: error.formattedMessage,
+                        severity: error.severity,
+                        position: {
+                            start: {
+                                line: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
+                                column: ((lineColumn.start && lineColumn.start.column) || 0) + 1
+                            },
+                            end: {
+                                line: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
+                                column: ((lineColumn.end && lineColumn.end.column) || 0) + 1
+                            }
+                        }
+                        , file: filePath
+                     }]
                 }
                 const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
                 if(displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
@@ -115,15 +147,15 @@ export default class CodeParserCompiler {
         }
     }
 
-    async addDecorators(allErrors: any[], sources: any) {
+    async addDecorators(allErrors: errorMarker[], sources: any) {
         const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
         if(!displayErrors) return
         const errorsPerFiles = {}
         for (const error of allErrors) {
-            if (!errorsPerFiles[error.error.sourceLocation.file]) {
-                errorsPerFiles[error.error.sourceLocation.file] = []
+            if (!errorsPerFiles[error.file]) {
+                errorsPerFiles[error.file] = []
             }
-            errorsPerFiles[error.error.sourceLocation.file].push(error.error)
+            errorsPerFiles[error.file].push(error)
         }
 
         const errorPriority = {
