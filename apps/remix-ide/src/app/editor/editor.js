@@ -551,14 +551,6 @@ class Editor extends Plugin {
     this.currentDecorations[typeOfDecoration][filePath].push(...currentDecorations)
   }
 
-  async addErrorMarker (error){
-    this.api.addErrorMarker(error)
-  }
-
-  async clearErrorMarkers(sources){
-    this.api.clearErrorMarkers(sources)
-  }
-
   /**
    * Add an annotation to the current session.
    * An annotation has the following shape:
