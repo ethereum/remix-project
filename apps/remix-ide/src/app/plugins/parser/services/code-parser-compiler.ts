@@ -2,7 +2,7 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { Compiler } from '@remix-project/remix-solidity'
 
-import { CompilationError, CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
+import { CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
 import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
@@ -57,7 +57,7 @@ export default class CodeParserCompiler {
 
                     allErrors = [...allErrors, {
                         message: error.formattedMessage,
-                        severity: error.severity,
+                        severity: error.severity === 'error' ? MarkerSeverity.Error : MarkerSeverity.Warning,
                         position: {
                             start: {
                                 line: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
@@ -150,7 +150,7 @@ export default class CodeParserCompiler {
     async addDecorators(allErrors: errorMarker[], sources: any) {
         const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
         if(!displayErrors) return
-        const errorsPerFiles = {}
+        const errorsPerFiles: {[fileName: string]: errorMarker[]} = {}
         for (const error of allErrors) {
             if (!errorsPerFiles[error.file]) {
                 errorsPerFiles[error.file] = []
@@ -164,7 +164,7 @@ export default class CodeParserCompiler {
         }
 
         // sort errorPerFiles by error priority
-        const sortedErrorsPerFiles = {}
+        const sortedErrorsPerFiles: {[fileName: string]: errorMarker[]} = {}
         for (const fileName in errorsPerFiles) {
             const errors = errorsPerFiles[fileName]
             errors.sort((a, b) => {
@@ -181,11 +181,11 @@ export default class CodeParserCompiler {
             const decorator: fileDecoration = {
                 path: fileName,
                 isDirectory: false,
-                fileStateType: errors[0].severity === 'error' ? fileDecorationType.Error : fileDecorationType.Warning,
-                fileStateLabelClass: errors[0].severity === 'error' ? 'text-danger' : 'text-warning',
+                fileStateType: errors[0].severity == MarkerSeverity.Error? fileDecorationType.Error : fileDecorationType.Warning,
+                fileStateLabelClass: errors[0].severity == MarkerSeverity.Error ? 'text-danger' : 'text-warning',
                 fileStateIconClass: '',
                 fileStateIcon: '',
-                text: errors.length,
+                text: errors.length.toString(),
                 owner: 'code-parser',
                 bubble: true,
                 comment: errors.map((error) => error.message),
