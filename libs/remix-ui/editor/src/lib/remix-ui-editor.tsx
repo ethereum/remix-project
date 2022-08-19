@@ -106,8 +106,6 @@ export interface EditorUIProps {
     getCursorPosition: () => number
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    addErrorMarker: (errors: []) => void
-    clearErrorMarkers: (sources: any) => void
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     addErrorMarker: (errors: []) => void
