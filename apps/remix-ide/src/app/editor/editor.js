@@ -511,11 +511,13 @@ class Editor extends Plugin {
 
   // error markers
   async addErrorMarker (error){
-    this.api.addErrorMarker(error)
+    const { from } = this.currentRequest
+    this.api.addErrorMarker(error, from)
   }
 
   async clearErrorMarkers(sources){
-    this.api.clearErrorMarkers(sources)
+    const { from } = this.currentRequest
+    this.api.clearErrorMarkers(sources, from)
   }
 
   /**

@@ -62,7 +62,7 @@ export type lineText = {
 
 type errorMarker = {
   message: string
-  severity: MarkerSeverity
+  severity: MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
   position: {
     start: {
       line: number
@@ -108,8 +108,8 @@ export interface EditorUIProps {
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: []) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}) => void
+    addErrorMarker: (errors: errorMarker[], from: string) => void
+    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
   }
 }
 export const EditorUI = (props: EditorUIProps) => {
@@ -410,7 +410,7 @@ export const EditorUI = (props: EditorUIProps) => {
     return addDecoration(marker, filePath, typeOfDecoration)
   }
 
-  props.editorAPI.addErrorMarker = async (errors: errorMarker[]) => {
+  props.editorAPI.addErrorMarker = async (errors: errorMarker[], from: string) => {
 
     const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
 
@@ -421,10 +421,14 @@ export const EditorUI = (props: EditorUIProps) => {
       const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
       filePath = fileFromUrl.file
       const model = editorModelsState[filePath]?.model
-
+      const errorServerityMap = {
+        'error': MarkerSeverity.Error,
+        'warning': MarkerSeverity.Warning,
+        'info': MarkerSeverity.Info
+      }
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
-          severity: error.severity,
+          severity: (typeof error.severity === 'string') ? errorServerityMap[error.severity] : error.severity,
           startLineNumber: ((error.position.start && error.position.start.line) || 0),
           startColumn: ((error.position.start && error.position.start.column) || 0),
           endLineNumber: ((error.position.end && error.position.end.line) || 0),
@@ -440,18 +444,18 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
-        monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', allMarkersPerfile[filePath])
+        monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}, from: string) => {
     if (sources) {
       for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
         const filePath = source
         const model = editorModelsState[filePath]?.model
         if (model) {
-          monacoRef.current.editor.setModelMarkers(model, 'remix-solidity', [])
+          monacoRef.current.editor.setModelMarkers(model, from, [])
         }
       }
     }
