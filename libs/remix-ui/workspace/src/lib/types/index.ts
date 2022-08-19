@@ -98,6 +98,7 @@ export interface FileExplorerProps {
     dispatchRemoveInputField:(path: string) => Promise<void>,
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>
+    dispatchMoveFile: (src: string, dest: string) => Promise<void>,
 }
 
 export interface FileExplorerMenuProps {
