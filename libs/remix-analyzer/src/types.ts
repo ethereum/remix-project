@@ -168,7 +168,7 @@ export interface ContractDefinitionAstNode {
   nodeType: 'ContractDefinition'
   src: string
   name: string
-  documentation: string | null
+  documentation: string | null | StructuredDocumentationAstNode
   contractKind: 'interface' | 'contract' | 'library'
   abstract: boolean
   fullyImplemented: boolean
@@ -241,7 +241,7 @@ export interface FunctionDefinitionAstNode {
   nodeType: 'FunctionDefinition'
   src: string
   name: string
-  documentation: string | null
+  documentation: string | null | StructuredDocumentationAstNode
   kind: string
   stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable'
   visibility: string
@@ -281,7 +281,7 @@ export interface ModifierDefinitionAstNode {
   nodeType: 'ModifierDefinition'
   src: string
   name: string
-  documentation: Record<string, unknown> | null
+  documentation: Record<string, unknown> | null | StructuredDocumentationAstNode
   visibility: string
   parameters: ParameterListAstNode
   virtual: boolean
@@ -303,7 +303,7 @@ export interface EventDefinitionAstNode {
   nodeType: 'EventDefinition'
   src: string
   name: string
-  documentation: Record<string, unknown> | null
+  documentation: Record<string, unknown> | null | StructuredDocumentationAstNode
   parameters: ParameterListAstNode
   anonymous: boolean
 }

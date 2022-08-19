@@ -9,7 +9,7 @@ import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription
+  isFunctionDescription, CompilerRetriggerMode
 } from './types'
 
 /*
@@ -19,7 +19,7 @@ export class Compiler {
   event
   state: CompilerState
 
-  constructor (public handleImportCall?: (fileurl: string, cb) => void) {
+  constructor(public handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
     this.state = {
       compileJSON: null,
@@ -34,6 +34,7 @@ export class Compiler {
       target: null,
       useFileConfiguration: false,
       configFileContent: '',
+      compilerRetriggerMode: CompilerRetriggerMode.none,
       lastCompilationResult: {
         data: null,
         source: null
@@ -48,7 +49,6 @@ export class Compiler {
     })
 
     this.event.register('compilationStarted', () => {
-      this.state.compilationStartTime = new Date().getTime()
     })
   }
 
@@ -58,7 +58,7 @@ export class Compiler {
    * @param value value of key in CompilerState
    */
 
-  set <K extends keyof CompilerState> (key: K, value: CompilerState[K]): void {
+  set<K extends keyof CompilerState>(key: K, value: CompilerState[K]): void {
     this.state[key] = value
     if (key === 'runs') this.state['runs'] = parseInt(value)
   }
@@ -69,7 +69,7 @@ export class Compiler {
    * @param missingInputs missing import file path list
    */
 
-  internalCompile (files: Source, missingInputs?: string[]): void {
+  internalCompile(files: Source, missingInputs?: string[]): void {
     this.gatherImports(files, missingInputs, (error, input) => {
       if (error) {
         this.state.lastCompilationResult = null
@@ -84,8 +84,9 @@ export class Compiler {
    * @param target target file name (This is passed as it is to IDE)
    */
 
-  compile (files: Source, target: string): void {
+  compile(files: Source, target: string): void {
     this.state.target = target
+    this.state.compilationStartTime = new Date().getTime()
     this.event.trigger('compilationStarted', [])
     this.internalCompile(files)
   }
@@ -105,7 +106,7 @@ export class Compiler {
    * @dev Called when compiler is loaded internally (without worker)
    */
 
-  onInternalCompilerLoaded (): void {
+  onInternalCompilerLoaded(): void {
     if (this.state.worker === null) {
       const compiler: any = typeof (window) !== 'undefined' && window['Module'] ? require('solc/wrapper')(window['Module']) : require('solc') // eslint-disable-line
       this.state.compileJSON = (source: SourceWithTarget) => {
@@ -144,7 +145,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
+  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -179,7 +180,7 @@ export class Compiler {
    * @param version compiler version
    */
 
-  loadRemoteVersion (version: string): void {
+  loadRemoteVersion(version: string): void {
     console.log(`Loading remote solc version ${version} ...`)
     const compiler: any = require('solc') // eslint-disable-line
     compiler.loadRemoteVersion(version, (err, remoteCompiler) => {
@@ -224,7 +225,7 @@ export class Compiler {
    * @param url URL to load compiler from
    */
 
-  loadVersion (usingWorker: boolean, url: string): void {
+  loadVersion(usingWorker: boolean, url: string): void {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
     this.event.trigger('loadingCompiler', [url, usingWorker])
     if (this.state.worker) {
@@ -243,7 +244,7 @@ export class Compiler {
    * @param url URL to load compiler from
    */
 
-  loadInternal (url: string): void {
+  loadInternal(url: string): void {
     delete window['Module']
     // NOTE: workaround some browsers?
     window['Module'] = undefined
@@ -269,38 +270,41 @@ export class Compiler {
    * @param url URL to load compiler from
    */
 
-  loadWorker (url: string): void {
+  loadWorker(url: string): void {
     this.state.worker = webworkify(require.resolve('./compiler-worker'))
-    const jobs: Record<'sources', SourceWithTarget> [] = []
+    const jobs: Record<'sources', SourceWithTarget>[] = []
 
-    this.state.worker.addEventListener('message', (msg: Record <'data', MessageFromWorker>) => {
+    this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
+      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+        return
+      }
       switch (data.cmd) {
         case 'versionLoaded':
           if (data.data && data.license) this.onCompilerLoaded(data.data, data.license)
           break
         case 'compiled':
-        {
-          let result: CompilationResult
-          if (data.data && data.job !== undefined && data.job >= 0) {
-            try {
-              result = JSON.parse(data.data)
-            } catch (exception) {
-              result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
+          {
+            let result: CompilationResult
+            if (data.data && data.job !== undefined && data.job >= 0) {
+              try {
+                result = JSON.parse(data.data)
+              } catch (exception) {
+                result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
+              }
+              let sources: SourceWithTarget = {}
+              if (data.job in jobs !== undefined) {
+                sources = jobs[data.job].sources
+                delete jobs[data.job]
+              }
+              this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
             }
-            let sources: SourceWithTarget = {}
-            if (data.job in jobs !== undefined) {
-              sources = jobs[data.job].sources
-              delete jobs[data.job]
-            }
-            this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
+            break
           }
-          break
-        }
       }
     })
 
-    this.state.worker.addEventListener('error', (msg: Record <'data', MessageFromWorker>) => {
+    this.state.worker.addEventListener('error', (msg: Record<'data', MessageFromWorker>) => {
       const formattedMessage = `Worker error: ${msg.data && msg.data !== undefined ? msg.data : msg['message']}`
       this.onCompilationFinished({ error: { formattedMessage } })
     })
@@ -326,7 +330,8 @@ export class Compiler {
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
-          input: input
+          input: input,
+          timestamp: this.state.compilationStartTime
         })
       }
     }
@@ -344,7 +349,7 @@ export class Compiler {
    * @param cb callback
    */
 
-  gatherImports (files: Source, importHints?: string[], cb?: gatherImportsCallbackInterface): void {
+  gatherImports(files: Source, importHints?: string[], cb?: gatherImportsCallbackInterface): void {
     importHints = importHints || []
     // FIXME: This will only match imports if the file begins with one '.'
     // It should tokenize by lines and check each.
@@ -383,7 +388,7 @@ export class Compiler {
    * @param version version
    */
 
-  truncateVersion (version: string): string {
+  truncateVersion(version: string): string {
     const tmp: RegExpExecArray | null = /^(\d+.\d+.\d+)/.exec(version)
     return tmp ? tmp[1] : version
   }
@@ -393,8 +398,8 @@ export class Compiler {
    * @param data Compilation result
    */
 
-  updateInterface (data: CompilationResult) : CompilationResult {
-    txHelper.visitContracts(data.contracts, (contract : visitContractsCallbackParam) => {
+  updateInterface(data: CompilationResult): CompilationResult {
+    txHelper.visitContracts(data.contracts, (contract: visitContractsCallbackParam) => {
       if (!contract.object.abi) contract.object.abi = []
       if (this.state.language === 'Yul' && contract.object.abi.length === 0) {
         // yul compiler does not return any abi,
@@ -426,7 +431,7 @@ export class Compiler {
    * @param name contract name
    */
 
-  getContract (name: string): Record<string, any> | null {
+  getContract(name: string): Record<string, any> | null {
     if (this.state.lastCompilationResult && this.state.lastCompilationResult.data && this.state.lastCompilationResult.data.contracts) {
       return txHelper.getContract(name, this.state.lastCompilationResult.data.contracts)
     }
@@ -438,7 +443,7 @@ export class Compiler {
    * @param cb callback
    */
 
-  visitContracts (cb: visitContractsCallbackInterface) : void | null {
+  visitContracts(cb: visitContractsCallbackInterface): void | null {
     if (this.state.lastCompilationResult && this.state.lastCompilationResult.data && this.state.lastCompilationResult.data.contracts) {
       return txHelper.visitContracts(this.state.lastCompilationResult.data.contracts, cb)
     }
@@ -449,7 +454,7 @@ export class Compiler {
    * @dev Get the compiled contracts data from last compilation result
    */
 
-  getContracts () : CompilationResult['contracts'] | null {
+  getContracts(): CompilationResult['contracts'] | null {
     if (this.state.lastCompilationResult && this.state.lastCompilationResult.data && this.state.lastCompilationResult.data.contracts) {
       return this.state.lastCompilationResult.data.contracts
     }
@@ -460,7 +465,7 @@ export class Compiler {
    * @dev Get sources from last compilation result
    */
 
-  getSources () : Source | null | undefined {
+  getSources(): Source | null | undefined {
     if (this.state.lastCompilationResult && this.state.lastCompilationResult.source) {
       return this.state.lastCompilationResult.source.sources
     }
@@ -472,7 +477,7 @@ export class Compiler {
    * @param fileName file name
    */
 
-  getSource (fileName: string) : Source['filename'] | null {
+  getSource(fileName: string): Source['filename'] | null {
     if (this.state.lastCompilationResult && this.state.lastCompilationResult.source && this.state.lastCompilationResult.source.sources) {
       return this.state.lastCompilationResult.source.sources[fileName]
     }
@@ -484,7 +489,7 @@ export class Compiler {
    * @param index    - index of the source
    */
 
-  getSourceName (index: number): string | null {
+  getSourceName(index: number): string | null {
     if (this.state.lastCompilationResult && this.state.lastCompilationResult.data && this.state.lastCompilationResult.data.sources) {
       return Object.keys(this.state.lastCompilationResult.data.sources)[index]
     }
