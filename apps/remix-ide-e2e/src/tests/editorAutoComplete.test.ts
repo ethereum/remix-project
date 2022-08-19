@@ -12,7 +12,7 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
-  'Should add test and base files #group2': function (browser: NightwatchBrowser) {
+  'Should add test and base files #group1': function (browser: NightwatchBrowser) {
     browser.addFile(examples.testContract.name, examples.testContract)
       .addFile(examples.baseContract.name, examples.baseContract)
       .addFile(examples.import1Contract.name, examples.import1Contract)
@@ -21,14 +21,14 @@ module.exports = {
       .addFile(examples.importbase.name, examples.importbase)
       .openFile(examples.testContract.name)
   },
-  'Should put cursor in the () of the function #group2': function (browser: NightwatchBrowser) {
+  'Should put cursor in the () of the function #group1': function (browser: NightwatchBrowser) {
     browser.scrollToLine(36)
     const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'(')]"
     browser.waitForElementVisible('#editorView')
       .useXpath()
       .click(path).pause(1000)
   },
-  'Should complete variable declaration types in a function definition #group2': function (browser: NightwatchBrowser) {
+  'Should complete variable declaration types in a function definition #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -75,7 +75,7 @@ module.exports = {
           sendKeys(' localbbook')
       }).pause(3000)
   },
-  'Should put cursor at the end of function #group2': function (browser: NightwatchBrowser) {
+  'Should put cursor at the end of function #group1': function (browser: NightwatchBrowser) {
 
     const path = "//*[@class='view-line' and contains(.,'localbbook') and contains(.,'private')]//span//span[contains(.,'{')]"
     browser
@@ -89,7 +89,7 @@ module.exports = {
           sendKeys(this.Keys.ARROW_RIGHT)
       })
   },
-  'Should autcomplete address types': function (browser: NightwatchBrowser) {
+  'Should autcomplete address types #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -120,7 +120,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should autcomplete array types': function (browser: NightwatchBrowser) {
+  'Should autcomplete array types #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -158,7 +158,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should see and autocomplete second import because it was imported by the first import #group2': function (browser: NightwatchBrowser) {
+  'Should see and autocomplete second import because it was imported by the first import #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -188,7 +188,7 @@ module.exports = {
       })
 
   },
-  'Should see and autocomplete imported local class #group2': function (browser: NightwatchBrowser) {
+  'Should see and autocomplete imported local class #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -222,7 +222,7 @@ module.exports = {
       })
 
   },
-  'Should autocomplete derived and local event when not using this. #group2': function (browser: NightwatchBrowser) {
+  'Should autocomplete derived and local event when not using this. #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -256,7 +256,7 @@ module.exports = {
       })
   },
 
-  'Should type and get msg options #group2': function (browser: NightwatchBrowser) {
+  'Should type and get msg options #group1': function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -287,7 +287,7 @@ module.exports = {
           sendKeys(this.Keys.ENTER)
       })
   },
-  'Should bo and get book #group2': function (browser: NightwatchBrowser) {
+  'Should bo and get book #group1': function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -298,7 +298,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('book'))
       .click(autoCompleteLineElement('book'))
   },
-  'Should autcomplete derived struct #group2': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -315,7 +315,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should bo and get basebook #group2': function (browser: NightwatchBrowser) {
+  'Should bo and get basebook #group1': function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -326,7 +326,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('basebook'))
       .click(autoCompleteLineElement('basebook'))
   },
-  'Should autcomplete derived struct from base class #group2': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct from base class #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -343,7 +343,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should block scoped localbbook #group2': function (browser: NightwatchBrowser) {
+  'Should block scoped localbbook #group1': function (browser: NightwatchBrowser) {
     browser.pause(4000).
       perform(function () {
         const actions = this.actions({ async: true });
@@ -354,7 +354,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('localbbook'))
       .click(autoCompleteLineElement('localbbook'))
   },
-  'Should autcomplete derived struct from block localbbook #group2': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct from block localbbook #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -371,7 +371,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should block scoped btextbook #group2': function (browser: NightwatchBrowser) {
+  'Should block scoped btextbook #group1': function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -382,7 +382,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('btextbook'))
       .click(autoCompleteLineElement('btextbook'))
   },
-  'Should autcomplete derived struct from block btextbook #group2': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct from block btextbook #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -399,7 +399,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should find private and internal local functions #group2': function (browser: NightwatchBrowser) {
+  'Should find private and internal local functions #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -415,7 +415,7 @@ module.exports = {
           sendKeys(this.Keys.ENTER)
       })
   },
-  'Should find internal functions and var from base and owner #group2': function (browser: NightwatchBrowser) {
+  'Should find internal functions and var from base and owner #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -434,7 +434,7 @@ module.exports = {
       })
   },
 
-  'Should not find external functions without this. #group2': function (browser: NightwatchBrowser) {
+  'Should not find external functions without this. #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -456,7 +456,7 @@ module.exports = {
           .sendKeys(this.Keys.BACK_SPACE)
       })
   },
-  'Should find external functions using this. #group2': function (browser: NightwatchBrowser) {
+  'Should find external functions using this. #group1': function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -467,7 +467,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('externalbasefunction'))
       .waitForElementVisible(autoCompleteLineElement('myexternalfunction'))
   },
-  'Should find public functions and vars using this. but not private & other types of nodes #group2': function (browser: NightwatchBrowser) {
+  'Should find public functions and vars using this. but not private & other types of nodes #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible(autoCompleteLineElement('"publicbasefunction"'))
       .waitForElementVisible(autoCompleteLineElement('"publicstring"'))
@@ -486,7 +486,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should autocomplete local and derived ENUMS #group2': function (browser: NightwatchBrowser) {
+  'Should autocomplete local and derived ENUMS #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
