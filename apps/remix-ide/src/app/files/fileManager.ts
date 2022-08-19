@@ -817,6 +817,35 @@ class FileManager extends Plugin {
 
     return exists
   }
+
+  /**
+   * Moves a file to a new folder
+   * @param {string} src path of the source file
+   * @param {string} dest path of the destrination file
+   * @returns {void}
+   */
+  
+   async moveFile(src: string, dest: string) {
+    try {
+      src = this.normalize(src)
+      dest = this.normalize(dest)
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
+      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
+
+      const content = await this.readFile(src)
+      let movedFilePath = dest + ( '/' + `${helper.extractNameFromKey(src)}`)
+      movedFilePath = await helper.createNonClashingNameAsync(movedFilePath, this)
+
+      await this.writeFile(movedFilePath, content)
+      await this.remove(src)
+
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
 }
 
 module.exports = FileManager

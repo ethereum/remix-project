@@ -57,7 +57,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [state.debugging, state.isActive])
 
-
   useEffect(() => {
     return unLoad()
   }, [])
@@ -191,6 +190,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }
 
   const unLoad = () => {
+    debuggerModule.onStopDebugging()
     if (state.debugger) state.debugger.unload()
     setState(prevState => {
       return {
@@ -282,6 +282,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     setTimeout(async() => {
+      debuggerModule.onStartDebugging()
       try {
         await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
           listenToEvents(debuggerInstance, currentReceipt)
@@ -349,7 +350,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <Toaster message={state.toastMessage} />
       <div className="px-2" ref={debuggerTopRef}>
         <div>
-          <div className="mb-2 debuggerConfig custom-control custom-checkbox" title="Using Generated Sources lets you step into compiler outputs while debugging.">
+          <p className="my-2 debuggerLabel">Debugger Configuration</p>
+          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }

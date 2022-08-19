@@ -222,5 +222,4 @@ export const loadTypes = async (monaco) => {
     }
     `
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexRemixApi)
-    console.log('loaded monaco types')
 }
