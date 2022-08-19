@@ -462,3 +462,13 @@ const saveAs = (blob, name) => {
     }
   }, 0) // 40s
 }
+
+export const moveFile = async (src: string, dest: string) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    await fileManager.moveFile(src, dest)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while performing moveFile operation.' + error))
+  }
+}
