@@ -5,7 +5,7 @@ import { fileDecoration } from '../../types'
 const FileDecorationWarningIcon = (props: {
     fileDecoration: fileDecoration
 }) => {
-    return <><span className={`${props.fileDecoration.fileStateIconClass} text-warning pr-2`}>{props.fileDecoration.text}</span></>
+    return <><span data-id={`file-decoration-warning-${props.fileDecoration.path}`} className={`${props.fileDecoration.fileStateIconClass} text-warning pr-2`}>{props.fileDecoration.text}</span></>
 }
 
 export default FileDecorationWarningIcon
