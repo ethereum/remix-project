@@ -421,14 +421,10 @@ export const EditorUI = (props: EditorUIProps) => {
       const fileFromUrl = await props.plugin.call('fileManager', 'getPathFromUrl', filePath)
       filePath = fileFromUrl.file
       const model = editorModelsState[filePath]?.model
-      const errorServerityMap = {
-        'error': MarkerSeverity.Error,
-        'warning': MarkerSeverity.Warning,
-        'info': MarkerSeverity.Info
-      }
+
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
-          severity: errorServerityMap[error.severity],
+          severity: error.severity,
           startLineNumber: ((error.position.start && error.position.start.line) || 0),
           startColumn: ((error.position.start && error.position.start.column) || 0),
           endLineNumber: ((error.position.end && error.position.end.line) || 0),
