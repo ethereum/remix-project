@@ -188,19 +188,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsUseAutoComplete">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} htmlFor="settingsUseAutoComplete">
               <span>{useAutoCompleteText}</span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsUseShowGas">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} htmlFor="settingsUseShowGas">
               <span>{useShowGasInEditorText}</span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/use-auto-complete')}`} htmlFor="settingsDisplayErrors">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`} htmlFor="settingsDisplayErrors">
               <span>{displayErrorsText}</span>
             </label>
           </div>
