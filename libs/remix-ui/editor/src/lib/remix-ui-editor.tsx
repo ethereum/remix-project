@@ -619,7 +619,7 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: true }}
+        options={{ glyphMargin: true, readOnly: false }}
         defaultValue={defaultEditorValue}
       />
 
