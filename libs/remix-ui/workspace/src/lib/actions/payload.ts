@@ -126,7 +126,7 @@ export const createWorkspaceRequest = (promise: Promise<any>) => {
   }
 }
 
-export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; }) => {
+export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }) => {
   return {
     type: 'CREATE_WORKSPACE_SUCCESS',
     payload: workspaceName
