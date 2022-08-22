@@ -310,8 +310,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     nodes = [...Object.values(fileNodes.imports), ...nodes]
                     // at the nodes at the block itself
                     nodes = [...nodes, ...await this.getBlockNodesAtPosition(position)]
-                    console.log(await this.getBlockNodesAtPosition(position))
-                    // filter private nodes, only allow      them when contract ID is the same as the current contract
+                    // filter private nodes, only allow them when contract ID is the same as the current contract
                     nodes = nodes.filter(node => {
                         if (node.visibility) {
                             if (node.visibility === 'private') {
