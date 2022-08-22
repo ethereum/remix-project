@@ -221,21 +221,23 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
           <div className="pt-2 d-flex justify-content-between">
-            <div className="mx-4 my-4 pt-4 d-flex">
-              <label style={ { fontSize: 'xxx-large' } }>Remix IDE</label>
-            </div>
-            <div className="pt-4 align-self-end mb-2 d-flex flex-column">
-              <span className="pl-4 text-danger mt-2">
-                <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
-                <b>Scam Alerts:</b>
-              </span>
-              <span className="pl-4 text-danger mt-1">
-                The only domain Remix uses is ethereum.org 
-              </span>
-              <span className="pl-4 text-danger mt-1">        
-                Beware of online videos promoting "liquidity front runner bots". 
-                <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
-              </span>
+            <div>
+              <div className="mx-4 my-4 pt-4 d-flex">
+                <label style={ { fontSize: 'xxx-large' } }>Remix IDE</label>
+              </div>
+              <div className="pt-4 align-self-end mb-2 d-flex flex-column">
+                <span className="pl-4 text-danger mt-2">
+                  <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
+                  <b>Scam Alerts:</b>
+                </span>
+                <span className="pl-4 text-danger mt-1">
+                  The only domain Remix uses is ethereum.org 
+                </span>
+                <span className="pl-4 text-danger mt-1">        
+                  Beware of online videos promoting "liquidity front runner bots". 
+                  <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+                </span>
+              </div>
             </div>
             <div className="mr-4 d-flex">
               <img className="align-self-end remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
