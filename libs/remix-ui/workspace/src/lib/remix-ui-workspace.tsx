@@ -189,7 +189,7 @@ export function Workspace () {
 
   return (
     <div className='px-2 remixui_container'>
-      <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
+      <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
             <div className="mb-2">
@@ -299,7 +299,7 @@ export function Workspace () {
         <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
           <div className='h-100'>
             { global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
-              : <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
+              : <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
                 { (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
                     <FileExplorer
                       name={currentWorkspace}
