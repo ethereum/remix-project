@@ -231,14 +231,14 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                   <b>Scam Alerts:</b>
                 </span>
                 <span className="pl-4 text-danger mt-1">
-                  The only domain Remix uses is ethereum.org 
+                  The only URL Remix uses is remix.ethereum.org 
                 </span>
                 <span className="pl-4 text-danger mt-1">        
-                  Beware of online videos promoting "liquidity front runner bots". 
+                  Beware of online videos promoting "liquidity front runner bots":  
                   <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
                 </span>
                 <span className="pl-4 text-danger mt-1">
-                  <a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">Using Remix Safely</a>
+                  Additional safety tips: &nbsp;<a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">here</a>
                 </span>
               </div>
             </div>
