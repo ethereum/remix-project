@@ -83,12 +83,12 @@ export const FileRender = (props: RenderFileProps) => {
         iconY='pr-3 fa fa-folder-open'
         key={`${file.path + props.index}`}
         label={<>
-          <div className="d-flex flex-row">
-            <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+          <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+            <div className="d-flex flex-row">
               <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-            </Draggable>
-            <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
-          </div>
+              <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
+            </div>
+          </Draggable>
         </>}
         onClick={handleFolderClick}
         onContextMenu={handleContextMenu}
