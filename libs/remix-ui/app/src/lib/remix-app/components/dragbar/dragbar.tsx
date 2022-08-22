@@ -25,16 +25,23 @@ const DragBar = (props: IRemixDragBarUi) => {
   useEffect(() => {
     initialWidth.current = props.refObject.current.clientWidth
     if (props.maximiseTrigger > 0) {
-      const width =  0.4 * window.innerWidth      
-      props.refObject.current.style.width = width + 'px'
-      setDragBarPosX(offset + width)  
+      const width = 0.4 * window.innerWidth
+      console.log(width, props.refObject.current.offsetWidth)
+      if (width > props.refObject.current.offsetWidth) {
+        props.refObject.current.style.width = width + 'px'
+        setTimeout(() => {
+          setDragBarPosX(offset + width)
+        }, 300)
+      }
     }
   }, [props.maximiseTrigger])
 
   useEffect(() => {
     if (props.maximiseTrigger > 0) {
       props.refObject.current.style.width = initialWidth.current + 'px'
-      setDragBarPosX(offset + initialWidth.current)  
+      setTimeout(() => {
+        setDragBarPosX(offset + initialWidth.current)
+      }, 300)
     }
   }, [props.resetTrigger])
 
@@ -51,19 +58,22 @@ const DragBar = (props: IRemixDragBarUi) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  function stopDrag (e: MouseEvent, data: any) {
+  function stopDrag(e: MouseEvent, data: any) {
     setDragState(false)
     if (data.x < props.minWidth) {
       setDragBarPosX(offset)
       props.setHideStatus(true)
     } else {
       props.refObject.current.style.width = (data.x - offset) + 'px'
-      props.setHideStatus(false)
-      setDragBarPosX(offset + props.refObject.current.offsetWidth)
+      setTimeout(() => {
+        props.setHideStatus(false)
+        setDragBarPosX(offset + props.refObject.current.offsetWidth)
+      }, 300)
     }
+
   }
 
-  function startDrag () {
+  function startDrag() {
     setDragState(true)
   }
   return <>
