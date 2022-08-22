@@ -220,11 +220,11 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
-          <div className="d-flex justify-content-between">
+          <div className="pt-2 d-flex justify-content-between">
             <div className="mx-4 my-4 pt-4 d-flex">
               <label style={ { fontSize: 'xxx-large' } }>Remix IDE</label>
             </div>
-            <div className="align-self-end mb-2 d-flex flex-column">
+            <div className="pt-4 align-self-end mb-2 d-flex flex-column">
               <span className="pl-4 text-danger mt-2">
                 <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
                 <b>Scam Alerts:</b>
