@@ -242,8 +242,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 // try to find the real block in the AST and get the nodes in that scope
                 if (node.nodeType === 'ContractDefinition') {
                     const contractNodes = fileNodes.contracts[node.name].contractNodes
-                    for (const contractNode of Object.values(contractNodes)) {
-                        if (contractNode['name'] === ANTLRBlock.name) {
+                    for (const contractNode of Object.values(contractNodes)) {    
+                        if (contractNode['name'] === ANTLRBlock.name 
+                        || (contractNode['kind'] === 'constructor' && ANTLRBlock.name === null )
+                        ) {
                             let nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode as any).id)
                             nodes = [...nodes, ...nodeOfScope]
                             if (contractNode['body']) {
