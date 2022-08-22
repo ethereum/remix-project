@@ -237,6 +237,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                   Beware of online videos promoting "liquidity front runner bots". 
                   <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
                 </span>
+                <span className="pl-4 text-danger mt-1">
+                  <a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">Using Remix Safely</a>
+                </span>
               </div>
             </div>
             <div className="mr-4 d-flex">
