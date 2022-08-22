@@ -189,86 +189,86 @@ export function Workspace () {
 
   return (
     <>
-    <div className='px-2 remixui_container' style={{ height: '95%' }}>
-      <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
-        <div>
-          <header>
-            <div className="mb-2">
-              <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
-                Workspaces
-              </label>
-                <span className="remixui_menu">
-                  <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='workspaceCreate'
-                    data-id='workspaceCreate'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      createWorkspace()
-                    }}
-                    className='far fa-plus-square remixui_menuicon'
-                    title='Create'>
+      <div className='px-2 remixui_container' style={{ height: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
+        <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
+          <div>
+            <header>
+              <div className="mb-2">
+                <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
+                  Workspaces
+                </label>
+                  <span className="remixui_menu">
+                    <span
+                      hidden={currentWorkspace === LOCALHOST}
+                      id='workspaceCreate'
+                      data-id='workspaceCreate'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        createWorkspace()
+                      }}
+                      className='far fa-plus-square remixui_menuicon'
+                      title='Create'>
+                    </span>
+                    <span
+                      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                      id='workspaceRename'
+                      data-id='workspaceRename'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        renameCurrentWorkspace()
+                      }}
+                      className='far fa-edit remixui_menuicon'
+                      title='Rename'>
+                    </span>
+                    <span
+                      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                      id='workspaceDelete'
+                      data-id='workspaceDelete'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteCurrentWorkspace()
+                      }}
+                      className='far fa-trash remixui_menuicon'
+                      title='Delete'>
+                    </span>
+                    <span
+                      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                      id='workspacesDownload'
+                      data-id='workspacesDownload'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        downloadWorkspaces()
+                      }}
+                      className='far fa-download remixui_menuicon'
+                      title='Download Workspaces'>
+                    </span>
+                    <span
+                      hidden={currentWorkspace === LOCALHOST}
+                      id='workspacesRestore'
+                      data-id='workspacesRestore'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        restoreBackup()
+                      }}
+                      className='far fa-upload remixui_menuicon'
+                      title='Restore Workspaces Backup'>
+                    </span>
+                    <span
+                      hidden={currentWorkspace === LOCALHOST}
+                      id='cloneGitRepository'
+                      data-id='cloneGitRepository'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        cloneGitRepository()
+                      }}
+                      className='far fa-clone remixui_menuicon'
+                      title='Clone Git Repository'>
+                    </span>
                   </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                    id='workspaceRename'
-                    data-id='workspaceRename'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      renameCurrentWorkspace()
-                    }}
-                    className='far fa-edit remixui_menuicon'
-                    title='Rename'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                    id='workspaceDelete'
-                    data-id='workspaceDelete'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      deleteCurrentWorkspace()
-                    }}
-                    className='far fa-trash remixui_menuicon'
-                    title='Delete'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                    id='workspacesDownload'
-                    data-id='workspacesDownload'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      downloadWorkspaces()
-                    }}
-                    className='far fa-download remixui_menuicon'
-                    title='Download Workspaces'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='workspacesRestore'
-                    data-id='workspacesRestore'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      restoreBackup()
-                    }}
-                    className='far fa-upload remixui_menuicon'
-                    title='Restore Workspaces Backup'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='cloneGitRepository'
-                    data-id='cloneGitRepository'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      cloneGitRepository()
-                    }}
-                    className='far fa-clone remixui_menuicon'
-                    title='Clone Git Repository'>
-                  </span>
-                </span>
-                <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
-                  <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
-                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
-                  </Dropdown.Toggle>
+                  <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
+                    <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
+                      { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
+                    </Dropdown.Toggle>
 
                     <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
                       {
@@ -378,7 +378,7 @@ export function Workspace () {
           </div>
         </div>
       </div>
-      <div className='bg-light border-top' style={{ height: '5%' }}>
+      <div className={`bg-light border-top ${selectedWorkspace && selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`} style={{ height: '5%' }}>
         <div className='d-flex justify-space-between p-1'>
           <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
           <div className="pt-1 mr-1">
