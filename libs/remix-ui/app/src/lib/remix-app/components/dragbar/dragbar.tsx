@@ -26,7 +26,6 @@ const DragBar = (props: IRemixDragBarUi) => {
     initialWidth.current = props.refObject.current.clientWidth
     if (props.maximiseTrigger > 0) {
       const width = 0.4 * window.innerWidth
-      console.log(width, props.refObject.current.offsetWidth)
       if (width > props.refObject.current.offsetWidth) {
         props.refObject.current.style.width = width + 'px'
         setTimeout(() => {
