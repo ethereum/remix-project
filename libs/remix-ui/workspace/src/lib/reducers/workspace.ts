@@ -13,6 +13,11 @@ export interface BrowserState {
     workspaces: {
       name: string;
       isGitRepo: boolean;
+      branches?: {
+        remote: any;
+        name: string;
+      }[],
+      currentBranch?: string
     }[],
     files: { [x: string]: Record<string, FileType> },
     expandPath: string[]
@@ -117,7 +122,7 @@ export const browserInitialState: BrowserState = {
 export const browserReducer = (state = browserInitialState, action: Action) => {
   switch (action.type) {
     case 'SET_CURRENT_WORKSPACE': {
-      const payload = action.payload as { name: string; isGitRepo: boolean; }
+      const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
       const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
       return {
@@ -131,7 +136,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'SET_WORKSPACES': {
-      const payload = action.payload as { name: string; isGitRepo: boolean; }[]
+      const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }[]
 
       return {
         ...state,
@@ -429,7 +434,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'CREATE_WORKSPACE_SUCCESS': {
-      const payload = action.payload as { name: string; isGitRepo: boolean; }
+      const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
       const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
       return {
@@ -460,13 +465,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     case 'RENAME_WORKSPACE': {
       const payload = action.payload as { oldName: string, workspaceName: string }
       let renamedWorkspace
-      const workspaces = state.browser.workspaces.filter(({ name, isGitRepo }) => {
+      const workspaces = state.browser.workspaces.filter(({ name, isGitRepo, branches, currentBranch }) => {
         if (name && (name !== payload.oldName)) {
           return true
         } else {
           renamedWorkspace = {
             name: payload.workspaceName,
-            isGitRepo
+            isGitRepo,
+            branches,
+            currentBranch
           }
           return false
         }

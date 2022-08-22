@@ -9,6 +9,7 @@ import {
   saveAs
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
+import { IndexedDBStorage } from './filesystems/indexedDB'
 
 const JSZip = require('jszip')
 const path = require('path')
@@ -145,17 +146,16 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch () {
-    const name = await git.currentBranch({
-      ...await this.getGitConfig()
-    })
+  async currentbranch (config) {
+    console.log('config: ', config)
+    const cmd = config ? config : await this.getGitConfig()
+    const name = await git.currentBranch(cmd)
+
     return name
   }
 
-  async branches () {
-    const cmd = {
-      ...await this.getGitConfig()
-    }
+  async branches (config) {
+    const cmd = config ? config : await this.getGitConfig()
     const remotes = await this.remotes()
     let branches = []
     branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })

@@ -679,7 +679,7 @@ export function Workspace () {
         </div>
       </div>
       </div>
-      <div className='bg-light border-top' style={{ height: '5%' }}>
+      <div className={`bg-light border-top ${selectedWorkspace && selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`} style={{ height: '5%' }}>
         <div className='d-flex justify-space-between p-1'>
           <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
           <div className="pt-1 mr-1">
