@@ -32,7 +32,7 @@ pre {
   display            : flex;
   flex-direction     : row-reverse;
   width              : 320px;
-  transition         : width 1s;
+  transition         : width 0.25s;
 }
 
 .highlightcode       {
