@@ -136,6 +136,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
 
     case 'SET_WORKSPACES': {
+      console.log('called SET_WORKSPACES')
       const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }[]
 
       return {

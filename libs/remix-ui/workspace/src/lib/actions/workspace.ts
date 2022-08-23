@@ -54,25 +54,6 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
-    if (isGitRepo) {
-      let branches = []
-      let currentBranch = null
-
-      try {
-        branches = await getGitRepoBranches(`${plugin.fileProviders.workspace.workspacesPath}/${workspaceName}`)
-      } catch (e) {
-        console.error(e)
-      }
-      try {
-        currentBranch = await getGitRepoCurrentBranch(`${plugin.fileProviders.workspace.workspacesPath}/${workspaceName}`)
-      } catch (e) {
-        console.error(e)
-      }
-      
-      dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo, branches, currentBranch }))
-    } else {
-      dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
-    }
     dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
@@ -338,9 +319,9 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   })
 }
 
-export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean}[]> | undefined => {
+export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
   try {
-    const workspaces: {name: string, isGitRepo: boolean}[] = await new Promise((resolve, reject) => {
+    const workspaces: {name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string}[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
@@ -350,25 +331,15 @@ export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean
         Promise.all(Object.keys(items)
           .filter((item) => items[item].isDirectory)
           .map(async (folder) => {
-            console.log('folder: ', folder)
             const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
 
             if (isGitRepo) {
               let branches = []
               let currentBranch = null
-        
-              try {
-                branches = await getGitRepoBranches(folder)
-              } catch (e) {
-                console.error(e)
-              }
-              try {
-                currentBranch = await getGitRepoCurrentBranch(folder)
-              } catch (e) {
-                console.error(e)
-              }
 
+              branches = await getGitRepoBranches(folder)
               console.log('branches: ', branches)
+              currentBranch = await getGitRepoCurrentBranch(folder)
 
               return {
                 name: folder.replace(workspacesPath + '/', ''),
