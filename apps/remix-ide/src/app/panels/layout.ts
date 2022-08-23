@@ -6,7 +6,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 const profile: Profile = {
   name: 'layout',
   description: 'layout',
-  methods: ['minimize']
+  methods: ['minimize', 'maximiseSidePanel', 'resetSidePanel']
 }
 
 interface panelState {
@@ -30,8 +30,10 @@ export type PanelConfiguration = {
 export class Layout extends Plugin {
   event: any
   panels: panels
+  maximised: { [key: string]: boolean }
   constructor () {
     super(profile)
+    this.maximised = {}
     this.event = new EventEmitter()
   }
 
@@ -64,6 +66,14 @@ export class Layout extends Plugin {
           break
       }
     })
+    this.on('sidePanel', 'focusChanged', async (name) => {
+      const current = await this.call('sidePanel', 'currentFocus')
+      if (this.maximised[current]) {
+        this.event.emit('maximisesidepanel')
+      } else {
+        this.event.emit('resetsidepanel')
+      }
+    })
     document.addEventListener('keypress', e => {
       if (e.shiftKey && e.ctrlKey) {
         if (e.code === 'KeyF') {
@@ -91,5 +101,17 @@ export class Layout extends Plugin {
   minimize (name: string, minimized:boolean): void {
     this.panels[name].minimized = minimized
     this.event.emit('change', null)
+  }
+
+  async maximiseSidePanel () {
+    this.event.emit('maximisesidepanel')
+    const current = await this.call('sidePanel', 'currentFocus')
+    this.maximised[current] = true
+  }
+
+  async resetSidePanel () {
+    this.event.emit('resetsidepanel')
+    const current = await this.call('sidePanel', 'currentFocus')
+    this.maximised[current] = false
   }
 }

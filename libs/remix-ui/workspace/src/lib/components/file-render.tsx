@@ -7,7 +7,7 @@ import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileLabel } from './file-label'
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
-
+import { Draggable } from "@remix-ui/drag-n-drop"
 
 
 
@@ -82,17 +82,25 @@ export const FileRender = (props: RenderFileProps) => {
         iconX='pr-3 fa fa-folder'
         iconY='pr-3 fa fa-folder-open'
         key={`${file.path + props.index}`}
-        label={<FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />}
+        label={<>
+          <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+            <div className="d-flex flex-row">
+              <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+              <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
+            </div>
+          </Draggable>
+        </>}
         onClick={handleFolderClick}
         onContextMenu={handleContextMenu}
         labelClass={labelClass}
-        controlBehaviour={ props.ctrlKey }
+        controlBehaviour={props.ctrlKey}
         expand={props.expandPath.includes(file.path)}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
+        expandedPaths={props.expandPath}
       >
         {
-          file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
+          file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps}>{
             Object.keys(file.child).map((key, index) => <FileRender
               file={file.child[key]}
               fileDecorations={props.fileDecorations}
@@ -109,7 +117,7 @@ export const FileRender = (props: RenderFileProps) => {
               key={index}
             />)
           }
-          </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }/>
+          </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps} />
         }
       </TreeViewItem>
     )
@@ -120,10 +128,12 @@ export const FileRender = (props: RenderFileProps) => {
         key={`treeView${file.path}`}
         label={
           <>
-            <div className="d-flex flex-row">
-              <FileLabel file={file} fileDecorations={props.fileDecorations} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
-              <FileDecorationIcons file={file} fileDecorations={props.fileDecorations}/>
-            </div>
+            <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+              <div className="d-flex flex-row">
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+                <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
+              </div>
+            </Draggable>
           </>
         }
         onClick={handleFileClick}
@@ -132,6 +142,7 @@ export const FileRender = (props: RenderFileProps) => {
         labelClass={labelClass}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
+        expandedPaths={props.expandPath}
       />
     )
   }

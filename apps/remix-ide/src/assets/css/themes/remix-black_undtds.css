@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap');
 :root {
-  --blue: #28282D;
+  --blue: #90c3f6;
   --indigo: #6610f2;
   --purple: #9e77f6;
   --pink: #f38abb;
   --red: #823a3a;
   --orange: #e46b15;
   --yellow: #ffc107;
-  --green: #065337;
+  --green: #1ea171;
   --teal: #20c997;
   --cyan: #053c64;
   --white: #d5d5d5;
@@ -15,7 +15,7 @@
   --gray-dark: #343a40;
   --primary: #b5b4bc;
   --secondary: #3d3e44;
-  --success: #366a57;
+  --success: #6bceaa;
   --info: #086CB5;
   --warning: #c26829;
   --danger: #823a3a;
@@ -8800,7 +8800,7 @@ a.text-dark:hover {
   padding: 0 !important;
   margin: 0 !important;
   border: 0 !important;
-  color: #aaaaaa !important; 
+  color: #aaaaaa !important;
 }
 .run-instance-list li {
   margin: 0 !important;
