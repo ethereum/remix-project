@@ -125,10 +125,10 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async remotes () {
+  async remotes (config) {
     let remotes = []
     try {
-      remotes = await git.listRemotes({ ...await this.getGitConfig() })
+      remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
     } catch (e) {
       // do nothing
     }
@@ -155,7 +155,7 @@ class DGitProvider extends Plugin {
 
   async branches (config) {
     const cmd = config ? config : await this.getGitConfig()
-    const remotes = await this.remotes()
+    const remotes = await this.remotes(config)
     let branches = []
     branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
     for (const remote of remotes) {
