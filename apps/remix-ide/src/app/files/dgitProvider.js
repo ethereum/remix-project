@@ -147,7 +147,6 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch (config) {
-    console.log('config: ', config)
     const cmd = config ? config : await this.getGitConfig()
     const name = await git.currentBranch(cmd)
 
