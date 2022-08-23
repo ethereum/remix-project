@@ -5,6 +5,7 @@ import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 
 const txFormat = remixLib.execution.txFormat
+const txHelper = remixLib.execution.txHelper
 export function ContractGUI (props: ContractGUIProps) {
   const [title, setTitle] = useState<string>('')
   const [basicInput, setBasicInput] = useState<string>('')
@@ -74,7 +75,7 @@ export function ContractGUI (props: ContractGUIProps) {
     }
   }, [props.lookupOnly, props.funcABI, title])
 
-  const getContentOnCTC = () => {
+  const getEncodedCall = () => {
     const multiString = getMultiValsString(multiFields.current)
     // copy-to-clipboard icon is only visible for method requiring input params
     if (!multiString) {
@@ -92,6 +93,20 @@ export function ContractGUI (props: ContractGUIProps) {
       return encodeObj.error
     } else {
       return encodeObj.data
+    }
+  }
+
+  const getEncodedParams = () => {
+    try {
+      const multiString = getMultiValsString(multiFields.current)
+      // copy-to-clipboard icon is only visible for method requiring input params
+      if (!multiString) {
+        return 'cannot encode empty arguments'
+      }
+      const multiJSON = JSON.parse('[' + multiString + ']')
+      return txHelper.encodeParams(props.funcABI, multiJSON)
+    } catch (e) {
+      console.error(e)
     }
   }
 
@@ -250,9 +265,28 @@ export function ContractGUI (props: ContractGUIProps) {
                 </div>)
             })}
           </div>
-          <div className="udapp_group udapp_multiArg">
-            <CopyToClipboard tip='Encode values of input fields & copy to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getContentOnCTC} />
-            <button onClick={handleExpandMultiClick} title={buttonOptions.title} data-id={buttonOptions.dataId} className={`udapp_instanceButton ${buttonOptions.classList}`}>{ buttonOptions.content }</button>
+          <div className="d-flex udapp_group udapp_multiArg">
+            <CopyToClipboard tip='Copy calldata to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedCall} >
+              <button className="btn remixui_copyButton">
+                <i id="copyCalldata" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <label htmlFor="copyCalldata">Calldata</label>
+              </button>
+            </CopyToClipboard>
+            <CopyToClipboard tip='Copy encoded input parameters to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedParams} >
+              <button className="btn remixui_copyButton">
+                <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <label htmlFor="copyParameters">Parameters</label>
+              </button>
+            </CopyToClipboard>
+            <button
+              type="button"
+              onClick={handleExpandMultiClick}
+              title={buttonOptions.title}
+              data-id={buttonOptions.dataId}
+              className={`btn udapp_instanceButton ${buttonOptions.classList}`}
+            >
+              { buttonOptions.content }
+            </button>
           </div>
         </div>
       </div>

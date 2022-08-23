@@ -184,19 +184,25 @@
     "solidity-unit-testing": {
       "tags": []
     },
-    "remix-ui-editor-context-view": {
-      "tags": []
-    },
     "remix-ui-run-tab": {
       "tags": []
     },
     "remix-ui-permission-handler": {
       "tags": []
     },
+    "remix-ui-file-decorators": {
+      "tags": []
+    },
     "remix-ui-tooltip-popup": {
       "tags": []
     },
     "vyper": {
+      "tags": []
+    },
+    "etherscan": {
+      "tags": []
+    },
+    "remix-ui-drag-n-drop": {
       "tags": []
     }
   },
@@ -208,4 +214,5 @@
       }
     ]
   }
+
 }

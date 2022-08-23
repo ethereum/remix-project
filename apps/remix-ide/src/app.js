@@ -14,10 +14,11 @@ import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
+import { CodeParser } from './app/plugins/parser/code-parser'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
@@ -31,6 +32,7 @@ import { FoundryProvider } from './app/tabs/foundry-provider'
 import { ExternalHttpProvider } from './app/tabs/external-http-provider'
 import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
+import { FileDecorator } from './app/plugins/file-decorator'
 
 const isElectron = require('is-electron')
 
@@ -156,6 +158,9 @@ class AppComponent {
     // ----------------- Storage plugin ---------------------------------
     const storagePlugin = new StoragePlugin()
 
+    // ------- FILE DECORATOR PLUGIN ------------------
+    const fileDecorator = new FileDecorator()
+
     //----- search
     const search = new SearchPlugin()
 
@@ -208,7 +213,9 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener(new AstWalker())
+    
+    const codeParser = new CodeParser(new AstWalker())
+
 
     this.notification = new NotificationPlugin()
 
@@ -232,7 +239,8 @@ class AppComponent {
       compilersArtefacts,
       networkModule,
       offsetToLineColumnConverter,
-      contextualListener,
+      codeParser,
+      fileDecorator,
       terminal,
       web3Provider,
       compileAndRun,
@@ -363,7 +371,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 
@@ -405,7 +413,7 @@ class AppComponent {
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
+                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
                 this.appManager.call(...callDetails).catch(console.error)
               }
@@ -421,7 +429,7 @@ class AppComponent {
                   this.appManager.call(
                     "notification",
                     "toast",
-                    `initiating ${callDetails[0]} ...`
+                    `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`
                   );
 
                   // @todo(remove the timeout when activatePlugin is on 0.3.0)

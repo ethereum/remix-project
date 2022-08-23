@@ -31,12 +31,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
 
             modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
           } catch (err) {
-            let parseError = err
-            try {
-              parseError = JSON.stringify(err)
-            } catch (e) {
-            }
-            modal('Swarm Publish Failed', publishMessageFailed(storage, parseError))
+            modal('Swarm Publish Failed', publishMessageFailed(storage, err.message))
           }
         } else {
           if (!api.config.get('settings/ipfs-url') && !modalShown) {
@@ -81,7 +76,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
       const result = await publishToIPFS(contract, api)
       modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
     } catch (err) {
-      modal('IPFS Publish Failed', publishMessageFailed(storage, err))
+      modal('IPFS Publish Failed', publishMessageFailed(storage, err.message))
     }
     setModalShown(true)
   }

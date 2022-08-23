@@ -9,6 +9,7 @@ import {
   saveAs
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
+import { IndexedDBStorage } from './filesystems/indexedDB'
 
 const JSZip = require('jszip')
 const path = require('path')
@@ -28,10 +29,10 @@ class DGitProvider extends Plugin {
   constructor () {
     super(profile)
     this.ipfsconfig = {
-      host: 'ipfs.remixproject.org',
+      host: 'jqgt.remixproject.org',
       port: 443,
       protocol: 'https',
-      ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
+      ipfsurl: 'https://jqgt.remixproject.org/ipfs/'
     }
     this.globalIPFSConfig = {
       host: 'ipfs.io',
@@ -40,10 +41,10 @@ class DGitProvider extends Plugin {
       ipfsurl: 'https://ipfs.io/ipfs/'
     }
     this.remixIPFS = {
-      host: 'ipfs.remixproject.org',
+      host: 'jqgt.remixproject.org',
       port: 443,
       protocol: 'https',
-      ipfsurl: 'https://ipfs.remixproject.org/ipfs/'
+      ipfsurl: 'https://jqgt.remixproject.org/ipfs/'
     }
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
@@ -145,17 +146,15 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch () {
-    const name = await git.currentBranch({
-      ...await this.getGitConfig()
-    })
+  async currentbranch (config) {
+    const cmd = config ? config : await this.getGitConfig()
+    const name = await git.currentBranch(cmd)
+
     return name
   }
 
-  async branches () {
-    const cmd = {
-      ...await this.getGitConfig()
-    }
+  async branches (config) {
+    const cmd = config ? config : await this.getGitConfig()
     const remotes = await this.remotes()
     let branches = []
     branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })

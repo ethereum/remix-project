@@ -3,10 +3,14 @@
   "compilerOptions": {
     "module": "commonjs",
     "outDir": "../../dist/out-tsc",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "declaration": true,
-    "rootDir": "./src",
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts"],
+  "exclude": [
+    "**/*.spec.ts",
+    "tests/"
+  ],
   "include": ["**/*.ts"]
 }

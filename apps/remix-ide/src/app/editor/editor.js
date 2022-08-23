@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers'],
 }
 
 class Editor extends Plugin {
@@ -26,8 +26,8 @@ class Editor extends Plugin {
       remixDark: 'remix-dark'
     }
 
-    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
-    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {}, lineTextPerFile: {} }
+    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {}, lineTextPerFile: {} }
 
     // Init
     this.event = new EventManager()
@@ -211,6 +211,7 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
+    this.triggerEvent('didChangeFile', [file])
     const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
@@ -290,6 +291,10 @@ class Editor extends Plugin {
    */
   find (string) {
     return this.api.findMatches(this.currentFile, string)
+  }
+
+  addModel(path, content) {
+    this.emit('addModel', content, this._getMode(path), path, false)
   }
 
   /**
@@ -504,6 +509,17 @@ class Editor extends Plugin {
     }
   }
 
+  // error markers
+  async addErrorMarker (error){
+    const { from } = this.currentRequest
+    this.api.addErrorMarker(error, from)
+  }
+
+  async clearErrorMarkers(sources){
+    const { from } = this.currentRequest
+    this.api.clearErrorMarkers(sources, from)
+  }
+
   /**
    * Clears all the annotations for the given @arg filePath, the plugin name is retrieved from the context, if none is given, the current sesssion is used.
    * An annotation has the following shape:
@@ -565,6 +581,18 @@ class Editor extends Plugin {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
       this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
+    }
+  }
+
+  async addLineText (lineText, filePath) {
+    filePath = filePath || this.currentFile
+    await this.addDecoration(lineText, filePath, 'lineTextPerFile')
+  }
+
+  discardLineTexts() {
+    const { from } = this.currentRequest
+    for (const session in this.sessions) {
+      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 }

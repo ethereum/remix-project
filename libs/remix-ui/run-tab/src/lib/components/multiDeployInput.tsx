@@ -2,13 +2,13 @@ import React, { useRef, useState } from 'react'
 import { MultiDeployInputProps } from '../types'
 import { DeployButton } from './deployButton'
 
-export function MultiDeployInput (props: MultiDeployInputProps) {
+export function MultiDeployInput(props: MultiDeployInputProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
-  
-  return ( 
+
+  return (
     <div className="udapp_contractActionsContainerMulti" style={{ display: 'flex' }}>
       <div className="udapp_contractActionsContainerMultiInner text-dark">
-        <div className="udapp_multiHeader">
+        <div className="pt-2 udapp_multiHeader">
           <div className="udapp_multiTitle run-instance-multi-title">Deploy</div>
         </div>
         <div>

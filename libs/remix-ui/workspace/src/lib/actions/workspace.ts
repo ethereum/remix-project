@@ -2,11 +2,17 @@ import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
-import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
+import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
+
+declare global {
+  interface Window { remixFileSystemCallback: IndexedDBStorage; }
+}
 
 
 const LOCALHOST = ' - connect to localhost - '
@@ -255,7 +261,7 @@ export const switchToWorkspace = async (name: string) => {
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
-    const isGitRepo = await plugin.fileManager.isGitRepo()
+    const isGitRepo = await plugin.fileManager.isGitRepo(name)
 
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
@@ -305,9 +311,9 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   })
 }
 
-export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean}[]> | undefined => {
+export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
   try {
-    const workspaces: {name: string, isGitRepo: boolean}[] = await new Promise((resolve, reject) => {
+    const workspaces: {name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string}[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
@@ -318,9 +324,26 @@ export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean
           .filter((item) => items[item].isDirectory)
           .map(async (folder) => {
             const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
-            return {
-              name: folder.replace(workspacesPath + '/', ''),
-              isGitRepo
+
+            if (isGitRepo) {
+              let branches = []
+              let currentBranch = null
+
+              branches = await getGitRepoBranches(folder)
+              console.log('branches: ', branches)
+              currentBranch = await getGitRepoCurrentBranch(folder)
+
+              return {
+                name: folder.replace(workspacesPath + '/', ''),
+                isGitRepo,
+                branches,
+                currentBranch
+              }
+            } else {
+              return {
+                name: folder.replace(workspacesPath + '/', ''),
+                isGitRepo
+              }
             }
           })).then(workspacesList => resolve(workspacesList))
       })
@@ -388,4 +411,24 @@ export const getRepositoryTitle = async (url: string) => {
   const counter = _counter || ''
 
   return name + counter
+}
+
+export const getGitRepoBranches = async (workspacePath: string) => {
+  const gitConfig: { fs: IndexedDBStorage, dir: string } = {
+    fs: window.remixFileSystemCallback,
+    dir: addSlash(workspacePath)
+  }
+  const branches: { remote: any; name: string; }[] = await plugin.call('dGitProvider', 'branches', gitConfig)
+
+  return branches
+}
+
+export const getGitRepoCurrentBranch = async (workspaceName: string) => {
+  const gitConfig: { fs: IndexedDBStorage, dir: string } = {
+    fs: window.remixFileSystemCallback,
+    dir: addSlash(workspaceName)
+  }
+  const currentBranch: string = await plugin.call('dGitProvider', 'currentbranch', gitConfig)
+
+  return currentBranch
 }

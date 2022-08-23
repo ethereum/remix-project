@@ -1370,26 +1370,6 @@
         }
       }
     },
-    "remix-ui-editor-context-view": {
-      "root": "libs/remix-ui/editor-context-view",
-      "sourceRoot": "libs/remix-ui/editor-context-view/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/editor-context-view/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/editor-context-view/**/*"
-            ]
-          }
-        }
-      }
-    },
     "remix-ui-run-tab": {
       "root": "libs/remix-ui/run-tab",
       "sourceRoot": "libs/remix-ui/run-tab/src",
@@ -1496,6 +1476,46 @@
         }
       }
     },
+    "remix-ui-file-decorators": {
+      "root": "libs/remix-ui/file-decorators",
+      "sourceRoot": "libs/remix-ui/file-decorators/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/file-decorators/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/file-decorators/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-drag-n-drop": {
+      "root": "libs/remix-ui/drag-n-drop",
+      "sourceRoot": "libs/remix-ui/drag-n-drop/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-ui/drag-n-drop/.eslintrc.json",
+            "tsConfig": [
+              "libs/remix-ui/drag-n-drop/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
     "vyper": {
       "root": "apps/vyper",
       "sourceRoot": "apps/vyper/src",
@@ -1566,7 +1586,88 @@
             "linter": "eslint",
             "config": "apps/vyper/.eslintrc",
             "files": [
-              "apps/vyper/src/**/*.js", "apps/vyper/src/**/*.ts"
+              "apps/vyper/src/**/*.js",
+              "apps/vyper/src/**/*.ts"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "etherscan": {
+      "root": "apps/etherscan",
+      "sourceRoot": "apps/etherscan/src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "outputPath": "dist/apps/etherscan",
+            "index": "apps/etherscan/src/index.html",
+            "main": "apps/etherscan/src/main.tsx",
+            "polyfills": "apps/etherscan/src/polyfills.ts",
+            "tsConfig": "apps/etherscan/tsconfig.app.json",
+            "assets": [
+              "apps/etherscan/src/favicon.ico",
+              "apps/etherscan/src/assets"
+            ],
+            "styles": [
+              "apps/etherscan/src/styles.css"
+            ],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/etherscan/src/environments/environment.ts",
+                  "with": "apps/etherscan/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "etherscan:build",
+            "port": 5003
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "etherscan:build:production",
+              "hmr": false
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/vyper/.eslintrc",
+            "files": [
+              "apps/vyper/src/**/*.js",
+              "apps/vyper/src/**/*.ts"
             ],
             "exclude": [
               "**/node_modules/**"

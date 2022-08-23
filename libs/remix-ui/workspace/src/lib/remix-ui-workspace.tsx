@@ -11,7 +11,7 @@ export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
-  const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
+  const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
@@ -189,7 +189,7 @@ export function Workspace () {
 
   return (
     <>
-      <div className='px-2 remixui_container' style={{ height: '95%' }}>
+      <div className='px-2 remixui_container' style={{ height: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
         <div className='remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
@@ -228,7 +228,7 @@ export function Workspace () {
                         e.stopPropagation()
                         deleteCurrentWorkspace()
                       }}
-                      className='fas fa-trash remixui_menuicon'
+                      className='far fa-trash remixui_menuicon'
                       title='Delete'>
                     </span>
                     <span
@@ -308,6 +308,7 @@ export function Workspace () {
                         contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                         removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                         files={global.fs.browser.files}
+                        fileState={global.fs.browser.fileState}
                         expandPath={global.fs.browser.expandPath}
                         focusEdit={global.fs.focusEdit}
                         focusElement={global.fs.focusElement}
@@ -330,6 +331,7 @@ export function Workspace () {
                         dispatchRemoveInputField={global.dispatchRemoveInputField}
                         dispatchAddInputField={global.dispatchAddInputField}
                         dispatchHandleExpandPath={global.dispatchHandleExpandPath}
+                        dispatchMoveFile={global.dispatchMoveFile}
                       />
                   }
                 </div>
@@ -344,6 +346,7 @@ export function Workspace () {
                           contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
                           removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                           files={global.fs.localhost.files}
+                          fileState={[]}
                           expandPath={global.fs.localhost.expandPath}
                           focusEdit={global.fs.focusEdit}
                           focusElement={global.fs.focusElement}
@@ -366,6 +369,7 @@ export function Workspace () {
                           dispatchRemoveInputField={global.dispatchRemoveInputField}
                           dispatchAddInputField={global.dispatchAddInputField}
                           dispatchHandleExpandPath={global.dispatchHandleExpandPath}
+                          dispatchMoveFile={global.dispatchMoveFile}
                         />
                     }
                   </div>
@@ -374,22 +378,31 @@ export function Workspace () {
           </div>
         </div>
       </div>
-      <div className='bg-light border-top' style={{ height: '5%' }}>
-        <div className='d-flex justify-space-between p-1'>
-          <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
-          <div className="pt-1 mr-1">
-            <Dropdown style={{ height: 30, minWidth: 80 }}>
-              <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark" icon={null}>
-                Main
-              </Dropdown.Toggle>
+      {
+        selectedWorkspace &&
+        <div className='bg-light border-top' style={{ height: '5%' }}>
+          <div className='d-flex justify-space-between p-1'>
+            <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
+            <div className="pt-1 mr-1">
+              <Dropdown style={{ height: 30, minWidth: 80 }}>
+                <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark" icon={null}>
+                  { selectedWorkspace.currentBranch || '-none-'}
+                </Dropdown.Toggle>
 
-              <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items' data-id="custom-dropdown-items">
-                <Dropdown.Item><span className="pl-3">setup</span></Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+                <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items' data-id="custom-dropdown-items">
+                  {
+                    (selectedWorkspace.branches || []).map((branch, index) => {
+                      return (
+                        <Dropdown.Item key={index}><span>{ selectedWorkspace.currentBranch === branch.name ? <span>&#10003; { branch.name } </span> : <span className="pl-3">{ branch.name }</span> }</span></Dropdown.Item>
+                      )
+                    })
+                  }
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </>
   )
 }

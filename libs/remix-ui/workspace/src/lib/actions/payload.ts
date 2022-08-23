@@ -1,3 +1,4 @@
+import { fileDecoration } from '@remix-ui/file-decorators'
 import { action } from '../types'
 
 export const setCurrentWorkspace = (workspace: { name: string; isGitRepo: boolean; }) => {
@@ -125,7 +126,7 @@ export const createWorkspaceRequest = (promise: Promise<any>) => {
   }
 }
 
-export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; }) => {
+export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }) => {
   return {
     type: 'CREATE_WORKSPACE_SUCCESS',
     payload: workspaceName
@@ -240,6 +241,12 @@ export const fsInitializationCompleted = () => {
   }
 }
 
+export const setFileDecorationSuccess = (items: fileDecoration[]) => {
+  return {
+    type: 'SET_FILE_DECORATION_SUCCESS',
+    payload: items
+  }
+}
 export const cloneRepositoryRequest = () => {
   return {
     type: 'CLONE_REPOSITORY_REQUEST'

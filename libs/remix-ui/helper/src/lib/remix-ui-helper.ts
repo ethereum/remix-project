@@ -123,3 +123,8 @@ export const shortenHexData = (data) => {
   const len = data.length
   return data.slice(0, 5) + '...' + data.slice(len - 5, len)
 }
+
+export const addSlash = (file: string) => {
+  if (!file.startsWith('/'))file = '/' + file
+  return file
+}
