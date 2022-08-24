@@ -6,13 +6,7 @@
     box-sizing        : border-box;
   }
   .remixui_fileexplorer       {
-    display           : flex;
-    flex-direction    : column;
     position          : relative;
-    width             : 100%;
-    padding-left      : 6px;
-    padding-right     : 6px;
-    padding-top       : 6px;
     overflow-y        : auto;
   }
   .remixui_fileExplorerTree   {
