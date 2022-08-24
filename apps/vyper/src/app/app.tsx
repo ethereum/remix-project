@@ -75,7 +75,7 @@ const App: React.FC = () => {
         </div>
         <a
           rel="noopener noreferrer"
-          href="https://github.com/GrandSchtroumpf/vyper-remix"
+          href="https://github.com/ethereum/remix-project/tree/master/apps/vyper"
           target="_blank"
         >
         <i className="fab fa-github"></i>
