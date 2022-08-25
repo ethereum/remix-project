@@ -72,7 +72,7 @@ const App: React.FC = () => {
       <header>
         <div className="title">
           <img src={vyperLogo} alt="Vyper logo" />
-          <h4>yper Compiler</h4>
+          <h4>yper Compiler</h4><h5></h5>
         </div>
         <a
           rel="noopener noreferrer"
