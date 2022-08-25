@@ -43,10 +43,11 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   if (extension !== 'vy') {
     throw new Error('Use extension .vy for Vyper.')
   }
+  const data = JSON.stringify({ code: contract.content })
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: contract.content })
+    headers: { 'Content-Type': 'application/json', 'Content-Length': data.length.toString() },
+    body: data
   })
 
   if (response.status === 404) {
