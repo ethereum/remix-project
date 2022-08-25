@@ -795,7 +795,7 @@ class FileManager extends Plugin {
     if (provider) {
       try{
         const content = await provider.get(currentFile)
-        if(content) this.editor.setText(content)
+        if(content) this.editor.setText(currentFile, content)
       }catch(error){
         console.log(error)
       }
