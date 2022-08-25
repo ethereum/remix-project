@@ -57,6 +57,7 @@ export const useDisplayErrors = (config, checked, dispatch) => {
 }
 
 export const saveTokenToast = (config, dispatch, tokenValue, key) => {
+  console.log('key in saveToken---->', key)
   config.set('settings/' + key, tokenValue)
   dispatch({ type: 'save', payload: { message: 'GitHub credentials updated' } })
 }
