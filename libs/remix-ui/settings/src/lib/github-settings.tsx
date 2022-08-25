@@ -35,14 +35,14 @@ export function GithubSettings (props: GithubSettingsProps) {
 
   // api key settings
   const saveGithubToken = () => {
-    props.saveTokenToast(githubToken, githubUserName, githubEmail)
+    props.saveToken(githubToken, githubUserName, githubEmail)
   }
 
   const removeToken = () => {
     setGithubToken('')
     setGithubUsername('')
     setGithubEmail('')
-    props.removeTokenToast()
+    props.removeToken()
   }
   
   return (

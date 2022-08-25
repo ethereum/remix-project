@@ -9,6 +9,7 @@ import { initialState, toastInitialState, toastReducer, settingReducer } from '.
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
 import { GithubSettings } from './github-settings'
+import { EtherscanSettings } from './etherscan-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -388,19 +389,27 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}     
       <GithubSettings
-        saveTokenToast={(githubToken: string, githubUserName: string, githubEmail: string) => {
+        saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
           saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token")
           saveTokenToast(props.config, dispatchToast, githubUserName, "github-user-name")
           saveTokenToast(props.config, dispatchToast, githubEmail, "github-email")
         }}
-        removeTokenToast={() => { 
+        removeToken={() => { 
           removeTokenToast(props.config, dispatchToast, "gist-access-token")
           removeTokenToast(props.config, dispatchToast, "github-user-name")
           removeTokenToast(props.config, dispatchToast, "github-email")
         }}
         config={props.config}
       />
-      {token('etherscan')}
+      <EtherscanSettings
+        saveToken={(etherscanToken: string) => {
+          saveTokenToast(props.config, dispatchToast, etherscanToken, "etherscan-access-token")
+        }}
+        removeToken={() => { 
+          removeTokenToast(props.config, dispatchToast, "etherscan-access-token")
+        }}
+        config={props.config}
+      />
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
