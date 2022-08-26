@@ -118,9 +118,7 @@ export class CodeParser extends Plugin {
         })
 
         this.on('solidity', 'loadingCompiler', async (url) => {
-            // add timestamp to avoid caching
-            url = url + '?t=' + Date.now()
-            this.compilerService.compiler.loadVersion(true, url)
+            this.compilerService.compiler.loadVersion(true, `${url}?t=${Date.now()}`)
         })
 
         await this.compilerService.init()
