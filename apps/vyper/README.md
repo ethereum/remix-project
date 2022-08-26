@@ -27,8 +27,8 @@ You can host this plugin in your local environment.
 
 
 ## Load example contracts
-It is possible to cloned the Vyper repository in Remix in order to use example contracts. Click on `Clone Vyper Repository`.
-Once it is clone, you will find the contract in the `examples` folder.
+It is possible to clone the Vyper repository in Remix in order to use example contracts. Click on `Clone Vyper Repository`.
+Once it is cloned, you will find the contract in the `examples` folder.
 
 ### Local Vyper Compiler
 You can use your local Vyper compiler by selecting the radio button `Local` .
