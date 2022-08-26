@@ -32,6 +32,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
 
   useEffect(() => {
+    enableContractNames(true)
+  }, [Object.keys(props.contracts.contractList).length])
+
+  useEffect(() => {
     enableAtAddress(false)
     setAbiLabel({
       display: 'none',
@@ -72,13 +76,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       })
       if (!currentContract) enableAtAddress(false)
     }
-    if (currentFile) {
-      enableContractNames(true)
-      setCompFails('none')
-    } else {
-      enableContractNames(false)
-      setCompFails('block')
-    }
+    enableContractNames(true)
     initSelectedContract()
   }, [loadType, currentFile, compilationCount])
 
