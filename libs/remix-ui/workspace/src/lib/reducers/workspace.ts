@@ -2,6 +2,7 @@ import { extractNameFromKey } from '@remix-ui/helper'
 import { action, FileType } from '../types'
 import * as _ from 'lodash'
 import { fileDecoration } from '@remix-ui/file-decorators'
+import { ROOT_PATH } from '../utils/constants'
 interface Action {
   type: string
   payload: any
@@ -693,7 +694,7 @@ const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<s
 
 const removeInputField = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
   let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
-  const root = state.mode === 'browser' ? state.browser.currentWorkspace : state.mode
+  const root = state.mode === 'browser' ? ROOT_PATH : state.mode
 
   if (path === root) {
     delete files[root][path + '/' + 'blank']
@@ -720,11 +721,11 @@ const removeInputField = (state: BrowserState, path: string): { [x: string]: Rec
 const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }, deletePath?: string): { [x: string]: Record<string, FileType> } => {
   if (!payload.fileTree) return state.mode === 'browser' ? state.browser.files : state[state.mode].files
   if (state.mode === 'browser') {
-    if (payload.path === state.browser.currentWorkspace) {
-      let files = normalize(payload.fileTree, payload.path, payload.type)
-      files = _.merge(files, state.browser.files[state.browser.currentWorkspace])
+    if (payload.path === ROOT_PATH) {
+      let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
+      files = _.merge(files, state.browser.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
-      return { [state.browser.currentWorkspace]: files }
+      return { [ROOT_PATH]: files }
     } else {
       let files = state.browser.files
       const _path = splitPath(state, payload.path)
@@ -788,9 +789,9 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
 
 const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }): { [x: string]: Record<string, FileType> } => {
   if (state.mode === 'browser') {
-    const files = normalize(payload.fileTree, payload.path)
+    const files = normalize(payload.fileTree, ROOT_PATH)
 
-    return { [payload.path]: files }
+    return { [ROOT_PATH]: files }
   } else {
     return fetchDirectoryContent(state, payload)
   }
@@ -846,7 +847,7 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
 }
 
 const splitPath = (state: BrowserState, path: string): string[] | string => {
-  const root = state.mode === 'browser' ? state.browser.currentWorkspace : 'localhost'
+  const root = state.mode === 'browser' ? ROOT_PATH : 'localhost'
   const pathArr: string[] = (path || '').split('/').filter(value => value)
 
   if (pathArr[0] !== root) pathArr.unshift(root)
