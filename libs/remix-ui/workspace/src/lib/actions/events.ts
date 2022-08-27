@@ -2,6 +2,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
 import { action, WorkspaceTemplate } from '../types'
+import { ROOT_PATH } from '../utils/constants'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
@@ -164,7 +165,7 @@ const fileAdded = async (filePath: string) => {
 
 const folderAdded = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
+  const path = extractParentFromKey(folderPath) || ROOT_PATH
 
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
