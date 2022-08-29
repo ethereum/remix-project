@@ -1,5 +1,4 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
-import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
 import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText, useShowGasInEditorText, displayErrorsText } from './constants'
 
@@ -223,47 +222,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       </div>
     )
   }
-
-  // api key settings
-  const saveToken = (type: string) => {
-    saveTokenToast(props.config, dispatchToast, tokenValue[type], labels[type].key)
-  }
-
-  const removeToken = (type: string) => {
-    setTokenValue(prevState => {
-      return { ...prevState, [type]: '' }
-    })
-    removeTokenToast(props.config, dispatchToast, labels[type].key)
-  }
-
-  const handleSaveTokenState = useCallback(
-    (event, type) => {
-      setTokenValue(prevState => {
-        return { ...prevState, [type]: event.target.value }
-      })
-    },
-    [tokenValue]
-  )
-
-  const token = (type: string) => (
-    <div className="border-top">
-      <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{labels[type].title}</h6>
-        <p className="mb-1">{labels[type].message1}</p>
-        <p className="">{labels[type].message2}</p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{labels[type].link}</a></p>
-        <div className=""><label  className="m-0">TOKEN:</label>
-          <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] || '' } />
-            <div className="d-flex justify-content-end pt-2">
-              <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
-              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub access token" onClick={() => removeToken(type)}>Remove</button>
-            </div>
-          </div></div>
-      </div>
-    </div>
-  )
 
   // swarm settings
   const handleSavePrivateBeeAddress = useCallback(
