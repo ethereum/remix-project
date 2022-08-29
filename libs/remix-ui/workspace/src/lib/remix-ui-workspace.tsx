@@ -339,7 +339,7 @@ export function Workspace () {
             }
             {
               global.fs.localhost.isRequestingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
-                : <div className='pl-2 filesystemexplorer remixui_treeview'>
+                : <div className='h-100 filesystemexplorer remixui_treeview'>
                   { global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost &&
                       <FileExplorer
                         name='localhost'
