@@ -1,4 +1,5 @@
 import { remixTypes } from './remix-plugin-types'
+import { hardhatEthersExtension } from './hardhat-ethers-extension'
 
 export const loadTypes = async (monaco) => {
     // ethers.js
@@ -169,6 +170,7 @@ export const loadTypes = async (monaco) => {
     ethers.default = ethers.default.replace(/.\/_version/g, '_version-ethers-lib')
     ethers.default = ethers.default.replace(/.\/ethers/g, 'ethers-lib')
     ethers.default = ethers.default.replace(/@ethersproject\//g, '@ethersproject_')
+    ethers.default = ethers.default + '\n' + hardhatEthersExtension
     monaco.languages.typescript.typescriptDefaults.addExtraLib(ethers.default, `file:///node_modules/@types/ethers-lib/index.d.ts`)
 
     // @ts-ignore
