@@ -410,16 +410,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
-  const handleFileMove = (dest: string, dragged:string)=>{
+  const handleFileMove = (dest: string, src: string) => {
     try {
-      props.dispatchMoveFile(dragged, dest)
+      props.dispatchMoveFile(src, dest)
     } catch (error) {
-      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + dragged, 'Close', async () => {})
+      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + src, 'Close', async () => {})
     }   
-}
+  }
 
+  const handleFolderMove = (dest: string, src: string) => {
+    try {
+      props.dispatchMoveFolder(src, dest)
+    } catch (error) {
+      props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
+    }   
+  }
   return (
-    <Drag onFileMoved={handleFileMove}>
+    <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
