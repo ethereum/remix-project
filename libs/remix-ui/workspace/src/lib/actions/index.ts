@@ -472,3 +472,13 @@ export const moveFile = async (src: string, dest: string) => {
     dispatch(displayPopUp('Oops! An error ocurred while performing moveFile operation.' + error))
   }
 }
+
+export const moveFolder = async (src: string, dest: string) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    await fileManager.moveDir(src, dest)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
+  }
+}
