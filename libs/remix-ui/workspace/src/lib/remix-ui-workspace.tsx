@@ -331,6 +331,7 @@ export function Workspace () {
                       dispatchAddInputField={global.dispatchAddInputField}
                       dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                       dispatchMoveFile={global.dispatchMoveFile}
+                      dispatchMoveFolder={global.dispatchMoveFolder}
                     />
                 }
               </div>
@@ -369,6 +370,7 @@ export function Workspace () {
                         dispatchAddInputField={global.dispatchAddInputField}
                         dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                         dispatchMoveFile={global.dispatchMoveFile}
+                        dispatchMoveFolder={global.dispatchMoveFolder}
                       />
                   }
                 </div>
