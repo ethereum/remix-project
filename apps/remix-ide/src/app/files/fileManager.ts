@@ -236,7 +236,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-  async copyFile(src, dest, customName) {
+  async copyFile(src: string, dest: string, customName?: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -262,7 +262,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination dir
    * @returns {void}
    */
-  async copyDir(src, dest) {
+  async copyDir(src: string, dest: string, customName?: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -277,16 +277,16 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
       } else {
-        await this.inDepthCopy(src, dest)
+        await this.inDepthCopy(src, dest, customName)
       }
     } catch (e) {
       throw new Error(e)
     }
   }
 
-  async inDepthCopy(src, dest, count = 0) {
+  async inDepthCopy(src: string, dest: string, customName?: string) {
     const content = await this.readdir(src)
-    let copiedFolderPath = count === 0 ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
+    let copiedFolderPath = !customName ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
     copiedFolderPath = await helper.createNonClashingDirNameAsync(copiedFolderPath, this)
 
     await this.mkdir(copiedFolderPath)
@@ -295,7 +295,7 @@ class FileManager extends Plugin {
       if (!value.isDirectory) {
         await this.copyFile(key, copiedFolderPath, helper.extractNameFromKey(key))
       } else {
-        await this.inDepthCopy(key, copiedFolderPath, count + 1)
+        await this.inDepthCopy(key, copiedFolderPath, helper.extractNameFromKey(key))
       }
     }
   }
@@ -831,15 +831,45 @@ class FileManager extends Plugin {
       dest = this.normalize(dest)
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
-      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
-      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
-      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
+      await this._handleExists(src, `Cannot move ${src}. Path does not exist.`)
+      await this._handleExists(dest, `Cannot move content into ${dest}. Path does not exist.`)
+      await this._handleIsFile(src, `Cannot move ${src}. Path is not a file.`)
+      await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
+      const fileName = helper.extractNameFromKey(src)
+      
+      if (await this.exists(dest + '/' + fileName)) {
+        throw createError({ code: 'ENOENT', message: `Cannot move ${src}. File already exists at destination ${dest}`})
+      }
+      await this.copyFile(src, dest, fileName)
+      await this.remove(src)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
 
-      const content = await this.readFile(src)
-      let movedFilePath = dest + ( '/' + `${helper.extractNameFromKey(src)}`)
-      movedFilePath = await helper.createNonClashingNameAsync(movedFilePath, this)
-
-      await this.writeFile(movedFilePath, content)
+  /**
+   * Moves a folder to a new folder
+   * @param {string} src path of the source folder
+   * @param {string} dest path of the destination folder
+   * @returns {void}
+   */
+  
+  async moveDir(src: string, dest: string) {
+    try {
+      src = this.normalize(src)
+      dest = this.normalize(dest)
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot move ${src}. Path does not exist.`)
+      await this._handleExists(dest, `Cannot move content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(src, `Cannot move ${src}. Path is not directory.`)
+      await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
+      const dirName = helper.extractNameFromKey(src)
+      
+      if (await this.exists(dest + '/' + dirName)) {
+        throw createError({ code: 'ENOENT', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
+      }
+      await this.copyDir(src, dest, dirName)
       await this.remove(src)
 
     } catch (e) {

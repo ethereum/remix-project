@@ -4,13 +4,14 @@ import { MoveContext } from "./context/moveContext"
 import { DraggableType, DragType } from "./types"
 
 export const Drag = (props: DragType) => {
-  const [dragged, setDragged] = useState<string>("")
+  const [dragged, setDragged] = useState<{ path: string, isDirectory: boolean }>({} as { path: string, isDirectory: boolean })
 
   return (
     <MoveContext.Provider
       value={{
         dragged: dragged,
         moveFile: props.onFileMoved,
+        moveFolder: props.onFolderMoved,
         currentlyMoved: (path) => {
           setDragged(() => path)
         },
@@ -23,37 +24,44 @@ export const Drag = (props: DragType) => {
 
 export const Draggable = (props: DraggableType) => {
   const dragRef = useRef<HTMLSpanElement>(null),
-    file = props.file,
+    destination = props.file,
     context = useContext(MoveContext)
 
   const handleDrop = (event: React.DragEvent<HTMLSpanElement>) => {
     event.preventDefault()
 
-    if (file.isDirectory) {
-      context.moveFile(file.path, context.dragged)
+    if (destination.isDirectory) {
+      if (context.dragged.isDirectory) {
+        context.moveFolder(destination.path, context.dragged.path)
+      } else {
+        context.moveFile(destination.path, context.dragged.path)
+      }
     } else {
-      const path = extractParentFromKey(file.path) || '/'
+      const path = extractParentFromKey(destination.path) || '/'
 
-      context.moveFile(path, context.dragged)
+      if (context.dragged.isDirectory) {
+        context.moveFolder(path, context.dragged.path)
+      } else {
+        context.moveFile(path, context.dragged.path)
+      }
     }
   }
 
   const handleDragover = (event: React.DragEvent<HTMLSpanElement>) => {
     //Checks if the folder is opened
     event.preventDefault()
-    if (file.isDirectory && !props.expandedPath.includes(file.path)) {
-      props.handleClickFolder(file.path, file.type)
+    if (destination.isDirectory && !props.expandedPath.includes(destination.path)) {
+      props.handleClickFolder(destination.path, destination.type)
     }
   }
   
   const handleDrag = () => {
-    if (context.dragged !== file.path) {
-      context.currentlyMoved(file.path)
+    if (context.dragged.path !== destination.path) {
+      context.currentlyMoved({
+        path: destination.path,
+        isDirectory: destination.isDirectory
+      })
     }
-  }
-
-  if (props.isDraggable) {
-    return <>{props.children}</>
   }
 
   return (
@@ -67,12 +75,12 @@ export const Draggable = (props: DraggableType) => {
             handleDrop(event)
           }}
           onDragStart={() => {
-            if (file) {
+            if (destination) {
               handleDrag()
             }
           }}
           onDragOver={(event) => {
-            if (file) {
+            if (destination) {
               handleDragover(event)
             }
           }}
