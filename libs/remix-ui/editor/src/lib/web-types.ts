@@ -224,4 +224,12 @@ export const loadTypes = async (monaco) => {
     }
     `
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexRemixApi)
+
+    // @ts-ignore
+    const chaiType = await import('raw-loader!@types/chai/index.d.ts')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(chaiType.default)
+
+    // @ts-ignore
+    const mochaType = await import('raw-loader!@types/mocha/index.d.ts')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(mochaType.default)
 }
