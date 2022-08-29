@@ -166,33 +166,6 @@ class Editor extends Plugin {
         }
       }
     })
-
-    this.on('fileManager', 'noFileSelected', async () => {
-      this.currentFile = null
-      this.renderComponent()
-    })
-    this.on('fileManager', 'currentFileChanged', async (name) => {
-      if (name.endsWith('.ts')) {
-        // extract the import, resolve their content
-        // and add the imported files to Monaco through the `addModel`
-        // so Monaco can provide auto completion
-        let content = await this.call('fileManager', 'readFile', name)
-        const paths = name.split('/')
-        paths.pop()
-        const fromPath = paths.join('/') // get current execution context path
-        for (const match of content.matchAll(/import\s+.*\s+from\s+(?:"(.*?)"|'(.*?)')/g)) {
-          let path = match[2]
-          if (path.startsWith('./') || path.startsWith('../')) path = resolve(fromPath, path)
-          if (path.startsWith('/')) path = path.substring(1)
-          if (!path.endsWith('.ts')) path = path + '.ts'
-          if (await this.call('fileManager', 'exists', path)) {
-            content = await this.call('fileManager', 'readFile', path)
-            this.emit('addModel', content, 'typescript', path, false)
-          }
-        }
-      }
-    })
-
     this.on('fileManager', 'noFileSelected', async () => {
       this.currentFile = null
       this.renderComponent()
