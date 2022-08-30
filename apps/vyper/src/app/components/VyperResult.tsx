@@ -3,7 +3,6 @@ import {
   VyperCompilationResult,
   VyperCompilationOutput,
   isCompilationError,
-  remixClient
 } from '../utils';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
@@ -28,9 +27,7 @@ function VyperResult({ output }: VyperResultProps) {
 
     <div id="result">
       <p className="my-3">No contract compiled yet.</p>
-      <Button data-id="add-repository" variant="secondary" className="w-100" onClick={() => remixClient.cloneVyperRepo()}>
-          Clone Vyper examples repository
-      </Button>
+      
     </div>
   )
 
@@ -38,7 +35,11 @@ function VyperResult({ output }: VyperResultProps) {
     return (
     <div id="result" className="error">
       <i className="fas fa-exclamation-circle text-danger"></i>
-      <pre data-id="error-message" className="w-100 alert alert-danger">{output.message}</pre>
+      <pre data-id="error-message" className="px-2 w-100 alert alert-danger" style={{
+        fontSize: "0.5rem",
+        overflowX: "hidden",
+        textOverflow: "ellipsis"
+      }}>{output.message}</pre>
     </div>)
   }
 
