@@ -188,7 +188,7 @@ export function Workspace () {
   }
 
   return (
-    <div className='emixui_container'>
+    <div className='remixui_container'>
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
