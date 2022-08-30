@@ -184,6 +184,15 @@ export function cborEncodedValueExtraction () {
   return /64697066735822([0-9a-f]{68})64736f6c6343([0-9a-f]{6})0033$/
 }
 
+/**
+  * return a regex which extract the input parameters from the bytecode
+  *
+  * @return {RegEx}
+  */
+export function inputParametersExtraction () {
+  return /64697066735822[0-9a-f]{68}64736f6c6343[0-9a-f]{6}0033(.*)$/
+}
+
 export function extractcborMetadata (value) {
   return value.replace(cborEncodedValueExtraction(), '')
 }
@@ -193,6 +202,10 @@ export function extractSwarmHash (value) {
   value = value.replace(swarmHashExtractionPOC31(), '')
   value = value.replace(swarmHashExtractionPOC32(), '')
   return value
+}
+
+export function extractinputParameters (value) {
+  return value.replace(inputParametersExtraction(), '')
 }
 
 /**
@@ -218,14 +231,16 @@ export function compareByteCode (code1, code2) {
     code2 = replaceLibReference(code2, pos)
     code1 = replaceLibReference(code1, pos)
   }
+  code1 = extractinputParameters(code1)  
   code1 = extractSwarmHash(code1)
   code1 = extractcborMetadata(code1)
+  code2 = extractinputParameters(code2)
   code2 = extractSwarmHash(code2)
   code2 = extractcborMetadata(code2)
 
   if (code1 && code2) {
     const compare = stringSimilarity.compareTwoStrings(code1, code2)
-    return compare > 0.93
+    return compare == 1
   }
 
   return false
