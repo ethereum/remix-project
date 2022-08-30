@@ -77,7 +77,6 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
                   start: { line: parseInt(location[0]) - 1, column: 10 },
                   end: { line: parseInt(location[0]) - 1, column: 10 }
                 }
-                console.log("msg = ", message)
                 remixClient.highlight(lineColumnPos as any, _contract.name, message)
               }
             })
