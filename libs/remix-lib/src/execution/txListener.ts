@@ -2,7 +2,7 @@
 import { ethers } from 'ethers'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
-import { compareByteCode } from '../util'
+import { compareByteCode, getinputParameters } from '../util'
 import { decodeResponse } from './txFormat'
 import { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
 
@@ -352,7 +352,7 @@ export class TxListener {
       const bytecode = contract.object.evm.bytecode.object
       let params = null
       if (bytecode && bytecode.length) {
-        params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
+        params = this._decodeInputParams(getinputParameters(inputData), getConstructorInterface(abi))
       }
       this._resolvedTransactions[tx.hash] = {
         contractName: contract.name,
