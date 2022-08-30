@@ -27,9 +27,9 @@ function VyperResult({ output }: VyperResultProps) {
   if (!output) return (
 
     <div id="result">
-      <p>No contract compiled yet.</p>
-      <Button data-id="add-repository" variant="info" onClick={() => remixClient.cloneVyperRepo()}>
-          Clone Vyper repository and play with the contract examples
+      <p className="my-3">No contract compiled yet.</p>
+      <Button data-id="add-repository" variant="secondary" className="w-100" onClick={() => remixClient.cloneVyperRepo()}>
+          Clone Vyper examples repository
       </Button>
     </div>
   )
@@ -38,7 +38,7 @@ function VyperResult({ output }: VyperResultProps) {
     return (
     <div id="result" className="error">
       <i className="fas fa-exclamation-circle text-danger"></i>
-      <pre data-id="error-message" className="alert alert-danger">{output.message}</pre>
+      <pre data-id="error-message" className="w-100 alert alert-danger">{output.message}</pre>
     </div>)
   }
 
