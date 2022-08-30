@@ -47,7 +47,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
   }
 
   return (
-    <div className='container px-0'>
+    <div className='pb-2 container px-0'>
       <div className='txContainer'>
         <div className='py-1 d-flex justify-content-center w-100 input-group'>
           <input
