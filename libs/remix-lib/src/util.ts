@@ -208,6 +208,14 @@ export function extractinputParameters (value) {
   return value.replace(inputParametersExtraction(), '')
 }
 
+export function getinputParameters (value) {
+  const regex = value.match(inputParametersExtraction())
+  if (regex && regex[1]) {
+    return regex[1]
+  } else
+      return ''
+}
+
 /**
   * Compare bytecode. return true if the code is equal (handle swarm hash and library references)
   * @param {String} code1 - the bytecode that is actually deployed (contains resolved library reference and a potentially different swarmhash)
