@@ -69,7 +69,7 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
               errorIndex = errorIndex + 4
               if (message && message.split('\n\n').length > 0) {
                 try {
-                  message = message.split('\n\n')[1]
+                  message = message.split('\n\n')[message.split('\n\n').length - 1]
                 } catch (e) {}                
               }
               if (location.length > 0) {
@@ -77,6 +77,7 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
                   start: { line: parseInt(location[0]) - 1, column: 10 },
                   end: { line: parseInt(location[0]) - 1, column: 10 }
                 }
+                console.log("msg = ", message)
                 remixClient.highlight(lineColumnPos as any, _contract.name, message)
               }
             })
