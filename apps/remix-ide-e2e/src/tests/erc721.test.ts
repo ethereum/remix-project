@@ -13,7 +13,8 @@ module.exports = {
     return sources
   },
   'Deploy SampleERC721 whose bytecode is very similar to ERC721': function (browser: NightwatchBrowser) {
-    browser.click('*[data-id="workspaceCreate"]')
+    browser.clickLaunchIcon('filePanel')
+      .click('*[data-id="workspaceCreate"]')
       // create contract
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
@@ -26,10 +27,12 @@ module.exports = {
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
+      .openFile('contracts/SampleERC721.sol')
+      .verifyContracts(['SampleERC721'])
       // deploy contract
       .clickLaunchIcon('udapp')
       .selectContract('SampleERC721')
-      .createContract('E, E')
+      .createContract('E,E')
       .testFunction('last',
       {
         status: 'true Transaction mined and execution succeed',
