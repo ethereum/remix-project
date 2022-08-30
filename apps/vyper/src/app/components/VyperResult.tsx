@@ -10,7 +10,6 @@ import Button from 'react-bootstrap/Button';
 import JSONTree from 'react-json-view'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 
-
 interface VyperResultProps {
   output?: VyperCompilationOutput;
 }
@@ -27,20 +26,20 @@ function VyperResult({ output }: VyperResultProps) {
 
     <div id="result">
       <p className="my-3">No contract compiled yet.</p>
-      
     </div>
   )
 
   if (isCompilationError(output)) {
     return (
-    <div id="result" className="error" title={output.message}>
-      <i className="fas fa-exclamation-circle text-danger"></i>
-      <pre data-id="error-message" className="px-2 w-100 alert alert-danger" style={{
-        fontSize: "0.5rem",
-        overflowX: "hidden",
-        textOverflow: "ellipsis"
-      }}>{output.message}</pre>
-    </div>)
+      <div id="result" className="error" title={output.message}>
+        <i className="fas fa-exclamation-circle text-danger"></i>
+        <pre data-id="error-message" className="px-2 w-100 alert alert-danger" style={{
+          fontSize: "0.5rem",
+          overflowX: "hidden",
+          textOverflow: "ellipsis"
+        }}>{output.message}</pre>
+      </div>
+    )
   }
 
   return (

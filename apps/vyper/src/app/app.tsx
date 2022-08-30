@@ -83,7 +83,7 @@ const App: React.FC = () => {
         </a>
       </header>
       <section>
-        <div className="px-3 w-100">
+        <div className="px-4 w-100">
           <Button data-id="add-repository" className="w-100 text-dark w-100 bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
           </Button>
@@ -107,7 +107,7 @@ const App: React.FC = () => {
           environment={state.environment}
         />
         <WarnRemote environment={state.environment} />
-        <div id="compile-btn">
+        <div className="px-4" id="compile-btn">
           <CompilerButton
             compilerUrl={compilerUrl()}
             contract={contract}
