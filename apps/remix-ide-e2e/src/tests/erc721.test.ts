@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import examples from '../examples/example-contracts'
 
 const sources = []
 
