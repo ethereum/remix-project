@@ -633,9 +633,9 @@ class FileManager extends Plugin {
         throw error
       }
       if (provider.isReadOnly(file)) {
-        this.editor.openReadOnly(file, content)
+        await this.editor.openReadOnly(file, content)
       } else {
-        this.editor.open(file, content)
+        await this.editor.open(file, content)
       }
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
