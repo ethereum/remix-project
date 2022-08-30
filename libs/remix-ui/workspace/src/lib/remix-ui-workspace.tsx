@@ -188,7 +188,7 @@ export function Workspace () {
   }
 
   return (
-    <div className='emixui_container'>
+    <div className='remixui_container'>
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
@@ -196,103 +196,103 @@ export function Workspace () {
               <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
-                <span className="remixui_menu">
-                  <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='workspaceCreate'
-                    data-id='workspaceCreate'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      createWorkspace()
-                    }}
-                    className='far fa-plus-square remixui_menuicon'
-                    title='Create'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                    id='workspaceRename'
-                    data-id='workspaceRename'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      renameCurrentWorkspace()
-                    }}
-                    className='far fa-edit remixui_menuicon'
-                    title='Rename'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                    id='workspaceDelete'
-                    data-id='workspaceDelete'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      deleteCurrentWorkspace()
-                    }}
-                    className='far fa-trash remixui_menuicon'
-                    title='Delete'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                    id='workspacesDownload'
-                    data-id='workspacesDownload'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      downloadWorkspaces()
-                    }}
-                    className='far fa-download remixui_menuicon'
-                    title='Download Workspaces'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='workspacesRestore'
-                    data-id='workspacesRestore'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      restoreBackup()
-                    }}
-                    className='far fa-upload remixui_menuicon'
-                    title='Restore Workspaces Backup'>
-                  </span>
-                  <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='cloneGitRepository'
-                    data-id='cloneGitRepository'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      cloneGitRepository()
-                    }}
-                    className='far fa-clone remixui_menuicon'
-                    title='Clone Git Repository'>
-                  </span>
+              <span className="remixui_menu">
+                <span
+                  hidden={currentWorkspace === LOCALHOST}
+                  id='workspaceCreate'
+                  data-id='workspaceCreate'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    createWorkspace()
+                  }}
+                  className='far fa-plus-square remixui_menuicon'
+                  title='Create'>
                 </span>
-                <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
-                  <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
-                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
-                  </Dropdown.Toggle>
+                <span
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                  id='workspaceRename'
+                  data-id='workspaceRename'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    renameCurrentWorkspace()
+                  }}
+                  className='far fa-edit remixui_menuicon'
+                  title='Rename'>
+                </span>
+                <span
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                  id='workspaceDelete'
+                  data-id='workspaceDelete'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    deleteCurrentWorkspace()
+                  }}
+                  className='far fa-trash remixui_menuicon'
+                  title='Delete'>
+                </span>
+                <span
+                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+                  id='workspacesDownload'
+                  data-id='workspacesDownload'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    downloadWorkspaces()
+                  }}
+                  className='far fa-download remixui_menuicon'
+                  title='Download Workspaces'>
+                </span>
+                <span
+                  hidden={currentWorkspace === LOCALHOST}
+                  id='workspacesRestore'
+                  data-id='workspacesRestore'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    restoreBackup()
+                  }}
+                  className='far fa-upload remixui_menuicon'
+                  title='Restore Workspaces Backup'>
+                </span>
+                <span
+                  hidden={currentWorkspace === LOCALHOST}
+                  id='cloneGitRepository'
+                  data-id='cloneGitRepository'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    cloneGitRepository()
+                  }}
+                  className='far fa-clone remixui_menuicon'
+                  title='Clone Git Repository'>
+                </span>
+              </span>
+              <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
+                <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
+                  { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
+                </Dropdown.Toggle>
 
-                  <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
-                    {
-                      global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
-                        <Dropdown.Item
-                          key={index}
-                          onClick={() => {
-                            switchWorkspace(name)
-                          }}
-                          data-id={`dropdown-item-${name}`}
-                        >
-                          { isGitRepo ? 
-                            <div className='d-flex justify-content-between'>
-                              <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
-                              <i className='fas fa-code-branch pt-1'></i>
-                            </div> : 
+                <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
+                  {
+                    global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => {
+                          switchWorkspace(name)
+                        }}
+                        data-id={`dropdown-item-${name}`}
+                      >
+                        { isGitRepo ?
+                          <div className='d-flex justify-content-between'>
                             <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
-                          }
-                        </Dropdown.Item>
-                      ))
-                    }
-                    <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
-                    { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
-                  </Dropdown.Menu>
-                </Dropdown>
+                            <i className='fas fa-code-branch pt-1'></i>
+                          </div> :
+                          <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
+                        }
+                      </Dropdown.Item>
+                    ))
+                  }
+                  <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
+                  { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           </header>
         </div>
