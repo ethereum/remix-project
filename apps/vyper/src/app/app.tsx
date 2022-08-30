@@ -10,6 +10,7 @@ import VyperResult from './components/VyperResult'
 import LocalUrlInput from './components/LocalUrl'
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 import ToggleButton from 'react-bootstrap/ToggleButton'
+import Button from 'react-bootstrap/Button'
 
 import vyperLogo from './logo.svg'
 import './app.css'
@@ -82,6 +83,11 @@ const App: React.FC = () => {
         </a>
       </header>
       <section>
+        <div className="px-3 w-100">
+          <Button data-id="add-repository" className="w-100 text-dark w-100 bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+            Clone Vyper examples repository
+          </Button>
+        </div>
         <ToggleButtonGroup
           name="remote"
           onChange={setEnvironment}
