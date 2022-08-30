@@ -69,7 +69,7 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
               errorIndex = errorIndex + 4
               if (message && message.split('\n\n').length > 0) {
                 try {
-                  message = message.split('\n\n')[1]
+                  message = message.split('\n\n')[message.split('\n\n').length - 1]
                 } catch (e) {}                
               }
               if (location.length > 0) {
@@ -103,8 +103,9 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   }
 
   return (
-    <Button data-id="compile" onClick={compileContract} variant="primary">
-      Compile {contract}
+    <Button data-id="compile" onClick={compileContract} variant="primary" title={contract} className="d-flex flex-column">
+      <span>Compile</span>
+      <span className="overflow-hidden text-truncate text-nowrap" >{contract}</span>
     </Button>
   )
 }
