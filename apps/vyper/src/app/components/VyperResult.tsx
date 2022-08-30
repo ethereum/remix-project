@@ -34,7 +34,7 @@ function VyperResult({ output }: VyperResultProps) {
   if (isCompilationError(output)) {
     return (
     <div id="result" className="error">
-      <i className="fas fa-exclamation-circle text-danger"></i>
+      <i className="fas fa-exclamation-circle text-danger" title={output.message}></i>
       <pre data-id="error-message" className="px-2 w-100 alert alert-danger" style={{
         fontSize: "0.5rem",
         overflowX: "hidden",
