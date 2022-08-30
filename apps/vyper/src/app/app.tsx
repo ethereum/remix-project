@@ -89,7 +89,7 @@ const App: React.FC = () => {
           value={state.environment}
         >
           <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
-            Remote Compiler
+            Remote Compiler v0.2.16
           </ToggleButton>
           <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
             Local Compiler

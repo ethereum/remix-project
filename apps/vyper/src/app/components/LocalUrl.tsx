@@ -20,7 +20,7 @@ function LocalUrlInput({ url, setUrl, environment }: Props) {
   return (
     <Form id="local-url">
       <Form.Group controlId="localUrl">
-        <label className="text-warning pb-4">Currently we support vyper version > 0.2.16</label>
+        <Form.Label className="text-warning pb-4">Currently we support vyper version > 0.2.16</Form.Label>
         <Form.Label>Local Compiler Url</Form.Label>
         <Form.Control onBlur={updateUrl}
           defaultValue={url}
