@@ -295,7 +295,7 @@ module.exports = {
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
       'README.txt': { isDirectory: false } 
-    }, null, null)
+    }, null, '/')
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false}, {name:"emptyworkspace",isGitRepo:false}, {name:"testspace",isGitRepo:false}], null, null)
