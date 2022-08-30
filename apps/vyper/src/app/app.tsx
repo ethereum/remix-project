@@ -68,7 +68,7 @@ const App: React.FC = () => {
 
   return (
     <main id="vyper-plugin">
-      <header className="bg-light">
+      <header>
         <div className="title">
           <img src={vyperLogo} alt="Vyper logo" />
           <h4>yper Compiler</h4>
@@ -110,7 +110,7 @@ const App: React.FC = () => {
             }
           />
         </div>
-        <article id="result">
+        <article id="result" className="px-2">
           <VyperResult output={contract ? output[contract] : undefined} />
         </article>
       </section>

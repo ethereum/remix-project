@@ -103,8 +103,9 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   }
 
   return (
-    <Button data-id="compile" onClick={compileContract} variant="primary">
-      Compile {contract}
+    <Button data-id="compile" onClick={compileContract} variant="primary" title={contract} className="d-flex flex-column">
+      <span>Compile</span>
+      <span className="overflow-hidden text-truncate text-nowrap" >{contract}</span>
     </Button>
   )
 }
