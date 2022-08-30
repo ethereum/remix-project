@@ -189,7 +189,7 @@ const fileRemoved = async (removePath: string) => {
 
 const fileRenamed = async (oldPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
+  const path = extractParentFromKey(oldPath) || ROOT_PATH
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)

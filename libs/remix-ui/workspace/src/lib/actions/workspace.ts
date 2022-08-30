@@ -7,6 +7,7 @@ import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
+import { ROOT_PATH } from '../utils/constants'
 
 
 const LOCALHOST = ' - connect to localhost - '
@@ -346,7 +347,7 @@ export const cloneRepository = async (url: string) => {
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-      await fetchWorkspaceDirectory('/')
+      await fetchWorkspaceDirectory(ROOT_PATH)
       dispatch(cloneRepositorySuccess())
     }).catch(() => {
       const cloneModal = {
