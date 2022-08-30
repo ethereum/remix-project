@@ -38,7 +38,7 @@ const App: React.FC = () => {
     async function start() {
       try {
         await remixClient.loaded()
-        remixClient.onFileChange(name => setContract(name))        
+        remixClient.onFileChange(name => setContract(name))
         remixClient.onNoFileSelected(() => setContract(''))
       } catch (err) {
         console.log(err)
@@ -111,7 +111,7 @@ const App: React.FC = () => {
           />
         </div>
         <article id="result">
-          <VyperResult output={contract ? output[contract] : undefined} />
+          {/* <VyperResult output={contract ? output[contract] : undefined} /> */}
         </article>
       </section>
     </main>
