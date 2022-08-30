@@ -43,8 +43,7 @@ export class ExecutionContext {
   }
 
   askPermission () {
-    // metamask
-    if (ethereum && typeof ethereum.enable === 'function') ethereum.enable()
+    if (ethereum && typeof ethereum.request === "function") ethereum.request({ method: "eth_requestAccounts" });
   }
 
   getProvider () {
@@ -169,7 +168,7 @@ export class ExecutionContext {
 
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      if (!this.customNetWorks[context].isInjected) {        
+      if (!this.customNetWorks[context].isInjected) {
         this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
           if (error) infoCb(error)
           cb()
@@ -183,7 +182,7 @@ export class ExecutionContext {
         this.event.trigger('contextChanged', [context])
         return cb()
       }
-    }   
+    }
   }
 
   currentblockGasLimit () {
