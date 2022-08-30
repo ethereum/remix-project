@@ -346,7 +346,7 @@ export const cloneRepository = async (url: string) => {
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-      await fetchWorkspaceDirectory(repoName)
+      await fetchWorkspaceDirectory('/')
       dispatch(cloneRepositorySuccess())
     }).catch(() => {
       const cloneModal = {
