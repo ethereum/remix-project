@@ -188,11 +188,11 @@ export function Workspace () {
   }
 
   return (
-    <div className='px-2 remixui_container'>
+    <div className='emixui_container'>
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
-            <div className="mb-2">
+            <div className="mx-2 mb-2">
               <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
