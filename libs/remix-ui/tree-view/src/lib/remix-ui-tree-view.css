@@ -21,11 +21,12 @@
   }
   .label_item {
     word-break: break-all;
+    max-width: 90%;
   }
   .label_key {
-    min-width: max-content;
-    max-width: 80%;
+    max-width: 65%;
     word-break: break-word;
+    min-width: fit-content;
   }
   .label_value {
     min-width: 10%;
