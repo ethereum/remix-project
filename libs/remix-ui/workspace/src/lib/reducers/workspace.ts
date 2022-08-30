@@ -756,14 +756,11 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       return files
     }
   } else {
-    if (payload.path === '/') {
-      const files = normalize(payload.fileTree, payload.path, payload.type)
-      return { [state.mode]: files }
-    } else if (payload.path === state.mode) {
-      let files = normalize(payload.fileTree, payload.path, payload.type)
-      files = _.merge(files, state[state.mode].files[state.mode])
+    if (payload.path === ROOT_PATH) {
+      let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
+      files = _.merge(files, state.localhost.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
-      return { [state.mode]: files }
+      return { [ROOT_PATH]: files }
     } else {
       let files = state.localhost.files
       const _path = splitPath(state, payload.path)
@@ -788,13 +785,9 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
 }
 
 const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }): { [x: string]: Record<string, FileType> } => {
-  if (state.mode === 'browser') {
-    const files = normalize(payload.fileTree, ROOT_PATH)
+  const files = normalize(payload.fileTree, ROOT_PATH)
 
-    return { [ROOT_PATH]: files }
-  } else {
-    return fetchDirectoryContent(state, payload)
-  }
+  return { [ROOT_PATH]: files }
 }
 
 const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'file'): Record<string, FileType> => {
@@ -847,7 +840,7 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
 }
 
 const splitPath = (state: BrowserState, path: string): string[] | string => {
-  const root = state.mode === 'browser' ? ROOT_PATH : 'localhost'
+  const root = ROOT_PATH
   const pathArr: string[] = (path || '').split('/').filter(value => value)
 
   if (pathArr[0] !== root) pathArr.unshift(root)
