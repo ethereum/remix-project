@@ -226,17 +226,19 @@ module.exports = {
   },
 
   'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
-    let intervalTimer: any
+    let intervalTimer: NodeJS.Timer
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
       .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-      //.pause(5000)
-      //.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
       .pause(10000)
+      .waitForElementNotPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
+        timeout: 120000
+      })
       .click('[data-id="terminalClearConsole"]') // clear the console
       .click('[data-id="listenNetworkCheckInput"]') // start to listen
       .pause(5000)
-     
       .perform(() => {
         intervalTimer = setInterval(() => {
           browser.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
