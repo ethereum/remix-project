@@ -235,7 +235,7 @@ module.exports = {
       .pause(10000)
       .waitForElementNotPresent({
         locateStrategy: 'xpath',
-        selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
+        selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
         timeout: 120000
       })
       .click('[data-id="terminalClearConsole"]') // clear the console
@@ -249,7 +249,7 @@ module.exports = {
       .findElements(
         {
           locateStrategy: 'xpath',
-          selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
+          selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
           timeout: 120000,
         }
         , async (result) => {
