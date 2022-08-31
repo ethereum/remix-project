@@ -194,8 +194,8 @@ module.exports = {
 
   'Should run a script right after compilation #group6': function (browser: NightwatchBrowser) {
     browser
-      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract } )
-      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
+      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract })
+      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script })
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
       .pause(15000)
@@ -209,12 +209,12 @@ module.exports = {
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => {})
+      }, [], () => { })
       .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('filePanel')
       .openFile('README.txt')
-      .addFile('scripts/log_tx_block.js', { content: scriptBlockAndTransaction } )
+      .addFile('scripts/log_tx_block.js', { content: scriptBlockAndTransaction })
       .pause(1000)
       .executeScriptInTerminal('remix.execute(\'scripts/log_tx_block.js\')')
       // check if the input of the transaction is being logged (web3 call)
@@ -223,38 +223,66 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x00000000000000000000000000100000000000000000020000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000040000000060000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000100000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001', 120000)
       // check if the logsBloom is being logged (ethers.js call)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
-    },
+  },
 
-    'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
-      browser
-        .clickLaunchIcon('udapp') // connect to mainnet
-        .switchEnvironment('External Http Provider')
-        .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-        .execute(() => {
-          (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-        }, [], () => {})
-        .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-        .modalFooterOKClick('basic-http-provider')
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .click('[data-id="listenNetworkCheckInput"]') // start to listen
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'from:', 200000)
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'to:', 200000)
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'from:', 200000)
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'to:', 200000)
-        .click('[data-id="listenNetworkCheckInput"]') // stop to listen
-        .pause(30000)
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .pause(5000)
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .pause(20000)
-        .execute(function () {
-          return (document.querySelector('[data-id="terminalJournal"]') as any).innerText
-        }, [], function (result) {
-          browser.assert.equal(result.value, '', 'terminal log should be empty')
+  'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
+    const url = 'http://127.0.0.1:8545'
+    const identifier = 'Custom'
+    browser
+      .clickLaunchIcon('udapp') // connect to mainnet
+      .connectToExternalHttpProvider(url, identifier)
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
+      .pause(4000)
+      .clickLaunchIcon('solidity')
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
+      .pause(10000)
+      .waitForElementNotPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+        timeout: 120000
+      })
+      .click({
+        selector: '[data-id="listenNetworkCheckInput"]',
+      }) // start to listen
+      .pause(5000)
+      .findElements(
+        {
+          locateStrategy: 'xpath',
+          selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+          timeout: 120000,
+        }
+        , async (result) => {
+          if (Array.isArray(result.value) && result.value.length == 2) {
+            console.log('Found ' + result.value.length + ' transactions')
+            browser
+            .click({
+              selector: '[data-id="listenNetworkCheckInput"]',
+            })
+            .click({
+              selector: '*[data-id="terminalClearConsole"]',
+            })
+            .click({
+              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+            })
+            .pause(10000)
+            .waitForElementNotPresent({
+              locateStrategy: 'xpath',
+              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+              timeout: 120000
+            })
+            .end()
+          } else {
+            browser
+              .assert.fail('No transaction found')
+              .end()
+          }
         })
-    }
+  }
 }
+
 
 const asyncAwait = `
   var p = function () {
