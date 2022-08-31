@@ -253,7 +253,7 @@ module.exports = {
                 {
                   locateStrategy: 'css selector',
                   selector: '[data-id="listenNetworkCheckInput"]',
-                  timeout: 120000
+                  timeout: 120000,
                 }
               )
               .pause(5000)
