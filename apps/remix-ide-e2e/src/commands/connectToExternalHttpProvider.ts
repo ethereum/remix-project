@@ -23,7 +23,7 @@ class ConnectToExternalHttpProvider extends EventEmitter {
                             (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
                         }, [], () => { })
                         .setValue('[data-id="modalDialogCustomPromp"]', url)
-                        .modalFooterOKClick('basic-http-provider').pause(4000)
+                        .modalFooterOKClick('basic-http-provider')
                         .perform((done) => {
                             done()
                             this.emit('complete')

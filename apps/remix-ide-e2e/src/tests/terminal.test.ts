@@ -226,27 +226,37 @@ module.exports = {
   },
 
   'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
+    let intervalTimer: any
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
       .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      .pause(10000)
       .click('[data-id="terminalClearConsole"]') // clear the console
       .click('[data-id="listenNetworkCheckInput"]') // start to listen
       .pause(5000)
-      .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      .perform(() => {
+        intervalTimer = setInterval(() => {
+          browser.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+        }, 1000)
+      })
+
       .useXpath()
       .findElements("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]", async (result) => {
         if (Array.isArray(result.value) && result.value.length > 0) {
           console.log('Found ' + result.value.length + ' transactions')
           browser
-          .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym') 
-          .useCss().click('[data-id="listenNetworkCheckInput"]')
-          .pause(5000)
-          .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-          .click('[data-id="terminalClearConsole"]') // clear the console
-          .pause(5000)
-          .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-          .useXpath()
-          .waitForElementNotPresent("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]")
+
+            .useCss().click('[data-id="listenNetworkCheckInput"]')
+            .pause(5000)
+
+            .click('[data-id="terminalClearConsole"]') // clear the console
+            .pause(5000)
+
+            .useXpath()
+            .waitForElementNotPresent("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]")
+            .perform(() => {
+              clearInterval(intervalTimer)
+            })
         } else {
           browser.assert.fail('No transaction found')
         }
