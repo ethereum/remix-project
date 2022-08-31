@@ -269,6 +269,7 @@ module.exports = {
                               })
                             })
                           .useCss().click('[data-id="listenNetworkCheckInput"]') // stop to listen
+                          .pause(5000)
                           .click('[data-id="terminalClearConsole"]') // clear the console
                           .pause(5000,
                             () => {
