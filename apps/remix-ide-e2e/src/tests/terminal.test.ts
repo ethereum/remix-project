@@ -228,90 +228,96 @@ module.exports = {
   'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
-      .waitUntil(async () => {
-        return new Promise((resolve,) => {
-          console.log('Attempting to connect to mainnet...')
-          browser.useCss().switchEnvironment('External Http Provider')
-            .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-            .execute(() => {
-              (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-            }, [], () => { })
-            .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-            .modalFooterOKClick('basic-http-provider').pause(10000)
-            .element('xpath', "//*[@data-id='basic-http-providerModalDialogModalBody-react' and contains(.,'Error while')]",
-              async (result) => {
-                if (result.status === 0) {
-                  console.log("No connection")
-                  browser.click('[data-id="basic-http-provider-modal-footer-ok-react"]')
-                  resolve(false)
-                } else {
-                  console.log("Connection established")
-                  browser.click('[data-id="terminalClearConsole"]') // clear the console
-                    .click('[data-id="listenNetworkCheckInput"]') // start to listen
+      .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      .click('[data-id="terminalClearConsole"]') // clear the console
+      .click('[data-id="listenNetworkCheckInput"]') // start to listen
+      .pause(5000)
+      .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      .useXpath()
+      .findElements("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]", async (result) => {
+        if (Array.isArray(result.value) && result.value.length > 0) {
+          console.log('Found ' + result.value.length + ' transactions')
+          browser
+          .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym') 
+          .useCss().click('[data-id="listenNetworkCheckInput"]')
+          .pause(5000)
+          .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+          .click('[data-id="terminalClearConsole"]') // clear the console
+          .pause(5000)
+          .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+          .useXpath()
+          .waitForElementNotPresent("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]")
+        } else {
+          browser.assert.fail('No transaction found')
+        }
+      })
+    /*
+    browser.useCss().switchEnvironment('External Http Provider')
+      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+      }, [], () => { })
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      .modalFooterOKClick('basic-http-provider').pause(10000)
+      .element('xpath', "//*[@data-id='basic-http-providerModalDialogModalBody-react' and contains(.,'Error while')]",
+        async (result) => {
+          if (result.status === 0) {
+            console.log("No connection")
+            browser.click('[data-id="basic-http-provider-modal-footer-ok-react"]')
+            resolve(false)
+          } else {
+            console.log("Connection established")
+            browser.click('[data-id="terminalClearConsole"]') // clear the console
+              .click('[data-id="listenNetworkCheckInput"]') // start to listen
+              .pause(5000,
+                () => {
+                  checkForBrokenConnection(browser).then(() => {
+                    console.log('Connection is fine')
+                  }).catch(() => {
+                    //resolve(false)
+                  })
+                })
+              .useXpath()
+              .findElements("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]", async (result) => {
+                if (Array.isArray(result.value) && result.value.length > 0) {
+                  console.log("Transactions received", result.value.length)
+                  browser.
+                    pause(10,
+                      () => {
+                        checkForBrokenConnection(browser).then(() => {
+                          console.log('Connection is fine')
+                        }).catch(() => {
+                          // resolve(false)
+                        })
+                      })
+                    .useCss().click('[data-id="listenNetworkCheckInput"]') // stop to listen
+                    .pause(5000)
+                    .click('[data-id="terminalClearConsole"]') // clear the console
                     .pause(5000,
                       () => {
                         checkForBrokenConnection(browser).then(() => {
                           console.log('Connection is fine')
                         }).catch(() => {
-                          //resolve(false)
+                          // resolve(false)
                         })
                       })
                     .useXpath()
-                    .findElements("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]", async (result) => {
-                      if (Array.isArray(result.value) && result.value.length > 0) {
-                        console.log("Transactions received", result.value.length)
-                        browser.
-                          pause(10,
-                            () => {
-                              checkForBrokenConnection(browser).then(() => {
-                                console.log('Connection is fine')
-                              }).catch(() => {
-                                // resolve(false)
-                              })
-                            })
-                          .useCss().click('[data-id="listenNetworkCheckInput"]') // stop to listen
-                          .pause(5000)
-                          .click('[data-id="terminalClearConsole"]') // clear the console
-                          .pause(5000,
-                            () => {
-                              checkForBrokenConnection(browser).then(() => {
-                                console.log('Connection is fine')
-                              }).catch(() => {
-                                // resolve(false)
-                              })
-                            })
-                          .useXpath()
-                          .waitForElementNotPresent("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]")
-                          .pause(10, () => {
-                            resolve(true)
-                          })
-                      } else {
-                        resolve(false)
-                      }
+                    .waitForElementNotPresent("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]")
+                    .pause(10, () => {
+                      resolve(true)
                     })
+                } else {
+                  resolve(false)
                 }
               })
+          }
         })
-      }, 100000, 10000)
+        */
+    //    })
+    //  }, 100000, 10000)
 
   }
 }
-
-const checkForBrokenConnection = (browser: NightwatchBrowser) => {
-  return new Promise((resolve, reject) => {
-    browser.element('xpath', "//*[@data-id='basic-http-providerModalDialogModalBody-react' and contains(.,'Error while')]",
-      async (result) => {
-        if (result.status === 0) {
-          console.log("No connection")
-          browser.click('[data-id="basic-http-provider-modal-footer-ok-react"]')
-          reject()
-        } else {
-          resolve(true)
-        }
-      })
-  })
-}
-
 const asyncAwait = `
   var p = function () {
     return new Promise(function (resolve, reject)  {
