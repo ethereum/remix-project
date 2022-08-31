@@ -230,7 +230,8 @@ module.exports = {
       .clickLaunchIcon('udapp') // connect to mainnet
       .waitUntil(async () => {
         return new Promise((resolve,) => {
-          browser.switchEnvironment('External Http Provider')
+          console.log('Attempting to connect to mainnet...')
+          browser.useCss().switchEnvironment('External Http Provider')
             .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
             .execute(() => {
               (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
