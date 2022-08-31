@@ -238,14 +238,15 @@ module.exports = {
         selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
         timeout: 120000
       })
-      .click('[data-id="terminalClearConsole"]') // clear the console
-      .click('[data-id="listenNetworkCheckInput"]') // start to listen
-      .pause(5000)
       .perform(() => {
         intervalTimer = setInterval(() => {
           browser.connectToExternalHttpProvider(url, identifier)
         }, 3000)
       })
+      .click('[data-id="terminalClearConsole"]') // clear the console
+      .click('[data-id="listenNetworkCheckInput"]') // start to listen
+      .pause(5000)
+ 
       .findElements(
         {
           locateStrategy: 'xpath',
