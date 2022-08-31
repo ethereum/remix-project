@@ -253,7 +253,7 @@ module.exports = {
                         checkForBrokenConnection(browser).then(() => {
                           console.log('Connection is fine')
                         }).catch(() => {
-                          resolve(false)
+                          //resolve(false)
                         })
                       })
                     .useXpath()
@@ -266,7 +266,7 @@ module.exports = {
                               checkForBrokenConnection(browser).then(() => {
                                 console.log('Connection is fine')
                               }).catch(() => {
-                                resolve(false)
+                                // resolve(false)
                               })
                             })
                           .useCss().click('[data-id="listenNetworkCheckInput"]') // stop to listen
@@ -277,7 +277,7 @@ module.exports = {
                               checkForBrokenConnection(browser).then(() => {
                                 console.log('Connection is fine')
                               }).catch(() => {
-                                resolve(false)
+                                // resolve(false)
                               })
                             })
                           .useXpath()
