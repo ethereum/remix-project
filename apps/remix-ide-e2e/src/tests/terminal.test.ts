@@ -232,7 +232,7 @@ module.exports = {
         return new Promise((resolve, ) => {
           browser.switchEnvironment('External Http Provider')
             .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-            .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.ios/e50zmkroshle2e2e50zm0044i7ao04ym')
+            .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
             .modalFooterOKClick('basic-http-provider').pause(3000)
             .element('xpath', "//*[@data-id='basic-http-providerModalDialogModalBody-react' and contains(.,'Error while')]",
               async (result) => {
