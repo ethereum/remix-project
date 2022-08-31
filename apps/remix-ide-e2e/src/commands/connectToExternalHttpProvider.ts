@@ -2,9 +2,9 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class ConnectToExternalHttpProvider extends EventEmitter {
-    command(this: NightwatchBrowser, url: string): NightwatchBrowser {
+    command(this: NightwatchBrowser, url: string, identifier: string): NightwatchBrowser {
         console.log('ConnectToExternalHttpProvider: ' + url)
-        this.api.element('xpath', "//*[@class='udapp_environment' and contains(.,'Main')]",
+        this.api.element('xpath', `//*[@class='udapp_environment' and contains(.,'${identifier}')]`,
             (result) => {
                 console.log('ConnectToExternalHttpProvider: ' + result.status, result.value)
                 if (result.status as any === -1 ) {

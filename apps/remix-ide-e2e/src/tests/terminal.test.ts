@@ -228,9 +228,10 @@ module.exports = {
   'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
     let intervalTimer: NodeJS.Timer
     const url = 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym'
+    const identifier = 'Main'
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
-      .connectToExternalHttpProvider(url)
+      .connectToExternalHttpProvider(url, identifier)
       .pause(10000)
       .waitForElementNotPresent({
         locateStrategy: 'xpath',
@@ -242,7 +243,7 @@ module.exports = {
       .pause(5000)
       .perform(() => {
         intervalTimer = setInterval(() => {
-          browser.connectToExternalHttpProvider(url)
+          browser.connectToExternalHttpProvider(url, identifier)
         }, 3000)
       })
       .findElements(
