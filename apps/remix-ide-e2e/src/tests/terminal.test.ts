@@ -225,7 +225,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
     },
 
-    'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
+    'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
       browser
         .clickLaunchIcon('udapp') // connect to mainnet
         .switchEnvironment('External Http Provider')
