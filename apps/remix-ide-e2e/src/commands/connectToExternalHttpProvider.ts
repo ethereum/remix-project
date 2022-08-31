@@ -13,7 +13,7 @@ class ConnectToExternalHttpProvider extends EventEmitter {
                         .click({
                             locateStrategy: 'css selector',
                             selector: '[data-id="basic-http-provider-modal-footer-ok-react"]',
-                            abortOnFailure: true,
+                            abortOnFailure: false,
                             suppressNotFoundErrors: true,
                             timeout: 5000
                         })

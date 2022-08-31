@@ -230,14 +230,17 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
       .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      //.pause(5000)
+      //.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
       .pause(10000)
       .click('[data-id="terminalClearConsole"]') // clear the console
       .click('[data-id="listenNetworkCheckInput"]') // start to listen
       .pause(5000)
+     
       .perform(() => {
         intervalTimer = setInterval(() => {
           browser.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-        }, 1000)
+        }, 3000)
       })
       .findElements(
         {
