@@ -252,6 +252,7 @@ module.exports = {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
+              /*
               .click(
                 {
                   locateStrategy: 'css selector',
@@ -271,11 +272,15 @@ module.exports = {
                 selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
                 timeout: 120000
               })
+              */
               .perform(() => {
                 clearInterval(intervalTimer)
-              })
+              }).end()
           } else {
             browser.assert.fail('No transaction found')
+            .perform(() => {
+              clearInterval(intervalTimer)
+            }).end()
           }
         })
   }
