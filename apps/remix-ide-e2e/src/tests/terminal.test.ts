@@ -227,9 +227,10 @@ module.exports = {
 
   'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
     let intervalTimer: NodeJS.Timer
+    const url = 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym'
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
-      .connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+      .connectToExternalHttpProvider(url)
       .pause(10000)
       .waitForElementNotPresent({
         locateStrategy: 'xpath',
@@ -241,7 +242,7 @@ module.exports = {
       .pause(5000)
       .perform(() => {
         intervalTimer = setInterval(() => {
-          browser.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
+          browser.connectToExternalHttpProvider(url)
         }, 3000)
       })
       .findElements(
@@ -254,27 +255,6 @@ module.exports = {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-              /*
-              .click(
-                {
-                  locateStrategy: 'css selector',
-                  selector: '[data-id="listenNetworkCheckInput"]',
-                  timeout: 120000,
-                }
-              )
-              .pause(5000)
-              .click({
-                locateStrategy: 'css selector',
-                selector: '[data-id="terminalClearConsole"]',
-                timeout: 120000
-              }) // clear the console
-              .pause(5000)
-              .waitForElementNotPresent({
-                locateStrategy: 'xpath',
-                selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
-                timeout: 120000
-              })
-              */
               .perform(() => {
                 clearInterval(intervalTimer)
               }).end()
