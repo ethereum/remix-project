@@ -225,7 +225,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
   },
 
-  'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
+  'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
     let intervalTimer: NodeJS.Timer
     const url = 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym'
     const identifier = 'Main'
