@@ -260,9 +260,9 @@ module.exports = {
               }).end()
           } else {
             browser.assert.fail('No transaction found')
-            .perform(() => {
-              clearInterval(intervalTimer)
-            }).end()
+              .perform(() => {
+                clearInterval(intervalTimer)
+              }).end()
           }
         })
   }
