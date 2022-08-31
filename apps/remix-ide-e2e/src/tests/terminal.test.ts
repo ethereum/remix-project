@@ -225,7 +225,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
   },
 
-  'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
+  'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
     let intervalTimer: NodeJS.Timer
     const url = 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym'
     const identifier = 'Main'
@@ -250,7 +250,7 @@ module.exports = {
         {
           locateStrategy: 'xpath',
           selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-          timeout: 120000,
+          timeout: 5000,
         }
         , async (result) => {
           if (Array.isArray(result.value) && result.value.length > 0) {
@@ -260,10 +260,12 @@ module.exports = {
                 clearInterval(intervalTimer)
               }).end()
           } else {
-            browser.assert.fail('No transaction found')
+              browser
               .perform(() => {
                 clearInterval(intervalTimer)
-              }).end()
+              })
+              .assert.fail('No transaction found')
+              .end()
           }
         })
   }
