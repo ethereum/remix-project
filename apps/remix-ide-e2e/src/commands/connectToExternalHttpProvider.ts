@@ -9,9 +9,9 @@ class ConnectToExternalHttpProvider extends EventEmitter {
                 console.log('ConnectToExternalHttpProvider: ' + result.status, result.value)
                 if (result.status as any === -1 ) {
                     console.log("No connection")
-                    browser.
-                        useCss()
+                    browser
                         .click({
+                            locateStrategy: 'css selector',
                             selector: '[data-id="basic-http-provider-modal-footer-ok-react"]',
                             abortOnFailure: false,
                             suppressNotFoundErrors: true,

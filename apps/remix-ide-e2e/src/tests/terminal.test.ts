@@ -239,10 +239,9 @@ module.exports = {
           browser.connectToExternalHttpProvider('https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
         }, 1000)
       })
-
-      .useXpath()
       .findElements(
         {
+          locateStrategy: 'xpath',
           selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
           timeout: 120000,
         }
@@ -250,15 +249,25 @@ module.exports = {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-
-              .useCss().click('[data-id="listenNetworkCheckInput"]')
+              .click(
+                {
+                  locateStrategy: 'css selector',
+                  selector: '[data-id="listenNetworkCheckInput"]',
+                  timeout: 120000
+                }
+              )
               .pause(5000)
-
-              .click('[data-id="terminalClearConsole"]') // clear the console
+              .click({
+                locateStrategy: 'css selector',
+                selector: '[data-id="terminalClearConsole"]',
+                timeout: 120000
+              }) // clear the console
               .pause(5000)
-
-              .useXpath()
-              .waitForElementNotPresent("//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]")
+              .waitForElementNotPresent({
+                locateStrategy: 'xpath',
+                selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'to:')]",
+                timeout: 120000
+              })
               .perform(() => {
                 clearInterval(intervalTimer)
               })
