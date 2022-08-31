@@ -232,8 +232,11 @@ module.exports = {
         return new Promise((resolve, ) => {
           browser.switchEnvironment('External Http Provider')
             .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
+            .execute(() => {
+              (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+            }, [], () => {})
             .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-            .modalFooterOKClick('basic-http-provider').pause(3000)
+            .modalFooterOKClick('basic-http-provider').pause(10000)
             .element('xpath', "//*[@data-id='basic-http-providerModalDialogModalBody-react' and contains(.,'Error while')]",
               async (result) => {
                 if (result.status === 0) {
