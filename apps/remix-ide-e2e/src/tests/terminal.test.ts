@@ -250,7 +250,7 @@ module.exports = {
         {
           locateStrategy: 'xpath',
           selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-          timeout: 5000,
+          timeout: 120000,
         }
         , async (result) => {
           if (Array.isArray(result.value) && result.value.length > 0) {
