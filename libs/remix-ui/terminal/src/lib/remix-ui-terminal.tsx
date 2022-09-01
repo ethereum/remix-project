@@ -554,17 +554,18 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       return (
                         <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ parse(msg.value) } </span></div>
                       )
+                    } else if ((Object.keys(msg).length)) {
+                      let stringified
+                      try {
+                        stringified = JSON.stringify(msg)
+                      } catch (e) {
+                        console.error(e)
+                        stringified = '< value not displayable >'
+                      }
+                      return (
+                        <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ stringified } </span></div>
+                      )
                     }
-                    let stringified
-                    try {
-                      stringified = JSON.stringify(msg)
-                    } catch (e) {
-                      console.error(e)
-                      stringified = '< value not displayable >'
-                    }
-                    return (
-                      <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ stringified } </span></div>
-                    )
                   } else {
                     return (
                       <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg ? msg.toString() : null}</span></div>
