@@ -136,6 +136,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
+  const definitionProvider = new RemixDefinitionProvider(props, monaco)
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
 
@@ -569,14 +570,17 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
-
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
-    editorService.openCodeEditor = async (input, source) => {
+    editorService.openCodeEditor = async (input , source) => {
       const result = await openEditorBase(input, source)
       if (input && input.resource && input.resource.path) {
         try {
           await props.plugin.call('fileManager', 'open', input.resource.path)
+          if (input.options && input.options.selection) {
+            editor.revealRange(input.options.selection)
+            editor.setPosition({ column: input.options.selection.startColumn, lineNumber: input.options.selection.startLineNumber })
+          }
         } catch (e) {
           console.log(e)
         }
@@ -608,6 +612,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
 
+    
     loadTypes(monacoRef.current)
   }
 
