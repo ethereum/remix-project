@@ -247,7 +247,10 @@ module.exports = {
       .click({
         selector: '[data-id="listenNetworkCheckInput"]',
       }) // start to listen
-      .pause(5000)
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
+      .pause(10000)
       .findElements(
         {
           locateStrategy: 'xpath',
