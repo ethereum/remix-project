@@ -255,7 +255,7 @@ module.exports = {
           timeout: 120000,
         }
         , async (result) => {
-          if (Array.isArray(result.value) && result.value.length == 2) {
+          if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
             .click({
