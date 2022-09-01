@@ -632,6 +632,13 @@ class FileManager extends Plugin {
         console.log(error)
         throw error
       }
+      try {
+        // This make sure dependencies are loaded in the editor context.
+        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.   
+        await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path))
+      } catch (e) {
+        console.log('unable to handle TypeScript dependencies of', file)
+      }
       if (provider.isReadOnly(file)) {
         await this.editor.openReadOnly(file, content)
       } else {
