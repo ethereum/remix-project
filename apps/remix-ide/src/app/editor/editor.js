@@ -234,7 +234,9 @@ class Editor extends Plugin {
           if (contentDep !== null) {
             this.emit('addModel', contentDep, 'typescript', pathDep, false)
           }
-        } catch (e) {}
+        } catch (e) {
+          console.log(e)
+        }
       }
       
     }
