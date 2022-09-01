@@ -136,7 +136,6 @@ export const EditorUI = (props: EditorUIProps) => {
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
-  const definitionProvider = new RemixDefinitionProvider(props, monaco)
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
 
