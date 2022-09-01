@@ -226,27 +226,28 @@ module.exports = {
   },
 
   'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
-    let intervalTimer: NodeJS.Timer
-    const url = 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym'
-    const identifier = 'Main'
+    const url = 'http://127.0.0.1:8545'
+    const identifier = 'Custom'
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
       .connectToExternalHttpProvider(url, identifier)
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
+      .pause(4000)
+      .clickLaunchIcon('solidity')
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
       .pause(10000)
       .waitForElementNotPresent({
         locateStrategy: 'xpath',
         selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
         timeout: 120000
       })
-      .perform(() => {
-        intervalTimer = setInterval(() => {
-          browser.connectToExternalHttpProvider(url, identifier)
-        }, 3000)
-      })
-      .click('[data-id="terminalClearConsole"]') // clear the console
-      .click('[data-id="listenNetworkCheckInput"]') // start to listen
+      .click({
+        selector: '[data-id="listenNetworkCheckInput"]',
+      }) // start to listen
       .pause(5000)
- 
       .findElements(
         {
           locateStrategy: 'xpath',
@@ -254,23 +255,69 @@ module.exports = {
           timeout: 120000,
         }
         , async (result) => {
-          if (Array.isArray(result.value) && result.value.length > 0) {
+          if (Array.isArray(result.value) && result.value.length == 2) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-              .perform(() => {
-                clearInterval(intervalTimer)
-              }).end()
+            .click({
+              selector: '[data-id="listenNetworkCheckInput"]',
+            })
+            .click({
+              selector: '*[data-id="terminalClearConsole"]',
+            })
+            .click({
+              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+            })
+            .pause(10000)
+            .waitForElementNotPresent({
+              locateStrategy: 'xpath',
+              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+              timeout: 120000
+            })
+            .end()
           } else {
-              browser
-              .perform(() => {
-                clearInterval(intervalTimer)
-              })
+            browser
               .assert.fail('No transaction found')
               .end()
           }
         })
   }
 }
+
+
+const testStorageForLiveMode = `// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+/**
+ * @title Storage
+ * @dev Store & retrieve value in a variable
+ * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
+ */
+contract Storage {
+
+    uint256 number;
+
+    constructor () {
+        number = 350;
+    }
+
+    /**
+     * @dev Store value in variable
+     * @param num value to store
+     */
+    function store(uint256 num) public {
+        number = num;
+    }
+
+    /**
+     * @dev Return value 
+     * @return value of 'number'
+     */
+    function retrieve() public view returns (uint256){
+        return number;
+    }
+}`
+
 const asyncAwait = `
   var p = function () {
     return new Promise(function (resolve, reject)  {
