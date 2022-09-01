@@ -225,7 +225,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
   },
 
-  'Should listen on all transactions #group8 #flaky': function (browser: NightwatchBrowser) {
+  'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
     const url = 'http://127.0.0.1:8545'
     const identifier = 'Custom'
     browser
