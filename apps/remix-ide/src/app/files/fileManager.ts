@@ -875,12 +875,11 @@ class FileManager extends Plugin {
       if (await this.exists(dest + '/' + dirName) || src === dest) {
         throw createError({ code: 'ENOENT', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
       }
-      console.log('mv files')
+
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
 
     } catch (e) {
-      console.log('mv dir error', e)
       throw new Error(e)
     }
   }
