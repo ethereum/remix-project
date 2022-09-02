@@ -32,7 +32,7 @@ export class Web3ProviderModule extends Plugin {
               if (error) {
                 const errorData = error.data ? error.data : error.message
                 // See: https://github.com/ethers-io/ethers.js/issues/901
-                if (!errorData.includes("unknown method eth_chainId")) this.call('terminal', 'log', error.data ? error.data : error.message)
+                if (!(typeof errorData === 'string' && errorData.includes("unknown method eth_chainId"))) this.call('terminal', 'log', error.data ? error.data : error.message)
                 return reject(errorData)
               }
               if (payload.method === 'eth_sendTransaction') {
