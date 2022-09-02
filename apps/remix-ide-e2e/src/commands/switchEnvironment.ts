@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 
 class switchEnvironment extends EventEmitter {
   command (this: NightwatchBrowser, provider: string): NightwatchBrowser {
-    this.api.waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
+    this.api.useCss().waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
     .click('[data-id="settingsSelectEnvOptions"] button')
     .waitForElementVisible(`[data-id="dropdown-item-${provider}"]`)
     .click(`[data-id="dropdown-item-${provider}"]`)
