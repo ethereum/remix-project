@@ -561,11 +561,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     } catch (e) {
                       console.error(e)
                       stringified = '< value not displayable >'
-                    
+                    }
                     return (
                       <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ stringified } </span></div>
                     )
-                    }
                   } else {
                     return (
                       <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg ? msg.toString() : null}</span></div>
