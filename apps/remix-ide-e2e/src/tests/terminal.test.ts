@@ -129,6 +129,7 @@ module.exports = {
       .pause(1000) // compile Storage
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
       .pause(1000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
@@ -151,6 +152,7 @@ module.exports = {
       .pause(1000) // compile StorageWithLib
       .executeScriptInTerminal('remix.execute(\'scripts/storageWithLib.test.js\')')
       .pause(1000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'deploying lib:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ test library integration by calling a lib method')
