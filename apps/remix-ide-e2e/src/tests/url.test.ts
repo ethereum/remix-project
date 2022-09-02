@@ -85,7 +85,7 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contracts from URL "address" param) #group2': !function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contracts from URL "address" param)': !function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
