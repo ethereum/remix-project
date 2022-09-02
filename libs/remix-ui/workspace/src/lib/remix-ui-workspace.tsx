@@ -4,6 +4,7 @@ import { CustomMenu, CustomToggle } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
+import { ROOT_PATH } from './utils/constants'
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -28,9 +29,9 @@ export function Workspace () {
     if (global.fs.mode === 'browser') {
       if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
       else setCurrentWorkspace(NO_WORKSPACE)
-      global.dispatchFetchWorkspaceDirectory(global.fs.browser.currentWorkspace)
+      global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
     } else if (global.fs.mode === 'localhost') {
-      global.dispatchFetchWorkspaceDirectory('/')
+      global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
       setCurrentWorkspace(LOCALHOST)
     }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])

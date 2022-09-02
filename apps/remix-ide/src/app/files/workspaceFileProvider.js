@@ -2,7 +2,6 @@
 
 const EventManager = require('events')
 const FileProvider = require('./fileProvider')
-const pathModule = require('path')
 
 class WorkspaceFileProvider extends FileProvider {
   constructor () {
@@ -31,16 +30,10 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   removePrefix (path) {
+    if (!path) path = '/'
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     path = path.replace(/^\.\/+/, '') // remove ./ from start of string
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
-    const splitPath = path.split('/')
-
-    if (splitPath[0] === this.workspace) {
-      splitPath[0] = this.workspacesPath + '/' + this.workspace
-      path = splitPath.join('/')
-      return path
-    }
     path = super.removePrefix(path)
     let ret = this.workspacesPath + '/' + this.workspace + '/' + (path === '/' ? '' : path)
 
@@ -80,8 +73,10 @@ class WorkspaceFileProvider extends FileProvider {
   async createWorkspace (name) {
     try {
       if (!name) name = 'default_workspace'
+      const path = this.workspacesPath + '/' + name
+
+      await super.forceCreateDir(path)
       this.setWorkspace(name)
-      await super.createDir(name)
       this.event.emit('createWorkspace', name)
     } catch (e) {
       throw new Error(e)
