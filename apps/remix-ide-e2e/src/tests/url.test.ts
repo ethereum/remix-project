@@ -85,7 +85,7 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contractss from URL "address" param) #group2 #flaky': function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contracts from URL "address" param) #group2': !function (browser: NightwatchBrowser) {
     browser
       .captureBrowserConsoleLogs((event) => {
         console.log(event.type, event.timestamp, event.args[0].value);
