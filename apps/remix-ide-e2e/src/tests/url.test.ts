@@ -87,9 +87,6 @@ module.exports = {
 
   'Should load Etherscan verified contracts from URL "address" param) #group2': !function (browser: NightwatchBrowser) {
     browser
-      .captureBrowserConsoleLogs((event) => {
-        console.log(event.type, event.timestamp, event.args[0].value);
-      })
       .pause(5000)
       .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
       .refresh()
@@ -251,7 +248,7 @@ module.exports = {
       .openFile('contracts/governance/UnionGovernor.sol')
   },
 
-  'Should execute function call from URL parameters #group2': function (browser: NightwatchBrowser) {
+  'Should execute function call from URL parameters #group1': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('default_workspace')
       .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')
