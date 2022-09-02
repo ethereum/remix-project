@@ -2,7 +2,6 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class ConnectToExternalHttpProvider extends EventEmitter {
-    
     command(this: NightwatchBrowser, url: string, identifier: string): NightwatchBrowser {
         this.api.element('xpath', `//*[@class='udapp_environment' and contains(.,'${identifier}')]`,
             (result) => {
