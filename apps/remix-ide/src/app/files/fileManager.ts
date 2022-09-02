@@ -845,7 +845,7 @@ class FileManager extends Plugin {
       const fileName = helper.extractNameFromKey(src)
       
       if (await this.exists(dest + '/' + fileName)) {
-        throw createError({ code: 'ENOENT', message: `Cannot move ${src}. File already exists at destination ${dest}`})
+        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. File already exists at destination ${dest}`})
       }
       await this.copyFile(src, dest, fileName)
       await this.remove(src)
@@ -873,9 +873,9 @@ class FileManager extends Plugin {
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const dirName = helper.extractNameFromKey(src)
       if (await this.exists(dest + '/' + dirName) || src === dest) {
-        throw createError({ code: 'ENOENT', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
+        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
       }
-
+      
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
 
