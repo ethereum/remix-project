@@ -213,6 +213,35 @@ class Editor extends Plugin {
     return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
   }
 
+  async handleTypeScriptDependenciesOf (path, content, readFile) {
+    if (path.endsWith('.ts')) {
+      // extract the import, resolve their content
+      // and add the imported files to Monaco through the `addModel`
+      // so Monaco can provide auto completion
+      const paths = path.split('/')
+      paths.pop()
+      const fromPath = paths.join('/') // get current execution context path
+      for (const match of content.matchAll(/import\s+.*\s+from\s+(?:"(.*?)"|'(.*?)')/g)) {
+        let pathDep = match[2]
+        if (pathDep.startsWith('./') || pathDep.startsWith('../')) pathDep = resolve(fromPath, pathDep)
+        if (pathDep.startsWith('/')) pathDep = pathDep.substring(1)
+        if (!pathDep.endsWith('.ts')) pathDep = pathDep + '.ts'
+        try {
+          // we can't use the fileManager plugin call directly
+          // because it's itself called in a plugin context, and that causes a timeout in the plugin stack
+          const contentDep = await readFile(pathDep)
+          console.log(contentDep)
+          if (contentDep !== null) {
+            this.emit('addModel', contentDep, 'typescript', pathDep, false)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      
+    }
+  }
+
   /**
    * Create an editor session
    * @param {string} path path of the file
@@ -222,30 +251,6 @@ class Editor extends Plugin {
   async _createSession (path, content, mode) {
     if (!this.activated) return
     
-    if (path.endsWith('.ts')) {
-      try {
-        // extract the import, resolve their content
-        // and add the imported files to Monaco through the `addModel`
-        // so Monaco can provide auto completion
-        let content = await this.call('fileManager', 'readFile', path)
-        const paths = path.split('/')
-        paths.pop()
-        const fromPath = paths.join('/') // get current execution context path
-        for (const match of content.matchAll(/import\s+.*\s+from\s+(?:"(.*?)"|'(.*?)')/g)) {
-          let path = match[2]
-          if (path.startsWith('./') || path.startsWith('../')) path = resolve(fromPath, path)
-          if (path.startsWith('/')) path = path.substring(1)
-          if (!path.endsWith('.ts')) path = path + '.ts'
-          if (await this.call('fileManager', 'exists', path)) {
-            content = await this.call('fileManager', 'readFile', path)
-            this.emit('addModel', content, 'typescript', path, false)
-          }
-        }
-      } catch (e) {
-        console.log('unable to resolve dependency of', path, e)
-      }
-    }
-
     this.emit('addModel', content, mode, path, false)
     return {
       path,
