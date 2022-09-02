@@ -40,7 +40,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const javascriptVM = props.config.get('settings/always-use-vm')
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
 
-    const useAutoComplete = props.config.get('settings/use-auto-complete')
+    const useAutoComplete = props.config.get('settings/auto-completion')
     if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
 
     const displayErrors = props.config.get('settings/display-errors')
