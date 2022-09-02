@@ -5,7 +5,6 @@ class ConnectToExternalHttpProvider extends EventEmitter {
     command(this: NightwatchBrowser, url: string, identifier: string): NightwatchBrowser {
         this.api.element('xpath', `//*[@class='udapp_environment' and contains(.,'${identifier}')]`,
             (result) => {
-                console.log('ConnectToExternalHttpProvider: ' + result.status, result.value)
                 if (result.status as any === -1 ) {
                     console.log("No connection to external provider found. Adding one.", url)
                     browser
