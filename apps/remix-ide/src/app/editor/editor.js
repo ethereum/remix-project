@@ -230,7 +230,6 @@ class Editor extends Plugin {
           // we can't use the fileManager plugin call directly
           // because it's itself called in a plugin context, and that causes a timeout in the plugin stack
           const contentDep = await readFile(pathDep)
-          console.log(contentDep)
           if (contentDep !== null) {
             this.emit('addModel', contentDep, 'typescript', pathDep, false)
           }
