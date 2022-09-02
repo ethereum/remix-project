@@ -235,7 +235,6 @@ module.exports = {
       .connectToExternalHttpProvider(url, identifier)
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
-      .pause(4000)
       .clickLaunchIcon('solidity')
       .click({
         selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
