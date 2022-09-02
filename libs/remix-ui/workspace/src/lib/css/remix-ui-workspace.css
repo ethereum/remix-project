@@ -7,7 +7,7 @@
   }
   .remixui_fileexplorer       {
     position          : relative;
-    overflow-y        : auto;
+    overflow-y        : hidden;
   }
   .remixui_fileExplorerTree   {
     cursor            : default;
