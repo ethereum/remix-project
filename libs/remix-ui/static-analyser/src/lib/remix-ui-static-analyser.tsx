@@ -80,9 +80,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       const tmp: RegExpExecArray | null = /^(\d+.\d+.\d+)/.exec(version)
       return tmp ? tmp[1] : version
     }
-    if (version != '' && !semver.gt(truncateVersion(version), '0.4.12')) {
+    if (version && version != '' && !semver.gt(truncateVersion(version), '0.4.12')) {
       setIsSupportedVersion(false)
-      setRunButtonTitle('Sselect Solidity compiler version greater than 0.4.12.')
+      setRunButtonTitle('Select Solidity compiler version greater than 0.4.12.')
     } else {
       setIsSupportedVersion(true)
       setRunButtonTitle('Run static analysis')
