@@ -87,6 +87,9 @@ module.exports = {
 
   'Should load Etherscan verified contractss from URL "address" param) #group2 #flaky': function (browser: NightwatchBrowser) {
     browser
+      .captureBrowserConsoleLogs((event) => {
+        console.log(event.type, event.timestamp, event.args[0].value);
+      })
       .pause(5000)
       .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
       .refresh()
