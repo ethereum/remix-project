@@ -129,15 +129,15 @@ module.exports = {
       .pause(1000) // compile Storage
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
       .pause(1000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ fail test updating and retrieving updated value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 55')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 56')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 56')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '2 passing, 1 failing')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 2')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
@@ -151,14 +151,14 @@ module.exports = {
       .pause(1000) // compile StorageWithLib
       .executeScriptInTerminal('remix.execute(\'scripts/storageWithLib.test.js\')')
       .pause(1000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage with lib')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'deploying lib:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ test library integration by calling a lib method')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 34')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 14')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 14')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: expected \'14\' to equal \'34\'')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0 passing, 1 failing')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
