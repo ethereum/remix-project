@@ -7,7 +7,7 @@ class ConnectToExternalHttpProvider extends EventEmitter {
             (result) => {
                 if (result.status as any === -1) {
                     console.log("No connection to external provider found. Adding one.", url)
-                    this.api
+                    browser
                         .click({
                             locateStrategy: 'css selector',
                             selector: '[data-id="basic-http-provider-modal-footer-ok-react"]',
