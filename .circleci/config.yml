@@ -131,6 +131,9 @@ jobs:
       - run: 
           command: |
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/*.test.js")
+            echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
+            echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*")
+            echo $(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*")
       - run: yarn install
       - run:
           name: Start Selenium
