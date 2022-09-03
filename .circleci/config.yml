@@ -139,6 +139,7 @@ jobs:
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*")
             echo $(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*")
             circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*" > ./reports/screenshots/glob.txt
+            circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*" | circleci tests split --split-by=timings  > ./reports/screenshots/timings.txt
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
