@@ -49,15 +49,17 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-
-  'Should load the code from URL params (code param) #group1': function (browser: NightwatchBrowser) {
+  'Disable auto compile': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]') // we set it too false in the local storage
-      //.pause(5000)
+  },
+  'Should load the code from URL params (code param) #group1': function (browser: NightwatchBrowser) {
+    browser
+      
       .url('http://127.0.0.1:8080/#autoCompile=true&optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
       .refresh() // we do one reload for making sure we already have the default workspace
-      //.pause(5000)
+      
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
       .click('[for="autoCompile"]') // we set it too false again
       .click('[for="autoCompile"]') // back to True in the local storage
@@ -73,10 +75,10 @@ module.exports = {
 
   'Should load the code from URL params (url param) #group1': function (browser: NightwatchBrowser) {
     browser
-      //.pause(5000)
+      
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol')
       .refresh() // we do one reload for making sure we already have the default workspace
-      //.pause(5000)
+      
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
@@ -87,10 +89,10 @@ module.exports = {
 
   'Should load Etherscan verified contracts from URL "address" param)': !function (browser: NightwatchBrowser) {
     browser
-      //.pause(5000)
+      
       .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
       .refresh()
-      //.pause(7000)
+
       .currentWorkspaceIs('etherscan-code-sample')
       .assert.elementPresent('*[data-id=treeViewLitreeViewItemropsten]')
       .assert.elementPresent('*[data-id=treeViewLitreeViewItemrinkeby]')
@@ -118,6 +120,7 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
       .refresh() // we do one reload for making sure we already have the default workspace
+      .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
@@ -138,10 +141,11 @@ module.exports = {
 
   'Should load the code from language & code params #group1': function (browser: NightwatchBrowser) {
     browser
-      //.pause(5000)
+      
       .url('http://127.0.0.1:8080/#language=yul&version=soljson-v0.8.7+commit.e28d00a7.js&code=Ly8gQSBjb250cmFjdCBjb25zaXN0cyBvZiBhIHNpbmdsZSBvYmplY3Qgd2l0aCBzdWItb2JqZWN0cyByZXByZXNlbnRpbmcKLy8gdGhlIGNvZGUgdG8gYmUgZGVwbG95ZWQgb3Igb3RoZXIgY29udHJhY3RzIGl0IGNhbiBjcmVhdGUuCi8vIFRoZSBzaW5nbGUgImNvZGUiIG5vZGUgaXMgdGhlIGV4ZWN1dGFibGUgY29kZSBvZiB0aGUgb2JqZWN0LgovLyBFdmVyeSAob3RoZXIpIG5hbWVkIG9iamVjdCBvciBkYXRhIHNlY3Rpb24gaXMgc2VyaWFsaXplZCBhbmQKLy8gbWFkZSBhY2Nlc3NpYmxlIHRvIHRoZSBzcGVjaWFsIGJ1aWx0LWluIGZ1bmN0aW9ucyBkYXRhY29weSAvIGRhdGFvZmZzZXQgLyBkYXRhc2l6ZQovLyBUaGUgY3VycmVudCBvYmplY3QsIHN1Yi1vYmplY3RzIGFuZCBkYXRhIGl0ZW1zIGluc2lkZSB0aGUgY3VycmVudCBvYmplY3QKLy8gYXJlIGluIHNjb3BlLgpvYmplY3QgIkNvbnRyYWN0MSIgewogICAgLy8gVGhpcyBpcyB0aGUgY29uc3RydWN0b3IgY29kZSBvZiB0aGUgY29udHJhY3QuCiAgICBjb2RlIHsKICAgICAgICBmdW5jdGlvbiBhbGxvY2F0ZShzaXplKSAtPiBwdHIgewogICAgICAgICAgICBwdHIgOj0gbWxvYWQoMHg0MCkKICAgICAgICAgICAgaWYgaXN6ZXJvKHB0cikgeyBwdHIgOj0gMHg2MCB9CiAgICAgICAgICAgIG1zdG9yZSgweDQwLCBhZGQocHRyLCBzaXplKSkKICAgICAgICB9CgogICAgICAgIC8vIGZpcnN0IGNyZWF0ZSAiQ29udHJhY3QyIgogICAgICAgIGxldCBzaXplIDo9IGRhdGFzaXplKCJDb250cmFjdDIiKQogICAgICAgIGxldCBvZmZzZXQgOj0gYWxsb2NhdGUoc2l6ZSkKICAgICAgICAvLyBUaGlzIHdpbGwgdHVybiBpbnRvIGNvZGVjb3B5IGZvciBFVk0KICAgICAgICBkYXRhY29weShvZmZzZXQsIGRhdGFvZmZzZXQoIkNvbnRyYWN0MiIpLCBzaXplKQogICAgICAgIC8vIGNvbnN0cnVjdG9yIHBhcmFtZXRlciBpcyBhIHNpbmdsZSBudW1iZXIgMHgxMjM0CiAgICAgICAgbXN0b3JlKGFkZChvZmZzZXQsIHNpemUpLCAweDEyMzQpCiAgICAgICAgcG9wKGNyZWF0ZShvZmZzZXQsIGFkZChzaXplLCAzMiksIDApKQoKICAgICAgICAvLyBub3cgcmV0dXJuIHRoZSBydW50aW1lIG9iamVjdCAodGhlIGN1cnJlbnRseQogICAgICAgIC8vIGV4ZWN1dGluZyBjb2RlIGlzIHRoZSBjb25zdHJ1Y3RvciBjb2RlKQogICAgICAgIHNpemUgOj0gZGF0YXNpemUoIkNvbnRyYWN0MV9kZXBsb3llZCIpCiAgICAgICAgb2Zmc2V0IDo9IGFsbG9jYXRlKHNpemUpCiAgICAgICAgLy8gVGhpcyB3aWxsIHR1cm4gaW50byBhIG1lbW9yeS0+bWVtb3J5IGNvcHkgZm9yIEV3YXNtIGFuZAogICAgICAgIC8vIGEgY29kZWNvcHkgZm9yIEVWTQogICAgICAgIGRhdGFjb3B5KG9mZnNldCwgZGF0YW9mZnNldCgiQ29udHJhY3QxX2RlcGxveWVkIiksIHNpemUpCiAgICAgICAgcmV0dXJuKG9mZnNldCwgc2l6ZSkKICAgIH0KCiAgICBkYXRhICJUYWJsZTIiIGhleCI0MTIzIgoKICAgIG9iamVjdCAiQ29udHJhY3QxX2RlcGxveWVkIiB7CiAgICAgICAgY29kZSB7CiAgICAgICAgICAgIGZ1bmN0aW9uIGFsbG9jYXRlKHNpemUpIC0+IHB0ciB7CiAgICAgICAgICAgICAgICBwdHIgOj0gbWxvYWQoMHg0MCkKICAgICAgICAgICAgICAgIGlmIGlzemVybyhwdHIpIHsgcHRyIDo9IDB4NjAgfQogICAgICAgICAgICAgICAgbXN0b3JlKDB4NDAsIGFkZChwdHIsIHNpemUpKQogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyBydW50aW1lIGNvZGUKCiAgICAgICAgICAgIG1zdG9yZSgwLCAiSGVsbG8sIFdvcmxkISIpCiAgICAgICAgICAgIHJldHVybigwLCAweDIwKQogICAgICAgIH0KICAgIH0KCiAgICAvLyBFbWJlZGRlZCBvYmplY3QuIFVzZSBjYXNlIGlzIHRoYXQgdGhlIG91dHNpZGUgaXMgYSBmYWN0b3J5IGNvbnRyYWN0LAogICAgLy8gYW5kIENvbnRyYWN0MiBpcyB0aGUgY29kZSB0byBiZSBjcmVhdGVkIGJ5IHRoZSBmYWN0b3J5CiAgICBvYmplY3QgIkNvbnRyYWN0MiIgewogICAgICAgIGNvZGUgewogICAgICAgICAgICAvLyBjb2RlIGhlcmUgLi4uCiAgICAgICAgfQoKICAgICAgICBvYmplY3QgIkNvbnRyYWN0Ml9kZXBsb3llZCIgewogICAgICAgICAgICBjb2RlIHsKICAgICAgICAgICAgICAgIC8vIGNvZGUgaGVyZSAuLi4KICAgICAgICAgICAgfQogICAgICAgIH0KCiAgICAgICAgZGF0YSAiVGFibGUxIiBoZXgiNDEyMyIKICAgIH0KfQ&optimize=false&runs=200&evmVersion=null')
       .refresh()
-      //.pause(5000)
+      .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
+      
       .clickLaunchIcon('filePanel')
       .currentWorkspaceIs('code-sample')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontract-eaa022e37e.yul"]', 6000)
@@ -152,11 +156,11 @@ module.exports = {
       })
   },
 
-  'Should select deploy with proxy option from URL params #group1': function (browser: NightwatchBrowser) {
+  'Should select deploy with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&deployProxy=true')
       .refresh()
-      //.pause(5000)
+      
       .switchWorkspace('default_workspace')
       .addFile('myTokenV1.sol', sources[1]['myTokenV1.sol'])
       .clickLaunchIcon('solidity')
@@ -170,11 +174,11 @@ module.exports = {
       .expect.element('[data-id="contractGUIDeployWithProxy"]').to.be.selected
   },
 
-  'Should select upgrade with proxy option from URL params #group1': function (browser: NightwatchBrowser) {
+  'Should select upgrade with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
       .refresh()
-      //.pause(5000)
+      
       .openFile('myTokenV1.sol')
       .clickLaunchIcon('solidity')
       .pause(2000)
@@ -187,12 +191,12 @@ module.exports = {
       .expect.element('[data-id="contractGUIUpgradeImplementation"]').to.be.selected
   },
 
-  'Should load using various URL compiler params #group1': function (browser: NightwatchBrowser) {
+  'Should load using various URL compiler params #group2': function (browser: NightwatchBrowser) {
     browser
-      //.pause(5000)
+      
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&autoCompile=true&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&language=Yul')
       .refresh()
-      //.pause(5000)
+      
       .clickLaunchIcon('solidity')
       .click('*[data-id="scConfigExpander"]')
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.7.4+commit.3f05b770')
@@ -203,23 +207,23 @@ module.exports = {
       .verify.attributeEquals('#runs', 'value', '300')
       .url('http://127.0.0.1:8080/#version=0.8.7')
       .refresh()
-      //.pause(5000)
+      
       .clickLaunchIcon('solidity')
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.7+commit.e28d00a7')
       .url('http://127.0.0.1:8080/#version=0.8.15+commit.e14f2714')
       .refresh()
-      //.pause(5000)
+      
       .clickLaunchIcon('solidity')
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.15+commit.e14f2714')
   },
 
-  'Should load using compiler from link passed in remix URL #group1': function (browser: NightwatchBrowser) {
+  'Should load using compiler from link passed in remix URL #group2': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#version=https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js&optimize=false')
       .refresh()
-      //.pause(5000)
+      
       .clickLaunchIcon('solidity')
-      //.pause(5000)
+      
       .click('*[data-id="scConfigExpander"]')
       .assert.containsText('#versionSelector option[data-id="selected"]', 'custom')
       // default values
@@ -231,11 +235,11 @@ module.exports = {
       .verify.attributeEquals('#runs', 'value', '200')
   },
 
-  'Should load json files from link passed in remix URL #group1': function (browser: NightwatchBrowser) {
+  'Should load json files from link passed in remix URL #group2': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&evmVersion=null&version=soljson-v0.6.12+commit.27d51765.js&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refresh()
-      //.pause(5000)
+      
       .switchWorkspace('code-sample')
       .openFile('@openzeppelin')
       .openFile('@openzeppelin/contracts')
@@ -246,7 +250,7 @@ module.exports = {
       .openFile('contracts/governance/UnionGovernor.sol')
   },
 
-  'Should execute function call from URL parameters #group1': function (browser: NightwatchBrowser) {
+  'Should execute function call from URL parameters #group2': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('default_workspace')
       .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')

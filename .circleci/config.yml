@@ -36,9 +36,8 @@ jobs:
           paths:
             - node_modules
       - run: yarn run downloadsolc_assets
-      - run: npx nx build remix-ide
+      - run: yarn build
       - run: npx nx build remix-ide-e2e-src-local-plugin
-      
       - run: yarn run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
