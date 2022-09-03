@@ -130,12 +130,13 @@ jobs:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: 
           command: |
+            mkdir ./reports/
             mkdir ./reports/screenshots
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/*.test.js")
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*")
             echo $(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*")
-            circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*" > glob.txt
+            circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*" > ./reports/screenshots/glob.txt
       - run: yarn install
       - run:
           name: Start Selenium
