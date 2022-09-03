@@ -62,10 +62,10 @@ module.exports = {
     browser.waitForElementVisible('#editorView')
       .execute(() => {
         (window as any).addRemixBreakpoint(11)
-      }, [], () => {})
+      }, [], () => { })
       .execute(() => {
         (window as any).addRemixBreakpoint(21)
-      }, [], () => {})
+      }, [], () => { })
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
@@ -103,7 +103,7 @@ module.exports = {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
-        'current displayed content is not from the ERC20 source code')
+          'current displayed content is not from the ERC20 source code')
       })
   },
 
@@ -133,31 +133,19 @@ module.exports = {
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"133")]',
       })
       .goToVMTraceStep(261)
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"261")]',
-      })
       .waitForElementPresent('.highlightLine8')
-    /*
-      for the test below:
-      source highlight should remain line `bytes32 idAsk = abi.decode(userData[:33], (bytes32));`
-      At this vmtrace index, the sourcemap has file = -1 because the execution is in the generated sources (ABIEncoderV2)
-      the atIndex of SourceLocationTracker was buggy and return an incorrect value, this is fixed
-      But the debugger uses now validSourcelocation, which means file is not -1.
-      In that case the source highlight at 261 should be the same as for step 262
-    */
-      
+      /*
+        for the test below:
+        source highlight should remain line `bytes32 idAsk = abi.decode(userData[:33], (bytes32));`
+        At this vmtrace index, the sourcemap has file = -1 because the execution is in the generated sources (ABIEncoderV2)
+        the atIndex of SourceLocationTracker was buggy and return an incorrect value, this is fixed
+        But the debugger uses now validSourcelocation, which means file is not -1.
+        In that case the source highlight at 261 should be the same as for step 262
+      */
+
       .goToVMTraceStep(266)
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"266")]',
-      })
       .checkVariableDebug('soliditylocals', localVariable_step266_ABIEncoder) // locals should not be initiated at this point, only idAsk should
       .goToVMTraceStep(717)
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"717")]',
-      })
       .checkVariableDebug('soliditylocals', localVariable_step717_ABIEncoder) // all locals should be initiaed
       .clearTransactions()
   },
@@ -248,7 +236,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
       .pause(10000)
       .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
-      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })      
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
   },
 
   'Should debug reverted transactions #group5': function (browser: NightwatchBrowser) {
