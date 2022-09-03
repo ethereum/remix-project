@@ -128,7 +128,9 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
-      - run: echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/*.test.ts")
+      - run: 
+          command: |
+            echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/*.test.ts")
       - run: yarn install
       - run:
           name: Start Selenium
