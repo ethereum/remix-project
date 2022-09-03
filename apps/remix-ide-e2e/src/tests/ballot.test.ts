@@ -9,13 +9,18 @@ const sources = [
 ]
 
 module.exports = {
+  "@disabled": true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': function () {
     return sources
   },
-  'Deploy Ballot': function (browser: NightwatchBrowser) {
+  'Add Ballot #group2': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+  },
+  'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
@@ -34,7 +39,7 @@ module.exports = {
         })
   },
 
-  'Call method from Ballot to check return value': function (browser: NightwatchBrowser) {
+  'Call method from Ballot to check return value #group1': function (browser: NightwatchBrowser) {
     browser
       .clickFunction('winnerName - call')
       // Test in terminal
@@ -47,7 +52,7 @@ module.exports = {
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
 
-  'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
+  'Debug Ballot / delegate #group1': function (browser: NightwatchBrowser) {
     browser.pause(500)
       .debugTransaction(1)
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
@@ -60,7 +65,7 @@ module.exports = {
       .checkVariableDebug('soliditylocals', localsCheck)
   },
 
-  'Access Ballot via at address': function (browser: NightwatchBrowser) {
+  'Access Ballot via at address #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
       .click('*[data-id="universalDappUiUdappClose"]')
       .addFile('ballot.abi', { content: ballotABI })
@@ -79,19 +84,11 @@ module.exports = {
         })
   },
 
-  'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
+  'Deploy and use Ballot using external web3  #group2': function (browser: NightwatchBrowser) {
     browser
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('External Http Provider')
-      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-      .execute(function () {
-        const modal = document.querySelector('[data-id="basic-http-provider-modal-footer-ok-react"]') as any
-
-        modal.click()
-      })
-      .pause(5000)
-      .waitForElementContainsText('#selectExEnvOptions button', 'External Http Provider')
+      .connectToExternalHttpProvider('http://localhost:8545', 'Custom')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
@@ -105,7 +102,7 @@ module.exports = {
       .journalLastChildIncludes('data: 0x5c1...a733c')
   },
 
-  'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
+  'Call method from Ballot to check return value using external web3  #group2': function (browser: NightwatchBrowser) {
     browser
       .clickFunction('winnerName - call')
       // Test in terminal
@@ -118,9 +115,9 @@ module.exports = {
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
 
-  'Compile Ballot using config file': function (browser: NightwatchBrowser) {
+  'Compile Ballot using config file  #group2': function (browser: NightwatchBrowser) {
     browser
-      .addFile('cf.json', {content: configFile})
+      .addFile('cf.json', { content: configFile })
       .clickLaunchIcon('solidity')
       .waitForElementVisible('*[data-id="scConfigExpander"]')
       .click('*[data-id="scConfigExpander"]')
@@ -133,12 +130,12 @@ module.exports = {
       .setValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id$="scConfigFilePathInput"]', browser.Keys.ENTER)
       .openFile('Untitled.sol')
-      .verifyContracts(['Ballot'], {wait: 2000, runs: '300'})
+      .verifyContracts(['Ballot'], { wait: 2000, runs: '300' })
   },
 
-  'Compile and deploy sample yul file': function (browser: NightwatchBrowser) {
+  'Compile and deploy sample yul file  #group2': function (browser: NightwatchBrowser) {
     browser
-      .addFile('sample.yul', {content: yulSample})
+      .addFile('sample.yul', { content: yulSample })
       .clickLaunchIcon('solidity')
       .waitForElementVisible('*[data-id="scConfigExpander"]')
       .click('*[data-id="scManualConfiguration"]')
