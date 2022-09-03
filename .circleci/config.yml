@@ -128,16 +128,17 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run: 
           command: |
             mkdir ./reports/
             mkdir ./reports/screenshots
+            yarn run build:e2e
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/*.test.js")
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*.test.js")
             echo $(circleci tests glob "./dist/apps/remix-ide-e2e/src/tests/**/*")
             echo $(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*")
             circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*" > ./reports/screenshots/glob.txt
-      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
