@@ -13,6 +13,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     //.pause(6000)
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
+    .click('[id="remixTourSkipbtn"]')
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
