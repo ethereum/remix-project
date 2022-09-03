@@ -14,6 +14,7 @@ yarn run remixd &
 sleep 5
 
 yarn run build:e2e
+grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .js | circleci tests split --split-by=timings
 TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=$1  || TEST_EXITCODE=1

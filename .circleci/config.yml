@@ -138,10 +138,7 @@ jobs:
             mkdir ./reports/
             mkdir ./reports/screenshots
             yarn run build:e2e
-            grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" 
-            grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .js
             grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .js | circleci tests split --split-by=timings
-            grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .js | circleci tests split --split-by=timings --timings-type=classname
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
