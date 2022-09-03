@@ -12,6 +12,10 @@ module.exports = {
     return sources
   },
 
+  'addfiletest #group10': function (browser: NightwatchBrowser) {
+    browser.addFile('test.sol', sources[0]['blah.sol'])
+  },
+
   'Should launch debugger #group1': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('udapp')
