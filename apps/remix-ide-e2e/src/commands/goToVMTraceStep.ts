@@ -19,7 +19,7 @@ function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number
     }, [step])
     .waitForElementVisible({
       locateStrategy: 'xpath',
-      selector: `//*[@data-id="treeViewLivm trace step" and contains(.,"${step}")]")]`,
+      selector: `//*[@data-id="treeViewLivm trace step" and contains(.,"${step}")]`,
     })
     .perform(() => {
       done()
