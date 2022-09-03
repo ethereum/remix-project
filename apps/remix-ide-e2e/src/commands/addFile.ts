@@ -30,7 +30,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
           .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
-          .waitForElementVisible('xpath', `//*[@data-id='tab-active' and contains(.,'${name}')]`, 60000)
+          //.waitForElementVisible('xpath', `//*[@data-id='tab-active' and contains(.,'${name}')]`, 60000)
           .setEditorValue(content.content)
           .perform(function () {
             done()
