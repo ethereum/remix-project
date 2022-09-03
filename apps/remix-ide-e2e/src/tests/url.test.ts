@@ -180,8 +180,12 @@ module.exports = {
       .refresh()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
       .openFile('myTokenV1.sol')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[contains(@class, 'view-lines') and contains(.,'ERC721Upgradeable')]"
+      })
       .clickLaunchIcon('solidity')
-      .pause(2000)
+      .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
       .click('[data-id="compilerContainerCompileBtn"]')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
