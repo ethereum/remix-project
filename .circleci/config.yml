@@ -206,7 +206,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 80
+    parallelism: 100
     steps:
       - browser-tools/install-firefox
       - browser-tools/install-geckodriver
