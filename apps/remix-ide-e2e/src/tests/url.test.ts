@@ -178,7 +178,7 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
       .refresh()
-      
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
       .openFile('myTokenV1.sol')
       .clickLaunchIcon('solidity')
       .pause(2000)
