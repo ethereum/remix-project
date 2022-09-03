@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 const deepequal = require('deep-equal')
 
 class CheckVariableDebug extends EventEmitter {
-  command (this: NightwatchBrowser, id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser {
+  command(this: NightwatchBrowser, id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser {
     this.api.perform((done) => {
       checkDebug(this.api, id, debugValue, () => {
         done()
@@ -15,27 +15,38 @@ class CheckVariableDebug extends EventEmitter {
   }
 }
 
-function checkDebug (browser: NightwatchBrowser, id: string, debugValue: NightwatchCheckVariableDebugValue, done: VoidFunction) {
+function checkDebug(browser: NightwatchBrowser, id: string, debugValue: NightwatchCheckVariableDebugValue, done: VoidFunction) {
   // id is soliditylocals or soliditystate
-  browser.execute(function (id: string) {
-    const elem = document.querySelector('#' + id + ' .dropdownrawcontent') as HTMLElement
-
-    return elem.innerText
-  }, [id], function (result) {
-    let value
-    try {
-      value = JSON.parse(<string>result.value)
-    } catch (e) {
-      browser.assert.fail('cant parse solidity state', e.message, '')
+  let resultOfElement = null
+  let isEqual = false
+  browser.waitUntil(() => {
+    browser.execute(function (id: string) {
+      const elem = document.querySelector('#' + id + ' .dropdownrawcontent') as HTMLElement
+      if (elem && elem.innerText) {
+        console.log(elem.innerText)
+        return elem.innerText
+      }
+    }, [id], (result) => {
+      if (result.value) {
+        console.log(JSON.parse(<string>result.value))
+        try {
+          resultOfElement = JSON.parse(<string>result.value)
+          isEqual = deepequal(debugValue, resultOfElement)
+        } catch (e) {
+          browser.assert.fail('cant parse solidity state', e.message, '')
+          console.log(e)
+        }
+      }
+    })
+    if (isEqual) return true
+    return false
+  }, 10000, 1000)
+    .perform(() => {
+      if (!isEqual) {
+        browser.assert.fail(JSON.stringify(resultOfElement), 'info about error\n ' + JSON.stringify(debugValue) + '\n ' + JSON.stringify(resultOfElement), '')
+      }
       done()
-      return
-    }
-    const equal = deepequal(debugValue, value)
-    if (!equal) {
-      browser.assert.fail(JSON.stringify(value), 'info about error\n ' + JSON.stringify(debugValue) + '\n ' + JSON.stringify(value), '')
-    }
-    done()
-  })
+    })
 }
 
 module.exports = CheckVariableDebug
