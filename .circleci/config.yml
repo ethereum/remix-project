@@ -116,6 +116,10 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
+          name: Check out previous test metadata
+          command: |
+            cat "${CIRCLE_INTERNAL_TASK_DATA}/circle-test-results/results.json" | jq .
+      - run:
           command: |
               google-chrome --version
               chromedriver --version
