@@ -69,12 +69,20 @@ module.exports = {
     browser.clickLaunchIcon('udapp')
       .click('*[data-id="universalDappUiUdappClose"]')
       .addFile('ballot.abi', { content: ballotABI })
+      .clickLaunchIcon('udapp')
+      .click({
+        selector: '*[data-id="deployAndRunClearInstances"]',
+        abortOnFailure: false,
+        suppressNotFoundErrors: true,
+      })
       // we are not changing the visibility for not checksumed contracts
       // .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
       .clickLaunchIcon('filePanel')
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
-      .pause(500)
-      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[@id='instance0x692a70D2e424a56D2C6C27aA97D1a86395877b3A']"
+      })
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
