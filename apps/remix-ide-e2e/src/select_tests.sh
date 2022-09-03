@@ -31,7 +31,7 @@ do
 done
 yarn run build:e2e
 PS3='Select a test or command: '
-TESTFILES=( $(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test\|plugin_api" | sort ) )
+TESTFILES=( $(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | sort ) )
 
 # declare -p TESTFILES
 TESTFILES+=("list")
