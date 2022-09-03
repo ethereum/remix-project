@@ -23,7 +23,7 @@ module.exports = {
           status: 'true Transaction mined and execution succeed',
           'decoded output': { 0: 'uint256: 8' }
         })
-      .pause(120000)
+      //.pause(5000)
       //.checkTerminalFilter('0x12332162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92782', '')
       .clickFunction('g - transact (not payable)')
       .testFunction('last',
