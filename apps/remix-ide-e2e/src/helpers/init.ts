@@ -13,14 +13,16 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     //.pause(6000)
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
-    .click('[id="remixTourSkipbtn"]')
     .perform((done) => {
       if (!loadPlugin) return done()
-      browser.execute(function (loadPlugin) { // override a plugin url for testing purpose
+      browser
+      .pause(5000)
+      .execute(function (loadPlugin) { // override a plugin url for testing purpose
         localStorage.setItem('test-plugin-name', loadPlugin.name)
         localStorage.setItem('test-plugin-url', loadPlugin.url)
       }, [loadPlugin])
       .refresh()
+      .waitForElementVisible('[data-id="sidePanelSwapitTitle"]')
       .perform(done())
     })
     .maximizeWindow()
