@@ -17,7 +17,10 @@ function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number
     .execute((step) => {
       (document.querySelector('*[data-id="slider"]') as any).internal_onmouseup({ target: { value: step }})
     }, [step])
-    .pause(10000)
+    .waitForElementVisible({
+      locateStrategy: 'xpath',
+      selector: `//*[@data-id="treeViewLivm trace step" and contains(.,"${step}")]")]`,
+    })
     .perform(() => {
       done()
     })

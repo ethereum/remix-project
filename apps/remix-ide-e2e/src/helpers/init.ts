@@ -10,7 +10,7 @@ type LoadPlugin = {
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
-    .pause(6000)
+    //.pause(6000)
     .switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
@@ -21,14 +21,14 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         localStorage.setItem('test-plugin-url', loadPlugin.url)
       }, [loadPlugin])
       .refresh()
-      .pause(6000)
       .perform(done())
     })
     .maximizeWindow()
     .fullscreenWindow(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
-          browser.pause(2000).clickLaunchIcon('solidity')
+          browser
+            .clickLaunchIcon('solidity')
             .waitForElementVisible('[for="autoCompile"]')
             .click('[for="autoCompile"]')
             .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
@@ -41,7 +41,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
 }
 
 function initModules (browser: NightwatchBrowser, callback: VoidFunction) {
-  browser.pause(5000)
+  browser
     .click('[data-id="verticalIconsKindpluginManager"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityStaticAnalysis"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtondebugger"]')
