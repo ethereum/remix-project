@@ -88,9 +88,16 @@ module.exports = {
       .selectContract('ERC20')
       .createContract('"tokenName", "symbol"')
       .debugTransaction(0)
-      .pause(2000)
       .waitForElementVisible('#stepdetail')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"545")]',
+      })
       .goToVMTraceStep(10)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
@@ -120,10 +127,17 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('test1 - transact (not payable)', { types: 'bytes userData', values: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4' })
       .debugTransaction(0)
-      .pause(2000)
       .waitForElementVisible('#stepdetail')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"133")]',
+      })
       .goToVMTraceStep(261)
-      .pause(1000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"261")]',
+      })
+      .waitForElementPresent('.highlightLine8')
     /*
       for the test below:
       source highlight should remain line `bytes32 idAsk = abi.decode(userData[:33], (bytes32));`
@@ -132,12 +146,18 @@ module.exports = {
       But the debugger uses now validSourcelocation, which means file is not -1.
       In that case the source highlight at 261 should be the same as for step 262
     */
-      .waitForElementPresent('.highlightLine8')
+      
       .goToVMTraceStep(266)
-      .pause(1000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"266")]',
+      })
       .checkVariableDebug('soliditylocals', localVariable_step266_ABIEncoder) // locals should not be initiated at this point, only idAsk should
       .goToVMTraceStep(717)
-      .pause(5000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"717")]',
+      })
       .checkVariableDebug('soliditylocals', localVariable_step717_ABIEncoder) // all locals should be initiaed
       .clearTransactions()
   },
