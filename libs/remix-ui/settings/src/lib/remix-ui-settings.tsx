@@ -148,7 +148,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
-    const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? true:props.config.get('settings/auto-completion')
+    const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? false:props.config.get('settings/auto-completion')
     const isShowGasInEditorChecked = props.config.get('settings/show-gas') === null ? true:props.config.get('settings/show-gas')
     const displayErrorsChecked = props.config.get('settings/display-errors') === null ? true:props.config.get('settings/display-errors')
     return (
