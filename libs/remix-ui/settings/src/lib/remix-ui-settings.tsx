@@ -150,8 +150,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
 
     const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
-    const isShowGasInEditorChecked = props.config.get('settings/show-gas') === null ? true:props.config.get('settings/show-gas')
-    const displayErrorsChecked = props.config.get('settings/display-errors') === null ? true:props.config.get('settings/display-errors')
+    const isShowGasInEditorChecked = props.config.get('settings/show-gas') || false
+    const displayErrorsChecked = props.config.get('settings/display-errors') || false
     return (
       <div className="$border-top">
         <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
