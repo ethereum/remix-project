@@ -12,6 +12,15 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
+
+  'Should enable settings': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('settings')
+      .click('[data-id="settingsAutoCompleteLabel"]')
+      .click('[data-id="settingsShowGasLabel"]')
+      .click('[data-id="displayErrorsLabel"]')
+  },
+
   'Should add test and base files #group1': function (browser: NightwatchBrowser) {
     browser.addFile(examples.testContract.name, examples.testContract)
       .addFile(examples.baseContract.name, examples.baseContract)
