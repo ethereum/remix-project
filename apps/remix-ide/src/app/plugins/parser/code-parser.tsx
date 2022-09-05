@@ -94,7 +94,7 @@ export class CodeParser extends Plugin {
         }
         const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
         const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
-        if(showGasSettings || showErrorSettings) {
+        if(showGasSettings || showErrorSettings || completionSettings) {
             await this.compilerService.compile()
         }
     }
