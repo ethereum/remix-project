@@ -113,6 +113,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (isElectron()) {
+      await basicWorkspaceInit(workspaces, workspaceProvider)
       await plugin.call('manager', 'activatePlugin', 'remixd')
     } else if (localStorage.getItem("currentWorkspace")) {
       const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))
