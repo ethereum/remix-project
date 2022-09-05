@@ -41,13 +41,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
 
     const useAutoComplete = props.config.get('settings/auto-completion')
-    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
+    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, false, dispatch)
 
     const displayErrors = props.config.get('settings/display-errors')
-    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, true, dispatch)
+    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, false, dispatch)
   
     const useShowGas = props.config.get('settings/show-gas')
-    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
+    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, false, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -148,7 +148,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
-    const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? false:props.config.get('settings/auto-completion')
+
+    const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
     const isShowGasInEditorChecked = props.config.get('settings/show-gas') === null ? true:props.config.get('settings/show-gas')
     const displayErrorsChecked = props.config.get('settings/display-errors') === null ? true:props.config.get('settings/display-errors')
     return (
