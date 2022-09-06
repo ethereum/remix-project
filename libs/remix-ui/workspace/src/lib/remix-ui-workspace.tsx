@@ -16,6 +16,8 @@ export function Workspace () {
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
+  const [showBranches, setShowBranches] = useState<boolean>(false)
+  const [branchFilter, setBranchFilter] = useState<string>('')  
   const displayOzCustomRef = useRef<HTMLDivElement>()
   const mintableCheckboxRef = useRef()
   const burnableCheckboxRef = useRef()
@@ -197,6 +199,18 @@ export function Workspace () {
   const handleUpgradeability = () => {
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
+  }
+  
+  const toggleBranches = (isOpen: boolean) => {
+    setShowBranches(isOpen)
+  }
+
+  const handleBranchFilerChange = (branchFilter: string) => {
+    setBranchFilter(branchFilter)
+  }
+
+  const showAllBranches = () => {
+    global.dispatchShowAllBranches()
   }
 
   const createModalMessage = () => {
@@ -685,18 +699,31 @@ export function Workspace () {
           <div className='d-flex justify-space-between p-1'>
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
             <div className="pt-1 mr-1">
-              <Dropdown style={{ height: 30, minWidth: 80 }}>
+              <Dropdown style={{ height: 30, minWidth: 80 }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark" icon={null}>
-                  { selectedWorkspace.currentBranch || '-none-'}
+                  { selectedWorkspace.currentBranch || '-none-' }
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items' data-id="custom-dropdown-items">
+                <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items branches-dropdown' data-id="custom-dropdown-items">
+                  <div className='d-flex text-dark' style={{ fontSize: 14, fontWeight: 'bold' }}>
+                    <span className='mt-2 ml-2 mr-auto'>Switch branches</span>
+                    <div className='pt-2 pr-2' onClick={() => { toggleBranches(false) }}><i className='fa fa-close'></i>
+                    </div>
+                  </div>
+                  <div className='border-top py-2'>
+                    <input className='form-control border checkout-input bg-light' placeholder='Find or create a branch.' style={{ minWidth: 225 }} onChange={(e) => { handleBranchFilerChange(e.target.value) }} />
+                  </div>
+                  <div className='border-top'>
+                    {
+                      (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.remote).slice(0, 4).map((branch, index) => {
+                        return (
+                          <Dropdown.Item key={index}><span>{ selectedWorkspace.currentBranch === branch.name ? <span>&#10003; { branch.name } </span> : <span className="pl-3">{ branch.name }</span> }</span></Dropdown.Item>
+                        )
+                      })
+                    }
+                  </div>
                   {
-                    (selectedWorkspace.branches || []).map((branch, index) => {
-                      return (
-                        <Dropdown.Item key={index}><span>{ selectedWorkspace.currentBranch === branch.name ? <span>&#10003; { branch.name } </span> : <span className="pl-3">{ branch.name }</span> }</span></Dropdown.Item>
-                      )
-                    })
+                    (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><a href='#' style={{ fontSize: 12 }} onClick={showAllBranches}>view all branches</a></div>
                   }
                 </Dropdown.Menu>
               </Dropdown>
