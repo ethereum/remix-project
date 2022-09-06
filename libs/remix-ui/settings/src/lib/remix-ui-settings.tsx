@@ -40,14 +40,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const javascriptVM = props.config.get('settings/always-use-vm')
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
 
-    const useAutoComplete = props.config.get('settings/use-auto-complete')
-    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
+    const useAutoComplete = props.config.get('settings/auto-completion')
+    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, false, dispatch)
 
     const displayErrors = props.config.get('settings/display-errors')
-    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, true, dispatch)
+    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, false, dispatch)
   
     const useShowGas = props.config.get('settings/show-gas')
-    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
+    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, false, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -148,9 +148,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
-    const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? true:props.config.get('settings/auto-completion')
-    const isShowGasInEditorChecked = props.config.get('settings/show-gas') === null ? true:props.config.get('settings/show-gas')
-    const displayErrorsChecked = props.config.get('settings/display-errors') === null ? true:props.config.get('settings/display-errors')
+
+    const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
+    const isShowGasInEditorChecked = props.config.get('settings/show-gas') || false
+    const displayErrorsChecked = props.config.get('settings/display-errors') || false
     return (
       <div className="$border-top">
         <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
@@ -188,19 +189,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} htmlFor="settingsUseAutoComplete">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} data-id="settingsAutoCompleteLabel" htmlFor="settingsUseAutoComplete">
               <span>{useAutoCompleteText}</span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} htmlFor="settingsUseShowGas">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} data-id="settingsShowGasLabel" htmlFor="settingsUseShowGas">
               <span>{useShowGasInEditorText}</span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`} htmlFor="settingsDisplayErrors">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}  data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
               <span>{displayErrorsText}</span>
             </label>
           </div>

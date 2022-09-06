@@ -262,7 +262,8 @@ export const EditorUI = (props: EditorUIProps) => {
         // see https://code.visualstudio.com/api/references/theme-color for more settings
         'editor.background': textbackground,
         'editorSuggestWidget.background': lightColor,
-        'editorSuggestWidget.selectedBackground': lightColor,
+        'editorSuggestWidget.selectedBackground': secondaryColor,
+        'editorSuggestWidget.selectedForeground': textColor,
         'editorSuggestWidget.highlightForeground': infoColor,
         'editor.lineHighlightBorder': secondaryColor,
         'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
@@ -569,14 +570,17 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
-
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
-    editorService.openCodeEditor = async (input, source) => {
+    editorService.openCodeEditor = async (input , source) => {
       const result = await openEditorBase(input, source)
       if (input && input.resource && input.resource.path) {
         try {
           await props.plugin.call('fileManager', 'open', input.resource.path)
+          if (input.options && input.options.selection) {
+            editor.revealRange(input.options.selection)
+            editor.setPosition({ column: input.options.selection.startColumn, lineNumber: input.options.selection.startLineNumber })
+          }
         } catch (e) {
           console.log(e)
         }
@@ -608,6 +612,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
 
+    
     loadTypes(monacoRef.current)
   }
 

@@ -129,15 +129,16 @@ module.exports = {
       .pause(1000) // compile Storage
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
       .pause(1000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ fail test updating and retrieving updated value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 55')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 56')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 56')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '2 passing, 1 failing')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 2')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
@@ -151,14 +152,15 @@ module.exports = {
       .pause(1000) // compile StorageWithLib
       .executeScriptInTerminal('remix.execute(\'scripts/storageWithLib.test.js\')')
       .pause(1000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage with lib')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'deploying lib:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ test library integration by calling a lib method')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 34')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 14')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 14')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: expected \'14\' to equal \'34\'')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0 passing, 1 failing')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
@@ -194,8 +196,8 @@ module.exports = {
 
   'Should run a script right after compilation #group6': function (browser: NightwatchBrowser) {
     browser
-      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract } )
-      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
+      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract })
+      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script })
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
       .pause(15000)
@@ -209,12 +211,12 @@ module.exports = {
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => {})
+      }, [], () => { })
       .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('filePanel')
       .openFile('README.txt')
-      .addFile('scripts/log_tx_block.js', { content: scriptBlockAndTransaction } )
+      .addFile('scripts/log_tx_block.js', { content: scriptBlockAndTransaction })
       .pause(1000)
       .executeScriptInTerminal('remix.execute(\'scripts/log_tx_block.js\')')
       // check if the input of the transaction is being logged (web3 call)
@@ -223,38 +225,68 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x00000000000000000000000000100000000000000000020000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000040000000060000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000100000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001', 120000)
       // check if the logsBloom is being logged (ethers.js call)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
-    },
+  },
 
-    'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
-      browser
-        .clickLaunchIcon('udapp') // connect to mainnet
-        .switchEnvironment('External Http Provider')
-        .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-        .execute(() => {
-          (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-        }, [], () => {})
-        .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym')
-        .modalFooterOKClick('basic-http-provider')
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .click('[data-id="listenNetworkCheckInput"]') // start to listen
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'from:', 200000)
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'to:', 200000)
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'from:', 200000)
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'to:', 200000)
-        .click('[data-id="listenNetworkCheckInput"]') // stop to listen
-        .pause(30000)
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .pause(5000)
-        .click('[data-id="terminalClearConsole"]') // clear the console
-        .pause(20000)
-        .execute(function () {
-          return (document.querySelector('[data-id="terminalJournal"]') as any).innerText
-        }, [], function (result) {
-          browser.assert.equal(result.value, '', 'terminal log should be empty')
+  'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
+    const url = 'http://127.0.0.1:8545'
+    const identifier = 'Custom'
+    browser
+      .clickLaunchIcon('udapp') // connect to mainnet
+      .connectToExternalHttpProvider(url, identifier)
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
+      .clickLaunchIcon('solidity')
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
+      .pause(10000)
+      .waitForElementNotPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+        timeout: 120000
+      })
+      .click({
+        selector: '[data-id="listenNetworkCheckInput"]',
+      }) // start to listen
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
+      .pause(10000)
+      .findElements(
+        {
+          locateStrategy: 'xpath',
+          selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+          timeout: 120000,
+        }
+        , async (result) => {
+          if (Array.isArray(result.value) && result.value.length > 0) {
+            console.log('Found ' + result.value.length + ' transactions')
+            browser
+            .click({
+              selector: '[data-id="listenNetworkCheckInput"]',
+            })
+            .click({
+              selector: '*[data-id="terminalClearConsole"]',
+            })
+            .click({
+              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+            })
+            .pause(10000)
+            .waitForElementNotPresent({
+              locateStrategy: 'xpath',
+              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+              timeout: 120000
+            })
+            .end()
+          } else {
+            browser
+              .assert.fail('No transaction found')
+              .end()
+          }
         })
-    }
+  }
 }
+
 
 const asyncAwait = `
   var p = function () {
