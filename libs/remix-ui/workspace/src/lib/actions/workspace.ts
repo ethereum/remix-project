@@ -338,7 +338,6 @@ export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean
               let currentBranch = null
 
               branches = await getGitRepoBranches(folder)
-              console.log('branches: ', branches)
               currentBranch = await getGitRepoCurrentBranch(folder)
 
               return {
