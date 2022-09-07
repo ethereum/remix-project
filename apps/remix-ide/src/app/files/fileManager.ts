@@ -215,9 +215,7 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data)
         this.emit('fileAdded', path)
-        if(!this.isFromLastAction){
-          this.recordFileAction("writefile", {path: path})
-        }
+        this.recordFileAction("writefile", {path: path})
         return ret
       }
     } catch (e) {
@@ -340,10 +338,7 @@ class FileManager extends Plugin {
           return
         }
 
-        if(!this.isFromLastAction){
-          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
-          this.isFromLastAction = false
-        }
+        this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
         return provider.rename(oldPath, newPath, false)
       } else {
         if (newPathExists) {
@@ -353,11 +348,7 @@ class FileManager extends Plugin {
           })
           return
         }
-        if(!this.isFromLastAction){
-          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
-        } else {
-          this.isFromLastAction = false
-        }
+        this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
         return provider.rename(oldPath, newPath, true)
       }
 
@@ -434,9 +425,8 @@ class FileManager extends Plugin {
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
-      if(!this.isFromLastAction){
-        this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
-      }
+      
+      this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
@@ -923,10 +913,7 @@ class FileManager extends Plugin {
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
       
-      if(!this.isFromLastAction){
-        this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
-      }
-      
+      this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
     } catch (e) {
       throw new Error(e)
     }
@@ -940,8 +927,11 @@ class FileManager extends Plugin {
    */
   
    recordFileAction(action: FileAction, args: any) {
+    if(!this.isFromLastAction){
+      this.actions.push({action: action, args: args})
+
+    }
     this.isFromLastAction = false
-    this.actions.push({action: action, args: args})
   }
   
   /**
@@ -950,12 +940,15 @@ class FileManager extends Plugin {
   */
 
   async revertFileAction(redo: boolean){
+    this.isFromLastAction = true
+
     let lastAction = this.actions[this.actions.length - 1]
     if(redo){
       lastAction = this.undoActions[this.undoActions.length - 1]
       this.undoActions.pop()
     } else {
       const popped = this.actions.pop()
+
       if(popped){
         this.undoActions.push(popped)
       }
@@ -964,23 +957,23 @@ class FileManager extends Plugin {
     if(!lastAction){
       return
     }
-    console.log(lastAction.args)
-
-    this.isFromLastAction = true
     switch(lastAction.action){
       case "move":
-        let file = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")),
-          folder = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/"))
+        let file = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")+1),
+          folder = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/")+1)
 
-        this.moveFile(lastAction.args.dest+file, folder)
-
+        await this.moveFile(`${lastAction.args.dest}/${file}`, folder)
       break;
       case "movedir":
         let dir = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")),
           dirToMove = lastAction.args.dest
-        this.moveDir(lastAction.args.dest+dirToMove, lastAction.args.src )
+        this.moveDir(lastAction.args.dest + dirToMove, lastAction.args.src )
       break;
       case "writefile":
+        if(redo){
+          this.writeFile(lastAction.args.path, "")
+          return
+        }
         this.remove(lastAction.args.path)
       break;
       case "rename":
@@ -995,11 +988,16 @@ class FileManager extends Plugin {
         this.remove(lastAction.args.path)
       break;
       case "remove":
+        if(redo){
+          this.remove(lastAction.args.path)
+          return
+        }
         this.writeFile(lastAction.args.path, lastAction.args.content)
       break;
     }
 
   }
+  
 }
 
 module.exports = FileManager
