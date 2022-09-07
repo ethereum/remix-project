@@ -36,10 +36,7 @@ module.exports = {
       .testFunction('last',
       {
         status: 'true Transaction mined and execution succeed',
-        'decoded input': {
-          'string tokenName': 'MyToken',
-          'string tokenSymbol': 'MTK'
-        }
+        'decoded input': {}
       }).end()
   }
 }
