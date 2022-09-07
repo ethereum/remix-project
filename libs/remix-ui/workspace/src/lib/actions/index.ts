@@ -497,3 +497,13 @@ export const moveFolder = async (src: string, dest: string) => {
     dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
   }
 }
+
+export const revertFileAction = (redo: boolean)=>{
+  const fileManager = plugin.fileManager
+
+  try {
+    fileManager.revertFileAction(redo)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while performing undo operation.' + error))
+  }
+}

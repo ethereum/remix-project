@@ -531,7 +531,8 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
-                  />
+                  dispatchRevertFileAction={global.dispatchRevertFileAction}
+                />
               </div>
             }
             { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
@@ -571,7 +572,8 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
-                />
+                  dispatchRevertFileAction={global.dispatchRevertFileAction}
+              />
               </div>
             }
             </div>

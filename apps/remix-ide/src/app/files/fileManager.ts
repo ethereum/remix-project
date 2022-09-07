@@ -7,6 +7,7 @@ import { EventEmitter } from 'events'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
+import { FileAction, FileActionType } from './types'
 
 /*
   attach to files event (removed renamed)
@@ -49,6 +50,10 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
+  actions: FileActionType[]
+  undoActions: FileActionType[]
+  isFromLastAction: boolean
+
   constructor(editor, appManager) {
     super(profile)
     this.mode = 'browser'
@@ -59,8 +64,9 @@ class FileManager extends Plugin {
     this._components.registry = Registry.getInstance()
     this.appManager = appManager
     this.init()
+    this.actions = []
+    this.undoActions = []
   }
-
   getOpenedFiles() {
     return this.openedFiles
   }
@@ -209,6 +215,9 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data)
         this.emit('fileAdded', path)
+        if(!this.isFromLastAction){
+          this.recordFileAction("writefile", {path: path})
+        }
         return ret
       }
     } catch (e) {
@@ -252,7 +261,7 @@ class FileManager extends Plugin {
       const content = await this.readFile(src)
       let copiedFilePath = dest + (customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`)
       copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
-
+      this.recordFileAction("copy",{src: src})
       await this.writeFile(copiedFilePath, content)
     } catch (e) {
       throw new Error(e)
@@ -282,6 +291,8 @@ class FileManager extends Plugin {
       } else {
         await this.inDepthCopy(src, dest, customName)
       }
+      this.recordFileAction("create", {dest: dest})
+
     } catch (e) {
       throw new Error(e)
     }
@@ -328,6 +339,11 @@ class FileManager extends Plugin {
           })
           return
         }
+
+        if(!this.isFromLastAction){
+          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+          this.isFromLastAction = false
+        }
         return provider.rename(oldPath, newPath, false)
       } else {
         if (newPathExists) {
@@ -337,8 +353,15 @@ class FileManager extends Plugin {
           })
           return
         }
+        if(!this.isFromLastAction){
+          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+        } else {
+          this.isFromLastAction = false
+        }
         return provider.rename(oldPath, newPath, true)
       }
+
+
     } catch (e) {
       throw new Error(e)
     }
@@ -368,6 +391,7 @@ class FileManager extends Plugin {
         throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
       }
       const provider = this.fileProviderOf(path)
+      this.recordFileAction("create", {path: path})
       return await provider.createDir(path)
     } catch (e) {
       throw new Error(e)
@@ -410,6 +434,9 @@ class FileManager extends Plugin {
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
+      if(!this.isFromLastAction){
+        this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
+      }
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
@@ -865,6 +892,8 @@ class FileManager extends Plugin {
       }
       await this.copyFile(src, dest, fileName)
       await this.remove(src)
+      this.recordFileAction("move", {src: src, dest: dest})
+
     } catch (e) {
       throw new Error(e)
     }
@@ -893,10 +922,83 @@ class FileManager extends Plugin {
       }
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
-
+      
+      if(!this.isFromLastAction){
+        this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
+      }
+      
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  /**
+   * Undos the last action on the Filesystem
+   * @param {string} action the action that was taken
+   * @param {string} args the command that was used
+   * @returns {void}
+   */
+  
+   recordFileAction(action: FileAction, args: any) {
+    this.isFromLastAction = false
+    this.actions.push({action: action, args: args})
+  }
+  
+  /**
+   * Reverts the last action that was performed by the user
+   * @returns {void}
+  */
+
+  async revertFileAction(redo: boolean){
+    let lastAction = this.actions[this.actions.length - 1]
+    if(redo){
+      lastAction = this.undoActions[this.undoActions.length - 1]
+      this.undoActions.pop()
+    } else {
+      const popped = this.actions.pop()
+      if(popped){
+        this.undoActions.push(popped)
+      }
+    }
+    
+    if(!lastAction){
+      return
+    }
+    console.log(lastAction.args)
+
+    this.isFromLastAction = true
+    switch(lastAction.action){
+      case "move":
+        let file = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")),
+          folder = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/"))
+
+        this.moveFile(lastAction.args.dest+file, folder)
+
+      break;
+      case "movedir":
+        let dir = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")),
+          dirToMove = lastAction.args.dest
+        this.moveDir(lastAction.args.dest+dirToMove, lastAction.args.src )
+      break;
+      case "writefile":
+        this.remove(lastAction.args.path)
+      break;
+      case "rename":
+        if(redo){
+          this.rename( lastAction.args.oldPath, lastAction.args.newPath)
+          return
+        }
+        this.rename(lastAction.args.newPath, lastAction.args.oldPath)
+
+      break;
+      case "copy":
+        this.remove(lastAction.args.path)
+      break;
+      case "remove":
+        this.writeFile(lastAction.args.path, lastAction.args.content)
+      break;
+    }
+
   }
 }
 
