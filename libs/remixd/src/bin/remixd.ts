@@ -27,7 +27,8 @@ const services = {
   hardhat: (readOnly: boolean) => new servicesList.HardhatClient(readOnly),
   truffle: (readOnly: boolean) => new servicesList.TruffleClient(readOnly),
   slither: (readOnly: boolean) => new servicesList.SlitherClient(readOnly),
-  folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly)
+  folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly),
+  foundry: (readOnly: boolean) => new servicesList.FoundryClient(readOnly)
 }
 
 // Similar object is also defined in websocket.ts
@@ -36,11 +37,12 @@ const ports = {
   hardhat: 65522,
   slither: 65523,
   truffle: 65524,
+  foundry: 65525,
   folder: 65520
 }
 
 const killCallBack: Array<any> = [] // any is function
-function startService<S extends 'git' | 'hardhat' | 'truffle' | 'slither' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
+function startService<S extends 'git' | 'hardhat' | 'truffle' | 'slither' | 'folder' | 'foundry'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
   const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
@@ -128,6 +130,19 @@ function errorHandler (error: any, service: string) {
         startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
           if (error) {
             errorHandler(error, 'hardhat')
+            return false
+          }
+          sharedFolderClient.setWebSocket(ws)
+          sharedFolderClient.sharedFolder(program.sharedFolder)
+        })
+      }
+      // Run foundry service if a founndry project is shared as folder
+      const foundryConfigFilePath = absolutePath('./', program.sharedFolder)
+      const isFoundryProject = existsSync(foundryConfigFilePath  + '/foundry.toml')
+      if (isFoundryProject) {
+        startService('foundry', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
+          if (error) {
+            errorHandler(error, 'foundry')
             return false
           }
           sharedFolderClient.setWebSocket(ws)
