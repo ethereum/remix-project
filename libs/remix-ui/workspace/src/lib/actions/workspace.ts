@@ -439,3 +439,40 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 
   return currentBranch
 }
+
+export const showAllBranches = async () => {
+  const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+  if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+  plugin.call('menuicons', 'select', 'dgit')
+}
+
+export const switchToBranch = async (branch: string) => {
+  const gitConfig = {
+    ref: branch
+  }
+  const promise = plugin.call('dGitProvider', 'checkout', gitConfig)
+
+  dispatch(cloneRepositoryRequest())
+  promise.then(async () => {
+    await fetchWorkspaceDirectory(ROOT_PATH)
+    dispatch(cloneRepositorySuccess())
+  }).catch((e) => {
+    const checkoutModal = {
+      id: 'checkoutGitBranch',
+      title: 'Checkout Git Branch',
+      message: 'An error occurred: ' + e,
+      modalType: 'modal',
+      okLabel: 'OK',
+      okFn: async () => {
+        // await deleteWorkspace(repoName)
+        dispatch(cloneRepositoryFailed())
+      },
+      hideFn: async () => {
+        // await deleteWorkspace(repoName)
+        dispatch(cloneRepositoryFailed())
+      }
+    }
+    plugin.call('notification', 'modal', checkoutModal)
+  })
+}
