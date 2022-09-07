@@ -172,7 +172,7 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
@@ -204,7 +204,7 @@ module.exports = {
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/SampleERC721_test.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/MyToken_test.sol"]')
   },
 
   // WORKSPACE TEMPLATES E2E END
