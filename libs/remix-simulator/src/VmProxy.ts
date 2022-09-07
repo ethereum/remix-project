@@ -132,6 +132,7 @@ export class VmProxy {
     this.txs[this.processingHash] = tx
     this.txsReceipt[this.processingHash] = tx
     this.storageCache[this.processingHash] = {}
+    this.storageCache['after_' + this.processingHash] = {}
     if (data.to) {
       try {
         const storage = await this.vm.stateManager.dumpStorage(data.to)
@@ -174,6 +175,17 @@ export class VmProxy {
     this.txsReceipt[this.processingHash].transactionHash = this.processingHash
     const status = data.execResult.exceptionError ? 0 : 1
     this.txsReceipt[this.processingHash].status = `0x${status}`
+
+    const to = this.txs[this.processingHash].to
+    if (to) {
+      try {
+        const account = Address.fromString(to)
+        const storage = await this.vm.stateManager.dumpStorage(account)
+        this.storageCache['after_' + this.processingHash][to] = storage
+      } catch (e) {
+        console.log(e)
+      }
+    }
 
     if (data.createdAddress) {
       const address = data.createdAddress.toString()
@@ -308,8 +320,8 @@ export class VmProxy {
     
     
 
-    if (this.storageCache[txHash] && this.storageCache[txHash][address]) {
-      const storage = this.storageCache[txHash][address]
+    if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
+      const storage = this.storageCache['after_' + txHash][address]
       return cb(null, {
         storage: JSON.parse(JSON.stringify(storage)),
         nextKey: null
