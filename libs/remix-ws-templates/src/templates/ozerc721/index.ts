@@ -1,7 +1,8 @@
+import { erc721 } from '@openzeppelin/wizard';
+
 export default async () => {
     return {
-        // @ts-ignore
-        'contracts/SampleERC721.sol': (await import('raw-loader!./contracts/SampleERC721.sol')).default,
+        'contracts/MyToken.sol': erc721.print(),
         // @ts-ignore
         'scripts/deploy_with_ethers.ts': (await import('!!raw-loader!./scripts/deploy_with_ethers.ts')).default,
         // @ts-ignore
@@ -11,6 +12,6 @@ export default async () => {
         // @ts-ignore
         'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default,
         // @ts-ignore
-        'tests/SampleERC721_test.sol': (await import('raw-loader!./tests/SampleERC721_test.sol')).default
+        'tests/MyToken_test.sol': (await import('raw-loader!./tests/MyToken_test.sol')).default
     }
 }
