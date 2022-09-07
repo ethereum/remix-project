@@ -26,19 +26,19 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
-      .openFile('contracts/SampleERC721.sol')
-      .verifyContracts(['SampleERC721'])
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .openFile('contracts/MyToken.sol')
+      .verifyContracts(['MyToken'])
       // deploy contract
       .clickLaunchIcon('udapp')
-      .selectContract('SampleERC721')
-      .createContract('E,E')
+      .selectContract('MyToken')
+      .createContract('')
       .testFunction('last',
       {
         status: 'true Transaction mined and execution succeed',
         'decoded input': {
-          'string tokenName': 'E',
-          'string tokenSymbol': 'E'
+          'string tokenName': 'MyToken',
+          'string tokenSymbol': 'MTK'
         }
       }).end()
   }
