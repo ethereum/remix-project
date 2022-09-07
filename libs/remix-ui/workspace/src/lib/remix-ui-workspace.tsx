@@ -213,6 +213,10 @@ export function Workspace () {
     global.dispatchShowAllBranches()
   }
 
+  const switchToBranch = (branch: string) => {
+    global.dispatchSwitchToBranch(branch)
+  }
+
   const createModalMessage = () => {
     return (
       <>
@@ -717,7 +721,13 @@ export function Workspace () {
                     {
                       (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.remote).slice(0, 4).map((branch, index) => {
                         return (
-                          <Dropdown.Item key={index}><span>{ selectedWorkspace.currentBranch === branch.name ? <span>&#10003; { branch.name } </span> : <span className="pl-3">{ branch.name }</span> }</span></Dropdown.Item>
+                          <Dropdown.Item key={index}>
+                            { 
+                              selectedWorkspace.currentBranch === branch.name ?
+                              <span onClick={() => { switchToBranch(branch.name) }}>&#10003; { branch.name } </span> :
+                              <span className="pl-3" onClick={() => { switchToBranch(branch.name) }}>{ branch.name }</span>
+                            }
+                          </Dropdown.Item>
                         )
                       })
                     }
