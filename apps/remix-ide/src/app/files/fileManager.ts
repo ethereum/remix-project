@@ -215,7 +215,9 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data)
         this.emit('fileAdded', path)
-        this.recordFileAction("writefile", {path: path})
+        if(!this.isFromLastAction){
+          this.recordFileAction("writefile", {path: path})
+        }
         return ret
       }
     } catch (e) {
@@ -338,7 +340,10 @@ class FileManager extends Plugin {
           return
         }
 
-        this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+        if(!this.isFromLastAction){
+          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+          this.isFromLastAction = false
+        }
         return provider.rename(oldPath, newPath, false)
       } else {
         if (newPathExists) {
@@ -348,7 +353,11 @@ class FileManager extends Plugin {
           })
           return
         }
-        this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+        if(!this.isFromLastAction){
+          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+        } else {
+          this.isFromLastAction = false
+        }
         return provider.rename(oldPath, newPath, true)
       }
 
@@ -916,8 +925,11 @@ class FileManager extends Plugin {
       }
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
-      this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
-
+      
+      if(!this.isFromLastAction){
+        this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
+      }
+      
     } catch (e) {
       throw new Error(e)
     }
