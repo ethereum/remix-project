@@ -220,12 +220,30 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
-          <div className="d-flex justify-content-between ">
-            <div className="mx-4 my-4 d-flex">
-              <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+          <div className="pt-2 d-flex justify-content-between">
+            <div>
+              <div className="mx-4 my-4 pt-4 d-flex">
+                <label style={ { fontSize: 'xxx-large' } }>Remix IDE</label>
+              </div>
+              <div className="pt-4 align-self-end mb-2 d-flex flex-column">
+                <span className="pl-4 text-danger mt-2">
+                  <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
+                  <b><FormattedMessage id='home.scamAlert' defaultMessage='Scam Alerts' />:</b>
+                </span>
+                <span className="pl-4 text-danger mt-1">
+                  <FormattedMessage id='home.scamAlertText' defaultMessage='The only URL Remix uses is remix.ethereum.org' />
+                </span>
+                <span className="pl-4 text-danger mt-1">
+                  <FormattedMessage id='home.scamAlertText2' defaultMessage='Beware of online videos promoting "liquidity front runner bots"' />:
+                  <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d"><FormattedMessage id='home.learnMore' defaultMessage='Learn more' /></a>
+                </span>
+                <span className="pl-4 text-danger mt-1">
+                  <FormattedMessage id='home.scamAlertText3' defaultMessage='Additional safety tips' />: &nbsp;<a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html"><FormattedMessage id='home.here' defaultMessage='here' /></a>
+                </span>
+              </div>
             </div>
             <div className="mr-4 d-flex">
-              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
+              <img className="align-self-end remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
               <audio
                 id="remiAudio"
                 muted={false}
@@ -233,13 +251,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 ref={remiAudioEl}
               ></audio>
             </div>
-          </div>
-          <div>
-            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
-            <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              <FormattedMessage id='home.scamAlert' defaultMessage='Scam Alert: There are video tutorials going around that provide urls other than remix.ethereum.org, and could be scams. Also, beware of online videos promoting "liquidity front runner bots".' />
-            </span>
-            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d"><FormattedMessage id='home.learnMore' defaultMessage='Learn more' /></a>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">

@@ -152,7 +152,7 @@ export function AccountUI (props: AccountProps) {
   return (
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
-        <FormattedMessage id='udapp.value' defaultMessage='Account' />
+        <FormattedMessage id='udapp.account' defaultMessage='Account' />
         <span id="remixRunPlusWraper" title={plusOpt.title}>
           <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
         </span>

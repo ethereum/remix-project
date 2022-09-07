@@ -292,7 +292,15 @@ export function UniversalDappUI (props: UdappProps) {
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
               <input id="deployAndRunLLTxCalldata" onChange={handleCalldataChange} className="udapp_calldataInput form-control" title="The Calldata to send to fallback function of the contract." />
-              <button id="deployAndRunLLTxSendTransaction" data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction" className="udapp_instanceButton p-0 w-50 btn border-warning text-warning" title="Send data to contract." onClick={sendData}>Transact</button>
+              <button
+                id="deployAndRunLLTxSendTransaction"
+                data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"
+                className="btn udapp_instanceButton p-0 w-50 border-warning text-warning"
+                title="Send data to contract."
+                onClick={sendData}
+              >
+                Transact
+              </button>
             </div>
           </div>
           <div>

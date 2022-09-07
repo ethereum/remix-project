@@ -89,8 +89,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         scriptRunnerDispatch({ type: 'html', payload: { message: [html ? html.innerText ? html.innerText : html : null] } })
       },
 
-      log: (message, type) => {
-        scriptRunnerDispatch({ type: type ? type : 'log', payload: { message: [message] } })
+      log: (message) => {
+        scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
       }
     })
   }, [])
@@ -464,6 +464,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               className="pt-1 form-check-label custom-control-label text-nowrap"
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
               htmlFor="listenNetworkCheck"
+              data-id="listenNetworkCheckInput"
             >
               <FormattedMessage id='terminal.listen' defaultMessage='listen on all transactions' />
             </label>
@@ -552,6 +553,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       <div className="px-4 block" data-id="block" key={i}><span className={x.style}>{ msg }</span></div>
                     )
                   } else if (typeof msg === 'object') {
+                    if (msg.value && isHtml(msg.value)) {
+                      return (
+                        <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{ parse(msg.value) } </span></div>
+                      )
+                    }
                     let stringified
                     try {
                       stringified = JSON.stringify(msg)
@@ -610,6 +616,15 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       {toastProvider.show && <Toaster message={`provider for path ${toastProvider.fileName} not found`} />}
     </div>
   )
+}
+
+function isHtml (value) {
+  if (!value.indexOf) return false
+  return value.indexOf('<div') !== -1
+    || value.indexOf('<span') !== -1
+    || value.indexOf('<p') !== -1
+    || value.indexOf('<label') !== -1
+    || value.indexOf('<b') !== -1
 }
 
 export default RemixUiTerminal

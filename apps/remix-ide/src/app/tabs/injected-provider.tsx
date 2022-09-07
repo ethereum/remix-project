@@ -18,7 +18,7 @@ export class InjectedProvider extends Plugin {
 
   sendAsync (data: JsonDataRequest): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.sendAsyncInternal(data, resolve, reject) 
+      this.sendAsyncInternal(data, resolve, reject)
     })
   }
 
@@ -30,7 +30,7 @@ export class InjectedProvider extends Plugin {
       return reject(new Error('no injected provider found.'))
     }
     try {
-      if ((window as any) && typeof (window as any).ethereum.enable === 'function') (window as any).ethereum.enable()
+      if ((window as any) && typeof (window as any).ethereum.request === "function") (window as any).ethereum.request({ method: "eth_requestAccounts" });
       if (!await (window as any).ethereum._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       await addL2Network(this.chainName, this.chainId, this.rpcUrls)
       const resultData = await this.provider.currentProvider.send(data.method, data.params)
@@ -61,7 +61,7 @@ export const addL2Network =  async (chainName: string, chainId: string, rpcUrls:
             },
           ],
         });
-        
+
         await (window as any).ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: chainId }],
@@ -71,5 +71,5 @@ export const addL2Network =  async (chainName: string, chainId: string, rpcUrls:
       }
     }
     // handle other "switch" errors
-  }  
+  }
 }

@@ -9,8 +9,7 @@
 * Copyright 2011-2020 The Bootstrap Authors
 * Copyright 2011-2020 Twitter, Inc.
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-*/@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@400;
-700&display=swap);
+*/@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap);
 :root {
     --blue:#2a9fd6;
     --indigo:#6610f2;
@@ -36,6 +35,7 @@
     --dark:#adafae;
     --body-bg: #060606;
     --text-bg-mark: #fcf8e3;
+    --custom-select: #fff;
     --breakpoint-xs:0;
     --breakpoint-sm:576px;
     --breakpoint-md:768px;

@@ -28,22 +28,60 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   /** Compile a Contract */
   async function compileContract() {
     try {
-      const _contract = await remixClient.getContract()
+      await remixClient.discardHighlight()
+      let _contract: any
+      try {
+        _contract = await remixClient.getContract()
+      } catch (e: any) {
+        setOutput('', { status: 'failed', message: e.message})
+        return
+      }      
       remixClient.changeStatus({
         key: 'loading',
         type: 'info',
         title: 'Compiling'
       })
-      const output = await compile(compilerUrl, _contract)
+      let output
+      try {
+        output = await compile(compilerUrl, _contract)
+      } catch (e: any) {
+        setOutput(_contract.name, { status: 'failed', message: e.message})
+        return
+      }      
       setOutput(_contract.name, output)
       // ERROR
       if (isCompilationError(output)) {
         const line = output.line
-        const lineColumnPos = {
-          start: { line: line - 1 },
-          end: { line: line - 1 }
+        if (line) {
+          const lineColumnPos = {
+            start: { line: line - 1, column: 10 },
+            end: { line: line - 1,  column: 10 }
+          }
+          remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
+        } else {
+          const regex = output.message.match(/line ((\d+):(\d+))+/g)
+          const errors = output.message.split(/line ((\d+):(\d+))+/g) // extract error message
+          if (regex) {
+            let errorIndex = 0
+            regex.map((errorLocation) => {
+              const location = errorLocation.replace('line ', '').split(':')
+              let message = errors[errorIndex]
+              errorIndex = errorIndex + 4
+              if (message && message.split('\n\n').length > 0) {
+                try {
+                  message = message.split('\n\n')[message.split('\n\n').length - 1]
+                } catch (e) {}                
+              }
+              if (location.length > 0) {
+                const lineColumnPos = {
+                  start: { line: parseInt(location[0]) - 1, column: 10 },
+                  end: { line: parseInt(location[0]) - 1, column: 10 }
+                }
+                remixClient.highlight(lineColumnPos as any, _contract.name, message)
+              }
+            })
+          }
         }
-        remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
         throw new Error(output.message)
       }
       // SUCCESS
@@ -61,13 +99,13 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
         type: 'error',
         title: err.message
       })
-      console.error(err)
     }
   }
 
   return (
-    <Button data-id="compile" onClick={compileContract} variant="primary">
-      Compile {contract}
+    <Button data-id="compile" onClick={compileContract} variant="primary" title={contract} className="d-flex flex-column">
+      <span>Compile</span>
+      <span className="overflow-hidden text-truncate text-nowrap" >{contract}</span>
     </Button>
   )
 }

@@ -1,9 +1,8 @@
 'use strict'
-import { each } from 'async'
 import { ethers } from 'ethers'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
-import { compareByteCode } from '../util'
+import { compareByteCode, getinputParameters } from '../util'
 import { decodeResponse } from './txFormat'
 import { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
 
@@ -34,8 +33,7 @@ export class TxListener {
   _listenOnNetwork:boolean
   _loopId
   blocks
-  lastBlock
-
+  
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
@@ -107,8 +105,7 @@ export class TxListener {
         addExecutionCosts(txResult, tx, execResult)
         tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.receipt.status // 0x0 or 0x1
-        this._resolve([tx], () => {
-        })
+        this._resolve([tx])
       })
     })
   }
@@ -123,9 +120,7 @@ export class TxListener {
     if (this._loopId) {
       clearInterval(this._loopId)
     }
-    if (this._listenOnNetwork) {
-      this._startListenOnNetwork()
-    }
+    this._listenOnNetwork ? this.startListening() : this.stopListening()
   }
 
   /**
@@ -133,7 +128,6 @@ export class TxListener {
     */
   init () {
     this.blocks = []
-    this.lastBlock = -1
   }
 
   /**
@@ -164,34 +158,54 @@ export class TxListener {
     this._isListening = false
   }
 
-  _startListenOnNetwork () {
-    this._loopId = setInterval(() => {
+  async _startListenOnNetwork () {
+    let lastSeenBlock = this.executionContext.lastBlock?.number - 1
+    let processingBlock = false
+
+    const processBlocks = async () => {
+      if (!this._isListening) return
+      if (processingBlock) return
+      processingBlock = true
       const currentLoopId = this._loopId
-      this.executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
-        if (this._loopId === null) return
-        if (error) return console.log(error)
-        if (currentLoopId === this._loopId && blockNumber > this.lastBlock) {
-          let current = this.lastBlock + 1
-          this.lastBlock = blockNumber
-          while (blockNumber >= current) {
-            try {
-              this._manageBlock(current)
-            } catch (e) {
-              console.log(e)
-            }
-            current++
+      if (this._loopId === null) {
+        processingBlock = false
+        return
+      }
+      if (!lastSeenBlock) {
+        lastSeenBlock = this.executionContext.lastBlock?.number // trying to resynchronize
+        console.log('listen on blocks, resynchronising')
+        processingBlock = false
+        return
+      }
+      const current = this.executionContext.lastBlock?.number
+      if (!current) {
+        console.log(new Error('no last block found'))
+        processingBlock = false
+        return
+      }
+      if (currentLoopId === this._loopId && lastSeenBlock < current) {
+        while (lastSeenBlock <= current) {
+          try {
+            if (!this._isListening) break
+            await this._manageBlock(lastSeenBlock)
+          } catch (e) {
+            console.log(e)
           }
+          lastSeenBlock++
         }
-      })
-    }, 2000)
+        lastSeenBlock = current
+      }
+      processingBlock = false
+    }
+    this._loopId = setInterval(processBlocks, 20000)
+    processBlocks()
   }
 
-  _manageBlock (blockNumber) {
-    this.executionContext.web3().eth.getBlock(blockNumber, true, (error, result) => {
-      if (!error) {
-        this._newBlock(Object.assign({ type: 'web3' }, result))
-      }
-    })
+  async _manageBlock (blockNumber) {
+    try {
+      const result = await this.executionContext.web3().eth.getBlock(blockNumber, true)
+      return await this._newBlock(Object.assign({ type: 'web3' }, result))  
+    } catch (e) {}
   }
 
   /**
@@ -215,29 +229,35 @@ export class TxListener {
     return this._resolvedTransactions[txHash]
   }
 
-  _newBlock (block) {
+  async _newBlock (block) {
     this.blocks.push(block)
-    this._resolve(block.transactions, () => {
-      this.event.trigger('newBlock', [block])
-    })
+    await this._resolve(block.transactions)
+    this.event.trigger('newBlock', [block])
   }
 
-  _resolve (transactions, callback) {
-    each(transactions, (tx, cb) => {
+  _resolveAsync (tx) {
+    return new Promise((resolve, reject) => {
       this._api.resolveReceipt(tx, (error, receipt) => {
-        if (error) return cb(error)
+        if (error) return reject(error)
         this._resolveTx(tx, receipt, (error, resolvedData) => {
-          if (error) cb(error)
+          if (error) return reject(error)
           if (resolvedData) {
             this.event.trigger('txResolved', [tx, receipt, resolvedData])
           }
           this.event.trigger('newTransaction', [tx, receipt])
-          cb()
+          resolve({})
         })
       })
-    }, () => {
-      callback()
     })
+  }
+
+  async _resolve (transactions) {
+    for (const tx of transactions) {
+      try {
+        if (!this._isListening) break
+        await this._resolveAsync(tx)
+      } catch (e) {}
+    }
   }
 
   _resolveTx (tx, receipt, cb) {
@@ -332,7 +352,7 @@ export class TxListener {
       const bytecode = contract.object.evm.bytecode.object
       let params = null
       if (bytecode && bytecode.length) {
-        params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
+        params = this._decodeInputParams(getinputParameters(inputData), getConstructorInterface(abi))
       }
       this._resolvedTransactions[tx.hash] = {
         contractName: contract.name,

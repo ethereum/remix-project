@@ -15,10 +15,11 @@ import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
+import { CodeParser } from './app/plugins/parser/code-parser'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
@@ -216,7 +217,9 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener(new AstWalker())
+
+    const codeParser = new CodeParser(new AstWalker())
+
 
     this.notification = new NotificationPlugin()
 
@@ -241,14 +244,14 @@ class AppComponent {
       compilersArtefacts,
       networkModule,
       offsetToLineColumnConverter,
-      contextualListener,
+      codeParser,
+      fileDecorator,
       terminal,
       web3Provider,
       compileAndRun,
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
-      fileDecorator,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
@@ -356,10 +359,6 @@ class AppComponent {
     const queryParams = new QueryParams()
     const params = queryParams.get()
 
-    if (isElectron()) {
-      this.appManager.activatePlugin('remixd')
-    }
-
     try {
       this.engine.register(await this.appManager.registeredPlugins())
     } catch (e) {
@@ -373,7 +372,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'fileDecorator', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
 

@@ -11,6 +11,7 @@ const themes = [
   { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
   { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
   { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
+  { name: 'HackerOwl', quality: 'dark', url: 'assets/css/themes/remix-hacker_owl.css' },
 
   { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
   { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },

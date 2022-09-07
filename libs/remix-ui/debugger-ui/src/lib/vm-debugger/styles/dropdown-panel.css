@@ -4,10 +4,14 @@
   }
   .name {
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .nameDetail {
     font-weight: bold;
     margin-left: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .icon {
     margin-right: 5%;
