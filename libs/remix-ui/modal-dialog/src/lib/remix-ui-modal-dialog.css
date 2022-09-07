@@ -8,6 +8,7 @@
 .remixModalBody {
   overflow-y: auto;
   max-height: 600px;
+  white-space: pre-line;
 }
 @-webkit-keyframes animatetop {
   from {top: -300px; opacity: 0}

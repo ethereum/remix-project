@@ -122,9 +122,10 @@ export const AssemblyItems = ({ registerEvent }) => {
   }
 
   return (
-    <div className="border rounded px-1 mt-1 bg-light">
+    <div className="h-100 border rounded px-1 mt-1 bg-light">
       <div className='dropdownpanel'>
-        <div className='dropdowncontent'>
+        <div className='dropdowncontent pb-2'>
+          { assemblyItems.display.length == 0 && <div>No data available</div> }
           <div className="pl-2 my-1 small instructions" data-id="asmitems" id='asmitems' ref={asmItemsRef}>
             {
               assemblyItems.display.map((item, i) => {

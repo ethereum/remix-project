@@ -2,6 +2,8 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettingsProps } from '../types'
+import { gitAccessTokenTitle, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenLink } from './constants'
+
 
 export function GithubSettings (props: GithubSettingsProps) {
   const [githubToken, setGithubToken] = useState<string>("")
@@ -11,9 +13,9 @@ export function GithubSettings (props: GithubSettingsProps) {
 
   useEffect(() => {
     if (props.config) {
-      const githubToken = props.config.get('settings/gist-access-token')
-      const githubUserName = props.config.get('settings/github-user-name')
-      const githubEmail = props.config.get('settings/github-email')
+      const githubToken = props.config.get('settings/gist-access-token') || ''
+      const githubUserName = props.config.get('settings/github-user-name') || ''
+      const githubEmail = props.config.get('settings/github-email') || ''
 
       setGithubToken(githubToken)
       setGithubUsername(githubUserName)
@@ -35,28 +37,23 @@ export function GithubSettings (props: GithubSettingsProps) {
 
   // api key settings
   const saveGithubToken = () => {
-    props.saveTokenToast(githubToken, githubUserName, githubEmail)
+    props.saveToken(githubToken, githubUserName, githubEmail)
   }
 
   const removeToken = () => {
     setGithubToken('')
     setGithubUsername('')
     setGithubEmail('')
-    props.removeTokenToast()
+    props.removeToken()
   }
 
   return (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title"><FormattedMessage id='settings.githubTitle' defaultMessage='GitHub Credentials' /></h6>
-        <p className="mb-1"><FormattedMessage id='settings.githubText' defaultMessage='Manage your GitHub credentials used to publish to Gist and retrieve GitHub contents.' /></p>
-        <p className="">
-          <FormattedMessage
-            id='settings.githubText2'
-            defaultMessage="Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only \'create gist\' permission."
-          />
-        </p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+        <h6 className="card-title"><FormattedMessage id='settings.gitAccessTokenTitle' defaultMessage={gitAccessTokenTitle} /></h6>
+        <p className="mb-1"><FormattedMessage id='settings.gitAccessTokenText' defaultMessage={gitAccessTokenText} /></p>
+        <p className=""><FormattedMessage id='settings.gitAccessTokenText2' defaultMessage={gitAccessTokenText2} /></p>
+        <p className="mb-1"><a className="text-primary" target="_blank" href={gitAccessTokenLink}>{gitAccessTokenLink}</a></p>
         <div>
           <label className="mb-0 pb-0">TOKEN:</label>
           <div className="input-group text-secondary mb-0 h6">

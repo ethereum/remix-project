@@ -3,7 +3,7 @@ import { DebuggerApiMixin } from '@remixproject/debugger-plugin' // eslint-disab
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import * as remixBleach from '../../lib/remixBleach'
+import { bleach } from '@remix-ui/helper'
 import { compilationFinishedToastMsg, compilingToastMsg, localCompilationToastMsg, notFoundToastMsg, sourceVerificationNotAvailableToastMsg } from '@remix-ui/helper'
 const css = require('./styles/debugger-tab-styles')
 
@@ -52,7 +52,7 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
       this.call('notification', 'toast', sourceVerificationNotAvailableToastMsg())
     })
-    return <div className={css.debuggerTabView} id='debugView'><DebuggerUI debuggerAPI={this} /></div>
+    return <div className="overflow-hidden px-1" id='debugView'><DebuggerUI debuggerAPI={this} /></div>
   }
 
   showMessage (title, message) {
@@ -60,7 +60,7 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
       this.call('notification', 'alert', {
         id: 'debuggerTabShowMessage',
         title,
-        message: remixBleach.sanitize(message)
+        message: bleach.sanitize(message)
       })
     } catch (e) {
       console.log(e)

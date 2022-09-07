@@ -1,5 +1,5 @@
 import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue, setTxFeeContent } from "./payload"
+import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, hidePopUp, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -63,10 +63,6 @@ export const updateBaseFeePerGas = (dispatch: React.Dispatch<any>, baseFee: stri
 
 export const updateGasPrice = (dispatch: React.Dispatch<any>, price: string) => {
   dispatch(setGasPrice(price))
-}
-
-export const updateTxFeeContent = (dispatch: React.Dispatch<any>, content: string) => {
-  dispatch(setTxFeeContent(content))
 }
 
 export const addInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> }) => {

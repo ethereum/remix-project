@@ -33,7 +33,8 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
         }
         self.postMessage({
           cmd: 'versionLoaded',
-          data: compiler.version()
+          data: compiler.version(),
+          license: compiler.license()
         })
         break
       }
@@ -44,6 +45,7 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
           self.postMessage({
             cmd: 'compiled',
             job: data.job,
+            timestamp: data.timestamp,
             data: compileJSON(data.input),
             input: data.input,
             missingInputs: missingInputs

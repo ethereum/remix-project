@@ -21,7 +21,7 @@ import {
   setBaseFeePerGas, setConfirmSettings,
   setGasPrice, setGasPriceStatus,
   setMaxFee, setMaxPriorityFee,
-  setTxFeeContent, removeInstances,
+  removeInstances,
   removeSingleInstance, getExecutionContext,
   executeTransactions, loadFromAddress,
   storeNewScenario, runScenario,
@@ -189,8 +189,6 @@ export function RunTabUI (props: RunTabProps) {
       updateGasPriceStatus={setGasPriceStatus}
       updateMaxFee={setMaxFee}
       updateMaxPriorityFee={setMaxPriorityFee}
-      setTxFeeContent={setTxFeeContent}
-      txFeeContent={runTab.txFeeContent}
       maxFee={runTab.maxFee}
       maxPriorityFee={runTab.maxPriorityFee}
     />

@@ -1370,26 +1370,6 @@
         }
       }
     },
-    "remix-ui-editor-context-view": {
-      "root": "libs/remix-ui/editor-context-view",
-      "sourceRoot": "libs/remix-ui/editor-context-view/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/remix-ui/editor-context-view/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/remix-ui/editor-context-view/**/*"
-            ]
-          }
-        }
-      }
-    },
     "remix-ui-run-tab": {
       "root": "libs/remix-ui/run-tab",
       "sourceRoot": "libs/remix-ui/run-tab/src",
@@ -1526,6 +1506,26 @@
             "exclude": [
               "**/node_modules/**",
               "!libs/remix-ui/file-decorators/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-drag-n-drop": {
+      "root": "libs/remix-ui/drag-n-drop",
+      "sourceRoot": "libs/remix-ui/drag-n-drop/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-ui/drag-n-drop/.eslintrc.json",
+            "tsConfig": [
+              "libs/remix-ui/drag-n-drop/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
             ]
           }
         }

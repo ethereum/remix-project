@@ -21,25 +21,30 @@ module.exports = {
       .frame(0)
   },
 
-  'Should add the Ballot.vy #group1': function (browser: NightwatchBrowser) {
-    browser.click('button[data-id="add-ballot"]')
+  'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
+    browser.click('button[data-id="add-repository"]')
       .frameParent()
-      .openFile('ballot.vy')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Vyper repository cloned', 30000)
+      .openFile('examples')
+      .openFile('examples/auctions')
+      .openFile('examples/auctions/blind_auction.vy')
   },
 
-  'Compile ballot.vy should error #group1': function (browser: NightwatchBrowser) {
+  'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('vyper')
       // @ts-ignore
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
-      .assert.containsText('[data-id="error-message"]', 'unexpected indent')
+      .waitForElementVisible('[data-id="copy-abi"]')
   },
 
-  'Compile test contract should success #group1': function (browser: NightwatchBrowser) {
+  'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
     let contractAddress
     browser
       .frameParent()
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
       .addFile('test.vy', { content: testContract })
       .clickLaunchIcon('vyper')
       // @ts-ignore

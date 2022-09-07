@@ -184,9 +184,6 @@
     "solidity-unit-testing": {
       "tags": []
     },
-    "remix-ui-editor-context-view": {
-      "tags": []
-    },
     "remix-ui-run-tab": {
       "tags": []
     },
@@ -207,6 +204,9 @@
     },
     "etherscan": {
       "tags": []
+    },
+    "remix-ui-drag-n-drop": {
+      "tags": []
     }
   },
   "targetDependencies": {
@@ -217,4 +217,5 @@
       }
     ]
   }
+
 }
