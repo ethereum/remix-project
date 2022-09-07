@@ -163,7 +163,7 @@ const remixIdeThemes = {
   },
   flatly: {
     primary: '#2C3E50',
-    secondary: '#95a5a6',
+    secondary: '#dadfe0',
     success: '#18BC9C',
     info: '#3498DB',
     warning: '#F39C12',
