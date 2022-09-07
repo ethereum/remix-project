@@ -64,7 +64,7 @@ export class HardhatClient extends PluginClient {
         const content = await fs.readFile(path, { encoding: 'utf-8' })
         const compilationResult = JSON.parse(content)
         // @ts-ignore
-        this.call('terminal', 'log', 'received compilation result from hardhat')
+        this.call('terminal', 'log', 'updated compilation result from hardhat')
         this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
       }
 
