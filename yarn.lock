@@ -3912,6 +3912,18 @@
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
 
+"@openzeppelin/contracts@^4.7.3":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.7.3.tgz#939534757a81f8d69cc854c7692805684ff3111e"
+  integrity sha512-dGRS0agJzu8ybo44pCIf3xBaPQN/65AIXNgK8+4gzKd5kbvlqyxryUYVLJv7fK98Seyd2hDZzVEHSWAh0Bt1Yw==
+
+"@openzeppelin/wizard@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/wizard/-/wizard-0.1.1.tgz#8c183e2c5748869bc3a5317c0330aa36a9ad44fe"
+  integrity sha512-AGyvn3PIh1vCgAEoRKAXKhtlk4fkA8AHE7G4PyzLnYcASClYCWpSf43WLJCs6S/LORvTZADX1flvF8x2LciJIg==
+  dependencies:
+    array.prototype.flatmap "^1.2.4"
+
 "@pmmmwh/react-refresh-webpack-plugin@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.4.3.tgz#1eec460596d200c0236bf195b078a5d1df89b766"
