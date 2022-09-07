@@ -8,7 +8,8 @@ import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches
+  showAllBranches,
+  switchToBranch
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -143,6 +144,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await showAllBranches()
   }
 
+  const dispatchSwitchToBranch = async (branch: string) => {
+    await switchToBranch(branch)
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -248,7 +253,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCloneRepository,
     dispatchMoveFile,
     dispatchMoveFolder,
-    dispatchShowAllBranches
+    dispatchShowAllBranches,
+    dispatchSwitchToBranch
   }
   return (
     <FileSystemContext.Provider value={value}>

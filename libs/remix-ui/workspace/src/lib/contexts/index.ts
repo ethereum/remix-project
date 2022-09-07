@@ -33,6 +33,7 @@ export const FileSystemContext = createContext<{
   dispatchCloneRepository: (url: string) => Promise<void>,
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
   dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
-  dispatchShowAllBranches: () => Promise<void>
+  dispatchShowAllBranches: () => Promise<void>,
+  dispatchSwitchToBranch: (branch: string) => Promise<void>
     }>(null)
     
