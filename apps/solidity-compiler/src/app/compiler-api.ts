@@ -219,13 +219,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.data.loading = true
       this.data.loadingUrl = url
       this.statusChanged({ key: 'loading', title: 'loading compiler...', type: 'info' })
+      this.emit('loadingCompiler', url)
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
-    this.data.eventHandlers.onCompilerLoaded = (version) => {
+    this.data.eventHandlers.onCompilerLoaded = (version, license) => {
       this.data.loading = false
       this.statusChanged({ key: 'none' })
-      this.emit('compilerLoaded', version)
+      this.emit('compilerLoaded', version, license)
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 

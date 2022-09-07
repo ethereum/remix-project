@@ -18,8 +18,8 @@ export interface VyperCompilationResult {
 
 export interface VyperCompilationError {
   status: 'failed'
-  column: number
-  line: number
+  column?: number
+  line?: number
   message: string
 }
 

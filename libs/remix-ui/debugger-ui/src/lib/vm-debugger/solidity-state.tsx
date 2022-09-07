@@ -3,7 +3,7 @@ import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import { extractData } from '../../utils/solidityTypeFormatter'
 import { ExtractData } from '../../types' // eslint-disable-line
 
-export const SolidityState = ({ calldata, message }) => {
+export const SolidityState = ({ calldata, message, className }) => {
   const formatSelf = (key: string, data: ExtractData) => {
     try {
       let color = 'var(--primary)'
@@ -38,7 +38,7 @@ export const SolidityState = ({ calldata, message }) => {
   }
 
   return (
-    <div id='soliditystate' data-id='soliditystate'>
+    <div id='soliditystate' data-id='soliditystate' className={className}>
       {
         <DropdownPanel dropdownName='Solidity State' calldata={calldata || {}} formatSelfFunc={formatSelf} extractFunc={extractData} />
       }

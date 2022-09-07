@@ -65,6 +65,7 @@ declare module 'nightwatch' {
         currentSelectedFileIs (name: string): NightwatchBrowser,
         switchWorkspace: (workspaceName: string) => NightwatchBrowser
         switchEnvironment: (provider: string) => NightwatchBrowser
+        connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

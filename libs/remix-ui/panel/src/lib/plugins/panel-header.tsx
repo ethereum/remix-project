@@ -28,11 +28,11 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   return (
     <header className='d-flex flex-column'>
       <div className="swapitHeader px-3 pt-2 pb-0 d-flex flex-row">
-        <h6 className="mb-2" data-id='sidePanelSwapitTitle'>
+        <h6 className="mb-3" data-id='sidePanelSwapitTitle'>
           {/* @ts-ignore */}
           <FormattedMessage id={plugin?.profile.intlId || 'defaultId'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
         </h6>
-        <div className="mt-2 d-flex flex-row">
+        <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (<i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check" title="Maintained by Remix"></i>)}
           </div>

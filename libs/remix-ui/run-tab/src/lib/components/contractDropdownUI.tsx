@@ -30,6 +30,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
   const contractsRef = useRef<HTMLSelectElement>(null)
+  const atAddressValue = useRef<HTMLInputElement>(null)
   const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }, [loadedAddress])
 
   useEffect(() => {
-    if (/.(.abi)$/.exec(currentFile)) {
+    if (/.(.abi)$/.exec(currentFile) && "" !== atAddressValue.current.value) {
       setAbiLabel({
         display: 'block',
         content: currentFile
@@ -177,7 +178,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const atAddressChanged = (event) => {
     const value = event.target.value
-
     if (!value) {
       enableAtAddress(false)
     } else {
@@ -290,6 +290,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             <FormattedMessage id='udapp.atAddress' defaultMessage='At Address' />
           </button>
           <input
+            ref={atAddressValue}
             className="udapp_input udapp_ataddressinput ataddressinput form-control"
             placeholder={intl.formatMessage({id: 'udapp.loadContractFromAddress', defaultMessage: "Load contract from Address"})}
             title="address of contract"

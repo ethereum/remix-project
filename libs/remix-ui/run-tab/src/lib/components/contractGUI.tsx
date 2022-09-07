@@ -283,7 +283,7 @@ export function ContractGUI (props: ContractGUIProps) {
               onClick={handleExpandMultiClick}
               title={buttonOptions.title}
               data-id={buttonOptions.dataId}
-              className={`btn udapp_instanceButton ${buttonOptions.classList}`}
+              className={`udapp_instanceButton ${buttonOptions.classList}`}
             >
               { buttonOptions.content }
             </button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
 import { FormattedMessage } from 'react-intl'
 import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
@@ -36,6 +36,27 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     isLocalNodeUsed: false,
     sourceLocationStatus: ''
   })
+
+  const panelsRef = useRef<HTMLDivElement>(null)
+  const debuggerTopRef = useRef(null)
+
+  const handleResize = () => {
+    if (panelsRef.current && debuggerTopRef.current) {
+      panelsRef.current.style.height = (window.innerHeight - debuggerTopRef.current.clientHeight) - debuggerTopRef.current.offsetTop - 7 +'px'
+    }
+  }
+
+  useEffect(() => {
+    handleResize()
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    // TODO: not a good way to wait on the ref doms element to be rendered of course
+    setTimeout(() =>
+      handleResize(), 2000)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [state.debugging, state.isActive])
 
   useEffect(() => {
     return unLoad()
@@ -170,6 +191,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }
 
   const unLoad = () => {
+    debuggerModule.onStopDebugging()
     if (state.debugger) state.debugger.unload()
     setState(prevState => {
       return {
@@ -261,34 +283,36 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     setTimeout(async() => {
-    try {
-      await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-        listenToEvents(debuggerInstance, currentReceipt)
+      debuggerModule.onStartDebugging()
+      try {
+        await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
+          listenToEvents(debuggerInstance, currentReceipt)
+          setState(prevState => {
+            return {
+              ...prevState,
+              blockNumber,
+              txNumber,
+              debugging: true,
+              currentReceipt,
+              currentBlock,
+              currentTransaction,
+              debugger: debuggerInstance,
+              toastMessage: `debugging ${txNumber}`,
+              validationError: ''
+            }
+          })
+        })
+      } catch (error) {
+        unLoad()
         setState(prevState => {
           return {
             ...prevState,
-            blockNumber,
-            txNumber,
-            debugging: true,
-            currentReceipt,
-            currentBlock,
-            currentTransaction,
-            debugger: debuggerInstance,
-            toastMessage: `debugging ${txNumber}`,
-            validationError: ''
+            validationError: error.message || error
           }
         })
-      })
-    } catch (error) {
-      unLoad()
-      setState(prevState => {
-        return {
-          ...prevState,
-          validationError: error.message || error
-        }
-      })
-    }
-  }, 300)
+      }
+    }, 300)
+    handleResize()
   }
 
   const debug = (txHash, web3?) => {
@@ -316,18 +340,17 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
     registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null
   }
+
   const vmDebugger = {
     registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
     triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
   }
+
   return (
     <div>
       <Toaster message={state.toastMessage} />
-      <div className="px-2">
+      <div className="px-2" ref={debuggerTopRef}>
         <div>
-          <p className="my-2 debuggerLabel">
-            <FormattedMessage id='debugger.debuggerConfiguration' defaultMessage='Debugger Configuration' />
-          </p>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
@@ -336,7 +359,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
           </div>
-          { state.isLocalNodeUsed && <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+          { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
@@ -359,9 +382,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           </span>
         </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }
-        { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>
-      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
+      <div className="debuggerPanels" ref={panelsRef}>
+        { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
+        { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
+      </div>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { Api, Status } from '@remixproject/plugin-utils';
 import { createClient } from '@remixproject/plugin-webview'
 import { PluginClient } from '@remixproject/plugin';
 import { Contract } from './compiler';
+import { ExampleContract } from '../components/VyperResult';
 
 export class RemixClient extends PluginClient {
   private client = createClient<Api, Readonly<RemixApi>>(this);
@@ -14,18 +15,40 @@ export class RemixClient extends PluginClient {
   /** Emit an event when file changed */
   async onFileChange(cb: (contract: string) => any) {
     this.client.on('fileManager', 'currentFileChanged', async (name: string) => {
-      if (!name) return
       cb(name)
     })
   }
 
+  /** Emit an event when file changed */
+  async onNoFileSelected(cb: () => any) {
+    this.client.on('fileManager', 'noFileSelected', async () => {
+      cb()
+    })
+  }
+
   /** Load Ballot contract example into the file manager */
-  async loadContract({name, content}: Contract) {
+  async loadContract({name, address}: ExampleContract) {
     try {
-      await this.client.call('fileManager', 'setFile', name, content)
-      await this.client.call('fileManager', 'switchFile', name)
+      const content = await this.client.call('contentImport', 'resolve', address)
+      await this.client.call('fileManager', 'setFile', content.cleanUrl, content.content)
+      await this.client.call('fileManager', 'switchFile', content.cleanUrl)
     } catch (err) {
       console.log(err)
+    }
+  }
+
+  async cloneVyperRepo() {
+    try {
+      // @ts-ignore
+      this.call('notification', 'toast', 'cloning Vyper repository...')
+      await this.call('manager', 'activatePlugin', 'dGitProvider')
+      // @ts-ignore
+      await this.call('dGitProvider', 'clone', { url: 'https://github.com/vyperlang/vyper', token: null }, 'vyper-lang')
+      // @ts-ignore
+      this.call('notification', 'toast', 'Vyper repository cloned, the workspace Vyper has been created.')
+    } catch (e) {
+      // @ts-ignore
+      this.call('notification', 'toast', e.message)
     }
   }
 
@@ -35,13 +58,27 @@ export class RemixClient extends PluginClient {
   }
 
   /** Highlight a part of the editor */
-  highlight(lineColumnPos: HighlightPosition, name: string, color: string) {
-    return this.client.call('editor', 'highlight', lineColumnPos, name, color)
+  async highlight(lineColumnPos: HighlightPosition, name: string, message: string) {
+    await this.client.call('editor', 'highlight', lineColumnPos, name)
+    /*
+    column: -1
+      row: -1
+      text: "browser/Untitled1.sol: Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.↵"
+      type: "warning"
+    */
+    const annotation = {
+      column: 0,
+      row: lineColumnPos.start.line,
+      type: 'error',
+      text: message
+    }
+    await this.client.call('editor', 'addAnnotation', annotation, name)
   }
 
   /** Remove current Hightlight */
-  discardHighlight() {
-    return this.client.call('editor', 'discardHighlight')
+  async discardHighlight() {
+    await this.client.call('editor', 'discardHighlight')
+    await this.client.call('editor', 'clearAnnotations')
   }
 
   /** Get the name of the current contract */

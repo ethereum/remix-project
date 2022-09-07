@@ -18,6 +18,8 @@ interface IRemixAppUi {
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
+  const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
+  const [resetTrigger, setResetTrigger] = useState<number>(0)
   const [locale, setLocale] = useState<{ name:string; messages:any }>({ name:'', messages:{} });
   const sidePanelRef = useRef(null)
 
@@ -51,6 +53,18 @@ const RemixApp = (props: IRemixAppUi) => {
         setHideSidePanel(true)
       }, 1000)
     })
+
+    props.app.layout.event.on('maximisesidepanel', () => {
+      setMaximiseTrigger(prev => {
+        return prev + 1
+      })
+    })
+
+    props.app.layout.event.on('resetsidepanel', () => {
+      setResetTrigger(prev => {
+        return prev + 1
+      })
+    })
     props.app.localeModule.events.on('localeChanged', (nextLocale) => {
       setLocale(nextLocale)
     })
@@ -73,7 +87,7 @@ const RemixApp = (props: IRemixAppUi) => {
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
           <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light">{props.app.menuicons.render()}</div>
           <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
-          <DragBar minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
+          <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
           <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
             <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
           </div>

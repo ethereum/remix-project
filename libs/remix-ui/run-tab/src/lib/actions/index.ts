@@ -5,7 +5,7 @@ import { resetAndInit, setupEvents } from './events'
 import { createNewBlockchainAccount, fillAccountsList, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
-  updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath, updateTxFeeContent } from './actions'
+  updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
 import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
 import { ContractData, FuncABI } from "@remix-project/core-plugin"
@@ -50,7 +50,6 @@ export const setGasPrice = (price: string) => updateGasPrice(dispatch, price)
 export const setGasPriceStatus = (status: boolean) => updateGasPriceStatus(dispatch, status)
 export const setMaxFee = (fee: string) => updateMaxFee(dispatch, fee)
 export const setMaxPriorityFee = (fee: string) => updateMaxPriorityFee(dispatch, fee)
-export const setTxFeeContent = (content: string) => updateTxFeeContent(dispatch, content)
 export const removeInstances = () => clearInstances(dispatch)
 export const removeSingleInstance = (index: number) => removeInstance(dispatch, index)
 export const getExecutionContext = () => getContext(plugin)

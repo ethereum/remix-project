@@ -18,7 +18,11 @@ const profile = {
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
-  version: packageJson.version
+  version: packageJson.version,
+  repo: "https://github.com/ethereum/remix-project/tree/master/libs/remixd",
+  maintainedBy: "Remix",
+  documentation: "https://remix-ide.readthedocs.io/en/latest/remixd.html",
+  authorContact: ""
 }
 
 enum State {

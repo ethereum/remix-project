@@ -7,7 +7,7 @@ import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
-  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository } from '../actions'
+  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -129,6 +129,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await cloneRepository(url)
   }
 
+  const dispatchMoveFile = async (src: string, dest: string) => {
+    await moveFile(src, dest)
+  }
+
+  const dispatchMoveFolder = async (src: string, dest: string) => {
+    await moveFolder(src, dest)
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -231,7 +239,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleExpandPath,
     dispatchHandleDownloadFiles,
     dispatchHandleRestoreBackup,
-    dispatchCloneRepository
+    dispatchCloneRepository,
+    dispatchMoveFile,
+    dispatchMoveFolder
   }
   return (
     <FileSystemContext.Provider value={value}>
@@ -244,3 +254,4 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 }
 
 export default FileSystemProvider
+

@@ -3,45 +3,50 @@ import {
   VyperCompilationResult,
   VyperCompilationOutput,
   isCompilationError,
-  remixClient
 } from '../utils';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
-import { Ballot } from '../examples/ballot';
 import Button from 'react-bootstrap/Button';
 import JSONTree from 'react-json-view'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-
 
 interface VyperResultProps {
   output?: VyperCompilationOutput;
 }
 
+export type ExampleContract = {
+  name: string,
+  address: string
+}
+
 function VyperResult({ output }: VyperResultProps) {
-  const [ active, setActive ] = useState<keyof VyperCompilationResult>('abi');
-  
+  const [ active, setActive ] = useState<keyof VyperCompilationResult>('abi') 
+
   if (!output) return (
+
     <div id="result">
-      <p>No contract compiled yet.</p>
-      <Button data-id="add-ballot" variant="info" onClick={() => remixClient.loadContract(Ballot)}>
-        Create Ballot.vy example
-      </Button>
+      <p className="my-3">No contract compiled yet.</p>
     </div>
   )
 
   if (isCompilationError(output)) {
     return (
-    <div id="result" className="error">
-      <i className="fas fa-exclamation-circle text-danger"></i>
-      <p data-id="error-message" className="alert alert-danger">{output.message}</p>
-    </div>)
+      <div id="result" className="error" title={output.message}>
+        <i className="fas fa-exclamation-circle text-danger"></i>
+        <pre data-id="error-message" className="px-2 w-100 alert alert-danger" style={{
+          fontSize: "0.5rem",
+          overflowX: "hidden",
+          textOverflow: "ellipsis"
+        }}>{output.message}</pre>
+      </div>
+    )
   }
 
   return (
     <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
       <Tab eventKey="abi" title="ABI">
         <CopyToClipboard getContent={() => JSON.stringify(output.abi)}>
-          <Button variant="info" className="copy">Copy ABI</Button>
+          <Button variant="info" className="copy" data-id="copy-abi">Copy ABI</Button>
         </CopyToClipboard>
         <JSONTree src={output.abi} />
       </Tab>
