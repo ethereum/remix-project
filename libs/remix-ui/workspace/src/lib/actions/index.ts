@@ -488,11 +488,3 @@ export const moveFolder = async (src: string, dest: string) => {
     dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
   }
 }
-
-
-export const showAllBranches = async () => {
-  const isActive = await plugin.call('manager', 'isActive', 'dgit')
-
-  if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-  plugin.call('menuicons', 'select', 'dgit')
-}

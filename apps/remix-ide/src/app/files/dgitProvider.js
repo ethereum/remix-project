@@ -107,14 +107,16 @@ class DGitProvider extends Plugin {
     }, 1000)
   }
 
-  async checkout (cmd) {
+  async checkout (cmd, refresh = true) {
     await git.checkout({
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (refresh) {
+        setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
   }
 
   async log (cmd) {
@@ -135,14 +137,16 @@ class DGitProvider extends Plugin {
     return remotes
   }
 
-  async branch (cmd) {
+  async branch (cmd, refresh = true) {
     const status = await git.branch({
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (refresh) {
+        setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
     return status
   }
 
