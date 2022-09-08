@@ -23,7 +23,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
-  const [compFails, setCompFails] = useState<'none' | 'block'>('none')
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
