@@ -1,2 +1,2 @@
 
-export * from './lib/remix-ui-drag-n-drop';
+export * from './lib/drag-n-drop';

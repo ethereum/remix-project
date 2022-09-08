@@ -87,6 +87,18 @@ export class CodeParser extends Plugin {
         }
     }
 
+    async handleChangeEvents() {
+        const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
+        if (completionSettings) {
+            await this.antlrService.getCurrentFileAST()
+        }
+        const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
+        const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
+        if(showGasSettings || showErrorSettings || completionSettings) {
+            await this.compilerService.compile()
+        }
+    }
+
     async onActivation() {
 
         this.gasService = new CodeParserGasService(this)
@@ -102,8 +114,7 @@ export class CodeParser extends Plugin {
 
         this.on('editor', 'didChangeFile', async (file) => {
             await this.call('editor', 'discardLineTexts')
-            await this.antlrService.getCurrentFileAST()
-            await this.compilerService.compile()
+            await this.handleChangeEvents()
         })
 
         this.on('filePanel', 'setWorkspace', async () => {
@@ -113,12 +124,11 @@ export class CodeParser extends Plugin {
 
         this.on('fileManager', 'currentFileChanged', async () => {
             await this.call('editor', 'discardLineTexts')
-            await this.antlrService.getCurrentFileAST()
-            await this.compilerService.compile()
+            await this.handleChangeEvents()
         })
 
         this.on('solidity', 'loadingCompiler', async (url) => {
-            this.compilerService.compiler.loadVersion(true, url)
+            this.compilerService.compiler.loadVersion(true, `${url}?t=${Date.now()}`)
         })
 
         await this.compilerService.init()
@@ -188,10 +198,10 @@ export class CodeParser extends Plugin {
         const index = {}
         const contractName: string = contractNode.name
         const callback = (node) => {
-            if(inScope && node.scope !== contractNode.id
+            if (inScope && node.scope !== contractNode.id
                 && !(node.nodeType === 'EnumDefinition' || node.nodeType === 'EventDefinition' || node.nodeType === 'ModifierDefinition'))
                 return
-            if(inScope) node.isClassNode = true;
+            if (inScope) node.isClassNode = true;
             node.gasEstimate = this._getContractGasEstimate(node, contractName, fileName, compilatioResult)
             node.functionName = node.name + this._getInputParams(node)
             node.contractName = contractName
@@ -227,11 +237,11 @@ export class CodeParser extends Plugin {
                                     if ((node.scope && node.scope === baseContract.id)
                                         || node.nodeType === 'EnumDefinition'
                                         || node.nodeType === 'EventDefinition'
-                                        ) {
+                                    ) {
                                         baseNodesWithBaseContractScope[node.id] = node
                                     }
-                                    if(node.members){
-                                        for(const member of node.members){
+                                    if (node.members) {
+                                        for (const member of node.members) {
                                             member.contractName = (baseContract as any).name
                                             member.contractId = (baseContract as any).id
                                             member.isBaseNode = true;
@@ -249,7 +259,7 @@ export class CodeParser extends Plugin {
                 if (node.nodeType === 'ImportDirective') {
 
                     const imported = await this.resolveImports(node, {})
-                    
+
                     for (const importedNode of (Object.values(imported) as any)) {
                         if (importedNode.nodes)
                             for (const subNode of importedNode.nodes) {

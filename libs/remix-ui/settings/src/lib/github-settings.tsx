@@ -1,6 +1,8 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import React, { useEffect, useState } from 'react'
 import { GithubSettingsProps } from '../types'
+import { gitAccessTokenTitle, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenLink } from './constants'
+
 
 export function GithubSettings (props: GithubSettingsProps) {
   const [githubToken, setGithubToken] = useState<string>("")
@@ -33,23 +35,23 @@ export function GithubSettings (props: GithubSettingsProps) {
 
   // api key settings
   const saveGithubToken = () => {
-    props.saveTokenToast(githubToken, githubUserName, githubEmail)
+    props.saveToken(githubToken, githubUserName, githubEmail)
   }
 
   const removeToken = () => {
     setGithubToken('')
     setGithubUsername('')
     setGithubEmail('')
-    props.removeTokenToast()
+    props.removeToken()
   }
   
   return (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">GitHub Credentials</h6>
-        <p className="mb-1">Manage your GitHub credentials used to publish to Gist and retrieve GitHub contents.</p>
-        <p className="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only \'create gist\' permission.</p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+        <h6 className="card-title">{gitAccessTokenTitle}</h6>
+        <p className="mb-1">{gitAccessTokenText}</p>
+        <p className="">{gitAccessTokenText2}</p>
+        <p className="mb-1"><a className="text-primary" target="_blank" href={gitAccessTokenLink}>{gitAccessTokenLink}</a></p>
         <div>
           <label className="mb-0 pb-0">TOKEN:</label>
           <div className="input-group text-secondary mb-0 h6">

@@ -260,18 +260,24 @@ export class RemixdClient extends PluginClient {
       this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true })
     })
     */
-    watcher.on('change', (f: string) => {
+    watcher.on('change', async (f: string) => {
       if (this.trackDownStreamUpdate[f]) {
         delete this.trackDownStreamUpdate[f]
         return
       }
-      this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+      if (this.isLoaded) {
+        this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+      }
     })
-    watcher.on('unlink', (f: string) => {
-      this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
+    watcher.on('unlink', async (f: string) => {
+      if (this.isLoaded) {
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)    
+      }
     })
-    watcher.on('unlinkDir', (f: string) => {
-      this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
+    watcher.on('unlinkDir', async (f: string) => {
+      if (this.isLoaded) {
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)    
+      }
     })
   }
 }

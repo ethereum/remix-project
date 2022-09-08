@@ -1,5 +1,4 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
-import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
 import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText, useShowGasInEditorText, displayErrorsText } from './constants'
 
@@ -9,6 +8,7 @@ import { initialState, toastInitialState, toastReducer, settingReducer } from '.
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
 import { GithubSettings } from './github-settings'
+import { EtherscanSettings } from './etherscan-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -22,7 +22,7 @@ export interface RemixUiSettingsProps {
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [, dispatch] = useReducer(settingReducer, initialState)
   const [state, dispatchToast] = useReducer(toastReducer, toastInitialState)
-  const [tokenValue, setTokenValue] = useState({})
+  const [tokenValue, setTokenValue] = useState({}) // eslint-disable-line @typescript-eslint/no-unused-vars
   const [themeName,] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
@@ -40,14 +40,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const javascriptVM = props.config.get('settings/always-use-vm')
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
 
-    const useAutoComplete = props.config.get('settings/use-auto-complete')
-    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
+    const useAutoComplete = props.config.get('settings/auto-completion')
+    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, false, dispatch)
 
     const displayErrors = props.config.get('settings/display-errors')
-    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, true, dispatch)
+    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, false, dispatch)
   
     const useShowGas = props.config.get('settings/show-gas')
-    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
+    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, false, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -148,9 +148,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
-    const isAutoCompleteChecked = props.config.get('settings/auto-completion') === null ? true:props.config.get('settings/auto-completion')
-    const isShowGasInEditorChecked = props.config.get('settings/show-gas') === null ? true:props.config.get('settings/show-gas')
-    const displayErrorsChecked = props.config.get('settings/display-errors') === null ? true:props.config.get('settings/display-errors')
+
+    const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
+    const isShowGasInEditorChecked = props.config.get('settings/show-gas') || false
+    const displayErrorsChecked = props.config.get('settings/display-errors') || false
     return (
       <div className="$border-top">
         <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
@@ -188,19 +189,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} htmlFor="settingsUseAutoComplete">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} data-id="settingsAutoCompleteLabel" htmlFor="settingsUseAutoComplete">
               <span>{useAutoCompleteText}</span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} htmlFor="settingsUseShowGas">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} data-id="settingsShowGasLabel" htmlFor="settingsUseShowGas">
               <span>{useShowGasInEditorText}</span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`} htmlFor="settingsDisplayErrors">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}  data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
               <span>{displayErrorsText}</span>
             </label>
           </div>
@@ -222,47 +223,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       </div>
     )
   }
-
-  // api key settings
-  const saveToken = (type: string) => {
-    saveTokenToast(props.config, dispatchToast, tokenValue[type], labels[type].key)
-  }
-
-  const removeToken = (type: string) => {
-    setTokenValue(prevState => {
-      return { ...prevState, [type]: '' }
-    })
-    removeTokenToast(props.config, dispatchToast, labels[type].key)
-  }
-
-  const handleSaveTokenState = useCallback(
-    (event, type) => {
-      setTokenValue(prevState => {
-        return { ...prevState, [type]: event.target.value }
-      })
-    },
-    [tokenValue]
-  )
-
-  const token = (type: string) => (
-    <div className="border-top">
-      <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{labels[type].title}</h6>
-        <p className="mb-1">{labels[type].message1}</p>
-        <p className="">{labels[type].message2}</p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href={labels[type].link}>{labels[type].link}</a></p>
-        <div className=""><label>TOKEN:</label>
-          <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={(e) => handleSaveTokenState(e, type)} value={ tokenValue[type] || '' } />
-            <div className="d-flex justify-content-end pt-2">
-              <CopyToClipboard content={tokenValue[type]} data-id='copyToClipboardCopyIcon' />
-              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken(type)} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub access token" onClick={() => removeToken(type)}>Remove</button>
-            </div>
-          </div></div>
-      </div>
-    </div>
-  )
 
   // swarm settings
   const handleSavePrivateBeeAddress = useCallback(
@@ -287,12 +247,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">{ swarmSettingsTitle }</h6>
-        <div className="pt-2 pt-2 mb-0 pb-0"><label>PRIVATE BEE ADDRESS:</label>
+        <div className="pt-2 pt-2 mb-0 pb-0"><label className="m-0">PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={privateBeeAddress} />
           </div>
         </div>
-        <div className="pt-2 mb-0 pb-0"><label>POSTAGE STAMP ID:</label>
+        <div className="pt-2 mb-0 pb-0"><label className="m-0">POSTAGE STAMP ID:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmpostagestamp" data-id="settingsPostageStampId" className="form-control" onChange={handleSavePostageStampId} value={postageStampId} />
             <div className="d-flex justify-content-end pt-2">
@@ -351,27 +311,27 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
     <div className="card-body pt-3 pb-2">
       <h6 className="card-title">{ ipfsSettingsText }</h6>
-      <div className="pt-2 mb-0"><label>IPFS HOST:</label>
+      <div className="pt-2 mb-0"><label className="m-0">IPFS HOST:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
         </div>
       </div>
-      <div className="pt-2 mb-0 pb-0"><label>IPFS PROTOCOL:</label>
+      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROTOCOL:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ ipfsProtocol } />
         </div>
       </div>
-      <div className="pt-2 mb-0 pb-0"><label>IPFS PORT:</label>
+      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PORT:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ ipfsPort } />
         </div>
       </div>
-      <div className="pt-2 mb-0 pb-0"><label>IPFS PROJECT ID [ INFURA ]:</label>
+      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROJECT ID [ INFURA ]:</label>
         <div className="text-secondary mb-0 h6">
           <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ ipfsProjectId } />
         </div>
       </div>
-      <div className="pt-2 mb-0 pb-0"><label>IPFS PROJECT SECRET [ INFURA ]:</label>
+      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROJECT SECRET [ INFURA ]:</label>
         <div className="text-secondary mb-0 h6">
           <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ ipfsProjectSecret } />
         </div>
@@ -388,19 +348,27 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}     
       <GithubSettings
-        saveTokenToast={(githubToken: string, githubUserName: string, githubEmail: string) => {
+        saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
           saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token")
           saveTokenToast(props.config, dispatchToast, githubUserName, "github-user-name")
           saveTokenToast(props.config, dispatchToast, githubEmail, "github-email")
         }}
-        removeTokenToast={() => { 
+        removeToken={() => { 
           removeTokenToast(props.config, dispatchToast, "gist-access-token")
           removeTokenToast(props.config, dispatchToast, "github-user-name")
           removeTokenToast(props.config, dispatchToast, "github-email")
         }}
         config={props.config}
       />
-      {token('etherscan')}
+      <EtherscanSettings
+        saveToken={(etherscanToken: string) => {
+          saveTokenToast(props.config, dispatchToast, etherscanToken, "etherscan-access-token")
+        }}
+        removeToken={() => { 
+          removeTokenToast(props.config, dispatchToast, "etherscan-access-token")
+        }}
+        config={props.config}
+      />
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />

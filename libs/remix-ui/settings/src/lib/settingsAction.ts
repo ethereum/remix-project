@@ -58,12 +58,12 @@ export const useDisplayErrors = (config, checked, dispatch) => {
 
 export const saveTokenToast = (config, dispatch, tokenValue, key) => {
   config.set('settings/' + key, tokenValue)
-  dispatch({ type: 'save', payload: { message: 'GitHub credentials updated' } })
+  dispatch({ type: 'save', payload: { message: 'Credentials updated' } })
 }
 
 export const removeTokenToast = (config, dispatch, key) => {
   config.set('settings/' + key, '')
-  dispatch({ type: 'removed', payload: { message: 'GitHub credentials removed' } })
+  dispatch({ type: 'removed', payload: { message: 'Credentials removed' } })
 }
 
 export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, postageStampId) => {

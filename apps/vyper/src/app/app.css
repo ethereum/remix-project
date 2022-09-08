@@ -49,7 +49,7 @@ html, body, #root, main {
 }
 
 #compile-btn {
-  width: 90%;
+  width: 100%;
 }
 
 #compile-btn * {
@@ -60,7 +60,6 @@ html, body, #root, main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
   padding-top: 10px;
