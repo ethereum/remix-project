@@ -632,6 +632,13 @@ class FileManager extends Plugin {
         console.log(error)
         throw error
       }
+      try {
+        // This make sure dependencies are loaded in the editor context.
+        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.   
+        await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path))
+      } catch (e) {
+        console.log('unable to handle TypeScript dependencies of', file)
+      }
       if (provider.isReadOnly(file)) {
         await this.editor.openReadOnly(file, content)
       } else {
@@ -838,7 +845,7 @@ class FileManager extends Plugin {
       const fileName = helper.extractNameFromKey(src)
       
       if (await this.exists(dest + '/' + fileName)) {
-        throw createError({ code: 'ENOENT', message: `Cannot move ${src}. File already exists at destination ${dest}`})
+        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. File already exists at destination ${dest}`})
       }
       await this.copyFile(src, dest, fileName)
       await this.remove(src)
@@ -865,9 +872,8 @@ class FileManager extends Plugin {
       await this._handleIsDir(src, `Cannot move ${src}. Path is not directory.`)
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const dirName = helper.extractNameFromKey(src)
-      
-      if (await this.exists(dest + '/' + dirName)) {
-        throw createError({ code: 'ENOENT', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
+      if (await this.exists(dest + '/' + dirName) || src === dest) {
+        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
       }
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
