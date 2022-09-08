@@ -354,10 +354,6 @@ class AppComponent {
     const queryParams = new QueryParams()
     const params = queryParams.get()
     
-    if (isElectron()) {
-      this.appManager.activatePlugin('remixd')
-    }
-
     try {
       this.engine.register(await this.appManager.registeredPlugins())
     } catch (e) {

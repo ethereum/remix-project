@@ -22,8 +22,11 @@
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-ws-templates#readme",
   "typings": "./src/index.d.ts",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/wizard": "^0.1.1",
     "ethers": "^5.4.2",
     "web3": "^1.5.1"
+    
   },
   "gitHead": "0c1957c9b2f890076a5062309bc81b41f93af57c"
 }
