@@ -158,16 +158,23 @@ export function Workspace () {
   const createModalMessage = () => {
     return (
       <>
-        <label id="wsName" className="form-check-label">Workspace name</label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" /><br/>
         <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
         <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
-          <option value='remixDefault'>Default</option>
-          <option value='blank'>Blank</option>
-          <option value='ozerc20'>OpenZeppelin ERC20</option>
-          <option value='zeroxErc20'>0xProject ERC20</option>
-          <option value='ozerc721'>OpenZeppelin ERC721</option>
+          <optgroup label="General">
+            <option value='remixDefault'>Default</option>
+            <option value='blank'>Blank</option>
+          </optgroup>
+          <optgroup label="OpenZepplin">
+            <option value='ozerc20'>ERC20</option>
+            <option value='ozerc721'>ERC721</option>
+          </optgroup>
+          <optgroup label="0xProject">
+            <option value='zeroxErc20'>ERC20</option>
+          </optgroup>
         </select>
+        <br/><br/>
+        <label id="wsName" className="form-check-label">Workspace name</label>
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
     )
   }
