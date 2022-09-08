@@ -3,7 +3,7 @@ const { hexListFromBNs, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs } from '@remix-project/remix-lib'
-import { toChecksumAddress, BN, bufferToHex, Address } from 'ethereumjs-util'
+import { toChecksumAddress, BN, keccak, bufferToHex, Address, toBuffer } from 'ethereumjs-util'
 import Web3 from 'web3'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
@@ -40,7 +40,6 @@ export class VmProxy {
   utils
   txsMapBlock
   blocks
-  latestBlockNumber
 
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
@@ -62,6 +61,7 @@ export class VmProxy {
     this.eth.getTransactionReceipt = (txHash, cb) => this.getTransactionReceipt(txHash, cb)
     this.eth.getTransactionFromBlock = (blockNumber, txIndex, cb) => this.getTransactionFromBlock(blockNumber, txIndex, cb)
     this.eth.getBlockNumber = (cb) => this.getBlockNumber(cb)
+    this.eth.getStorageAt = (address: string, position: string, blockNumber: string, cb) => this.getStorageAt(address, position, blockNumber, cb)
     this.debug.traceTransaction = (txHash, options, cb) => this.traceTransaction(txHash, options, cb)
     this.debug.storageRangeAt = (blockNumber, txIndex, address, start, maxLength, cb) => this.storageRangeAt(blockNumber, txIndex, address, start, maxLength, cb)
     this.debug.preimage = (hashedKey, cb) => this.preimage(hashedKey, cb)
@@ -83,7 +83,6 @@ export class VmProxy {
     this.utils = Web3.utils || []
     this.txsMapBlock = {}
     this.blocks = {}
-    this.latestBlockNumber = 0
   }
 
   setVM (vm) {
@@ -306,6 +305,25 @@ export class VmProxy {
     }
   }
 
+  getStorageAt (address: string, position: string, blockNumber: string, cb) {
+    // we don't use the range params here
+    address = toChecksumAddress(address)
+    
+    blockNumber = blockNumber === 'latest' ? this.vmContext.latestBlockNumber : blockNumber
+
+    const block = this.vmContext.blocks[blockNumber]
+    const txHash = '0x' + block.transactions[block.transactions.length - 1].hash().toString('hex')
+
+    if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
+      const slot = '0x' + keccak(toBuffer(ethers.utils.hexZeroPad(position, 32))).toString('hex')
+      const storage = this.storageCache['after_' + txHash][address]
+      return cb(null, storage[slot].value)
+    }
+    // Before https://github.com/ethereum/remix-project/pull/1703, it used to throw error as
+    // 'unable to retrieve storage ' + txIndex + ' ' + address
+    cb(null, { storage: {} })
+  }
+
   storageRangeAt (blockNumber, txIndex, address, start, maxLength, cb) {
     // we don't use the range params here
     address = toChecksumAddress(address)
@@ -313,8 +331,8 @@ export class VmProxy {
     const block = this.vmContext.blocks[blockNumber]
     const txHash = '0x' + block.transactions[txIndex].hash().toString('hex')
 
-    if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
-      const storage = this.storageCache['after_' + txHash][address]
+    if (this.storageCache[txHash] && this.storageCache[txHash][address]) {
+      const storage = this.storageCache[txHash][address]
       return cb(null, {
         storage: JSON.parse(JSON.stringify(storage)),
         nextKey: null
