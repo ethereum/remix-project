@@ -1,7 +1,8 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
+import { writeFileSync } from 'fs'
 import init from '../helpers/init'
-import { hardhat_compilation } from '../helpers/hardhat_compilation'
+import * as hardhatCompilation from '../helpers/hardhat_compilation_8a7ab689ec618720f53ce867a3031c03.json'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -115,13 +116,19 @@ module.exports = {
       .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
   },
 
-  'Should listen on compilation result from hardhat #group4': function (browser: NightwatchBrowser) {
-    browser
-      .addFile('artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', { content: hardhat_compilation }) // emulate hardhat emitting a compilation result
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'received compilation result from hardhat', 60000)
-      .clickLaunchIcon('udapp')
-      .assert.containsText('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
-      .verifyContracts(['Lock'])
+  'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
+    browser.perform((done) => {
+      console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', JSON.stringify(hardhatCompilation))
+      done()
+    })
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('received compilation result from hardhat').before(60000)
+      
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
+      .selectContract('Lock')
+      .createContract('1')
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
    }
 }
 
