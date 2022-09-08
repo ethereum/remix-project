@@ -70,6 +70,7 @@ export interface RunTabState {
     proxyKey: string,
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
+    compilationSource: string,
     currentContract: string,
     compilationCount: number,
     isRequesting: boolean,
@@ -523,8 +524,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         contracts: {
-          ...state.contracts,
           compilationSource: payload,
+          ...state.contracts,
         }
       }
     }
