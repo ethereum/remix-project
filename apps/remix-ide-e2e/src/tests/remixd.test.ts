@@ -1,6 +1,7 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
+import { hardhat_compilation } from '../helpers/hardhat_compilation'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -112,8 +113,16 @@ module.exports = {
     browser
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
-      .end()
-  }
+  },
+
+  'Should listen on compilation result from hardhat #group4': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', { content: hardhat_compilation }) // emulate hardhat emitting a compilation result
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'received compilation result from hardhat', 60000)
+      .clickLaunchIcon('udapp')
+      .assert.containsText('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
+      .verifyContracts(['Lock'])
+   }
 }
 
 function startRemixd (browser: NightwatchBrowser) {
