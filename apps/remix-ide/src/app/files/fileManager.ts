@@ -425,8 +425,13 @@ class FileManager extends Plugin {
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
+
+      if(await this.isDirectory(path)){
+        this.recordFileAction("remove", {path: path})
+      }else{
+        this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
+      }
       
-      this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
@@ -434,7 +439,7 @@ class FileManager extends Plugin {
   }
 
   init() {
-    this._deps = {
+    this._deps = {    
       config: this._components.registry.get('config').api,
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
@@ -896,7 +901,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   
-  async moveDir(src: string, dest: string) {
+   async moveDir(src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -912,8 +917,8 @@ class FileManager extends Plugin {
       }
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
-      
       this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
+
     } catch (e) {
       throw new Error(e)
     }
@@ -966,8 +971,10 @@ class FileManager extends Plugin {
       break;
       case "movedir":
         let dir = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")),
-          dirToMove = lastAction.args.dest
-        this.moveDir(lastAction.args.dest + dirToMove, lastAction.args.src )
+          dirToMove = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/")+1)
+          console.log(`lastAction.args.dest}/${lastAction.args.src}`, lastAction.args.dest, dirToMove)
+          
+        this.moveDir(`${lastAction.args.dest}/${lastAction.args.src}`, lastAction.args.src )
       break;
       case "writefile":
         if(redo){
