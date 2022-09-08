@@ -175,7 +175,7 @@ export class Blocks {
   eth_getStorageAt (payload, cb) {
     const [ address, position, blockNumber ] = payload.params
 
-    this.vmContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
+    this.vmContext.web3().debug.storageRangeAt(blockNumber + 1, 0, address.toLowerCase(), position, 1, (err, result) => {
       if (err || (result.storage && Object.values(result.storage).length === 0)) {
         return cb(err, '')
       }

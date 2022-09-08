@@ -310,15 +310,8 @@ export class VmProxy {
     // we don't use the range params here
     address = toChecksumAddress(address)
 
-    let txHash
-    if (txIndex === 'latest') {
-      txHash = this.lastProcessedStorageTxHash[address]
-    } else {
-      const block = this.vmContext.blocks[blockNumber]
-      txHash = '0x' + block.transactions[txIndex].hash().toString('hex')
-    }
-    
-    
+    const block = this.vmContext.blocks[blockNumber]
+    const txHash = '0x' + block.transactions[txIndex].hash().toString('hex')
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
       const storage = this.storageCache['after_' + txHash][address]
