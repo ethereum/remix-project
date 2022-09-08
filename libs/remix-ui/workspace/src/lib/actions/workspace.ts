@@ -451,28 +451,29 @@ export const switchToBranch = async (branch: string) => {
   const gitConfig = {
     ref: branch
   }
-  const promise = plugin.call('dGitProvider', 'checkout', gitConfig)
+  const promise = plugin.call('dGitProvider', 'checkout', gitConfig, false)
 
   dispatch(cloneRepositoryRequest())
   promise.then(async () => {
     await fetchWorkspaceDirectory(ROOT_PATH)
     dispatch(cloneRepositorySuccess())
   }).catch((e) => {
-    const checkoutModal = {
-      id: 'checkoutGitBranch',
-      title: 'Checkout Git Branch',
-      message: 'An error occurred: ' + e,
-      modalType: 'modal',
-      okLabel: 'OK',
-      okFn: async () => {
-        // await deleteWorkspace(repoName)
-        dispatch(cloneRepositoryFailed())
-      },
-      hideFn: async () => {
-        // await deleteWorkspace(repoName)
-        dispatch(cloneRepositoryFailed())
-      }
-    }
-    plugin.call('notification', 'modal', checkoutModal)
+    dispatch(cloneRepositoryFailed())
   })
+  return promise
+}
+
+export const switchToNewBranch = async (branch: string) => {
+  const gitConfig = {
+    ref: branch
+  }
+  const promise = plugin.call('dGitProvider', 'branch', gitConfig, false)
+
+  dispatch(cloneRepositoryRequest())
+  promise.then(async () => {
+    dispatch(cloneRepositorySuccess())
+  }).catch((e) => {
+    dispatch(cloneRepositoryFailed())
+  })
+  return promise
 }

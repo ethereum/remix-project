@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext, SyntheticEvent } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
@@ -17,7 +17,8 @@ export function Workspace () {
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
   const [showBranches, setShowBranches] = useState<boolean>(false)
-  const [branchFilter, setBranchFilter] = useState<string>('')  
+  const [branchFilter, setBranchFilter] = useState<string>('')
+  const [selectedBranch, setSelectedBranch] = useState<string>('')
   const displayOzCustomRef = useRef<HTMLDivElement>()
   const mintableCheckboxRef = useRef()
   const burnableCheckboxRef = useRef()
@@ -30,6 +31,7 @@ export function Workspace () {
   const workspaceCreateTemplateInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
   const initGitRepoRef = useRef<HTMLInputElement>()
+  const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.remote).slice(0, 20) : []
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -65,6 +67,7 @@ export function Workspace () {
     const workspace = global.fs.browser.workspaces.find(workspace => workspace.name === currentWorkspace)
 
     setSelectedWorkspace(workspace)
+    workspace && setSelectedBranch(workspace.currentBranch)
   }, [currentWorkspace])
 
   const renameCurrentWorkspace = () => {
@@ -205,7 +208,9 @@ export function Workspace () {
     setShowBranches(isOpen)
   }
 
-  const handleBranchFilerChange = (branchFilter: string) => {
+  const handleBranchFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const branchFilter = e.target.value
+
     setBranchFilter(branchFilter)
   }
 
@@ -213,8 +218,22 @@ export function Workspace () {
     global.dispatchShowAllBranches()
   }
 
-  const switchToBranch = (branch: string) => {
-    global.dispatchSwitchToBranch(branch)
+  const switchToBranch = async (branch: string) => {
+    try {
+      await global.dispatchSwitchToBranch(branch)
+      setSelectedBranch(branch)
+    } catch (e) {
+      global.modal('Checkout Git Branch', e.message, 'OK', () => {})
+    }
+  }
+
+  const switchToNewBranch = async () => {
+    try {
+      await global.dispatchSwitchToNewBranch(branchFilter)
+      setSelectedBranch(branchFilter)
+    } catch (e) {
+      global.modal('Checkout Git Branch', e.message, 'OK', () => {})
+    }
   }
 
   const createModalMessage = () => {
@@ -603,16 +622,17 @@ export function Workspace () {
                           </div> :
                           <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
                         }
-                      </Dropdown.Item>
-                    ))
-                  }
-                  { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </header>
-        </div>
-        <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
+                        </Dropdown.Item>
+                      ))
+                    }
+                    <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
+                    { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </header>
+          </div>
+          <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
           <div className='h-100'>
           { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
           { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
@@ -705,7 +725,7 @@ export function Workspace () {
             <div className="pt-1 mr-1">
               <Dropdown style={{ height: 30, minWidth: 80 }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark" icon={null}>
-                  { selectedWorkspace.currentBranch || '-none-' }
+                  { global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : selectedBranch || '-none-' }
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items branches-dropdown' data-id="custom-dropdown-items">
@@ -715,21 +735,31 @@ export function Workspace () {
                     </div>
                   </div>
                   <div className='border-top py-2'>
-                    <input className='form-control border checkout-input bg-light' placeholder='Find or create a branch.' style={{ minWidth: 225 }} onChange={(e) => { handleBranchFilerChange(e.target.value) }} />
+                    <input
+                      className='form-control border checkout-input bg-light'
+                      placeholder='Find or create a branch.'
+                      style={{ minWidth: 225 }}
+                      onChange={handleBranchFilterChange}
+                    />
                   </div>
-                  <div className='border-top'>
+                  <div className='border-top' style={{ maxHeight: 120, overflowY: 'scroll' }}>
                     {
-                      (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.remote).slice(0, 4).map((branch, index) => {
+                      filteredBranches.length > 0 ? filteredBranches.map((branch, index) => {
                         return (
-                          <Dropdown.Item key={index}>
+                          <Dropdown.Item key={index} onClick={() => { switchToBranch(branch.name) }}>
                             { 
-                              selectedWorkspace.currentBranch === branch.name ?
-                              <span onClick={() => { switchToBranch(branch.name) }}>&#10003; { branch.name } </span> :
-                              <span className="pl-3" onClick={() => { switchToBranch(branch.name) }}>{ branch.name }</span>
+                              selectedBranch === branch.name ?
+                              <span>&#10003; { branch.name } </span> :
+                              <span className="pl-3">{ branch.name }</span>
                             }
                           </Dropdown.Item>
                         )
-                      })
+                      }) : 
+                      <Dropdown.Item onClick={switchToNewBranch}>
+                        <div className="pl-1 pr-1">
+                          <i className="fas fa-code-branch pr-2"></i><span>Create branch: { branchFilter } from '{selectedBranch}'</span>
+                        </div>
+                      </Dropdown.Item>
                     }
                   </div>
                   {
