@@ -157,6 +157,7 @@ export const runTabInitialState: RunTabState = {
     contractList: {},
     deployOptions: {} as any,
     proxyKey: '',
+    compilationSource: '',
     loadType: 'other',
     currentFile: '',
     currentContract: '',
