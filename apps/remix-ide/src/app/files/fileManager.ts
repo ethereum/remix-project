@@ -970,11 +970,10 @@ class FileManager extends Plugin {
         await this.moveFile(`${lastAction.args.dest}/${file}`, folder)
       break;
       case "movedir":
-        let dir = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")),
-          dirToMove = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/")+1)
-          console.log(`lastAction.args.dest}/${lastAction.args.src}`, lastAction.args.dest, dirToMove)
+        let dir = lastAction.args.src,
+          src = dir.substring(0,dir.lastIndexOf("/"))
           
-        this.moveDir(`${lastAction.args.dest}/${lastAction.args.src}`, lastAction.args.src )
+        this.moveDir(`${lastAction.args.dest}/${lastAction.args.dirName}`, src )
       break;
       case "writefile":
         if(redo){
