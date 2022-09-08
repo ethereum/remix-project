@@ -525,8 +525,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         contracts: {
-          compilationSource: payload,
           ...state.contracts,
+          compilationSource: payload,
         }
       }
     }
