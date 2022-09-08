@@ -229,7 +229,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
         <label className="udapp_settingsLabel">Contract</label>
-        { Object.keys(props.contracts.contractList).length > 0 && <label className='text-light'>Compiled by {compilationSource} </label> }
+        { Object.keys(props.contracts.contractList).length > 0 && <label data-id="udappCompiledBy" className='text-light'>Compiled by {compilationSource} </label> }
       </div>
       <div className="udapp_subcontainer">
        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
