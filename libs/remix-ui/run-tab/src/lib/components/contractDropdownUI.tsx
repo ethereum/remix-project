@@ -28,10 +28,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [constructorInputs, setConstructorInputs] = useState(null)
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
-  const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
 
   useEffect(() => {
-    enableContractNames(true)
+    enableContractNames(Object.keys(props.contracts.contractList).length > 0)
   }, [Object.keys(props.contracts.contractList).length])
 
   useEffect(() => {
@@ -75,7 +75,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       })
       if (!currentContract) enableAtAddress(false)
     }
-    enableContractNames(true)
     initSelectedContract()
   }, [loadType, currentFile, compilationCount])
 
@@ -228,9 +227,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
-      <label className="udapp_settingsLabel">Contract</label>
+      <div className='d-flex justify-content-between'>
+        <label className="udapp_settingsLabel">Contract</label>
+        { Object.keys(props.contracts.contractList).length > 0 && <label className='text-light'>Compiled by {compilationSource} </label> }
+      </div>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+       <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }
