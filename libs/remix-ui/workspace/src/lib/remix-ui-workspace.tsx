@@ -160,16 +160,16 @@ export function Workspace () {
       <>
         <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
         <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
-          <optgroup label="General">
-            <option value='remixDefault'>Default</option>
-            <option value='blank'>Blank</option>
+          <optgroup className="text-light" label="General">
+            <option className="text-dark" value='remixDefault'>Default</option>
+            <option className="text-dark" value='blank'>Blank</option>
           </optgroup>
-          <optgroup label="OpenZepplin">
-            <option value='ozerc20'>ERC20</option>
-            <option value='ozerc721'>ERC721</option>
+          <optgroup className="text-light" label="OpenZepplin">
+            <option className="text-dark" value='ozerc20'>ERC20</option>
+            <option className="text-dark" value='ozerc721'>ERC721</option>
           </optgroup>
-          <optgroup label="0xProject">
-            <option value='zeroxErc20'>ERC20</option>
+          <optgroup className="text-light" label="0xProject">
+            <option className="text-dark" value='zeroxErc20'>ERC20</option>
           </optgroup>
         </select>
         <br/><br/>
