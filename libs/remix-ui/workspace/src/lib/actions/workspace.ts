@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
@@ -339,7 +339,6 @@ export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean
 
               branches = await getGitRepoBranches(folder)
               currentBranch = await getGitRepoCurrentBranch(folder)
-
               return {
                 name: folder.replace(workspacesPath + '/', ''),
                 isGitRepo,
@@ -377,6 +376,13 @@ export const cloneRepository = async (url: string) => {
 
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
       await fetchWorkspaceDirectory(ROOT_PATH)
+      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+      const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
+
+      dispatch(setCurrentWorkspaceBranches(branches))
+      const currentBranch = await getGitRepoCurrentBranch(workspacesPath + '/' + repoName)
+
+      dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
       dispatch(cloneRepositorySuccess())
     }).catch(() => {
       const cloneModal = {
@@ -456,8 +462,9 @@ export const switchToBranch = async (branch: string) => {
   dispatch(cloneRepositoryRequest())
   promise.then(async () => {
     await fetchWorkspaceDirectory(ROOT_PATH)
+    dispatch(setCurrentWorkspaceCurrentBranch(branch))
     dispatch(cloneRepositorySuccess())
-  }).catch((e) => {
+  }).catch(() => {
     dispatch(cloneRepositoryFailed())
   })
   return promise
@@ -471,8 +478,14 @@ export const switchToNewBranch = async (branch: string) => {
 
   dispatch(cloneRepositoryRequest())
   promise.then(async () => {
+    await fetchWorkspaceDirectory(ROOT_PATH)
+    dispatch(setCurrentWorkspaceCurrentBranch(branch))
+    const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+    const branches = await getGitRepoBranches(workspacesPath + '/' + branch)
+
+    dispatch(setCurrentWorkspaceBranches(branches))
     dispatch(cloneRepositorySuccess())
-  }).catch((e) => {
+  }).catch(() => {
     dispatch(cloneRepositoryFailed())
   })
   return promise

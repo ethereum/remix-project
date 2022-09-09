@@ -264,3 +264,17 @@ export const cloneRepositoryFailed = () => {
     type: 'CLONE_REPOSITORY_FAILED'
   }
 }
+
+export const setCurrentWorkspaceBranches = (branches?: { remote: any, name: string }[]) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_BRANCHES',
+    payload: branches
+  }
+}
+
+export const setCurrentWorkspaceCurrentBranch = (currentBranch?: string) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH',
+    payload: currentBranch
+  }
+}
