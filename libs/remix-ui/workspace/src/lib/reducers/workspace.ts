@@ -674,6 +674,36 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'SET_CURRENT_WORKSPACE_BRANCHES': {
+      const payload: { remote: any, name: string }[] = action.payload
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          workspaces: state.browser.workspaces.map((workspace) => {
+            if (workspace.name === state.browser.currentWorkspace) workspace.branches = payload
+            return workspace
+          })
+        }
+      }
+    }
+
+    case 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH': {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          workspaces: state.browser.workspaces.map((workspace) => {
+            if (workspace.name === state.browser.currentWorkspace) workspace.currentBranch = payload
+            return workspace
+          })
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
