@@ -278,7 +278,16 @@ export function Workspace () {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
-                  {
+                  <Dropdown.Item
+                      onClick={() => {
+                        createWorkspace()
+                      }}
+                  >
+                    { 
+                      <span className="pl-3"> - create a new workspace - </span>
+                    }
+                  </Dropdown.Item>
+                  {                    
                     global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                       <Dropdown.Item
                         key={index}
