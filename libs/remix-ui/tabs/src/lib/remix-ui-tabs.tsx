@@ -24,15 +24,18 @@ export interface TabsUIApi {
 interface ITabsState {
   selectedIndex: number,
   fileDecorations: fileDecoration[],
+  currentExt: string
 }
 interface ITabsAction {
   type: string,
   payload: any,
+  ext?: string,
 }
 
 const initialTabsState: ITabsState = {
   selectedIndex: -1,
   fileDecorations: [],
+  currentExt: ''
 }
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
@@ -40,6 +43,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
     case 'SELECT_INDEX':
       return {
         ...state,
+        currentExt: action.ext,
         selectedIndex: action.payload,
       }
     case 'SET_FILE_DECORATIONS':
@@ -54,7 +58,6 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 
 export const TabsUI = (props: TabsUIProps) => {
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState);
-  const [currentFileExt, setCurrentFileExt] = useState<string>('sol')
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
@@ -104,9 +107,7 @@ export const TabsUI = (props: TabsUIProps) => {
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
-    const ext = getExt(name)
-    setCurrentFileExt(ext)
-    dispatch({ type: 'SELECT_INDEX', payload: index })
+    dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name)})
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
@@ -136,32 +137,32 @@ export const TabsUI = (props: TabsUIProps) => {
     const root = path.split('#')[0].split('?')[0]
     const ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
     if (ext) return ext[0]
-    else return'txt'
+    else return ''
   }
 
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          <OverlayTrigger placement="bottom" overlay={
-            <Tooltip id="overlay-tooltip-run-script">
-              <span>
-                Run script
-              </span>
-            </Tooltip>
-          }>
-            <button
-              className="btn text-success py-0"
-              disabled={!(currentFileExt === 'js' || currentFileExt === 'ts')}
-              onClick={async () => {
-                const path = active().substr(active().indexOf('/') + 1, active().length)
-                const content = await props.plugin.call('fileManager', "readFile", path)
-                await props.plugin.call('scriptRunner', 'execute', content)}
-              }
-            >
+          <button
+            className="btn text-success py-0"
+            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')}
+            onClick={async () => {
+              const path = active().substr(active().indexOf('/') + 1, active().length)
+              const content = await props.plugin.call('fileManager', "readFile", path)
+              await props.plugin.call('scriptRunner', 'execute', content)}
+            }
+          >
+            <OverlayTrigger placement="bottom" overlay={
+              <Tooltip id="overlay-tooltip-run-script">
+                <span>
+                  {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" : "Select a .ts or .js file and run it"}
+                </span>
+              </Tooltip>
+            }>
               <i className="fad fa-play"></i>
-            </button>
-          </OverlayTrigger>
+            </OverlayTrigger>
+          </button>
           <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
           <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
         </div>
@@ -176,7 +177,7 @@ export const TabsUI = (props: TabsUIProps) => {
           onSelect={(index) => {
             props.onSelect(index)
             currentIndexRef.current = index
-            dispatch({ type: 'SELECT_INDEX', payload: index })
+            dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(props.tabs[currentIndexRef.current].name)})
           }}
         >
           <TabList className="d-flex flex-row align-items-center">
