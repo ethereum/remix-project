@@ -1,8 +1,8 @@
 
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
 import { Plugin } from '@remixproject/engine'
-
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 
@@ -17,22 +17,18 @@ export interface TabsUIProps {
   onReady: (api: any) => void
   themeQuality: string
 }
-
 export interface TabsUIApi {
-  activateTab: (namee: string) => void
+  activateTab: (name: string) => void
   active: () => string
 }
-
 interface ITabsState {
   selectedIndex: number,
   fileDecorations: fileDecoration[],
 }
-
 interface ITabsAction {
   type: string,
   payload: any,
 }
-
 
 const initialTabsState: ITabsState = {
   selectedIndex: -1,
@@ -58,6 +54,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 
 export const TabsUI = (props: TabsUIProps) => {
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState);
+  const [currentFileExt, setCurrentFileExt] = useState<string>('sol')
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
@@ -71,8 +68,6 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }, [tabsState.selectedIndex])
 
-
-
   const getFileDecorationClasses = (tab: any) => {
     const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
       if(`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
@@ -84,8 +79,7 @@ export const TabsUI = (props: TabsUIProps) => {
     return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
   }
 
-
-  const renderTab = (tab, index) => {
+   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
@@ -106,9 +100,12 @@ export const TabsUI = (props: TabsUIProps) => {
     if (currentIndexRef.current < 0) return ''
     return tabs.current[currentIndexRef.current].name
   }
+
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
+    const ext = getExt(name)
+    setCurrentFileExt(ext)
     dispatch({ type: 'SELECT_INDEX', payload: index })
   }
 
@@ -135,10 +132,36 @@ export const TabsUI = (props: TabsUIProps) => {
     return () => { tabsElement.current.removeEventListener('wheel', transformScroll) }
   }, [])
 
+  const getExt = (path) => {
+    const root = path.split('#')[0].split('?')[0]
+    const ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
+    if (ext) return ext[0]
+    else return'txt'
+  }
+
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
-        <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-2">
+        <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
+          <OverlayTrigger placement="bottom" overlay={
+            <Tooltip id="overlay-tooltip-run-script">
+              <span>
+                Run script
+              </span>
+            </Tooltip>
+          }>
+            <button
+              className="btn text-success py-0"
+              disabled={!(currentFileExt === 'js' || currentFileExt === 'ts')}
+              onClick={async () => {
+                const path = active().substr(active().indexOf('/') + 1, active().length)
+                const content = await props.plugin.call('fileManager', "readFile", path)
+                await props.plugin.call('scriptRunner', 'execute', content)}
+              }
+            >
+              <i className="fad fa-play"></i>
+            </button>
+          </OverlayTrigger>
           <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
           <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
         </div>
