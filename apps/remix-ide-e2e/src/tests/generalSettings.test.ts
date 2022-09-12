@@ -179,7 +179,7 @@ const remixIdeThemes = {
   },
   cyborg: {
     primary: '#2A9FD6',
-    secondary: '#555',
+    secondary: '#3c3939',
     success: '#77B300',
     info: '#93C',
     warning: '#F80',
