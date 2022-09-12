@@ -426,9 +426,9 @@ class FileManager extends Plugin {
       await this._handleExists(path, `Cannot remove file or directory ${path}`)
       const provider = this.fileProviderOf(path)
 
-      if(await this.isDirectory(path)){
+      if (await this.isDirectory(path)) {
         this.recordFileAction("remove", {path: path})
-      }else{
+      } else {
         this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
       }
       
@@ -900,7 +900,6 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination folder
    * @returns {void}
    */
-  
    async moveDir(src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -948,7 +947,7 @@ class FileManager extends Plugin {
     this.isFromLastAction = true
 
     let lastAction = this.actions[this.actions.length - 1]
-    if(redo){
+    if (redo) {
       lastAction = this.undoActions[this.undoActions.length - 1]
       this.undoActions.pop()
     } else {
