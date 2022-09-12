@@ -171,7 +171,7 @@ const remixIdeThemes = {
   },
   spacelab: {
     primary: '#446E9B',
-    secondary: '#999',
+    secondary: '#dadfe0',
     success: '#3CB521',
     info: '#3399F3',
     warning: '#D47500',
