@@ -146,17 +146,22 @@ export const TabsUI = (props: TabsUIProps) => {
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <button
             className="btn text-success py-0"
-            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')}
+            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
             onClick={async () => {
               const path = active().substr(active().indexOf('/') + 1, active().length)
               const content = await props.plugin.call('fileManager', "readFile", path)
-              await props.plugin.call('scriptRunner', 'execute', content)}
-            }
+              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                await props.plugin.call('scriptRunner', 'execute', content)
+              } else if (tabsState.currentExt === 'sol') {
+                await props.plugin.call('solidity', 'compile', path)
+              }
+            }}
           >
             <OverlayTrigger placement="bottom" overlay={
               <Tooltip id="overlay-tooltip-run-script">
                 <span>
-                  {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" : "Select a .ts or .js file and run it"}
+                  {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
+                    tabsState.currentExt === 'sol' ? "Compile CTRL + S" : "Select .sol file to compile or a .ts or .js file and run it"}
                 </span>
               </Tooltip>
             }>
