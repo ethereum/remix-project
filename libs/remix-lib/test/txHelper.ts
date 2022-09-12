@@ -3,7 +3,7 @@ import tape from 'tape'
 import * as txHelper from '../src/execution/txHelper'
 
 tape('getFunction', function (st) {
-  st.plan(6)
+  st.plan(11)
   let fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
   st.equal(fn.name, 'o')
 
