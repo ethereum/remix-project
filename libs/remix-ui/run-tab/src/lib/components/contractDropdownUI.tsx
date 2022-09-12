@@ -2,10 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI(props: ContractDropdownProps) {
@@ -114,7 +114,6 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
 
   const initSelectedContract = () => {
     const contracts = contractList[currentFile]
-
 
     if (contracts && contracts.length > 0) {
       const contract = contracts.find(contract => contract.alias === currentContract)
@@ -324,8 +323,14 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           }
         </div>
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>or</div>
-        <div className="udapp_button udapp_atAddressSect">
-          <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} title={atAddressOptions.title} onClick={loadFromAddress}>At Address</button>
+        <div className="udapp_button udapp_atAddressSect ">
+          <OverlayTrigger placement={'bottom-end'} overlay={
+          <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
+            <span>{atAddressOptions.title}</span>
+          </Tooltip>
+        }>
+          <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.   disabled} onClick={loadFromAddress}>At Address</button>
+        </OverlayTrigger>
           <input
             ref={atAddressValue}
             className="udapp_input udapp_ataddressinput ataddressinput form-control"
