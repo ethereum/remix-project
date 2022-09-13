@@ -280,6 +280,7 @@ export function Workspace () {
                       <span className="pl-3"> - create a new workspace - </span>
                     }
                   </Dropdown.Item>
+                  <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
                   {                    
                     global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                       <Dropdown.Item
@@ -299,7 +300,6 @@ export function Workspace () {
                       </Dropdown.Item>
                     ))
                   }
-                  <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
                   { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                 </Dropdown.Menu>
               </Dropdown>
