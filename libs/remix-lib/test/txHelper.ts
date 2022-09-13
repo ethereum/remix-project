@@ -3,7 +3,7 @@ import tape from 'tape'
 import * as txHelper from '../src/execution/txHelper'
 
 tape('getFunction', function (st) {
-  st.plan(6)
+  st.plan(11)
   let fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
   st.equal(fn.name, 'o')
 
@@ -21,6 +21,17 @@ tape('getFunction', function (st) {
 
   fn = txHelper.getReceiveInterface(JSON.parse(abi))
   st.equal(fn.type, 'receive')
+
+  fn = txHelper.getFunction(testTupleAbi, 'setUser(tuple)') // some compiler version might resolve to tuple.
+  st.equal(fn.name, 'setUser')
+  st.equal(fn.inputs[0].type, 'tuple')
+  st.equal(fn.inputs[0].name, 'user')
+
+  fn = txHelper.getFunctionLiner(testTupleAbi[0], true)
+  st.equal(fn, 'setUser((string,uint256))')
+  
+  fn = txHelper.getFunctionLiner(testTupleAbi[0], false)
+  st.equal(fn, 'setUser(tuple)')
 })
 
 const abi = `[
@@ -153,3 +164,5 @@ const abi = `[
 		"type": "receive"
 	}
 ]`
+
+const testTupleAbi = [{"inputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"age","type":"uint256"}],"internalType":"struct Example.User","name":"user","type":"tuple"}],"name":"setUser","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userByAddress","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"age","type":"uint256"}],"stateMutability":"view","type":"function"}]

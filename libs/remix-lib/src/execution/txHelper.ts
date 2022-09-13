@@ -102,17 +102,25 @@ export function extractSize (type) {
   return size ? size[2] : ''
 }
 
+export function getFunctionLiner (fn, detailTuple: boolean = true) {
+  /*
+    if detailsTuple is True, this will return something like fnName((uint, string))
+    if detailsTuple is False, this will return something like fnName(tuple)
+  */
+  return fn.name + '(' + fn.inputs.map((value) => {
+    if (detailTuple && value.components) {
+      const fullType = makeFullTypeDefinition(value)
+      return fullType.replace(/tuple/g, '') // return of makeFullTypeDefinition might contain `tuple`, need to remove it cause `methodIdentifier` (fnName) does not include `tuple` keyword
+    } else {
+      return value.type
+    }
+  }).join(',') + ')'
+}
+
 export function getFunction (abi, fnName) {
   for (let i = 0; i < abi.length; i++) {
     const fn = abi[i]
-    if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
-      if (value.components) {
-        const fullType = makeFullTypeDefinition(value)
-        return fullType.replace(/tuple/g, '') // return of makeFullTypeDefinition might contain `tuple`, need to remove it cause `methodIdentifier` (fnName) does not include `tuple` keyword
-      } else {
-        return value.type
-      }
-    }).join(',') + ')') {
+    if (fn.type === 'function' && (fnName === getFunctionLiner(fn, true) || fnName === getFunctionLiner(fn, false))) {
       return fn
     }
   }
