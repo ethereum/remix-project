@@ -300,6 +300,7 @@ export function Workspace () {
                       <span className="pl-3"> - create a new workspace - </span>
                     }
                   </Dropdown.Item>
+                  <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
                   {                    
                     global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                       <Dropdown.Item
@@ -319,7 +320,6 @@ export function Workspace () {
                       </Dropdown.Item>
                     ))
                   }
-                  <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
                   { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                 </Dropdown.Menu>
               </Dropdown>
@@ -329,83 +329,80 @@ export function Workspace () {
         <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
           <div className='h-100'>
           { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
-            { !(global.fs.browser.isRequestingWorkspace || 
-              global.fs.browser.isRequestingCloning) &&
-              (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) && 
-              <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
-                <FileExplorer
-                  name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                  contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
-                  removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
-                  files={global.fs.browser.files}
-                  fileState={global.fs.browser.fileState}
-                  expandPath={global.fs.browser.expandPath}
-                  focusEdit={global.fs.focusEdit}
-                  focusElement={global.fs.focusElement}
-                  dispatchCreateNewFile={global.dispatchCreateNewFile}
-                  modal={global.modal}
-                  dispatchCreateNewFolder={global.dispatchCreateNewFolder}
-                  readonly={global.fs.readonly}
-                  toast={global.toast}
-                  dispatchDeletePath={global.dispatchDeletePath}
-                  dispatchRenamePath={global.dispatchRenamePath}
-                  dispatchUploadFile={global.dispatchUploadFile}
-                  dispatchCopyFile={global.dispatchCopyFile}
-                  dispatchCopyFolder={global.dispatchCopyFolder}
-                  dispatchPublishToGist={global.dispatchPublishToGist}
-                  dispatchRunScript={global.dispatchRunScript}
-                  dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
-                  dispatchHandleClickFile={global.dispatchHandleClickFile}
-                  dispatchSetFocusElement={global.dispatchSetFocusElement}
-                  dispatchFetchDirectory={global.dispatchFetchDirectory}
-                  dispatchRemoveInputField={global.dispatchRemoveInputField}
-                  dispatchAddInputField={global.dispatchAddInputField}
-                  dispatchHandleExpandPath={global.dispatchHandleExpandPath}
-                  dispatchMoveFile={global.dispatchMoveFile}
-                  dispatchMoveFolder={global.dispatchMoveFolder}
-                  />
-              </div>
-            }
-            {
-              global.fs.localhost.isRequestingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
-                : <div className='h-100 filesystemexplorer remixui_treeview'>
-                  { global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost &&
-                      <FileExplorer
-                        name='localhost'
-                        menuItems={['createNewFile', 'createNewFolder']}
-                        contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
-                        removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
-                        files={global.fs.localhost.files}
-                        fileState={[]}
-                        expandPath={global.fs.localhost.expandPath}
-                        focusEdit={global.fs.focusEdit}
-                        focusElement={global.fs.focusElement}
-                        dispatchCreateNewFile={global.dispatchCreateNewFile}
-                        modal={global.modal}
-                        dispatchCreateNewFolder={global.dispatchCreateNewFolder}
-                        readonly={global.fs.readonly}
-                        toast={global.toast}
-                        dispatchDeletePath={global.dispatchDeletePath}
-                        dispatchRenamePath={global.dispatchRenamePath}
-                        dispatchUploadFile={global.dispatchUploadFile}
-                        dispatchCopyFile={global.dispatchCopyFile}
-                        dispatchCopyFolder={global.dispatchCopyFolder}
-                        dispatchPublishToGist={global.dispatchPublishToGist}
-                        dispatchRunScript={global.dispatchRunScript}
-                        dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
-                        dispatchHandleClickFile={global.dispatchHandleClickFile}
-                        dispatchSetFocusElement={global.dispatchSetFocusElement}
-                        dispatchFetchDirectory={global.dispatchFetchDirectory}
-                        dispatchRemoveInputField={global.dispatchRemoveInputField}
-                        dispatchAddInputField={global.dispatchAddInputField}
-                        dispatchHandleExpandPath={global.dispatchHandleExpandPath}
-                        dispatchMoveFile={global.dispatchMoveFile}
-                        dispatchMoveFolder={global.dispatchMoveFolder}
-                      />
-                  }
-                </div>
-            }
+          { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
+            (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) && 
+            <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
+              <FileExplorer
+                name={currentWorkspace}
+                menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
+                removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
+                files={global.fs.browser.files}
+                fileState={global.fs.browser.fileState}
+                expandPath={global.fs.browser.expandPath}
+                focusEdit={global.fs.focusEdit}
+                focusElement={global.fs.focusElement}
+                dispatchCreateNewFile={global.dispatchCreateNewFile}
+                modal={global.modal}
+                dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                readonly={global.fs.readonly}
+                toast={global.toast}
+                dispatchDeletePath={global.dispatchDeletePath}
+                dispatchRenamePath={global.dispatchRenamePath}
+                dispatchUploadFile={global.dispatchUploadFile}
+                dispatchCopyFile={global.dispatchCopyFile}
+                dispatchCopyFolder={global.dispatchCopyFolder}
+                dispatchPublishToGist={global.dispatchPublishToGist}
+                dispatchRunScript={global.dispatchRunScript}
+                dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                dispatchHandleClickFile={global.dispatchHandleClickFile}
+                dispatchSetFocusElement={global.dispatchSetFocusElement}
+                dispatchFetchDirectory={global.dispatchFetchDirectory}
+                dispatchRemoveInputField={global.dispatchRemoveInputField}
+                dispatchAddInputField={global.dispatchAddInputField}
+                dispatchHandleExpandPath={global.dispatchHandleExpandPath}
+                dispatchMoveFile={global.dispatchMoveFile}
+                dispatchMoveFolder={global.dispatchMoveFolder}
+                />
+            </div>
+          }
+          { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
+          { (global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost) &&
+            <div className='h-100 filesystemexplorer remixui_treeview'>
+              <FileExplorer
+                name='localhost'
+                menuItems={['createNewFile', 'createNewFolder']}
+                contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
+                removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
+                files={global.fs.localhost.files}
+                fileState={[]}
+                expandPath={global.fs.localhost.expandPath}
+                focusEdit={global.fs.focusEdit}
+                focusElement={global.fs.focusElement}
+                dispatchCreateNewFile={global.dispatchCreateNewFile}
+                modal={global.modal}
+                dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                readonly={global.fs.readonly}
+                toast={global.toast}
+                dispatchDeletePath={global.dispatchDeletePath}
+                dispatchRenamePath={global.dispatchRenamePath}
+                dispatchUploadFile={global.dispatchUploadFile}
+                dispatchCopyFile={global.dispatchCopyFile}
+                dispatchCopyFolder={global.dispatchCopyFolder}
+                dispatchPublishToGist={global.dispatchPublishToGist}
+                dispatchRunScript={global.dispatchRunScript}
+                dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                dispatchHandleClickFile={global.dispatchHandleClickFile}
+                dispatchSetFocusElement={global.dispatchSetFocusElement}
+                dispatchFetchDirectory={global.dispatchFetchDirectory}
+                dispatchRemoveInputField={global.dispatchRemoveInputField}
+                dispatchAddInputField={global.dispatchAddInputField}
+                dispatchHandleExpandPath={global.dispatchHandleExpandPath}
+                dispatchMoveFile={global.dispatchMoveFile}
+                dispatchMoveFolder={global.dispatchMoveFolder}
+              />
+            </div>
+          }
           </div>
         </div>
       </div>
