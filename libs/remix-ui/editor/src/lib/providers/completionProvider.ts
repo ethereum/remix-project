@@ -228,12 +228,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         }
     }
 
-    private getBlockNodesAtPosition = async (position: Position) => {
+    private getBlockNodesAtPosition = async (position: Position, ANTLRBlock) => {
         let nodes: any[] = []
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         const nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-        // try to get the block from ANTLR of which the position is in
-        const ANTLRBlock = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', position, null)
         // if the block has a name and a type we can maybe find it in the contract nodes
         const fileNodes = await this.props.plugin.call('codeParser', 'getCurrentFileNodes')
 
@@ -275,7 +273,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         nodes = nodes.filter(node => {
             if (node.src) {
                 const position = sourceMappingDecoder.decode(node.src)
-                if (position.start >= ANTLRBlock.range[0] && (position.start + position.length) <= ANTLRBlock.range[1]) {
+                if (position.start >= ANTLRBlock.start && (position.start + position.length) <= ANTLRBlock.end) {
                     return true
                 }
             }
@@ -291,10 +289,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         let nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
         // if no nodes exits at position, try to get the block of which the position is in
-        const block = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', position, null)
+        const block = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', cursorPosition, null)
         if (!nodesAtPosition.length) {
             if (block) {
-                nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.range[0])
+                nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.start)
             }
         }
         // find the contract and get the nodes of the contract and the base contracts and imports
@@ -309,7 +307,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     nodes = [...Object.values(contractNodes.baseNodesWithBaseContractScope), ...nodes]
                     nodes = [...Object.values(fileNodes.imports), ...nodes]
                     // at the nodes at the block itself
-                    nodes = [...nodes, ...await this.getBlockNodesAtPosition(position)]
+                    nodes = [...nodes, ...await this.getBlockNodesAtPosition(position, block)]
                     // filter private nodes, only allow them when contract ID is the same as the current contract
                     nodes = nodes.filter(node => {
                         if (node.visibility) {
