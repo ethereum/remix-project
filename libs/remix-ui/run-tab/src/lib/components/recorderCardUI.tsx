@@ -59,19 +59,33 @@ export function RecorderUI (props: RecorderProps) {
           </OverlayTrigger>
         </div>
         <div className="mb-1 mt-1 udapp_transactionActions">
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="tooltip-save-recorder">
-            <span>Save {props.count} transaction{props.count === 1 ? '' : 's'} as scenario file</span>
+        <OverlayTrigger placement={'bottom-start'} overlay={
+          <Tooltip className="text-nowrap" id="remixUdappTransactionSavetooltip">
+            <span>
+              {
+                props.count === 0 ? 'No transactions to save'
+                :  props.count === 1 ? `Save ${props.count} transaction as scenario file`
+                : `Save ${props.count} transactions as scenario file`
+              }
+            </span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info savetransaction udapp_recorder" title={props.count === 0 ? 'No transactions to save' : ''} disabled={props.count === 0 ? true: false} onClick={triggerRecordButton}>Save</button>
+          <span>
+            <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>
+              Save
+            </button>
+          </span>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-run-recorder">
             <span>Run transaction(s) from the current scenario file</span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" title={enableRunButton ? 'No scenario file selected' : ''} disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
+          <span>
+            <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton} style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}>
+              Run
+            </button>
+          </span>
         </OverlayTrigger>
         </div>
       </div>
