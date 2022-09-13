@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -235,15 +236,26 @@ export function ContractGUI (props: ContractGUIProps) {
   return (
     <div className={`udapp_contractProperty ${(props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive') ? 'udapp_hasArgs' : ''}`}>
       <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
-        <button onClick={handleActionClick} title={buttonOptions.title} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+        <OverlayTrigger placement={'right'} overlay={
+          <Tooltip className="text-nowrap" id="remixUdappInstanceButtonTooltip">
+            <span>{buttonOptions.title}</span>
+          </Tooltip>
+        }>
+        <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+        </OverlayTrigger>
+        <OverlayTrigger placement={'right'} overlay={
+          <Tooltip className="text-nowrap" id="remixUdappInstanceButtonTooltip">
+            <span>{props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}</span>
+          </Tooltip>
+        }>
         <input
           className="form-control"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
-          title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
           onChange={handleBasicInput}
           ref={basicInputRef}
           style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
+        </OverlayTrigger>
         <i
           className="fas fa-angle-down udapp_methCaret"
           onClick={switchMethodViewOn}
@@ -313,7 +325,7 @@ export function ContractGUI (props: ContractGUIProps) {
             </div>
             <div>
               {
-                props.initializerOptions && props.initializerOptions.initializeInputs ? 
+                props.initializerOptions && props.initializerOptions.initializeInputs ?
                 <span onClick={handleToggleDeployProxy}>
                   <i className={!toggleDeployProxy ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
                 </span> : null
