@@ -14,7 +14,7 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
     async provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken): Promise<monaco.languages.Definition | monaco.languages.LocationLink[]> {
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         const jumpLocation = await this.jumpToDefinition(cursorPosition)
-
+        if(!jumpLocation || !jumpLocation.fileName) return []
         return [{
             uri: this.monaco.Uri.parse(jumpLocation.fileName),
             range: {
