@@ -5,6 +5,7 @@ import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH } from './utils/constants'
+const _paq = window._paq = window._paq || []
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -225,6 +226,7 @@ export function Workspace () {
                   onClick={(e) => {
                     e.stopPropagation()
                     createWorkspace()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
                   }}
                   className='far fa-plus-square remixui_menuicon'
                   title='Create'>
@@ -236,6 +238,7 @@ export function Workspace () {
                   onClick={(e) => {
                     e.stopPropagation()
                     renameCurrentWorkspace()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
                   }}
                   className='far fa-edit remixui_menuicon'
                   title='Rename'>
@@ -247,6 +250,7 @@ export function Workspace () {
                   onClick={(e) => {
                     e.stopPropagation()
                     deleteCurrentWorkspace()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
                   }}
                   className='far fa-trash remixui_menuicon'
                   title='Delete'>
@@ -258,6 +262,7 @@ export function Workspace () {
                   onClick={(e) => {
                     e.stopPropagation()
                     downloadWorkspaces()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
                   }}
                   className='far fa-download remixui_menuicon'
                   title='Download Workspaces'>
@@ -269,6 +274,7 @@ export function Workspace () {
                   onClick={(e) => {
                     e.stopPropagation()
                     restoreBackup()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
                   }}
                   className='far fa-upload remixui_menuicon'
                   title='Restore Workspaces Backup'>
@@ -280,6 +286,7 @@ export function Workspace () {
                   onClick={(e) => {
                     e.stopPropagation()
                     cloneGitRepository()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
                   }}
                   className='far fa-clone remixui_menuicon'
                   title='Clone Git Repository'>
