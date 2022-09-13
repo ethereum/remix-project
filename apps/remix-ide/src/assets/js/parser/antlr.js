@@ -4232,7 +4232,7 @@ var SolidityParser = (() => {
       "use strict";
       Object.defineProperty(exports, "__esModule", {value: true});
       exports.RecognitionException = void 0;
-      var RecognitionException3 = class extends Error {
+      var RecognitionException4 = class extends Error {
         constructor(recognizer, input, ctx, message) {
           super(message);
           this._offendingState = -1;
@@ -4276,7 +4276,7 @@ var SolidityParser = (() => {
           return this._recognizer;
         }
       };
-      exports.RecognitionException = RecognitionException3;
+      exports.RecognitionException = RecognitionException4;
     }
   });
 
@@ -4957,7 +4957,7 @@ var SolidityParser = (() => {
         return m;
       }
       exports.toMap = toMap;
-      function toCharArray3(str) {
+      function toCharArray5(str) {
         if (typeof str === "string") {
           let result = new Uint16Array(str.length);
           for (let i = 0; i < str.length; i++) {
@@ -4968,7 +4968,7 @@ var SolidityParser = (() => {
           return str.toCharArray();
         }
       }
-      exports.toCharArray = toCharArray3;
+      exports.toCharArray = toCharArray5;
     }
   });
 
@@ -4999,7 +4999,7 @@ var SolidityParser = (() => {
       var MurmurHash_1 = require_MurmurHash();
       var Decorators_1 = require_Decorators();
       var ObjectEqualityComparator_1 = require_ObjectEqualityComparator();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       function max(items) {
         let result;
         for (let current of items) {
@@ -5253,7 +5253,7 @@ var SolidityParser = (() => {
             return result;
           }
           toString() {
-            return Utils3.join(this.opnds, "&&");
+            return Utils5.join(this.opnds, "&&");
           }
         };
         __decorate([
@@ -5348,7 +5348,7 @@ var SolidityParser = (() => {
             return result;
           }
           toString() {
-            return Utils3.join(this.opnds, "||");
+            return Utils5.join(this.opnds, "||");
           }
         };
         __decorate([
@@ -5471,9 +5471,9 @@ var SolidityParser = (() => {
       var RecognitionException_1 = require_RecognitionException();
       var Decorators_1 = require_Decorators();
       var PredicateTransition_1 = require_PredicateTransition();
-      var FailedPredicateException3 = class FailedPredicateException4 extends RecognitionException_1.RecognitionException {
+      var FailedPredicateException4 = class FailedPredicateException5 extends RecognitionException_1.RecognitionException {
         constructor(recognizer, predicate, message) {
-          super(recognizer, recognizer.inputStream, recognizer.context, FailedPredicateException4.formatMessage(predicate, message));
+          super(recognizer, recognizer.inputStream, recognizer.context, FailedPredicateException5.formatMessage(predicate, message));
           let s = recognizer.interpreter.atn.states[recognizer.state];
           let trans = s.transition(0);
           if (trans instanceof PredicateTransition_1.PredicateTransition) {
@@ -5504,11 +5504,11 @@ var SolidityParser = (() => {
       };
       __decorate([
         Decorators_1.NotNull
-      ], FailedPredicateException3, "formatMessage", null);
-      FailedPredicateException3 = __decorate([
+      ], FailedPredicateException4, "formatMessage", null);
+      FailedPredicateException4 = __decorate([
         __param(0, Decorators_1.NotNull)
-      ], FailedPredicateException3);
-      exports.FailedPredicateException = FailedPredicateException3;
+      ], FailedPredicateException4);
+      exports.FailedPredicateException = FailedPredicateException4;
     }
   });
 
@@ -5978,16 +5978,16 @@ var SolidityParser = (() => {
       Object.defineProperty(exports, "__esModule", {value: true});
       exports.Token = void 0;
       var IntStream_1 = require_IntStream();
-      var Token3;
-      (function(Token4) {
-        Token4.INVALID_TYPE = 0;
-        Token4.EPSILON = -2;
-        Token4.MIN_USER_TOKEN_TYPE = 1;
-        Token4.EOF = IntStream_1.IntStream.EOF;
-        Token4.DEFAULT_CHANNEL = 0;
-        Token4.HIDDEN_CHANNEL = 1;
-        Token4.MIN_USER_CHANNEL_VALUE = 2;
-      })(Token3 = exports.Token || (exports.Token = {}));
+      var Token4;
+      (function(Token5) {
+        Token5.INVALID_TYPE = 0;
+        Token5.EPSILON = -2;
+        Token5.MIN_USER_TOKEN_TYPE = 1;
+        Token5.EOF = IntStream_1.IntStream.EOF;
+        Token5.DEFAULT_CHANNEL = 0;
+        Token5.HIDDEN_CHANNEL = 1;
+        Token5.MIN_USER_CHANNEL_VALUE = 2;
+      })(Token4 = exports.Token || (exports.Token = {}));
     }
   });
 
@@ -8083,7 +8083,7 @@ var SolidityParser = (() => {
       var PredictionContextCache_1 = require_PredictionContextCache();
       var SemanticContext_1 = require_SemanticContext();
       var assert = require_assert();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var KeyTypeEqualityComparer = class {
         hashCode(key) {
           return key.state ^ key.alt;
@@ -8337,7 +8337,7 @@ var SolidityParser = (() => {
           if (!(obj instanceof ATNConfigSet2)) {
             return false;
           }
-          return this.outermostConfigSet === obj.outermostConfigSet && Utils3.equals(this._conflictInfo, obj._conflictInfo) && ArrayEqualityComparator_1.ArrayEqualityComparator.INSTANCE.equals(this.configs, obj.configs);
+          return this.outermostConfigSet === obj.outermostConfigSet && Utils5.equals(this._conflictInfo, obj._conflictInfo) && ArrayEqualityComparator_1.ArrayEqualityComparator.INSTANCE.equals(this.configs, obj.configs);
         }
         hashCode() {
           if (this.isReadOnly && this.cachedHashCode !== -1) {
@@ -8810,7 +8810,7 @@ var SolidityParser = (() => {
       var ProxyErrorListener_1 = require_ProxyErrorListener();
       var Decorators_1 = require_Decorators();
       var Token_1 = require_Token();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var Recognizer2 = class {
         constructor() {
           this._listeners = [ConsoleErrorListener_1.ConsoleErrorListener.INSTANCE];
@@ -8844,7 +8844,7 @@ var SolidityParser = (() => {
           }
           let result = Recognizer2.ruleIndexMapCache.get(ruleNames);
           if (result == null) {
-            result = Utils3.toMap(ruleNames);
+            result = Utils5.toMap(ruleNames);
             Recognizer2.ruleIndexMapCache.set(ruleNames, result);
           }
           return result;
@@ -8975,7 +8975,7 @@ var SolidityParser = (() => {
       exports.VocabularyImpl = void 0;
       var Decorators_1 = require_Decorators();
       var Token_1 = require_Token();
-      var VocabularyImpl3 = class {
+      var VocabularyImpl5 = class {
         constructor(literalNames, symbolicNames, displayNames) {
           this.literalNames = literalNames;
           this.symbolicNames = symbolicNames;
@@ -9018,33 +9018,33 @@ var SolidityParser = (() => {
           return String(tokenType);
         }
       };
-      VocabularyImpl3.EMPTY_VOCABULARY = new VocabularyImpl3([], [], []);
+      VocabularyImpl5.EMPTY_VOCABULARY = new VocabularyImpl5([], [], []);
       __decorate([
         Decorators_1.NotNull
-      ], VocabularyImpl3.prototype, "literalNames", void 0);
+      ], VocabularyImpl5.prototype, "literalNames", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], VocabularyImpl3.prototype, "symbolicNames", void 0);
+      ], VocabularyImpl5.prototype, "symbolicNames", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], VocabularyImpl3.prototype, "displayNames", void 0);
+      ], VocabularyImpl5.prototype, "displayNames", void 0);
       __decorate([
         Decorators_1.Override
-      ], VocabularyImpl3.prototype, "maxTokenType", null);
+      ], VocabularyImpl5.prototype, "maxTokenType", null);
       __decorate([
         Decorators_1.Override
-      ], VocabularyImpl3.prototype, "getLiteralName", null);
+      ], VocabularyImpl5.prototype, "getLiteralName", null);
       __decorate([
         Decorators_1.Override
-      ], VocabularyImpl3.prototype, "getSymbolicName", null);
+      ], VocabularyImpl5.prototype, "getSymbolicName", null);
       __decorate([
         Decorators_1.Override,
         Decorators_1.NotNull
-      ], VocabularyImpl3.prototype, "getDisplayName", null);
+      ], VocabularyImpl5.prototype, "getDisplayName", null);
       __decorate([
         Decorators_1.NotNull
-      ], VocabularyImpl3, "EMPTY_VOCABULARY", void 0);
-      exports.VocabularyImpl = VocabularyImpl3;
+      ], VocabularyImpl5, "EMPTY_VOCABULARY", void 0);
+      exports.VocabularyImpl = VocabularyImpl5;
     }
   });
 
@@ -9947,7 +9947,7 @@ var SolidityParser = (() => {
       var PredictionContext_1 = require_PredictionContext();
       var Token_1 = require_Token();
       var assert = require_assert();
-      var ATN3 = class ATN {
+      var ATN4 = class ATN {
         constructor(grammarType, maxTokenType) {
           this.states = [];
           this.decisionToState = [];
@@ -10057,46 +10057,46 @@ var SolidityParser = (() => {
       };
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "states", void 0);
+      ], ATN4.prototype, "states", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "decisionToState", void 0);
+      ], ATN4.prototype, "decisionToState", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "modeNameToStartState", void 0);
+      ], ATN4.prototype, "modeNameToStartState", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "modeToStartState", void 0);
+      ], ATN4.prototype, "modeToStartState", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "decisionToDFA", void 0);
+      ], ATN4.prototype, "decisionToDFA", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "modeToDFA", void 0);
+      ], ATN4.prototype, "modeToDFA", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "nextTokens", null);
+      ], ATN4.prototype, "nextTokens", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ATN3.prototype, "removeState", null);
+      ], ATN4.prototype, "removeState", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ATN3.prototype, "defineMode", null);
+      ], ATN4.prototype, "defineMode", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ATN3.prototype, "defineDecisionState", null);
+      ], ATN4.prototype, "defineDecisionState", null);
       __decorate([
         Decorators_1.NotNull
-      ], ATN3.prototype, "getExpectedTokens", null);
-      ATN3 = __decorate([
+      ], ATN4.prototype, "getExpectedTokens", null);
+      ATN4 = __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ATN3);
-      exports.ATN = ATN3;
-      (function(ATN4) {
-        ATN4.INVALID_ALT_NUMBER = 0;
-      })(ATN3 = exports.ATN || (exports.ATN = {}));
-      exports.ATN = ATN3;
+      ], ATN4);
+      exports.ATN = ATN4;
+      (function(ATN5) {
+        ATN5.INVALID_ALT_NUMBER = 0;
+      })(ATN4 = exports.ATN || (exports.ATN = {}));
+      exports.ATN = ATN4;
     }
   });
 
@@ -10330,7 +10330,7 @@ var SolidityParser = (() => {
       var RecognitionException_1 = require_RecognitionException();
       var Decorators_1 = require_Decorators();
       var Interval_1 = require_Interval();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var LexerNoViableAltException2 = class LexerNoViableAltException extends RecognitionException_1.RecognitionException {
         constructor(lexer, input, startIndex, deadEndConfigs) {
           super(lexer, input);
@@ -10350,7 +10350,7 @@ var SolidityParser = (() => {
           let symbol = "";
           if (this._startIndex >= 0 && this._startIndex < this.inputStream.size) {
             symbol = this.inputStream.getText(Interval_1.Interval.of(this._startIndex, this._startIndex));
-            symbol = Utils3.escapeWhitespace(symbol, false);
+            symbol = Utils5.escapeWhitespace(symbol, false);
           }
           return `LexerNoViableAltException('${symbol}')`;
         }
@@ -10461,7 +10461,7 @@ var SolidityParser = (() => {
       var RuleStopState_1 = require_RuleStopState();
       var Token_1 = require_Token();
       var assert = require_assert();
-      var LexerATNSimulator3 = class LexerATNSimulator4 extends ATNSimulator_1.ATNSimulator {
+      var LexerATNSimulator4 = class LexerATNSimulator5 extends ATNSimulator_1.ATNSimulator {
         constructor(atn, recog) {
           super(atn);
           this.optimize_tail_calls = true;
@@ -10469,7 +10469,7 @@ var SolidityParser = (() => {
           this._line = 1;
           this._charPositionInLine = 0;
           this.mode = Lexer_1.Lexer.DEFAULT_MODE;
-          this.prevAccept = new LexerATNSimulator4.SimState();
+          this.prevAccept = new LexerATNSimulator5.SimState();
           this.recog = recog;
         }
         copyState(simulator) {
@@ -10503,7 +10503,7 @@ var SolidityParser = (() => {
         }
         matchATN(input) {
           let startState = this.atn.modeToStartState[this.mode];
-          if (LexerATNSimulator4.debug) {
+          if (LexerATNSimulator5.debug) {
             console.log(`matchATN mode ${this.mode} start: ${startState}`);
           }
           let old_mode = this.mode;
@@ -10522,13 +10522,13 @@ var SolidityParser = (() => {
             }
           }
           let predict = this.execATN(input, next);
-          if (LexerATNSimulator4.debug) {
+          if (LexerATNSimulator5.debug) {
             console.log(`DFA after matchATN: ${this.atn.modeToDFA[old_mode].toLexerString()}`);
           }
           return predict;
         }
         execATN(input, ds0) {
-          if (LexerATNSimulator4.debug) {
+          if (LexerATNSimulator5.debug) {
             console.log(`start state closure=${ds0.configs}`);
           }
           if (ds0.isAcceptState) {
@@ -10537,7 +10537,7 @@ var SolidityParser = (() => {
           let t = input.LA(1);
           let s = ds0;
           while (true) {
-            if (LexerATNSimulator4.debug) {
+            if (LexerATNSimulator5.debug) {
               console.log(`execATN loop starting closure: ${s.configs}`);
             }
             let target = this.getExistingTargetState(s, t);
@@ -10563,7 +10563,7 @@ var SolidityParser = (() => {
         }
         getExistingTargetState(s, t) {
           let target = s.getTarget(t);
-          if (LexerATNSimulator4.debug && target != null) {
+          if (LexerATNSimulator5.debug && target != null) {
             console.log("reuse state " + s.stateNumber + " edge to " + target.stateNumber);
           }
           return target;
@@ -10598,7 +10598,7 @@ var SolidityParser = (() => {
             if (currentAltReachedAcceptState && c.hasPassedThroughNonGreedyDecision) {
               continue;
             }
-            if (LexerATNSimulator4.debug) {
+            if (LexerATNSimulator5.debug) {
               console.log(`testing ${this.getTokenName(t)} at ${c.toString(this.recog, true)}`);
             }
             let n = c.state.numberOfOptimizedTransitions;
@@ -10625,7 +10625,7 @@ var SolidityParser = (() => {
           }
         }
         accept(input, lexerActionExecutor, startIndex, index, line, charPos) {
-          if (LexerATNSimulator4.debug) {
+          if (LexerATNSimulator5.debug) {
             console.log(`ACTION ${lexerActionExecutor}`);
           }
           input.seek(index);
@@ -10652,11 +10652,11 @@ var SolidityParser = (() => {
           return configs;
         }
         closure(input, config, configs, currentAltReachedAcceptState, speculative, treatEofAsEpsilon) {
-          if (LexerATNSimulator4.debug) {
+          if (LexerATNSimulator5.debug) {
             console.log("closure(" + config.toString(this.recog, true) + ")");
           }
           if (config.state instanceof RuleStopState_1.RuleStopState) {
-            if (LexerATNSimulator4.debug) {
+            if (LexerATNSimulator5.debug) {
               if (this.recog != null) {
                 console.log(`closure at ${this.recog.ruleNames[config.state.ruleIndex]} rule stop ${config}`);
               } else {
@@ -10714,7 +10714,7 @@ var SolidityParser = (() => {
               throw new Error("Precedence predicates are not supported in lexers.");
             case 4:
               let pt = t;
-              if (LexerATNSimulator4.debug) {
+              if (LexerATNSimulator5.debug) {
                 console.log("EVAL rule " + pt.ruleIndex + ":" + pt.predIndex);
               }
               configs.hasSemanticContext = true;
@@ -10793,7 +10793,7 @@ var SolidityParser = (() => {
             this.addDFAEdge(p, t, to);
             return to;
           } else {
-            if (LexerATNSimulator4.debug) {
+            if (LexerATNSimulator5.debug) {
               console.log("EDGE " + p + " -> " + q + " upon " + String.fromCharCode(t));
             }
             if (p != null) {
@@ -10861,87 +10861,87 @@ var SolidityParser = (() => {
       };
       __decorate([
         Decorators_1.NotNull
-      ], LexerATNSimulator3.prototype, "prevAccept", void 0);
+      ], LexerATNSimulator4.prototype, "prevAccept", void 0);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "copyState", null);
+      ], LexerATNSimulator4.prototype, "copyState", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "match", null);
+      ], LexerATNSimulator4.prototype, "match", null);
       __decorate([
         Decorators_1.Override
-      ], LexerATNSimulator3.prototype, "reset", null);
+      ], LexerATNSimulator4.prototype, "reset", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "matchATN", null);
+      ], LexerATNSimulator4.prototype, "matchATN", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "execATN", null);
+      ], LexerATNSimulator4.prototype, "execATN", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "getExistingTargetState", null);
+      ], LexerATNSimulator4.prototype, "getExistingTargetState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "computeTargetState", null);
+      ], LexerATNSimulator4.prototype, "computeTargetState", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "getReachableConfigSet", null);
+      ], LexerATNSimulator4.prototype, "getReachableConfigSet", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "accept", null);
+      ], LexerATNSimulator4.prototype, "accept", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "computeStartState", null);
+      ], LexerATNSimulator4.prototype, "computeStartState", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "closure", null);
+      ], LexerATNSimulator4.prototype, "closure", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull),
         __param(3, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "getEpsilonTarget", null);
+      ], LexerATNSimulator4.prototype, "getEpsilonTarget", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "evaluatePredicate", null);
+      ], LexerATNSimulator4.prototype, "evaluatePredicate", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "captureSimState", null);
+      ], LexerATNSimulator4.prototype, "captureSimState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "addDFAState", null);
+      ], LexerATNSimulator4.prototype, "addDFAState", null);
       __decorate([
         Decorators_1.NotNull
-      ], LexerATNSimulator3.prototype, "getDFA", null);
+      ], LexerATNSimulator4.prototype, "getDFA", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "getText", null);
+      ], LexerATNSimulator4.prototype, "getText", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3.prototype, "consume", null);
+      ], LexerATNSimulator4.prototype, "consume", null);
       __decorate([
         Decorators_1.NotNull
-      ], LexerATNSimulator3.prototype, "getTokenName", null);
-      LexerATNSimulator3 = __decorate([
+      ], LexerATNSimulator4.prototype, "getTokenName", null);
+      LexerATNSimulator4 = __decorate([
         __param(0, Decorators_1.NotNull)
-      ], LexerATNSimulator3);
-      exports.LexerATNSimulator = LexerATNSimulator3;
-      (function(LexerATNSimulator4) {
-        LexerATNSimulator4.debug = false;
-        LexerATNSimulator4.dfa_debug = false;
+      ], LexerATNSimulator4);
+      exports.LexerATNSimulator = LexerATNSimulator4;
+      (function(LexerATNSimulator5) {
+        LexerATNSimulator5.debug = false;
+        LexerATNSimulator5.dfa_debug = false;
         class SimState2 {
           constructor() {
             this.index = -1;
@@ -10955,9 +10955,9 @@ var SolidityParser = (() => {
             this.dfaState = void 0;
           }
         }
-        LexerATNSimulator4.SimState = SimState2;
-      })(LexerATNSimulator3 = exports.LexerATNSimulator || (exports.LexerATNSimulator = {}));
-      exports.LexerATNSimulator = LexerATNSimulator3;
+        LexerATNSimulator5.SimState = SimState2;
+      })(LexerATNSimulator4 = exports.LexerATNSimulator || (exports.LexerATNSimulator = {}));
+      exports.LexerATNSimulator = LexerATNSimulator4;
     }
   });
 
@@ -10987,7 +10987,7 @@ var SolidityParser = (() => {
       var Decorators_1 = require_Decorators();
       var Recognizer_1 = require_Recognizer();
       var Token_1 = require_Token();
-      var Lexer3 = class extends Recognizer_1.Recognizer {
+      var Lexer4 = class extends Recognizer_1.Recognizer {
         constructor(input) {
           super();
           this._factory = CommonTokenFactory_1.CommonTokenFactory.DEFAULT;
@@ -10998,7 +10998,7 @@ var SolidityParser = (() => {
           this._channel = 0;
           this._type = 0;
           this._modeStack = new IntegerStack_1.IntegerStack();
-          this._mode = Lexer3.DEFAULT_MODE;
+          this._mode = Lexer4.DEFAULT_MODE;
           this._input = input;
           this._tokenFactorySourcePair = {source: this, stream: input};
         }
@@ -11020,7 +11020,7 @@ var SolidityParser = (() => {
           this._tokenStartLine = -1;
           this._text = void 0;
           this._hitEOF = false;
-          this._mode = Lexer3.DEFAULT_MODE;
+          this._mode = Lexer4.DEFAULT_MODE;
           this._modeStack.clear();
           this.interpreter.reset();
         }
@@ -11050,7 +11050,7 @@ var SolidityParser = (() => {
                     if (e instanceof LexerNoViableAltException_1.LexerNoViableAltException) {
                       this.notifyListeners(e);
                       this.recover(e);
-                      ttype = Lexer3.SKIP;
+                      ttype = Lexer4.SKIP;
                     } else {
                       throw e;
                     }
@@ -11061,10 +11061,10 @@ var SolidityParser = (() => {
                   if (this._type === Token_1.Token.INVALID_TYPE) {
                     this._type = ttype;
                   }
-                  if (this._type === Lexer3.SKIP) {
+                  if (this._type === Lexer4.SKIP) {
                     continue outer;
                   }
-                } while (this._type === Lexer3.MORE);
+                } while (this._type === Lexer4.MORE);
                 if (this._token == null) {
                   return this.emit();
                 }
@@ -11075,10 +11075,10 @@ var SolidityParser = (() => {
           }
         }
         skip() {
-          this._type = Lexer3.SKIP;
+          this._type = Lexer4.SKIP;
         }
         more() {
-          this._type = Lexer3.MORE;
+          this._type = Lexer4.MORE;
         }
         mode(m) {
           this._mode = m;
@@ -11174,13 +11174,13 @@ var SolidityParser = (() => {
           return this._channel;
         }
         getAllTokens() {
-          let tokens2 = [];
+          let tokens = [];
           let t = this.nextToken();
           while (t.type !== Token_1.Token.EOF) {
-            tokens2.push(t);
+            tokens.push(t);
             t = this.nextToken();
           }
-          return tokens2;
+          return tokens;
         }
         notifyListeners(e) {
           let text = this._input.getText(Interval_1.Interval.of(this._tokenStartCharIndex, this._input.index));
@@ -11220,30 +11220,30 @@ var SolidityParser = (() => {
           }
         }
       };
-      Lexer3.DEFAULT_MODE = 0;
-      Lexer3.MORE = -2;
-      Lexer3.SKIP = -3;
-      Lexer3.MIN_CHAR_VALUE = 0;
-      Lexer3.MAX_CHAR_VALUE = 1114111;
+      Lexer4.DEFAULT_MODE = 0;
+      Lexer4.MORE = -2;
+      Lexer4.SKIP = -3;
+      Lexer4.MIN_CHAR_VALUE = 0;
+      Lexer4.MAX_CHAR_VALUE = 1114111;
       __decorate([
         Decorators_1.Override
-      ], Lexer3.prototype, "nextToken", null);
+      ], Lexer4.prototype, "nextToken", null);
       __decorate([
         Decorators_1.Override
-      ], Lexer3.prototype, "tokenFactory", null);
+      ], Lexer4.prototype, "tokenFactory", null);
       __decorate([
         Decorators_1.Override
-      ], Lexer3.prototype, "inputStream", null);
+      ], Lexer4.prototype, "inputStream", null);
       __decorate([
         Decorators_1.Override
-      ], Lexer3.prototype, "sourceName", null);
+      ], Lexer4.prototype, "sourceName", null);
       __decorate([
         Decorators_1.Override
-      ], Lexer3.prototype, "line", null);
+      ], Lexer4.prototype, "line", null);
       __decorate([
         Decorators_1.Override
-      ], Lexer3.prototype, "charPositionInLine", null);
-      exports.Lexer = Lexer3;
+      ], Lexer4.prototype, "charPositionInLine", null);
+      exports.Lexer = Lexer4;
     }
   });
 
@@ -12804,7 +12804,7 @@ var SolidityParser = (() => {
       Object.defineProperty(exports, "__esModule", {value: true});
       exports.ConflictInfo = void 0;
       var Decorators_1 = require_Decorators();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var ConflictInfo = class {
         constructor(conflictedAlts, exact) {
           this._conflictedAlts = conflictedAlts;
@@ -12822,7 +12822,7 @@ var SolidityParser = (() => {
           } else if (!(obj instanceof ConflictInfo)) {
             return false;
           }
-          return this.isExact === obj.isExact && Utils3.equals(this.conflictedAlts, obj.conflictedAlts);
+          return this.isExact === obj.isExact && Utils5.equals(this.conflictedAlts, obj.conflictedAlts);
         }
         hashCode() {
           return this.conflictedAlts.hashCode();
@@ -13012,7 +13012,7 @@ var SolidityParser = (() => {
       var RuleNode_1 = require_RuleNode();
       var TerminalNode_1 = require_TerminalNode();
       var Token_1 = require_Token();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var Trees2 = class {
         static toStringTree(t, arg2) {
           let ruleNames;
@@ -13021,13 +13021,13 @@ var SolidityParser = (() => {
           } else {
             ruleNames = arg2;
           }
-          let s = Utils3.escapeWhitespace(this.getNodeText(t, ruleNames), false);
+          let s = Utils5.escapeWhitespace(this.getNodeText(t, ruleNames), false);
           if (t.childCount === 0) {
             return s;
           }
           let buf = "";
           buf += "(";
-          s = Utils3.escapeWhitespace(this.getNodeText(t, ruleNames), false);
+          s = Utils5.escapeWhitespace(this.getNodeText(t, ruleNames), false);
           buf += s;
           buf += " ";
           for (let i = 0; i < t.childCount; i++) {
@@ -13367,7 +13367,7 @@ var SolidityParser = (() => {
       var Decorators_1 = require_Decorators();
       var RuleContext_1 = require_RuleContext();
       var TerminalNode_1 = require_TerminalNode();
-      var ParserRuleContext3 = class extends RuleContext_1.RuleContext {
+      var ParserRuleContext4 = class extends RuleContext_1.RuleContext {
         constructor(parent, invokingStateNumber) {
           if (invokingStateNumber == null) {
             super();
@@ -13376,7 +13376,7 @@ var SolidityParser = (() => {
           }
         }
         static emptyContext() {
-          return ParserRuleContext3.EMPTY;
+          return ParserRuleContext4.EMPTY;
         }
         copyFrom(ctx) {
           this._parent = ctx._parent;
@@ -13440,7 +13440,7 @@ var SolidityParser = (() => {
         }
         get parent() {
           let parent = super.parent;
-          if (parent === void 0 || parent instanceof ParserRuleContext3) {
+          if (parent === void 0 || parent instanceof ParserRuleContext4) {
             return parent;
           }
           throw new TypeError("Invalid parent type for ParserRuleContext");
@@ -13499,19 +13499,19 @@ var SolidityParser = (() => {
           return void 0;
         }
         getTokens(ttype) {
-          let tokens2 = [];
+          let tokens = [];
           if (!this.children) {
-            return tokens2;
+            return tokens;
           }
           for (let o of this.children) {
             if (o instanceof TerminalNode_1.TerminalNode) {
               let symbol = o.symbol;
               if (symbol.type === ttype) {
-                tokens2.push(o);
+                tokens.push(o);
               }
             }
           }
-          return tokens2;
+          return tokens;
         }
         get ruleContext() {
           return this;
@@ -13557,17 +13557,17 @@ var SolidityParser = (() => {
           return "ParserRuleContext" + rules + "{start=" + this._start + ", stop=" + this._stop + "}";
         }
       };
-      ParserRuleContext3.EMPTY = new ParserRuleContext3();
+      ParserRuleContext4.EMPTY = new ParserRuleContext4();
       __decorate([
         Decorators_1.Override
-      ], ParserRuleContext3.prototype, "parent", null);
+      ], ParserRuleContext4.prototype, "parent", null);
       __decorate([
         Decorators_1.Override
-      ], ParserRuleContext3.prototype, "childCount", null);
+      ], ParserRuleContext4.prototype, "childCount", null);
       __decorate([
         Decorators_1.Override
-      ], ParserRuleContext3.prototype, "sourceInterval", null);
-      exports.ParserRuleContext = ParserRuleContext3;
+      ], ParserRuleContext4.prototype, "sourceInterval", null);
+      exports.ParserRuleContext = ParserRuleContext4;
     }
   });
 
@@ -13749,7 +13749,7 @@ var SolidityParser = (() => {
       var assert = require_assert();
       var MAX_SHORT_VALUE = 65535;
       var MIN_INTEGER_VALUE = -(1 << 31 >>> 0);
-      var ParserATNSimulator3 = class ParserATNSimulator4 extends ATNSimulator_1.ATNSimulator {
+      var ParserATNSimulator4 = class ParserATNSimulator5 extends ATNSimulator_1.ATNSimulator {
         constructor(atn, parser) {
           super(atn);
           this.predictionMode = PredictionMode_1.PredictionMode.LL;
@@ -13807,7 +13807,7 @@ var SolidityParser = (() => {
             if (outerContext == null) {
               outerContext = ParserRuleContext_1.ParserRuleContext.emptyContext();
             }
-            if (ParserATNSimulator4.debug) {
+            if (ParserATNSimulator5.debug) {
               console.log("ATN decision " + dfa.decision + " exec LA(1)==" + this.getLookaheadName(input) + ", outerContext=" + outerContext.toString(this._parser));
             }
             state = this.computeStartState(dfa, outerContext, useContext);
@@ -13816,7 +13816,7 @@ var SolidityParser = (() => {
           let index = input.index;
           try {
             let alt = this.execDFA(dfa, input, index, state);
-            if (ParserATNSimulator4.debug) {
+            if (ParserATNSimulator5.debug) {
               console.log("DFA after predictATN: " + dfa.toString(this._parser.vocabulary, this._parser.ruleNames));
             }
             return alt;
@@ -13868,17 +13868,17 @@ var SolidityParser = (() => {
         }
         execDFA(dfa, input, startIndex, state) {
           let outerContext = state.outerContext;
-          if (ParserATNSimulator4.dfa_debug) {
+          if (ParserATNSimulator5.dfa_debug) {
             console.log("DFA decision " + dfa.decision + " exec LA(1)==" + this.getLookaheadName(input) + ", outerContext=" + outerContext.toString(this._parser));
           }
-          if (ParserATNSimulator4.dfa_debug) {
+          if (ParserATNSimulator5.dfa_debug) {
             console.log(dfa.toString(this._parser.vocabulary, this._parser.ruleNames));
           }
           let s = state.s0;
           let t = input.LA(1);
           let remainingOuterContext = state.remainingOuterContext;
           while (true) {
-            if (ParserATNSimulator4.dfa_debug) {
+            if (ParserATNSimulator5.dfa_debug) {
               console.log("DFA state " + s.stateNumber + " LA(1)==" + this.getLookaheadName(input));
             }
             if (state.useContext) {
@@ -13899,11 +13899,11 @@ var SolidityParser = (() => {
             }
             if (this.isAcceptState(s, state.useContext)) {
               if (s.predicates != null) {
-                if (ParserATNSimulator4.dfa_debug) {
+                if (ParserATNSimulator5.dfa_debug) {
                   console.log("accept " + s);
                 }
               } else {
-                if (ParserATNSimulator4.dfa_debug) {
+                if (ParserATNSimulator5.dfa_debug) {
                   console.log("accept; predict " + s.prediction + " in state " + s.stateNumber);
                 }
               }
@@ -13912,20 +13912,20 @@ var SolidityParser = (() => {
             assert(!this.isAcceptState(s, state.useContext));
             let target = this.getExistingTargetState(s, t);
             if (target == null) {
-              if (ParserATNSimulator4.dfa_debug && t >= 0) {
+              if (ParserATNSimulator5.dfa_debug && t >= 0) {
                 console.log("no edge for " + this._parser.vocabulary.getDisplayName(t));
               }
               let alt;
-              if (ParserATNSimulator4.dfa_debug) {
+              if (ParserATNSimulator5.dfa_debug) {
                 let interval = Interval_1.Interval.of(startIndex, this._parser.inputStream.index);
                 console.log("ATN exec upon " + this._parser.inputStream.getText(interval) + " at DFA state " + s.stateNumber);
               }
               let initialState = new SimulatorState_1.SimulatorState(outerContext, s, state.useContext, remainingOuterContext);
               alt = this.execATN(dfa, input, startIndex, initialState);
-              if (ParserATNSimulator4.dfa_debug) {
+              if (ParserATNSimulator5.dfa_debug) {
                 console.log("back from DFA update, alt=" + alt + ", dfa=\n" + dfa.toString(this._parser.vocabulary, this._parser.ruleNames));
               }
-              if (ParserATNSimulator4.dfa_debug) {
+              if (ParserATNSimulator5.dfa_debug) {
                 console.log("DFA decision " + dfa.decision + " predicts " + alt);
               }
               return alt;
@@ -13988,7 +13988,7 @@ var SolidityParser = (() => {
                 return alts.nextSetBit(0);
             }
           }
-          if (ParserATNSimulator4.dfa_debug) {
+          if (ParserATNSimulator5.dfa_debug) {
             console.log("DFA decision " + dfa.decision + " predicts " + s.prediction);
           }
           return s.prediction;
@@ -14006,7 +14006,7 @@ var SolidityParser = (() => {
           return true;
         }
         execATN(dfa, input, startIndex, initialState) {
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("execATN decision " + dfa.decision + " exec LA(1)==" + this.getLookaheadName(input));
           }
           let outerContext = initialState.outerContext;
@@ -14074,7 +14074,7 @@ var SolidityParser = (() => {
               } else {
                 assert(!useContext);
                 assert(this.isAcceptState(D, false));
-                if (ParserATNSimulator4.debug) {
+                if (ParserATNSimulator5.debug) {
                   console.log("RETRY with outerContext=" + outerContext);
                 }
                 let fullContextState = this.computeStartState(dfa, outerContext, true);
@@ -14190,7 +14190,7 @@ var SolidityParser = (() => {
             let reachIntermediate = new ATNConfigSet_1.ATNConfigSet();
             let skippedStopStates;
             for (let c of closureConfigs) {
-              if (ParserATNSimulator4.debug) {
+              if (ParserATNSimulator5.debug) {
                 console.log("testing " + this.getTokenName(t) + " at " + c.toString());
               }
               if (c.state instanceof RuleStopState_1.RuleStopState) {
@@ -14431,7 +14431,7 @@ var SolidityParser = (() => {
           if (!conflictingAlts) {
             throw new Error("This unhandled scenario is intended to be unreachable, but I'm currently not sure of why we know that's the case.");
           }
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("predicateDFAState " + D);
           }
           let altToPred = this.getPredsForAmbigAlts(conflictingAlts, configs, nalts);
@@ -14462,7 +14462,7 @@ var SolidityParser = (() => {
           if (nPredAlts === 0) {
             result = void 0;
           }
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("getPredsForAmbigAlts result " + (result ? Arrays_1.Arrays.toString(result) : "undefined"));
           }
           return result;
@@ -14496,11 +14496,11 @@ var SolidityParser = (() => {
               continue;
             }
             let evaluatedResult = this.evalSemanticContextImpl(pair.pred, outerContext, pair.alt);
-            if (ParserATNSimulator4.debug || ParserATNSimulator4.dfa_debug) {
+            if (ParserATNSimulator5.debug || ParserATNSimulator5.dfa_debug) {
               console.log("eval pred " + pair + "=" + evaluatedResult);
             }
             if (evaluatedResult) {
-              if (ParserATNSimulator4.debug || ParserATNSimulator4.dfa_debug) {
+              if (ParserATNSimulator5.debug || ParserATNSimulator5.dfa_debug) {
                 console.log("PREDICT " + pair.alt);
               }
               predictions.set(pair.alt);
@@ -14529,7 +14529,7 @@ var SolidityParser = (() => {
           }
         }
         closureImpl(config, configs, intermediate, closureBusy, collectPredicates, hasMoreContexts, contextCache, depth, treatEofAsEpsilon) {
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("closure(" + config.toString(this._parser, true) + ")");
           }
           if (config.state instanceof RuleStopState_1.RuleStopState) {
@@ -14553,7 +14553,7 @@ var SolidityParser = (() => {
               configs.add(config, contextCache);
               return;
             } else {
-              if (ParserATNSimulator4.debug) {
+              if (ParserATNSimulator5.debug) {
                 console.log("FALLING off rule " + this.getRuleName(config.state.ruleIndex));
               }
               if (config.context === PredictionContext_1.PredictionContext.EMPTY_FULL) {
@@ -14566,7 +14566,7 @@ var SolidityParser = (() => {
           let p = config.state;
           if (!p.onlyHasEpsilonTransitions) {
             configs.add(config, contextCache);
-            if (ParserATNSimulator4.debug) {
+            if (ParserATNSimulator5.debug) {
               console.log("added config " + configs);
             }
           }
@@ -14608,7 +14608,7 @@ var SolidityParser = (() => {
                 }
                 assert(newDepth > MIN_INTEGER_VALUE);
                 newDepth--;
-                if (ParserATNSimulator4.debug) {
+                if (ParserATNSimulator5.debug) {
                   console.log("dips into outer ctx: " + c);
                 }
               } else if (t instanceof RuleTransition_1.RuleTransition) {
@@ -14666,13 +14666,13 @@ var SolidityParser = (() => {
           }
         }
         actionTransition(config, t) {
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("ACTION edge " + t.ruleIndex + ":" + t.actionIndex);
           }
           return config.transform(t.target, false);
         }
         precedenceTransition(config, pt, collectPredicates, inContext) {
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("PRED (collectPredicates=" + collectPredicates + ") " + pt.precedence + ">=_p, ctx dependent=true");
             if (this._parser != null) {
               console.log("context surrounding pred is " + this._parser.getRuleInvocationStack());
@@ -14685,13 +14685,13 @@ var SolidityParser = (() => {
           } else {
             c = config.transform(pt.target, false);
           }
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("config from pred transition=" + c);
           }
           return c;
         }
         predTransition(config, pt, collectPredicates, inContext) {
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("PRED (collectPredicates=" + collectPredicates + ") " + pt.ruleIndex + ":" + pt.predIndex + ", ctx dependent=" + pt.isCtxDependent);
             if (this._parser != null) {
               console.log("context surrounding pred is " + this._parser.getRuleInvocationStack());
@@ -14704,13 +14704,13 @@ var SolidityParser = (() => {
           } else {
             c = config.transform(pt.target, false);
           }
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("config from pred transition=" + c);
           }
           return c;
         }
         ruleTransition(config, t, contextCache) {
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("CALL rule " + this.getRuleName(t.target.ruleIndex) + ", ctx=" + config.context);
           }
           let returnState = t.followState;
@@ -14729,7 +14729,7 @@ var SolidityParser = (() => {
             return void 0;
           }
           let configs = configset.toArray();
-          configs.sort(ParserATNSimulator4.STATE_ALT_SORT_COMPARATOR);
+          configs.sort(ParserATNSimulator5.STATE_ALT_SORT_COMPARATOR);
           let exact = !configset.dipsIntoOuterContext;
           let alts = new BitSet_1.BitSet();
           let minAlt = configs[0].alt;
@@ -14929,11 +14929,11 @@ var SolidityParser = (() => {
               from = next;
             }
           }
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("EDGE " + from + " -> " + to + " upon " + this.getTokenName(t));
           }
           this.setDFAEdge(from, t, to);
-          if (ParserATNSimulator4.debug) {
+          if (ParserATNSimulator5.debug) {
             console.log("DFA=\n" + dfa.toString(this._parser != null ? this._parser.vocabulary : VocabularyImpl_1.VocabularyImpl.EMPTY_VOCABULARY, this._parser != null ? this._parser.ruleNames : void 0));
           }
           return to;
@@ -14992,7 +14992,7 @@ var SolidityParser = (() => {
             return newState;
           }
           let added = dfa.addState(newState);
-          if (ParserATNSimulator4.debug && added === newState) {
+          if (ParserATNSimulator5.debug && added === newState) {
             console.log("adding new DFA state: " + newState);
           }
           return added;
@@ -15001,7 +15001,7 @@ var SolidityParser = (() => {
           return new DFAState_1.DFAState(configs);
         }
         reportAttemptingFullContext(dfa, conflictingAlts, conflictState, startIndex, stopIndex) {
-          if (ParserATNSimulator4.debug || ParserATNSimulator4.retry_debug) {
+          if (ParserATNSimulator5.debug || ParserATNSimulator5.retry_debug) {
             let interval = Interval_1.Interval.of(startIndex, stopIndex);
             console.log("reportAttemptingFullContext decision=" + dfa.decision + ":" + conflictState.s0.configs + ", input=" + this._parser.inputStream.getText(interval));
           }
@@ -15013,7 +15013,7 @@ var SolidityParser = (() => {
           }
         }
         reportContextSensitivity(dfa, prediction, acceptState, startIndex, stopIndex) {
-          if (ParserATNSimulator4.debug || ParserATNSimulator4.retry_debug) {
+          if (ParserATNSimulator5.debug || ParserATNSimulator5.retry_debug) {
             let interval = Interval_1.Interval.of(startIndex, stopIndex);
             console.log("reportContextSensitivity decision=" + dfa.decision + ":" + acceptState.s0.configs + ", input=" + this._parser.inputStream.getText(interval));
           }
@@ -15025,7 +15025,7 @@ var SolidityParser = (() => {
           }
         }
         reportAmbiguity(dfa, D, startIndex, stopIndex, exact, ambigAlts, configs) {
-          if (ParserATNSimulator4.debug || ParserATNSimulator4.retry_debug) {
+          if (ParserATNSimulator5.debug || ParserATNSimulator5.retry_debug) {
             let interval = Interval_1.Interval.of(startIndex, stopIndex);
             console.log("reportAmbiguity " + ambigAlts + ":" + configs + ", input=" + this._parser.inputStream.getText(interval));
           }
@@ -15063,10 +15063,10 @@ var SolidityParser = (() => {
           return this._parser;
         }
       };
-      ParserATNSimulator3.debug = false;
-      ParserATNSimulator3.dfa_debug = false;
-      ParserATNSimulator3.retry_debug = false;
-      ParserATNSimulator3.STATE_ALT_SORT_COMPARATOR = (o1, o2) => {
+      ParserATNSimulator4.debug = false;
+      ParserATNSimulator4.dfa_debug = false;
+      ParserATNSimulator4.retry_debug = false;
+      ParserATNSimulator4.STATE_ALT_SORT_COMPARATOR = (o1, o2) => {
         let diff = o1.state.nonStopStateNumber - o2.state.nonStopStateNumber;
         if (diff !== 0) {
           return diff;
@@ -15079,173 +15079,173 @@ var SolidityParser = (() => {
       };
       __decorate([
         Decorators_1.NotNull
-      ], ParserATNSimulator3.prototype, "predictionMode", void 0);
+      ], ParserATNSimulator4.prototype, "predictionMode", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], ParserATNSimulator3.prototype, "getPredictionMode", null);
+      ], ParserATNSimulator4.prototype, "getPredictionMode", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "setPredictionMode", null);
+      ], ParserATNSimulator4.prototype, "setPredictionMode", null);
       __decorate([
         Decorators_1.Override
-      ], ParserATNSimulator3.prototype, "reset", null);
+      ], ParserATNSimulator4.prototype, "reset", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "adaptivePredict", null);
+      ], ParserATNSimulator4.prototype, "adaptivePredict", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "getStartState", null);
+      ], ParserATNSimulator4.prototype, "getStartState", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(3, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "execDFA", null);
+      ], ParserATNSimulator4.prototype, "execDFA", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(3, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "execATN", null);
+      ], ParserATNSimulator4.prototype, "execATN", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "handleNoViableAlt", null);
+      ], ParserATNSimulator4.prototype, "handleNoViableAlt", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "getExistingTargetState", null);
+      ], ParserATNSimulator4.prototype, "getExistingTargetState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "computeTargetState", null);
+      ], ParserATNSimulator4.prototype, "computeTargetState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "removeAllConfigsNotInRuleStopState", null);
+      ], ParserATNSimulator4.prototype, "removeAllConfigsNotInRuleStopState", null);
       __decorate([
         Decorators_1.NotNull
-      ], ParserATNSimulator3.prototype, "computeStartState", null);
+      ], ParserATNSimulator4.prototype, "computeStartState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "applyPrecedenceFilter", null);
+      ], ParserATNSimulator4.prototype, "applyPrecedenceFilter", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "getReachableTarget", null);
+      ], ParserATNSimulator4.prototype, "getReachableTarget", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "getPredsForAmbigAlts", null);
+      ], ParserATNSimulator4.prototype, "getPredsForAmbigAlts", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "evalSemanticContext", null);
+      ], ParserATNSimulator4.prototype, "evalSemanticContext", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "evalSemanticContextImpl", null);
+      ], ParserATNSimulator4.prototype, "evalSemanticContextImpl", null);
       __decorate([
         __param(1, Decorators_1.NotNull),
         __param(4, Decorators_1.Nullable)
-      ], ParserATNSimulator3.prototype, "closure", null);
+      ], ParserATNSimulator4.prototype, "closure", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.Nullable),
         __param(3, Decorators_1.NotNull),
         __param(6, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "closureImpl", null);
+      ], ParserATNSimulator4.prototype, "closureImpl", null);
       __decorate([
         Decorators_1.NotNull
-      ], ParserATNSimulator3.prototype, "getRuleName", null);
+      ], ParserATNSimulator4.prototype, "getRuleName", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "getEpsilonTarget", null);
+      ], ParserATNSimulator4.prototype, "getEpsilonTarget", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "actionTransition", null);
+      ], ParserATNSimulator4.prototype, "actionTransition", null);
       __decorate([
         Decorators_1.Nullable,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "precedenceTransition", null);
+      ], ParserATNSimulator4.prototype, "precedenceTransition", null);
       __decorate([
         Decorators_1.Nullable,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "predTransition", null);
+      ], ParserATNSimulator4.prototype, "predTransition", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.Nullable)
-      ], ParserATNSimulator3.prototype, "ruleTransition", null);
+      ], ParserATNSimulator4.prototype, "ruleTransition", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "isConflicted", null);
+      ], ParserATNSimulator4.prototype, "isConflicted", null);
       __decorate([
         Decorators_1.NotNull
-      ], ParserATNSimulator3.prototype, "getTokenName", null);
+      ], ParserATNSimulator4.prototype, "getTokenName", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "dumpDeadEndConfigs", null);
+      ], ParserATNSimulator4.prototype, "dumpDeadEndConfigs", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "noViableAlt", null);
+      ], ParserATNSimulator4.prototype, "noViableAlt", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "getUniqueAlt", null);
+      ], ParserATNSimulator4.prototype, "getUniqueAlt", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "configWithAltAtStopState", null);
+      ], ParserATNSimulator4.prototype, "configWithAltAtStopState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull),
         __param(4, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "addDFAEdge", null);
+      ], ParserATNSimulator4.prototype, "addDFAEdge", null);
       __decorate([
         __param(0, Decorators_1.Nullable),
         __param(2, Decorators_1.Nullable)
-      ], ParserATNSimulator3.prototype, "setDFAEdge", null);
+      ], ParserATNSimulator4.prototype, "setDFAEdge", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "addDFAContextState", null);
+      ], ParserATNSimulator4.prototype, "addDFAContextState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "addDFAState", null);
+      ], ParserATNSimulator4.prototype, "addDFAState", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull),
         __param(1, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "createDFAState", null);
+      ], ParserATNSimulator4.prototype, "createDFAState", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "reportAttemptingFullContext", null);
+      ], ParserATNSimulator4.prototype, "reportAttemptingFullContext", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(2, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "reportContextSensitivity", null);
+      ], ParserATNSimulator4.prototype, "reportContextSensitivity", null);
       __decorate([
         __param(0, Decorators_1.NotNull),
         __param(5, Decorators_1.NotNull),
         __param(6, Decorators_1.NotNull)
-      ], ParserATNSimulator3.prototype, "reportAmbiguity", null);
-      ParserATNSimulator3 = __decorate([
+      ], ParserATNSimulator4.prototype, "reportAmbiguity", null);
+      ParserATNSimulator4 = __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ParserATNSimulator3);
-      exports.ParserATNSimulator = ParserATNSimulator3;
+      ], ParserATNSimulator4);
+      exports.ParserATNSimulator = ParserATNSimulator4;
     }
   });
 
@@ -15696,7 +15696,7 @@ var SolidityParser = (() => {
         UnicodeDeserializingMode2[UnicodeDeserializingMode2["UNICODE_BMP"] = 0] = "UNICODE_BMP";
         UnicodeDeserializingMode2[UnicodeDeserializingMode2["UNICODE_SMP"] = 1] = "UNICODE_SMP";
       })(UnicodeDeserializingMode || (UnicodeDeserializingMode = {}));
-      var ATNDeserializer4 = class {
+      var ATNDeserializer6 = class {
         constructor(deserializationOptions) {
           if (deserializationOptions === void 0) {
             deserializationOptions = ATNDeserializationOptions_1.ATNDeserializationOptions.defaultOptions;
@@ -15707,24 +15707,24 @@ var SolidityParser = (() => {
           return 3;
         }
         static isFeatureSupported(feature, actualUuid) {
-          let featureIndex = ATNDeserializer4.SUPPORTED_UUIDS.findIndex((e) => e.equals(feature));
+          let featureIndex = ATNDeserializer6.SUPPORTED_UUIDS.findIndex((e) => e.equals(feature));
           if (featureIndex < 0) {
             return false;
           }
-          return ATNDeserializer4.SUPPORTED_UUIDS.findIndex((e) => e.equals(actualUuid)) >= featureIndex;
+          return ATNDeserializer6.SUPPORTED_UUIDS.findIndex((e) => e.equals(actualUuid)) >= featureIndex;
         }
         static getUnicodeDeserializer(mode) {
           if (mode === 0) {
             return {
               readUnicode: (data, p) => {
-                return ATNDeserializer4.toInt(data[p]);
+                return ATNDeserializer6.toInt(data[p]);
               },
               size: 1
             };
           } else {
             return {
               readUnicode: (data, p) => {
-                return ATNDeserializer4.toInt32(data, p);
+                return ATNDeserializer6.toInt32(data, p);
               },
               size: 2
             };
@@ -15736,40 +15736,40 @@ var SolidityParser = (() => {
             data[i] = data[i] - 2 & 65535;
           }
           let p = 0;
-          let version = ATNDeserializer4.toInt(data[p++]);
-          if (version !== ATNDeserializer4.SERIALIZED_VERSION) {
-            let reason = `Could not deserialize ATN with version ${version} (expected ${ATNDeserializer4.SERIALIZED_VERSION}).`;
+          let version = ATNDeserializer6.toInt(data[p++]);
+          if (version !== ATNDeserializer6.SERIALIZED_VERSION) {
+            let reason = `Could not deserialize ATN with version ${version} (expected ${ATNDeserializer6.SERIALIZED_VERSION}).`;
             throw new Error(reason);
           }
-          let uuid = ATNDeserializer4.toUUID(data, p);
+          let uuid = ATNDeserializer6.toUUID(data, p);
           p += 8;
-          if (ATNDeserializer4.SUPPORTED_UUIDS.findIndex((e) => e.equals(uuid)) < 0) {
-            let reason = `Could not deserialize ATN with UUID ${uuid} (expected ${ATNDeserializer4.SERIALIZED_UUID} or a legacy UUID).`;
+          if (ATNDeserializer6.SUPPORTED_UUIDS.findIndex((e) => e.equals(uuid)) < 0) {
+            let reason = `Could not deserialize ATN with UUID ${uuid} (expected ${ATNDeserializer6.SERIALIZED_UUID} or a legacy UUID).`;
             throw new Error(reason);
           }
-          let supportsLexerActions = ATNDeserializer4.isFeatureSupported(ATNDeserializer4.ADDED_LEXER_ACTIONS, uuid);
-          let grammarType = ATNDeserializer4.toInt(data[p++]);
-          let maxTokenType = ATNDeserializer4.toInt(data[p++]);
+          let supportsLexerActions = ATNDeserializer6.isFeatureSupported(ATNDeserializer6.ADDED_LEXER_ACTIONS, uuid);
+          let grammarType = ATNDeserializer6.toInt(data[p++]);
+          let maxTokenType = ATNDeserializer6.toInt(data[p++]);
           let atn = new ATN_1.ATN(grammarType, maxTokenType);
           let loopBackStateNumbers = [];
           let endStateNumbers = [];
-          let nstates = ATNDeserializer4.toInt(data[p++]);
+          let nstates = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < nstates; i++) {
-            let stype = ATNDeserializer4.toInt(data[p++]);
+            let stype = ATNDeserializer6.toInt(data[p++]);
             if (stype === ATNStateType_1.ATNStateType.INVALID_TYPE) {
               atn.addState(new InvalidState_1.InvalidState());
               continue;
             }
-            let ruleIndex = ATNDeserializer4.toInt(data[p++]);
+            let ruleIndex = ATNDeserializer6.toInt(data[p++]);
             if (ruleIndex === 65535) {
               ruleIndex = -1;
             }
             let s = this.stateFactory(stype, ruleIndex);
             if (stype === ATNStateType_1.ATNStateType.LOOP_END) {
-              let loopBackStateNumber = ATNDeserializer4.toInt(data[p++]);
+              let loopBackStateNumber = ATNDeserializer6.toInt(data[p++]);
               loopBackStateNumbers.push([s, loopBackStateNumber]);
             } else if (s instanceof BlockStartState_1.BlockStartState) {
-              let endStateNumber = ATNDeserializer4.toInt(data[p++]);
+              let endStateNumber = ATNDeserializer6.toInt(data[p++]);
               endStateNumbers.push([s, endStateNumber]);
             }
             atn.addState(s);
@@ -15780,39 +15780,39 @@ var SolidityParser = (() => {
           for (let pair of endStateNumbers) {
             pair[0].endState = atn.states[pair[1]];
           }
-          let numNonGreedyStates = ATNDeserializer4.toInt(data[p++]);
+          let numNonGreedyStates = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < numNonGreedyStates; i++) {
-            let stateNumber = ATNDeserializer4.toInt(data[p++]);
+            let stateNumber = ATNDeserializer6.toInt(data[p++]);
             atn.states[stateNumber].nonGreedy = true;
           }
-          let numSllDecisions = ATNDeserializer4.toInt(data[p++]);
+          let numSllDecisions = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < numSllDecisions; i++) {
-            let stateNumber = ATNDeserializer4.toInt(data[p++]);
+            let stateNumber = ATNDeserializer6.toInt(data[p++]);
             atn.states[stateNumber].sll = true;
           }
-          let numPrecedenceStates = ATNDeserializer4.toInt(data[p++]);
+          let numPrecedenceStates = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < numPrecedenceStates; i++) {
-            let stateNumber = ATNDeserializer4.toInt(data[p++]);
+            let stateNumber = ATNDeserializer6.toInt(data[p++]);
             atn.states[stateNumber].isPrecedenceRule = true;
           }
-          let nrules = ATNDeserializer4.toInt(data[p++]);
+          let nrules = ATNDeserializer6.toInt(data[p++]);
           if (atn.grammarType === 0) {
             atn.ruleToTokenType = new Int32Array(nrules);
           }
           atn.ruleToStartState = new Array(nrules);
           for (let i = 0; i < nrules; i++) {
-            let s = ATNDeserializer4.toInt(data[p++]);
+            let s = ATNDeserializer6.toInt(data[p++]);
             let startState = atn.states[s];
-            startState.leftFactored = ATNDeserializer4.toInt(data[p++]) !== 0;
+            startState.leftFactored = ATNDeserializer6.toInt(data[p++]) !== 0;
             atn.ruleToStartState[i] = startState;
             if (atn.grammarType === 0) {
-              let tokenType = ATNDeserializer4.toInt(data[p++]);
+              let tokenType = ATNDeserializer6.toInt(data[p++]);
               if (tokenType === 65535) {
                 tokenType = Token_1.Token.EOF;
               }
               atn.ruleToTokenType[i] = tokenType;
-              if (!ATNDeserializer4.isFeatureSupported(ATNDeserializer4.ADDED_LEXER_ACTIONS, uuid)) {
-                let actionIndexIgnored = ATNDeserializer4.toInt(data[p++]);
+              if (!ATNDeserializer6.isFeatureSupported(ATNDeserializer6.ADDED_LEXER_ACTIONS, uuid)) {
+                let actionIndexIgnored = ATNDeserializer6.toInt(data[p++]);
                 if (actionIndexIgnored === 65535) {
                   actionIndexIgnored = -1;
                 }
@@ -15827,9 +15827,9 @@ var SolidityParser = (() => {
             atn.ruleToStopState[state.ruleIndex] = state;
             atn.ruleToStartState[state.ruleIndex].stopState = state;
           }
-          let nmodes = ATNDeserializer4.toInt(data[p++]);
+          let nmodes = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < nmodes; i++) {
-            let s = ATNDeserializer4.toInt(data[p++]);
+            let s = ATNDeserializer6.toInt(data[p++]);
             atn.modeToStartState.push(atn.states[s]);
           }
           atn.modeToDFA = new Array(nmodes);
@@ -15837,18 +15837,18 @@ var SolidityParser = (() => {
             atn.modeToDFA[i] = new DFA_1.DFA(atn.modeToStartState[i]);
           }
           let sets = [];
-          p = this.deserializeSets(data, p, sets, ATNDeserializer4.getUnicodeDeserializer(0));
-          if (ATNDeserializer4.isFeatureSupported(ATNDeserializer4.ADDED_UNICODE_SMP, uuid)) {
-            p = this.deserializeSets(data, p, sets, ATNDeserializer4.getUnicodeDeserializer(1));
+          p = this.deserializeSets(data, p, sets, ATNDeserializer6.getUnicodeDeserializer(0));
+          if (ATNDeserializer6.isFeatureSupported(ATNDeserializer6.ADDED_UNICODE_SMP, uuid)) {
+            p = this.deserializeSets(data, p, sets, ATNDeserializer6.getUnicodeDeserializer(1));
           }
-          let nedges = ATNDeserializer4.toInt(data[p++]);
+          let nedges = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < nedges; i++) {
-            let src = ATNDeserializer4.toInt(data[p]);
-            let trg = ATNDeserializer4.toInt(data[p + 1]);
-            let ttype = ATNDeserializer4.toInt(data[p + 2]);
-            let arg1 = ATNDeserializer4.toInt(data[p + 3]);
-            let arg2 = ATNDeserializer4.toInt(data[p + 4]);
-            let arg3 = ATNDeserializer4.toInt(data[p + 5]);
+            let src = ATNDeserializer6.toInt(data[p]);
+            let trg = ATNDeserializer6.toInt(data[p + 1]);
+            let ttype = ATNDeserializer6.toInt(data[p + 2]);
+            let arg1 = ATNDeserializer6.toInt(data[p + 3]);
+            let arg2 = ATNDeserializer6.toInt(data[p + 4]);
+            let arg3 = ATNDeserializer6.toInt(data[p + 5]);
             let trans = this.edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
             let srcState = atn.states[src];
             srcState.addTransition(trans);
@@ -15917,23 +15917,23 @@ var SolidityParser = (() => {
               }
             }
           }
-          let ndecisions = ATNDeserializer4.toInt(data[p++]);
+          let ndecisions = ATNDeserializer6.toInt(data[p++]);
           for (let i = 1; i <= ndecisions; i++) {
-            let s = ATNDeserializer4.toInt(data[p++]);
+            let s = ATNDeserializer6.toInt(data[p++]);
             let decState = atn.states[s];
             atn.decisionToState.push(decState);
             decState.decision = i - 1;
           }
           if (atn.grammarType === 0) {
             if (supportsLexerActions) {
-              atn.lexerActions = new Array(ATNDeserializer4.toInt(data[p++]));
+              atn.lexerActions = new Array(ATNDeserializer6.toInt(data[p++]));
               for (let i = 0; i < atn.lexerActions.length; i++) {
-                let actionType = ATNDeserializer4.toInt(data[p++]);
-                let data1 = ATNDeserializer4.toInt(data[p++]);
+                let actionType = ATNDeserializer6.toInt(data[p++]);
+                let data1 = ATNDeserializer6.toInt(data[p++]);
                 if (data1 === 65535) {
                   data1 = -1;
                 }
-                let data2 = ATNDeserializer4.toInt(data[p++]);
+                let data2 = ATNDeserializer6.toInt(data[p++]);
                 if (data2 === 65535) {
                   data2 = -1;
                 }
@@ -16037,10 +16037,10 @@ var SolidityParser = (() => {
           if (this.deserializationOptions.isOptimize) {
             while (true) {
               let optimizationCount = 0;
-              optimizationCount += ATNDeserializer4.inlineSetRules(atn);
-              optimizationCount += ATNDeserializer4.combineChainedEpsilons(atn);
+              optimizationCount += ATNDeserializer6.inlineSetRules(atn);
+              optimizationCount += ATNDeserializer6.combineChainedEpsilons(atn);
               let preserveOrder = atn.grammarType === 0;
-              optimizationCount += ATNDeserializer4.optimizeSets(atn, preserveOrder);
+              optimizationCount += ATNDeserializer6.optimizeSets(atn, preserveOrder);
               if (optimizationCount === 0) {
                 break;
               }
@@ -16049,17 +16049,17 @@ var SolidityParser = (() => {
               this.verifyATN(atn);
             }
           }
-          ATNDeserializer4.identifyTailCalls(atn);
+          ATNDeserializer6.identifyTailCalls(atn);
           return atn;
         }
         deserializeSets(data, p, sets, unicodeDeserializer) {
-          let nsets = ATNDeserializer4.toInt(data[p++]);
+          let nsets = ATNDeserializer6.toInt(data[p++]);
           for (let i = 0; i < nsets; i++) {
-            let nintervals = ATNDeserializer4.toInt(data[p]);
+            let nintervals = ATNDeserializer6.toInt(data[p]);
             p++;
             let set = new IntervalSet_1.IntervalSet();
             sets.push(set);
-            let containsEof = ATNDeserializer4.toInt(data[p++]) !== 0;
+            let containsEof = ATNDeserializer6.toInt(data[p++]) !== 0;
             if (containsEof) {
               set.add(-1);
             }
@@ -16446,10 +16446,10 @@ var SolidityParser = (() => {
           return (data[offset] | data[offset + 1] << 16) >>> 0;
         }
         static toUUID(data, offset) {
-          let leastSigBits = ATNDeserializer4.toInt32(data, offset);
-          let lessSigBits = ATNDeserializer4.toInt32(data, offset + 2);
-          let moreSigBits = ATNDeserializer4.toInt32(data, offset + 4);
-          let mostSigBits = ATNDeserializer4.toInt32(data, offset + 6);
+          let leastSigBits = ATNDeserializer6.toInt32(data, offset);
+          let lessSigBits = ATNDeserializer6.toInt32(data, offset + 2);
+          let moreSigBits = ATNDeserializer6.toInt32(data, offset + 4);
+          let mostSigBits = ATNDeserializer6.toInt32(data, offset + 6);
           return new UUID_1.UUID(mostSigBits, moreSigBits, lessSigBits, leastSigBits);
         }
         edgeFactory(atn, type, src, trg, arg1, arg2, arg3, sets) {
@@ -16561,29 +16561,29 @@ var SolidityParser = (() => {
           }
         }
       };
-      ATNDeserializer4.BASE_SERIALIZED_UUID = UUID_1.UUID.fromString("E4178468-DF95-44D0-AD87-F22A5D5FB6D3");
-      ATNDeserializer4.ADDED_LEXER_ACTIONS = UUID_1.UUID.fromString("AB35191A-1603-487E-B75A-479B831EAF6D");
-      ATNDeserializer4.ADDED_UNICODE_SMP = UUID_1.UUID.fromString("C23FEA89-0605-4f51-AFB8-058BCAB8C91B");
-      ATNDeserializer4.SUPPORTED_UUIDS = [
-        ATNDeserializer4.BASE_SERIALIZED_UUID,
-        ATNDeserializer4.ADDED_LEXER_ACTIONS,
-        ATNDeserializer4.ADDED_UNICODE_SMP
+      ATNDeserializer6.BASE_SERIALIZED_UUID = UUID_1.UUID.fromString("E4178468-DF95-44D0-AD87-F22A5D5FB6D3");
+      ATNDeserializer6.ADDED_LEXER_ACTIONS = UUID_1.UUID.fromString("AB35191A-1603-487E-B75A-479B831EAF6D");
+      ATNDeserializer6.ADDED_UNICODE_SMP = UUID_1.UUID.fromString("C23FEA89-0605-4f51-AFB8-058BCAB8C91B");
+      ATNDeserializer6.SUPPORTED_UUIDS = [
+        ATNDeserializer6.BASE_SERIALIZED_UUID,
+        ATNDeserializer6.ADDED_LEXER_ACTIONS,
+        ATNDeserializer6.ADDED_UNICODE_SMP
       ];
-      ATNDeserializer4.SERIALIZED_UUID = ATNDeserializer4.ADDED_UNICODE_SMP;
+      ATNDeserializer6.SERIALIZED_UUID = ATNDeserializer6.ADDED_UNICODE_SMP;
       __decorate([
         Decorators_1.NotNull
-      ], ATNDeserializer4.prototype, "deserializationOptions", void 0);
+      ], ATNDeserializer6.prototype, "deserializationOptions", void 0);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ATNDeserializer4.prototype, "deserialize", null);
+      ], ATNDeserializer6.prototype, "deserialize", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], ATNDeserializer4.prototype, "markPrecedenceDecisions", null);
+      ], ATNDeserializer6.prototype, "markPrecedenceDecisions", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull)
-      ], ATNDeserializer4.prototype, "edgeFactory", null);
-      exports.ATNDeserializer = ATNDeserializer4;
+      ], ATNDeserializer6.prototype, "edgeFactory", null);
+      exports.ATNDeserializer = ATNDeserializer6;
     }
   });
 
@@ -17144,8 +17144,8 @@ var SolidityParser = (() => {
       var CodePointBuffer_1 = require_CodePointBuffer();
       var CodePointCharStream_1 = require_CodePointCharStream();
       var IntStream_1 = require_IntStream();
-      var CharStreams;
-      (function(CharStreams2) {
+      var CharStreams2;
+      (function(CharStreams3) {
         function fromString(s, sourceName) {
           if (sourceName === void 0 || sourceName.length === 0) {
             sourceName = IntStream_1.IntStream.UNKNOWN_SOURCE_NAME;
@@ -17158,8 +17158,8 @@ var SolidityParser = (() => {
           codePointBufferBuilder.append(cb);
           return CodePointCharStream_1.CodePointCharStream.fromBuffer(codePointBufferBuilder.build(), sourceName);
         }
-        CharStreams2.fromString = fromString;
-      })(CharStreams = exports.CharStreams || (exports.CharStreams = {}));
+        CharStreams3.fromString = fromString;
+      })(CharStreams2 = exports.CharStreams || (exports.CharStreams = {}));
     }
   });
 
@@ -17666,13 +17666,13 @@ var SolidityParser = (() => {
       var Decorators_1 = require_Decorators();
       var Token_1 = require_Token();
       var ListTokenSource = class ListTokenSource {
-        constructor(tokens2, sourceName) {
+        constructor(tokens, sourceName) {
           this.i = 0;
           this._factory = CommonTokenFactory_1.CommonTokenFactory.DEFAULT;
-          if (tokens2 == null) {
+          if (tokens == null) {
             throw new Error("tokens cannot be null");
           }
-          this.tokens = tokens2;
+          this.tokens = tokens;
           this._sourceName = sourceName;
         }
         get charPositionInLine() {
@@ -18291,7 +18291,7 @@ var SolidityParser = (() => {
       var Lexer_1 = require_Lexer();
       var LexerATNSimulator_1 = require_LexerATNSimulator();
       var VocabularyImpl_1 = require_VocabularyImpl();
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var XPathLexer = class extends Lexer_1.Lexer {
         constructor(input) {
           super(input);
@@ -18336,7 +18336,7 @@ var SolidityParser = (() => {
         }
         static get _ATN() {
           if (!XPathLexer.__ATN) {
-            XPathLexer.__ATN = new ATNDeserializer_1.ATNDeserializer().deserialize(Utils3.toCharArray(XPathLexer._serializedATN));
+            XPathLexer.__ATN = new ATNDeserializer_1.ATNDeserializer().deserialize(Utils5.toCharArray(XPathLexer._serializedATN));
           }
           return XPathLexer.__ATN;
         }
@@ -18392,7 +18392,7 @@ var SolidityParser = (() => {
       XPathLexer._serializedATNSegment0 = '\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\n2\b					\x07	\x07\b	\b			\x07\n\f"\v\x07\x07\b\b		\x07	,\n	\f		/\v			-\n\x07\x07	\b\v	\r\n\u02B6\n2;C\\aac|\x81\xA1\xAC\xAC\xAF\xAF\xB7\xB7\xBC\xBC\xC2\xD8\xDA\xF8\xFA\u02C3\u02C8\u02D3\u02E2\u02E6\u02EE\u02EE\u02F0\u02F0\u0302\u0376\u0378\u0379\u037C\u037F\u0381\u0381\u0388\u0388\u038A\u038C\u038E\u038E\u0390\u03A3\u03A5\u03F7\u03F9\u0483\u0485\u0489\u048C\u0531\u0533\u0558\u055B\u055B\u0563\u0589\u0593\u05BF\u05C1\u05C1\u05C3\u05C4\u05C6\u05C7\u05C9\u05C9\u05D2\u05EC\u05F2\u05F4\u0602\u0607\u0612\u061C\u061E\u061E\u0622\u066B\u0670\u06D5\u06D7\u06DF\u06E1\u06EA\u06EC\u06FE\u0701\u0701\u0711\u074C\u074F\u07B3\u07C2\u07F7\u07FC\u07FC\u0802\u082F\u0842\u085D\u08A2\u08B6\u08B8\u08BF\u08D6\u0965\u0968\u0971\u0973\u0985\u0987\u098E\u0991\u0992\u0995\u09AA\u09AC\u09B2\u09B4\u09B4\u09B8\u09BB\u09BE\u09C6\u09C9\u09CA\u09CD\u09D0\u09D9\u09D9\u09DE\u09DF\u09E1\u09E5\u09E8\u09F3\u0A03\u0A05\u0A07\u0A0C\u0A11\u0A12\u0A15\u0A2A\u0A2C\u0A32\u0A34\u0A35\u0A37\u0A38\u0A3A\u0A3B\u0A3E\u0A3E\u0A40\u0A44\u0A49\u0A4A\u0A4D\u0A4F\u0A53\u0A53\u0A5B\u0A5E\u0A60\u0A60\u0A68\u0A77\u0A83\u0A85\u0A87\u0A8F\u0A91\u0A93\u0A95\u0AAA\u0AAC\u0AB2\u0AB4\u0AB5\u0AB7\u0ABB\u0ABE\u0AC7\u0AC9\u0ACB\u0ACD\u0ACF\u0AD2\u0AD2\u0AE2\u0AE5\u0AE8\u0AF1\u0AFB\u0AFB\u0B03\u0B05\u0B07\u0B0E\u0B11\u0B12\u0B15\u0B2A\u0B2C\u0B32\u0B34\u0B35\u0B37\u0B3B\u0B3E\u0B46\u0B49\u0B4A\u0B4D\u0B4F\u0B58\u0B59\u0B5E\u0B5F\u0B61\u0B65\u0B68\u0B71\u0B73\u0B73\u0B84\u0B85\u0B87\u0B8C\u0B90\u0B92\u0B94\u0B97\u0B9B\u0B9C\u0B9E\u0B9E\u0BA0\u0BA1\u0BA5\u0BA6\u0BAA\u0BAC\u0BB0\u0BBB\u0BC0\u0BC4\u0BC8\u0BCA\u0BCC\u0BCF\u0BD2\u0BD2\u0BD9\u0BD9\u0BE8\u0BF1\u0C02\u0C05\u0C07\u0C0E\u0C10\u0C12\u0C14\u0C2A\u0C2C\u0C3B\u0C3F\u0C46\u0C48\u0C4A\u0C4C\u0C4F\u0C57\u0C58\u0C5A\u0C5C\u0C62\u0C65\u0C68\u0C71\u0C82\u0C85\u0C87\u0C8E\u0C90\u0C92\u0C94\u0CAA\u0CAC\u0CB5\u0CB7\u0CBB\u0CBE\u0CC6\u0CC8\u0CCA\u0CCC\u0CCF\u0CD7\u0CD8\u0CE0\u0CE0\u0CE2\u0CE5\u0CE8\u0CF1\u0CF3\u0CF4\u0D03\u0D05\u0D07\u0D0E\u0D10\u0D12\u0D14\u0D3C\u0D3F\u0D46\u0D48\u0D4A\u0D4C\u0D50\u0D56\u0D59\u0D61\u0D65\u0D68\u0D71\u0D7C\u0D81\u0D84\u0D85\u0D87\u0D98\u0D9C\u0DB3\u0DB5\u0DBD\u0DBF\u0DBF\u0DC2\u0DC8\u0DCC\u0DCC\u0DD1\u0DD6\u0DD8\u0DD8\u0DDA\u0DE1\u0DE8\u0DF1\u0DF4\u0DF5\u0E03\u0E3C\u0E42\u0E50\u0E52\u0E5B\u0E83\u0E84\u0E86\u0E86\u0E89\u0E8A\u0E8C\u0E8C\u0E8F\u0E8F\u0E96\u0E99\u0E9B\u0EA1\u0EA3\u0EA5\u0EA7\u0EA7\u0EA9\u0EA9\u0EAC\u0EAD\u0EAF\u0EBB\u0EBD\u0EBF\u0EC2\u0EC6\u0EC8\u0EC8\u0ECA\u0ECF\u0ED2\u0EDB\u0EDE\u0EE1\u0F02\u0F02\u0F1A\u0F1B\u0F22\u0F2B\u0F37\u0F37\u0F39\u0F39\u0F3B\u0F3B\u0F40\u0F49\u0F4B\u0F6E\u0F73\u0F86\u0F88\u0F99\u0F9B\u0FBE\u0FC8\u0FC8\u1002\u104B\u1052\u109F\u10A2\u10C7\u10C9\u10C9\u10CF\u10CF\u10D2\u10FC\u10FE\u124A\u124C\u124F\u1252\u1258\u125A\u125A\u125C\u125F\u1262\u128A\u128C\u128F\u1292\u12B2\u12B4\u12B7\u12BA\u12C0\u12C2\u12C2\u12C4\u12C7\u12CA\u12D8\u12DA\u1312\u1314\u1317\u131A\u135C\u135F\u1361\u1382\u1391\u13A2\u13F7\u13FA\u13FF\u1403\u166E\u1671\u1681\u1683\u169C\u16A2\u16EC\u16F0\u16FA\u1702\u170E\u1710\u1716\u1722\u1736\u1742\u1755\u1762\u176E\u1770\u1772\u1774\u1775\u1782\u17D5\u17D9\u17D9\u17DE\u17DF\u17E2\u17EB\u180D\u1810\u1812\u181B\u1822\u1879\u1882\u18AC\u18B2\u18F7\u1902\u1920\u1922\u192D\u1932\u193D\u1948\u196F\u1972\u1976\u1982\u19AD\u19B2\u19CB\u19D2\u19DB\u1A02\u1A1D\u1A22\u1A60\u1A62\u1A7E\u1A81\u1A8B\u1A92\u1A9B\u1AA9\u1AA9\u1AB2\u1ABF\u1B02\u1B4D\u1B52\u1B5B\u1B6D\u1B75\u1B82\u1BF5\u1C02\u1C39\u1C42\u1C4B\u1C4F\u1C7F\u1C82\u1C8A\u1CD2\u1CD4\u1CD6\u1CF8\u1CFA\u1CFB\u1D02\u1DF7\u1DFD\u1F17\u1F1A\u1F1F\u1F22\u1F47\u1F4A\u1F4F\u1F52\u1F59\u1F5B\u1F5B\u1F5D\u1F5D\u1F5F\u1F5F\u1F61\u1F7F\u1F82\u1FB6\u1FB8\u1FBE\u1FC0\u1FC0\u1FC4\u1FC6\u1FC8\u1FCE\u1FD2\u1FD5\u1FD8\u1FDD\u1FE2\u1FEE\u1FF4\u1FF6\u1FF8\u1FFE\u200D\u2011\u202C\u2030\u2041\u2042\u2056\u2056\u2062\u2066\u2068\u2071\u2073\u2073\u2081\u2081\u2092\u209E\u20D2\u20DE\u20E3\u20E3\u20E7\u20F2\u2104\u2104\u2109\u2109\u210C\u2115\u2117\u2117\u211B\u211F\u2126\u2126\u2128\u2128\u212A\u212A\u212C\u212F\u2131\u213B\u213E\u2141\u2147\u214B\u2150\u2150\u2162\u218A\u2C02\u2C30\u2C32\u2C60\u2C62\u2CE6\u2CED\u2CF5\u2D02\u2D27\u2D29\u2D29\u2D2F\u2D2F\u2D32\u2D69\u2D71\u2D71\u2D81\u2D98\u2DA2\u2DA8\u2DAA\u2DB0\u2DB2\u2DB8\u2DBA\u2DC0\u2DC2\u2DC8\u2DCA\u2DD0\u2DD2\u2DD8\u2DDA\u2DE0\u2DE2\u2E01\u2E31\u2E31\u3007\u3009\u3023\u3031\u3033\u3037\u303A\u303E\u3043\u3098\u309B\u309C\u309F\u30A1\u30A3\u30FC\u30FE\u3101\u3107\u312F\u3133\u3190\u31A2\u31BC\u31F2\u3201\u3402\u4DB7\u4E02\u9FD7\uA002\uA48E\uA4D2\uA4FF\uA502\uA60E\uA612\uA62D\uA642\uA671\uA676\uA67F\uA681\uA6F3\uA719\uA721\uA724\uA78A\uA78D\uA7B0\uA7B2\uA7B9\uA7F9\uA829\uA842\uA875\uA882\uA8C7\uA8D2\uA8DB\uA8E2\uA8F9\uA8FD\uA8FD\uA8FF\uA8FF\uA902\uA92F\uA932\uA955\uA962\uA97E\uA982\uA9C2\uA9D1\uA9DB\uA9E2\uAA00\uAA02\uAA38\uAA42\uAA4F\uAA52\uAA5B\uAA62\uAA78\uAA7C\uAAC4\uAADD\uAADF\uAAE2\uAAF1\uAAF4\uAAF8\uAB03\uAB08\uAB0B\uAB10\uAB13\uAB18\uAB22\uAB28\uAB2A\uAB30\uAB32\uAB5C\uAB5E\uAB67\uAB72\uABEC\uABEE\uABEF\uABF2\uABFB\uAC02\uD7A5\uD7B2\uD7C8\uD7CD\uD7FD\uF902\uFA6F\uFA72\uFADB\uFB02\uFB08\uFB15\uFB19\uFB1F\uFB2A\uFB2C\uFB38\uFB3A\uFB3E\uFB40\uFB40\uFB42\uFB43\uFB45\uFB46\uFB48\uFBB3\uFBD5\uFD3F\uFD52\uFD91\uFD94\uFDC9\uFDF2\uFDFD\uFE02\uFE11\uFE22\uFE31\uFE35\uFE36\uFE4F\uFE51\uFE72\uFE76\uFE78\uFEFE\uFF01\uFF01\uFF12\uFF1B\uFF23\uFF3C\uFF41\uFF41\uFF43\uFF5C\uFF68\uFFC0\uFFC4\uFFC9\uFFCC\uFFD1\uFFD4\uFFD9\uFFDC\uFFDE\uFFFB\uFFFD\r(*<>?AOR_\x82\xFC\u0142\u0176\u01FF\u01FF\u0282\u029E\u02A2\u02D2\u02E2\u02E2\u0302\u0321\u0332\u034C\u0352\u037C\u0382\u039F\u03A2\u03C5\u03CA\u03D1\u03D3\u03D7\u0402\u049F\u04A2\u04AB\u04B2\u04D5\u04DA\u04FD\u0502\u0529\u0532\u0565\u0602\u0738\u0742\u0757\u0762\u0769\u0802\u0807\u080A\u080A\u080C\u0837\u0839\u083A\u083E\u083E\u0841\u0857\u0862\u0878\u0882\u08A0\u08E2\u08F4\u08F6\u08F7\u0902\u0917\u0922\u093B\u0982\u09B9\u09C0\u09C1\u0A02\u0A05\u0A07\u0A08\u0A0E\u0A15\u0A17\u0A19\u0A1B\u0A35\u0A3A\u0A3C\u0A41\u0A41\u0A62\u0A7E\u0A82\u0A9E\u0AC2\u0AC9\u0ACB\u0AE8\u0B02\u0B37\u0B42\u0B57\u0B62\u0B74\u0B82\u0B93\u0C02\u0C4A\u0C82\u0CB4\u0CC2\u0CF4\u1002\u1048\u1068\u1071\u1081\u10BC\u10BF\u10BF\u10D2\u10EA\u10F2\u10FB\u1102\u1136\u1138\u1141\u1152\u1175\u1178\u1178\u1182\u11C6\u11CC\u11CE\u11D2\u11DC\u11DE\u11DE\u1202\u1213\u1215\u1239\u1240\u1240\u1282\u1288\u128A\u128A\u128C\u128F\u1291\u129F\u12A1\u12AA\u12B2\u12EC\u12F2\u12FB\u1302\u1305\u1307\u130E\u1311\u1312\u1315\u132A\u132C\u1332\u1334\u1335\u1337\u133B\u133E\u1346\u1349\u134A\u134D\u134F\u1352\u1352\u1359\u1359\u135F\u1365\u1368\u136E\u1372\u1376\u1402\u144C\u1452\u145B\u1482\u14C7\u14C9\u14C9\u14D2\u14DB\u1582\u15B7\u15BA\u15C2\u15DA\u15DF\u1602\u1642\u1646\u1646\u1652\u165B\u1682\u16B9\u16C2\u16CB\u1702\u171B\u171F\u172D\u1732\u173B\u18A2\u18EB\u1901\u1901\u1AC2\u1AFA\u1C02\u1C0A\u1C0C\u1C38\u1C3A\u1C42\u1C52\u1C5B\u1C74\u1C91\u1C94\u1CA9\u1CAB\u1CB8\u2002\u239B\u2402\u2470\u2482\u2545\u3002\u3430\u4402\u4648\u6802\u6A3A\u6A42\u6A60\u6A62\u6A6B\u6AD2\u6AEF\u6AF2\u6AF6\u6B02\u6B38\u6B42\u6B45\u6B52\u6B5B\u6B65\u6B79\u6B7F\u6B91\u6F02\u6F46\u6F52\u6F80\u6F91\u6FA1\u6FE2\u6FE2\u7002\u87EE\u8802\u8AF4\uB002\uB003\uBC02\uBC6C\uBC72\uBC7E\uBC82\uBC8A\uBC92\uBC9B\uBC9F\uBCA0\uBCA2\uBCA5\uD167\uD16B\uD16F\uD184\uD187\uD18D\uD1AC\uD1AF\uD244\uD246\uD402\uD456\uD458\uD49E\uD4A0\uD4A1\uD4A4\uD4A4\uD4A7\uD4A8\uD4AB\uD4AE\uD4B0\uD4BB\uD4BD\uD4BD\uD4BF\uD4C5\uD4C7\uD507\uD509\uD50C\uD50F\uD516\uD518\uD51E\uD520\uD53B\uD53D\uD540\uD542\uD546\uD548\uD548\uD54C\uD552\uD554\uD6A7\uD6AA\uD6C2\uD6C4\uD6DC\uD6DE\uD6FC\uD6FE\uD716\uD718\uD736\uD738\uD750\uD752\uD770\uD772\uD78A\uD78C\uD7AA\uD7AC\uD7C4\uD7C6\uD7CD\uD7D0\uD801\uDA02\uDA38\uDA3D\uDA6E\uDA77\uDA77\uDA86\uDA86\uDA9D\uDAA1\uDAA3\uDAB1\uE002\uE008\uE00A\uE01A\uE01D\uE023\uE025\uE026\uE028\uE02C\uE802\uE8C6\uE8D2\uE8D8\uE902\uE94C\uE952\uE95B\uEE02\uEE05\uEE07\uEE21\uEE23\uEE24\uEE26\uEE26\uEE29\uEE29\uEE2B\uEE34\uEE36\uEE39\uEE3B\uEE3B\uEE3D\uEE3D\uEE44\uEE44\uEE49\uEE49\uEE4B\uEE4B\uEE4D\uEE4D\uEE4F\uEE51\uEE53\uEE54\uEE56\uEE56\uEE59\uEE59\uEE5B\uEE5B\uEE5D\uEE5D\uEE5F\uEE5F\uEE61\uEE61\uEE63\uEE64\uEE66\uEE66\uEE69\uEE6C\uEE6E\uEE74\uEE76\uEE79\uEE7B\uEE7E\uEE80\uEE80\uEE82\uEE8B\uEE8D\uEE9D\uEEA3\uEEA5\uEEA7\uEEAB\uEEAD\uEEBD\uA6D8\uA702\uB736\uB742\uB81F\uB822\uCEA3\uF802\uFA1F"\x81\u0102\u01F1\u0240C\\c|\xAC\xAC\xB7\xB7\xBC\xBC\xC2\xD8\xDA\xF8\xFA\u02C3\u02C8\u02D3\u02E2\u02E6\u02EE\u02EE\u02F0\u02F0\u0372\u0376\u0378\u0379\u037C\u037F\u0381\u0381\u0388\u0388\u038A\u038C\u038E\u038E\u0390\u03A3\u03A5\u03F7\u03F9\u0483\u048C\u0531\u0533\u0558\u055B\u055B\u0563\u0589\u05D2\u05EC\u05F2\u05F4\u0622\u064C\u0670\u0671\u0673\u06D5\u06D7\u06D7\u06E7\u06E8\u06F0\u06F1\u06FC\u06FE\u0701\u0701\u0712\u0712\u0714\u0731\u074F\u07A7\u07B3\u07B3\u07CC\u07EC\u07F6\u07F7\u07FC\u07FC\u0802\u0817\u081C\u081C\u0826\u0826\u082A\u082A\u0842\u085A\u08A2\u08B6\u08B8\u08BF\u0906\u093B\u093F\u093F\u0952\u0952\u095A\u0963\u0973\u0982\u0987\u098E\u0991\u0992\u0995\u09AA\u09AC\u09B2\u09B4\u09B4\u09B8\u09BB\u09BF\u09BF\u09D0\u09D0\u09DE\u09DF\u09E1\u09E3\u09F2\u09F3\u0A07\u0A0C\u0A11\u0A12\u0A15\u0A2A\u0A2C\u0A32\u0A34\u0A35\u0A37\u0A38\u0A3A\u0A3B\u0A5B\u0A5E\u0A60\u0A60\u0A74\u0A76\u0A87\u0A8F\u0A91\u0A93\u0A95\u0AAA\u0AAC\u0AB2\u0AB4\u0AB5\u0AB7\u0ABB\u0ABF\u0ABF\u0AD2\u0AD2\u0AE2\u0AE3\u0AFB\u0AFB\u0B07\u0B0E\u0B11\u0B12\u0B15\u0B2A\u0B2C\u0B32\u0B34\u0B35\u0B37\u0B3B\u0B3F\u0B3F\u0B5E\u0B5F\u0B61\u0B63\u0B73\u0B73\u0B85\u0B85\u0B87\u0B8C\u0B90\u0B92\u0B94\u0B97\u0B9B\u0B9C\u0B9E\u0B9E\u0BA0\u0BA1\u0BA5\u0BA6\u0BAA\u0BAC\u0BB0\u0BBB\u0BD2\u0BD2\u0C07\u0C0E\u0C10\u0C12\u0C14\u0C2A\u0C2C\u0C3B\u0C3F\u0C3F\u0C5A\u0C5C\u0C62\u0C63\u0C82\u0C82\u0C87\u0C8E\u0C90\u0C92\u0C94\u0CAA\u0CAC\u0CB5\u0CB7\u0CBB\u0CBF\u0CBF\u0CE0\u0CE0\u0CE2\u0CE3\u0CF3\u0CF4\u0D07\u0D0E\u0D10\u0D12\u0D14\u0D3C\u0D3F\u0D3F\u0D50\u0D50\u0D56\u0D58\u0D61\u0D63\u0D7C\u0D81\u0D87\u0D98\u0D9C\u0DB3\u0DB5\u0DBD\u0DBF\u0DBF\u0DC2\u0DC8\u0E03\u0E32\u0E34\u0E35\u0E42\u0E48\u0E83\u0E84\u0E86\u0E86\u0E89\u0E8A\u0E8C\u0E8C\u0E8F\u0E8F\u0E96\u0E99\u0E9B\u0EA1\u0EA3\u0EA5\u0EA7\u0EA7\u0EA9\u0EA9\u0EAC\u0EAD\u0EAF\u0EB2\u0EB4\u0EB5\u0EBF\u0EBF\u0EC2\u0EC6\u0EC8\u0EC8\u0EDE\u0EE1\u0F02\u0F02\u0F42\u0F49\u0F4B\u0F6E\u0F8A\u0F8E\u1002\u102C\u1041\u1041\u1052\u1057\u105C\u105F\u1063\u1063\u1067\u1068\u1070\u1072\u1077\u1083\u1090\u1090\u10A2\u10C7\u10C9\u10C9\u10CF\u10CF\u10D2\u10FC\u10FE\u124A\u124C\u124F\u1252\u1258\u125A\u125A\u125C\u125F\u1262\u128A\u128C\u128F\u1292\u12B2\u12B4\u12B7\u12BA\u12C0\u12C2\u12C2\u12C4\u12C7\u12CA\u12D8\u12DA\u1312\u1314\u1317\u131A\u135C\u1382\u1391\u13A2\u13F7\u13FA\u13FF\u1403\u166E\u1671\u1681\u1683\u169C\u16A2\u16EC\u16F0\u16FA\u1702\u170E\u1710\u1713\u1722\u1733\u1742\u1753\u1762\u176E\u1770\u1772\u1782\u17B5\u17D9\u17D9\u17DE\u17DE\u1822\u1879\u1882\u1886\u1889\u18AA\u18AC\u18AC\u18B2\u18F7\u1902\u1920\u1952\u196F\u1972\u1976\u1982\u19AD\u19B2\u19CB\u1A02\u1A18\u1A22\u1A56\u1AA9\u1AA9\u1B07\u1B35\u1B47\u1B4D\u1B85\u1BA2\u1BB0\u1BB1\u1BBC\u1BE7\u1C02\u1C25\u1C4F\u1C51\u1C5C\u1C7F\u1C82\u1C8A\u1CEB\u1CEE\u1CF0\u1CF3\u1CF7\u1CF8\u1D02\u1DC1\u1E02\u1F17\u1F1A\u1F1F\u1F22\u1F47\u1F4A\u1F4F\u1F52\u1F59\u1F5B\u1F5B\u1F5D\u1F5D\u1F5F\u1F5F\u1F61\u1F7F\u1F82\u1FB6\u1FB8\u1FBE\u1FC0\u1FC0\u1FC4\u1FC6\u1FC8\u1FCE\u1FD2\u1FD5\u1FD8\u1FDD\u1FE2\u1FEE\u1FF4\u1FF6\u1FF8\u1FFE\u2073\u2073\u2081\u2081\u2092\u209E\u2104\u2104\u2109\u2109\u210C\u2115\u2117\u2117\u211B\u211F\u2126\u2126\u2128\u2128\u212A\u212A\u212C\u212F\u2131\u213B\u213E\u2141\u2147\u214B\u2150\u2150\u2162\u218A\u2C02\u2C30\u2C32\u2C60\u2C62\u2CE6\u2CED\u2CF0\u2CF4\u2CF5\u2D02\u2D27\u2D29\u2D29\u2D2F\u2D2F\u2D32\u2D69\u2D71\u2D71\u2D82\u2D98\u2DA2\u2DA8\u2DAA\u2DB0\u2DB2\u2DB8\u2DBA\u2DC0\u2DC2\u2DC8\u2DCA\u2DD0\u2DD2\u2DD8\u2DDA\u2DE0\u2E31\u2E31\u3007\u3009\u3023\u302B\u3033\u3037\u303A\u303E\u3043\u3098\u309F\u30A1\u30A3\u30FC\u30FE\u3101\u3107\u312F\u3133\u3190\u31A2\u31BC\u31F2\u3201\u3402\u4DB7\u4E02\u9FD7\uA002\uA48E\uA4D2\uA4FF\uA502\uA60E\uA612\uA621\uA62C\uA62D\uA642\uA670\uA681\uA69F\uA6A2\uA6F1\uA719\uA721\uA724\uA78A\uA78D\uA7B0\uA7B2\uA7B9\uA7F9\uA803\uA805\uA807\uA809\uA80C\uA80E\uA824\uA842\uA875\uA884\uA8B5\uA8F4\uA8F9\uA8FD\uA8FD\uA8FF\uA8FF\uA90C\uA927\uA932\uA948\uA962\uA97E\uA986\uA9B4\uA9D1\uA9D1\uA9E2\uA9E6\uA9E8\uA9F1\uA9FC\uAA00\uAA02\uAA2A\uAA42\uAA44\uAA46\uAA4D\uAA62\uAA78\uAA7C\uAA7C\uAA80\uAAB1\uAAB3\uAAB3\uAAB7\uAAB8\uAABB\uAABF\uAAC2\uAAC2\uAAC4\uAAC4\uAADD\uAADF\uAAE2\uAAEC\uAAF4\uAAF6\uAB03\uAB08\uAB0B\uAB10\uAB13\uAB18\uAB22\uAB28\uAB2A\uAB30\uAB32\uAB5C\uAB5E\uAB67\uAB72\uABE4\uAC02\uD7A5\uD7B2\uD7C8\uD7CD\uD7FD\uF902\uFA6F\uFA72\uFADB\uFB02\uFB08\uFB15\uFB19\uFB1F\uFB1F\uFB21\uFB2A\uFB2C\uFB38\uFB3A\uFB3E\uFB40\uFB40\uFB42\uFB43\uFB45\uFB46\uFB48\uFBB3\uFBD5\uFD3F\uFD52\uFD91\uFD94\uFDC9\uFDF2\uFDFD\uFE72\uFE76\uFE78\uFEFE\uFF23\uFF3C\uFF43\uFF5C\uFF68\uFFC0\uFFC4\uFFC9\uFFCC\uFFD1\uFFD4\uFFD9\uFFDC\uFFDE\r(*<>?AOR_\x82\xFC\u0142\u0176\u0282\u029E\u02A2\u02D2\u0302\u0321\u0332\u034C\u0352\u0377\u0382\u039F\u03A2\u03C5\u03CA\u03D1\u03D3\u03D7\u0402\u049F\u04B2\u04D5\u04DA\u04FD\u0502\u0529\u0532\u0565\u0602\u0738\u0742\u0757\u0762\u0769\u0802\u0807\u080A\u080A\u080C\u0837\u0839\u083A\u083E\u083E\u0841\u0857\u0862\u0878\u0882\u08A0\u08E2\u08F4\u08F6\u08F7\u0902\u0917\u0922\u093B\u0982\u09B9\u09C0\u09C1\u0A02\u0A02\u0A12\u0A15\u0A17\u0A19\u0A1B\u0A35\u0A62\u0A7E\u0A82\u0A9E\u0AC2\u0AC9\u0ACB\u0AE6\u0B02\u0B37\u0B42\u0B57\u0B62\u0B74\u0B82\u0B93\u0C02\u0C4A\u0C82\u0CB4\u0CC2\u0CF4\u1005\u1039\u1085\u10B1\u10D2\u10EA\u1105\u1128\u1152\u1174\u1178\u1178\u1185\u11B4\u11C3\u11C6\u11DC\u11DC\u11DE\u11DE\u1202\u1213\u1215\u122D\u1282\u1288\u128A\u128A\u128C\u128F\u1291\u129F\u12A1\u12AA\u12B2\u12E0\u1307\u130E\u1311\u1312\u1315\u132A\u132C\u1332\u1334\u1335\u1337\u133B\u133F\u133F\u1352\u1352\u135F\u1363\u1402\u1436\u1449\u144C\u1482\u14B1\u14C6\u14C7\u14C9\u14C9\u1582\u15B0\u15DA\u15DD\u1602\u1631\u1646\u1646\u1682\u16AC\u1702\u171B\u18A2\u18E1\u1901\u1901\u1AC2\u1AFA\u1C02\u1C0A\u1C0C\u1C30\u1C42\u1C42\u1C74\u1C91\u2002\u239B\u2402\u2470\u2482\u2545\u3002\u3430\u4402\u4648\u6802\u6A3A\u6A42\u6A60\u6AD2\u6AEF\u6B02\u6B31\u6B42\u6B45\u6B65\u6B79\u6B7F\u6B91\u6F02\u6F46\u6F52\u6F52\u6F95\u6FA1\u6FE2\u6FE2\u7002\u87EE\u8802\u8AF4\uB002\uB003\uBC02\uBC6C\uBC72\uBC7E\uBC82\uBC8A\uBC92\uBC9B\uD402\uD456\uD458\uD49E\uD4A0\uD4A1\uD4A4\uD4A4\uD4A7\uD4A8\uD4AB\uD4AE\uD4B0\uD4BB\uD4BD\uD4BD\uD4BF\uD4C5\uD4C7\uD507\uD509\uD50C\uD50F\uD516\uD518\uD51E\uD520\uD53B\uD53D\uD540\uD542\uD546\uD548\uD548';
       XPathLexer._serializedATNSegment1 = `\uD54C\uD552\uD554\uD6A7\uD6AA\uD6C2\uD6C4\uD6DC\uD6DE\uD6FC\uD6FE\uD716\uD718\uD736\uD738\uD750\uD752\uD770\uD772\uD78A\uD78C\uD7AA\uD7AC\uD7C4\uD7C6\uD7CD\uE802\uE8C6\uE902\uE945\uEE02\uEE05\uEE07\uEE21\uEE23\uEE24\uEE26\uEE26\uEE29\uEE29\uEE2B\uEE34\uEE36\uEE39\uEE3B\uEE3B\uEE3D\uEE3D\uEE44\uEE44\uEE49\uEE49\uEE4B\uEE4B\uEE4D\uEE4D\uEE4F\uEE51\uEE53\uEE54\uEE56\uEE56\uEE59\uEE59\uEE5B\uEE5B\uEE5D\uEE5D\uEE5F\uEE5F\uEE61\uEE61\uEE63\uEE64\uEE66\uEE66\uEE69\uEE6C\uEE6E\uEE74\uEE76\uEE79\uEE7B\uEE7E\uEE80\uEE80\uEE82\uEE8B\uEE8D\uEE9D\uEEA3\uEEA5\uEEA7\uEEAB\uEEAD\uEEBD\uA6D8\uA702\uB736\uB742\uB81F\uB822\uCEA3\uF802\uFA1F1\x07	\v\x07	\v\r%')\x071\x071\x071\x07,\b\x07#
  \b\r\x07"  !!#" #$\b$\f%&	&'(	()-\x07)*,\v+*,/-.-+.0/-01\x07)1 -`;
-      XPathLexer._serializedATN = Utils3.join([
+      XPathLexer._serializedATN = Utils5.join([
         XPathLexer._serializedATNSegment0,
         XPathLexer._serializedATNSegment1
       ], "");
@@ -18752,24 +18752,24 @@ var SolidityParser = (() => {
             }
             throw e;
           }
-          let tokens2 = tokenStream.getTokens();
+          let tokens = tokenStream.getTokens();
           let elements = [];
-          let n = tokens2.length;
+          let n = tokens.length;
           let i = 0;
           loop:
             while (i < n) {
-              let el = tokens2[i];
+              let el = tokens[i];
               let next;
               switch (el.type) {
                 case XPathLexer_1.XPathLexer.ROOT:
                 case XPathLexer_1.XPathLexer.ANYWHERE:
                   let anywhere = el.type === XPathLexer_1.XPathLexer.ANYWHERE;
                   i++;
-                  next = tokens2[i];
+                  next = tokens[i];
                   let invert = next.type === XPathLexer_1.XPathLexer.BANG;
                   if (invert) {
                     i++;
-                    next = tokens2[i];
+                    next = tokens[i];
                   }
                   let pathElement = this.getXPathElement(next, anywhere);
                   pathElement.invert = invert;
@@ -19333,9 +19333,9 @@ var SolidityParser = (() => {
         compile(pattern, patternRuleIndex) {
           let tokenList = this.tokenize(pattern);
           let tokenSrc = new ListTokenSource_1.ListTokenSource(tokenList);
-          let tokens2 = new CommonTokenStream_1.CommonTokenStream(tokenSrc);
+          let tokens = new CommonTokenStream_1.CommonTokenStream(tokenSrc);
           const parser = this._parser;
-          let parserInterp = new ParserInterpreter_1.ParserInterpreter(parser.grammarFileName, parser.vocabulary, parser.ruleNames, parser.getATNWithBypassAlts(), tokens2);
+          let parserInterp = new ParserInterpreter_1.ParserInterpreter(parser.grammarFileName, parser.vocabulary, parser.ruleNames, parser.getATNWithBypassAlts(), tokens);
           let tree;
           try {
             parserInterp.errorHandler = new BailErrorStrategy_1.BailErrorStrategy();
@@ -19351,7 +19351,7 @@ var SolidityParser = (() => {
               throw e;
             }
           }
-          if (tokens2.LA(1) !== Token_1.Token.EOF) {
+          if (tokens.LA(1) !== Token_1.Token.EOF) {
             throw new ParseTreePatternMatcher.StartRuleDoesNotConsumeFullPattern();
           }
           return new ParseTreePattern_1.ParseTreePattern(this, pattern, patternRuleIndex, tree);
@@ -19440,7 +19440,7 @@ var SolidityParser = (() => {
         }
         tokenize(pattern) {
           let chunks = this.split(pattern);
-          let tokens2 = [];
+          let tokens = [];
           for (let chunk of chunks) {
             if (chunk instanceof TagChunk_1.TagChunk) {
               let tagChunk = chunk;
@@ -19451,14 +19451,14 @@ var SolidityParser = (() => {
                   throw new Error("Unknown token " + tagChunk.tag + " in pattern: " + pattern);
                 }
                 let t = new TokenTagToken_1.TokenTagToken(tagChunk.tag, ttype, tagChunk.label);
-                tokens2.push(t);
+                tokens.push(t);
               } else if (firstChar === firstChar.toLowerCase()) {
                 let ruleIndex = this._parser.getRuleIndex(tagChunk.tag);
                 if (ruleIndex === -1) {
                   throw new Error("Unknown rule " + tagChunk.tag + " in pattern: " + pattern);
                 }
                 let ruleImaginaryTokenType = this._parser.getATNWithBypassAlts().ruleToTokenType[ruleIndex];
-                tokens2.push(new RuleTagToken_1.RuleTagToken(tagChunk.tag, ruleImaginaryTokenType, tagChunk.label));
+                tokens.push(new RuleTagToken_1.RuleTagToken(tagChunk.tag, ruleImaginaryTokenType, tagChunk.label));
               } else {
                 throw new Error("invalid tag: " + tagChunk.tag + " in pattern: " + pattern);
               }
@@ -19467,12 +19467,12 @@ var SolidityParser = (() => {
               this._lexer.inputStream = CharStreams_1.CharStreams.fromString(textChunk.text);
               let t = this._lexer.nextToken();
               while (t.type !== Token_1.Token.EOF) {
-                tokens2.push(t);
+                tokens.push(t);
                 t = this._lexer.nextToken();
               }
             }
           }
-          return tokens2;
+          return tokens;
         }
         split(pattern) {
           let p = 0;
@@ -20166,7 +20166,7 @@ var SolidityParser = (() => {
       };
       Object.defineProperty(exports, "__esModule", {value: true});
       exports.Parser = void 0;
-      var Utils3 = require_Utils();
+      var Utils5 = require_Utils();
       var ATNDeserializationOptions_1 = require_ATNDeserializationOptions();
       var ATNDeserializer_1 = require_ATNDeserializer();
       var DefaultErrorStrategy_1 = require_DefaultErrorStrategy();
@@ -20211,7 +20211,7 @@ var SolidityParser = (() => {
       __decorate([
         Decorators_1.Override
       ], TraceListener2.prototype, "visitTerminal", null);
-      var Parser3 = class extends Recognizer_1.Recognizer {
+      var Parser4 = class extends Recognizer_1.Recognizer {
         constructor(input) {
           super();
           this._errHandler = new DefaultErrorStrategy_1.DefaultErrorStrategy();
@@ -20320,12 +20320,12 @@ var SolidityParser = (() => {
           if (serializedAtn == null) {
             throw new Error("The current parser does not support an ATN with bypass alternatives.");
           }
-          let result = Parser3.bypassAltsAtnCache.get(serializedAtn);
+          let result = Parser4.bypassAltsAtnCache.get(serializedAtn);
           if (result == null) {
             let deserializationOptions = new ATNDeserializationOptions_1.ATNDeserializationOptions();
             deserializationOptions.isGenerateRuleBypassTransitions = true;
-            result = new ATNDeserializer_1.ATNDeserializer(deserializationOptions).deserialize(Utils3.toCharArray(serializedAtn));
-            Parser3.bypassAltsAtnCache.set(serializedAtn, result);
+            result = new ATNDeserializer_1.ATNDeserializer(deserializationOptions).deserialize(Utils5.toCharArray(serializedAtn));
+            Parser4.bypassAltsAtnCache.set(serializedAtn, result);
           }
           return result;
         }
@@ -20384,7 +20384,7 @@ var SolidityParser = (() => {
         }
         consume() {
           let o = this.currentToken;
-          if (o.type !== Parser3.EOF) {
+          if (o.type !== Parser4.EOF) {
             this.inputStream.consume();
           }
           let hasListener = this._parseListeners.length !== 0;
@@ -20659,55 +20659,55 @@ var SolidityParser = (() => {
           return this._tracer != null;
         }
       };
-      Parser3.bypassAltsAtnCache = new Map();
+      Parser4.bypassAltsAtnCache = new Map();
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "_errHandler", void 0);
+      ], Parser4.prototype, "_errHandler", void 0);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "match", null);
+      ], Parser4.prototype, "match", null);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "matchWildcard", null);
+      ], Parser4.prototype, "matchWildcard", null);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "getParseListeners", null);
+      ], Parser4.prototype, "getParseListeners", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], Parser3.prototype, "addParseListener", null);
+      ], Parser4.prototype, "addParseListener", null);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "getATNWithBypassAlts", null);
+      ], Parser4.prototype, "getATNWithBypassAlts", null);
       __decorate([
         Decorators_1.NotNull,
         __param(0, Decorators_1.NotNull)
-      ], Parser3.prototype, "errorHandler", null);
+      ], Parser4.prototype, "errorHandler", null);
       __decorate([
         Decorators_1.Override
-      ], Parser3.prototype, "inputStream", null);
+      ], Parser4.prototype, "inputStream", null);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "currentToken", null);
+      ], Parser4.prototype, "currentToken", null);
       __decorate([
         __param(0, Decorators_1.NotNull)
-      ], Parser3.prototype, "enterRule", null);
+      ], Parser4.prototype, "enterRule", null);
       __decorate([
         Decorators_1.Override,
         __param(0, Decorators_1.Nullable)
-      ], Parser3.prototype, "precpred", null);
+      ], Parser4.prototype, "precpred", null);
       __decorate([
         Decorators_1.Override
-      ], Parser3.prototype, "getErrorListenerDispatch", null);
+      ], Parser4.prototype, "getErrorListenerDispatch", null);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "getExpectedTokens", null);
+      ], Parser4.prototype, "getExpectedTokens", null);
       __decorate([
         Decorators_1.NotNull
-      ], Parser3.prototype, "getExpectedTokensWithinCurrentRule", null);
+      ], Parser4.prototype, "getExpectedTokensWithinCurrentRule", null);
       __decorate([
         Decorators_1.Override
-      ], Parser3.prototype, "parseInfo", null);
-      exports.Parser = Parser3;
+      ], Parser4.prototype, "parseInfo", null);
+      exports.Parser = Parser4;
     }
   });
 
@@ -20731,7 +20731,7 @@ var SolidityParser = (() => {
       var Parser_1 = require_Parser();
       var RecognitionException_1 = require_RecognitionException();
       var Decorators_1 = require_Decorators();
-      var NoViableAltException3 = class extends RecognitionException_1.RecognitionException {
+      var NoViableAltException4 = class extends RecognitionException_1.RecognitionException {
         constructor(recognizer, input, startToken, offendingToken, deadEndConfigs, ctx) {
           if (recognizer instanceof Parser_1.Parser) {
             if (input === void 0) {
@@ -20761,8 +20761,8 @@ var SolidityParser = (() => {
       };
       __decorate([
         Decorators_1.NotNull
-      ], NoViableAltException3.prototype, "_startToken", void 0);
-      exports.NoViableAltException = NoViableAltException3;
+      ], NoViableAltException4.prototype, "_startToken", void 0);
+      exports.NoViableAltException = NoViableAltException4;
     }
   });
 
@@ -20860,8 +20860,8 @@ var SolidityParser = (() => {
           if (this.inErrorRecoveryMode(recognizer)) {
             return;
           }
-          let tokens2 = recognizer.inputStream;
-          let la = tokens2.LA(1);
+          let tokens = recognizer.inputStream;
+          let la = tokens.LA(1);
           let nextTokens = recognizer.atn.nextTokens(s);
           if (nextTokens.contains(la)) {
             this.nextTokensContext = void 0;
@@ -20896,13 +20896,13 @@ var SolidityParser = (() => {
           }
         }
         reportNoViableAlternative(recognizer, e) {
-          let tokens2 = recognizer.inputStream;
+          let tokens = recognizer.inputStream;
           let input;
-          if (tokens2) {
+          if (tokens) {
             if (e.startToken.type === Token_1.Token.EOF) {
               input = "<EOF>";
             } else {
-              input = tokens2.getTextFromRange(e.startToken, e.getOffendingToken());
+              input = tokens.getTextFromRange(e.startToken, e.getOffendingToken());
             }
           } else {
             input = "<unknown input>";
@@ -21555,8 +21555,8 @@ var SolidityParser = (() => {
       var Decorators_1 = require_Decorators();
       var Token_1 = require_Token();
       var TokenStreamRewriter = class {
-        constructor(tokens2) {
-          this.tokens = tokens2;
+        constructor(tokens) {
+          this.tokens = tokens;
           this.programs = new Map();
           this.programs.set(TokenStreamRewriter.DEFAULT_PROGRAM_NAME, []);
           this.lastRewriteTokenIndexes = new Map();
@@ -21805,8 +21805,8 @@ var SolidityParser = (() => {
       TokenStreamRewriter.PROGRAM_INIT_SIZE = 100;
       TokenStreamRewriter.MIN_TOKEN_INDEX = 0;
       var RewriteOperation = class {
-        constructor(tokens2, index, instructionIndex, text) {
-          this.tokens = tokens2;
+        constructor(tokens, index, instructionIndex, text) {
+          this.tokens = tokens;
           this.instructionIndex = instructionIndex;
           this.index = index;
           this.text = text === void 0 ? "" : text;
@@ -21826,8 +21826,8 @@ var SolidityParser = (() => {
       ], RewriteOperation.prototype, "toString", null);
       exports.RewriteOperation = RewriteOperation;
       var InsertBeforeOp = class extends RewriteOperation {
-        constructor(tokens2, index, instructionIndex, text) {
-          super(tokens2, index, instructionIndex, text);
+        constructor(tokens, index, instructionIndex, text) {
+          super(tokens, index, instructionIndex, text);
         }
         execute(buf) {
           buf.push(this.text.toString());
@@ -21841,13 +21841,13 @@ var SolidityParser = (() => {
         Decorators_1.Override
       ], InsertBeforeOp.prototype, "execute", null);
       var InsertAfterOp = class extends InsertBeforeOp {
-        constructor(tokens2, index, instructionIndex, text) {
-          super(tokens2, index + 1, instructionIndex, text);
+        constructor(tokens, index, instructionIndex, text) {
+          super(tokens, index + 1, instructionIndex, text);
         }
       };
       var ReplaceOp = class extends RewriteOperation {
-        constructor(tokens2, from, to, instructionIndex, text) {
-          super(tokens2, from, instructionIndex, text);
+        constructor(tokens, from, to, instructionIndex, text) {
+          super(tokens, from, instructionIndex, text);
           this.lastIndex = to;
         }
         execute(buf) {
@@ -22043,31 +22043,12 @@ var SolidityParser = (() => {
     }
   });
 
-  // src/antlr/Solidity.tokens
-  var require_Solidity = __commonJS({
-    "src/antlr/Solidity.tokens"(exports, module) {
-      module.exports = "./Solidity-EZVQ6AE4.tokens";
-    }
-  });
-
-  // src/tokens-string.js
-  var require_tokens_string = __commonJS({
-    "src/tokens-string.js"(exports, module) {
-      init_process_shim();
-      if (true) {
-        module.exports = require_Solidity();
-      } else {
-        module.exports = null.readFileSync(null.join(true, "./antlr/Solidity.tokens")).toString();
-      }
-    }
-  });
-
   // src/index.ts
   var src_exports = {};
   __export(src_exports, {
     ParserError: () => ParserError,
     parse: () => parse,
-    tokenize: () => tokenize,
+    parseBlock: () => parseBlock,
     visit: () => visit
   });
   init_process_shim();
@@ -32565,7 +32546,7 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
     visitBlock(ctx) {
       const node = {
         type: "Block",
-        statements: ctx.statement().map((x) => this.visitStatement(x))
+        statements: ctx.statement && ctx.statement().map((x) => this.visitStatement(x))
       };
       return this._addMeta(node, ctx);
     }
@@ -37095,7 +37076,7 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
       this._stateNumber = -1;
     }
     checkVersion(toolVersion) {
-      const runtimeVersion = "4.10.1";
+      const runtimeVersion = "4.11.0";
       if (runtimeVersion !== toolVersion) {
         console.log("ANTLR runtime and generated code versions disagree: " + runtimeVersion + "!=" + toolVersion);
       }
@@ -37475,13 +37456,13 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
       return this._input.index;
     }
     getAllTokens() {
-      const tokens2 = [];
+      const tokens = [];
       let t = this.nextToken();
       while (t.type !== Token_default.EOF) {
-        tokens2.push(t);
+        tokens.push(t);
         t = this.nextToken();
       }
-      return tokens2;
+      return tokens;
     }
     notifyListeners(e) {
       const start = this._tokenStartCharIndex;
@@ -39903,13 +39884,13 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
       }
     }
     reportNoViableAlternative(recognizer, e) {
-      const tokens2 = recognizer.getTokenStream();
+      const tokens = recognizer.getTokenStream();
       let input;
-      if (tokens2 !== null) {
+      if (tokens !== null) {
         if (e.startToken.type === Token_default.EOF) {
           input = "<EOF>";
         } else {
-          input = tokens2.getText(new Interval_default(e.startToken.tokenIndex, e.offendingToken.tokenIndex));
+          input = tokens.getText(new Interval_default(e.startToken.tokenIndex, e.offendingToken.tokenIndex));
         }
       } else {
         input = "<unknown input>";
@@ -41103,16 +41084,16 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
       if (this.children === null) {
         return [];
       } else {
-        const tokens2 = [];
+        const tokens = [];
         for (let j = 0; j < this.children.length; j++) {
           const child = this.children[j];
           if (child instanceof TerminalNode_default) {
             if (child.symbol.type === ttype) {
-              tokens2.push(child);
+              tokens.push(child);
             }
           }
         }
-        return tokens2;
+        return tokens;
       }
     }
     getTypedRuleContext(ctxType, i) {
@@ -41195,83 +41176,1057 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
   };
   var ErrorListener_default2 = ErrorListener2;
 
-  // src/tokens.ts
+  // src/antlr/SolidityBlocksParser.ts
   init_process_shim();
-  var import_tokens_string = __toModule(require_tokens_string());
-  var tokens = import_tokens_string.default;
-  var TYPE_TOKENS = [
-    "var",
-    "bool",
-    "address",
-    "string",
-    "Int",
-    "Uint",
-    "Byte",
-    "Fixed",
-    "UFixed"
+  var import_ATN8 = __toModule(require_ATN());
+  var import_ATNDeserializer5 = __toModule(require_ATNDeserializer());
+  var import_FailedPredicateException4 = __toModule(require_FailedPredicateException());
+  var import_NoViableAltException5 = __toModule(require_NoViableAltException());
+  var import_Parser3 = __toModule(require_Parser());
+  var import_ParserRuleContext3 = __toModule(require_ParserRuleContext());
+  var import_ParserATNSimulator3 = __toModule(require_ParserATNSimulator());
+  var import_RecognitionException8 = __toModule(require_RecognitionException());
+  var import_Token20 = __toModule(require_Token());
+  var import_VocabularyImpl3 = __toModule(require_VocabularyImpl());
+  var Utils3 = __toModule(require_Utils());
+  var _SolidityBlocksParser = class extends import_Parser3.Parser {
+    get vocabulary() {
+      return _SolidityBlocksParser.VOCABULARY;
+    }
+    get grammarFileName() {
+      return "SolidityBlocks.g4";
+    }
+    get ruleNames() {
+      return _SolidityBlocksParser.ruleNames;
+    }
+    get serializedATN() {
+      return _SolidityBlocksParser._serializedATN;
+    }
+    createFailedPredicateException(predicate, message) {
+      return new import_FailedPredicateException4.FailedPredicateException(this, predicate, message);
+    }
+    constructor(input) {
+      super(input);
+      this._interp = new import_ParserATNSimulator3.ParserATNSimulator(_SolidityBlocksParser._ATN, this);
+    }
+    sol() {
+      let _localctx = new SolContext(this._ctx, this.state);
+      this.enterRule(_localctx, 0, _SolidityBlocksParser.RULE_sol);
+      let _la;
+      try {
+        this.enterOuterAlt(_localctx, 1);
+        {
+          this.state = 15;
+          this._errHandler.sync(this);
+          _la = this._input.LA(1);
+          while ((_la & ~31) === 0 && (1 << _la & (1 << _SolidityBlocksParser.T__0 | 1 << _SolidityBlocksParser.T__1 | 1 << _SolidityBlocksParser.T__2 | 1 << _SolidityBlocksParser.T__3)) !== 0) {
+            {
+              {
+                this.state = 12;
+                this.contract();
+              }
+            }
+            this.state = 17;
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+          }
+          this.state = 18;
+          this.match(_SolidityBlocksParser.EOF);
+        }
+      } catch (re) {
+        if (re instanceof import_RecognitionException8.RecognitionException) {
+          _localctx.exception = re;
+          this._errHandler.reportError(this, re);
+          this._errHandler.recover(this, re);
+        } else {
+          throw re;
+        }
+      } finally {
+        this.exitRule();
+      }
+      return _localctx;
+    }
+    contract() {
+      let _localctx = new ContractContext(this._ctx, this.state);
+      this.enterRule(_localctx, 2, _SolidityBlocksParser.RULE_contract);
+      let _la;
+      try {
+        let _alt;
+        this.enterOuterAlt(_localctx, 1);
+        {
+          this.state = 21;
+          this._errHandler.sync(this);
+          _la = this._input.LA(1);
+          if (_la === _SolidityBlocksParser.T__0) {
+            {
+              this.state = 20;
+              this.match(_SolidityBlocksParser.T__0);
+            }
+          }
+          this.state = 23;
+          _la = this._input.LA(1);
+          if (!((_la & ~31) === 0 && (1 << _la & (1 << _SolidityBlocksParser.T__1 | 1 << _SolidityBlocksParser.T__2 | 1 << _SolidityBlocksParser.T__3)) !== 0)) {
+            this._errHandler.recoverInline(this);
+          } else {
+            if (this._input.LA(1) === import_Token20.Token.EOF) {
+              this.matchedEOF = true;
+            }
+            this._errHandler.reportMatch(this);
+            this.consume();
+          }
+          this.state = 24;
+          this.functionname();
+          this.state = 25;
+          this.match(_SolidityBlocksParser.LBRACE);
+          this.state = 30;
+          this._errHandler.sync(this);
+          _alt = this.interpreter.adaptivePredict(this._input, 3, this._ctx);
+          while (_alt !== 1 && _alt !== import_ATN8.ATN.INVALID_ALT_NUMBER) {
+            if (_alt === 1 + 1) {
+              {
+                this.state = 28;
+                this._errHandler.sync(this);
+                switch (this._input.LA(1)) {
+                  case _SolidityBlocksParser.T__4:
+                  case _SolidityBlocksParser.Constructorkeyword:
+                    {
+                      this.state = 26;
+                      this.function();
+                    }
+                    break;
+                  case _SolidityBlocksParser.Identifier:
+                  case _SolidityBlocksParser.AMP:
+                  case _SolidityBlocksParser.TILDE:
+                  case _SolidityBlocksParser.PIPE:
+                  case _SolidityBlocksParser.LT:
+                  case _SolidityBlocksParser.GT:
+                  case _SolidityBlocksParser.DOT:
+                  case _SolidityBlocksParser.EQUAL:
+                  case _SolidityBlocksParser.LPAREN:
+                  case _SolidityBlocksParser.RBRACE:
+                  case _SolidityBlocksParser.LBRACE:
+                  case _SolidityBlocksParser.RPAREN:
+                  case _SolidityBlocksParser.PLUS:
+                  case _SolidityBlocksParser.MINUS:
+                  case _SolidityBlocksParser.STAR:
+                  case _SolidityBlocksParser.SLASH:
+                  case _SolidityBlocksParser.BACKSLASH:
+                  case _SolidityBlocksParser.PERCENT:
+                  case _SolidityBlocksParser.CARET:
+                  case _SolidityBlocksParser.BANG:
+                  case _SolidityBlocksParser.QUESTION:
+                  case _SolidityBlocksParser.COLON:
+                  case _SolidityBlocksParser.SEMI:
+                  case _SolidityBlocksParser.COMMA:
+                    {
+                      this.state = 27;
+                      this.subrule();
+                    }
+                    break;
+                  default:
+                    throw new import_NoViableAltException5.NoViableAltException(this);
+                }
+              }
+            }
+            this.state = 32;
+            this._errHandler.sync(this);
+            _alt = this.interpreter.adaptivePredict(this._input, 3, this._ctx);
+          }
+          this.state = 33;
+          this.match(_SolidityBlocksParser.RBRACE);
+        }
+      } catch (re) {
+        if (re instanceof import_RecognitionException8.RecognitionException) {
+          _localctx.exception = re;
+          this._errHandler.reportError(this, re);
+          this._errHandler.recover(this, re);
+        } else {
+          throw re;
+        }
+      } finally {
+        this.exitRule();
+      }
+      return _localctx;
+    }
+    function() {
+      let _localctx = new FunctionContext(this._ctx, this.state);
+      this.enterRule(_localctx, 4, _SolidityBlocksParser.RULE_function);
+      let _la;
+      try {
+        let _alt;
+        this.enterOuterAlt(_localctx, 1);
+        {
+          this.state = 35;
+          this.functionDescriptor();
+          this.state = 36;
+          this.match(_SolidityBlocksParser.LPAREN);
+          this.state = 40;
+          this._errHandler.sync(this);
+          _la = this._input.LA(1);
+          while (_la === _SolidityBlocksParser.Identifier) {
+            {
+              {
+                this.state = 37;
+                this.match(_SolidityBlocksParser.Identifier);
+              }
+            }
+            this.state = 42;
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+          }
+          this.state = 51;
+          this._errHandler.sync(this);
+          _alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
+          while (_alt !== 1 && _alt !== import_ATN8.ATN.INVALID_ALT_NUMBER) {
+            if (_alt === 1 + 1) {
+              {
+                {
+                  this.state = 43;
+                  this.match(_SolidityBlocksParser.COMMA);
+                  this.state = 45;
+                  this._errHandler.sync(this);
+                  _la = this._input.LA(1);
+                  do {
+                    {
+                      {
+                        this.state = 44;
+                        this.match(_SolidityBlocksParser.Identifier);
+                      }
+                    }
+                    this.state = 47;
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                  } while (_la === _SolidityBlocksParser.Identifier);
+                }
+              }
+            }
+            this.state = 53;
+            this._errHandler.sync(this);
+            _alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
+          }
+          this.state = 54;
+          this.match(_SolidityBlocksParser.RPAREN);
+          this.state = 58;
+          this._errHandler.sync(this);
+          _la = this._input.LA(1);
+          while ((_la - 7 & ~31) === 0 && (1 << _la - 7 & (1 << _SolidityBlocksParser.Identifier - 7 | 1 << _SolidityBlocksParser.LPAREN - 7 | 1 << _SolidityBlocksParser.RPAREN - 7 | 1 << _SolidityBlocksParser.COMMA - 7)) !== 0) {
+            {
+              {
+                this.state = 55;
+                _la = this._input.LA(1);
+                if (!((_la - 7 & ~31) === 0 && (1 << _la - 7 & (1 << _SolidityBlocksParser.Identifier - 7 | 1 << _SolidityBlocksParser.LPAREN - 7 | 1 << _SolidityBlocksParser.RPAREN - 7 | 1 << _SolidityBlocksParser.COMMA - 7)) !== 0)) {
+                  this._errHandler.recoverInline(this);
+                } else {
+                  if (this._input.LA(1) === import_Token20.Token.EOF) {
+                    this.matchedEOF = true;
+                  }
+                  this._errHandler.reportMatch(this);
+                  this.consume();
+                }
+              }
+            }
+            this.state = 60;
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+          }
+          this.state = 61;
+          this.match(_SolidityBlocksParser.LBRACE);
+          this.state = 65;
+          this._errHandler.sync(this);
+          _alt = this.interpreter.adaptivePredict(this._input, 8, this._ctx);
+          while (_alt !== 1 && _alt !== import_ATN8.ATN.INVALID_ALT_NUMBER) {
+            if (_alt === 1 + 1) {
+              {
+                {
+                  this.state = 62;
+                  this.subrule();
+                }
+              }
+            }
+            this.state = 67;
+            this._errHandler.sync(this);
+            _alt = this.interpreter.adaptivePredict(this._input, 8, this._ctx);
+          }
+          this.state = 68;
+          this.match(_SolidityBlocksParser.RBRACE);
+          this.state = 70;
+          this._errHandler.sync(this);
+          switch (this.interpreter.adaptivePredict(this._input, 9, this._ctx)) {
+            case 1:
+              {
+                this.state = 69;
+                this.match(_SolidityBlocksParser.SEMI);
+              }
+              break;
+          }
+        }
+      } catch (re) {
+        if (re instanceof import_RecognitionException8.RecognitionException) {
+          _localctx.exception = re;
+          this._errHandler.reportError(this, re);
+          this._errHandler.recover(this, re);
+        } else {
+          throw re;
+        }
+      } finally {
+        this.exitRule();
+      }
+      return _localctx;
+    }
+    functionDescriptor() {
+      let _localctx = new FunctionDescriptorContext2(this._ctx, this.state);
+      this.enterRule(_localctx, 6, _SolidityBlocksParser.RULE_functionDescriptor);
+      try {
+        this.state = 75;
+        this._errHandler.sync(this);
+        switch (this._input.LA(1)) {
+          case _SolidityBlocksParser.T__4:
+            this.enterOuterAlt(_localctx, 1);
+            {
+              this.state = 72;
+              this.match(_SolidityBlocksParser.T__4);
+              this.state = 73;
+              this.functionname();
+            }
+            break;
+          case _SolidityBlocksParser.Constructorkeyword:
+            this.enterOuterAlt(_localctx, 2);
+            {
+              this.state = 74;
+              this.match(_SolidityBlocksParser.Constructorkeyword);
+            }
+            break;
+          default:
+            throw new import_NoViableAltException5.NoViableAltException(this);
+        }
+      } catch (re) {
+        if (re instanceof import_RecognitionException8.RecognitionException) {
+          _localctx.exception = re;
+          this._errHandler.reportError(this, re);
+          this._errHandler.recover(this, re);
+        } else {
+          throw re;
+        }
+      } finally {
+        this.exitRule();
+      }
+      return _localctx;
+    }
+    subrule() {
+      let _localctx = new SubruleContext(this._ctx, this.state);
+      this.enterRule(_localctx, 8, _SolidityBlocksParser.RULE_subrule);
+      let _la;
+      try {
+        this.enterOuterAlt(_localctx, 1);
+        {
+          this.state = 77;
+          _la = this._input.LA(1);
+          if (!((_la - 7 & ~31) === 0 && (1 << _la - 7 & (1 << _SolidityBlocksParser.Identifier - 7 | 1 << _SolidityBlocksParser.AMP - 7 | 1 << _SolidityBlocksParser.TILDE - 7 | 1 << _SolidityBlocksParser.PIPE - 7 | 1 << _SolidityBlocksParser.LT - 7 | 1 << _SolidityBlocksParser.GT - 7 | 1 << _SolidityBlocksParser.DOT - 7 | 1 << _SolidityBlocksParser.EQUAL - 7 | 1 << _SolidityBlocksParser.LPAREN - 7 | 1 << _SolidityBlocksParser.RBRACE - 7 | 1 << _SolidityBlocksParser.LBRACE - 7 | 1 << _SolidityBlocksParser.RPAREN - 7 | 1 << _SolidityBlocksParser.PLUS - 7 | 1 << _SolidityBlocksParser.MINUS - 7 | 1 << _SolidityBlocksParser.STAR - 7 | 1 << _SolidityBlocksParser.SLASH - 7 | 1 << _SolidityBlocksParser.BACKSLASH - 7 | 1 << _SolidityBlocksParser.PERCENT - 7 | 1 << _SolidityBlocksParser.CARET - 7 | 1 << _SolidityBlocksParser.BANG - 7 | 1 << _SolidityBlocksParser.QUESTION - 7 | 1 << _SolidityBlocksParser.COLON - 7 | 1 << _SolidityBlocksParser.SEMI - 7 | 1 << _SolidityBlocksParser.COMMA - 7)) !== 0)) {
+            this._errHandler.recoverInline(this);
+          } else {
+            if (this._input.LA(1) === import_Token20.Token.EOF) {
+              this.matchedEOF = true;
+            }
+            this._errHandler.reportMatch(this);
+            this.consume();
+          }
+        }
+      } catch (re) {
+        if (re instanceof import_RecognitionException8.RecognitionException) {
+          _localctx.exception = re;
+          this._errHandler.reportError(this, re);
+          this._errHandler.recover(this, re);
+        } else {
+          throw re;
+        }
+      } finally {
+        this.exitRule();
+      }
+      return _localctx;
+    }
+    functionname() {
+      let _localctx = new FunctionnameContext(this._ctx, this.state);
+      this.enterRule(_localctx, 10, _SolidityBlocksParser.RULE_functionname);
+      try {
+        this.enterOuterAlt(_localctx, 1);
+        {
+          this.state = 79;
+          this.match(_SolidityBlocksParser.Identifier);
+        }
+      } catch (re) {
+        if (re instanceof import_RecognitionException8.RecognitionException) {
+          _localctx.exception = re;
+          this._errHandler.reportError(this, re);
+          this._errHandler.recover(this, re);
+        } else {
+          throw re;
+        }
+      } finally {
+        this.exitRule();
+      }
+      return _localctx;
+    }
+    static get _ATN() {
+      if (!_SolidityBlocksParser.__ATN) {
+        _SolidityBlocksParser.__ATN = new import_ATNDeserializer5.ATNDeserializer().deserialize(Utils3.toCharArray(_SolidityBlocksParser._serializedATN));
+      }
+      return _SolidityBlocksParser.__ATN;
+    }
+  };
+  var SolidityBlocksParser = _SolidityBlocksParser;
+  SolidityBlocksParser.T__0 = 1;
+  SolidityBlocksParser.T__1 = 2;
+  SolidityBlocksParser.T__2 = 3;
+  SolidityBlocksParser.T__3 = 4;
+  SolidityBlocksParser.T__4 = 5;
+  SolidityBlocksParser.Constructorkeyword = 6;
+  SolidityBlocksParser.Identifier = 7;
+  SolidityBlocksParser.WS = 8;
+  SolidityBlocksParser.COMMENT = 9;
+  SolidityBlocksParser.STRINGS = 10;
+  SolidityBlocksParser.STRINGS_2 = 11;
+  SolidityBlocksParser.PRAGMA = 12;
+  SolidityBlocksParser.IMPORT = 13;
+  SolidityBlocksParser.LINE_COMMENT = 14;
+  SolidityBlocksParser.AMP = 15;
+  SolidityBlocksParser.TILDE = 16;
+  SolidityBlocksParser.PIPE = 17;
+  SolidityBlocksParser.LT = 18;
+  SolidityBlocksParser.GT = 19;
+  SolidityBlocksParser.DOT = 20;
+  SolidityBlocksParser.EQUAL = 21;
+  SolidityBlocksParser.LPAREN = 22;
+  SolidityBlocksParser.RBRACE = 23;
+  SolidityBlocksParser.LBRACE = 24;
+  SolidityBlocksParser.RPAREN = 25;
+  SolidityBlocksParser.PLUS = 26;
+  SolidityBlocksParser.MINUS = 27;
+  SolidityBlocksParser.STAR = 28;
+  SolidityBlocksParser.SLASH = 29;
+  SolidityBlocksParser.BACKSLASH = 30;
+  SolidityBlocksParser.PERCENT = 31;
+  SolidityBlocksParser.CARET = 32;
+  SolidityBlocksParser.BANG = 33;
+  SolidityBlocksParser.QUESTION = 34;
+  SolidityBlocksParser.COLON = 35;
+  SolidityBlocksParser.SEMI = 36;
+  SolidityBlocksParser.COMMA = 37;
+  SolidityBlocksParser.OTHER = 38;
+  SolidityBlocksParser.RULE_sol = 0;
+  SolidityBlocksParser.RULE_contract = 1;
+  SolidityBlocksParser.RULE_function = 2;
+  SolidityBlocksParser.RULE_functionDescriptor = 3;
+  SolidityBlocksParser.RULE_subrule = 4;
+  SolidityBlocksParser.RULE_functionname = 5;
+  SolidityBlocksParser.ruleNames = [
+    "sol",
+    "contract",
+    "function",
+    "functionDescriptor",
+    "subrule",
+    "functionname"
   ];
-  function rsplit(str, value) {
-    const index = str.lastIndexOf(value);
-    return [str.substring(0, index), str.substring(index + 1, str.length)];
-  }
-  function normalizeTokenType(value) {
-    if (value.endsWith("'")) {
-      value = value.substring(0, value.length - 1);
+  SolidityBlocksParser._LITERAL_NAMES = [
+    void 0,
+    "'abstract'",
+    "'contract'",
+    "'interface'",
+    "'library'",
+    "'function'",
+    "'constructor'",
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    "'&'",
+    "'~'",
+    "'|'",
+    "'<'",
+    "'>'",
+    "'.'",
+    "'='",
+    "'('",
+    "'}'",
+    "'{'",
+    "')'",
+    "'+'",
+    "'-'",
+    "'*'",
+    "'/'",
+    "'\\'",
+    "'%'",
+    "'^'",
+    "'!'",
+    "'?'",
+    "':'",
+    "';'",
+    "','"
+  ];
+  SolidityBlocksParser._SYMBOLIC_NAMES = [
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    "Constructorkeyword",
+    "Identifier",
+    "WS",
+    "COMMENT",
+    "STRINGS",
+    "STRINGS_2",
+    "PRAGMA",
+    "IMPORT",
+    "LINE_COMMENT",
+    "AMP",
+    "TILDE",
+    "PIPE",
+    "LT",
+    "GT",
+    "DOT",
+    "EQUAL",
+    "LPAREN",
+    "RBRACE",
+    "LBRACE",
+    "RPAREN",
+    "PLUS",
+    "MINUS",
+    "STAR",
+    "SLASH",
+    "BACKSLASH",
+    "PERCENT",
+    "CARET",
+    "BANG",
+    "QUESTION",
+    "COLON",
+    "SEMI",
+    "COMMA",
+    "OTHER"
+  ];
+  SolidityBlocksParser.VOCABULARY = new import_VocabularyImpl3.VocabularyImpl(_SolidityBlocksParser._LITERAL_NAMES, _SolidityBlocksParser._SYMBOLIC_NAMES, []);
+  SolidityBlocksParser._serializedATN = `\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241(T					\x07	\x07\x07
+\f\v
+\x07
+\f"\v\x07)
+\f,\v0
+\r1\x074
+\f7\v\x07;
+\f>\v\x07B
+\fE\vI
+N
+\x07\x07\x07 5C\b\b
+\f		''		'X%\bM
+O\fQ\x07\x07	\f\x07 \x07
+" ! !#" #$\x07$%&\b&*\x07')\x07	('),*(*++5,*-/\x07'.0\x07	/.011/12243-47565368758<\x079;	:9;><:<==?><?C\x07@B
+A@BECDCADFECFH\x07GI\x07&HGHII\x07JK\x07\x07KN\f\x07LN\x07\bMJMLN	OP	P\vQR\x07	R\r\r *15<CHM`;
+  var SolContext = class extends import_ParserRuleContext3.ParserRuleContext {
+    EOF() {
+      return this.getToken(SolidityBlocksParser.EOF, 0);
     }
-    if (value.startsWith("'")) {
-      value = value.substring(1, value.length);
-    }
-    return value;
-  }
-  function getTokenType(value) {
-    if (value === "Identifier" || value === "from") {
-      return "Identifier";
-    } else if (value === "TrueLiteral" || value === "FalseLiteral") {
-      return "Boolean";
-    } else if (value === "VersionLiteral") {
-      return "Version";
-    } else if (value === "StringLiteral") {
-      return "String";
-    } else if (TYPE_TOKENS.includes(value)) {
-      return "Type";
-    } else if (value === "NumberUnit") {
-      return "Subdenomination";
-    } else if (value === "DecimalNumber") {
-      return "Numeric";
-    } else if (value === "HexLiteral") {
-      return "Hex";
-    } else if (value === "ReservedKeyword") {
-      return "Reserved";
-    } else if (/^\W+$/.test(value)) {
-      return "Punctuator";
-    } else {
-      return "Keyword";
-    }
-  }
-  function getTokenTypeMap() {
-    return tokens.split("\n").map((line) => rsplit(line, "=")).reduce((acum, [value, key]) => {
-      acum[parseInt(key, 10)] = normalizeTokenType(value);
-      return acum;
-    }, {});
-  }
-  function buildTokenList(tokensArg, options) {
-    const tokenTypes = getTokenTypeMap();
-    const result = tokensArg.map((token) => {
-      const type = getTokenType(tokenTypes[token.type]);
-      const node = {type, value: token.text};
-      if (options.range === true) {
-        node.range = [token.startIndex, token.stopIndex + 1];
+    contract(i) {
+      if (i === void 0) {
+        return this.getRuleContexts(ContractContext);
+      } else {
+        return this.getRuleContext(i, ContractContext);
       }
-      if (options.loc === true) {
-        node.loc = {
-          start: {line: token.line, column: token.charPositionInLine},
-          end: {line: token.line, column: token.charPositionInLine + (token.text?.length ?? 0)}
-        };
+    }
+    constructor(parent, invokingState) {
+      super(parent, invokingState);
+    }
+    get ruleIndex() {
+      return SolidityBlocksParser.RULE_sol;
+    }
+    enterRule(listener) {
+      if (listener.enterSol) {
+        listener.enterSol(this);
       }
-      return node;
-    });
-    return result;
-  }
+    }
+    exitRule(listener) {
+      if (listener.exitSol) {
+        listener.exitSol(this);
+      }
+    }
+  };
+  var ContractContext = class extends import_ParserRuleContext3.ParserRuleContext {
+    functionname() {
+      return this.getRuleContext(0, FunctionnameContext);
+    }
+    LBRACE() {
+      return this.getToken(SolidityBlocksParser.LBRACE, 0);
+    }
+    RBRACE() {
+      return this.getToken(SolidityBlocksParser.RBRACE, 0);
+    }
+    function(i) {
+      if (i === void 0) {
+        return this.getRuleContexts(FunctionContext);
+      } else {
+        return this.getRuleContext(i, FunctionContext);
+      }
+    }
+    subrule(i) {
+      if (i === void 0) {
+        return this.getRuleContexts(SubruleContext);
+      } else {
+        return this.getRuleContext(i, SubruleContext);
+      }
+    }
+    constructor(parent, invokingState) {
+      super(parent, invokingState);
+    }
+    get ruleIndex() {
+      return SolidityBlocksParser.RULE_contract;
+    }
+    enterRule(listener) {
+      if (listener.enterContract) {
+        listener.enterContract(this);
+      }
+    }
+    exitRule(listener) {
+      if (listener.exitContract) {
+        listener.exitContract(this);
+      }
+    }
+  };
+  var FunctionContext = class extends import_ParserRuleContext3.ParserRuleContext {
+    functionDescriptor() {
+      return this.getRuleContext(0, FunctionDescriptorContext2);
+    }
+    LPAREN(i) {
+      if (i === void 0) {
+        return this.getTokens(SolidityBlocksParser.LPAREN);
+      } else {
+        return this.getToken(SolidityBlocksParser.LPAREN, i);
+      }
+    }
+    RPAREN(i) {
+      if (i === void 0) {
+        return this.getTokens(SolidityBlocksParser.RPAREN);
+      } else {
+        return this.getToken(SolidityBlocksParser.RPAREN, i);
+      }
+    }
+    LBRACE() {
+      return this.getToken(SolidityBlocksParser.LBRACE, 0);
+    }
+    RBRACE() {
+      return this.getToken(SolidityBlocksParser.RBRACE, 0);
+    }
+    Identifier(i) {
+      if (i === void 0) {
+        return this.getTokens(SolidityBlocksParser.Identifier);
+      } else {
+        return this.getToken(SolidityBlocksParser.Identifier, i);
+      }
+    }
+    COMMA(i) {
+      if (i === void 0) {
+        return this.getTokens(SolidityBlocksParser.COMMA);
+      } else {
+        return this.getToken(SolidityBlocksParser.COMMA, i);
+      }
+    }
+    subrule(i) {
+      if (i === void 0) {
+        return this.getRuleContexts(SubruleContext);
+      } else {
+        return this.getRuleContext(i, SubruleContext);
+      }
+    }
+    SEMI() {
+      return this.tryGetToken(SolidityBlocksParser.SEMI, 0);
+    }
+    constructor(parent, invokingState) {
+      super(parent, invokingState);
+    }
+    get ruleIndex() {
+      return SolidityBlocksParser.RULE_function;
+    }
+    enterRule(listener) {
+      if (listener.enterFunction) {
+        listener.enterFunction(this);
+      }
+    }
+    exitRule(listener) {
+      if (listener.exitFunction) {
+        listener.exitFunction(this);
+      }
+    }
+  };
+  var FunctionDescriptorContext2 = class extends import_ParserRuleContext3.ParserRuleContext {
+    functionname() {
+      return this.tryGetRuleContext(0, FunctionnameContext);
+    }
+    Constructorkeyword() {
+      return this.tryGetToken(SolidityBlocksParser.Constructorkeyword, 0);
+    }
+    constructor(parent, invokingState) {
+      super(parent, invokingState);
+    }
+    get ruleIndex() {
+      return SolidityBlocksParser.RULE_functionDescriptor;
+    }
+    enterRule(listener) {
+      if (listener.enterFunctionDescriptor) {
+        listener.enterFunctionDescriptor(this);
+      }
+    }
+    exitRule(listener) {
+      if (listener.exitFunctionDescriptor) {
+        listener.exitFunctionDescriptor(this);
+      }
+    }
+  };
+  var SubruleContext = class extends import_ParserRuleContext3.ParserRuleContext {
+    BACKSLASH() {
+      return this.tryGetToken(SolidityBlocksParser.BACKSLASH, 0);
+    }
+    SLASH() {
+      return this.tryGetToken(SolidityBlocksParser.SLASH, 0);
+    }
+    STAR() {
+      return this.tryGetToken(SolidityBlocksParser.STAR, 0);
+    }
+    PLUS() {
+      return this.tryGetToken(SolidityBlocksParser.PLUS, 0);
+    }
+    MINUS() {
+      return this.tryGetToken(SolidityBlocksParser.MINUS, 0);
+    }
+    DOT() {
+      return this.tryGetToken(SolidityBlocksParser.DOT, 0);
+    }
+    COMMA() {
+      return this.tryGetToken(SolidityBlocksParser.COMMA, 0);
+    }
+    LBRACE() {
+      return this.tryGetToken(SolidityBlocksParser.LBRACE, 0);
+    }
+    RBRACE() {
+      return this.tryGetToken(SolidityBlocksParser.RBRACE, 0);
+    }
+    LPAREN() {
+      return this.tryGetToken(SolidityBlocksParser.LPAREN, 0);
+    }
+    RPAREN() {
+      return this.tryGetToken(SolidityBlocksParser.RPAREN, 0);
+    }
+    SEMI() {
+      return this.tryGetToken(SolidityBlocksParser.SEMI, 0);
+    }
+    EQUAL() {
+      return this.tryGetToken(SolidityBlocksParser.EQUAL, 0);
+    }
+    Identifier() {
+      return this.tryGetToken(SolidityBlocksParser.Identifier, 0);
+    }
+    QUESTION() {
+      return this.tryGetToken(SolidityBlocksParser.QUESTION, 0);
+    }
+    LT() {
+      return this.tryGetToken(SolidityBlocksParser.LT, 0);
+    }
+    GT() {
+      return this.tryGetToken(SolidityBlocksParser.GT, 0);
+    }
+    BANG() {
+      return this.tryGetToken(SolidityBlocksParser.BANG, 0);
+    }
+    TILDE() {
+      return this.tryGetToken(SolidityBlocksParser.TILDE, 0);
+    }
+    AMP() {
+      return this.tryGetToken(SolidityBlocksParser.AMP, 0);
+    }
+    PIPE() {
+      return this.tryGetToken(SolidityBlocksParser.PIPE, 0);
+    }
+    CARET() {
+      return this.tryGetToken(SolidityBlocksParser.CARET, 0);
+    }
+    PERCENT() {
+      return this.tryGetToken(SolidityBlocksParser.PERCENT, 0);
+    }
+    COLON() {
+      return this.tryGetToken(SolidityBlocksParser.COLON, 0);
+    }
+    constructor(parent, invokingState) {
+      super(parent, invokingState);
+    }
+    get ruleIndex() {
+      return SolidityBlocksParser.RULE_subrule;
+    }
+    enterRule(listener) {
+      if (listener.enterSubrule) {
+        listener.enterSubrule(this);
+      }
+    }
+    exitRule(listener) {
+      if (listener.exitSubrule) {
+        listener.exitSubrule(this);
+      }
+    }
+  };
+  var FunctionnameContext = class extends import_ParserRuleContext3.ParserRuleContext {
+    Identifier() {
+      return this.getToken(SolidityBlocksParser.Identifier, 0);
+    }
+    constructor(parent, invokingState) {
+      super(parent, invokingState);
+    }
+    get ruleIndex() {
+      return SolidityBlocksParser.RULE_functionname;
+    }
+    enterRule(listener) {
+      if (listener.enterFunctionname) {
+        listener.enterFunctionname(this);
+      }
+    }
+    exitRule(listener) {
+      if (listener.exitFunctionname) {
+        listener.exitFunctionname(this);
+      }
+    }
+  };
+
+  // src/antlr/SolidityBlocksLexer.ts
+  init_process_shim();
+  var import_ATNDeserializer6 = __toModule(require_ATNDeserializer());
+  var import_Lexer5 = __toModule(require_Lexer());
+  var import_LexerATNSimulator3 = __toModule(require_LexerATNSimulator());
+  var import_VocabularyImpl4 = __toModule(require_VocabularyImpl());
+  var Utils4 = __toModule(require_Utils());
+  var _SolidityBlocksLexer = class extends import_Lexer5.Lexer {
+    get vocabulary() {
+      return _SolidityBlocksLexer.VOCABULARY;
+    }
+    constructor(input) {
+      super(input);
+      this._interp = new import_LexerATNSimulator3.LexerATNSimulator(_SolidityBlocksLexer._ATN, this);
+    }
+    get grammarFileName() {
+      return "SolidityBlocks.g4";
+    }
+    get ruleNames() {
+      return _SolidityBlocksLexer.ruleNames;
+    }
+    get serializedATN() {
+      return _SolidityBlocksLexer._serializedATN;
+    }
+    get channelNames() {
+      return _SolidityBlocksLexer.channelNames;
+    }
+    get modeNames() {
+      return _SolidityBlocksLexer.modeNames;
+    }
+    static get _ATN() {
+      if (!_SolidityBlocksLexer.__ATN) {
+        _SolidityBlocksLexer.__ATN = new import_ATNDeserializer6.ATNDeserializer().deserialize(Utils4.toCharArray(_SolidityBlocksLexer._serializedATN));
+      }
+      return _SolidityBlocksLexer.__ATN;
+    }
+  };
+  var SolidityBlocksLexer = _SolidityBlocksLexer;
+  SolidityBlocksLexer.T__0 = 1;
+  SolidityBlocksLexer.T__1 = 2;
+  SolidityBlocksLexer.T__2 = 3;
+  SolidityBlocksLexer.T__3 = 4;
+  SolidityBlocksLexer.T__4 = 5;
+  SolidityBlocksLexer.Constructorkeyword = 6;
+  SolidityBlocksLexer.Identifier = 7;
+  SolidityBlocksLexer.WS = 8;
+  SolidityBlocksLexer.COMMENT = 9;
+  SolidityBlocksLexer.STRINGS = 10;
+  SolidityBlocksLexer.STRINGS_2 = 11;
+  SolidityBlocksLexer.PRAGMA = 12;
+  SolidityBlocksLexer.IMPORT = 13;
+  SolidityBlocksLexer.LINE_COMMENT = 14;
+  SolidityBlocksLexer.AMP = 15;
+  SolidityBlocksLexer.TILDE = 16;
+  SolidityBlocksLexer.PIPE = 17;
+  SolidityBlocksLexer.LT = 18;
+  SolidityBlocksLexer.GT = 19;
+  SolidityBlocksLexer.DOT = 20;
+  SolidityBlocksLexer.EQUAL = 21;
+  SolidityBlocksLexer.LPAREN = 22;
+  SolidityBlocksLexer.RBRACE = 23;
+  SolidityBlocksLexer.LBRACE = 24;
+  SolidityBlocksLexer.RPAREN = 25;
+  SolidityBlocksLexer.PLUS = 26;
+  SolidityBlocksLexer.MINUS = 27;
+  SolidityBlocksLexer.STAR = 28;
+  SolidityBlocksLexer.SLASH = 29;
+  SolidityBlocksLexer.BACKSLASH = 30;
+  SolidityBlocksLexer.PERCENT = 31;
+  SolidityBlocksLexer.CARET = 32;
+  SolidityBlocksLexer.BANG = 33;
+  SolidityBlocksLexer.QUESTION = 34;
+  SolidityBlocksLexer.COLON = 35;
+  SolidityBlocksLexer.SEMI = 36;
+  SolidityBlocksLexer.COMMA = 37;
+  SolidityBlocksLexer.OTHER = 38;
+  SolidityBlocksLexer.channelNames = [
+    "DEFAULT_TOKEN_CHANNEL",
+    "HIDDEN"
+  ];
+  SolidityBlocksLexer.modeNames = [
+    "DEFAULT_MODE"
+  ];
+  SolidityBlocksLexer.ruleNames = [
+    "T__0",
+    "T__1",
+    "T__2",
+    "T__3",
+    "T__4",
+    "Constructorkeyword",
+    "Identifier",
+    "WS",
+    "COMMENT",
+    "STRINGS",
+    "STRINGS_2",
+    "PRAGMA",
+    "IMPORT",
+    "LINE_COMMENT",
+    "AMP",
+    "TILDE",
+    "PIPE",
+    "LT",
+    "GT",
+    "DOT",
+    "EQUAL",
+    "LPAREN",
+    "RBRACE",
+    "LBRACE",
+    "RPAREN",
+    "PLUS",
+    "MINUS",
+    "STAR",
+    "SLASH",
+    "BACKSLASH",
+    "PERCENT",
+    "CARET",
+    "BANG",
+    "QUESTION",
+    "COLON",
+    "SEMI",
+    "COMMA",
+    "OTHER"
+  ];
+  SolidityBlocksLexer._LITERAL_NAMES = [
+    void 0,
+    "'abstract'",
+    "'contract'",
+    "'interface'",
+    "'library'",
+    "'function'",
+    "'constructor'",
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    "'&'",
+    "'~'",
+    "'|'",
+    "'<'",
+    "'>'",
+    "'.'",
+    "'='",
+    "'('",
+    "'}'",
+    "'{'",
+    "')'",
+    "'+'",
+    "'-'",
+    "'*'",
+    "'/'",
+    "'\\'",
+    "'%'",
+    "'^'",
+    "'!'",
+    "'?'",
+    "':'",
+    "';'",
+    "','"
+  ];
+  SolidityBlocksLexer._SYMBOLIC_NAMES = [
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    void 0,
+    "Constructorkeyword",
+    "Identifier",
+    "WS",
+    "COMMENT",
+    "STRINGS",
+    "STRINGS_2",
+    "PRAGMA",
+    "IMPORT",
+    "LINE_COMMENT",
+    "AMP",
+    "TILDE",
+    "PIPE",
+    "LT",
+    "GT",
+    "DOT",
+    "EQUAL",
+    "LPAREN",
+    "RBRACE",
+    "LBRACE",
+    "RPAREN",
+    "PLUS",
+    "MINUS",
+    "STAR",
+    "SLASH",
+    "BACKSLASH",
+    "PERCENT",
+    "CARET",
+    "BANG",
+    "QUESTION",
+    "COLON",
+    "SEMI",
+    "COMMA",
+    "OTHER"
+  ];
+  SolidityBlocksLexer.VOCABULARY = new import_VocabularyImpl4.VocabularyImpl(_SolidityBlocksLexer._LITERAL_NAMES, _SolidityBlocksLexer._SYMBOLIC_NAMES, []);
+  SolidityBlocksLexer._serializedATN = `\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241(\u0117\b					\x07	\x07\b	\b			
+	
+\v	\v\f	\f\r	\r																		 	 !	!"	"#	#$	$%	%&	&'	'\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\b\b\x8A
+\b\r\b\b\x8B		\x8F
+	\r		\x90		
+
+
+
+\x07
+\x99
+
+\f
+
+\x9C\v
+
+
+
+
+
+\v\v\x07\v\xA5
+\v\f\v\v\xA8\v\v\v\v\v\v\f\f\x07\f\xB0
+\f\f\f\f\xB3\v\f\f\f\f\f\r\r\r\r\r\r\r\r\x07\r\xC1
+\r\f\r\r\xC4\v\r\r\r\r\r\x07\xD2
+\f\xD5\v\x07\xDF
+\f\xE2\v  !!""##$$%%&&''''\x07\x9A\xA6\xB1\xC2\xD3(\x07	\v\x07\r\b	
+\v\f\r!#%')+-/13579;= ?!A"C#E$G%I&K'M(2;C\\aac|\v\f""\f\f\u011E\x07	\v\r!#%')+-/13579;=?ACEGIKMOX\x07a	k\vs\r|\x89\x8E\x94\xA2\xAD\xB8\xC9\xDA\xE5!\xE7#\xE9%\xEB'\xED)\xEF+\xF1-\xF3/\xF51\xF73\xF95\xFB7\xFD9\xFF;\u0101=\u0103?\u0105A\u0107C\u0109E\u010BG\u010DI\u010FK\u0111M\u0113OP\x07cPQ\x07dQR\x07uRS\x07vST\x07tTU\x07cUV\x07eVW\x07vWXY\x07eYZ\x07qZ[\x07p[\\\x07v\\]\x07t]^\x07c^_\x07e_\`\x07v\`ab\x07kbc\x07pcd\x07vde\x07gef\x07tfg\x07hgh\x07chi\x07eij\x07gj\bkl\x07nlm\x07kmn\x07dno\x07top\x07cpq\x07tqr\x07{r
+st\x07htu\x07wuv\x07pvw\x07ewx\x07vxy\x07kyz\x07qz{\x07p{\f|}\x07e}~\x07q~\x7F\x07p\x7F\x80\x07u\x80\x81\x07v\x81\x82\x07t\x82\x83\x07w\x83\x84\x07e\x84\x85\x07v\x85\x86\x07q\x86\x87\x07t\x87\x88\x8A	\x89\x88\x8A\x8B\x8B\x89\x8B\x8C\x8C\x8D\x8F	\x8E\x8D\x8F\x90\x90\x8E\x90\x91\x91\x92\x92\x93\b	\x93\x94\x95\x071\x95\x96\x07,\x96\x9A\x97\x99\v\x98\x97\x99\x9C\x9A\x9B\x9A\x98\x9B\x9D\x9C\x9A\x9D\x9E\x07,\x9E\x9F\x071\x9F\xA0\xA0\xA1\b
+\xA1\xA2\xA6\x07$\xA3\xA5\v\xA4\xA3\xA5\xA8\xA6\xA7\xA6\xA4\xA7\xA9\xA8\xA6\xA9\xAA\x07$\xAA\xAB\xAB\xAC\b\v\xAC\xAD\xB1\x07)\xAE\xB0\v\xAF\xAE\xB0\xB3\xB1\xB2\xB1\xAF\xB2\xB4\xB3\xB1\xB4\xB5\x07)\xB5\xB6\xB6\xB7\b\f\xB7\xB8\xB9\x07r\xB9\xBA\x07t\xBA\xBB\x07c\xBB\xBC\x07i\xBC\xBD\x07o\xBD\xBE\x07c\xBE\xC2\xBF\xC1\v\xC0\xBF\xC1\xC4\xC2\xC3\xC2\xC0\xC3\xC5\xC4\xC2\xC5\xC6\x07=\xC6\xC7\xC7\xC8\b\r\xC8\xC9\xCA\x07k\xCA\xCB\x07o\xCB\xCC\x07r\xCC\xCD\x07q\xCD\xCE\x07t\xCE\xCF\x07v\xCF\xD3\xD0\xD2\v\xD1\xD0\xD2\xD5\xD3\xD4\xD3\xD1\xD4\xD6\xD5\xD3\xD6\xD7\x07=\xD7\xD8\xD8\xD9\b\xD9\xDA\xDB\x071\xDB\xDC\x071\xDC\xE0\xDD\xDF
+\xDE\xDD\xDF\xE2\xE0\xDE\xE0\xE1\xE1\xE3\xE2\xE0\xE3\xE4\b\xE4\xE5\xE6\x07(\xE6 \xE7\xE8\x07\x80\xE8"\xE9\xEA\x07~\xEA$\xEB\xEC\x07>\xEC&\xED\xEE\x07@\xEE(\xEF\xF0\x070\xF0*\xF1\xF2\x07?\xF2,\xF3\xF4\x07*\xF4.\xF5\xF6\x07\x7F\xF60\xF7\xF8\x07}\xF82\xF9\xFA\x07+\xFA4\xFB\xFC\x07-\xFC6\xFD\xFE\x07/\xFE8\xFF\u0100\x07,\u0100:\u0101\u0102\x071\u0102<\u0103\u0104\x07^\u0104>\u0105\u0106\x07'\u0106@\u0107\u0108\x07\`\u0108B\u0109\u010A\x07#\u010AD\u010B\u010C\x07A\u010CF\u010D\u010E\x07<\u010EH\u010F\u0110\x07=\u0110J\u0111\u0112\x07.\u0112L\u0113\u0114\v\u0114\u0115\u0115\u0116\b'\u0116N\v\x8B\x90\x9A\xA6\xB1\xC2\xD3\xE0\b`;
 
   // src/parser.ts
   var ParserError = class extends Error {
@@ -41287,12 +42242,7 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
       }
     }
   };
-  function tokenize(input, options = {}) {
-    const inputStream = new import_antlr4ts.ANTLRInputStream(input);
-    const lexer = new SolidityLexer(inputStream);
-    return buildTokenList(lexer.getAllTokens(), options);
-  }
-  function parse(input, options = {}) {
+  function parse(input, options = {}, parseListsener = {}) {
     const inputStream = new import_antlr4ts.ANTLRInputStream(input);
     const lexer = new SolidityLexer(inputStream);
     const tokenStream = new import_antlr4ts.CommonTokenStream(lexer);
@@ -41302,17 +42252,15 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
     lexer.addErrorListener(listener);
     parser.removeErrorListeners();
     parser.addErrorListener(listener);
+    const startTime = Date.now();
     parser.buildParseTree = true;
     const sourceUnit = parser.sourceUnit();
+    const endTime = Date.now();
     const astBuilder = new ASTBuilder(options);
     astBuilder.visit(sourceUnit);
     const ast = astBuilder.result;
     if (ast === null) {
       throw new Error("ast should never be null");
-    }
-    let tokenList = [];
-    if (options.tokens === true) {
-      tokenList = buildTokenList(tokenStream.getTokens(), options);
     }
     if (options.tolerant !== true && listener.hasErrors()) {
       throw new ParserError({errors: listener.getErrors()});
@@ -41320,10 +42268,60 @@ qrrrrrrrrrrsssssstttttttttuuuuuuuuuuvvvv
     if (options.tolerant === true && listener.hasErrors()) {
       ast.errors = listener.getErrors();
     }
-    if (options.tokens === true) {
-      ast.tokens = tokenList;
-    }
     return ast;
+  }
+  function parseBlock(input, options = {}, parseListsener = {}) {
+    const inputStream = import_antlr4ts.CharStreams.fromString(input);
+    const lexer = new SolidityBlocksLexer(inputStream);
+    const tokenStream = new import_antlr4ts.CommonTokenStream(lexer);
+    const parser = new SolidityBlocksParser(tokenStream);
+    const listener = new ErrorListener_default2();
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(listener);
+    parser.removeErrorListeners();
+    parser.addErrorListener(listener);
+    const result = [];
+    const l = {
+      exitContract(ctx) {
+        result.push({
+          type: "contract",
+          name: ctx.functionname().text,
+          start: ctx.start.startIndex,
+          end: ctx.stop?.stopIndex,
+          startLine: ctx.start.line,
+          startColumn: ctx.start.charPositionInLine,
+          endLine: ctx.stop?.line,
+          endColumn: ctx.stop?.charPositionInLine
+        });
+      },
+      exitFunction(ctx) {
+        const parentType = ctx.parent?.constructor.name;
+        let parentName = "";
+        if (parentType === "ContractContext") {
+          if (ctx.parent?.functionname) {
+            parentName = ctx.parent?.functionname().text;
+          }
+        }
+        result.push({
+          type: "function",
+          name: ctx.functionDescriptor()?.functionname()?.text || ctx.functionDescriptor()?.Constructorkeyword()?.text || null,
+          parent: parentName,
+          start: ctx.start.startIndex,
+          end: ctx.stop?.stopIndex,
+          startLine: ctx.start.line,
+          startColumn: ctx.start.charPositionInLine,
+          endLine: ctx.stop?.line,
+          endColumn: ctx.stop?.charPositionInLine
+        });
+      }
+    };
+    parser.addParseListener(l);
+    const startTime = Date.now();
+    parser.buildParseTree = true;
+    const sourceUnit = parser.sol();
+    const endTime = Date.now();
+    result.sort((a, b) => a.start > b.start ? 1 : -1);
+    return result;
   }
   function _isASTNode(node) {
     if (typeof node !== "object" || node === null) {

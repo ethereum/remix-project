@@ -103,7 +103,7 @@ export interface EditorUIProps {
     findMatches: (uri: string, value: string) => any
     getFontSize: () => number,
     getValue: (uri: string) => string
-    getCursorPosition: () => number
+    getCursorPosition: (offset?: boolean) => number | IPosition
     getHoverPosition: (position: IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
@@ -476,11 +476,11 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.getCursorPosition = () => {
+  props.editorAPI.getCursorPosition = (offset:boolean = true) => {
     if (!monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
-      return model.getOffsetAt(editorRef.current.getPosition())
+      return offset? model.getOffsetAt(editorRef.current.getPosition()): editorRef.current.getPosition()
     }
   }
 

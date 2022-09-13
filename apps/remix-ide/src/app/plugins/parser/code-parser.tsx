@@ -57,8 +57,6 @@ interface codeParserIndex {
 
 export class CodeParser extends Plugin {
 
-    antlrParserResult: antlr.ParseResult // contains the simple parsed AST for the current file
-
     compilerAbstract: CompilerAbstract
     currentFile: string
     nodeIndex: codeParserIndex
@@ -90,14 +88,13 @@ export class CodeParser extends Plugin {
     async handleChangeEvents() {
         const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
         if (completionSettings) {
-            // current timestamp
-            console.log('get ast', Date.now())
-            //this.antlrService.getCurrentFileAST()
-            console.log('done', Date.now())
+            this.antlrService.enableWorker()
+        } else {
+            this.antlrService.disableWorker()
         }
         const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
         const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
-        if(showGasSettings || showErrorSettings || completionSettings) {
+        if (showGasSettings || showErrorSettings || completionSettings) {
             await this.compilerService.compile()
         }
     }
@@ -127,6 +124,10 @@ export class CodeParser extends Plugin {
 
         this.on('fileManager', 'currentFileChanged', async () => {
             await this.call('editor', 'discardLineTexts')
+            const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
+            if (completionSettings) {
+                this.antlrService.getCurrentFileAST()
+            }
             await this.handleChangeEvents()
         })
 
@@ -408,19 +409,21 @@ export class CodeParser extends Plugin {
             return nodeDefinition
         } else {
             const astNodes = await this.antlrService.listAstNodes()
-            for (const node of astNodes) {
-                if (node.range[0] <= position && node.range[1] >= position) {
-                    if (nodeDefinition && nodeDefinition.range[0] < node.range[0]) {
-                        nodeDefinition = node
+            if (astNodes && astNodes.length) {
+                for (const node of astNodes) {
+                    if (node.range[0] <= position && node.range[1] >= position) {
+                        if (nodeDefinition && nodeDefinition.range[0] < node.range[0]) {
+                            nodeDefinition = node
+                        }
+                        if (!nodeDefinition) nodeDefinition = node
                     }
-                    if (!nodeDefinition) nodeDefinition = node
                 }
+                if (nodeDefinition && nodeDefinition.type && nodeDefinition.type === 'Identifier') {
+                    const nodeForIdentifier = await this.findIdentifier(nodeDefinition)
+                    if (nodeForIdentifier) nodeDefinition = nodeForIdentifier
+                }
+                return nodeDefinition
             }
-            if (nodeDefinition && nodeDefinition.type && nodeDefinition.type === 'Identifier') {
-                const nodeForIdentifier = await this.findIdentifier(nodeDefinition)
-                if (nodeForIdentifier) nodeDefinition = nodeForIdentifier
-            }
-            return nodeDefinition
         }
 
     }
