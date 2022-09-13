@@ -149,6 +149,27 @@ export function getCompletionSnippets(range: IRange, monaco): monaco.languages.C
             range
         },
         {
+            label: 'while loop',
+            kind: monaco.languages.CompletionItemKind.Snippet,
+            insertText: 'while (${1:condition}) \n{\n\t${2:code}\n};',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            range
+        },
+        {
+            label: 'do while loop',
+            kind: monaco.languages.CompletionItemKind.Snippet,
+            insertText: 'do {\n\t${2:code}\n} \nwhile (${1:condition});',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            range
+        },
+        {
+            label: 'for loop',
+            kind: monaco.languages.CompletionItemKind.Snippet,
+            insertText: 'for (${1:init}; ${2:condition}; ${3:increment}) \n{\n\t${4:code}\n};',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            range
+        },
+        {
             label: 'pragma',
             kind: monaco.languages.CompletionItemKind.Snippet,
             insertText: '// SPDX-License-Identifier: MIT\npragma solidity ${1:version};',
