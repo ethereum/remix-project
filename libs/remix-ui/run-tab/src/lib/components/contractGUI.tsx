@@ -244,7 +244,7 @@ export function ContractGUI (props: ContractGUIProps) {
         <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="remixUdappInstanceButtonTooltip">
+          <Tooltip className="text-nowrap" id="remixContractGuiTooltip">
             <span>{props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}</span>
           </Tooltip>
         }>
