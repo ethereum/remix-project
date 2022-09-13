@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react' //eslint-disable-line
 import { FileExplorerMenuProps } from '../types'
+const _paq = window._paq = window._paq || []
 
 export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   const [state, setState] = useState({
@@ -72,6 +73,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 data-id={'fileExplorerNewFile' + action}
                 onClick={(e) => {
                   e.stopPropagation()
+                  _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                   if (action === 'createNewFile') {
                     props.createNewFile()
                   } else if (action === 'createNewFolder') {
