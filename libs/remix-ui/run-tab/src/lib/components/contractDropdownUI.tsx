@@ -302,22 +302,27 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 savedProxyAddress={proxyKey}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-                <input
-                  id="deployAndRunPublishToIPFS"
-                  data-id="contractDropdownIpfsCheckbox"
-                  className="form-check-input custom-control-input"
-                  type="checkbox"
-                  onChange={handleCheckedIPFS}
-                  checked={props.ipfsCheckedState}
-                />
-                <label
-                  htmlFor="deployAndRunPublishToIPFS"
-                  data-id="contractDropdownIpfsCheckboxLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                  title="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
-                >
-                  Publish to IPFS
-                </label>
+                  <input
+                    id="deployAndRunPublishToIPFS"
+                    data-id="contractDropdownIpfsCheckbox"
+                    className="form-check-input custom-control-input"
+                    type="checkbox"
+                    onChange={handleCheckedIPFS}
+                    checked={props.ipfsCheckedState}
+                  />
+                <OverlayTrigger placement={'right'} overlay={
+                  <Tooltip className="text-nowrap" id="remixIpfsUdappTooltip">
+                    <span>{"Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"}</span>
+                  </Tooltip>
+                }>
+                  <label
+                    htmlFor="deployAndRunPublishToIPFS"
+                    data-id="contractDropdownIpfsCheckboxLabel"
+                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                  >
+                    Publish to IPFS
+                  </label>
+                </OverlayTrigger>
               </div>
             </div> : ''
           }
